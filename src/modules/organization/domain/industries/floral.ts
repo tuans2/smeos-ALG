@@ -1,4 +1,5 @@
 import type { IndustryPluginContract } from "../industry-plugin-contract"
+import { DEFAULT_CUSTOMER_TIER_THRESHOLDS } from "../industry-customer-tiers"
 
 export const FLORAL_INDUSTRY: IndustryPluginContract = {
   identity: {
@@ -135,6 +136,8 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
     ],
     holidayMultiplier: 1.5,
   },
+  // Ngưỡng hạng khách ngành hoa giữ nguyên như trước (PO 07/11/2026, Q6)
+  customerTiers: DEFAULT_CUSTOMER_TIER_THRESHOLDS,
   costing: {
     materialCategories: [
       { key: "MAIN_FLOWER", label: "Hoa chính", defaultUnit: "cành", defaultWastePercent: 10 },

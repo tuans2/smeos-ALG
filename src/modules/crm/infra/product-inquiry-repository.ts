@@ -1,5 +1,6 @@
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { phoneEquals } from "@/core/security/pii-lookup"
 
 /** Ghi yêu cầu tư vấn: một hội thoại + tin đầu của khách, trong một giao dịch. */
 export class ProductInquiryRepository {
@@ -41,7 +42,7 @@ export class ProductInquiryRepository {
         organization_id: organizationId,
         channel: "STOREFRONT_CATALOG",
         created_at: { gte: since },
-        customer: { phone },
+        customer: phoneEquals(organizationId, phone), // P-5b
       },
     })
   }

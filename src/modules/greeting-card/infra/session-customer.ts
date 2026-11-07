@@ -1,4 +1,5 @@
 import type { Prisma } from "@/generated/prisma/client"
+import { phoneEquals } from "@/core/security/pii-lookup"
 import { isUniqueViolation } from "@/modules/coordinator/infra/transaction"
 import { randomCode } from "../domain/greeting-card-rules"
 
@@ -22,7 +23,8 @@ export async function ensureProspectCustomer(
 ): Promise<string | null> {
   if (!phone) return null
   const where = { organization_id: organizationId, phone }
-  const existing = await db.customers.findFirst({ where, select: { id: true } })
+  const lookup = { organization_id: organizationId, AND: [phoneEquals(organizationId, phone)] } // P-5b
+  const existing = await db.customers.findFirst({ where: lookup, select: { id: true } })
   if (existing) return existing.id
   for (let attempt = 0; attempt < CODE_ATTEMPTS; attempt++) {
     try {
@@ -33,7 +35,7 @@ export async function ensureProspectCustomer(
       return created.id
     } catch (error) {
       if (!isUniqueViolation(error)) throw error
-      const raced = await db.customers.findFirst({ where, select: { id: true } })
+      const raced = await db.customers.findFirst({ where: lookup, select: { id: true } })
       if (raced) return raced.id
     }
   }

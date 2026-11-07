@@ -6,6 +6,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy"
 import { customerBranchWhere } from "./customer-branch-scope"
+import { phoneSearch } from "@/core/security/pii-lookup"
 
 const MAX_CUSTOMERS = 10_000
 
@@ -24,7 +25,7 @@ export async function queryCustomersForExport(ctx: TenantContext, filter: Custom
       ? {
           OR: [
             { name: { contains: filter.search, mode: "insensitive" as const } },
-            { phone: { contains: filter.search } },
+            ...[phoneSearch(ctx.organizationId, filter.search)].filter((w) => w !== null), // P-5b: 4 số cuối / đủ số (D-49)
             { code: { contains: filter.search, mode: "insensitive" as const } },
           ],
         }

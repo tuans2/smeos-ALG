@@ -128,10 +128,13 @@ describe("khách tiềm năng từ link Thẻ chào", () => {
     const fresh2 = await link(a, "A10")
     const other = await link(b, "B2")
     const nameOnly = await link(a, "A11")
-    // Trạng thái trước migration: chỉ có tên/SĐT trên link, chưa có customer_id
+    // Trạng thái trước migration: chỉ có tên/SĐT (chữ rõ, trước P-5c) trên link, chưa có customer_id. Ghi bằng SQL thô —
+    // qua client Prisma thì SĐT thành bản mã (mỗi lần một IV), khối backfill so chữ rõ không bao giờ khớp.
     const legacy = async (id: string, name: string | null, phone: string | null) =>
-      prisma.greeting_sessions.update({ where: { id }, data: { customer_id: null, customer_name: name, customer_phone: phone } })
+      prisma.$executeRaw`UPDATE "greeting_sessions" SET "customer_id" = NULL, "customer_name" = ${name}, "customer_phone" = ${phone} WHERE "id" = ${id}`
     await prisma.greeting_sessions.update({ where: { id: withOrder.sessionId }, data: { customer_id: null } })
+    const orderCustomerId = (await prisma.orders.findFirstOrThrow({ where: { source_session_id: withOrder.sessionId } })).customer_id
+    await prisma.$executeRaw`UPDATE "customers" SET "phone" = ${PHONE} WHERE "id" = ${orderCustomerId}`
     await legacy(known.sessionId, "Lan cũ", PHONE)
     await legacy(fresh.sessionId, "Cũ hơn", "0944444444")
     await legacy(fresh2.sessionId, "Mới nhất", "0944444444")

@@ -249,7 +249,7 @@ PO chốt: trần thân JSON 2 MB · khoá trùng mà thân khác → chỉ cả
 | OpenAPI | Operation có thân khai thêm 413; enum mã lỗi có `PAYLOAD_TOO_LARGE` | `tests/unit/integration/integration-openapi.test.ts` |
 | CodeQL | `scripts/gen-openapi.ts` bỏ mẫu `existsSync` rồi đọc/ghi (`js/file-system-race`) — cảnh báo high trên PR #172 | — |
 
-Còn lại cho đợt sau: chống bấm đúp `POST /orders` (cột `orders.idempotency_key` + migration — cần PO duyệt sửa schema); chặn 422 khi khoá trùng thân khác sau khi có số đo cảnh báo.
+Còn lại cho đợt sau: ~~chống bấm đúp `POST /orders`~~ (đã làm, §12); chặn 422 khi khoá trùng thân khác sau khi có số đo cảnh báo.
 
 ## 11. Nhật ký sửa — đợt 6 (07/11/2026)
 
@@ -265,6 +265,15 @@ PO chốt: báo trước 90 ngày cho `/integration/*` và `/public/*`, 30 ngày
 
 Ghi nhận ngoài phạm vi (chưa sửa):
 - `GET /public/catalog/{slug}` không có rate limit — route Catalog đóng băng; OpenAPI ghi `x-rate-limit: chưa có`.
-- `POST /public/subcontract/{orderCode}` `CLAIM` trả 500 khi `metadata` điều phối thiếu `declinedBranchIds` (đơn cũ hoặc dữ liệu tay) — nên mặc định mảng rỗng.
+- ~~`POST /public/subcontract/{orderCode}` `CLAIM` trả 500 khi `metadata` điều phối thiếu `declinedBranchIds`~~ — đã sửa (§12).
 - Webhook Zalo OA vẫn trả envelope lỗi cũ (`x-legacy-error-envelope`); đổi cần thống nhất với Zalo.
 - Còn từ đợt trước: `include_revoked=false` của Integration catalog bị hiểu là `true` (đóng băng); chống bấm đúp `POST /orders` cần sửa schema; 8 lệch năng lực và năng lực/credit của `content-engine/rewrite` chờ PO.
+
+## 12. Nhật ký sửa — sau đợt 6 (07/11/2026)
+
+PO chọn hai việc từ danh sách còn lại: sửa lỗi 500 nhận đơn gia công, chống bấm đúp `POST /orders` (đồng ý sửa schema).
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-11 | `POST /orders` nhận `Idempotency-Key` (≤ 255 ký tự): gửi lại cùng khoá → trả đơn đã tạo, 201 + `Idempotent-Replayed: true`; gửi đồng thời → một đơn. Cột `orders.idempotency_key` + chỉ mục duy nhất `(organization_id, idempotency_key)`, migration `20261107230000_orders_idempotency_key` (expand). Modal tạo đơn gửi một khoá cho mỗi lần soạn, giữ khi thử lại. Không lưu thân yêu cầu nên chưa phân biệt "cùng khoá, thân khác" | `tests/tenant/order-idempotency.test.ts` (3/5 ca đỏ trên mã cũ), `ingest-order-once.test.ts` |
+| Ngoài phạm vi đợt 6 | `CLAIM` gia công với `subcontract_dispatch` thiếu `declinedBranchIds` → coi như rỗng, ghi lại khi nhận; `CANCEL` sau đó cũng không vỡ. Đường này đã có test khoá hành vi (B5) | `subcontract-order.test.ts`, `tests/tenant/public-contract-subcontract.test.ts` (đỏ trên mã cũ) |

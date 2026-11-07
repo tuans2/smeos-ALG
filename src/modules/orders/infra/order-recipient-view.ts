@@ -8,8 +8,10 @@ import { deliveryAddressView, type OrderRecipientView } from "../domain/order-re
  * (`tests/unit/architecture/order-recipient-reads.test.ts` khoá). Tệp này không import client Prisma (tránh vòng).
  */
 
-/** Cột cần để dựng JSON đọc. */
-export const RECIPIENT_VIEW_FIELDS = { recipient_name: true, recipient_phone: true, address_line: true, address_parts: true } as const
+/** Cột cần để dựng JSON đọc (`organization_id` để giải mã cột cá nhân, P-5c). */
+export const RECIPIENT_VIEW_FIELDS = {
+  organization_id: true, recipient_name: true, recipient_phone: true, address_line: true, address_parts: true,
+} as const
 export const RECIPIENT_VIEW_SELECT = { select: RECIPIENT_VIEW_FIELDS } as const
 
 type Row = Record<string, unknown> & { delivery_address?: unknown; recipient?: OrderRecipientView | null }
@@ -45,12 +47,15 @@ export function planRecipientRead(operation: string, args: Args | undefined): { 
   return { args: { ...a, include: { ...(a.include ?? {}), recipient: merge(a.include?.recipient) } }, keepRecipient }
 }
 
-/** Áp `withDeliveryView` lên kết quả (một dòng, mảng, hoặc `null`). */
-export function applyRecipientView(result: unknown, keepRecipient: boolean): unknown {
+/**
+ * Áp `withDeliveryView` lên kết quả (một dòng, mảng, hoặc `null`). Chạy trong query extension — trước khi Prisma giải mã
+ * cột cá nhân (P-5c: cột chỉ chứa bản mã) — nên `decodeRecipient` giải mã `recipient` trước khi ghép JSON.
+ */
+export function applyRecipientView(result: unknown, keepRecipient: boolean, decodeRecipient: <T>(r: T) => T = (r) => r): unknown {
   const one = (row: unknown) => {
     if (!row || typeof row !== "object" || !("delivery_address" in row)) return row
     const r = row as Row
-    const view = deliveryAddressView(r.delivery_address, r.recipient)
+    const view = deliveryAddressView(r.delivery_address, r.recipient ? decodeRecipient(r.recipient) : r.recipient)
     if (keepRecipient) return { ...r, delivery_address: view }
     const { recipient: _recipient, ...rest } = r
     return { ...rest, delivery_address: view }

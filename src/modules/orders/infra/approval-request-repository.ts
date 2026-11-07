@@ -10,6 +10,7 @@ import { scopedWhere, type TenantContext } from "@/core/tenancy/tenant-context"
 import type { Prisma } from "@/generated/prisma/client"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import { sendToCoordination } from "./coordination-handoff"
+import { DELIVER_BEFORE_PAY } from "../workflow/deliver-before-pay"
 
 const ORDER_SELECT = {
   id: true, code: true, source: true, status: true, total_vnd: true, paid_vnd: true,
@@ -43,8 +44,8 @@ export class ApprovalRequestRepository {
   }
 
   async customerStats(ctx: TenantContext, customerId: string | null, now: Date) {
-    if (!customerId) return { completedOrders: 0, hasOverdueDebt: false }
-    const [completedOrders, overdue] = await Promise.all([
+    if (!customerId) return { completedOrders: 0, hasOverdueDebt: false, openDebtVnd: 0 }
+    const [completedOrders, overdue, openDebt] = await Promise.all([
       prisma.orders.count({ where: scopedWhere(ctx, { customer_id: customerId, status: "COMPLETED" as const }) }),
       prisma.order_approval_requests.count({
         where: scopedWhere(ctx, {
@@ -53,8 +54,18 @@ export class ApprovalRequestRepository {
           order: { customer_id: customerId, balance_vnd: { gt: 0 }, status: { not: "CANCELLED" as const } },
         }),
       }),
+      // Công nợ đang mở: đơn đã được giao trước, thu sau mà chưa thu đủ (PO 07/11/2026, Q7)
+      prisma.orders.aggregate({
+        _sum: { balance_vnd: true },
+        where: scopedWhere(ctx, {
+          customer_id: customerId,
+          balance_vnd: { gt: 0 },
+          status: { not: "CANCELLED" as const },
+          approval_requests: { some: { kind: DELIVER_BEFORE_PAY, status: { in: APPROVED_STATUSES } } },
+        }),
+      }),
     ])
-    return { completedOrders, hasOverdueDebt: overdue > 0 }
+    return { completedOrders, hasOverdueDebt: overdue > 0, openDebtVnd: Number(openDebt._sum.balance_vnd ?? 0) }
   }
 
   async hasOpenRequest(ctx: TenantContext, orderId: string, kind: string): Promise<boolean> {

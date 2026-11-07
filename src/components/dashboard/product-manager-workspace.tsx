@@ -191,7 +191,7 @@ export function ProductManagerWorkspace() {
           ) : unready.length === 0 ? (
             <EmptyState
               title="Tất cả sản phẩm đã sẵn sàng bán!"
-              reason="100% sản phẩm trong danh mục đã có đủ ảnh chính, giá/BOM và ở trạng thái kích hoạt."
+              reason="100% sản phẩm trong danh mục đã có đủ ảnh chính, giá, định lượng nguyên vật liệu và ở trạng thái kích hoạt."
             />
           ) : (
             <ul className="flex flex-col divide-y divide-border">

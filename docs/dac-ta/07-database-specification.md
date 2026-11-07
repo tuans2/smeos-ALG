@@ -2242,7 +2242,7 @@ model order_coordinations {
   @@index([organization_id, risk_level])
 }
 
-Sổ thu (ĐP-4a, 26/09/2026, PO D2), migration `20260926220000_order_payments`. `orders` thêm `paid_vnd`/`balance_vnd` (Decimal); `balance_vnd = total_vnd − paid_vnd` giữ bằng CHECK ở SQL thô (không đẩy được qua `prisma db push`, cần `migrate deploy`). Mỗi lần thu/hoàn tiền là một dòng `order_payments`; `paymentStatus` (UNPAID/PARTIALLY_PAID/PAID/REFUNDED) là trường suy ra lúc đọc, không lưu.
+Sổ thu (ĐP-4a, 26/09/2026, PO D2), migration `20260926220000_order_payments`. `orders` thêm `paid_vnd`/`balance_vnd` (Decimal); `balance_vnd = total_vnd − paid_vnd`. Ghi chú cũ nói có CHECK ở migration này là sai (audit BL-05); CHECK thật `orders_money_check` (`paid_vnd ≥ 0` và `balance_vnd = total_vnd − paid_vnd`) có từ migration `20261108000000_orders_money_integrity` (PO duyệt 07/11/2026) — không đẩy được qua `prisma db push`, cần `migrate deploy`. Cùng migration: `orders.customer_id` trỏ `customers` theo khoá ghép `(customer_id, organization_id)`, `ON DELETE NO ACTION` (xoá khách thì repository gỡ khách khỏi đơn trước). Mỗi lần thu/hoàn tiền là một dòng `order_payments`; `paymentStatus` (UNPAID/PARTIALLY_PAID/PAID/REFUNDED) là trường suy ra lúc đọc, không lưu.
 
 ```prisma
 enum order_payment_kind {
@@ -4130,6 +4130,23 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 52. Chống bấm đúp khi tạo đơn — `orders.idempotency_key` (07/11/2026)
+
+Audit API-11, PO duyệt 07/11/2026. Migration `20261107230000_orders_idempotency_key` (expand, một giao dịch): thêm cột
+`orders.idempotency_key TEXT NULL` và chỉ mục duy nhất `(organization_id, idempotency_key)`. Cột chỉ thêm, không
+backfill; NULL không đụng nhau nên đơn cũ, đơn không gửi khoá và đơn từ nguồn khác không bị chặn.
+
+- **Ghi.** `POST /api/v1/orders` đọc header `Idempotency-Key` (≤ 255 ký tự, dài hơn → 400) và chuyển xuống
+  `ingestOrderOnce` (`src/modules/orders/use-cases/ingest-order-once.ts`), rồi `OrderRepository.create` ghi vào cột.
+- **Đọc.** Khoá đã có đơn trong tổ chức → trả đơn đó (201 + `Idempotent-Replayed: true`), không tạo đơn mới. Hai
+  request cùng khoá gửi đồng thời: người thua vỡ ở chỉ mục duy nhất, giao dịch cuộn lại, use-case đọc lại và trả đơn
+  của người thắng. Nhân viên chi nhánh gửi khoá trùng đơn của chi nhánh khác → 409, không lộ đơn.
+- **Không lưu thân yêu cầu** nên không phân biệt "cùng khoá, thân khác"; giao diện sinh một khoá cho mỗi lần soạn đơn
+  (`create-order-modal.tsx`), giữ khoá khi thử lại, bỏ khi đã tạo xong. Khoá không hết hạn.
+
+Ca thử: `tests/tenant/order-idempotency.test.ts` (gửi lại, đồng thời, khoá khác/không khoá, khác tổ chức, khoá quá dài),
+`src/modules/orders/use-cases/__tests__/ingest-order-once.test.ts`.
+
 ## 51. Mã hoá cột dữ liệu cá nhân — `tenant_data_keys`, cột `*_enc` / `*_hash` / `*_last4` (07/11/2026)
 
 ADR-014 D-P3, bước **P-5a** (expand). PO duyệt 07/11/2026 (D-65): phạm vi A — dữ liệu của khách cuối; khoá chủ
@@ -4166,9 +4183,40 @@ model tenant_data_keys {
   không xác định được → bản mã `null` (không bao giờ lệch chữ rõ), job xử lý sau.
 - Dữ liệu cũ: `encryptPendingPii` (`src/core/security/infra/pii-backfill.ts`) — lượt quét nền 5 phút
   (`/api/v1/internal/chain-dispatch-sweep`, trường `piiEncrypted`, 200 dòng mỗi bảng) và `npm run pii:backfill` (runbook §14).
-- Production chưa đặt khoá chủ → chưa mã hoá, log `pii.encryption_disabled`. Ở P-5a mọi chỗ đọc vẫn đọc cột rõ.
+- P-5a/P-5b: production chưa đặt khoá chủ → chưa mã hoá, log `pii.encryption_disabled`. Từ P-5c khoá là bắt buộc.
+- Đọc (P-5b, 07/11/2026): trường tính toán của client Prisma (`result` extension, `src/core/security/infra/pii-read.ts`)
+  trả giá trị giải từ `*_enc` cho mọi lệnh đọc kể cả truy vấn lồng (`include`, `select` lồng) — Prisma tự lấy thêm `*_enc`
+  và `organization_id`. Dòng chưa có bản mã → cột rõ (còn tới P-5c). Khoá dữ liệu phải ở bộ nhớ trước khi mã đọc trường:
+  `readWithPiiKeys` quét kết quả thô và nạp khoá còn thiếu bằng quyền hệ thống. Kết quả có thuộc tính symbol riêng từng
+  lần đọc (Prisma) — test so cả dòng dùng `toMatchObject` hoặc so JSON.
+- Tra cứu (P-5b): `src/core/security/pii-lookup.ts` — `phoneEquals` (đúng số, mọi cách viết, qua `*_hash`), `phoneIn`,
+  `phoneSearch` (ô tìm: đúng 4 chữ số → `*_last4`; từ 9 chữ số → đúng số; còn lại không tìm theo số — PO D-49). Dòng chưa
+  băm vẫn khớp theo cột rõ (bỏ ở P-5c). Áp ở: khách (tạo, trùng số, danh sách, xuất), đặt đơn Thẻ chào (gắn khách, chống
+  đơn rác, đơn trùng), link Thẻ chào → khách tiềm năng, tìm đơn Thẻ chào, lead (đếm, đơn công khai, phục hồi đơn hết hạn
+  thanh toán), hỏi giá sản phẩm, đơn của khách, giá theo hạng khách.
+- **Contract (P-5c, 07/11/2026)** — migration `20261108090000_pii_encryption_contract`, PO duyệt 07/11/2026:
+  - Chính cột cá nhân chứa bản mã (`customers.phone`, `email`, `address`, `notes`; `leads.phone`, `message`;
+    `greeting_sessions.customer_phone`; `order_recipients.*` của sổ — `address_parts` là chuỗi JSON bản mã;
+    `order_coordinations.shipper_phone`). Migration chép `*_enc` đè lên cột rõ, giữ `*_enc` làm bản sao (bản đang chạy lúc
+    deploy đọc `*_enc` nên không lỗi; Rollback về P-5b được). Bỏ `*_enc` ở P-5d.
+  - Chốt trước khi đè (khối `P5C-VERIFY`): mọi giá trị khác null đã có bản mã `pii1.` (và số đã có băm), không có hai khách
+    cùng `phone_hash` trong một tổ chức; sai → `RAISE`, cả giao dịch cuộn lại (runbook §14).
+  - Ràng buộc: `customers @@unique([organization_id, phone_hash])` thay `(organization_id, phone)`; index lead
+    `(organization_id, phone_hash, created_at)` thay index theo `phone`.
+  - SĐT khách lẻ của đơn điều phối (PO 07/11/2026): cột mới `order_coordinations.customer_phone` (bản mã) +
+    `customer_phone_hash`, index `(organization_id, customer_phone_hash)`. Client Prisma tách `metadata.customerPhone` khi ghi
+    `metadata` và gộp lại khi đọc (`PII_JSON_KEYS`) — mã nghiệp vụ không đổi. Dòng cũ: job `encryptPendingPii`.
+  - Ghi: khoá chủ bắt buộc (`requirePiiMasterKey`, thiếu → `PiiKeyRequiredError`); tổ chức lấy từ dữ liệu, `where`, ngữ cảnh
+    hoặc tra dòng — khớp nhiều tổ chức → `PiiOrganizationUnknownError`, không bao giờ ghi chữ rõ.
+  - Đọc: giá trị không có dạng bản mã (SQL thô, bản cũ ghi lúc deploy) trả nguyên, job mã hoá sau; bản mã không giải được
+    → lỗi (không trả rỗng).
+  - Tra cứu chỉ theo băm/4 số cuối; nhánh "dòng chưa băm khớp theo cột rõ" đã bỏ. Riêng đơn của khách còn khớp
+    `metadata.customerPhone` của đơn điều phối chưa qua job (bỏ ở P-5d).
+  - Chặn lọc/sắp xếp/`distinct`/`groupBy` theo cột cá nhân (`src/core/security/infra/pii-guard.ts`, cả `AND`/`OR`/`NOT` và
+    bộ lọc quan hệ; so với `null` được) → `PiiFilterError`.
 
-Ca thử: `tests/tenant/pii-encryption.test.ts`, `src/core/security/__tests__/pii-cipher.test.ts`.
+Ca thử: `tests/tenant/pii-encryption.test.ts`, `tests/tenant/pii-read.test.ts`, `tests/tenant/pii-contract.test.ts`,
+`src/core/security/__tests__/pii-cipher.test.ts`.
 
 ## 50. Quyền xem đơn của chi nhánh gia công — `shared_order_access` (07/11/2026)
 

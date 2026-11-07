@@ -103,7 +103,7 @@ export default function KnowledgeBasePage() {
           description={`Để hệ thống smeOS hoạt động chính xác 100% khi tính giá vốn, đo SLA ${ti.makerTitle} và tư vấn AI bán hàng, mọi thông tin phải được phân rã thành các trường độc lập (Tên ${ti.rawMaterialItem}, Số lượng, Đơn vị tính, Màu sắc...). Tuyệt đối không gộp chung văn bản và số lượng vào cùng một ô tự do.`}
           tips={[
             { icon: "⚡", text: "Atomic Fields: Sửa trực tiếp từng ô dữ liệu nguyên tử mà không làm hỏng cấu trúc" },
-            { icon: "🛡️", text: "Aegis Resource: Giữ nguyên tắc cách ly dữ liệu tenant và tránh ghi đè DB vô nghĩa" },
+            { icon: "🛡️", text: "Dữ liệu tách riêng: Dữ liệu của mỗi cửa hàng được giữ riêng, cửa hàng khác không xem hay ghi đè được" },
             { icon: "💬", text: "AI Copilot: Bấm 'Hỏi smeOS Copilot' để được trợ lý ảo hướng dẫn từng bước 24/7" },
             { icon: "🖨️", text: `In ấn bảo mật: Luôn dùng phiếu ${ti.makerAction} giấu giá cho thợ và phiếu A6 cho shipper` },
           ]}

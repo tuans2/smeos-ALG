@@ -128,7 +128,7 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-body-sm font-bold text-text">
-                  Nhắc Nghiệp Vụ Điều Phối (M0..M5)
+                  Nhắc việc điều phối theo tiến độ đơn
                 </span>
                 {totalCritical > 0 && (
                   <Badge tone="danger" className="text-caption font-extrabold px-2 py-0.5">

@@ -3,7 +3,8 @@ import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
+import { ingestOrderOnce, ORDER_IDEMPOTENCY_KEY_MAX } from "@/modules/orders/use-cases/ingest-order-once"
+import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency"
 import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { listOrders } from "@/modules/orders/use-cases/list-orders"
 import { parseDeliveryDate } from "@/modules/orders/domain/order-list-filter"
@@ -23,7 +24,6 @@ const createOrderSchema = z.object({
     })
   ).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm"),
   pricingRuleRef: z.record(z.string(), z.unknown()).optional(),
-  voucherId: z.string().optional(),
   cardMessage: z.string().optional(),
   internalNote: z.string().optional(),
   deliveryWindow: z
@@ -84,15 +84,23 @@ export const GET = handle(async (request) => {
   return jsonResponse(result)
 })
 
-/** `POST /api/v1/orders` (R2) — Tạo đơn hàng mới */
+/**
+ * `POST /api/v1/orders` (R2) — Tạo đơn hàng mới. Header `Idempotency-Key` (tuỳ chọn, ≤ 255 ký tự): gửi lại cùng
+ * khoá → trả lại đơn đã tạo kèm `Idempotent-Replayed: true`, không tạo đơn thứ hai (audit API-11).
+ */
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "R2")
 
+  const idempotencyKey = readIdempotencyKey(request)
+  if (idempotencyKey && idempotencyKey.length > ORDER_IDEMPOTENCY_KEY_MAX) {
+    throw validationFailed({ "Idempotency-Key": `Tối đa ${ORDER_IDEMPOTENCY_KEY_MAX} ký tự` })
+  }
   const body = await request.json()
   const parsed = createOrderSchema.parse(body)
 
-  const order = await ingestOrder(ctx, { ...parsed, source: "MANUAL" })
+  const { order, replayed } = await ingestOrderOnce(ctx, { ...parsed, source: "MANUAL" }, idempotencyKey)
+  if (replayed) return jsonResponse({ order }, { status: 201, headers: { "Idempotent-Replayed": "true" } })
   // Đơn thiếu địa chỉ/SĐT người nhận → tự sinh yêu cầu bổ sung (checklist ALG 4.14)
   await syncOrderInfoRequests(ctx, order.id)
   return jsonResponse({ order }, { status: 201 })

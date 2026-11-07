@@ -18,3 +18,9 @@ export function vnDayBounds(at: Date = new Date()): { start: Date; end: Date } {
   const start = new Date(Date.UTC(year, month - 1, day) - VN_OFFSET_MS)
   return { start, end: new Date(start.getTime() + DAY_MS) }
 }
+
+/** Hôm nay theo giờ Việt Nam, dạng `YYYY-MM-DD`. */
+export function vnTodayIso(at: Date = new Date()): string {
+  const { year, month, day } = vnCalendarDate(at)
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+}

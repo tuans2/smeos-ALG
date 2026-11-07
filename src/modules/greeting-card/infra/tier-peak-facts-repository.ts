@@ -1,4 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { phoneEquals } from "@/core/security/pii-lookup"
 
 const KEYS = ["customer_tier_discount", "peak_hour_surcharge"] as const
 
@@ -19,7 +20,7 @@ export class TierPeakFactsRepository {
 
   async customerTierByPhone(organizationId: string, phone: string): Promise<string | null> {
     if (!phone) return null
-    const row = await this.db.customers.findFirst({ where: { organization_id: organizationId, phone }, select: { tier: true } })
+    const row = await this.db.customers.findFirst({ where: { organization_id: organizationId, AND: [phoneEquals(organizationId, phone)] }, select: { tier: true } }) // P-5b
     return row?.tier ?? null
   }
 }

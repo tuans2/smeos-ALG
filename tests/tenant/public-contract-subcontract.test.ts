@@ -31,7 +31,7 @@ describe("hợp đồng — Thẻ Gia Công công khai", () => {
   let a: Tenant
   let branchId: string
 
-  async function seed(code: string) {
+  async function seed(code: string, legacyState = false) {
     const order = await prisma.orders.create({
       data: {
         organization_id: a.organizationId, code, source: "BROCHURE", status: "CONFIRMED", total_vnd: 500_000, paid_vnd: 500_000, balance_vnd: 0,
@@ -42,7 +42,7 @@ describe("hợp đồng — Thẻ Gia Công công khai", () => {
     await prisma.order_coordinations.create({
       data: { organization_id: a.organizationId, order_id: order.id, metadata: { subcontract_dispatch: {
         orderId: order.id, orderCode: code, dispatchStatus: "OPEN", currentRound: 1, claimedBranchId: null, claimedAt: null,
-        graceExpiresAt: null, declinedBranchIds: [], invitedBranchIds: [branchId], roundExpiresAt: null,
+        graceExpiresAt: null, ...(legacyState ? {} : { declinedBranchIds: [] }), invitedBranchIds: [branchId], roundExpiresAt: null,
       } } },
     })
     await syncSubcontractShares(a.organizationId, order.id)
@@ -96,6 +96,13 @@ describe("hợp đồng — Thẻ Gia Công công khai", () => {
     const code = "DH261107-0002"
     await seed(code)
     await act(post(code, "", { action: "CLAIM", branchId }), ps(code))
+    await expectContract(await act(post(code, "", { action: "CANCEL", branchId }), ps(code)), 200, R.subcontractActionResponse, "subcontract-action")
+  })
+
+  it("state điều phối cũ thiếu declinedBranchIds: nhận rồi huỷ vẫn 200 (từng 500)", async () => {
+    const code = "DH261107-0004"
+    await seed(code, true)
+    await expectContract(await act(post(code, "", { action: "CLAIM", branchId }), ps(code)), 200, R.subcontractActionResponse, "subcontract-action")
     await expectContract(await act(post(code, "", { action: "CANCEL", branchId }), ps(code)), 200, R.subcontractActionResponse, "subcontract-action")
   })
 

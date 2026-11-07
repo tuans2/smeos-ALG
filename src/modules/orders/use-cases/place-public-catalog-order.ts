@@ -10,6 +10,7 @@ import type { HumanVerifier } from "@/core/ports/human-verification"
 import { AppError, notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { VN_PHONE, normalizeInquiryPhone } from "@/modules/crm/domain/product-inquiry"
+import { isPastVnDate, PAST_DELIVERY_MESSAGE } from "../domain/order-input-rules"
 import { CatalogLinkRepository } from "@/modules/catalog-links/infra/catalog-link-repository"
 import { getPublicCatalog } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { BrochureCheckoutRepository } from "@/modules/greeting-card/infra/brochure-checkout-repository"
@@ -67,6 +68,7 @@ export function validatePublicOrder(input: PublicOrderInput): Record<string, str
   if (!input.address.trim() || input.address.trim().length > 300) e.address = "Nhập địa chỉ nhận hàng"
   if (!Number.isInteger(input.quantity) || input.quantity < 1 || input.quantity > 50) e.quantity = "Số lượng từ 1 đến 50"
   if (input.deliveryDate && !/^\d{4}-\d{2}-\d{2}$/.test(input.deliveryDate)) e.deliveryDate = "Ngày giao chưa đúng"
+  else if (input.deliveryDate && isPastVnDate(input.deliveryDate)) e.deliveryDate = PAST_DELIVERY_MESSAGE // PO 07/11/2026, Q11
   if (input.timeSlot && input.timeSlot.length > 20) e.timeSlot = "Khung giờ chưa đúng"
   if (input.note && input.note.length > 500) e.note = "Ghi chú tối đa 500 ký tự"
   return e

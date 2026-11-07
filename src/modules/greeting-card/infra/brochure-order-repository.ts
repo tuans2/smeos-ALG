@@ -8,13 +8,14 @@ import { resolveCoordinatorId } from "../domain/coordinator-owner"
 import { sortByDelivery } from "../domain/coordinator-board"
 import type { delivery_status, order_status, production_status } from "@/generated/prisma/client"
 import { orderListExtraWhere, type OrderListExtraFilter } from "@/modules/orders/domain/order-list-filter"
+import { phoneSearch } from "@/core/security/pii-lookup"
 
 export const ORDER_STATUSES: readonly order_status[] = [
   "DRAFT", "CONFIRMED", "PROCESSING", "DELIVERED", "COMPLETED", "CANCELLED",
 ]
 /** Đơn hàng nguồn Thẻ chào: tạo đơn, thu tiền, tra cứu, cập nhật xưởng. */
-/** Mã đơn, mã link, tên khách hàng (không phân biệt hoa thường) hoặc số điện thoại khách (so phần số). */
-function searchConditions(q: string) {
+/** Mã đơn, mã link, tên khách hàng (không phân biệt hoa thường) hoặc SĐT khách (4 số cuối / đủ số). */
+function searchConditions(q: string, organizationId?: string) {
   const text = q.trim()
   const cleanText = text.replace(/^#/, "").trim()
   const digits = text.replace(/\D/g, "")
@@ -25,11 +26,8 @@ function searchConditions(q: string) {
     { customer: { name: { contains: text, mode: "insensitive" as const } } },
     { greeting_sessions: { some: { send_code: { contains: text, mode: "insensitive" as const } } } },
     { greeting_sessions: { some: { customer_name: { contains: text, mode: "insensitive" as const } } } },
-    ...(!hasLetters && digits.length >= 3
-      ? [
-          { customer: { phone: { contains: digits } } },
-          { greeting_sessions: { some: { customer_phone: { contains: digits } } } },
-        ]
+    ...(!hasLetters && organizationId && phoneSearch(organizationId, digits) // P-5b (D-49): 4 số cuối hoặc đủ số
+      ? [{ customer: phoneSearch(organizationId, digits)! }, { greeting_sessions: { some: phoneSearch(organizationId, digits, "customer_phone")! } }]
       : []),
   ]
 }
@@ -141,7 +139,7 @@ export class BrochureOrderRepository {
         ...(options.payment === "PAID" ? { balance_vnd: { lte: 0 }, total_vnd: { gt: 0 } } : {}),
         ...(options.reported ? { greeting_sessions: { some: { status: "PAYMENT_REPORTED" as const, ...(options.saleId ? { sale_id: options.saleId } : {}) } } } : {}),
         ...(options.q || options.delivered
-          ? { AND: [...(options.q ? [{ OR: searchConditions(options.q) }] : []), ...(options.delivered ? [{ OR: [{ delivery_status: "DELIVERED" as const }, { status: "COMPLETED" as const }] }] : [])] }
+          ? { AND: [...(options.q ? [{ OR: searchConditions(options.q, ctx.organizationId) }] : []), ...(options.delivered ? [{ OR: [{ delivery_status: "DELIVERED" as const }, { status: "COMPLETED" as const }] }] : [])] }
           : {}),
       })] },
       include: {
