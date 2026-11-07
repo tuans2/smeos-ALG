@@ -1,11 +1,6 @@
 {
   "_comment": "Phát hiện CodeQL mức >= 7.0 có sẵn trên main khi chốt CodeQL ra đời (PR #189, PO duyệt 07/11/2026). Chốt chỉ chặn phát hiện MỚI; mốc chỉ được thu hẹp — sửa xong chỗ nào thì xoá/giảm dòng đó. Khoá: <luật>|<tệp> → số phát hiện.",
   "javascript-typescript": {
-    "js/incomplete-url-substring-sanitization|src/components/catalog/flower-image-fallback.ts": 1,
-    "js/incomplete-url-substring-sanitization|src/modules/greeting-card/domain/drive-thumb.ts": 1,
-    "js/incomplete-url-substring-sanitization|src/modules/market-intelligence/domain/video-evidence-catalog.ts": 4,
-    "js/incomplete-url-substring-sanitization|src/modules/market-intelligence/use-cases/list-tenant-opportunities.ts": 3,
-    "js/incomplete-url-substring-sanitization|src/modules/platform/adapters/google-workspace-client.test.ts": 1,
     "js/incomplete-sanitization|scripts/codemod-ux-tokens.ts": 2,
     "js/file-system-race|scripts/check-docs.mjs": 1,
     "js/file-system-race|scripts/gen-content-engine-schemas.ts": 1,
