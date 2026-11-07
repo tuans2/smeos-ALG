@@ -160,7 +160,7 @@ export function StorageSidebar({
         <div className="mt-4 flex flex-col gap-2">
           <span className="h-2 w-2 rounded-full bg-warning" title={`Ảnh gốc (${rawAssets.length})`} />
           <span className="h-2 w-2 rounded-full bg-info" title={`Đã duyệt định lượng (${approvedAnalyses.length})`} />
-          <span className="h-2 w-2 rounded-full bg-success" title={`Sale Pitch (${finalizedPitches.length})`} />
+          <span className="h-2 w-2 rounded-full bg-success" title={`Kịch bản tư vấn (${finalizedPitches.length})`} />
         </div>
       </div>
     )
@@ -252,7 +252,7 @@ export function StorageSidebar({
               filter === "finalized" ? "bg-success text-white font-bold hover:bg-success" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
-            Sale Pitch ({finalizedPitches.length})
+            Kịch bản tư vấn ({finalizedPitches.length})
           </Button>
         </div>
       </div>
