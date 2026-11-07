@@ -106,15 +106,15 @@ describe("greeting-card: tin nhắn nội bộ và Hộp việc", () => {
     expect((await getThread(lan, { orderId: order.orderId })).label).toContain("Đơn")
   })
 
-  it("xin giảm giá: trần 25% mặc định; Điều hành duyệt mức khác kèm ghi chú → giá chốt cập nhật, sale nhận kết quả", async () => {
+  it("xin giảm giá: trần 50% mặc định (một trần duy nhất — PO 07/11/2026); Điều hành duyệt mức khác kèm ghi chú → giá chốt cập nhật, sale nhận kết quả", async () => {
     const order = await lanOrder()
     const base = Number((await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId } })).total_vnd)
-    expect(await codeOf(requestDiscount(lan, { orderId: order.orderId, ask: { percent: 30 }, reason: "Khách quen" }))).toBe("VALIDATION_FAILED")
+    expect(await codeOf(requestDiscount(lan, { orderId: order.orderId, ask: { percent: 60 }, reason: "Khách quen" }))).toBe("VALIDATION_FAILED")
     const req = await requestDiscount(lan, { orderId: order.orderId, ask: { percent: 10 }, reason: "Khách quen đặt lần 3" })
     expect(await codeOf(requestDiscount(lan, { orderId: order.orderId, ask: { percent: 5 }, reason: "Lần nữa" }))).toBe("CONFLICT")
 
     const action = (await getInbox(owner)).actions.find((x) => x.kind === "DISCOUNT")
-    expect(action?.discount).toMatchObject({ requestId: req.id, requester: "Lan", percent: 10, maxPercent: 25 })
+    expect(action?.discount).toMatchObject({ requestId: req.id, requester: "Lan", percent: 10, maxPercent: 50 })
 
     // Tổ chức khác không duyệt được; từ chối phải có lý do
     expect(await codeOf(decideDiscount({ ...b.ctx, capabilities: new Set(["F2"]) }, { requestId: req.id, approve: true, note: "" }))).toBe("NOT_FOUND")

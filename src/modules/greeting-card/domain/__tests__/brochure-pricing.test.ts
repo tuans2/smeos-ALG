@@ -98,3 +98,35 @@ describe("awaitingQuote", () => {
     expect(q).toMatchObject({ totalVnd: 0, shippingFeeVnd: 0, quantity: 20, awaitingQuote: true, shippingZone: { id: "q1" } })
   })
 })
+
+// PO 07/11/2026 (gỡ băng Thẻ chào, audit BL-08): mã + hạng + ưu đãi cộng lại không quá 50% tiền hàng, và tiền
+// hàng sau giảm không dưới giá sàn.
+describe("trần tổng chiết khấu", () => {
+  const shipping = { zones: [], freeShippingOverVnd: null }
+  const promo40 = { kind: "PERCENT_OFF" as const, percent: 40 }
+
+  it("mã 30% + hạng 20% + ưu đãi 40% → tổng giảm dừng ở 50% tiền hàng", () => {
+    const q = computeQuote({
+      unitPriceVnd: 1_000_000, quantity: 1, zone: null, shipping, voucher: voucher({ discountValue: 30 }),
+      tierDiscount: { ratio: 0.2, label: "VIP" }, promotion: promo40,
+    })
+    const totalDiscount = q.discountVnd + (q.tierDiscountVnd ?? 0) + (q.promotionDiscountVnd ?? 0)
+    expect(totalDiscount).toBe(500_000)
+    expect(q.totalVnd).toBe(500_000)
+    expect(q.discountCapped).toBe(true)
+  })
+
+  it("giá sàn cao hơn 50% → giảm chỉ tới sàn", () => {
+    const q = computeQuote({ unitPriceVnd: 1_000_000, quantity: 1, zone: null, shipping, voucher: voucher({ discountValue: 40 }), floorVnd: 800_000 })
+    expect(q.discountVnd).toBe(200_000)
+    expect(q.totalVnd).toBe(800_000)
+    expect(q.discountCapped).toBe(true)
+  })
+
+  it("trong trần → không đổi, không gắn cờ", () => {
+    const q = computeQuote({ unitPriceVnd: 1_000_000, quantity: 1, zone: null, shipping, voucher: voucher({ discountValue: 10 }), floorVnd: 500_000 })
+    expect(q.discountVnd).toBe(100_000)
+    expect(q.discountCapped).toBeUndefined()
+  })
+})
+

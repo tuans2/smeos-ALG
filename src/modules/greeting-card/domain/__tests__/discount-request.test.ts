@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest"
 import { discountError, discountVndOf, parseMaxDiscountPercent } from "../discount-request"
 
 describe("discount-request", () => {
-  it("mức tối đa mặc định 25%, Điều hành đổi được trong cài đặt", () => {
-    expect(parseMaxDiscountPercent({})).toBe(25)
+  // PO 07/11/2026: một trần duy nhất — mặc định và tối đa = trần nền tảng 50%
+  it("mức tối đa mặc định 50% (trần nền tảng), Điều hành đặt thấp hơn được, cao hơn bị kẹp về 50%", () => {
+    expect(parseMaxDiscountPercent({})).toBe(50)
     expect(parseMaxDiscountPercent({ brochure_discount: { max_percent: 10 } })).toBe(10)
-    expect(parseMaxDiscountPercent({ brochure_discount: { max_percent: 150 } })).toBe(25)
+    expect(parseMaxDiscountPercent({ brochure_discount: { max_percent: 80 } })).toBe(50)
+    expect(parseMaxDiscountPercent({ brochure_discount: { max_percent: 150 } })).toBe(50)
   })
 
   it("tính tiền giảm theo % (làm tròn xuống nghìn) hoặc theo số tiền", () => {
