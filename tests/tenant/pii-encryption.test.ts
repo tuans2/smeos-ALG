@@ -161,7 +161,7 @@ describe("mã hoá cột dữ liệu cá nhân — lưu bản mã", () => {
     for (const [model, fields] of Object.entries(PII_FIELDS)) {
       const body = schema.match(new RegExp(`model ${model} \\{([\\s\\S]*?)\\n\\}`))?.[1] ?? ""
       for (const [field, spec] of Object.entries(fields)) {
-        for (const col of [field, ...Object.values(spec).filter((v): v is string => typeof v === "string")]) {
+        for (const col of [field, ...Object.values(spec as Record<string, unknown>).filter((v): v is string => typeof v === "string")]) {
           expect(body, `${model}.${col}`).toMatch(new RegExp(`\\n\\s+${col}\\s`))
         }
       }
