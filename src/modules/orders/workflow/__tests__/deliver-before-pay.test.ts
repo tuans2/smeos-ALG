@@ -11,7 +11,7 @@ import {
 
 const strict = { brochure_policy: { require_full_before_dispatch: true } }
 const ctx = (over: Partial<DeliverBeforePayContext> = {}): DeliverBeforePayContext => ({
-  totalVnd: 800_000, paidVnd: 0, isUrgent: false, customerCompletedOrders: 3, customerHasOverdueDebt: false, ...over,
+  totalVnd: 800_000, paidVnd: 0, isUrgent: false, customerCompletedOrders: 3, customerHasOverdueDebt: false, customerOpenDebtVnd: 0, ...over,
 })
 
 describe("giao trước, thu sau — tầng 1: dùng lại chính sách thu tiền sẵn có", () => {
@@ -53,9 +53,34 @@ describe("tầng 2–3: ngoài chính sách", () => {
 
 describe("cài đặt hạn mức", () => {
   it("đọc mặc định, bỏ giá trị sai; hạn thu theo số ngày", () => {
-    expect(parseDeliverBeforePaySettings(null)).toEqual({ allowSelfDecide: true, selfDecideMaxVnd: 1_000_000, minCompletedOrders: 2, collectDueDays: 3 })
+    expect(parseDeliverBeforePaySettings(null)).toEqual({ allowSelfDecide: true, selfDecideMaxVnd: 1_000_000, minCompletedOrders: 2, collectDueDays: 3, customerDebtCapVnd: null })
     expect(parseDeliverBeforePaySettings({ order_deliver_before_pay: { selfDecideMaxVnd: -1, collectDueDays: 7 } })).toMatchObject({ selfDecideMaxVnd: 1_000_000, collectDueDays: 7 })
     expect(defaultCollectDueAt({}, new Date("2026-10-31T00:00:00Z")).toISOString()).toBe("2026-11-03T00:00:00.000Z")
     expect(Object.keys(validateDeliverBeforePaySettings({ collectDueDays: 0, allowSelfDecide: "x" })).sort()).toEqual(["allowSelfDecide", "collectDueDays"])
+  })
+})
+
+// PO 07/11/2026 (Q7), audit BL-15: nợ quá hạn và trần công nợ xét TRƯỚC mọi lối tự duyệt
+describe("nợ của khách xét trước mọi lối tự duyệt", () => {
+  it("khách nợ quá hạn: chính sách tiệm hay đơn hoả tốc cũng phải chờ Điều hành", () => {
+    expect(decideDeliverBeforePay({}, ctx({ customerHasOverdueDebt: true }))).toMatchObject({ outcome: "NEEDS_ADMIN", why: "Khách còn nợ quá hạn" })
+    expect(decideDeliverBeforePay(strict, ctx({ isUrgent: true, customerHasOverdueDebt: true }))).toMatchObject({ outcome: "NEEDS_ADMIN" })
+  })
+
+  it("trần công nợ mặc định không giới hạn", () => {
+    expect(parseDeliverBeforePaySettings({}).customerDebtCapVnd).toBeNull()
+    expect(decideDeliverBeforePay({}, ctx({ customerOpenDebtVnd: 900_000_000 }))).toMatchObject({ outcome: "AUTO_APPROVE" })
+  })
+
+  it("tiệm đặt trần: nợ đang mở + phần chưa thu của đơn này vượt trần → Điều hành duyệt, kể cả hoả tốc", () => {
+    const capped = { order_deliver_before_pay: { customerDebtCapVnd: 1_000_000 } }
+    expect(decideDeliverBeforePay(capped, ctx({ totalVnd: 500_000, customerOpenDebtVnd: 500_000 }))).toMatchObject({ outcome: "AUTO_APPROVE" })
+    expect(decideDeliverBeforePay(capped, ctx({ totalVnd: 500_000, customerOpenDebtVnd: 600_000, isUrgent: true }))).toMatchObject({ outcome: "NEEDS_ADMIN", why: "Vượt trần công nợ của khách" })
+  })
+
+  it("kiểm cài đặt trần công nợ", () => {
+    expect(validateDeliverBeforePaySettings({ customerDebtCapVnd: null })).toEqual({})
+    expect(validateDeliverBeforePaySettings({ customerDebtCapVnd: 2_000_000 })).toEqual({})
+    expect(validateDeliverBeforePaySettings({ customerDebtCapVnd: -1 })).toHaveProperty("customerDebtCapVnd")
   })
 })

@@ -14,6 +14,8 @@ interface Settings {
   selfDecideMaxVnd: number
   minCompletedOrders: number
   collectDueDays: number
+  /** Trần công nợ mỗi khách; `null` = không giới hạn (PO 07/11/2026). */
+  customerDebtCapVnd: number | null
 }
 
 const ENDPOINT = "/api/v1/orders/deliver-before-pay-settings"
@@ -64,7 +66,7 @@ export function DeliverBeforePaySettingsPanel() {
   return (
     <Disclosure label="Hạn mức Sale tự quyết" className="rounded-2xl bg-surface p-4 shadow-sm">
       <p className="mt-2 text-body-sm text-text-muted">
-        Đơn ngoài chính sách thu tiền của tiệm: Sale được tự cho giao trước khi thoả cả ba điều kiện dưới đây. Đơn hoả tốc luôn được tự quyết; còn lại chờ Điều hành duyệt.
+        Đơn ngoài chính sách thu tiền của tiệm: Sale được tự cho giao trước khi thoả cả ba điều kiện dưới đây. Đơn hoả tốc được tự quyết; còn lại chờ Điều hành duyệt. Khách đang nợ quá hạn hoặc vượt trần công nợ luôn chờ Điều hành duyệt.
       </p>
       {error && <div className="mt-3"><InlineError message={error} /></div>}
       {draft && (
@@ -90,6 +92,16 @@ export function DeliverBeforePaySettingsPanel() {
           <label className="space-y-1 text-body-sm text-text">
             <span>Hạn thu sau khi duyệt (ngày)</span>
             <Input inputMode="numeric" className={field} value={draft.collectDueDays} onChange={(e) => setDraft({ ...draft, collectDueDays: num(e.target.value) })} />
+          </label>
+          <label className="space-y-1 text-body-sm text-text">
+            <span>Trần công nợ mỗi khách ({draft.customerDebtCapVnd === null ? "không giới hạn" : formatCurrency(draft.customerDebtCapVnd)})</span>
+            <Input
+              inputMode="numeric"
+              className={field}
+              placeholder="Để trống = không giới hạn"
+              value={draft.customerDebtCapVnd ?? ""}
+              onChange={(e) => setDraft({ ...draft, customerDebtCapVnd: e.target.value.replace(/\D/g, "") === "" ? null : num(e.target.value) })}
+            />
           </label>
           <div className="flex items-end gap-3">
             <Button type="submit" size="sm" variant="secondary" disabled={saving}>Lưu</Button>
