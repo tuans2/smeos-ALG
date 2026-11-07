@@ -33,7 +33,7 @@ export function SalesOrderIntakeModal(props: SalesOrderIntakeModalProps) {
           Tiếp Nhận Đơn Hàng Mới
         </span>
       }
-      description="Tạo đơn hàng từ Sales & Đưa ngay vào Tháp Điều Phối Control Tower"
+      description="Tạo đơn hàng từ bộ phận bán hàng và đưa ngay vào Tháp điều phối đơn"
     >
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-caption">

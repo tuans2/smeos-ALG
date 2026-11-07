@@ -89,7 +89,7 @@ export function StorageSidebar({
 
       const title =
         a.product?.name || (effective.product_name as string) || (identity.category as string) || "Sản phẩm thiết kế"
-      const subtitle = `${flowerCount} cành • ${identity.phong_cach || "Đã duyệt BOM"}`
+      const subtitle = `${flowerCount} cành • ${identity.phong_cach || "Đã duyệt định lượng"}`
 
       items.push({
         type: "approved",
@@ -159,7 +159,7 @@ export function StorageSidebar({
         </div>
         <div className="mt-4 flex flex-col gap-2">
           <span className="h-2 w-2 rounded-full bg-warning" title={`Ảnh gốc (${rawAssets.length})`} />
-          <span className="h-2 w-2 rounded-full bg-info" title={`Đã duyệt BOM (${approvedAnalyses.length})`} />
+          <span className="h-2 w-2 rounded-full bg-info" title={`Đã duyệt định lượng (${approvedAnalyses.length})`} />
           <span className="h-2 w-2 rounded-full bg-success" title={`Sale Pitch (${finalizedPitches.length})`} />
         </div>
       </div>

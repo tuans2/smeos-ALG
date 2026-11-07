@@ -171,7 +171,7 @@ export function CoordinatorOrderDetailModal({
           {detailModalTab === "SALES_INTAKE" && (
             <SalesOrderIntakeCard
               orderCode={order.orderCode}
-              source="Tiếp nhận tại Control Tower"
+              source="Tiếp nhận tại Tháp điều phối đơn"
               customerName={order.customerName}
               customerTier={order.customerTier}
               recipientName={order.recipientName}
