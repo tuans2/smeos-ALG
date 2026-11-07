@@ -131,8 +131,8 @@ Thứ tự: WP-06 trước WP-07, WP-05b; WP-11 trước WP-09 (bộ sinh mã ch
 | Q8 | Nút ở modal `/don-hang` theo luồng nào (nợ #150)? | Ánh xạ `WAITING→ARRANGING→READY`, `PENDING→DELIVERING→DELIVERED`; hoàn tất chỉ ở Điều phối | WP-05b |
 | Q9 | Có quản lý tồn theo số lượng? | Chỉ cho sản phẩm bật chế độ số lượng | WP-20 |
 | Q10 | Đơn chuẩn có tính VAT? | Có khi khách yêu cầu hoá đơn | WP-21 |
-| Q11 | Tạo đơn với ngày giao đã qua (nhập bù đơn đã giao) có được không? | Được, nhưng chỉ người có quyền huỷ/duyệt (R6) | WP-12 |
-| Q12 | SĐT người nhận chỉ nhận số Việt Nam? | Nhận số VN chuẩn hoá (bỏ dấu cách/chấm); số khác cần ghi chú | WP-12 |
+| Q11 | Tạo đơn với ngày giao đã qua (nhập bù đơn đã giao) có được không? | **PO 07/11/2026: không** | WP-12 |
+| Q12 | SĐT người nhận chỉ nhận số Việt Nam? | **PO 07/11/2026: chỉ số Việt Nam** | WP-12 |
 
 ## 7. Definition of done mỗi WP
 
@@ -150,6 +150,6 @@ Thứ tự: WP-06 trước WP-07, WP-05b; WP-11 trước WP-09 (bộ sinh mã ch
 |---|---|---|
 | P0 | WP-01 · WP-02 · WP-03 · WP-04 · WP-05a | Đã làm — PR đợt P0. Còn lại của WP-03: sửa comment CHECK ở `schema.prisma` (cần PO duyệt, gộp WP-15) và đối soát `balance_vnd` (chuyển sang WP-15) |
 | P1 | WP-06 · WP-07 · WP-10 (sàn khi tạo đơn, nguyên liệu mất) · WP-11 · WP-12 · WP-13 | Đã làm — PR đợt P1 + PR "P1 phần còn lại" (sự kiện + cập nhật đơn một giao dịch; form tạo đơn gửi `productId`, dòng trống, ngày VN; ghi `order.create` vào nhật ký kiểm toán). WP-07 nhả `product_bookings`: không cần — giữ chỗ chỉ sinh cho đơn Thẻ chào, sổ đơn không huỷ được đơn Thẻ chào (`releaseOrderBooking` không có nơi gọi — thuộc Thẻ chào, đang đóng băng) |
-| P1 → PO | WP-12: chặn ngày giao quá khứ (nhập đơn bù?), kiểm SĐT người nhận theo mẫu VN (số nước ngoài?) | Chờ PO — thêm Q11, Q12 |
+| P1 → PO | WP-12: chặn ngày giao quá khứ, kiểm SĐT người nhận theo mẫu VN | PO 07/11/2026: Q11 không cho ngày giao đã qua, Q12 chỉ số Việt Nam — đã làm cho tạo đơn nhập tay/chat/Điều phối. Catalog công khai (vùng khoá Catalog) chưa chặn ngày quá khứ — cần PO duyệt sửa |
 | P1 [PO] | WP-05b · WP-08 · WP-09 · WP-10 (C9) · WP-14 | Chờ Q1–Q4, Q8 |
 | P2 | WP-15 … WP-21 | Chờ PO / [SCHEMA] |

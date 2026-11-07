@@ -12,7 +12,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { NativeSelect } from "@/components/ui/select"
 import { errorText } from "@/lib/error-text"
-import { vnCalendarDate } from "@/lib/vn-date"
+import { vnTodayIso } from "@/lib/vn-date"
+import { newOrderDeliveryErrors } from "@/modules/orders/domain/order-input-rules"
 import type { ProductMasterIndex } from "@/modules/products/domain/product-master-index"
 
 export interface CreateOrderInitialData {
@@ -55,11 +56,6 @@ interface ItemRow {
   ribbon?: string | undefined
 }
 
-function vnTodayIso(): string {
-  const { year, month, day } = vnCalendarDate()
-  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
-}
-
 export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: CreateOrderModalProps) {
   const [loading, setLoading] = useState(false)
   // Một khoá cho mỗi lần soạn đơn: thử lại sau lỗi mạng/hết giờ không tạo đơn thứ hai (audit API-11)
@@ -70,7 +66,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
   const [phone, setPhone] = useState("")
   const [street, setStreet] = useState("")
   // Hôm nay theo giờ Việt Nam — `toISOString()` là UTC, 00:00–07:00 sáng sẽ ra ngày hôm qua (audit BL-10)
-  const [deliveryDate, setDeliveryDate] = useState(vnTodayIso)
+  const [deliveryDate, setDeliveryDate] = useState(() => vnTodayIso())
   const [timeSlot, setTimeSlot] = useState("08:00 - 10:00")
   const [cardMessage, setCardMessage] = useState("")
   const [internalNote, setInternalNote] = useState("")
@@ -153,6 +149,13 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
     setError(null)
     if (!recipientName.trim() || !phone.trim() || !street.trim()) {
       setError("Chưa đủ thông tin giao hoa. Vui lòng nhập họ tên, số điện thoại và địa chỉ người nhận.")
+      return
+    }
+    // Cùng luật với máy chủ (PO 07/11/2026, Q11–Q12) — báo sớm trước khi gửi
+    const deliveryErrors = newOrderDeliveryErrors({ deliveryDate, recipientPhone: phone })
+    const firstDeliveryError = deliveryErrors.deliveryDate ?? deliveryErrors.recipientPhone
+    if (firstDeliveryError) {
+      setError(firstDeliveryError)
       return
     }
     if (items.some((it) => !it.description.trim() || it.unitPriceVnd <= 0)) {
@@ -282,7 +285,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block font-semibold text-text">Ngày hẹn giao</label>
-            <Input type="date" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} />
+            <Input type="date" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" min={vnTodayIso()} value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} />
           </div>
           <div>
             <label className="mb-1 block font-semibold text-text">Khung giờ giao</label>
