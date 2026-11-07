@@ -1,6 +1,8 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useApi } from "@/components/greeting-card/greeting-api"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -15,12 +17,6 @@ interface InvitationItem {
   membership_id: string
   organization_name: string
   role_name: string
-}
-
-async function readData<T>(url: string): Promise<T | null> {
-  const res = await fetch(url, { cache: "no-store" }).catch(() => null)
-  if (!res?.ok) return null
-  return (await res.json().catch(() => null)) as T | null
 }
 
 async function post(url: string, body?: unknown): Promise<string | null> {
@@ -40,26 +36,19 @@ async function post(url: string, body?: unknown): Promise<string | null> {
  * từ chối lời mời vào cửa hàng khác. Trước đây không có màn nào gọi đổi tổ chức, và lời mời không có chỗ nhận.
  */
 export function MyOrganizationsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
-  const [orgs, setOrgs] = useState<OrganizationItem[]>([])
-  const [currentId, setCurrentId] = useState<string | null>(null)
-  const [invitations, setInvitations] = useState<InvitationItem[]>([])
+  const router = useRouter()
+  // Chỉ tải khi mở hộp thoại
+  const orgsApi = useApi<{ data: OrganizationItem[] }>(open ? "/api/v1/organizations" : null)
+  const meApi = useApi<{ organization: { id: string } | null }>(open ? "/api/v1/auth/me" : null)
+  const invApi = useApi<{ data: InvitationItem[] }>(open ? "/api/v1/session/invitations" : null)
+  const orgs = orgsApi.data?.data ?? []
+  const currentId = meApi.data?.organization?.id ?? null
+  const invitations = invApi.data?.data ?? []
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-
-  const load = useCallback(async () => {
-    const [orgRes, me, inv] = await Promise.all([
-      readData<{ data: OrganizationItem[] }>("/api/v1/organizations"),
-      readData<{ organization: { id: string } | null }>("/api/v1/auth/me"),
-      readData<{ data: InvitationItem[] }>("/api/v1/session/invitations"),
-    ])
-    setOrgs(orgRes?.data ?? [])
-    setCurrentId(me?.organization?.id ?? null)
-    setInvitations(inv?.data ?? [])
-  }, [])
-
-  useEffect(() => {
-    if (open) void load()
-  }, [open, load])
+  const load = async () => {
+    await Promise.all([orgsApi.mutate(), invApi.mutate()])
+  }
 
   const run = async (key: string, action: () => Promise<string | null>, after: () => void | Promise<void>) => {
     setBusy(key)
@@ -72,7 +61,9 @@ export function MyOrganizationsDialog({ open, onOpenChange }: { open: boolean; o
 
   const switchTo = (id: string) =>
     run(`switch:${id}`, () => post("/api/v1/session/organization", { organization_id: id }), () => {
-      window.location.assign("/")
+      onOpenChange(false)
+      router.push("/" as never)
+      router.refresh()
     })
 
   const respond = (id: string, kind: "accept" | "decline") =>

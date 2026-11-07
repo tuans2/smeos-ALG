@@ -1,6 +1,7 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
+import { useApi } from "@/components/greeting-card/greeting-api"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
@@ -34,20 +35,15 @@ async function send(url: string, body?: unknown): Promise<string | null> {
  * ở đây, hoặc rời chuỗi đang tham gia (cần lý do). Ẩn hẳn khi không có gì hoặc người xem không có quyền `F2`.
  */
 export function ChainLinkInvitationsCard() {
-  const [data, setData] = useState<LinksData | null>(null)
+  // Không có quyền `F2` → API trả 403 → thẻ ẩn
+  const linksApi = useApi<{ data: LinksData }>("/api/v1/chain/links", { shouldRetryOnError: false })
+  const data = linksApi.data?.data ?? null
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [leaving, setLeaving] = useState<{ id: string; reason: string } | null>(null)
-
-  const load = useCallback(async () => {
-    const res = await fetch("/api/v1/chain/links", { cache: "no-store" }).catch(() => null)
-    const json = res?.ok ? ((await res.json().catch(() => null)) as { data?: LinksData } | null) : null
-    setData(json?.data ?? null)
-  }, [])
-
-  useEffect(() => {
-    void load()
-  }, [load])
+  const load = async () => {
+    await linksApi.mutate()
+  }
 
   const act = async (key: string, url: string, body?: unknown) => {
     setBusy(key)
