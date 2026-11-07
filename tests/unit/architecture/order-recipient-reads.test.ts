@@ -86,7 +86,7 @@ describe("order_recipients — mọi chỗ đọc địa chỉ giao", () => {
   it("extension (P-5c): JSON ghép từ `recipient` đã giải mã — không bao giờ lộ bản mã ra `delivery_address`", () => {
     const sealed = { recipient_name: "Lan", recipient_phone: "pii1.sdt", address_line: "pii1.dc", address_parts: null }
     const open = (r: Record<string, unknown>) => ({ ...r, recipient_phone: "0912", address_line: "1 Lê Lợi" })
-    const decode = <T,>(r: T) => open(r as Record<string, unknown>) as T
+    const decode = (r: unknown) => open(r as Record<string, unknown>)
     expect(applyRecipientView({ id: "o1", delivery_address: { zone: "Q1" }, recipient: sealed }, false, decode))
       .toEqual({ id: "o1", delivery_address: { zone: "Q1", street: "1 Lê Lợi", recipientName: "Lan", phone: "0912" } })
   })

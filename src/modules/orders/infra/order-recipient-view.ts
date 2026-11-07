@@ -51,11 +51,11 @@ export function planRecipientRead(operation: string, args: Args | undefined): { 
  * Áp `withDeliveryView` lên kết quả (một dòng, mảng, hoặc `null`). Chạy trong query extension — trước khi Prisma giải mã
  * cột cá nhân (P-5c: cột chỉ chứa bản mã) — nên `decodeRecipient` giải mã `recipient` trước khi ghép JSON.
  */
-export function applyRecipientView(result: unknown, keepRecipient: boolean, decodeRecipient: <T>(r: T) => T = (r) => r): unknown {
+export function applyRecipientView(result: unknown, keepRecipient: boolean, decodeRecipient: (r: unknown) => unknown = (r) => r): unknown {
   const one = (row: unknown) => {
     if (!row || typeof row !== "object" || !("delivery_address" in row)) return row
     const r = row as Row
-    const view = deliveryAddressView(r.delivery_address, r.recipient ? decodeRecipient(r.recipient) : r.recipient)
+    const view = deliveryAddressView(r.delivery_address, r.recipient ? (decodeRecipient(r.recipient) as Row["recipient"]) : r.recipient)
     if (keepRecipient) return { ...r, delivery_address: view }
     const { recipient: _recipient, ...rest } = r
     return { ...rest, delivery_address: view }
