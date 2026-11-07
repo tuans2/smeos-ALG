@@ -30,6 +30,8 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  *   (`place-public-catalog-order.ts` gọi `assertAcceptingPublicOrders`).
  * - PO 06/11/2026: `catalog-link-widgets.tsx` báo lỗi tạo catalog bằng `useToast()` thay `alert()` của
  *   trình duyệt (lint R13) — chỉ đổi cách hiển thị lỗi, không đổi luồng.
+ * - PO 07/11/2026 (kế hoạch logic nghiệp vụ, Q11): đặt hàng công khai không nhận ngày giao đã qua
+ *   (`place-public-catalog-order.ts` gọi `isPastVnDate`).
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")
