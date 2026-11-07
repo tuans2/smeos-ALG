@@ -25,7 +25,7 @@ import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
 
 /** Hợp đồng phản hồi Console — cấu hình toàn sàn (OpenAPI `/platform/*`, PO 07/11/2026), CSDL thật, lược đồ strict. */
 const BASE = "http://localhost/api/v1/platform"
-const ps = (params: Record<string, string>) => ({ params: Promise.resolve(params) })
+const ps = <T extends Record<string, string>>(params: T) => ({ params: Promise.resolve(params) })
 
 describe("hợp đồng — Console Vận hành Nền tảng: cấu hình", () => {
   let op: Tenant

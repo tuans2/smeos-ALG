@@ -47,7 +47,7 @@ import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
 
 /** Hợp đồng phản hồi Console — chợ đối tác và dữ liệu tổ chức (OpenAPI `/platform/*`, PO 07/11/2026), CSDL thật. */
 const BASE = "http://localhost/api/v1/platform"
-const ps = (params: Record<string, string>) => ({ params: Promise.resolve(params) })
+const ps = <T extends Record<string, string>>(params: T) => ({ params: Promise.resolve(params) })
 const csv = rows.map((r) => r.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")).join("\n")
 
 describe("hợp đồng — Console Vận hành Nền tảng: chợ đối tác, dữ liệu tổ chức", () => {

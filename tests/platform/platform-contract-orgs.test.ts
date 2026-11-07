@@ -35,8 +35,7 @@ import { createTenant, readJson, withSession, type Tenant } from "../helpers/fix
  * gọi route thật trên CSDL thật, phản hồi phải khớp lược đồ `strictObject` ở `_contracts/responses-orgs.ts`.
  */
 const BASE = "http://localhost/api/v1/platform"
-type Ps = { params: Promise<Record<string, string>> }
-const ps = (params: Record<string, string>): Ps => ({ params: Promise.resolve(params) })
+const ps = <T extends Record<string, string>>(params: T) => ({ params: Promise.resolve(params) })
 
 describe("hợp đồng — Console Vận hành Nền tảng: tổ chức, thu phí, vận hành", () => {
   let op: Tenant
