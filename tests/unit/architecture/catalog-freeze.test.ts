@@ -32,6 +32,8 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  *   trình duyệt (lint R13) — chỉ đổi cách hiển thị lỗi, không đổi luồng.
  * - PO 07/11/2026 (kế hoạch logic nghiệp vụ, Q11): đặt hàng công khai không nhận ngày giao đã qua
  *   (`place-public-catalog-order.ts` gọi `isPastVnDate`).
+ * - PO 07/11/2026 (sửa phát hiện CodeQL `js/incomplete-url-substring-sanitization`): `flower-image-fallback.ts`
+ *   so tên miền Google Drive bằng `urlHostIs` thay cho `includes`.
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")
