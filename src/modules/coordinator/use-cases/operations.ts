@@ -39,6 +39,7 @@ import {
   loadOrderOrThrow,
   runCoordinatorTx,
 } from "./shared"
+import { returnStock } from "@/modules/orders/infra/order-stock"
 
 function currentAxes(row: CoordinatorOrderRow) {
   return { status: row.status, productionStatus: row.production_status, deliveryStatus: row.delivery_status }
@@ -302,5 +303,7 @@ export async function cancelCoordinatorOrder(
     await audit(ctx, tx, "coordinator.order.cancel", row.id, { stage: from }, { stage: "CANCELLED", reason: input.reason.trim() })
     return row.id
   })
+  // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) — đánh dấu theo dòng nên gọi lại không hoàn hai lần
+  await returnStock(ctx.organizationId, orderId)
   return getOrderView(ctx, orderId)
 }
