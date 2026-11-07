@@ -22,6 +22,7 @@ import { tenTinhNang } from "@/lib/feature-labels"
 import { StoreManagerActionItemsCard, type DraftOrder } from "./store-manager-action-items-card"
 import { PageHeader } from "@/components/ui/page-header"
 import { fetchPendingApprovalCount } from "./pending-approval-count"
+import { jobStageLabel } from "@/modules/jobs/domain/job-stage-labels"
 
 type Job = {
   id: string
@@ -253,7 +254,7 @@ export function StoreGrowthCenter() {
                       <Cpu className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none text-primary" />
                       <span className="font-semibold text-text">{tenTinhNang(job.feature)}</span>
                     </div>
-                    <span className="text-text-muted">{job.stage || "Đang xử lý..."}</span>
+                    <span className="text-text-muted">{jobStageLabel(job.stage) ?? "Đang xử lý..."}</span>
                   </div>
                 ))}
               </div>
