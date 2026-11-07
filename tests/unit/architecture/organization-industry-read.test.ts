@@ -23,6 +23,7 @@ const PLAIN_SETTINGS_ALLOWED: Record<string, { count: number; reason: string }> 
   "src/modules/greeting-card/infra/telegram-linked-chats.ts": { count: 2, reason: "nhóm Telegram đã liên kết" },
   "src/modules/products/infra/product-master-index-repository.ts": { count: 1, reason: "freshness_guarantee_days" },
   "src/modules/catalog-links/infra/catalog-link-repository.ts": { count: 1, reason: "không đọc ngành (Catalog đóng băng, PO 01/11/2026)" },
+  "src/modules/orders/infra/unpaid-order-expiry-query.ts": { count: 1, reason: "chỉ khoá unpaid_order_auto_cancel (UJ-12), không đọc ngành" },
 }
 
 function plainSettingsSelects(): Map<string, number> {
