@@ -518,10 +518,10 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | GET | `/catalog-links/:slug` | **chưa gác** — có chủ đích, xem **RS-8** | Công khai, khách quét QR không đăng nhập |
 | PATCH | `/catalog-links/:slug` | `J1` | Trước 18/09 nằm nhầm ở đường dẫn `/revoke` (xem trên) |
 | POST | `/catalog-links/:slug/revoke` | `J2` | Thu hồi; không xoá bản ghi |
-| GET · POST | `/integration/catalog-links` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) — `LocalBudd` gọi thay mặt người dùng đang đăng nhập |
+| GET · POST | `/integration/catalog-links` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) — `LocalBudd` gọi thay mặt người dùng đang đăng nhập · GET `?include_revoked=` nhận `true/false/1/0/yes/no/on/off`, giá trị khác → 400; trước 07/11/2026 mọi chuỗi khác rỗng (kể cả `false`) đều thành `true` |
 | PATCH | `/integration/catalog-links/:slug` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) |
 | POST | `/integration/catalog-links/:slug/revoke` | `J2` (nhánh SSO) | Mới 18/09 (RS-3) |
-| GET | `/public/catalog/:slug` | — *(công khai)* | Storefront khách xem; ảnh ký HMAC; `customer` chỉ có tên/lời chào, không bao giờ có số điện thoại |
+| GET | `/public/catalog/:slug` | — *(công khai)* | Storefront khách xem; ảnh ký HMAC; `customer` chỉ có tên/lời chào, không bao giờ có số điện thoại · Giới hạn 60 lần/phút/IP → 429 (PO 07/11/2026, audit API-09) |
 | POST | `/public/catalog/:slug/lead` | — *(công khai)* | Bước 4 (30/10/2026): `{ name, phone, consent: true, message?, ref?, utm?, verificationToken?, website }` → bảng `leads` + khách CRM (tìm/tạo theo SĐT) + `customer_consents` PHONE_CALL. Tổ chức suy từ catalog; catalog thu hồi → 404. Chặn máy: 10 lần/10 phút/IP, ô bẫy `website`, Cloudflare Turnstile khi khai `TURNSTILE_SECRET_KEY`; mỗi SĐT 3 lead/giờ/tiệm → 429. `ref` = mã link động cùng tổ chức → nguồn `SHORT_LINK` |
 | POST | `/public/catalog/:slug/order` | — (công khai) | Đơn hàng đa nguồn P3 — khách đặt hàng trên catalog/landing `{ productId, quantity, name, phone, address, deliveryDate?, timeSlot?, note?, verificationToken? }`; tổ chức suy từ catalog; nút Đặt hàng tắt cho nguồn → 404; giá tính lại ở máy chủ (mẫu chưa có giá → đơn chờ báo giá); qua `ingestOrder` nguồn `CATALOG`/`LANDING`, gắn lead mở cùng SĐT; ≤ 10 lần/10 phút/IP, 5 đơn/giờ/SĐT; trả `{ orderCode, totalVnd, needsQuote, payment }` |
 | GET · POST | `/store-share-link` | `F1` · `F2` | Công cụ 11 (30/10/2026): xem / tạo link hồ sơ cửa hàng công khai. POST từ chối khi hồ sơ thiếu mục thiết yếu; đã có link đang hoạt động thì trả link đó |

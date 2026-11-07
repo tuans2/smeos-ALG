@@ -85,7 +85,8 @@ export const listProductsQuery = z.object({
 
 // ── Bản sao lược đồ của route Catalog đóng băng (xem đầu tệp) ─────────────────────────────────
 export const listCatalogLinksQuery = z.object({
-  include_revoked: z.coerce.boolean().optional(),
+  // `z.coerce.boolean()` đọc chuỗi "false" thành true (PO 07/11/2026 cho sửa) — stringbool nhận true/false/1/0/yes/no
+  include_revoked: z.stringbool().optional(),
 })
 
 export const createCatalogLinkBody = z.object({
