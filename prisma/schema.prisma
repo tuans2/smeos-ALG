@@ -1951,10 +1951,9 @@ model orders {
   /// trong migration.
   paid_vnd         Decimal @default(0) @db.Decimal(14, 2)
   /// Còn phải thu = total_vnd − paid_vnd. Máy chủ ghi, không ai sửa tay.
-  /// KHÔNG có ràng buộc CHECK ở tầng Prisma (xem migration.sql của
-  /// `..._coordinator_p1_p2_payments` — CHECK viết tay ở SQL thô, `prisma db
-  /// push` không đẩy được ràng buộc CHECK, chỉ `migrate deploy` mới đẩy).
-  /// Đơn cũ: gán = total_vnd trong migration (chưa thu gì).
+  /// CHECK `orders_money_check` (paid_vnd ≥ 0 và balance_vnd = total_vnd − paid_vnd) viết tay trong migration
+  /// `20261108000000_orders_money_integrity` (audit BL-05, PO duyệt 07/11/2026). Prisma không mô tả CHECK:
+  /// `prisma db push` (CSDL `_test`) không tạo nó, chỉ `migrate deploy` mới tạo.
   balance_vnd      Decimal @db.Decimal(14, 2)
   pricing_rule_ref Json? // quy tắc giá đã dùng, để đối soát
   voucher_id       String?
@@ -1976,7 +1975,9 @@ model orders {
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization      organizations           @relation(fields: [organization_id], references: [id])
-  customer          customers?              @relation(fields: [customer_id], references: [id])
+  /// Khoá ghép tenant: khách phải cùng tổ chức với đơn (audit BL-13, PO duyệt 07/11/2026). NoAction thay cho
+  /// SetNull cũ vì SetNull trên khoá ghép sẽ xoá cả organization_id — xoá khách thì repository gỡ khách khỏi đơn trước.
+  customer          customers?              @relation(fields: [customer_id, organization_id], references: [id, organization_id], onDelete: NoAction)
   items             order_items[]
   assignments       order_assignments[]
   events            order_events[]

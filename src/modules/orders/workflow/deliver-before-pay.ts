@@ -25,6 +25,11 @@ export interface DeliverBeforePaySettings {
   minCompletedOrders: number
   /** Hạn thu tiền mặc định sau khi duyệt (ngày). */
   collectDueDays: number
+  /**
+   * Trần công nợ mỗi khách (VND): tổng còn phải thu của các đơn khách đã được giao trước + đơn này. `null` = không
+   * giới hạn (mặc định — PO 07/11/2026, Q7). Vượt trần → Điều hành duyệt, kể cả đơn hoả tốc.
+   */
+  customerDebtCapVnd: number | null
 }
 
 export const DEFAULT_DELIVER_BEFORE_PAY_SETTINGS: DeliverBeforePaySettings = Object.freeze({
@@ -32,6 +37,7 @@ export const DEFAULT_DELIVER_BEFORE_PAY_SETTINGS: DeliverBeforePaySettings = Obj
   selfDecideMaxVnd: 1_000_000,
   minCompletedOrders: 2,
   collectDueDays: 3,
+  customerDebtCapVnd: null,
 })
 
 const MAX_VND = 1_000_000_000
@@ -50,6 +56,7 @@ export function parseDeliverBeforePaySettings(orgSettings: unknown): DeliverBefo
     selfDecideMaxVnd: int(r.selfDecideMaxVnd, 0, MAX_VND) ?? d.selfDecideMaxVnd,
     minCompletedOrders: int(r.minCompletedOrders, 0, 1000) ?? d.minCompletedOrders,
     collectDueDays: int(r.collectDueDays, 1, 90) ?? d.collectDueDays,
+    customerDebtCapVnd: r.customerDebtCapVnd === null ? null : int(r.customerDebtCapVnd, 0, MAX_VND) ?? d.customerDebtCapVnd,
   }
 }
 
@@ -61,6 +68,9 @@ export function validateDeliverBeforePaySettings(input: unknown): Record<string,
   if (r.selfDecideMaxVnd !== undefined && int(r.selfDecideMaxVnd, 0, MAX_VND) === null) errors.selfDecideMaxVnd = "Số tiền không hợp lệ"
   if (r.minCompletedOrders !== undefined && int(r.minCompletedOrders, 0, 1000) === null) errors.minCompletedOrders = "Số đơn không hợp lệ"
   if (r.collectDueDays !== undefined && int(r.collectDueDays, 1, 90) === null) errors.collectDueDays = "Hạn thu từ 1 đến 90 ngày"
+  if (r.customerDebtCapVnd !== undefined && r.customerDebtCapVnd !== null && int(r.customerDebtCapVnd, 0, MAX_VND) === null) {
+    errors.customerDebtCapVnd = "Trần công nợ không hợp lệ (để trống = không giới hạn)"
+  }
   return errors
 }
 
@@ -70,6 +80,8 @@ export interface DeliverBeforePayContext {
   isUrgent: boolean
   customerCompletedOrders: number
   customerHasOverdueDebt: boolean
+  /** Còn phải thu của các đơn KHÁC của khách đã được giao trước, thu sau (chưa huỷ). */
+  customerOpenDebtVnd: number
 }
 
 export type DeliverBeforePayBasis = "POLICY" | "URGENT" | "SELF_LIMIT"
@@ -98,15 +110,19 @@ export function decideDeliverBeforePay(
 ): DeliverBeforePayDecision {
   if (ctx.totalVnd <= 0) return { outcome: "QUOTE_FIRST" }
   if (ctx.paidVnd >= ctx.totalVnd) return { outcome: "ALREADY_PAID" }
+  const s = parseDeliverBeforePaySettings(orgSettings)
+  // Xét nợ TRƯỚC mọi lối tự duyệt — kể cả chính sách tiệm và đơn hoả tốc (PO 07/11/2026, Q7; audit BL-15)
+  if (ctx.customerHasOverdueDebt) return { outcome: "NEEDS_ADMIN", why: "Khách còn nợ quá hạn" }
+  if (s.customerDebtCapVnd !== null && ctx.customerOpenDebtVnd + (ctx.totalVnd - ctx.paidVnd) > s.customerDebtCapVnd) {
+    return { outcome: "NEEDS_ADMIN", why: "Vượt trần công nợ của khách" }
+  }
   if (withinShopPolicy(orgSettings, ctx)) {
     return { outcome: "AUTO_APPROVE", basis: "POLICY", label: "Trong chính sách thu tiền của tiệm (COD / thu sau)" }
   }
   if (ctx.isUrgent) return { outcome: "AUTO_APPROVE", basis: "URGENT", label: "Đơn hoả tốc — Sale tự quyết" }
-  const s = parseDeliverBeforePaySettings(orgSettings)
   if (!s.allowSelfDecide) return { outcome: "NEEDS_ADMIN", why: "Tiệm chưa cho Sale tự quyết" }
   if (ctx.totalVnd > s.selfDecideMaxVnd) return { outcome: "NEEDS_ADMIN", why: "Tổng đơn vượt hạn mức Sale tự quyết" }
   if (ctx.customerCompletedOrders < s.minCompletedOrders) return { outcome: "NEEDS_ADMIN", why: "Khách chưa đủ số đơn hoàn tất" }
-  if (ctx.customerHasOverdueDebt) return { outcome: "NEEDS_ADMIN", why: "Khách còn nợ quá hạn" }
   return { outcome: "AUTO_APPROVE", basis: "SELF_LIMIT", label: "Trong hạn mức Sale tự quyết" }
 }
 

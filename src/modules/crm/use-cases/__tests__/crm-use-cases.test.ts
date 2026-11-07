@@ -148,12 +148,13 @@ describe("CRM Use-Cases with ICustomerRepository Port", () => {
   })
 
   describe("getCustomerMasterIndex", () => {
-    it("lấy chi tiết và tự động sync metrics từ orders", async () => {
+    // Audit BL-14 (PO 07/11/2026, Q6): GET không ghi — chỉ số do bộ quét nền tính lại khi đơn đổi
+    it("lấy chi tiết, không ghi chỉ số khi đọc", async () => {
       const repo = createMockCustomerRepo()
       const result = await getCustomerMasterIndex(mockTenant, "cust_123", repo)
 
       expect(repo.getById).toHaveBeenCalledWith(mockTenant, "cust_123")
-      expect(repo.syncMetricsFromOrders).toHaveBeenCalledWith(mockTenant, "cust_123")
+      expect(repo.syncMetricsFromOrders).not.toHaveBeenCalled()
       expect(result.code).toBe("KH-0001")
     })
   })

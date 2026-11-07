@@ -74,7 +74,17 @@ describe("Điều hành quyết định", () => {
     const r = repo()
     r.findRequest.mockResolvedValue(pending)
     r.decide.mockResolvedValue(true)
-    expect(await decideDeliverBeforePay(ctx, "r-1", { approve: true, collectDueAt: "2026-11-05T00:00:00Z" }, r as never)).toEqual({ status: "APPROVED" })
+    const now = new Date("2026-11-01T00:00:00Z")
+    expect(await decideDeliverBeforePay(ctx, "r-1", { approve: true, collectDueAt: "2026-11-05T00:00:00Z" }, r as never, now)).toEqual({ status: "APPROVED" })
     expect(r.decide.mock.calls[0]?.[3]).toMatchObject({ approve: true, collectDueAt: new Date("2026-11-05T00:00:00Z") })
+  })
+
+  // Audit BL-15: hạn thu ở quá khứ làm đơn quá hạn ngay khi duyệt
+  it("hạn thu ở quá khứ → 400, không ghi quyết định", async () => {
+    const r = repo()
+    r.findRequest.mockResolvedValue(pending)
+    const now = new Date("2026-11-07T00:00:00Z")
+    await expect(decideDeliverBeforePay(ctx, "r-1", { approve: true, collectDueAt: "2026-11-05T00:00:00Z" }, r as never, now)).rejects.toMatchObject({ code: "VALIDATION_FAILED" })
+    expect(r.decide).not.toHaveBeenCalled()
   })
 })

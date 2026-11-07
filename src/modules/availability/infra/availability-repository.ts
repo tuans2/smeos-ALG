@@ -201,66 +201,35 @@ export class AvailabilityRepository implements IAvailabilityRepository {
     inventoryStatus?: string | undefined
     quantityAvailable?: number | null | undefined
   }>> {
-    try {
-      const products = await this.db.products.findMany({
-        where: { organization_id: organizationId, status: { not: "ARCHIVED" } },
-        select: {
-          id: true,
-          code: true,
-          name: true,
-          category: true,
-          status: true,
-          availability_config: true,
-          inventory: { select: { status: true, quantity_available: true }, take: 1 },
-        },
-        orderBy: { name: "asc" },
-      })
+    const products = await this.db.products.findMany({
+      where: { organization_id: organizationId, status: { not: "ARCHIVED" } },
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        category: true,
+        status: true,
+        availability_config: true,
+        inventory: { where: { organization_id: organizationId }, select: { status: true, quantity_available: true } },
+      },
+      orderBy: { name: "asc" },
+    })
 
-      return products.map((p) => ({
-        id: p.id,
-        code: p.code,
-        name: p.name,
-        category: p.category,
-        status: p.status,
-        availabilityConfig: (p as { availability_config?: unknown }).availability_config,
-        inventoryStatus: p.inventory[0]?.status,
-        quantityAvailable: p.inventory[0]?.quantity_available,
-      }))
-    } catch {
-      // Fallback khi Next.js Turbopack dev server chưa restart để nhận availability_config
-      const rawProducts = await this.db.$queryRaw<Array<{
-        id: string
-        code: string
-        name: string
-        category: string | null
-        status: string
-        availability_config: unknown
-        inventory_status: string | null
-        quantity_available: number | null
-      }>>`
-        SELECT p.id, p.code, p.name, p.category, p.status, p.availability_config,
-               inv.status as inventory_status, inv.quantity_available
-        FROM products p
-        LEFT JOIN LATERAL (
-          SELECT status, quantity_available FROM product_inventory
-          WHERE product_id = p.id AND organization_id = ${organizationId}
-          LIMIT 1
-        ) inv ON true
-        WHERE p.organization_id = ${organizationId} AND p.status != 'ARCHIVED'
-        ORDER BY p.name ASC
-      `
-
-      return rawProducts.map((p) => ({
+    // Tồn của cả tổ chức = gộp mọi chi nhánh (audit BL-16: trước đây lấy MỘT dòng bất kỳ — tiệm nhiều chi
+    // nhánh thấy tồn của một chi nhánh ngẫu nhiên). Bỏ nhánh dự phòng SQL thô cho dev server cũ.
+    return products.map((p) => {
+      const stock = aggregateInventory(p.inventory)
+      return {
         id: p.id,
         code: p.code,
         name: p.name,
         category: p.category,
         status: p.status,
         availabilityConfig: p.availability_config,
-        inventoryStatus: p.inventory_status ?? undefined,
-        quantityAvailable: p.quantity_available,
-      }))
-    }
+        inventoryStatus: stock.status,
+        quantityAvailable: stock.quantity,
+      }
+    })
   }
 
   /** Cập nhật delivery_window của đơn hàng (dùng khi tự phục hồi checkOutDate cho đơn Homestay) */
@@ -285,3 +254,13 @@ export function getAvailabilityRepository(): IAvailabilityRepository {
   return defaultAvailabilityRepository!
 }
 
+/** Gộp tồn nhiều chi nhánh: còn hàng nếu một chi nhánh còn; số lượng = tổng các chi nhánh có theo dõi số lượng. */
+export function aggregateInventory(rows: ReadonlyArray<{ status: string; quantity_available: number | null }>): {
+  status: string | undefined
+  quantity: number | null | undefined
+} {
+  if (rows.length === 0) return { status: undefined, quantity: undefined }
+  const tracked = rows.filter((r) => r.quantity_available !== null)
+  const status = rows.find((r) => r.status === "IN_STOCK")?.status ?? rows.find((r) => r.status === "PRE_ORDER_ONLY")?.status ?? rows[0]!.status
+  return { status, quantity: tracked.length === 0 ? null : tracked.reduce((sum, r) => sum + (r.quantity_available ?? 0), 0) }
+}

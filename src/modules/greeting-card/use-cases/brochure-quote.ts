@@ -23,6 +23,13 @@ import { listActiveShopPromotions } from "./active-shop-promotions"
 import { isWeekend, unitPriceFor } from "@/modules/products/domain/product-pricing"
 import { craftFeeForProduct } from "./craft-fee-for-product"
 import { tierAndPeakFor } from "./tier-and-peak-pricing"
+import { floorTotalVnd } from "@/modules/costing/use-cases/price-floor-guard"
+import type { TenantContext } from "@/core/tenancy"
+
+/** Trang khách không có phiên: ngữ cảnh chỉ đọc của tổ chức sở hữu catalog, để tra giá sàn. */
+function quoteContext(organizationId: string): TenantContext {
+  return { organizationId, workspaceId: "", userId: "system:brochure-quote", branchId: null, capabilities: new Set() }
+}
 
 export interface QuoteRequest {
   variantId?: string | undefined
@@ -182,6 +189,8 @@ async function priceProduct(
   const surcharge = peakApplied ? null : holidaySurcharge(holiday, catalogFilters)
   // Chiết khấu hạng khách (khách nhận diện qua SĐT) và phụ phí giờ cao điểm (checklist ALG 3.1)
   const { tierDiscount, peakHour } = await tierAndPeakFor(organizationId, req.customerPhone, req.deliveryTimeSlot)
-  const quote = computeQuote({ unitPriceVnd, quantity, zone, shipping, voucher, promotion, surcharge, tierDiscount, peakHour })
+  // Sau mọi khoản giảm tiền hàng không dưới giá sàn (PO 07/11/2026, audit BL-08) — cùng cách tính sàn với báo giá
+  const floorVnd = await floorTotalVnd(quoteContext(organizationId), [{ productId: product.id, quantity }])
+  const quote = computeQuote({ unitPriceVnd, quantity, zone, shipping, voucher, promotion, surcharge, tierDiscount, peakHour, floorVnd })
   return { quote: craft ? { ...quote, craftFee: craft } : quote, variant, voucher, errors }
 }

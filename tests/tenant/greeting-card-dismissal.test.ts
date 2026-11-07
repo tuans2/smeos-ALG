@@ -69,7 +69,7 @@ describe("greeting-card: bỏ hiển thị đơn chưa thanh toán", () => {
   it("khách trả tiền sau khi Sale đề xuất → duyệt bị từ chối, đơn không bị huỷ", async () => {
     const orderId = await draftOrder(a)
     await repo.propose(a.ctx, { id: orderId, ...REASON }, false)
-    await prisma.orders.update({ where: { id: orderId }, data: { paid_vnd: 100_000 } })
+    await prisma.orders.update({ where: { id: orderId }, data: { paid_vnd: 100_000, balance_vnd: { decrement: 100_000 } } }) // giữ balance = total − paid (CHECK orders_money_check)
     await expect(repo.decide(a.ctx, { id: orderId, type: "ORDER", approve: true })).rejects.toMatchObject({ code: "CONFLICT" })
     expect((await prisma.orders.findUniqueOrThrow({ where: { id: orderId } })).status).not.toBe("CANCELLED")
   })

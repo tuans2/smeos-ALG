@@ -118,4 +118,26 @@ describe("cách ly tenant — yêu cầu duyệt giao trước thu sau, báo gi�
     const page = await repo.listOverdue(new Date(), 1)
     expect(page.map((r) => r.order.id)).toEqual([second])
   })
+
+  // PO 07/11/2026 (Q7), audit BL-15: trần công nợ theo tổng còn phải thu của các đơn khách đã được giao trước
+  it("trần công nợ: khách đã nợ 2.000.000 ở đơn giao trước, đơn mới vượt trần 3.000.000 → chờ Điều hành", async () => {
+    const customer = await prisma.customers.create({ data: { organization_id: a.organizationId, code: "KH-0001", name: "Khách quen", phone: "0901234567" } })
+    await prisma.organizations.update({
+      where: { id: a.organizationId },
+      data: { settings: { ...strictPolicy, order_deliver_before_pay: { customerDebtCapVnd: 3_000_000, minCompletedOrders: 0, selfDecideMaxVnd: 5_000_000 } } },
+    })
+    const old = (await ingestOrder(a.ctx, { source: "MANUAL", customerId: customer.id, items: [{ description: "Đơn cũ", quantity: 1, unitPriceVnd: 2_000_000 }] })).id
+    await prisma.order_approval_requests.create({
+      data: { organization_id: a.organizationId, order_id: old, kind: "DELIVER_BEFORE_PAY", status: "APPROVED", reason: "Khách quen", requested_by: a.userId, collect_due_at: new Date(Date.now() + 86_400_000) },
+    })
+    const ask = async (amount: number) => {
+      const id = (await ingestOrder(a.ctx, { source: "MANUAL", customerId: customer.id, items: [{ description: "Đơn mới", quantity: 1, unitPriceVnd: amount }] })).id
+      const res = await postDeliverBeforePay(withSession(`${BASE}/orders/${id}/deliver-before-pay`, a.token, { method: "POST", body: JSON.stringify({ reason: "Khách quen" }) }), params(id))
+      expect(res.status).toBe(201)
+      return (await prisma.order_approval_requests.findFirstOrThrow({ where: { order_id: id } })).status
+    }
+    expect(await ask(900_000)).toBe("AUTO_APPROVED")
+    // Nợ đang mở giờ 2.900.000 → đơn 500.000 vượt trần
+    expect(await ask(500_000)).toBe("PENDING")
+  })
 })

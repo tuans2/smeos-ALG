@@ -2242,7 +2242,7 @@ model order_coordinations {
   @@index([organization_id, risk_level])
 }
 
-Sổ thu (ĐP-4a, 26/09/2026, PO D2), migration `20260926220000_order_payments`. `orders` thêm `paid_vnd`/`balance_vnd` (Decimal); `balance_vnd = total_vnd − paid_vnd` giữ bằng CHECK ở SQL thô (không đẩy được qua `prisma db push`, cần `migrate deploy`). Mỗi lần thu/hoàn tiền là một dòng `order_payments`; `paymentStatus` (UNPAID/PARTIALLY_PAID/PAID/REFUNDED) là trường suy ra lúc đọc, không lưu.
+Sổ thu (ĐP-4a, 26/09/2026, PO D2), migration `20260926220000_order_payments`. `orders` thêm `paid_vnd`/`balance_vnd` (Decimal); `balance_vnd = total_vnd − paid_vnd`. Ghi chú cũ nói có CHECK ở migration này là sai (audit BL-05); CHECK thật `orders_money_check` (`paid_vnd ≥ 0` và `balance_vnd = total_vnd − paid_vnd`) có từ migration `20261108000000_orders_money_integrity` (PO duyệt 07/11/2026) — không đẩy được qua `prisma db push`, cần `migrate deploy`. Cùng migration: `orders.customer_id` trỏ `customers` theo khoá ghép `(customer_id, organization_id)`, `ON DELETE NO ACTION` (xoá khách thì repository gỡ khách khỏi đơn trước). Mỗi lần thu/hoàn tiền là một dòng `order_payments`; `paymentStatus` (UNPAID/PARTIALLY_PAID/PAID/REFUNDED) là trường suy ra lúc đọc, không lưu.
 
 ```prisma
 enum order_payment_kind {
