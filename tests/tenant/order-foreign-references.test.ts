@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { POST as createOrder } from "@/app/api/v1/orders/route"
+import { CustomerRepository } from "@/modules/crm/infra/customer-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
@@ -61,5 +62,22 @@ describe("cách ly tenant — id tham chiếu khi tạo đơn", () => {
     const row = await prisma.orders.findFirstOrThrow({ where: { organization_id: a.organizationId } })
     expect(row.voucher_id).toBeNull()
     expect(Number(row.total_vnd)).toBe(300_000)
+  })
+
+  // WP-16 (PO duyệt 07/11/2026): khoá ghép (customer_id, organization_id) — CSDL tự chặn, kể cả khi mã quên kiểm
+  it("CSDL từ chối đơn gắn khách của tổ chức khác", async () => {
+    const customerB = await prisma.customers.create({ data: { organization_id: b.organizationId, code: "KH-0009", name: "Khách B", phone: "0901234560" } })
+    await expect(
+      prisma.orders.create({ data: { organization_id: a.organizationId, code: "DH-THU-1", customer_id: customerB.id, total_vnd: 0, balance_vnd: 0, created_by: a.userId } }),
+    ).rejects.toThrow()
+  })
+
+  it("xoá khách: đơn vẫn còn, chỉ gỡ liên kết khách (như SetNull cũ)", async () => {
+    const customerA = await prisma.customers.create({ data: { organization_id: a.organizationId, code: "KH-0010", name: "Khách A", phone: "0901234561" } })
+    const res = await post(a, { customerId: customerA.id, items: [item] })
+    expect(res.status).toBe(201)
+    expect(await new CustomerRepository().delete(a.ctx, customerA.id)).toBe(true)
+    const row = await prisma.orders.findFirstOrThrow({ where: { organization_id: a.organizationId } })
+    expect(row.customer_id).toBeNull()
   })
 })

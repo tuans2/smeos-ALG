@@ -144,7 +144,12 @@ export class CustomerRepository implements ICustomerRepository {
     })
     if (!existing) return false
 
-    await prisma.customers.delete({ where: { id } })
+    // Khoá ghép đơn ↔ khách là NO ACTION (SetNull trên khoá ghép sẽ xoá cả organization_id) — gỡ khách khỏi đơn
+    // trong cùng giao dịch, giữ đúng hành vi cũ: đơn còn, chỉ mất liên kết khách (audit BL-13)
+    await prisma.$transaction([
+      prisma.orders.updateMany({ where: { customer_id: id, organization_id: ctx.organizationId }, data: { customer_id: null } }),
+      prisma.customers.delete({ where: { id } }),
+    ])
     return true
   }
 
