@@ -93,9 +93,13 @@ export function ChainPartnerCreateModal({
             partnershipType: "SUBCONTRACTOR",
           }),
         })
-        const json = await res.json()
+        const json = await res.json().catch(() => ({}))
         if (!res.ok) {
-          setErrorMsg(json.message || "Không thể liên kết cửa hàng này")
+          setErrorMsg(
+            res.status === 404
+              ? "Không tìm thấy cửa hàng với email chủ tiệm hoặc mã cửa hàng này"
+              : json.error?.message || "Không thể liên kết cửa hàng này"
+          )
           return
         }
       }

@@ -84,14 +84,6 @@ export const MOTHER_NAV_ENTRIES: readonly NavEntry[] = [
 
   // 3. GIÁM SÁT SẢN PHẨM & KHO (toàn nền tảng)
   {
-    href: "/van-hanh/san-pham",
-    label: "Catalog toàn hệ thống",
-    group: "san-pham-kho-platform",
-    iconKey: "Package",
-    navKey: "platform-products",
-    mobileLabel: "Sản phẩm",
-  },
-  {
     href: "/van-hanh/truong-du-lieu",
     label: "Trường dữ liệu",
     group: "san-pham-kho-platform",

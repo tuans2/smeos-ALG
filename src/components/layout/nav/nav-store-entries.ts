@@ -85,15 +85,6 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     navKey: "templates",
     mobileLabel: "Kho mẫu",
   },
-  {
-    href: "/cong-cu/toi-uu-he-thong",
-    label: "Trợ lý tối ưu",
-    group: "cong-cu",
-    iconKey: "Brain",
-    navKey: "system-optimizer",
-    capability: "L6",
-    mobileLabel: "Tối ưu",
-  },
 
 
   // 02 · BÁN HÀNG & KHÁCH HÀNG

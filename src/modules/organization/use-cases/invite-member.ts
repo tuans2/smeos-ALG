@@ -1,4 +1,4 @@
-import { conflict, notFound, validationFailed } from "@/core/http/errors"
+import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { isValidEmail, normalizeEmail } from "@/modules/organization/domain/credentials"
 import { BranchRepository, getBranchRepository } from "@/modules/organization/infra/branch-repository"
@@ -12,13 +12,16 @@ export type InviteMemberInput = {
   branchId?: string | null
 }
 
+export const NEW_EMAIL_MESSAGE =
+  "Email này chưa có tài khoản — dùng nút “Thêm nhân viên” để tạo tài khoản đăng nhập dùng được ngay."
+
 /**
  * `POST /members/invite` (`F3`, đặc tả 06 mục 4).
  *
- * Người được mời có thể chưa từng có tài khoản — `users.password_hash` là
- * nullable đúng vì lý do này (đặc tả 07 mục 3). Họ đặt mật khẩu ở bước nhận
- * lời mời, ngoài phạm vi P2 (chưa có luồng email).
+ * Chỉ mời người ĐÃ có tài khoản (vd. nhân viên đang làm ở tiệm khác). Người mới dùng "Thêm nhân viên"
+ * (`POST /members`, `staff-accounts.ts`) — bước nhận lời mời/đặt mật khẩu chưa có (UJ-14, chờ PO).
  */
+
 export async function inviteMember(ctx: TenantContext, input: InviteMemberInput) {
   const email = normalizeEmail(input.email)
   if (!isValidEmail(email)) throw validationFailed({ email: "Địa chỉ thư không hợp lệ" })
@@ -41,12 +44,12 @@ export async function inviteMember(ctx: TenantContext, input: InviteMemberInput)
     throw conflict("Người này đã là thành viên của tổ chức")
   }
 
-  const user =
-    existingUser ??
-    (await users.create({ email, password_hash: "", name: null }))
+  // Chưa có luồng nhận lời mời/đặt mật khẩu: tạo tài khoản mật khẩu rỗng là tạo người không bao giờ đăng nhập
+  // được (audit hành trình M1, gói UJ-06). Người mới → "Thêm nhân viên" (tài khoản dùng được ngay).
+  if (!existingUser) throw unprocessable(NEW_EMAIL_MESSAGE)
 
   return memberships.invite(ctx, {
-    userId: user.id,
+    userId: existingUser.id,
     roleId: role.id,
     branchId: input.branchId ?? null,
   })

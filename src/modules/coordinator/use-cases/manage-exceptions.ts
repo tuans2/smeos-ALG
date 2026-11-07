@@ -16,7 +16,7 @@ import {
 import { axesAfterTransition } from "../domain/stage-transitions"
 import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
-import { audit, concurrentUpdate, ensureRule, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
+import { audit, concurrentUpdate, ensureRule, getOrderView, loadEditableOrderOrThrow, runCoordinatorTx } from "./shared"
 
 export async function openCoordinatorException(
   ctx: TenantContext,
@@ -25,7 +25,7 @@ export async function openCoordinatorException(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const from = row.coordination!.stage
     ensureRule(checkOpenException(from))
 
@@ -72,7 +72,7 @@ export async function resolveCoordinatorException(
     }
     await repo.resolveException(ctx, exception.id, input.resolution.trim())
 
-    const row = await loadOrderOrThrow(ctx, repo, exception.order_id)
+    const row = await loadEditableOrderOrThrow(ctx, repo, exception.order_id)
     const c = row.coordination!
     const stillOpen = await repo.countOpenExceptions(ctx, row.id)
     if (c.stage === "EXCEPTION" && stillOpen === 0) {

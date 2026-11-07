@@ -102,4 +102,30 @@ describe("Báo giá — chuyển thành đơn chỉ một lần", () => {
     expect(repo.releaseConversion).toHaveBeenCalledWith(ctx, "q-1", "ACCEPTED")
     expect(repo.update).not.toHaveBeenCalled()
   })
+
+  it("báo giá đã gửi nhưng quá hạn hiệu lực → không tạo đơn với giá cũ (audit hành trình Q2, UJ-04)", async () => {
+    const ingestOrderFn = vi.fn(async () => order)
+    const repo = repoStub({
+      findById: vi.fn(async () => ({ ...accepted, status: "SENT" as const, validUntil: new Date(Date.now() - 86400000) })),
+    })
+    const err = await convertQuotationToOrderUseCase(ctx, "q-1", { repo, ingestOrderFn }).catch((e: unknown) => e)
+    expect(err).toBeInstanceOf(AppError)
+    expect(JSON.stringify((err as AppError).details)).toContain("hết hiệu lực")
+    expect(repo.claimConversion).not.toHaveBeenCalled()
+    expect(ingestOrderFn).not.toHaveBeenCalled()
+  })
+
+  it("báo giá khách đã đồng ý dù quá ngày hiệu lực vẫn tạo đơn được (UJ-04)", async () => {
+    const ingestOrderFn = vi.fn(async () => order)
+    const repo = repoStub({ findById: vi.fn(async () => ({ ...accepted, validUntil: new Date(Date.now() - 86400000) })) })
+    await convertQuotationToOrderUseCase(ctx, "q-1", { repo, ingestOrderFn })
+    expect(ingestOrderFn).toHaveBeenCalledTimes(1)
+  })
+
+  it("thông điệp chặn không lộ mã trạng thái (UJ-04)", async () => {
+    const repo = repoStub({ findById: vi.fn(async () => ({ ...accepted, status: "REJECTED" as const })) })
+    const err = await convertQuotationToOrderUseCase(ctx, "q-1", { repo, ingestOrderFn: vi.fn() }).catch((e: unknown) => e)
+    expect(JSON.stringify((err as AppError).details)).not.toMatch(/REJECTED/)
+    expect(JSON.stringify((err as AppError).details)).toContain("Khách từ chối")
+  })
 })
