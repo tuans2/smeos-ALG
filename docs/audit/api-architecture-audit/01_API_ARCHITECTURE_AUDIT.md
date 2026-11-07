@@ -277,3 +277,13 @@ PO chọn hai việc từ danh sách còn lại: sửa lỗi 500 nhận đơn gi
 |---|---|---|
 | API-11 | `POST /orders` nhận `Idempotency-Key` (≤ 255 ký tự): gửi lại cùng khoá → trả đơn đã tạo, 201 + `Idempotent-Replayed: true`; gửi đồng thời → một đơn. Cột `orders.idempotency_key` + chỉ mục duy nhất `(organization_id, idempotency_key)`, migration `20261107230000_orders_idempotency_key` (expand). Modal tạo đơn gửi một khoá cho mỗi lần soạn, giữ khi thử lại. Không lưu thân yêu cầu nên chưa phân biệt "cùng khoá, thân khác" | `tests/tenant/order-idempotency.test.ts` (3/5 ca đỏ trên mã cũ), `ingest-order-once.test.ts` |
 | Ngoài phạm vi đợt 6 | `CLAIM` gia công với `subcontract_dispatch` thiếu `declinedBranchIds` → coi như rỗng, ghi lại khi nhận; `CANCEL` sau đó cũng không vỡ. Đường này đã có test khoá hành vi (B5) | `subcontract-order.test.ts`, `tests/tenant/public-contract-subcontract.test.ts` (đỏ trên mã cũ) |
+
+## 13. Nhật ký sửa — các việc chờ PO (07/11/2026)
+
+PO chốt 07/11/2026: 8 dòng lệch năng lực sửa đặc tả theo mã (`GET /media/optimizations` giữ `I2`); `content-engine/rewrite` gác một trong `F2`/`L2`/`L3` và trừ 1 credit mỗi lượt AI trả gợi ý; cho phép sửa 2 lỗi vùng Catalog; chặn 422 khi khoá trùng mà thân khác; OpenAPI cho `/platform/*`.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-12 | Đặc tả 06 ghi đủ mã gác theo trường/tham số của 7 route (consent `Q9`, occasions `Q6`, catalogs Thẻ chào +`F2`, `/products` +`L4`/`L5`, vision analyses `H5`/`H3`/`L1` khi đã duyệt, media optimizations `I2`); `NANG_LUC_LECH_CHO_PO` rỗng | `npm run check:docs` |
+| API-02 / nợ #170 | `content-engine/rewrite`: `requireRewriteCapability` (một trong `F2`/`L2`/`L3`), `holdRewriteCredit` giữ giá `content.rewrite` trước khi gọi AI (thiếu → 422 `QUOTA_EXCEEDED`), hoàn khi rơi về gợi ý dựng sẵn hoặc AI lỗi; không gian trải nghiệm không trừ. Gỡ khỏi danh sách route chưa gác | `tests/unit/content-engine/rewrite-credit-route.test.ts`, `src/modules/content-engine/use-cases/__tests__/rewrite-credit.test.ts`, `tests/tenant/rewrite-credit.test.ts` |
+
