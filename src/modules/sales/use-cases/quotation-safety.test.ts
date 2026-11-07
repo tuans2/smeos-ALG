@@ -122,6 +122,22 @@ describe("Báo giá — chuyển thành đơn chỉ một lần", () => {
     expect(ingestOrderFn).toHaveBeenCalledTimes(1)
   })
 
+  it("tổng báo giá lệch dòng hàng → không tạo đơn, không chiếm quyền chuyển (UJ-08)", async () => {
+    const ingestOrderFn = vi.fn(async () => order)
+    const repo = repoStub({ findById: vi.fn(async () => ({ ...accepted, totalAmount: 90 })) })
+    const err = await convertQuotationToOrderUseCase(ctx, "q-1", { repo, ingestOrderFn }).catch((e: unknown) => e)
+    expect((err as AppError).code).toBe("UNPROCESSABLE_ENTITY")
+    expect(repo.claimConversion).not.toHaveBeenCalled()
+    expect(ingestOrderFn).not.toHaveBeenCalled()
+  })
+
+  it("truyền ưu đãi + phí giao sang cổng nhận đơn (UJ-08)", async () => {
+    const ingestOrderFn = vi.fn(async () => order)
+    const repo = repoStub({ findById: vi.fn(async () => ({ ...accepted, discountAmount: 20, shippingFee: 5, totalAmount: 85 })) })
+    await convertQuotationToOrderUseCase(ctx, "q-1", { repo, ingestOrderFn })
+    expect(ingestOrderFn).toHaveBeenCalledWith(ctx, expect.objectContaining({ adjustments: { discountVnd: 20, shippingFeeVnd: 5 } }))
+  })
+
   it("thông điệp chặn không lộ mã trạng thái (UJ-04)", async () => {
     const repo = repoStub({ findById: vi.fn(async () => ({ ...accepted, status: "REJECTED" as const })) })
     const err = await convertQuotationToOrderUseCase(ctx, "q-1", { repo, ingestOrderFn: vi.fn() }).catch((e: unknown) => e)

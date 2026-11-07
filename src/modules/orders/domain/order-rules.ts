@@ -115,6 +115,21 @@ export function calculateOrderTotal(items: readonly OrderItemInput[]): number {
 }
 
 /**
+ * Tổng đơn có điều chỉnh cấp đơn (audit hành trình Q1, gói UJ-08): tiền hàng − ưu đãi + phí giao. Ưu đãi không
+ * vượt tiền hàng, không âm; phí giao không âm; làm tròn đồng — cùng cách `calculateQuotationTotals` của báo giá.
+ */
+export function calculateOrderTotalWithAdjustments(
+  items: readonly OrderItemInput[],
+  adjustments: { discountVnd: number; shippingFeeVnd: number } | null | undefined
+): number {
+  const goods = calculateOrderTotal(items)
+  if (!adjustments) return goods
+  const discount = Math.min(goods, Math.max(0, Math.round(adjustments.discountVnd || 0)))
+  const shipping = Math.max(0, Math.round(adjustments.shippingFeeVnd || 0))
+  return goods - discount + shipping
+}
+
+/**
  * Đo lường SLA từ chuỗi order_events (đặc tả 07 mục 12).
  * Không đọc cột cứng trên orders: chuỗi sự kiện là nguồn duy nhất đo SLA.
  */

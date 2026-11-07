@@ -1,5 +1,6 @@
-import { notFound, validationFailed } from "@/core/http/errors"
+import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
+import { calculateOrderTotalWithAdjustments } from "@/modules/orders/domain/order-rules"
 import type { IngestOrderInput, OrderItemInput, OrderRecord } from "@/modules/orders/domain/order-types"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 import {
@@ -60,6 +61,13 @@ export async function convertQuotationToOrderUseCase(
     metadata: it.note ? { note: it.note } : null,
   }))
 
+  // Ưu đãi + phí vận chuyển của báo giá đi theo sang đơn (audit hành trình Q1, gói UJ-08) — trước đây chỉ chép
+  // dòng hàng nên tổng đơn khác tổng khách đã đồng ý. Khẳng định trước khi tạo: lệch thì không tạo đơn.
+  const adjustments = { discountVnd: quotation.discountAmount, shippingFeeVnd: quotation.shippingFee }
+  if (calculateOrderTotalWithAdjustments(orderItems, adjustments) !== Math.round(quotation.totalAmount)) {
+    throw unprocessable(`Tổng tiền báo giá ${quotation.code} không khớp các dòng hàng — mở báo giá, lưu lại rồi tạo đơn.`)
+  }
+
   // Chiếm quyền chuyển bằng cập nhật có điều kiện trước khi tạo đơn: hai yêu cầu
   // song song (bấm hai lần, hai nhân viên) chỉ một yêu cầu thắng, không sinh đơn trùng.
   const claimed = await repo.claimConversion(ctx, id, quotation.status)
@@ -77,6 +85,8 @@ export async function convertQuotationToOrderUseCase(
       customerId: quotation.customerId ?? undefined,
       leadId: quotation.leadId ?? undefined,
       items: orderItems,
+      adjustments,
+      pricingRuleRef: { quotationAdjustment: { quotationCode: quotation.code, ...adjustments } },
       internalNote: `Tạo từ báo giá ${quotation.code}`,
     })
   } catch (err) {
