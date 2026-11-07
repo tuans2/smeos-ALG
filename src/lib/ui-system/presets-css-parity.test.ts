@@ -3,7 +3,7 @@ import path from "node:path"
 import { describe, expect, it } from "vitest"
 
 import { UI_PRESETS } from "./presets"
-import { CSS_VARIABLE_MAP } from "./tokens"
+import { CSS_VARIABLE_MAP, DENSITY_CONFIG } from "./tokens"
 import type { UiPresetId } from "./types"
 
 /**
@@ -76,4 +76,24 @@ describe("presets.ts khớp token CSS (một nguồn sự thật)", () => {
     const known = new Set([...Object.keys(UI_PRESETS), "clean-blue"])
     expect(ids.filter((x) => !known.has(x))).toEqual([])
   })
+})
+
+describe("DENSITY_CONFIG khớp density.css", () => {
+  const DENSITY_CSS = read("density.css")
+  function densityBlock(mode: keyof typeof DENSITY_CONFIG): Map<string, string> {
+    const m = DENSITY_CSS.match(new RegExp(`\\[data-density="${mode}"\\][^{]*\\{([^}]*)\\}`))
+    if (!m) throw new Error(`density.css thiếu khối [data-density="${mode}"]`)
+    return declarations(m[1]!)
+  }
+
+  for (const mode of Object.keys(DENSITY_CONFIG) as (keyof typeof DENSITY_CONFIG)[]) {
+    it(`${mode}: đệm bảng, đệm thẻ, khoảng cách trường bằng giá trị CSS`, () => {
+      const css = densityBlock(mode)
+      const cfg = DENSITY_CONFIG[mode]
+      expect(cfg.tableCellPadding).toBe(`${css.get("--table-py")} ${css.get("--table-px")}`)
+      expect(cfg.cardPadding).toBe(css.get("--card-padding"))
+      expect(cfg.formGap).toBe(css.get("--form-field-gap"))
+      expect(Object.keys(cfg).sort()).toEqual(["cardPadding", "formGap", "tableCellPadding"])
+    })
+  }
 })

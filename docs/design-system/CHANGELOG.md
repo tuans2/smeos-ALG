@@ -4,6 +4,16 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 
 ---
 
+## [1.3.3] - 2026-11-07
+
+### Density một nguồn; mở rộng R16
+
+#### Đã sửa
+- `DENSITY_CONFIG` (`src/lib/ui-system/tokens.ts`) lệch `density.css` ở khoảng cách trường (compact 0.75 → 0.5rem, comfortable 1 → 0.75rem) và mang chiều cao hàng bảng, chiều cao nút mà density không hề điều khiển. Nay chỉ giữ ba khoá CSS định nghĩa, theo đúng giá trị CSS; test đối chiếu trong `presets-css-parity.test.ts`. Không có mã nào đọc `DENSITY_CONFIG` nên giao diện không đổi.
+
+#### Đã đổi
+- Lint R16 soát cả giá trị chuỗi của khoá hiển thị (`label`, `title`, `description`…) trong mảng/object, thêm mã chức năng M01–M19, mức R1–R9, "Sale Pitch". Danh sách từ cấm (`GLOSSARY_BANNED`) được export để test domain dùng chung — áp cho nhãn bước và "việc kế tiếp" của điều phối.
+
 ## [1.3.2] - 2026-11-07
 
 ### Một nguồn sự thật cho token, tài liệu và cổng kiểm

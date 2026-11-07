@@ -15,12 +15,12 @@ export type RuleResult = { ok: true } | { ok: false; reason: string }
 
 const NEXT_ACTIONS: Record<CoordinatorStage, string> = {
   INTAKE: "Kiểm tra thông tin đơn trước khi lập kế hoạch",
-  VALIDATING: "Bổ sung thông tin còn thiếu từ Sales",
+  VALIDATING: "Bổ sung thông tin còn thiếu từ bộ phận bán hàng",
   PLANNING: "Chốt kế hoạch sản xuất và giờ lấy hàng",
   ASSIGNING: "Phân công đối tác xưởng ngoài hoặc thợ chế tác",
-  IN_PRODUCTION: "Theo dõi xưởng chế tác theo BOM",
+  IN_PRODUCTION: "Theo dõi xưởng làm đúng công thức chế tác",
   QUALITY_CHECK: "Kiểm ảnh thành phẩm đối chiếu ảnh mẫu",
-  DISPATCHING: "Theo dõi shipper tới người nhận, thu POD",
+  DISPATCHING: "Theo dõi shipper tới người nhận, thu ảnh giao hàng",
   DELIVERED: "Nghiệm thu, đóng đơn và chốt tiền công đối tác",
   COMPLETED: "Đơn đã hoàn thành",
   EXCEPTION: "Xử lý sự cố phát sinh",

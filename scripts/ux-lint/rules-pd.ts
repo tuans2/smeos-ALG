@@ -102,7 +102,7 @@ export const checkR15: RuleFunction = (sourceFile, context) => {
 }
 
 /** R16 — từ cấm theo docs/dac-ta/ux-patterns/glossary.md (UX-026). */
-const GLOSSARY_BANNED: [RegExp, string][] = [
+export const GLOSSARY_BANNED: [RegExp, string][] = [
   [/\bWorker\b/, '"hệ thống" hoặc bỏ hẳn'],
   [/\b[Rr]ender(?:ing)?\b/, '"dựng" (Đang dựng video, Đã dựng xong)'],
   [/\bjob\b/, '"tác vụ" hoặc bỏ mã'],
