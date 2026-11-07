@@ -4,6 +4,7 @@ import { conflict } from "@/core/http/errors"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { canProposeDismissal, type DismissalInfo } from "../domain/dismissal-policy"
 import { getVoucherRedemptionRepository } from "@/modules/promotions/infra/voucher-redemption-repository"
+import { returnStock } from "@/modules/orders/infra/order-stock"
 
 type Tx = Prisma.TransactionClient
 type Loose = Record<string, unknown>
@@ -50,6 +51,7 @@ export async function writeOrderDismissal(tx: Tx, ctx: TenantContext, order: Ord
   if (moved.count === 0) throw conflict("Đơn hàng vừa thay đổi (có thể khách vừa thanh toán), vui lòng tải lại")
   if (!approve) return
   await getVoucherRedemptionRepository(tx).releaseForOrder(ctx.organizationId, order.id)
+  await returnStock(ctx.organizationId, order.id, tx) // hoàn tồn đã trừ lúc đặt; khôi phục thì trừ lại
   await tx.greeting_sessions.updateMany({
     where: scopedWhere(ctx, { order_id: order.id, revoked_at: null }),
     data: { revoked_at: now, revoked_by: ctx.userId },
