@@ -15,6 +15,7 @@ import { DeliveryReceiptCard } from "@/components/templates/orders/delivery-rece
 import { OrderCancelDialog } from "./order-cancel-dialog"
 import { OrderActionButtons } from "./order-action-buttons"
 import { OrderInfoRequests } from "./order-info-requests"
+import { OrderVatSection } from "./order-vat-section"
 import { useI18n } from "@/lib/i18n"
 import { useToast } from "@/components/ui/toast"
 import type { OrderItemRecord, OrderRecord, OrderSlaCalculation } from "@/modules/orders/domain/order-types"
@@ -257,6 +258,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   </div>
                 )}
                 <OrderInfoRequests orderId={order.id} />
+                <OrderVatSection orderId={order.id} onChanged={onUpdated} />
 
                 <div>
                   <div className="mb-2 flex items-center gap-1.5 font-bold text-text">
