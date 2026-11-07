@@ -216,11 +216,13 @@ describe("order_recipients — ghi kép và backfill", () => {
     await run()
     expect(await rows()).toEqual(before)
 
-    // P-3c: khớp → bỏ phần cá nhân đúng như `stripRecipientPii`; lệch → dừng, không xoá gì
-    await prisma.order_recipients.update({ where: { order_id: ids[2]! }, data: { recipient_phone: "0000" } })
+    // P-3c: khớp → bỏ phần cá nhân đúng như `stripRecipientPii`; lệch → dừng, không xoá gì. Khối P-3c chạy trên chữ rõ
+    // (trước P-5c) nên sửa số bằng SQL thô — qua client Prisma thì số thành bản mã.
+    const setPhone = (id: string, phone: string) => prisma.$executeRaw`UPDATE "order_recipients" SET "recipient_phone" = ${phone} WHERE "order_id" = ${id}`
+    await setPhone(ids[2]!, "0000")
     await expect(replay([...VERIFY(), ...STRIP()])).rejects.toThrow(/P-3c: order_recipients lệch/)
     expect(await rawAddress(ids[2]!)).toEqual(shapes[2])
-    await prisma.order_recipients.update({ where: { order_id: ids[2]! }, data: { recipient_phone: "0912345678" } })
+    await setPhone(ids[2]!, "0912345678")
     await replay([...VERIFY(), ...STRIP()])
     for (const [i, id] of ids.entries()) expect(await rawAddress(id), `dạng #${i}`).toEqual(stripRecipientPii(shapes[i]))
   })

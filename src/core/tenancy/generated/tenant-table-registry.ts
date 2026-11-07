@@ -95,7 +95,7 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   order_approval_requests: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_assignments: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_change_requests: { scope: "TENANT", parents: ["orders", "organizations"] },
-  order_coordinations: { scope: "TENANT", parents: ["orders", "organizations", "partners"], pii: { pod_recipient_name: "identity", shipper_phone: "contact", shipper_phone_enc: "contact" } },
+  order_coordinations: { scope: "TENANT", parents: ["orders", "organizations", "partners"], pii: { customer_phone: "contact", customer_phone_hash: "contact", pod_recipient_name: "identity", shipper_phone: "contact", shipper_phone_enc: "contact" } },
   order_events: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_exceptions: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_info_requests: { scope: "TENANT", parents: ["orders", "organizations"] },

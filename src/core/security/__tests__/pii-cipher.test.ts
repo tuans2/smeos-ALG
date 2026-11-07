@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest"
 
 import {
-  decryptPii, encryptPii, newDataKey, normalizePhoneForHash, phoneHash, phoneLast4, piiKeyVersion, piiMasterKey, unwrapDataKey,
+  decryptPii, encryptPii, isPiiCiphertext, newDataKey, normalizePhoneForHash, phoneHash, phoneLast4, piiKeyVersion, piiMasterKey,
+  PiiKeyRequiredError, requirePiiMasterKey, unwrapDataKey,
 } from "../pii-cipher"
 
 const master = Buffer.alloc(32, 7)
@@ -47,5 +48,13 @@ describe("pii-cipher", () => {
     expect(piiMasterKey({ NODE_ENV: "production", SESSION_SECRET: "x".repeat(32) } as unknown as NodeJS.ProcessEnv)).toBeNull()
     const dev = piiMasterKey({ NODE_ENV: "test", SESSION_SECRET: "x".repeat(32) } as unknown as NodeJS.ProcessEnv)
     expect(dev?.length).toBe(32)
+  })
+
+  it("P-5c: khoá chủ bắt buộc — production thiếu biến → PiiKeyRequiredError; nhận dạng bản mã", () => {
+    expect(() => requirePiiMasterKey({ NODE_ENV: "production" } as unknown as NodeJS.ProcessEnv)).toThrow(PiiKeyRequiredError)
+    expect(requirePiiMasterKey({ PII_ENCRYPTION_KEY: master.toString("base64") } as unknown as NodeJS.ProcessEnv).equals(master)).toBe(true)
+    const { key } = newDataKey(master)
+    expect(isPiiCiphertext(encryptPii(key, 3, "0912345678"))).toBe(true)
+    for (const v of ["0912345678", "pii1.x.y", null, 42]) expect(isPiiCiphertext(v)).toBe(false)
   })
 })
