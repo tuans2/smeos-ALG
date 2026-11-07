@@ -52,4 +52,14 @@ describe("cách ly tenant — id tham chiếu khi tạo đơn", () => {
     expect((await post(a, { items: [{ ...item, quantity: 1000 }] })).status).toBe(400)
     expect((await post(a, { items: [item], deliveryWindow: { date: "mai giao" } })).status).toBe(400)
   })
+
+  // PO 07/11/2026 (Q5, audit BL-08): mã giảm giá không áp ở đơn chuẩn — trước đây `voucherId` được lưu mà không
+  // giảm tiền, không trừ lượt, không kiểm thuộc tổ chức.
+  it("voucherId gửi kèm bị bỏ qua: đơn không gắn mã, khách trả đúng giá", async () => {
+    const res = await post(a, { voucherId: "ma-cua-ai-do", items: [item] })
+    expect(res.status).toBe(201)
+    const row = await prisma.orders.findFirstOrThrow({ where: { organization_id: a.organizationId } })
+    expect(row.voucher_id).toBeNull()
+    expect(Number(row.total_vnd)).toBe(300_000)
+  })
 })

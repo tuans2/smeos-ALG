@@ -144,7 +144,7 @@ export interface CreateOrderInput {
   customerId?: string | null | undefined
   items: OrderItemInput[]
   pricingRuleRef?: Record<string, unknown> | null | undefined
-  voucherId?: string | null | undefined
+  // Không có `voucherId`: đơn chuẩn không nhận mã giảm giá — mã chỉ áp ở Thẻ chào (PO 07/11/2026, Q5; audit BL-08)
   cardMessage?: string | null | undefined
   internalNote?: string | null | undefined
   deliveryWindow?: DeliveryWindow | null | undefined

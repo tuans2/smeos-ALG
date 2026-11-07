@@ -122,7 +122,6 @@ export class OrderRepository implements IOrderRepository {
           total_vnd: totalVnd,
           balance_vnd: totalVnd,
           pricing_rule_ref: (input.pricingRuleRef as unknown as Prisma.InputJsonValue) ?? null,
-          voucher_id: input.voucherId ?? null,
           card_message: input.cardMessage ?? null,
           internal_note: input.internalNote ?? null,
           delivery_window: (input.deliveryWindow as unknown as Prisma.InputJsonValue) ?? null,
