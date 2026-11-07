@@ -2,6 +2,7 @@ import { log } from "@/core/observability/log"
 import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 import { matchStandardBankTransfers } from "./match-standard-bank-transfers"
 import { remindCollectDue } from "./remind-collect-due"
+import { expireUnpaidOrders } from "./expire-unpaid-orders"
 
 const STARTED = Symbol.for("smeos.orders.bank-match")
 const INTERVAL_MS = 60 * 1000
@@ -21,10 +22,16 @@ export function startOrdersBankMatchSweep(): void {
     if (running) return
     running = true
     // Một tiến trình trong cụm chạy mỗi lượt (audit hành trình S2, UJ-11)
-    runExclusive("orders_bank_match_sweep", async () => ({ match: await matchStandardBankTransfers(), due: await remindCollectDue() }))
+    runExclusive("orders_bank_match_sweep", async () => ({
+      match: await matchStandardBankTransfers(),
+      due: await remindCollectDue(),
+      // Đơn catalog/landing chưa thanh toán quá hạn → tự huỷ, chỉ ở cửa hàng đã bật (UJ-12)
+      expired: await expireUnpaidOrders(),
+    }))
       .then((out) => {
         if (!out) return
-        const { match: r, due } = out
+        const { match: r, due, expired } = out
+        if (expired && expired.cancelled + expired.failed > 0) log.info("orders.unpaid_expired", { feature: "orders", ...expired })
         if (r.matched > 0) log.info("orders.bank_match", { feature: "orders", ...r })
         if (due.reminded > 0) log.info("orders.collect_due_reminded", { feature: "orders", ...due })
       })

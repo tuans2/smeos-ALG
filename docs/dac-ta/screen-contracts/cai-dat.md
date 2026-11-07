@@ -51,6 +51,7 @@ acceptance:
 - Phụ (4): Các thẻ liên kết sâu (`Link` có focus-visible và hover effect).
 - Tab "Trường dữ liệu": chọn Đơn hàng/Đối tác; mỗi trường có ô đổi tên ("Lưu tên" chỉ hiện khi đã sửa) và công tắc Hiện/Ẩn — trường bắt buộc của hệ thống hiện "Luôn hiện", công tắc khoá; khối "Thêm trường riêng" (tên, kiểu: Chữ ngắn/Đoạn văn/Số/Số tiền/Ngày/Số điện thoại, công tắc "Bắt buộc nhập", nút "Thêm trường").
 - Tab "Tên miền riêng": ô nhập tên miền + nút chính "Thêm tên miền"; mỗi tên miền một dòng gồm trạng thái (Chờ xác minh / Đang hoạt động / Đã bị khoá), nút "Kiểm tra" (chỉ khi chờ xác minh), "Hướng dẫn DNS" (mở/đóng hai bản ghi TXT và CNAME cần thêm), "Gỡ" (hộp xác nhận nêu hậu quả; ẩn khi bị khoá). Tên miền bị khoá hiện lý do khoá.
+- Tab thanh toán, khối "Tự huỷ đơn chưa thanh toán (catalog, trang bán hàng)": công tắc (mặc định tắt) + số giờ 2–168 (mặc định 24) + nút "Lưu"; đơn nhập tay và đơn từ báo giá không bị tự huỷ (audit hành trình UJ-12, 07/11/2026).
 - Thẻ "Liên kết chuỗi" (trên các tab, chỉ hiện với quyền `F2` khi có lời mời hoặc chuỗi đang tham gia): đồng ý / từ chối lời mời liên kết của chuỗi (hạn 7 ngày), rời chuỗi kèm lý do. Đích của thông báo `CHAIN_LINK_INVITED` / `CHAIN_LINK_STATUS_CHANGED` (audit hành trình UJ-10, 07/11/2026).
 
 ## 5. Content budget

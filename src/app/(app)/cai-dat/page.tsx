@@ -19,6 +19,7 @@ import { ChainLinkInvitationsCard } from "@/components/organization/chain-link-i
 import { calculateReadinessScore } from "@/modules/field-platform/domain/readiness-score-engine"
 import { StorePaymentMethodsEditor } from "@/components/profiles/store-payment-methods-editor"
 import { PaymentPolicySection } from "@/components/profiles/payment-policy-section"
+import { UnpaidOrderExpirySection } from "@/components/profiles/unpaid-order-expiry-section"
 import { DepositLevelsSection } from "@/components/profiles/deposit-levels-section"
 import { PriceBudgetsSection } from "@/components/profiles/price-budgets-section"
 import { StorePoliciesEditor } from "@/components/profiles/store-policies-editor"
@@ -224,6 +225,7 @@ function CaiDatTiemContent() {
         <div className="flex flex-col gap-6">
           <StorePaymentMethodsEditor />
           <PaymentPolicySection />
+          <UnpaidOrderExpirySection />
         </div>
       )}
 
