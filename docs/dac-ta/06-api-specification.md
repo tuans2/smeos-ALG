@@ -771,6 +771,8 @@ Khuôn video là enum `video_format`: `REEL_15S` · `TIKTOK_30S` · `STORY_15S` 
 
 ## 21. Console Vận hành Nền tảng (P25a)
 
+**OpenAPI (07/11/2026, PO chọn).** Bản máy đọc được của mọi route `/platform/*` (70 operation): `docs/spec/contracts/openapi/platform.openapi.json` (OpenAPI 3.1, tệp sinh ra — `npm run gen:openapi`; nội bộ, không công bố). Nguồn ở `src/app/api/v1/platform/_contracts/`: route dùng chung lược đồ thân ở `requests.ts`; phản hồi khai `strictObject` và được kiểm trên CSDL thật (`tests/platform/platform-contract-*.test.ts`); `x-capability` của từng operation phải khớp cột năng lực bảng dưới (`tests/unit/platform/platform-openapi.test.ts`).
+
 Năm route dưới đây thuộc console vận hành nền tảng (`docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md`), dùng cho người vận hành FloraOS chứ không phải thành viên một tổ chức. Đây là **ngoại lệ có chủ đích, có gác quyền** với Luật 2 ở mục 1 ("không endpoint nào trả dữ liệu xuyên tổ chức") — năm route này CỐ Ý trả dữ liệu của nhiều/mọi tổ chức cùng lúc.
 
 Khác biệt với mọi route còn lại trong tài liệu này:

@@ -13,6 +13,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 
+import { buildPlatformOpenApi, PLATFORM_OPENAPI_PATH } from "../src/app/api/v1/platform/_contracts/platform-openapi"
 import { buildPublicOpenApi, PUBLIC_OPENAPI_PATH } from "../src/app/api/v1/public/_contracts/public-openapi"
 import { serializeOpenApi } from "../src/core/http/openapi"
 import { buildIntegrationOpenApi, INTEGRATION_OPENAPI_PATH } from "../src/modules/integration/contracts/integration-openapi"
@@ -20,6 +21,7 @@ import { buildIntegrationOpenApi, INTEGRATION_OPENAPI_PATH } from "../src/module
 const DOCUMENTS: Array<{ path: string; build: () => Record<string, unknown> }> = [
   { path: INTEGRATION_OPENAPI_PATH, build: buildIntegrationOpenApi },
   { path: PUBLIC_OPENAPI_PATH, build: buildPublicOpenApi },
+  { path: PLATFORM_OPENAPI_PATH, build: buildPlatformOpenApi },
 ]
 
 const check = process.argv.includes("--check")
