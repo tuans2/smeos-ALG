@@ -165,10 +165,10 @@ const TARGET_AREAS: Array<{
   icon: typeof FileText;
   description: string;
 }> = [
-  { id: "b", label: "Kịch bản & Bài viết", icon: FileText, description: "Tab B (M06)" },
-  { id: "d", label: "Studio Ảnh AI", icon: Wand2, description: "Tab D (M04b)" },
-  { id: "e", label: "Studio Video", icon: Video, description: "Tab E (M04c)" },
-  { id: "f", label: "Gói Chiến dịch", icon: Package, description: "Tab F (Chặng 07)" },
+  { id: "b", label: "Kịch bản & Bài viết", icon: FileText, description: "Viết kịch bản và bài đăng" },
+  { id: "d", label: "Studio Ảnh AI", icon: Wand2, description: "Tạo ảnh sản phẩm bằng AI" },
+  { id: "e", label: "Studio Video", icon: Video, description: "Dựng video ngắn" },
+  { id: "f", label: "Gói Chiến dịch", icon: Package, description: "Gói nội dung cho cả chiến dịch" },
 ];
 
 const SOURCE_OPTIONS: Array<{

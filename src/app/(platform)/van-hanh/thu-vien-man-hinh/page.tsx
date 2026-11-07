@@ -11,7 +11,7 @@ import { ScreenLibraryExplorer } from "./screen-library-explorer"
 
 export const metadata = {
   title: "Thư viện Màn hình Toàn hệ thống | Vận hành Nền tảng smeOS",
-  description: "Liệt kê và điều hướng trực tiếp 100% màn hình thực tế trong hệ sinh thái đa tenant smeOS",
+  description: "Liệt kê và điều hướng trực tiếp 100% màn hình thực tế trong hệ sinh thái nhiều doanh nghiệp của smeOS",
 }
 
 export default function ThuVienManHinhPage() {
