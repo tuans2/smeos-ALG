@@ -214,6 +214,8 @@ describe("Quotation Use-Cases", () => {
 
     const fetched = await getQuotationUseCase(fakeCtx, created.id, repo)
     expect(fetched.status).toBe("EXPIRED")
+    // Đọc không ghi — việc ghi do lượt quét định kỳ (UJ-11)
+    expect((await repo.findById(fakeCtx, created.id))?.status).toBe("DRAFT")
   })
 
   it("sendQuotationUseCase: cập nhật trạng thái SENT và cập nhật lead sang QUOTATION_SENT", async () => {

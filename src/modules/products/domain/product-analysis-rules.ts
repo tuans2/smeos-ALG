@@ -11,6 +11,13 @@
 
 export type ApprovalState = "PENDING" | "APPROVED" | "REJECTED"
 
+/** Nhãn tiếng Việt cho thông điệp lỗi — không lộ mã trạng thái (audit hành trình O6, UJ-07). */
+export const APPROVAL_STATE_LABELS: Record<ApprovalState, string> = {
+  PENDING: "Chờ duyệt",
+  APPROVED: "Đã duyệt",
+  REJECTED: "Đã từ chối",
+}
+
 /** `PATCH /vision/analyses/:id` (`H2`) — không sửa được sau khi đã duyệt. */
 export function canEditAnalysis(state: ApprovalState): boolean {
   return state !== "APPROVED"

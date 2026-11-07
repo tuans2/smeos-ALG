@@ -4,6 +4,8 @@ import type { IngestOrderInput, OrderItemInput, OrderRecord } from "@/modules/or
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 import {
   canTransitionQuotationStatus,
+  isQuotationExpired,
+  QUOTATION_STATUS_LABELS,
   type Quotation,
 } from "../domain/quotation"
 import type { IQuotationRepository } from "../domain/repositories/quotation-repository.interface"
@@ -38,7 +40,15 @@ export async function convertQuotationToOrderUseCase(
 
   if (!canTransitionQuotationStatus(quotation.status, "CONVERTED")) {
     throw validationFailed({
-      status: `Không thể chuyển đổi báo giá ở trạng thái "${quotation.status}" thành đơn hàng.`,
+      status: `Báo giá đang ở trạng thái "${QUOTATION_STATUS_LABELS[quotation.status]}" nên chưa tạo đơn được.`,
+    })
+  }
+
+  // Hết hạn chỉ được ghi khi có người mở chi tiết — báo giá đã gửi, quá hạn mà chưa ai mở vẫn ở `SENT`.
+  // Không tạo đơn với giá đã hết hiệu lực (audit hành trình Q2, gói UJ-04).
+  if (isQuotationExpired(quotation)) {
+    throw validationFailed({
+      status: `Báo giá ${quotation.code} đã hết hiệu lực — gia hạn ngày hiệu lực rồi mới tạo đơn.`,
     })
   }
 

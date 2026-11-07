@@ -359,7 +359,7 @@ export async function presentCoordinatorOrders(
       cardRequired: c.card_required,
       internalNote: r.internal_note,
       partnerInstruction: typeof meta.partnerInstruction === "string" ? meta.partnerInstruction : null,
-      source: c.source,
+      source: c.source ?? r.source,
       sourceReference: c.source_reference,
       channel: c.channel,
       orderType: c.order_type,

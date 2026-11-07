@@ -379,7 +379,8 @@ const GROUP_9_TOOLS: readonly ToolDefinition[] = [
     id: 50, name: "Trợ lý Học máy & Tối ưu Tác nghiệp",
     description: "Nhận diện thói quen tác nghiệp, hiệu quả chuyển đổi và đề xuất cải tiến toàn hệ thống",
     icon: "Brain", label: "BOTH", status: "FOUNDATION", progress: 30,
-    href: "/cong-cu/toi-uu-he-thong", statusNote: "Chức năng 13 hợp nhất — System Learning & Operations Optimizer",
+    // Chưa có trang (audit hành trình N1, UJ-05) — thẻ hiện ở danh mục nhưng không bấm vào trang 404.
+    href: null, statusNote: "Chức năng 13 hợp nhất — System Learning & Operations Optimizer",
   },
 ] as const
 

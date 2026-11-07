@@ -18,7 +18,7 @@ import {
   concurrentUpdate,
   ensureTransition,
   getOrderView,
-  loadOrderOrThrow,
+  loadEditableOrderOrThrow,
   runCoordinatorTx,
 } from "./shared"
 
@@ -30,7 +30,7 @@ export async function updateCoordinatorStage(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const from = row.coordination!.stage
     ensureTransition(from, nextStage, await repo.facts(ctx, row))
 
