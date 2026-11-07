@@ -30,6 +30,9 @@ export async function register(): Promise<void> {
   // Đối soát số đã thu với sổ thu mỗi 6 giờ (ADR-013 D-I6) — chỉ ghi nhận lệch, không tự sửa.
   const { startPaymentReconciliation } = await import("@/modules/orders/use-cases/reconciliation-scheduler")
   asSystemDb("sweep:payment-reconciliation", startPaymentReconciliation)
+  // Khách có đơn vừa đổi → tính lại chi tiêu thực thu và hạng theo ngành (PO 07/11/2026, Q6).
+  const { startCustomerMetricsSweep } = await import("@/modules/crm/use-cases/customer-metrics-scheduler")
+  asSystemDb("sweep:customer-metrics", startCustomerMetricsSweep)
 }
 
 /** Lỗi máy chủ không ai bắt → log có cấu trúc (rà soát 21/10/2026, giai đoạn 3 — quan trắc). */

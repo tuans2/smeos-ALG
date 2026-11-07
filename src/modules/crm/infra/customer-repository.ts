@@ -2,7 +2,7 @@ import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { CustomerMasterIndex, CustomerTier } from "../domain/customer-master-index"
-import { deriveCustomerTier } from "../domain/crm-rules"
+import { syncCustomerMetrics } from "./customer-metrics-repository"
 import { branchForNewCustomer, customerBranchWhere } from "./customer-branch-scope"
 import type {
   ICustomerRepository,
@@ -251,31 +251,9 @@ export class CustomerRepository implements ICustomerRepository {
   /**
    * Đồng bộ tự động chi tiêu và số đơn từ bảng `orders` của M10
    */
+  /** Tính lại chi tiêu (thực thu), số đơn và hạng theo ngành — xem `customer-metrics-repository.ts` (Q6). */
   async syncMetricsFromOrders(ctx: TenantContext, customerId: string): Promise<void> {
-    const orders = await prisma.orders.findMany({
-      where: {
-        organization_id: ctx.organizationId,
-        customer_id: customerId,
-        status: { in: ["CONFIRMED", "PROCESSING", "DELIVERED", "COMPLETED"] },
-      },
-      select: { total_vnd: true, created_at: true },
-      orderBy: { created_at: "desc" },
-    })
-
-    const totalSpent = orders.reduce((sum, o) => sum + Number(o.total_vnd), 0)
-    const orderCount = orders.length
-    const lastOrderAt = orders[0]?.created_at ?? null
-    const tier = deriveCustomerTier(totalSpent, orderCount)
-
-    await prisma.customers.update({
-      where: { id: customerId },
-      data: {
-        total_spent: totalSpent,
-        order_count: orderCount,
-        last_order_at: lastOrderAt,
-        tier,
-      },
-    })
+    await syncCustomerMetrics(ctx.organizationId, customerId)
   }
 
   private mapToMasterIndex(row: CustomerRow): CustomerMasterIndex {
