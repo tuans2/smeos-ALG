@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useI18n } from "@/lib/i18n"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
-import { type RoleOption, type BranchOption } from "./_components/invite-member-dialog"
+import { InviteMemberDialog, type RoleOption, type BranchOption } from "./_components/invite-member-dialog"
 import { AddStaffDialog } from "./_components/add-staff-dialog"
 import { ChangeRoleDialog } from "./_components/change-role-dialog"
 import { MemberTable, type MemberListItem } from "./_components/member-table"
@@ -41,6 +41,7 @@ export default function QuanLyThanhVienPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   const [inviteOpen, setInviteOpen] = useState(false)
+  const [inviteExistingOpen, setInviteExistingOpen] = useState(false)
   const [changeRoleTarget, setChangeRoleTarget] = useState<{
     id: string
     name: string | null
@@ -162,6 +163,11 @@ export default function QuanLyThanhVienPage() {
               <span>{dict.settings.members.addMemberButton}</span>
             </Button>
           )}
+          {canInvite && (
+            <Button type="button" variant="secondary" size="sm" onClick={() => setInviteExistingOpen(true)}>
+              <span>Mời người đã có tài khoản</span>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -263,6 +269,7 @@ export default function QuanLyThanhVienPage() {
 
       {/* Modals */}
       <AddStaffDialog open={inviteOpen} onOpenChange={setInviteOpen} roles={roles} onSuccess={() => void fetchData()} />
+      <InviteMemberDialog open={inviteExistingOpen} onOpenChange={setInviteExistingOpen} roles={roles} branches={branches} onSuccess={() => void fetchData()} />
 
       <ChangeRoleDialog
         open={changeRoleTarget !== null}

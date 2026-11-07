@@ -206,7 +206,7 @@ describe("Quotation Use-Cases", () => {
     const created = await createQuotationUseCase(fakeCtx, { leadId: "lead-1", items: [{ name: "Món 1", qty: 1, unitPrice: 100000 }] }, repo)
     await repo.update(fakeCtx, created.id, { status: "SENT" })
     const updateLeadFn = vi.fn(async () => undefined)
-    await updateQuotationUseCase(fakeCtx, created.id, { status: "REJECTED" }, repo, { add: async () => undefined }, updateLeadFn)
+    await updateQuotationUseCase(fakeCtx, created.id, { status: "REJECTED" }, repo, { add: async () => 0 }, updateLeadFn)
     expect(updateLeadFn).toHaveBeenCalledWith(fakeCtx, "lead-1", "FOLLOW_UP")
   })
 

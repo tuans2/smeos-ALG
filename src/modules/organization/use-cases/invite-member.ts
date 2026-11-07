@@ -40,9 +40,12 @@ export async function inviteMember(ctx: TenantContext, input: InviteMemberInput)
 
   const existingForOrg = await memberships.list(ctx)
   const existingUser = await users.findByEmail(email)
-  if (existingUser && existingForOrg.some((m) => m.user_id === existingUser.id)) {
-    throw conflict("Người này đã là thành viên của tổ chức")
+  const current = existingUser ? existingForOrg.find((m) => m.user_id === existingUser.id) : undefined
+  // Lời mời cũ chưa nhận (có thể đã hết hạn 14 ngày) → gửi lại: làm mới hạn, vai, chi nhánh (UJ-14)
+  if (current?.status === "INVITED") {
+    return memberships.refreshInvitation(ctx, current.id, { roleId: role.id, branchId: input.branchId ?? null })
   }
+  if (current) throw conflict("Người này đã là thành viên của tổ chức")
 
   // Chưa có luồng nhận lời mời/đặt mật khẩu: tạo tài khoản mật khẩu rỗng là tạo người không bao giờ đăng nhập
   // được (audit hành trình M1, gói UJ-06). Người mới → "Thêm nhân viên" (tài khoản dùng được ngay).
