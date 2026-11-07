@@ -23,6 +23,8 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { ChainPartnerCreateModal } from "./chain-partner-create-modal"
 import { PartnerCredentialDialog, type PartnerCredential } from "@/components/organization/partner-credential-dialog"
 import { useChainPartners } from "@/components/organization/use-chain-partners"
+import { PARTNERSHIP_STATUS_LABELS } from "@/modules/chain-partnership/domain/partnership-lifecycle"
+import type { PartnershipStatus } from "@/modules/chain-partnership/domain/partnership-entities"
 
 export default function ChainPartnersPage() {
   const { partners, setPartners, loading, refresh: fetchPartners } = useChainPartners()
@@ -132,7 +134,7 @@ export default function ChainPartnersPage() {
                       : "bg-surface-alt text-text-muted"
                   }`}
                 >
-                  {p.status === "ACTIVE" ? "Đang hoạt động" : "Tạm ngưng"}
+                  {PARTNERSHIP_STATUS_LABELS[p.status as PartnershipStatus] ?? "Tạm ngưng"}
                 </span>
               </div>
 

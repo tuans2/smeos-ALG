@@ -644,7 +644,7 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/orders/:id/cancel` | `R6` | Trần cứng điều hành; bắt buộc lý do; không huỷ đơn đã giao |
 | GET | `/coordinator/partners` | `R1` · `F1` | `?active=1`: đối tác gia công (`R1`); không tham số: đối tác chuỗi (`F1`) |
 | POST | `/coordinator/partners` | `R4` · `F2` | Đối tác gia công (`R4`): trùng mã trong tổ chức → 409. Cấp tài khoản đối tác chuỗi (thân có `partnerStoreName`/`contactEmail`, `F2`): không gửi `password` → sinh mật khẩu ngẫu nhiên, trả `temporaryPassword` đúng một lần (email đã có tài khoản thì giữ mật khẩu cũ, không trả); `password` gửi lên tối thiểu 10 ký tự |
-| POST | `/coordinator/partners/link-existing` | `F2` | Liên kết cửa hàng đã có tài khoản làm đối tác chuỗi. Chỉ tổ chức loại Chuỗi (khác → 409); khớp **chính xác** slug hoặc email chủ tiệm, không tìm theo tên; không tìm thấy hoặc tự liên kết → 404 cùng một câu; liên kết lại dùng lại dòng cũ (ADR-012 T-3b); trùng mã đối tác với cửa hàng khác → 409; phản hồi không chứa SĐT/email của tổ chức kia; không tự mở phòng chat (UJ-01, 07/11/2026) |
+| POST | `/coordinator/partners/link-existing` | `F2` | Chuỗi **mời** cửa hàng đã có tài khoản liên kết làm đối tác: tạo liên kết `PENDING` (không mở khoá gì) và báo cửa hàng (`CHAIN_LINK_INVITED`); cửa hàng đồng ý trong 7 ngày mới thành `ACTIVE` (UJ-10). Chỉ tổ chức loại Chuỗi (khác → 409); khớp **chính xác** slug hoặc email chủ tiệm; không tìm thấy hoặc tự mời → 404 cùng một câu; đang hợp tác/tạm ngưng → 409; lời mời cũ hoặc đã chấm dứt → gửi lời mời mới (cùng dòng, ADR-012 T-3b); trùng mã đối tác với cửa hàng khác → 409; phản hồi không chứa SĐT/email của tổ chức kia; không tự mở phòng chat (UJ-01) |
 | PATCH | `/coordinator/partners/:id` | `R4` | Sửa hồ sơ, tạm ngưng/mở lại |
 | GET | `/field-config` | `R1` | ĐP-3 — cấu hình trường hiệu lực cho tổ chức của người gọi (lớp mã + cấu hình nền tảng + ghi đè theo tổ chức + trường riêng của tổ chức), `?entity=ORDER\|PARTNER` |
 | POST | `/field-config` | `D18` | Checklist ALG 1.9 — cửa hàng tạo trường riêng `{ entity, label, dataType, requirement?, visibility?, placeholder? }` (không gồm kiểu chọn từ danh mục); khoá máy sinh `cf_…`; tối đa 50 trường/thực thể/tổ chức. 201 |
@@ -1140,7 +1140,11 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | GET | `/chain/stores-data` | `F1` | Tóm tắt dữ liệu các cửa hàng của chuỗi |
 | GET | `/chain/stores-data/:id` | `F1` | Thư mục dữ liệu một cửa hàng; cửa hàng của tổ chức khác → 404 |
 | POST | `/coordinator/orders/:id/dispatch-to-chat` | `R3` | Đẩy thẻ đơn sang chat với đối tác; chỉ đối tác ACTIVE của chính chuỗi (người nhận phải thuộc đối tác), khác → 404 |
-| PATCH | `/coordinator/partners/:id/status` | `F2` | `{ status: ACTIVE\|SUSPENDED\|TERMINATED }`; chỉ chuỗi sở hữu quan hệ, khác → 404 |
+| PATCH | `/coordinator/partners/:id/status` | `F2` | `{ status: ACTIVE\|SUSPENDED\|TERMINATED, reason }` — lý do bắt buộc; theo vòng đời (UJ-10): rút lời mời `PENDING → TERMINATED`, `ACTIVE ⇄ SUSPENDED`, chấm dứt; không kích hoạt thay cửa hàng, đã chấm dứt không mở lại (409); ghi `audit_logs`, báo cửa hàng (`CHAIN_LINK_STATUS_CHANGED`); chỉ chuỗi sở hữu quan hệ, khác → 404 |
+| GET | `/chain/links` | `F2` | Phía cửa hàng: lời mời liên kết đang chờ (chưa quá 7 ngày) và chuỗi đang tham gia (UJ-10) |
+| POST | `/chain/links/:id/accept` | `F2` | Cửa hàng đồng ý lời mời → `ACTIVE` (đặt lại cạnh chính); quá hạn → 409; liên kết của tổ chức khác → 404; báo chuỗi (`CHAIN_PARTNER_RESPONDED`) |
+| POST | `/chain/links/:id/decline` | `F2` | Cửa hàng từ chối lời mời → `TERMINATED`; báo chuỗi |
+| POST | `/chain/links/:id/leave` | `F2` | `{ reason }` — cửa hàng tự rời chuỗi → `TERMINATED`; ghi `audit_logs`, báo chuỗi |
 | GET · POST | `/internal-chat/conversations` | *(thành viên)* | GET: hội thoại mình tham gia. POST: tạo/lấy hội thoại; `orderId` của tổ chức khác hoặc `targetUserId` ngoài tổ chức/đối tác liên kết → 404 |
 | GET · POST | `/internal-chat/conversations/:id/messages` | *(người tham gia)* | Không phải người tham gia → 404 |
 | POST | `/internal-chat/messages/:id/action` | *(người tham gia)* | Bấm nút trên thẻ hành động |

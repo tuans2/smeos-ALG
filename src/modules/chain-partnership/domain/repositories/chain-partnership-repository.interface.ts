@@ -33,8 +33,10 @@ export interface IChainPartnershipRepository {
   }>
   findPartnershipById(id: string): Promise<ChainPartnershipEntity | null>
   updateStatus(id: string, status: PartnershipStatus): Promise<ChainPartnershipEntity>
-  /** Loại của tổ chức (`organizations.type`), `null` nếu không có — chỉ Chuỗi được liên kết cửa hàng có sẵn. */
-  findOrganizationType(orgId: string): Promise<string | null>
+  /** Loại + tên tổ chức, `null` nếu không có — chỉ Chuỗi được liên kết cửa hàng có sẵn. */
+  findOrganization(orgId: string): Promise<{ type: string; name: string } | null>
+  /** Liên kết hiện có của cặp chuỗi–cửa hàng (mọi trạng thái), `null` nếu chưa từng liên kết. */
+  findLinkStatus(chainOrgId: string, partnerOrgId: string): Promise<{ status: PartnershipStatus; validFrom: Date } | null>
   /**
    * Cửa hàng có sẵn theo slug hoặc email chủ tiệm, khớp CHÍNH XÁC. Không trả thông tin liên hệ của tổ chức kia
    * (audit hành trình C1): bên gọi là tổ chức khác.
@@ -49,5 +51,6 @@ export interface IChainPartnershipRepository {
     commissionRate?: number | undefined
     capacityDaily?: number | undefined
     contactName?: string | undefined
+    status?: "ACTIVE" | "PENDING" | undefined
   }): Promise<ChainPartnershipEntity>
 }

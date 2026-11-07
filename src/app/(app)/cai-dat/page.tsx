@@ -15,6 +15,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { SettingsLayout } from "@/components/layout/page-layout"
 import { PageHeader } from "@/components/ui/page-header"
 import { ModelChangeCard } from "@/components/organization/model-change-card"
+import { ChainLinkInvitationsCard } from "@/components/organization/chain-link-invitations-card"
 import { calculateReadinessScore } from "@/modules/field-platform/domain/readiness-score-engine"
 import { StorePaymentMethodsEditor } from "@/components/profiles/store-payment-methods-editor"
 import { PaymentPolicySection } from "@/components/profiles/payment-policy-section"
@@ -173,6 +174,9 @@ function CaiDatTiemContent() {
           <span>{error}</span>
         </div>
       )}
+      {/* Lời mời liên kết chuỗi — cửa hàng đồng ý / từ chối (UJ-10); tự ẩn khi không có */}
+      <ChainLinkInvitationsCard />
+
       {successMessage && (
         <div className="flex items-center gap-2 p-3 text-caption bg-success-bg text-primary border border-success-border rounded-xl">
           <CheckCircle2 size={15} />
