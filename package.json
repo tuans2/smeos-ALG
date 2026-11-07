@@ -29,7 +29,7 @@
     "check:tokens-doc": "tsx scripts/gen-design-tokens-doc.ts --check",
     "new:industry": "tsx scripts/new-industry.ts",
     "setup:hooks": "tsx scripts/setup-hooks.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node node_modules/typescript-7/lib/tsc.js --noEmit",
     "test": "vitest run --exclude 'tests/tenant/**' --exclude 'tests/platform/**' --exclude 'node_modules/**'",
     "test:harvest": "tsx --test tests/maChucNang.test.ts",
     "test:tenant": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}\" vitest run tests/tenant",
@@ -133,6 +133,7 @@
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
+    "typescript-7": "npm:typescript@^7.0.2",
     "vitest": "^5.0.5"
   }
 }
