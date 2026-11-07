@@ -40,6 +40,7 @@ import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resol
 import { sweepProductProposalsIfDue } from "@/modules/products/use-cases/sweep-product-proposals"
 import { scanStuckJobs } from "@/modules/jobs/use-cases/scan-stuck-jobs"
 import { sweepStorageLifecycle } from "@/modules/storage/use-cases/sweep-storage-lifecycle"
+import { runPiiBackfill } from "@/core/security/infra/pii-backfill"
 
 /** Kích thước một trang truy vấn — nhỏ để giới hạn bộ nhớ, lặp tới khi hết tập cần xử lý */
 const PAGE_SIZE = 50
@@ -315,6 +316,11 @@ export const POST = handle(async (request) => {
   const storageLifecycle = await sweepStorageLifecycle(now)
   // E5.3: khoá idempotent quá 30 ngày.
   const idempotencyKeysPurged = await purgeExpiredIdempotencyKeys(now).catch(() => null)
+  // ADR-014 P-5a: mã hoá theo lô cột cá nhân còn chữ rõ (dữ liệu cũ, lệnh ghi không rõ tổ chức)
+  const piiEncrypted = await runPiiBackfill().catch((error: unknown) => {
+    log.error("chain_dispatch_sweep.pii_backfill_failed", { error: error instanceof Error ? error.message : String(error) })
+    return null
+  })
 
   return jsonResponse({
     ok: true,
@@ -326,6 +332,7 @@ export const POST = handle(async (request) => {
     stuckJobsFailed,
     storageLifecycle,
     idempotencyKeysPurged,
+    piiEncrypted,
     complete: sweep.complete,
     productProposals: productProposals ?? undefined,
     sentDetails: sentDetails.length > 0 ? sentDetails.slice(0, MAX_REPORTED) : undefined,

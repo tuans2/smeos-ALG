@@ -15,7 +15,7 @@ export const DOMAINS = [
     "role_capabilities", "capability_overrides", "custom_domains", "business_profiles", "idempotency_keys",
   ]],
   ["Nền tảng và quản trị theo tầng", [
-    "platform_operators", "platform_role_capabilities", "platform_settings", "platform_secrets", "platform_audit_logs",
+    "platform_operators", "platform_role_capabilities", "platform_settings", "platform_secrets", "tenant_data_keys", "platform_audit_logs",
     "platform_access_logs", "decision_registry", "governance_decisions", "audit_logs", "reconciliation_findings",
   ]],
   ["Khách hàng và bán hàng", [

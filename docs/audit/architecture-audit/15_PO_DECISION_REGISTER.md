@@ -69,6 +69,7 @@
 | D-62 | Khách tiềm năng `PROSPECT` (07/11/2026) | **Chỉ người nhận link Thẻ chào có SĐT mà chưa đặt đơn** — ẩn khỏi danh sách/xuất/phân khúc; đặt đơn, để lại lead hay được tạo tay thì thành khách thường (cùng hồ sơ). Lead vẫn tạo khách thường như trước; khách cũ giữ nguyên | ADR-014 D-P2, bước P-2 (duyệt schema cùng ngày) |
 | D-63 | Người nhận và VAT của đơn (07/11/2026) | **P-3 chia ba bước** (P-3a bảng + backfill + ghi kép, P-3b chuyển đọc, P-3c bỏ nơi cũ); **gồm cả thông tin hoá đơn VAT** — mọi dữ liệu cá nhân của đơn ở `order_recipients` | ADR-014 D-P2, bước P-3 (duyệt schema P-3a cùng ngày) |
 | D-64 | Chia sẻ đơn gia công (07/11/2026) | **Làm ngay** (P-4): quyền xem đơn của chi nhánh ở `shared_order_access`; chi nhánh làm đơn còn **7 ngày** sau khi đơn đóng; chi nhánh được mời **mất quyền ngay** khi hết vòng / chi nhánh khác nhận; tin mời Telegram/Zalo **chỉ ghi khu vực** | ADR-014 D-P6, bước P-4 |
+| D-65 | Mã hoá dữ liệu cá nhân (07/11/2026) | **Phạm vi A**: dữ liệu của khách cuối (khách, lead, link Thẻ chào, người nhận + VAT của đơn, SĐT shipper); **khoá chủ `PII_ENCRYPTION_KEY`** ở Render, người vận hành tạo và sao lưu; tìm khách theo **4 số cuối hoặc đủ số**; **chia 3 PR** (P-5a/b/c) | ADR-014 D-P3, bước P-5 |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 

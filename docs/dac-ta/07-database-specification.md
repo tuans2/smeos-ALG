@@ -4130,6 +4130,46 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 51. Mã hoá cột dữ liệu cá nhân — `tenant_data_keys`, cột `*_enc` / `*_hash` / `*_last4` (07/11/2026)
+
+ADR-014 D-P3, bước **P-5a** (expand). PO duyệt 07/11/2026 (D-65): phạm vi A — dữ liệu của khách cuối; khoá chủ
+`PII_ENCRYPTION_KEY`; tìm khách theo 4 số cuối hoặc đủ số; chia 3 PR (P-5a cột + ghi kép + job, P-5b đọc và tra cứu, P-5c
+bỏ cột rõ). Migration `20261107220000_pii_encryption_expand`.
+
+```prisma
+model tenant_data_keys {
+  id              String    @id @default(uuid())
+  organization_id String
+  version         Int
+  wrapped_key     String
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  retired_at      DateTime? @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, version])
+  @@index([organization_id])
+}```
+
+- Cột thêm (đều `String?`): `customers.phone_enc` `phone_hash` `phone_last4` `email_enc` `address_enc` `notes_enc`;
+  `leads.phone_enc` `phone_hash` `phone_last4` `message_enc`; `greeting_sessions.customer_phone_enc`
+  `customer_phone_hash` `customer_phone_last4`; `order_recipients.recipient_phone_enc` `address_line_enc` `address_parts_enc`
+  (JSON đã mã hoá) `vat_company_name_enc` `vat_tax_code_enc` `vat_company_address_enc` `vat_email_enc`;
+  `order_coordinations.shipper_phone_enc`. Index `(organization_id, phone_hash)` ở `customers`, `leads`, `greeting_sessions`
+  (`customer_phone_hash`), `(organization_id, phone_last4)` ở `customers`. Sổ cột: `src/core/security/pii-fields.ts`.
+- Mã hoá (`src/core/security/pii-cipher.ts`): AES-256-GCM qua `node:crypto`; bản mã `pii1.<phiên bản khoá>.<iv>.<tag>.<ct>`;
+  khoá dữ liệu 32 byte ngẫu nhiên mỗi tổ chức, lưu ở `tenant_data_keys` dạng bọc bằng khoá chủ (`v1.<iv>.<tag>.<ct>`).
+  `phone_hash` = HMAC-SHA256 số đã chuẩn hoá (chỉ chữ số, +84/84 → 0), khoá HKDF từ khoá chủ theo tổ chức; số không có chữ
+  số → chuỗi rỗng. `phone_last4` dạng rõ. Tên khách không mã hoá.
+- Ghi kép (`src/core/security/infra/pii-write.ts`, extension của client Prisma): mọi `create`/`update`/`upsert`/`*Many`
+  vào cột rõ của sổ → ghi kèm bản mã/băm cùng lệnh. Tổ chức lấy từ dữ liệu, `where`, dòng đang sửa hoặc ngữ cảnh tổ chức;
+  không xác định được → bản mã `null` (không bao giờ lệch chữ rõ), job xử lý sau.
+- Dữ liệu cũ: `encryptPendingPii` (`src/core/security/infra/pii-backfill.ts`) — lượt quét nền 5 phút
+  (`/api/v1/internal/chain-dispatch-sweep`, trường `piiEncrypted`, 200 dòng mỗi bảng) và `npm run pii:backfill` (runbook §14).
+- Production chưa đặt khoá chủ → chưa mã hoá, log `pii.encryption_disabled`. Ở P-5a mọi chỗ đọc vẫn đọc cột rõ.
+
+Ca thử: `tests/tenant/pii-encryption.test.ts`, `src/core/security/__tests__/pii-cipher.test.ts`.
+
 ## 50. Quyền xem đơn của chi nhánh gia công — `shared_order_access` (07/11/2026)
 
 ADR-014 D-P6, bước **P-4**. PO duyệt 07/11/2026 (D-64): làm ngay; chi nhánh làm đơn còn quyền **7 ngày** sau khi đơn

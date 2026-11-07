@@ -33,6 +33,7 @@ Bốn biến bắt buộc để app khởi động (`src/lib/env.ts`) do bluepri
 | Theo dõi lỗi | `SENTRY_DSN`, `SENTRY_ENVIRONMENT` — đặt ở **cả** `smeos-web` và 3 worker | không gửi lỗi lên Sentry, chỉ còn log JSON |
 | Dữ liệu mẫu | `SEED_DEV_DATA` = `"false"` trên production | để `"true"` sẽ nạp tài khoản demo có mật khẩu cố định — **không bật trên production** |
 | Cách ly CSDL | `DB_RLS_MODE` = `off` · `audit` · `enforce` — đặt ở `smeos-web` và 3 worker (blueprint: `audit`) | thiếu = `off`: không đặt ngữ cảnh tổ chức, RLS không chặn; xem §12 |
+| Mã hoá dữ liệu cá nhân | `PII_ENCRYPTION_KEY` — 32 byte base64, **chỉ** ở `smeos-web`, người vận hành tự tạo và sao lưu (§14) | P-5a: chưa mã hoá, log `pii.encryption_disabled`; từ P-5b là bắt buộc |
 | Tên miền riêng | `RENDER_API_KEY` (bí mật, `sync: false`), `RENDER_SERVICE_ID` (mã dịch vụ `smeos-web`, dạng `srv-…`), `CUSTOM_DOMAIN_TARGET` (máy chủ cửa hàng trỏ CNAME về, mặc định lấy từ `RENDER_EXTERNAL_URL`) — chỉ ở `smeos-web` | thiếu khoá: cửa hàng vẫn xác minh được, tên miền ghi `MANUAL`, vận hành thêm tay; xem §13 |
 
 Zalo OA của **từng tiệm** (chat bán hàng) không dùng biến môi trường: tiệm nhập OA ID, App ID, Secret Key, Access Token trong *Hội thoại → Kênh tích hợp*.
@@ -193,4 +194,24 @@ deploy lại. Thiếu khoá: trạng thái chứng chỉ ghi `MANUAL` — vận 
 **Khoá tên miền** (giả mạo, khiếu nại thương hiệu): Console → tổ chức → Tên miền riêng → ghi lý do → "Khoá" (`N20`). Tên miền ngừng
 phục vụ ngay ở instance đang xử lý, các instance khác trong tối đa 60 giây. Cửa hàng không tự gỡ hay xác minh lại được. "Mở lại" →
 tên miền về "Chờ xác minh", cửa hàng bấm "Kiểm tra" lại.
+
+## 14. Khoá mã hoá dữ liệu cá nhân — `PII_ENCRYPTION_KEY` (ADR-014 P-5, 07/11/2026)
+
+Số điện thoại, email, địa chỉ, ghi chú của khách cuối (khách hàng, lead, link Thẻ chào, người nhận và hoá đơn VAT của đơn, SĐT
+shipper) được mã hoá ở tầng ứng dụng. Khoá chủ chỉ nằm ở biến môi trường; mỗi tổ chức có khoá dữ liệu riêng lưu trong
+`tenant_data_keys` dạng đã bọc bằng khoá chủ.
+
+**Mất khoá chủ = mất toàn bộ dữ liệu đã mã hoá, không khôi phục được.** Lộ khoá chủ cùng bản sao CSDL = lộ dữ liệu.
+
+1. Tạo khoá trên máy tin cậy: `openssl rand -base64 32` (44 ký tự). Không dán vào chat, ticket, log.
+2. Lưu khoá vào kho bí mật của công ty (ít nhất hai người giữ quyền mở) **trước** khi đặt lên Render.
+3. Render → `smeos-web` → Environment → `PII_ENCRYPTION_KEY` = khoá vừa tạo → Save (dịch vụ khởi động lại). Không đặt ở worker:
+   worker không giải mã.
+4. Sau khi web chạy lại: Render → `smeos-web` → Shell → `npm run pii:backfill`. Lệnh mã hoá theo lô 500 dòng mỗi bảng tới khi in
+   `xong`; chỉ in số dòng. Phần phát sinh sau đó do lượt quét nền 5 phút (`/internal/chain-dispatch-sweep`, trường `piiEncrypted`).
+5. Kiểm: log không còn `pii.encryption_disabled`; trên bản sao CSDL, `SELECT count(*) FROM customers WHERE phone_enc IS NULL` = 0.
+6. Không đổi khoá chủ khi chưa có quy trình xoay khoá (bọc lại `tenant_data_keys`): đổi biến là các khoá dữ liệu đã bọc không mở
+   được nữa.
+
+Dựng lại môi trường từ bản sao lưu CSDL: phải đặt **đúng** khoá chủ cũ. Blueprint cố ý không `generateValue` biến này.
 

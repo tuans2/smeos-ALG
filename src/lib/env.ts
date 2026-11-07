@@ -35,6 +35,9 @@ const schema = z.object({
   // cùng lý do đã ghi ở INTEGRATION_TOKEN_SECRET — ba khoá, ba vòng đời xoay
   // độc lập.
   SSO_SESSION_SECRET: z.string().min(16),
+  // ADR-014 P-5a: khoá chủ mã hoá cột dữ liệu cá nhân (32 byte base64). Thiếu ở production → chưa mã hoá (P-5a, có
+  // cảnh báo); ngoài production dẫn xuất khoá thử từ SESSION_SECRET. Đọc ở `src/core/security/pii-cipher.ts`.
+  PII_ENCRYPTION_KEY: z.string().optional(),
   // Khoá ký URL kho tệp (`/api/v1/storage/...`, SDAGF D-07). Tách khỏi
   // SESSION_SECRET để xoay độc lập; thiếu thì lùi về SESSION_SECRET.
   STORAGE_SIGNING_SECRET: z.string().min(16).optional(),

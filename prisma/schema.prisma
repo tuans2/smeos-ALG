@@ -181,6 +181,7 @@ model organizations {
   platform_access_logs                             platform_access_logs[]
   order_recipients                                 order_recipients[]
   shared_order_access                              shared_order_access[]
+  tenant_data_keys                                 tenant_data_keys[]
   business_profile                                 business_profiles?
   brand_profile                                    brand_profiles?
   products                                         products[]
@@ -2039,28 +2040,49 @@ model orders {
 /// `orders.vat_*` vẫn ghi và vẫn được đọc; đọc chuyển sang bảng này ở P-3b, bỏ nơi cũ ở P-3c. Ghi qua
 /// `upsertOrderRecipient` (`src/modules/orders/infra/order-recipient-repository.ts`).
 model order_recipients {
-  organization_id     String
-  order_id            String   @id // một dòng mỗi đơn
+  organization_id         String
+  order_id                String   @id // một dòng mỗi đơn
   /// @pii identity
-  recipient_name      String?
+  recipient_name          String?
   /// @pii contact
-  recipient_phone     String?
+  recipient_phone         String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `recipient_phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii contact
+  recipient_phone_enc     String?
   /// Dòng địa chỉ giao đầy đủ (như `formatDeliveryAddress`, null = chưa có / "Theo thỏa thuận").
   /// @pii address
-  address_line        String?
+  address_line            String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `address_line` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii address
+  address_line_enc        String?
   /// 5 ô địa chỉ (`AddressParts`) hoặc phường/quận/tỉnh của đơn nhập phẳng.
   /// @pii address
-  address_parts       Json?
+  address_parts           Json?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `address_parts` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii address
+  address_parts_enc       String?
   /// @pii tax
-  vat_company_name    String?
+  vat_company_name        String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `vat_company_name` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
   /// @pii tax
-  vat_tax_code        String?
+  vat_company_name_enc    String?
   /// @pii tax
-  vat_company_address String?
+  vat_tax_code            String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `vat_tax_code` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
   /// @pii tax
-  vat_email           String?
-  created_at          DateTime @default(now()) @db.Timestamptz(3)
-  updated_at          DateTime @updatedAt @db.Timestamptz(3)
+  vat_tax_code_enc        String?
+  /// @pii tax
+  vat_company_address     String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `vat_company_address` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii tax
+  vat_company_address_enc String?
+  /// @pii tax
+  vat_email               String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `vat_email` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii tax
+  vat_email_enc           String?
+  created_at              DateTime @default(now()) @db.Timestamptz(3)
+  updated_at              DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
   order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
@@ -2091,6 +2113,24 @@ model shared_order_access {
 
   @@unique([order_id, branch_key])
   @@index([organization_id, branch_key])
+}
+
+/// ADR-014 D-P3, bước P-5a (PO duyệt 07/11/2026): khoá dữ liệu mã hoá cột cá nhân của một tổ chức, đã bọc bằng khoá chủ
+/// `PII_ENCRYPTION_KEY` (biến môi trường, không ở CSDL). Xoá khoá của tổ chức = dữ liệu cá nhân của tổ chức không giải
+/// được nữa. `version` ghi trong từng bản mã để xoay khoá theo lô.
+model tenant_data_keys {
+  id              String    @id @default(uuid())
+  organization_id String
+  version         Int
+  /// Khoá 32 byte bọc AES-256-GCM bằng khoá chủ (`v1.<iv>.<tag>.<ct>`)
+  wrapped_key     String
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  retired_at      DateTime? @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, version])
+  @@index([organization_id])
 }
 
 enum shared_order_access_level {
@@ -2194,10 +2234,25 @@ model customers {
   name              String
   /// @pii contact
   phone             String
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii contact
+  phone_enc         String?
+  /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
+  /// @pii contact
+  phone_hash        String?
+  /// P-5a: 4 số cuối dạng rõ — ô tìm kiếm (PO D-49)
+  /// @pii contact
+  phone_last4       String?
   /// @pii contact
   email             String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `email` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii contact
+  email_enc         String?
   /// @pii address
   address           String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `address` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii address
+  address_enc       String?
   tier              customer_tier   @default(NEW)
   /// ADR-014 D-P2, P-2 (PO 07/11/2026): PROSPECT = người nhận link Thẻ chào có SĐT mà chưa đặt đơn — không hiện ở
   /// danh sách khách, xuất, phân khúc; đặt đơn, để lại lead hay được tạo tay thì thành ACTIVE.
@@ -2207,6 +2262,9 @@ model customers {
   /// chi nhánh mình và khách dùng chung.
   branch_id         String?
   notes             String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `notes` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii free_text
+  notes_enc         String?
   tags              String[]        @default([])
   preferred_flowers String[]        @default([])
   preferred_colors  String[]        @default([])
@@ -2241,6 +2299,8 @@ model customers {
   @@index([organization_id, status])
   @@index([organization_id, branch_id])
   @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([organization_id, phone_hash]) // P-5a: khớp đúng số (P-5c thay ràng buộc duy nhất theo `phone`)
+  @@index([organization_id, phone_last4])
 }
 
 model customer_occasions {
@@ -3341,6 +3401,9 @@ model order_coordinations {
   shipper_name          String?
   /// @pii contact
   shipper_phone         String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `shipper_phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii contact
+  shipper_phone_enc     String?
   carrier               String?
   /// PICKED_UP · ON_THE_WAY · DELIVERED_SUCCESS · DELIVERY_FAILED (F12).
   delivery_state        String?
@@ -3689,6 +3752,15 @@ model greeting_sessions {
   customer_name                  String?
   /// @pii contact
   customer_phone                 String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `customer_phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii contact
+  customer_phone_enc             String?
+  /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
+  /// @pii contact
+  customer_phone_hash            String?
+  /// P-5a: 4 số cuối dạng rõ — ô tìm kiếm (PO D-49)
+  /// @pii contact
+  customer_phone_last4           String?
   /// ADR-014 D-P2, P-2: hồ sơ khách cùng tổ chức (khách của đơn, hoặc khách PROSPECT theo SĐT trên link). Giai đoạn ghi
   /// kép: `customer_name`/`customer_phone` vẫn ghi; link chỉ có tên (không SĐT) thì để trống.
   customer_id                    String?
@@ -3731,6 +3803,7 @@ model greeting_sessions {
   @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([selected_product_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([organization_id, customer_phone_hash])
 }
 
 /// Tích hợp ngoài của Thẻ chào theo tiệm: webhook đối soát ngân hàng + kênh
@@ -4410,7 +4483,19 @@ model leads {
   name               String
   /// @pii contact
   phone              String
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii contact
+  phone_enc          String?
+  /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
+  /// @pii contact
+  phone_hash         String?
+  /// P-5a: 4 số cuối dạng rõ — ô tìm kiếm (PO D-49)
+  /// @pii contact
+  phone_last4        String?
   message            String?
+  /// ADR-014 P-5a: bản mã AES-256-GCM của `message` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// @pii free_text
+  message_enc        String?
   source             String // CATALOG_LINK | SHORT_LINK | LANDING | CHAT | MANUAL
   source_ref         String? // slug catalog hoặc mã link
   short_link_id      String?
@@ -4448,6 +4533,7 @@ model leads {
   @@index([converted_order_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([short_link_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([organization_id, phone_hash])
 }
 
 // Link/QR động: in một lần, đổi đích sau; mỗi điểm đặt (quầy, tờ rơi…) một mã để

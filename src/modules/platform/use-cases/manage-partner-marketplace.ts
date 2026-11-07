@@ -26,11 +26,19 @@ export type MarketplaceDeps = {
   env: Readonly<Record<string, string | undefined>>
 }
 
+/**
+ * Kho tệp và Google dựng khi dùng tới: nhập Excel / đồng bộ Sheet chỉ ghi DB, nên không hỏng
+ * theo cấu hình kho (production thiếu `STORAGE_*` → `getStorageProvider()` ném lỗi).
+ */
 function defaultDeps(): MarketplaceDeps {
   return {
     repo: getPartnerMarketplaceRepository(),
-    storage: getStorageProvider(),
-    google: getGoogleWorkspaceClient(),
+    get storage() {
+      return getStorageProvider()
+    },
+    get google() {
+      return getGoogleWorkspaceClient()
+    },
     audit: recordPlatformAuditLog,
     env: process.env,
   }

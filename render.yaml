@@ -73,6 +73,11 @@ services:
         generateValue: true
       - key: INTEGRATION_TOKEN_SECRET
         generateValue: true
+      # ADR-014 P-5a (PO 07/11/2026): khoá chủ mã hoá cột dữ liệu cá nhân của khách — 32 byte base64
+      # (`openssl rand -base64 32`). Người vận hành tự tạo, tự đặt và SAO LƯU ở kho bí mật: mất khoá = mất dữ liệu.
+      # Không dùng generateValue: dựng lại blueprint sẽ sinh khoá khác. Runbook: docs/handover/OPERATIONS_RUNBOOK.md §14.
+      - key: PII_ENCRYPTION_KEY
+        sync: false
       # Khoá ký URL kho tệp, tách khỏi SESSION_SECRET (SDAGF D-07).
       - key: STORAGE_SIGNING_SECRET
         generateValue: true
