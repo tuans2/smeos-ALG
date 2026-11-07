@@ -47,6 +47,8 @@ describe("hợp đồng — Console Vận hành Nền tảng: cấu hình", () =
     await prisma.field_definitions.create({
       data: { key: "customerPhone", entity: "ORDER", origin: "CORE", data_type: "PHONE", label: "SĐT người mua", requirement: "REQUIRED", required_at_stage: "INTAKE", sensitivity: "PII", status: "ACTIVE" },
     })
+    // Bảng cấp nền tảng — `resetDatabase` không dọn: xoá danh mục thử của lần chạy trước rồi tạo lại
+    await prisma.field_catalogs.deleteMany({ where: { key: "kenh_ban" } })
     await prisma.field_catalogs.create({ data: { key: "kenh_ban", label: "Kênh bán", governance: "OPEN" } })
     await expectContract(await listFields(get("/fields?entity=ORDER")), 200, R.fieldsResponse, "fields")
     await expectContract(await patchField(send("/fields", "PATCH", { key: "customerPhone", label: "Số điện thoại người mua" })), 200, R.fieldResponse, "field")
