@@ -232,3 +232,7 @@ Migration tự kiểm lại hai điều trên; thiếu thì dừng, không đổ
 hoá dòng bản cũ ghi trong lúc deploy. Từ đây thiếu `PII_ENCRYPTION_KEY` thì mọi thao tác ghi/đọc dữ liệu cá nhân báo lỗi
 `PiiKeyRequiredError`. Quay lại bản trước (Rollback trên Render) vẫn được: cột `*_enc` còn bản sao bản mã tới P-5d.
 
+**Trước khi merge P-5d-1** (ngừng ghi `*_enc`): P-5c đã chạy ổn và `npm run pii:backfill` in 0 ở mọi bảng. Sau P-5d-1 không
+quay lại bản P-5b được nữa (bản P-5b đọc `*_enc`, dòng ghi mới để trống); quay lại bản P-5c vẫn được. P-5d-2 (xoá cột) chỉ
+merge sau khi P-5d-1 đã deploy.
+

@@ -62,7 +62,7 @@ describe("mã hoá cột dữ liệu cá nhân — lưu bản mã", () => {
     const ra = await stored("customers", ca.id, ["phone", "phone_enc", "email", "address", "notes", "phone_hash", "phone_last4"])
     const rb = await stored("customers", cb.id, ["phone_hash"])
     expect(JSON.stringify(ra)).not.toMatch(/0912345678|lan@vi-du|Lê Lợi|Thích hồng/)
-    expect(ra.phone_enc).toBe(ra.phone) // bản sao cho quay lại P-5b
+    expect(ra.phone_enc).toBeNull() // P-5d-1: không còn ghi bản sao `*_enc` (cột `@ignore`, xoá ở P-5d-2)
     expect(await open(a.organizationId, ra.phone)).toBe("0912345678")
     expect(await open(a.organizationId, ra.email)).toBe("lan@vi-du.test")
     expect(await open(a.organizationId, ra.address)).toBe("1 Lê Lợi")

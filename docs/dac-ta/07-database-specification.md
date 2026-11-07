@@ -4198,7 +4198,8 @@ model tenant_data_keys {
   - Chính cột cá nhân chứa bản mã (`customers.phone`, `email`, `address`, `notes`; `leads.phone`, `message`;
     `greeting_sessions.customer_phone`; `order_recipients.*` của sổ — `address_parts` là chuỗi JSON bản mã;
     `order_coordinations.shipper_phone`). Migration chép `*_enc` đè lên cột rõ, giữ `*_enc` làm bản sao (bản đang chạy lúc
-    deploy đọc `*_enc` nên không lỗi; Rollback về P-5b được). Bỏ `*_enc` ở P-5d.
+    deploy đọc `*_enc` nên không lỗi; Rollback về P-5b được). Bỏ `*_enc` ở P-5d: P-5d-1 ngừng ghi và đánh `@ignore` (client
+    không còn cột, CSDL vẫn còn), P-5d-2 xoá cột — tách hai lần deploy vì migration chạy lúc bản cũ còn phục vụ.
   - Chốt trước khi đè (khối `P5C-VERIFY`): mọi giá trị khác null đã có bản mã `pii1.` (và số đã có băm), không có hai khách
     cùng `phone_hash` trong một tổ chức; sai → `RAISE`, cả giao dịch cuộn lại (runbook §14).
   - Ràng buộc: `customers @@unique([organization_id, phone_hash])` thay `(organization_id, phone)`; index lead
@@ -4211,7 +4212,7 @@ model tenant_data_keys {
   - Đọc: giá trị không có dạng bản mã (SQL thô, bản cũ ghi lúc deploy) trả nguyên, job mã hoá sau; bản mã không giải được
     → lỗi (không trả rỗng).
   - Tra cứu chỉ theo băm/4 số cuối; nhánh "dòng chưa băm khớp theo cột rõ" đã bỏ. Riêng đơn của khách còn khớp
-    `metadata.customerPhone` của đơn điều phối chưa qua job (bỏ ở P-5d).
+    `metadata.customerPhone` của đơn điều phối chưa qua job (bỏ ở P-5d-2).
   - Chặn lọc/sắp xếp/`distinct`/`groupBy` theo cột cá nhân (`src/core/security/infra/pii-guard.ts`, cả `AND`/`OR`/`NOT` và
     bộ lọc quan hệ; so với `null` được) → `PiiFilterError`.
 
