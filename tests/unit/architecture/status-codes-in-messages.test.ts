@@ -13,6 +13,7 @@ const FILES = [
   "src/modules/products/use-cases/reject-analysis.ts",
   "src/modules/products/use-cases/edit-analysis.ts",
   "src/modules/sales/use-cases/convert-quotation-to-order.use-case.ts",
+  "src/modules/sales/use-cases/send-quotation.use-case.ts",
   "src/modules/coordinator/domain/stage-transitions.ts",
 ]
 

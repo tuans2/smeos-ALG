@@ -5,6 +5,8 @@ import { createTenant, type Tenant } from "../helpers/fixtures"
 import { createCatalogLink } from "@/modules/catalog-links/use-cases/create-catalog-link"
 import { captureCatalogLead } from "@/modules/acquisition/use-cases/capture-lead"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
+import { cancelOrder } from "@/modules/orders/use-cases/cancel-order"
+import { sendToCoordination } from "@/modules/orders/infra/coordination-handoff"
 
 /**
  * Cổng nhận đơn chung — lead → đơn (`KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §3.3, §4).
@@ -31,7 +33,7 @@ describe("cách ly tenant — cổng nhận đơn chung và lead → đơn", () 
     await disconnectDatabase()
   })
 
-  it("lead cùng tổ chức thành đơn: đơn nhớ lead + nguồn + sale, lead chuyển WON và nhớ đơn", async () => {
+  it("lead cùng tổ chức thành đơn: đơn nhớ lead + nguồn + sale, lead nhớ đơn nhưng CHƯA chốt (UJ-13)", async () => {
     const order = await ingestOrder(a.ctx, { source: "CATALOG", items, leadId, ownerSaleId: a.userId })
     const row = await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })
     expect(row.organization_id).toBe(a.organizationId)
@@ -40,8 +42,28 @@ describe("cách ly tenant — cổng nhận đơn chung và lead → đơn", () 
     expect(row.owner_sale_id).toBe(a.userId)
     expect(row.workflow).toBe("LEGACY")
     const lead = await prisma.leads.findUniqueOrThrow({ where: { id: leadId } })
-    expect(lead.status).toBe("WON")
+    // Đơn nháp chưa thu tiền chưa phải "Đã chốt" (UQ4) — chốt khi tiền về / duyệt giao trước
+    expect(lead.status).toBe("NEW")
     expect(lead.converted_order_id).toBe(order.id)
+  })
+
+  it("đơn chuyển sang Điều phối (tiền về / duyệt giao trước) → lead WON (UJ-13)", async () => {
+    const order = await ingestOrder(a.ctx, { source: "CATALOG", items, leadId })
+    await prisma.$transaction((tx) => sendToCoordination(tx, a.ctx, { id: order.id, source: "CATALOG", status: "CONFIRMED" }, "Đã xác nhận tiền"))
+    expect((await prisma.leads.findUniqueOrThrow({ where: { id: leadId } })).status).toBe("WON")
+  })
+
+  it("huỷ đơn → lead về Theo dõi, gỡ liên kết và gắn được đơn mới (UJ-13)", async () => {
+    const order = await ingestOrder(a.ctx, { source: "CATALOG", items, leadId })
+    await prisma.$transaction((tx) => sendToCoordination(tx, a.ctx, { id: order.id, source: "CATALOG", status: "CONFIRMED" }, "Đã xác nhận tiền"))
+    const manager = { ...a.ctx, capabilities: new Set([...a.ctx.capabilities, "R6"]) }
+    await cancelOrder(manager, order.id, "Khách đổi ý")
+
+    const lead = await prisma.leads.findUniqueOrThrow({ where: { id: leadId } })
+    expect(lead.status).toBe("FOLLOW_UP")
+    expect(lead.converted_order_id).toBeNull()
+    const again = await ingestOrder(a.ctx, { source: "CATALOG", items, leadId })
+    expect((await prisma.leads.findUniqueOrThrow({ where: { id: leadId } })).converted_order_id).toBe(again.id)
   })
 
   it("tổ chức khác gắn lead của A → 404, không tạo đơn, lead A không đổi", async () => {

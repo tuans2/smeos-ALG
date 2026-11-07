@@ -5,6 +5,7 @@
 
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { Prisma } from "@/generated/prisma/client"
+import { markLeadWonForOrder } from "./order-lead-link"
 
 export async function sendToCoordination(
   tx: Prisma.TransactionClient,
@@ -18,6 +19,8 @@ export async function sendToCoordination(
     update: {},
   })
   await tx.orders.update({ where: { id: order.id }, data: { workflow: "STANDARD" } })
+  // Tiền về / duyệt giao trước = khách đã chốt thật (UJ-13)
+  await markLeadWonForOrder(tx, ctx.organizationId, order.id)
   await tx.order_events.create({
     data: { organization_id: ctx.organizationId, order_id: order.id, axis: "order", from_value: order.status, to_value: order.status, actor_id: ctx.userId, reason },
   })

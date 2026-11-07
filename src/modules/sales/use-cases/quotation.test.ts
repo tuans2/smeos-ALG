@@ -201,6 +201,15 @@ describe("Quotation Use-Cases", () => {
     expect(list.counts.DRAFT).toBe(2)
   })
 
+  it("updateQuotationUseCase: khách từ chối → lead gắn báo giá về Theo dõi (UJ-13)", async () => {
+    const repo = createInMemoryQuotationRepo()
+    const created = await createQuotationUseCase(fakeCtx, { leadId: "lead-1", items: [{ name: "Món 1", qty: 1, unitPrice: 100000 }] }, repo)
+    await repo.update(fakeCtx, created.id, { status: "SENT" })
+    const updateLeadFn = vi.fn(async () => undefined)
+    await updateQuotationUseCase(fakeCtx, created.id, { status: "REJECTED" }, repo, { add: async () => undefined }, updateLeadFn)
+    expect(updateLeadFn).toHaveBeenCalledWith(fakeCtx, "lead-1", "FOLLOW_UP")
+  })
+
   it("getQuotationUseCase: tự động chuyển EXPIRED khi quá hạn", async () => {
     const repo = createInMemoryQuotationRepo()
     const created = await createQuotationUseCase(
