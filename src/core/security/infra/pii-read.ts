@@ -39,6 +39,19 @@ function decryptField(row: Row, field: string, spec: PiiFieldSpec): unknown {
   return spec.json && plain !== raw && typeof plain === "string" ? JSON.parse(plain) : plain
 }
 
+/**
+ * Bản giải mã các cột cá nhân có trong một dòng thô của `model` (cần `organization_id` trên dòng). Dùng trong query
+ * extension đọc kết quả lồng trước khi Prisma áp `result` extension (vd. `orders` ghép `recipient` vào `delivery_address`).
+ */
+export function decryptPiiRow<T>(model: PiiModel, row: T): T {
+  if (!row || typeof row !== "object" || typeof (row as Row).organization_id !== "string") return row
+  const out: Row = { ...(row as Row) }
+  for (const [field, spec] of Object.entries(PII_FIELDS[model] as Record<string, PiiFieldSpec>)) {
+    if (field in out) out[field] = decryptField(out, field, spec)
+  }
+  return out as T
+}
+
 /** Khai báo `result` extension cho mọi cột trong `PII_FIELDS` và khoá Json tách cột (`PII_JSON_KEYS`). */
 export function piiResultExtension(): Record<string, Computed> {
   const out: Record<string, Computed> = {}
