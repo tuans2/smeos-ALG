@@ -21,6 +21,7 @@ import { useAnnounce } from "@/components/ui/live-region"
 import { tenTinhNang } from "@/lib/feature-labels"
 import { StoreManagerActionItemsCard, type DraftOrder } from "./store-manager-action-items-card"
 import { PageHeader } from "@/components/ui/page-header"
+import { fetchPendingApprovalCount } from "./pending-approval-count"
 
 type Job = {
   id: string
@@ -82,11 +83,12 @@ export function StoreGrowthCenter() {
     setLoading(true)
     setError(null)
     try {
-      const [dsJobs, dsSanPham, mucDung, dsDonHang] = await Promise.all([
+      const [dsJobs, dsSanPham, mucDung, dsDonHang, soChoDuyet] = await Promise.all([
         layJson<Job[]>("/api/v1/jobs").catch(() => [] as Job[]),
         layJson<Product[]>("/api/v1/products?limit=5").catch(() => [] as Product[]),
         layJson<UsageSummary>("/api/v1/usage/summary").catch(() => null),
         layJson<{ items: DraftOrder[] }>("/api/v1/orders?status=DRAFT&limit=5").catch(() => ({ items: [] })),
+        fetchPendingApprovalCount(),
       ])
 
       const validJobs = dsJobs ?? []
@@ -97,9 +99,8 @@ export function StoreGrowthCenter() {
       const fJobs = validJobs.filter((j) => j.status === "FAILED")
       setFailedJobs(fJobs)
 
-      const pApprovals = validJobs.filter(
-        (j) => j.status === "COMPLETED" && j.stage === "NEEDS_APPROVAL"
-      ).length
+      // Cùng nguồn với màn Duyệt — trước đây đếm job `NEEDS_APPROVAL` (không bao giờ có) nên luôn 0 (UJ-07)
+      const pApprovals = soChoDuyet ?? 0
       setPendingApprovals(pApprovals)
 
       const dOrders = dsDonHang?.items ?? []

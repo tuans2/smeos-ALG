@@ -3,8 +3,10 @@ import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import {
+  APPROVAL_STATE_LABELS,
   canEditAnalysis,
   missingKeysInEdit,
+  type ApprovalState,
 } from "@/modules/products/domain/product-analysis-rules"
 import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
 
@@ -29,7 +31,7 @@ export async function editAnalysis(
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
   if (!canEditAnalysis(current.approval_state)) {
-    throw conflict(`Đã ở trạng thái ${current.approval_state}, không sửa được nữa`)
+    throw conflict(`Bản phân tích đang ở trạng thái "${APPROVAL_STATE_LABELS[current.approval_state as ApprovalState]}", không sửa được nữa`)
   }
 
   const thieu = missingKeysInEdit(current.raw as Record<string, unknown>, edited)

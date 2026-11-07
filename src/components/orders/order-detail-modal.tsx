@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog } from "@/components/ui/dialog"
 import { FloristTicketCard } from "@/components/templates/orders/florist-ticket-card"
 import { DeliveryReceiptCard } from "@/components/templates/orders/delivery-receipt-card"
+import { formatDeliveryWindow } from "./order-ticket-format"
 import { OrderCancelDialog } from "./order-cancel-dialog"
 import { OrderActionButtons } from "./order-action-buttons"
 import { OrderInfoRequests } from "./order-info-requests"
@@ -284,7 +285,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   orderCode={order.code}
                   productName={productNameText}
                   sampleImageUrl={sampleImg}
-                  deadlineTime={`${order.deliveryWindow?.date} (${order.deliveryWindow?.timeSlot})`}
+                  deadlineTime={formatDeliveryWindow(order.deliveryWindow)}
                   floristName="Thợ chế tác hoa xưởng"
                   items={floristItems}
                   wrapStyle={wrapStyleText}
@@ -305,9 +306,8 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   recipientName={order.deliveryAddress?.recipientName ?? "Khách nhận"}
                   recipientPhone={order.deliveryAddress?.phone ?? "—"}
                   deliveryAddress={order.deliveryAddress?.street ?? "—"}
-                  deliveryTime={`${order.deliveryWindow?.date} (${order.deliveryWindow?.timeSlot})`}
-                  cardMessage={order.cardMessage || "Chúc mừng ngày đặc biệt!"}
-                  shippingFee="0 đ"
+                  deliveryTime={formatDeliveryWindow(order.deliveryWindow)}
+                  cardMessage={order.cardMessage ?? ""}
                   totalAmount={`${order.totalVnd.toLocaleString("vi-VN")} đ`}
                   onPrint={handlePrint}
                   onDelivered={() => handleUpdateStatus({ deliveryStatus: "DELIVERED" })}
