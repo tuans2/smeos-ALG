@@ -41,6 +41,9 @@ jobs:
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
       # Bản build/chạy production trên CI không có kho S3 — cho phép đĩa cục bộ (P0-05).
       ALLOW_LOCAL_STORAGE: "true"
+      # `tsc` (typecheck và bước kiểm kiểu của `next build`) đã chạm trần heap mặc định ~2 GB của runner và chết
+      # OOM (PR #188, 07/11/2026). Runner có ~7 GB RAM; nới 4 GB. PO duyệt 07/11/2026.
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -177,6 +180,9 @@ jobs:
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
       # Bản build/chạy production trên CI không có kho S3 — cho phép đĩa cục bộ (P0-05).
       ALLOW_LOCAL_STORAGE: "true"
+      # `tsc` (typecheck và bước kiểm kiểu của `next build`) đã chạm trần heap mặc định ~2 GB của runner và chết
+      # OOM (PR #188, 07/11/2026). Runner có ~7 GB RAM; nới 4 GB. PO duyệt 07/11/2026.
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
