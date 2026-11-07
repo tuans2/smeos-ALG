@@ -4,6 +4,7 @@
  * dịch sang `AppError` (422/409), domain không biết HTTP.
  */
 
+import { vnCalendarDate } from "@/lib/vn-date"
 import type { CoordinatorStage, CoordinationRiskLevel } from "./coordinator-types"
 import { stageLabel } from "./stage-labels"
 import { unpaidClosureReason } from "./stage-transitions"
@@ -258,10 +259,14 @@ export function checkCancellation(params: { stage: CoordinatorStage; reason: str
   return { ok: true }
 }
 
-/** Mã đơn điều phối: `FLR-YYMMDD-NNNN`, tuần tự theo ngày trong một tổ chức. */
+/**
+ * Mã đơn điều phối: `FLR-YYMMDD-NNNN`, tuần tự theo ngày Việt Nam trong một tổ chức (như mã `DH…`, audit BL-10 —
+ * máy chủ chạy giờ UTC, 00:00–07:00 giờ Việt Nam từng lấy ngày hôm trước).
+ */
 export function coordinatorOrderCode(sequence: number, date = new Date()): string {
-  const yy = String(date.getFullYear()).slice(-2)
-  const mm = String(date.getMonth() + 1).padStart(2, "0")
-  const dd = String(date.getDate()).padStart(2, "0")
+  const vn = vnCalendarDate(date)
+  const yy = String(vn.year).slice(-2)
+  const mm = String(vn.month).padStart(2, "0")
+  const dd = String(vn.day).padStart(2, "0")
   return `FLR-${yy}${mm}${dd}-${String(sequence).padStart(4, "0")}`
 }

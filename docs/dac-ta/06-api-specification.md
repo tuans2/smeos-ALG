@@ -604,7 +604,7 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | Phương thức | Đường dẫn | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/coordinator/orders` | `R1` | `?stage=` `?limit=` (≤200). Rủi ro trễ tính lại lúc đọc (F09/F12) |
-| POST | `/coordinator/orders` | `R2` | Mã đơn do máy chủ cấp, tuần tự theo ngày; `sampleImageUrl` cấm `data:` — ảnh tải lên dùng `sampleAssetId` |
+| POST | `/coordinator/orders` | `R2` | Mã đơn do máy chủ cấp `FLR-YYMMDD-NNNN`, tuần tự theo ngày Việt Nam; chuyển khoản ghi mã này (kể cả bỏ gạch) được tự khớp như mã `DH…`. `source` theo danh mục nguồn chung (`MANUAL · CHAT · CATALOG · LANDING · SHORT_LINK · CHANNEL · NETWORK · QUOTATION`, mặc định `MANUAL`), ghi cùng mã vào `orders.source`; mã cũ `ORDER_M10 · CHAT_M08 · CATALOG_M06` → 400. Đơn vào thẳng Điều phối (PO 07/11/2026, Q2); `sampleImageUrl` cấm `data:` — ảnh tải lên dùng `sampleAssetId` |
 | GET | `/coordinator/orders/:id` | `R1` | |
 | PATCH | `/coordinator/orders/:id/stage` | `R3` | Kiểm luồng + bằng chứng (đối tác / QC đạt / POD / hết sự cố); `→ COMPLETED` cần đã thu đủ như `/close` (audit BL-02) |
 | PATCH | `/coordinator/orders/:id/custom-fields` | `R3` | ĐP-3.16 — sửa giá trị trường tự tạo (entity ORDER); trộn vào giá trị cũ, không thay nguyên khối |

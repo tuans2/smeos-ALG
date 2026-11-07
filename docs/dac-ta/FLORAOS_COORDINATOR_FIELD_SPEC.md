@@ -66,7 +66,7 @@ Mọi template dùng chung một Order Object. Không template nào được t�
 | orderId | `id` (`orders.id`) | CÓ | ORDER-OWNED | Một đơn = một `order_coordinations` (quan hệ 1–1) |
 | orderCode | `orderCode` (`orders.code`) | CÓ | ORDER-OWNED | Máy chủ sinh `FLR-YYMMDD-NNNN`; client không đặt mã |
 | organizationId | `orders.organization_id` | CÓ | SYSTEM | Lấy từ phiên đăng nhập, không bao giờ nhận từ client |
-| source | `source` | CHƯA XÂY | ORDER-OWNED | Enum đã có sẵn ở `order-ingestion-connector.ts`: `ORDER_M10 · CHAT_M08 · CATALOG_M06 · MANUAL` — dùng lại, không đặt enum mới. Cột thật (Q5) |
+| source | `source` | CHƯA XÂY | ORDER-OWNED | Danh mục nguồn chung `orders/domain/order-source.ts` (`COORDINATOR_ENTRY_SOURCES`: `MANUAL · CHAT · CATALOG · LANDING · SHORT_LINK · CHANNEL · NETWORK · QUOTATION`), ghi cùng mã vào `orders.source` — PO 07/11/2026 (Q2) bỏ bộ mã cũ `ORDER_M10 · CHAT_M08 · CATALOG_M06`; đơn cũ để nguyên. Cột thật (Q5) |
 | sourceReference | `sourceReference` | CHƯA XÂY | ORDER-OWNED | Mã tham chiếu nguồn (id đơn M10, id hội thoại M08) |
 | channel | `channel` | CHƯA XÂY | ORDER-OWNED | Kênh khách liên hệ đặt (khác `source` = module tạo đơn). Danh mục §2.15.3, dùng lại tên giá trị của enum `chat_channel` |
 | orderType | `orderType` | CHƯA XÂY | ORDER-OWNED | Danh mục §2.15.4 — kích hoạt nhóm trường có điều kiện §12. Cột thật |
@@ -317,7 +317,7 @@ Thực tế thị trường: giao nhanh 60–90 phút hoặc trong 2 giờ, giao
 
 #### 2.15.3. `channel`: kênh khách liên hệ đặt hoa (loại MỞ)
 
-`channel` là kênh khách dùng để đặt. Nó **khác** `source` (module tạo ra đơn: `ORDER_M10 · CHAT_M08 · CATALOG_M06 · MANUAL`, đã có trong code).
+`channel` là kênh khách dùng để đặt. Nó **khác** `source` (nơi đơn sinh ra, theo danh mục nguồn chung `order-source.ts` — từ 07/11/2026, thay bộ mã cũ `ORDER_M10 · CHAT_M08 · CATALOG_M06`).
 
 | Mã | Nhãn | Ghi chú |
 |---|---|---|

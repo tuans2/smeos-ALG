@@ -62,6 +62,8 @@ export async function executeCreateOrder(
   const order = await db.orders.create({
     data: scopedData(ctx, {
       code: data.code,
+      // Cùng mã nguồn ở `orders` và `order_coordinations` (PO 07/11/2026, Q2) — sổ đơn, báo cáo đọc `orders.source`
+      source: data.source,
       customer_id: data.customerId,
       status: data.axes.status,
       production_status: data.axes.productionStatus,
