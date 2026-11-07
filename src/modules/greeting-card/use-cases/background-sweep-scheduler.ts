@@ -1,4 +1,5 @@
 import { log } from "@/core/observability/log"
+import { runExclusive } from "@/core/runtime/cluster-lock"
 import { SWEEP_INTERVAL_MS } from "../domain/background-sweep"
 import { runBackgroundSweep } from "./background-sweep"
 
@@ -18,9 +19,10 @@ export function startBackgroundSweep(): void {
   const timer = setInterval(() => {
     if (running) return
     running = true
-    runBackgroundSweep()
+    // Một tiến trình trong cụm chạy mỗi lượt (audit hành trình S2, UJ-11)
+    runExclusive("greeting_card_background_sweep", runBackgroundSweep)
       .then((r) => {
-        if (r.staleFailed + r.retried + r.reminded + r.cancelled + (r.sessionsExpired || 0) > 0) log.info("greeting_card.sweep", { feature: "greeting-card", ...r })
+        if (r && r.staleFailed + r.retried + r.reminded + r.cancelled + (r.sessionsExpired || 0) > 0) log.info("greeting_card.sweep", { feature: "greeting-card", ...r })
       })
       .catch((error: unknown) => {
         log.error("greeting_card.sweep_failed", { feature: "greeting-card", message: error instanceof Error ? error.message : String(error) })

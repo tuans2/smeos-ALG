@@ -1,4 +1,5 @@
 import { log } from "@/core/observability/log"
+import { runExclusive } from "@/core/runtime/cluster-lock"
 
 import { reconcileOrderPayments } from "./reconcile-order-payments"
 
@@ -18,8 +19,10 @@ export function startPaymentReconciliation(): void {
   const run = () => {
     if (running) return
     running = true
-    reconcileOrderPayments()
+    // Một tiến trình trong cụm chạy mỗi lượt (audit hành trình S2, UJ-11)
+    runExclusive("orders_payment_reconciliation", reconcileOrderPayments)
       .then((r) => {
+        if (!r) return
         if (r.mismatched > 0) log.warn("orders.payment_reconciliation_mismatch", { feature: "orders", ...r })
         else if (r.resolved > 0) log.info("orders.payment_reconciliation_resolved", { feature: "orders", ...r })
       })
