@@ -7,7 +7,8 @@ import { changePartnershipStatus } from "@/modules/chain-partnership/use-cases/m
 
 const statusSchema = z.object({
   status: z.enum(["ACTIVE", "SUSPENDED", "TERMINATED"]),
-  reason: z.string().trim().min(3, "Nêu lý do đổi trạng thái liên kết").max(500),
+  // Lý do kiểm ở use-case SAU bước kiểm sở hữu — chuỗi khác luôn nhận 404, không 400
+  reason: z.string().max(500).optional(),
 })
 
 /**
@@ -23,6 +24,6 @@ export const PATCH = handle<[{ params: Promise<{ id: string }> }]>(async (reques
   if (!parsed.success) {
     throw validationFailed({ reason: parsed.error.issues.map((e) => e.message).join(", ") })
   }
-  const updated = await changePartnershipStatus(ctx, partnershipId, parsed.data.status, parsed.data.reason)
+  const updated = await changePartnershipStatus(ctx, partnershipId, parsed.data.status, parsed.data.reason ?? "")
   return jsonResponse({ success: true, data: updated })
 })

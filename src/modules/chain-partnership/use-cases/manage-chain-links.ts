@@ -95,7 +95,7 @@ export async function changePartnershipStatus(
   const partnership = await repo.findPartnershipById(partnershipId)
   // Chuỗi khác → 404, không lộ id tồn tại
   if (!partnership || partnership.chainOrgId !== ctx.organizationId) throw notFound()
-  if (!reason.trim()) throw validationFailed({ reason: "Nêu lý do đổi trạng thái liên kết" })
+  if (reason.trim().length < 3) throw validationFailed({ reason: "Nêu lý do đổi trạng thái liên kết" })
   ensure(partnership.status, to, "CHAIN")
   const updated = await repo.updateStatus(partnershipId, to)
   await deps.audit(ctx, {
