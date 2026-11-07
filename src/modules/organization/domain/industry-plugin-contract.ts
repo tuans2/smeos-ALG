@@ -123,6 +123,7 @@ export interface IndustryCraftFeeSpec {
 }
 
 import type { IndustryCostingSpec } from "./industry-costing-spec"
+import type { CustomerTierThresholds } from "./industry-customer-tiers"
 
 export interface IndustryPluginContract {
   readonly identity: IndustryIdentity
@@ -139,4 +140,6 @@ export interface IndustryPluginContract {
    * "Ngành của bạn chưa được hỗ trợ" thay vì chạy với số không phù hợp ngành.
    */
   readonly costing: IndustryCostingSpec | null
+  /** Ngưỡng hạng khách của ngành (PO 07/11/2026, Q6); vắng = `DEFAULT_CUSTOMER_TIER_THRESHOLDS`. */
+  readonly customerTiers?: CustomerTierThresholds
 }

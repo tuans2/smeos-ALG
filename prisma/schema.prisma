@@ -1951,10 +1951,9 @@ model orders {
   /// trong migration.
   paid_vnd         Decimal @default(0) @db.Decimal(14, 2)
   /// Còn phải thu = total_vnd − paid_vnd. Máy chủ ghi, không ai sửa tay.
-  /// KHÔNG có ràng buộc CHECK ở tầng Prisma (xem migration.sql của
-  /// `..._coordinator_p1_p2_payments` — CHECK viết tay ở SQL thô, `prisma db
-  /// push` không đẩy được ràng buộc CHECK, chỉ `migrate deploy` mới đẩy).
-  /// Đơn cũ: gán = total_vnd trong migration (chưa thu gì).
+  /// CHECK `orders_money_check` (paid_vnd ≥ 0 và balance_vnd = total_vnd − paid_vnd) viết tay trong migration
+  /// `20261108000000_orders_money_integrity` (audit BL-05, PO duyệt 07/11/2026). Prisma không mô tả CHECK:
+  /// `prisma db push` (CSDL `_test`) không tạo nó, chỉ `migrate deploy` mới tạo.
   balance_vnd      Decimal @db.Decimal(14, 2)
   pricing_rule_ref Json? // quy tắc giá đã dùng, để đối soát
   voucher_id       String?
@@ -1976,7 +1975,9 @@ model orders {
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization      organizations           @relation(fields: [organization_id], references: [id])
-  customer          customers?              @relation(fields: [customer_id], references: [id])
+  /// Khoá ghép tenant: khách phải cùng tổ chức với đơn (audit BL-13, PO duyệt 07/11/2026). NoAction thay cho
+  /// SetNull cũ vì SetNull trên khoá ghép sẽ xoá cả organization_id — xoá khách thì repository gỡ khách khỏi đơn trước.
+  customer          customers?              @relation(fields: [customer_id, organization_id], references: [id, organization_id], onDelete: NoAction)
   items             order_items[]
   assignments       order_assignments[]
   events            order_events[]
@@ -2049,39 +2050,39 @@ model order_recipients {
   recipient_name          String?
   /// @pii contact
   recipient_phone         String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `recipient_phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `recipient_phone` (từ P-5c chính `recipient_phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii contact
   recipient_phone_enc     String?
   /// Dòng địa chỉ giao đầy đủ (như `formatDeliveryAddress`, null = chưa có / "Theo thỏa thuận").
   /// @pii address
   address_line            String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `address_line` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `address_line` (từ P-5c chính `address_line` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii address
   address_line_enc        String?
   /// 5 ô địa chỉ (`AddressParts`) hoặc phường/quận/tỉnh của đơn nhập phẳng.
   /// @pii address
   address_parts           Json?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `address_parts` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `address_parts` (từ P-5c chính `address_parts` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii address
   address_parts_enc       String?
   /// @pii tax
   vat_company_name        String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `vat_company_name` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `vat_company_name` (từ P-5c chính `vat_company_name` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii tax
   vat_company_name_enc    String?
   /// @pii tax
   vat_tax_code            String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `vat_tax_code` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `vat_tax_code` (từ P-5c chính `vat_tax_code` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii tax
   vat_tax_code_enc        String?
   /// @pii tax
   vat_company_address     String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `vat_company_address` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `vat_company_address` (từ P-5c chính `vat_company_address` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii tax
   vat_company_address_enc String?
   /// @pii tax
   vat_email               String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `vat_email` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `vat_email` (từ P-5c chính `vat_email` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii tax
   vat_email_enc           String?
   created_at              DateTime @default(now()) @db.Timestamptz(3)
@@ -2235,9 +2236,11 @@ model customers {
   code              String // KH-0001, KH-0002
   /// @pii identity
   name              String
+  /// ADR-014 P-5c: bản mã AES-256-GCM (`pii1.…`, khoá dữ liệu của tổ chức) — client Prisma tự mã hoá/giải mã
+  /// (`src/core/security/infra/pii-*.ts`); tra số qua `phone_hash` (`pii-lookup.ts`)
   /// @pii contact
   phone             String
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `phone` (từ P-5c chính `phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii contact
   phone_enc         String?
   /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
@@ -2248,12 +2251,12 @@ model customers {
   phone_last4       String?
   /// @pii contact
   email             String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `email` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `email` (từ P-5c chính `email` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii contact
   email_enc         String?
   /// @pii address
   address           String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `address` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `address` (từ P-5c chính `address` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii address
   address_enc       String?
   tier              customer_tier   @default(NEW)
@@ -2265,7 +2268,7 @@ model customers {
   /// chi nhánh mình và khách dùng chung.
   branch_id         String?
   notes             String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `notes` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `notes` (từ P-5c chính `notes` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii free_text
   notes_enc         String?
   tags              String[]        @default([])
@@ -2294,7 +2297,7 @@ model customers {
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
   voucher_redemptions_by_customer_id voucher_redemptions[] @relation("fk_voucher_redemptions_customer_id")
 
-  @@unique([organization_id, phone])
+  @@unique([organization_id, phone_hash]) // P-5c: một khách mỗi số (mọi cách viết) trong tổ chức
   @@unique([organization_id, code])
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, tier])
@@ -2302,7 +2305,6 @@ model customers {
   @@index([organization_id, status])
   @@index([organization_id, branch_id])
   @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
-  @@index([organization_id, phone_hash]) // P-5a: khớp đúng số (P-5c thay ràng buộc duy nhất theo `phone`)
   @@index([organization_id, phone_last4])
 }
 
@@ -3404,7 +3406,7 @@ model order_coordinations {
   shipper_name          String?
   /// @pii contact
   shipper_phone         String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `shipper_phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `shipper_phone` (từ P-5c chính `shipper_phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii contact
   shipper_phone_enc     String?
   carrier               String?
@@ -3421,6 +3423,13 @@ model order_coordinations {
   closed_at             DateTime?               @db.Timestamptz(3)
   cancelled_reason      String?
   metadata              Json?
+  /// ADR-014 P-5c (PO 07/11/2026): SĐT khách lẻ của đơn điều phối, bản mã — trước ở `metadata.customerPhone`. Client
+  /// Prisma tách khoá này khi ghi `metadata` và gộp lại khi đọc (`PII_JSON_KEYS`, `src/core/security/pii-fields.ts`)
+  /// @pii contact
+  customer_phone        String?
+  /// P-5c: HMAC-SHA256 của `customer_phone` đã chuẩn hoá — tìm đơn của khách theo số
+  /// @pii contact
+  customer_phone_hash   String?
   /// ĐP-3 — giá trị trường tự tạo (Console Vận hành > Trường dữ liệu), theo
   /// định nghĩa đang ACTIVE trong `field_definitions` (entity = ORDER).
   custom_fields         Json?
@@ -3491,6 +3500,7 @@ model order_coordinations {
   @@unique([order_id, organization_id]) // khoá ghép 1-1 về orders (05/11/2026)
   @@index([organization_id, stage])
   @@index([organization_id, risk_level])
+  @@index([organization_id, customer_phone_hash])
   @@index([partner_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
@@ -3755,7 +3765,7 @@ model greeting_sessions {
   customer_name                  String?
   /// @pii contact
   customer_phone                 String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `customer_phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `customer_phone` (từ P-5c chính `customer_phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii contact
   customer_phone_enc             String?
   /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
@@ -4486,7 +4496,7 @@ model leads {
   name               String
   /// @pii contact
   phone              String
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `phone` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `phone` (từ P-5c chính `phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii contact
   phone_enc          String?
   /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
@@ -4496,7 +4506,7 @@ model leads {
   /// @pii contact
   phone_last4        String?
   message            String?
-  /// ADR-014 P-5a: bản mã AES-256-GCM của `message` (khoá dữ liệu của tổ chức, `src/core/security/pii-cipher.ts`)
+  /// ADR-014 P-5a: bản sao bản mã của `message` (từ P-5c chính `message` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
   /// @pii free_text
   message_enc        String?
   source             String // CATALOG_LINK | SHORT_LINK | LANDING | CHAT | MANUAL
@@ -4530,13 +4540,12 @@ model leads {
 
   @@index([organization_id])
   @@index([organization_id, status, created_at])
-  @@index([organization_id, phone, created_at])
+  @@index([organization_id, phone_hash, created_at]) // P-5c: `phone` là bản mã — đếm/tra theo băm
   @@index([organization_id, next_follow_up_at])
   @@index([organization_id, converted_order_id])
   @@index([converted_order_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([short_link_id]) // khoá ngoại cần index (ADR-015 O-1)
-  @@index([organization_id, phone_hash])
 }
 
 // Link/QR động: in một lần, đổi đích sau; mỗi điểm đặt (quầy, tờ rơi…) một mã để

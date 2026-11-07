@@ -137,3 +137,13 @@ describe("Availability Use-Cases with IAvailabilityRepository Port", () => {
     })
   })
 })
+
+// Audit BL-16: tồn của cả tổ chức gộp mọi chi nhánh, không lấy một dòng bất kỳ
+describe("aggregateInventory", () => {
+  it("cộng số lượng các chi nhánh có theo dõi; còn hàng nếu một chi nhánh còn", async () => {
+    const { aggregateInventory } = await import("../../infra/availability-repository")
+    expect(aggregateInventory([{ status: "OUT_OF_STOCK", quantity_available: 0 }, { status: "IN_STOCK", quantity_available: 4 }])).toEqual({ status: "IN_STOCK", quantity: 4 })
+    expect(aggregateInventory([{ status: "IN_STOCK", quantity_available: null }])).toEqual({ status: "IN_STOCK", quantity: null })
+    expect(aggregateInventory([])).toEqual({ status: undefined, quantity: undefined })
+  })
+})

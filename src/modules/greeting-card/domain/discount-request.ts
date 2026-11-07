@@ -1,11 +1,17 @@
 /**
  * Xin giảm giá theo đơn (PO 06/10/2026): Sale xin, Điều hành duyệt (sửa được mức) hoặc từ chối,
  * kèm ghi chú. Mức tối đa do Điều hành đặt trong Cài đặt (`brochure_discount.max_percent`,
- * mặc định 25%). Pure TypeScript.
+ * mặc định và tối đa = trần nền tảng 50%, PO 07/11/2026). Pure TypeScript.
  */
 
+import { PLATFORM_MAX_DISCOUNT_PERCENT } from "@/modules/organization/domain/governance-decisions"
+
 export const DISCOUNT_SETTINGS_KEY = "brochure_discount"
-export const DEFAULT_MAX_DISCOUNT_PERCENT = 25
+/**
+ * Một trần duy nhất cho mọi khoản giảm (PO 07/11/2026, audit BL-08): mặc định = trần nền tảng 50%; Điều hành
+ * đặt thấp hơn được, cao hơn thì bị kẹp về trần nền tảng.
+ */
+export const DEFAULT_MAX_DISCOUNT_PERCENT = PLATFORM_MAX_DISCOUNT_PERCENT
 export type DiscountStatus = "PENDING" | "APPROVED" | "REJECTED"
 
 export interface DiscountAsk {
@@ -28,7 +34,7 @@ export interface DiscountPayload extends DiscountAsk {
 export function parseMaxDiscountPercent(settings: unknown): number {
   const root = settings && typeof settings === "object" ? (settings as Record<string, unknown>) : {}
   const raw = (root[DISCOUNT_SETTINGS_KEY] as Record<string, unknown> | undefined)?.max_percent
-  return typeof raw === "number" && Number.isInteger(raw) && raw >= 0 && raw <= 100 ? raw : DEFAULT_MAX_DISCOUNT_PERCENT
+  return typeof raw === "number" && Number.isInteger(raw) && raw >= 0 && raw <= 100 ? Math.min(raw, PLATFORM_MAX_DISCOUNT_PERCENT) : DEFAULT_MAX_DISCOUNT_PERCENT
 }
 
 /** Số tiền giảm của một yêu cầu (làm tròn xuống tới 1.000đ khi tính theo %). */

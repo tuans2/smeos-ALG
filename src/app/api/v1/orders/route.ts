@@ -24,7 +24,6 @@ const createOrderSchema = z.object({
     })
   ).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm"),
   pricingRuleRef: z.record(z.string(), z.unknown()).optional(),
-  voucherId: z.string().optional(),
   cardMessage: z.string().optional(),
   internalNote: z.string().optional(),
   deliveryWindow: z

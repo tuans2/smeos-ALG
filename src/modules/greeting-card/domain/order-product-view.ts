@@ -62,7 +62,7 @@ export function orderProductView(source: OrderProductSource, images: ReadonlyMap
     code: str(snap.code) ?? str(meta.code),
     // Cuối cùng: link Google Drive của mẫu (sản phẩm nhập từ Excel chưa có ảnh trong kho)
     imageUrl: liveImageUrl(str(snap.imageUrl), now.getTime()) ?? liveImageUrl(str(meta.imageUrl), now.getTime())
-      ?? (productId ? images.get(productId) ?? null : null)
+      ?? (productId ? images.get(productId) : undefined)
       ?? driveThumbProxySrc(str(snap.driveLink)) ?? driveThumbProxySrc(str(meta.driveLink)),
     price: num(snap.price) ?? num(meta.price) ?? num(item?.unit_price_vnd) ?? 0,
     flowersSummary: withVariant(str(snap.flowersSummary) ?? str(meta.flowersSummary), obj(meta.variant)),

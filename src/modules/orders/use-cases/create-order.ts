@@ -2,10 +2,11 @@
  * Use-case: Create Order (Tạo đơn hàng mới — M10, R2).
  */
 
-import { AppError } from "@/core/http/errors"
+import { AppError, validationFailed } from "@/core/http/errors"
 import { branchScopeOf } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { calculateOrderTotal, generateOrderCode } from "../domain/order-rules"
+import { newOrderDeliveryErrors } from "../domain/order-input-rules"
 import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
@@ -25,6 +26,14 @@ export async function createOrder(
 ): Promise<OrderRecord> {
   if (!input.items || input.items.length === 0) {
     throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc sản phẩm.")
+  }
+
+  const deliveryErrors = newOrderDeliveryErrors({ deliveryDate: input.deliveryWindow?.date, recipientPhone: input.deliveryAddress?.phone })
+  if (Object.keys(deliveryErrors).length > 0) {
+    throw validationFailed({
+      ...(deliveryErrors.deliveryDate ? { "deliveryWindow.date": deliveryErrors.deliveryDate } : {}),
+      ...(deliveryErrors.recipientPhone ? { "deliveryAddress.phone": deliveryErrors.recipientPhone } : {}),
+    })
   }
 
   const totalVnd = calculateOrderTotal(input.items)

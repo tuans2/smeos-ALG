@@ -79,9 +79,9 @@ describe("phạm vi chi nhánh đợt 1 — khách hàng", () => {
   it("khách tạo bởi nhân viên chi nhánh mang chi nhánh đó; khách tạo bởi Điều hành là khách dùng chung", async () => {
     const res = await createCustomer(withSession(`${BASE}/crm/customers`, lan.token, { method: "POST", body: JSON.stringify({ name: "Chị Hoa", phone: "0901234567" }) }))
     expect(res.status).toBeLessThan(300)
-    expect((await prisma.customers.findFirstOrThrow({ where: { phone: "0901234567" } })).branch_id).toBe(q1)
+    expect((await prisma.customers.findFirstOrThrow({ where: { name: "Chị Hoa" } })).branch_id).toBe(q1)
     await createCustomer(withSession(`${BASE}/crm/customers`, a.token, { method: "POST", body: JSON.stringify({ name: "Anh Nam", phone: "0907654321" }) }))
-    expect((await prisma.customers.findFirstOrThrow({ where: { phone: "0907654321" } })).branch_id).toBeNull()
+    expect((await prisma.customers.findFirstOrThrow({ where: { name: "Anh Nam" } })).branch_id).toBeNull()
   })
 
   it("đơn đầu tiên có chi nhánh gán chi nhánh cho khách chưa có; khách đã có chi nhánh giữ nguyên", async () => {

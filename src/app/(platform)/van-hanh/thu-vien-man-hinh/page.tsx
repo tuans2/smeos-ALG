@@ -21,7 +21,7 @@ export default function ThuVienManHinhPage() {
     <div className="container max-w-6xl mx-auto py-6 px-4 space-y-6">
       <PageHeader
         title="Thư viện Màn hình Toàn hệ thống"
-        description="Không gian đối soát, kiểm tra trực tiếp và phân loại 100% màn hình thực tế trong hệ sinh thái đa tenant smeOS. Dữ liệu được quét tự động và cập nhật tức thì theo mã nguồn."
+        description="Không gian đối soát, kiểm tra trực tiếp và phân loại 100% màn hình thực tế trong hệ sinh thái nhiều doanh nghiệp của smeOS. Dữ liệu được quét tự động và cập nhật tức thì theo mã nguồn."
       />
 
       {/* KPI Overview Tiles */}

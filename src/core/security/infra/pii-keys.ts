@@ -66,3 +66,20 @@ export async function dataKeyByVersion(db: PiiKeyDb, master: Buffer, organizatio
   byVersion.set(cacheKey, key)
   return key
 }
+
+/** Khoá đã có trong bộ nhớ (đồng bộ — dùng khi giải mã kết quả truy vấn). */
+export function cachedDataKey(organizationId: string, version: number): Buffer | null {
+  return byVersion.get(`${organizationId}:${version}`) ?? null
+}
+
+/** Nạp mọi khoá dữ liệu (mọi tổ chức, mọi phiên bản) vào bộ nhớ — gọi khi giải mã gặp khoá chưa có. */
+export async function loadAllDataKeys(
+  db: { tenant_data_keys: { findMany(args: { select: { organization_id: true; version: true; wrapped_key: true } }): Promise<Array<{ organization_id: string; version: number; wrapped_key: string }>> } },
+  master: Buffer,
+): Promise<void> {
+  const rows = await db.tenant_data_keys.findMany({ select: { organization_id: true, version: true, wrapped_key: true } })
+  for (const r of rows) {
+    const k = `${r.organization_id}:${r.version}`
+    if (!byVersion.has(k)) byVersion.set(k, unwrapDataKey(master, r.wrapped_key))
+  }
+}

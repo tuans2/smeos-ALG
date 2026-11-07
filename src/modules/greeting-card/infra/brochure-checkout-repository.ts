@@ -14,6 +14,7 @@ import { saleBranchOfSession } from "./sale-branch"
 import { activateProspect } from "./session-customer"
 import { storedDeliveryAddress, upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "@/modules/orders/infra/order-recipient-view"
+import { phoneEquals } from "@/core/security/pii-lookup"
 
 export interface CreateBrochureOrderData {
   organizationId: string
@@ -83,7 +84,7 @@ export class BrochureCheckoutRepository {
   async findCustomerIdByPhone(organizationId: string, phone: string): Promise<string | null> {
     if (!phone) return null
     const row = await this.db.customers.findFirst({
-      where: { organization_id: organizationId, phone },
+      where: { organization_id: organizationId, AND: [phoneEquals(organizationId, phone)] }, // P-5b
       select: { id: true },
     })
     return row?.id ?? null
@@ -125,7 +126,7 @@ export class BrochureCheckoutRepository {
   async countRecentOrdersByPhone(organizationId: string, phone: string, since: Date): Promise<number> {
     if (!phone) return 0
     return this.db.orders.count({
-      where: { organization_id: organizationId, source: "BROCHURE", created_at: { gte: since }, customer: { phone } },
+      where: { organization_id: organizationId, source: "BROCHURE", created_at: { gte: since }, customer: phoneEquals(organizationId, phone) },
     })
   }
 
@@ -138,7 +139,7 @@ export class BrochureCheckoutRepository {
   async findRecentPublicOrders(input: { organizationId: string; catalogId: string; customerPhone: string; productId: string; since: Date }) {
     const rows = await this.db.greeting_sessions.findMany({
       where: {
-        organization_id: input.organizationId, catalog_id: input.catalogId, customer_phone: input.customerPhone,
+        organization_id: input.organizationId, catalog_id: input.catalogId, AND: [phoneEquals(input.organizationId, input.customerPhone, "customer_phone")],
         selected_product_id: input.productId, order_id: { not: null }, created_at: { gte: input.since },
       },
       select: {
@@ -170,7 +171,8 @@ export class BrochureCheckoutRepository {
 
   async findOrCreateCustomer(data: Pick<CreateBrochureOrderData, "organizationId" | "customerPhone" | "customerName" | "deliveryAddress"> & { email?: string | undefined }) {
     const where = { organization_id: data.organizationId, phone: data.customerPhone }
-    const existing = await this.db.customers.findFirst({ where, select: { id: true, email: true, status: true } })
+    const lookup = { organization_id: data.organizationId, AND: [phoneEquals(data.organizationId, data.customerPhone)] } // P-5b
+    const existing = await this.db.customers.findFirst({ where: lookup, select: { id: true, email: true, status: true } })
     if (existing) {
       // P-2: khách tiềm năng từ link Thẻ chào đặt đơn / để lại lead → khách thường
       if (existing.status === "PROSPECT") await activateProspect(this.db, existing.id, { name: data.customerName, address: data.deliveryAddress })
@@ -191,7 +193,7 @@ export class BrochureCheckoutRepository {
         return created.id
       } catch (error) {
         if (!isUniqueViolation(error)) throw error
-        const raced = await this.db.customers.findFirst({ where, select: { id: true } })
+        const raced = await this.db.customers.findFirst({ where: lookup, select: { id: true } })
         if (raced) return raced.id
       }
     }

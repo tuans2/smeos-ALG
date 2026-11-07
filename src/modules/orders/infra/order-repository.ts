@@ -6,6 +6,7 @@
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { vnDayBounds } from "@/lib/vn-date"
+import { takeStock } from "./order-stock"
 import { storedDeliveryAddress, upsertOrderRecipient } from "./order-recipient-repository"
 import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "./order-recipient-view"
 import type {
@@ -122,7 +123,6 @@ export class OrderRepository implements IOrderRepository {
           total_vnd: totalVnd,
           balance_vnd: totalVnd,
           pricing_rule_ref: (input.pricingRuleRef as unknown as Prisma.InputJsonValue) ?? null,
-          voucher_id: input.voucherId ?? null,
           card_message: input.cardMessage ?? null,
           internal_note: input.internalNote ?? null,
           delivery_window: (input.deliveryWindow as unknown as Prisma.InputJsonValue) ?? null,
@@ -147,8 +147,9 @@ export class OrderRepository implements IOrderRepository {
       await upsertOrderRecipient(tx, organizationId, ord.id, { deliveryAddress: input.deliveryAddress ?? null })
 
       if (input.items && input.items.length > 0) {
+        const stock = await takeStock(tx, organizationId, input.branchId ?? null, input.items) // Q9: trừ tồn cùng giao dịch
         await tx.order_items.createMany({
-          data: input.items.map((it) => ({
+          data: input.items.map((it, i) => ({
             organization_id: organizationId,
             order_id: ord.id,
             product_id: it.productId ?? null,
@@ -156,7 +157,7 @@ export class OrderRepository implements IOrderRepository {
             description: it.description ?? null,
             quantity: it.quantity,
             unit_price_vnd: it.unitPriceVnd,
-            metadata: (it.metadata as unknown as Prisma.InputJsonValue) ?? undefined,
+            metadata: (stock[i] ? { ...(it.metadata ?? {}), stock: stock[i] } : it.metadata) as unknown as Prisma.InputJsonValue ?? undefined,
           })),
         })
       }

@@ -108,7 +108,7 @@ export function CoordinatorReminderSettingsModal({
           </div>
         </div>
       }
-      description="Chuỗi 6 mốc thời gian nhắc việc tự động cho Điều phối viên (M0..M5)"
+      description="Các mốc nhắc việc tự động cho Điều phối viên theo tiến độ đơn, từ in thẻ gia công tới chăm sóc sau giao"
       size="md"
     >
       <form onSubmit={handleSave} className="space-y-4">
@@ -138,7 +138,7 @@ export function CoordinatorReminderSettingsModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-caption font-bold text-primary uppercase">
-                      M0 · In thẻ gia công
+                      In thẻ gia công
                     </span>
                     <h4 className="text-body-sm font-bold text-text">
                       Sau khi nhận thanh toán
@@ -171,7 +171,7 @@ export function CoordinatorReminderSettingsModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-caption font-bold text-warning uppercase">
-                      M1 · Bắt đầu chế tác
+                      Bắt đầu chế tác
                     </span>
                     <h4 className="text-body-sm font-bold text-text">
                       Trước giờ giao hẹn
@@ -204,7 +204,7 @@ export function CoordinatorReminderSettingsModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-caption font-bold text-info uppercase">
-                      M2 · Hoàn thành & Book ship
+                      Hoàn thành & đặt lịch giao
                     </span>
                     <h4 className="text-body-sm font-bold text-text">
                       Trước giờ giao hẹn
@@ -237,7 +237,7 @@ export function CoordinatorReminderSettingsModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-caption font-bold text-warning uppercase">
-                      M3 · Shipper lấy hàng
+                      Shipper lấy hàng
                     </span>
                     <h4 className="text-body-sm font-bold text-text">
                       Sau khi gán shipper
@@ -270,7 +270,7 @@ export function CoordinatorReminderSettingsModal({
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-caption font-bold text-success uppercase">
-                      M5 · Chăm sóc sau giao
+                      Chăm sóc sau giao
                     </span>
                     <h4 className="text-body-sm font-bold text-text">
                       Sau giờ giao thành công

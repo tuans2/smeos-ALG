@@ -41,6 +41,10 @@ jobs:
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
       # Bản build/chạy production trên CI không có kho S3 — cho phép đĩa cục bộ (P0-05).
       ALLOW_LOCAL_STORAGE: "true"
+      # Lưới an toàn cho công cụ còn chạy TypeScript 5.9 trong Node (ESLint, `next build`): `tsc` 5.9 đã chạm trần
+      # heap mặc định ~2 GB của runner và chết OOM (PR #188, 07/11/2026). `npm run typecheck` nay dùng TypeScript 7
+      # (bản Go, không bị trần heap của Node). Runner có ~7 GB RAM. PO duyệt 07/11/2026.
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -177,6 +181,13 @@ jobs:
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
       # Bản build/chạy production trên CI không có kho S3 — cho phép đĩa cục bộ (P0-05).
       ALLOW_LOCAL_STORAGE: "true"
+      # Lưới an toàn cho công cụ còn chạy TypeScript 5.9 trong Node (ESLint, `next build`): `tsc` 5.9 đã chạm trần
+      # heap mặc định ~2 GB của runner và chết OOM (PR #188, 07/11/2026). `npm run typecheck` nay dùng TypeScript 7
+      # (bản Go, không bị trần heap của Node). Runner có ~7 GB RAM. PO duyệt 07/11/2026.
+      NODE_OPTIONS: --max-old-space-size=4096
+      # Job `web` đã typecheck đúng commit này (`npm run typecheck`, TypeScript 7); `next build` ở đây không kiểm
+      # kiểu lần nữa — như Render (`render.yaml`). PO duyệt 07/11/2026.
+      SKIP_BUILD_TYPECHECK: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

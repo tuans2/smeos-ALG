@@ -491,7 +491,7 @@ erDiagram
   customers |o--o{ chat_conversations : "customer_id"
   customers |o--o{ greeting_sessions : "customer_id"
   customers |o--o{ leads : "customer_id"
-  customers |o--o{ orders : "customer_id"
+  customers |o--o{ orders : "customer_id, organization_id"
   customers |o--o{ quotations : "customer_id"
   customers |o--o{ voucher_redemptions : "customer_id"
   customers |o--o{ vouchers : "customer_id"
@@ -643,7 +643,7 @@ erDiagram
   voucher_redemptions
   vouchers
   branches |o--o{ orders : "branch_id"
-  customers |o--o{ orders : "customer_id"
+  customers |o--o{ orders : "customer_id, organization_id"
   greeting_sessions |o--o{ orders : "source_session_id"
   leads |o--o{ orders : "lead_id"
   orders |o--o{ greeting_catalog_events : "order_id"

@@ -12,6 +12,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
+import { returnStock } from "../infra/order-stock"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 import { orderCoordinationPort, type OrderCoordinationPort } from "@/modules/coordinator/use-cases/order-coordination-port"
 
@@ -21,7 +22,8 @@ export async function cancelOrder(
   reason: string,
   repo: IOrderRepository = getOrderRepository(),
   notify: typeof notifyOrganization = notifyOrganization,
-  coordination: OrderCoordinationPort = orderCoordinationPort
+  coordination: OrderCoordinationPort = orderCoordinationPort,
+  releaseStock: typeof returnStock = returnStock
 ): Promise<OrderRecord> {
   // Gác quyền R6 (Trần cứng)
   requireCapability(ctx, "R6")
@@ -64,6 +66,8 @@ export async function cancelOrder(
     updated = await repo.update(ctx.organizationId, orderId, { status: "CANCELLED" }, [
       { axis: "order", fromValue: existing.status, toValue: "CANCELLED", actorId: ctx.userId, reason },
     ])
+    // Hoàn tồn đã trừ lúc tạo đơn (Q9); đơn ở Điều phối được hoàn trong `cancelCoordinatorOrder`
+    await releaseStock(ctx.organizationId, orderId)
   }
 
   // Ghi audit log

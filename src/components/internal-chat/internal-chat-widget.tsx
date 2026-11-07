@@ -136,7 +136,7 @@ export function InternalChatWidget() {
                   {activeConv ? activeConv.title || "Cuộc trò chuyện" : "Chat nội bộ smeOS"}
                 </h3>
                 <span className="text-caption text-primary-fg/80 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-success" /> Bảo mật & Cách ly đa tenant
+                  <ShieldCheck className="w-3 h-3 text-success" /> Bảo mật, dữ liệu riêng từng doanh nghiệp
                 </span>
               </div>
             </div>

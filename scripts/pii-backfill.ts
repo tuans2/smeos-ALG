@@ -1,7 +1,8 @@
 /**
- * ADR-014 P-5a: mã hoá toàn bộ cột cá nhân còn chữ rõ, chạy một lần ngay sau khi đặt `PII_ENCRYPTION_KEY` (Render shell của
- * smeos-web: `npm run pii:backfill`). Lặp từng lô 500 dòng mỗi bảng tới khi không còn dòng nào; lượt quét nền 5 phút vẫn
- * xử lý phần phát sinh sau đó. Không in dữ liệu, chỉ in số dòng.
+ * ADR-014 P-5: mã hoá toàn bộ cột cá nhân còn chữ rõ (Render shell của smeos-web: `npm run pii:backfill`) — chạy ngay sau
+ * khi đặt `PII_ENCRYPTION_KEY` và một lần sau khi P-5c chạy (tách SĐT khách lẻ khỏi `metadata` của đơn điều phối, runbook
+ * §14). Lặp từng lô 500 dòng mỗi bảng tới khi không còn dòng nào; lượt quét nền 5 phút vẫn xử lý phần phát sinh sau đó.
+ * Không in dữ liệu, chỉ in số dòng.
  */
 import { asSystemDb } from "@/core/tenancy/db-context"
 import { piiMasterKey } from "@/core/security/pii-cipher"

@@ -729,6 +729,17 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     expect(Number(row.balance_vnd)).toBe(1_000_000 - ledger)
   })
 
+  // PO 07/11/2026 — Q11: không tạo đơn với ngày giao đã qua; Q12: SĐT người nhận chỉ số Việt Nam.
+  it("tạo đơn Điều phối: hẹn giao hôm qua hoặc SĐT người nhận nước ngoài → 400, không tạo đơn", async () => {
+    const post = (body: Record<string, unknown>) =>
+      createOrder(withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify(body) }))
+    const yesterday = new Date(Date.now() - 36 * 3600_000).toISOString()
+    expect((await post({ ...ORDER_BODY, deliveryTargetAt: yesterday })).status).toBe(400)
+    expect((await post({ ...ORDER_BODY, recipientPhone: "+1 415 555 0100" })).status).toBe(400)
+    expect(await prisma.orders.count({ where: { organization_id: a.organizationId } })).toBe(0)
+    expect((await post({ ...ORDER_BODY, recipientPhone: "0901 234 567" })).status).toBe(201)
+  })
+
   it("order_info_requests: cách ly tổ chức — tổ chức B không thấy yêu cầu thông tin của tổ chức A", async () => {
     const orderA = await newOrder(a)
     await prisma.order_info_requests.create({
