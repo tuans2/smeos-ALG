@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest"
 
-import { runExclusive } from "@/core/runtime/cluster-lock"
+import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 
 import { disconnectDatabase } from "../helpers/database"
 

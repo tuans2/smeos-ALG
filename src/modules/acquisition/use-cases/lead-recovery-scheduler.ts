@@ -1,5 +1,5 @@
 import { log } from "@/core/observability/log"
-import { runExclusive } from "@/core/runtime/cluster-lock"
+import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 import { recoverPaymentTimeoutLeads } from "./recover-payment-timeout-leads"
 
 const STARTED = Symbol.for("smeos.acquisition.lead-recovery")

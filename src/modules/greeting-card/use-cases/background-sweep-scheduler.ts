@@ -1,5 +1,5 @@
 import { log } from "@/core/observability/log"
-import { runExclusive } from "@/core/runtime/cluster-lock"
+import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 import { SWEEP_INTERVAL_MS } from "../domain/background-sweep"
 import { runBackgroundSweep } from "./background-sweep"
 

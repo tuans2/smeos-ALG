@@ -1,5 +1,5 @@
 import { log } from "@/core/observability/log"
-import { runExclusive } from "@/core/runtime/cluster-lock"
+import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 import { matchStandardBankTransfers } from "./match-standard-bank-transfers"
 import { remindCollectDue } from "./remind-collect-due"
 
