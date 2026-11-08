@@ -10,7 +10,6 @@ import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { DashboardLayout } from "@/components/layout/page-layout"
 import { PageHeader } from "@/components/ui/page-header"
 import { AdPerformanceModal } from "@/components/marketing/ad-performance-modal"
-import type { OrderReportingItem } from "@/modules/orders/domain/business-reporting"
 import { AnalyticsMetricsPhase } from "@/components/analytics/analytics-metrics-phase"
 import { AnalyticsExplainPhase } from "@/components/analytics/analytics-explain-phase"
 import { AnalyticsLearningPhase } from "@/components/analytics/analytics-learning-phase"
@@ -26,7 +25,6 @@ async function fetchJson<T>(url: string): Promise<T | null> {
 export default function AnalyticsPage() {
   const router = useRouter()
   const { can, orgName } = useSession()
-  const [orders, setOrders] = useState<OrderReportingItem[]>([])
   const [phase, setPhase] = useState<"metrics" | "explain" | "learning" | "saved">("metrics")
   const [selectedRange, setSelectedRange] = useState("Tháng này")
   const [adModalOpen, setAdModalOpen] = useState(false)
@@ -67,20 +65,6 @@ export default function AnalyticsPage() {
     }
     loadUsage()
   }, [router])
-
-  useEffect(() => {
-    async function loadOrders() {
-      try {
-        const res = await fetch("/api/v1/orders?limit=100")
-        if (!res.ok) return
-        const data = (await res.json()) as { orders?: OrderReportingItem[] }
-        if (data.orders) setOrders(data.orders)
-      } catch {
-        // Fallback im lặng
-      }
-    }
-    loadOrders()
-  }, [])
 
   useEffect(() => {
     async function loadAiRequests() {
@@ -211,7 +195,6 @@ export default function AnalyticsPage() {
 
         {phase === "metrics" && (
           <AnalyticsMetricsPhase
-            orders={orders}
             usage={usage}
             usageLoading={usageLoading}
             shopName={orgName || "Cửa Hàng"}

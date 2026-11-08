@@ -60,7 +60,7 @@ describe("createOrder — giá sàn với đơn nhân viên nhập tay (audit BL
       { productId: "p1", quantity: 2, unitPriceVnd: 100_000 },
       { description: "Thiệp", quantity: 1, unitPriceVnd: 900_000 },
     ] }, repo(), vi.fn(), noForeign, floor, vi.fn())
-    expect(floor).toHaveBeenCalledWith(ctx, [{ productId: "p1", quantity: 2 }], 200_000)
+    expect(floor).toHaveBeenCalledWith(ctx, [{ productId: "p1", quantity: 2 }], 200_000, 200_000)
   })
 
   it("dưới sàn → lỗi của bộ kiểm sàn, không tạo đơn", async () => {

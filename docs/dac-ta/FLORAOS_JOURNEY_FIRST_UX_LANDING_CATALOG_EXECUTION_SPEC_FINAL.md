@@ -1,5 +1,7 @@
 # FLORAOS JOURNEY-FIRST UX — ĐẶC TẢ TẠO LANDING PAGE & CATALOG SỐ
 
+**Mã tài liệu:** `DOC-05-SPEC-JOURNEY-LANDING-CATALOG-REQUIREMENTS` · **Trạng thái:** `CANONICAL` — đặc tả yêu cầu chuẩn (PO chọn 08/11/2026)  
+**Bản đồ mã (tệp nào làm phần nào):** [`FLORAOS_JOURNEY_FIRST_UX_LANDING_AND_CATALOG_SPEC.md`](./FLORAOS_JOURNEY_FIRST_UX_LANDING_AND_CATALOG_SPEC.md)  
 **Loại tài liệu:** SSOT — Product / UX / AI Agent Implementation Specification  
 **Hệ thống:** `floraos-core`  
 **Phạm vi:** Tạo Landing Page và Tạo Catalog Số  

@@ -17,6 +17,7 @@ import {
   FALLBACK_DIVERSE_POOLS,
   hashStringDeterministic,
 } from "./video-catalog-presets";
+import { urlHostIs } from "@/lib/url-host"
 
 export interface EvidenceItemLike {
   title: string;
@@ -82,16 +83,16 @@ export function getDualOpportunityEvidencePreview(item: OpportunityLike): DualVi
 
   const tiktokRef = refs.find(
     (r) =>
-      (r.type === "TIKTOK_REELS" || r.platform?.toLowerCase().includes("tiktok") || r.url?.includes("tiktok.com")) &&
+      (r.type === "TIKTOK_REELS" || r.platform?.toLowerCase().includes("tiktok") || urlHostIs(r.url, "tiktok.com")) &&
       Boolean(r.thumbnailUrl) &&
-      !r.thumbnailUrl?.includes("unsplash.com")
+      !urlHostIs(r.thumbnailUrl, "unsplash.com")
   );
 
   const ytRef = refs.find(
     (r) =>
-      (r.type === "YOUTUBE" || r.platform?.toLowerCase().includes("youtube") || r.url?.includes("youtube.com")) &&
+      (r.type === "YOUTUBE" || r.platform?.toLowerCase().includes("youtube") || urlHostIs(r.url, "youtube.com")) &&
       Boolean(r.thumbnailUrl) &&
-      !r.thumbnailUrl?.includes("unsplash.com")
+      !urlHostIs(r.thumbnailUrl, "unsplash.com")
   );
 
   const isTtSearch = !tiktokRef?.url || tiktokRef.url.includes("/search?") || tiktokRef.url.includes("search_query");

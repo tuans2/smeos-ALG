@@ -7,6 +7,7 @@
 import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
+import { COORDINATOR_ENTRY_SOURCES } from "@/modules/orders/domain/order-source"
 import { COORDINATOR_STAGES } from "../domain/stage-transitions"
 import { EXCEPTION_SEVERITIES, EXCEPTION_TYPES } from "../domain/operation-rules"
 
@@ -105,7 +106,8 @@ export const createOrderSchema = z.object({
   // ĐP-4a.1 (26/09/2026), Đặc tả trường §2.1/§3.1 — mã chuỗi kiểm theo danh
   // mục (D12), kiểm active thật ở use-case (`validate-catalog-code.ts`) vì
   // zod thuần không gọi DB. `priority` để trống thì máy TỰ GỢI Ý (§2.15.1).
-  source: z.enum(["ORDER_M10", "CHAT_M08", "CATALOG_M06", "MANUAL"]).optional(),
+  // PO 07/11/2026 (Q2, audit BL-06): nguồn theo danh mục chung `order-source.ts`, ghi cả `orders.source`
+  source: z.enum(COORDINATOR_ENTRY_SOURCES).optional(),
   sourceReference: text(200).optional(),
   channel: text(60).optional(),
   orderType: text(60).optional(),

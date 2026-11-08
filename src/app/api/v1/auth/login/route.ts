@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 import { serializeSessionCookie, serializeSsoCookie } from "@/core/http/cookies"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -9,14 +7,10 @@ import { SESSION_TTL_SECONDS } from "@/modules/organization/domain/session-polic
 import { logIn } from "@/modules/organization/use-cases/log-in"
 import { ssoClaimsFor, SSO_TOKEN_TTL_SECONDS } from "@/modules/sso/domain/sso-claims"
 import { signSsoToken } from "@/modules/sso/infra/sso-jwt"
-
-const schema = z.object({
-  email: z.string(),
-  password: z.string(),
-})
+import { loginBody } from "@/app/api/v1/_contracts/requests-org"
 
 export const POST = handle(async (request) => {
-  const parsed = schema.safeParse(await request.json().catch(() => null))
+  const parsed = loginBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   // Chặn dò mật khẩu (PO 08/10/2026): theo email (10 lần/15 phút) và theo IP (40 lần/15 phút —

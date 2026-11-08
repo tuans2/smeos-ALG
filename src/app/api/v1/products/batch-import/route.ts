@@ -6,27 +6,9 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { ProductRepository, type CreateProductInput } from "@/modules/products/infra/product-repository"
 import { stripProposal } from "@/modules/products/domain/product-proposal"
 import { finishImportBatch, saveRevisionBeforeImport, startImportBatch } from "@/modules/products/use-cases/product-import-batches"
+import { batchImportBody, batchImportItem } from "@/app/api/v1/_contracts/requests-products"
 
-const itemSchema = z.object({
-  code: z.string().min(1),
-  name: z.string().min(1),
-  category: z.string().nullable().optional(),
-  shape: z.string().nullable().optional(),
-  facing: z.string().nullable().optional(),
-  container: z.string().nullable().optional(),
-  status: z.enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"]).optional(),
-  attributes: z.record(z.string(), z.unknown()).nullable().optional(),
-  image_asset_id: z.string().nullable().optional(),
-})
-
-const batchSchema = z.object({
-  items: z.array(itemSchema).min(1).max(500),
-  skip_duplicates: z.boolean().optional().default(true),
-  overwrite_existing_images: z.boolean().optional().default(false),
-  overwrite_existing: z.boolean().optional().default(false),
-})
-
-export type BatchImportItem = z.infer<typeof itemSchema>
+export type BatchImportItem = z.infer<typeof batchImportItem>
 
 /**
  * POST /api/v1/products/batch-import (Quyền: L2 + H3 — chỉ Điều hành nhập Excel, PO 23/10/2026)
@@ -37,7 +19,7 @@ export const POST = handle(async (request) => {
   requireCapability(ctx, "L2")
   requireCapability(ctx, "H3")
 
-  const parsed = batchSchema.safeParse(await request.json().catch(() => null))
+  const parsed = batchImportBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const { skip_duplicates, overwrite_existing_images, overwrite_existing } = parsed.data

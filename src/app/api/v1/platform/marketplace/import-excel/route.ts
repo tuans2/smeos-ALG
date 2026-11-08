@@ -5,18 +5,16 @@
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
-import { SURVEY_COLUMN_COUNT } from "@/modules/platform/domain/partner-marketplace-row-mapper"
 import { importMarketplaceExcel } from "@/modules/platform/use-cases/manage-partner-marketplace"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { readExcelUpload } from "./read-excel-upload"
-
-const MappingSchema = z.array(z.number().int().min(0).nullable()).length(SURVEY_COLUMN_COUNT)
+import { marketplaceMappingSchema } from "@/app/api/v1/platform/_contracts/requests"
 
 export const POST = handle(async (request) => {
   const pctx = await requirePlatformContext(request)
   const { form, file } = await readExcelUpload(request)
   const rawMapping = form.get("mapping")
-  let mapping: z.infer<typeof MappingSchema> | undefined
+  let mapping: z.infer<typeof marketplaceMappingSchema> | undefined
   if (typeof rawMapping === "string" && rawMapping.trim()) {
     let json: unknown
     try {
@@ -24,7 +22,7 @@ export const POST = handle(async (request) => {
     } catch {
       json = null
     }
-    const parsed = MappingSchema.safeParse(json)
+    const parsed = marketplaceMappingSchema.safeParse(json)
     if (!parsed.success) throw validationFailed({ mapping: "Bảng ghép cột không hợp lệ" })
     mapping = parsed.data
   }

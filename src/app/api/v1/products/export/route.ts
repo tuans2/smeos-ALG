@@ -4,8 +4,7 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { exportProductsCsv } from "@/modules/products/use-cases/export-products"
 import { recordDataExport } from "@/modules/audit/use-cases/record-data-export"
-
-const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"] as const
+import { PRODUCT_STATUS } from "@/app/api/v1/_contracts/requests-products"
 
 /**
  * `GET /products/export` — CSV theo bộ lọc `status`/`category`/`search` của danh sách.

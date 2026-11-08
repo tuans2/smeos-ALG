@@ -65,6 +65,7 @@ export const ordersVi = {
   "actions": {
     "viewDetails": "Xem chi tiết",
     "printA6": "In phiếu A6",
+    "followInCoordinator": "Theo dõi ở Điều phối",
     "cancelOrder": "Hủy đơn hàng",
     "confirmCancel": "Xác nhận hủy đơn",
     "cancelReasonPlaceholder": "Nhập lý do hủy đơn (bắt buộc)...",

@@ -2,32 +2,20 @@
  * GET/PUT /api/v1/platform/credit-pricing — quy đổi credit cấp nền tảng (PO Q10, checklist ALG 10.3, 10.4).
  * GET (`N4`). PUT (`N3`): `{ smsCredit?, znsCredit?, usdToVnd?, creditValueVnd?, defaultMonthlyLimit?, messageOverdraftCredit? }`.
  */
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { getCreditPricing, updateCreditPricing } from "@/modules/platform/use-cases/credit-pricing"
+import { creditPricingBody } from "@/app/api/v1/platform/_contracts/requests"
 
 export const GET = handle(async (request) => {
   const pctx = await requirePlatformContext(request)
   return jsonResponse({ data: await getCreditPricing(pctx) })
 })
 
-const bodySchema = z.object({
-  smsCredit: z.number().optional(),
-  znsCredit: z.number().optional(),
-  usdToVnd: z.number().optional(),
-  creditValueVnd: z.number().optional(),
-  smsCostVnd: z.number().optional(),
-  znsCostVnd: z.number().optional(),
-  defaultMonthlyLimit: z.number().int().nullable().optional(),
-  /** Tin nhắn gửi khách được âm số dư tối đa chừng này credit */
-  messageOverdraftCredit: z.number().int().optional(),
-})
-
 export const PUT = handle(async (request) => {
   const pctx = await requirePlatformContext(request)
-  const parsed = bodySchema.safeParse(await request.json().catch(() => null))
+  const parsed = creditPricingBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   const input = Object.fromEntries(Object.entries(parsed.data).filter(([, v]) => v !== undefined))
   return jsonResponse({ data: await updateCreditPricing(pctx, input) })

@@ -1,35 +1,10 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getOrder } from "@/modules/orders/use-cases/get-order"
 import { updateOrderProgress } from "@/modules/orders/use-cases/update-order-progress"
 import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
-
-const patchOrderSchema = z.object({
-  status: z.enum(["DRAFT", "CONFIRMED", "PROCESSING", "DELIVERED", "COMPLETED", "CANCELLED"]).optional(),
-  productionStatus: z.enum(["WAITING", "ASSIGNED", "ARRANGING", "QUALITY_CHECK", "READY"]).optional(),
-  deliveryStatus: z.enum(["PENDING", "DISPATCHED", "DELIVERING", "DELIVERED", "FAILED"]).optional(),
-  cardMessage: z.string().optional(),
-  internalNote: z.string().optional(),
-  deliveryWindow: z
-    .object({
-      date: z.string(),
-      timeSlot: z.string().optional(),
-    })
-    .optional(),
-  deliveryAddress: z
-    .object({
-      recipientName: z.string(),
-      phone: z.string(),
-      street: z.string(),
-      ward: z.string().optional(),
-      district: z.string().optional(),
-      province: z.string().optional(),
-      notes: z.string().optional(),
-    })
-    .optional(),
-})
+import { patchOrderBody } from "@/app/api/v1/_contracts/requests-orders"
 
 /** `GET /api/v1/orders/:id` (R1) — Xem chi tiết đơn hàng & SLA */
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
@@ -48,7 +23,7 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
 
   const { id } = await context.params
   const body = await request.json()
-  const parsed = patchOrderSchema.parse(body)
+  const parsed = patchOrderBody.parse(body)
 
   const updated = await updateOrderProgress(ctx, id, parsed)
   // Bổ sung đủ thông tin → yêu cầu bổ sung tự đóng (checklist ALG 4.14)

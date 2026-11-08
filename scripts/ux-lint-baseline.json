@@ -10,6 +10,9 @@
     "components/catalog": {
       "R14": 3
     },
+    "components/creative-studio": {
+      "R16": 1
+    },
     "components/dashboard": {
       "R18": 1
     },
@@ -29,6 +32,6 @@
       "R14": 1
     }
   },
-  "total": 28,
-  "updatedAt": "2026-11-07T10:45:16.590Z"
+  "total": 29,
+  "updatedAt": "2026-11-07T22:33:05.085Z"
 }

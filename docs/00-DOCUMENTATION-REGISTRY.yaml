@@ -1043,18 +1043,32 @@ documents:
     dependencies: ["docs/kien-truc/HIEN_TRANG_THE_CHAO.md", "docs/kien-truc/KE_HOACH_MA_TRAN_QUY_TRINH_THE_CHAO.md"]
     supersedes: []
 
-  - id: "DOC-05-SPEC-JOURNEY-UX-LANDING-CATALOG"
-    path: "docs/dac-ta/FLORAOS_JOURNEY_FIRST_UX_LANDING_AND_CATALOG_SPEC.md"
-    title: "Đặc tả Kiến trúc UX Journey-First: Tạo Landing Page & Catalog Số"
+  - id: "DOC-05-SPEC-JOURNEY-LANDING-CATALOG-REQUIREMENTS"
+    path: "docs/dac-ta/FLORAOS_JOURNEY_FIRST_UX_LANDING_CATALOG_EXECUTION_SPEC_FINAL.md"
+    title: "Đặc tả yêu cầu Journey-First: Tạo Landing Page & Tạo Catalog Số"
     domain: "Role UX & Content Engine"
     layer: "Level 5"
-    purpose: "Đặc tả chi tiết tái cấu trúc trải nghiệm người dùng chức năng Tạo Landing Page và Catalog Số theo triết lý Journey-First (J1–J7), hỗ trợ 2 cơ chế Automatic (AI Pre-fill) và Manually (Step-by-step Wizard), cùng khối Next Best Actions"
+    purpose: "Đặc tả yêu cầu chuẩn (PO chọn 08/11/2026): Landing Page và Catalog là hai hành trình độc lập, mỗi hành trình hai chế độ (AI làm cho tôi / Tự chọn từng bước) chọn trước khi nhập dữ liệu; luật dữ liệu người dùng, xem lại trước xuất bản, xử lý lỗi, tiêu chí nghiệm thu và định nghĩa hoàn thành"
     status: "CANONICAL"
     authority: "Level 5"
     canonical: true
     ssot: true
     owner: "Product Owner / UX Architect"
-    dependencies: ["docs/kien-truc/Nâng cấp tasks/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md", "docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md"]
+    dependencies: ["docs/kien-truc/Nâng cấp tasks/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md"]
+    supersedes: []
+
+  - id: "DOC-05-SPEC-JOURNEY-UX-LANDING-CATALOG"
+    path: "docs/dac-ta/FLORAOS_JOURNEY_FIRST_UX_LANDING_AND_CATALOG_SPEC.md"
+    title: "Bản đồ mã — Tạo Landing Page & Tạo Catalog Số"
+    domain: "Role UX & Content Engine"
+    layer: "Level 5"
+    purpose: "Chỉ ra tệp mã thực hiện từng phần của đặc tả yêu cầu Landing Page/Catalog (tuyến, bộ điều phối, màn chọn chế độ, bước, xuất bản, phần dùng chung) và nợ đã biết; không định nghĩa yêu cầu"
+    status: "SUPPORTING"
+    authority: "Level 5"
+    canonical: false
+    ssot: false
+    owner: "Product Owner / UX Architect"
+    dependencies: ["docs/dac-ta/FLORAOS_JOURNEY_FIRST_UX_LANDING_CATALOG_EXECUTION_SPEC_FINAL.md", "docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md"]
     supersedes: []
 
   - id: "DOC-05-CHECKLIST-CREATIVE-STUDIO"

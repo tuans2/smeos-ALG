@@ -60,4 +60,14 @@ describe("UX Lint R13–R16 (03c §7)", () => {
     expect(run(checkR16, `const a = <p>Định lượng nguyên vật liệu cho cửa hàng</p>`)).toHaveLength(0)
     expect(run(checkR16, `const a = <p className="m-2 tenant-box">Cỡ M20</p>`)).toHaveLength(0)
   })
+
+  it("R16 soát chữ hiển thị khai trong mảng/object (label, title, description…), bỏ qua khoá không hiển thị", () => {
+    expect(run(checkR16, `const TABS = [{ id: "INTAKE", label: "P1 Tiếp nhận" }]`)).toHaveLength(1)
+    expect(run(checkR16, `const STEPS = [{ title: "M01: Duyệt thành phần" }]`)).toHaveLength(1)
+    expect(run(checkR16, `const X = { description: \`Tab \${n} (M04b)\` }`)).toHaveLength(1)
+    expect(run(checkR16, `const X = { label: "Cấp độ Rủi ro Cao (R1)" }`)).toHaveLength(1)
+    expect(run(checkR16, `const X = { label: "Sale Pitch" }`)).toHaveLength(1)
+    expect(run(checkR16, `const X = { id: "P1 Tiếp nhận", code: "M01", stage: "R1" }`)).toHaveLength(0)
+    expect(run(checkR16, `const X = { subtitle: "Local Metal GPU (Apple M3)" }`)).toHaveLength(0)
+  })
 })

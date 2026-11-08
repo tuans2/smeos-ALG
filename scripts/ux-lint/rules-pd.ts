@@ -102,7 +102,7 @@ export const checkR15: RuleFunction = (sourceFile, context) => {
 }
 
 /** R16 — từ cấm theo docs/dac-ta/ux-patterns/glossary.md (UX-026). */
-const GLOSSARY_BANNED: [RegExp, string][] = [
+export const GLOSSARY_BANNED: [RegExp, string][] = [
   [/\bWorker\b/, '"hệ thống" hoặc bỏ hẳn'],
   [/\b[Rr]ender(?:ing)?\b/, '"dựng" (Đang dựng video, Đã dựng xong)'],
   [/\bjob\b/, '"tác vụ" hoặc bỏ mã'],
@@ -113,8 +113,17 @@ const GLOSSARY_BANNED: [RegExp, string][] = [
   [/\bControl Tower\b/i, '"tháp điều phối đơn"'],
   [/\b[Pp]ayload\b|\bRequest body\b/i, '"dữ liệu gửi lên" hoặc "thông tin nhập liệu"'],
   [/\b[Tt]enants?\b/, '"cửa hàng" hoặc "doanh nghiệp / tổ chức" theo tầng'],
-  [/\bM[0-5]\b/, '"tiến độ xử lý" kèm tên bước (Nhận đơn → Chế tác → Giao hàng)'],
+  [/(?<!Apple )\bM[0-5]\b/, '"tiến độ xử lý" kèm tên bước (Nhận đơn → Chế tác → Giao hàng)'],
+  [/\bM(?:0[1-9]|1\d)[a-z]?\b/, "tên chức năng (không hiện mã nội bộ M01, M01a…)"],
+  [/\bR[1-9]\b/, 'tên mức: "rủi ro cao", "tiêu chuẩn"'],
+  [/\bSales? [Pp]itch\b/, '"kịch bản tư vấn"'],
 ]
+
+/** Thuộc tính object mang chữ hiển thị (mảng tab, bước, mục chọn…) — soát cả ngoài JSX. */
+const DISPLAY_KEYS = new Set([
+  "label", "title", "shortTitle", "subtitle", "description", "desc", "text", "message",
+  "reason", "hint", "placeholder", "tooltip", "caption", "heading", "helperText", "emptyText", "ctaLabel",
+])
 
 const VISIBLE_PROPS = new Set(["label", "title", "placeholder", "description", "aria-label"])
 
@@ -137,6 +146,13 @@ export const checkR16: RuleFunction = (sourceFile, context) => {
       const name = ts.isIdentifier(node.name) ? node.name.text : node.name.name.text
       if (VISIBLE_PROPS.has(name) && node.initializer && ts.isStringLiteral(node.initializer)) check(node.initializer.text, node)
       if (name === "className" || name === "key" || name === "href" || name === "src") return
+    } else if (ts.isPropertyAssignment(node) && !insideJsx) {
+      const key = ts.isIdentifier(node.name) || ts.isStringLiteral(node.name) ? node.name.text : ""
+      const init = node.initializer
+      if (DISPLAY_KEYS.has(key)) {
+        if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) check(init.text, init)
+        else if (ts.isTemplateExpression(init)) check([init.head.text, ...init.templateSpans.map((s) => s.literal.text)].join(" "), init, true)
+      }
     } else if (insideJsx && (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node))) {
       check(node.text, node)
     } else if (insideJsx && ts.isTemplateExpression(node)) {
