@@ -4,15 +4,14 @@ import React from "react"
 import Link from "next/navigation"
 import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Folder } from "@/components/ui/icon-set/folder"
-import { Sparkles } from "@/components/ui/icon-set/sparkles"
-import { Wrench } from "@/components/ui/icon-set/wrench"
 import { Button } from "@/components/ui/button"
 import { IconTile } from "@/components/ui/app-icon"
 import { InfoTip } from "@/components/ui/info-tip"
 import type { BusinessModule } from "@/modules/toolkit/domain/business-modules"
 import { getAllTools, type ToolDefinition } from "@/modules/toolkit/domain/toolkit-catalog"
-import { AssetTypeCard } from "./asset-type-card"
-import { ToolCard } from "./toolkit-card"
+import { Disclosure } from "@/components/ui/disclosure"
+import { BrandKitTiles } from "@/components/brand-kit/tiles/brand-kit-tiles"
+import { ModuleCatalogSections } from "./module-catalog-sections"
 import { MODULE_TONES } from "./toolkit-module-grid"
 import { ModuleKpiStripComponent } from "./module-kpi-strip"
 
@@ -184,53 +183,19 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
         </div>
       )}
 
-      {/* Khu L0: Bạn muốn tạo gì? (Asset Types) */}
-      {module.assets.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" aria-hidden="true" />
-              <h3 className="text-title-sm font-bold text-text">
-                Bạn muốn tạo gì?
-                <span className="ml-2 text-caption font-medium text-text-muted">
-                  {module.assets.length} loại ấn phẩm
-                </span>
-              </h3>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5">
-            {module.assets.map((asset) => (
-              <AssetTypeCard
-                key={asset.code}
-                asset={asset}
-                tool={asset.toolId ? toolMap.get(asset.toolId) : null}
-                isDev={isDev}
-              />
-            ))}
-          </div>
-        </div>
+      {module.journey === "BRAND_KIT" ? (
+        <BrandKitTiles />
+      ) : (
+        <ModuleCatalogSections assets={module.assets} tools={module.tools} toolMap={toolMap} isDev={isDev} tone={tone} />
       )}
 
-      {/* Khu L1: Công cụ trực tiếp */}
-      {module.tools.length > 0 && (
-        <div className="space-y-4 pt-4 border-t border-border/60">
-          <div className="flex items-center gap-2">
-            <Wrench className="w-5 h-5 text-text-muted" aria-hidden="true" />
-            <h3 className="text-title-sm font-bold text-text">
-              Công cụ hỗ trợ
-              <span className="ml-2 text-caption font-medium text-text-muted">
-                {module.tools.length} công cụ
-              </span>
-            </h3>
+      {/* PHÁT_TRIỂN_SAU (PO 08/11/2026): nội dung cũ của nhóm — chỉ môi trường phát triển nhận được */}
+      {isDev && module.deferredAssets.length + module.deferredTools.length > 0 && (
+        <Disclosure label={`Phát triển sau — chỉ hiện ở môi trường phát triển (${module.deferredAssets.length} ấn phẩm · ${module.deferredTools.length} công cụ)`}>
+          <div className="space-y-8 pt-4">
+            <ModuleCatalogSections assets={module.deferredAssets} tools={module.deferredTools} toolMap={toolMap} isDev={isDev} tone={tone} />
           </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-            {module.tools.map((tool) => (
-              <ToolCard key={tool.id} tool={tool} isDev={isDev} tone={tone} />
-            ))}
-          </div>
-        </div>
+        </Disclosure>
       )}
     </section>
   )

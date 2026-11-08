@@ -10,6 +10,7 @@ import {
   type ToolStatus,
 } from "@/modules/toolkit/domain/toolkit-catalog"
 import {
+  deferredToolIds,
   getVisibleBusinessModules,
   type BusinessModule,
   type ModuleTool,
@@ -41,7 +42,8 @@ const FILTER_OPTIONS: { id: StatusFilter; label: string }[] = [
 
 function ToolkitStats({ isDev }: { isDev: boolean }) {
   if (!isDev) return null
-  const counts = countByStatus()
+  // Không đếm công cụ PHÁT_TRIỂN_SAU (PO 08/11/2026) — số liệu khớp những gì người dùng thấy
+  const counts = countByStatus(deferredToolIds())
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

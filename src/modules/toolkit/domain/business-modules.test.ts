@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   BUSINESS_MODULE_SPECS,
+  deferredToolIds,
   getAllBusinessModules,
   getVisibleBusinessModules,
 } from "./business-modules"
@@ -10,7 +11,7 @@ import {
   STORE_OPERATION_GROUP_SPECS,
   STORE_OPERATIONS_TOOL_IDS,
 } from "./store-operations"
-import { getAllTools } from "./toolkit-catalog"
+import { countByStatus, getAllTools } from "./toolkit-catalog"
 
 describe("6 Business Modules & Store Operations (PO 01/11/2026)", () => {
   it("đúng 6 module kinh doanh được đánh số thứ tự từ 1 đến 6", () => {
@@ -46,7 +47,7 @@ describe("6 Business Modules & Store Operations (PO 01/11/2026)", () => {
 
   it("công cụ mục tiêu trong lộ trình (dev) có mã âm riêng và không trùng tên", () => {
     const allModules = getAllBusinessModules()
-    const allTools = allModules.flatMap((m) => m.tools)
+    const allTools = allModules.flatMap((m) => [...m.tools, ...m.deferredTools])
     const roadmapTools = allTools.filter((t) => t.isRoadmap)
     const catalogNames = new Set(getAllTools().map((t) => t.name))
 
@@ -66,7 +67,8 @@ describe("6 Business Modules & Store Operations (PO 01/11/2026)", () => {
     const prodModules = getVisibleBusinessModules(false)
 
     for (const m of prodModules) {
-      expect(m.tools.length + m.assets.length).toBeGreaterThan(0)
+      // Nhóm có hành trình thay thế (brand) hiện dù không còn công cụ/ấn phẩm nào
+      expect(m.tools.length + m.assets.length + (m.journey ? 1 : 0)).toBeGreaterThan(0)
 
       for (const t of m.tools) {
         expect(t.status).toBe("DONE")
@@ -95,5 +97,35 @@ describe("6 Business Modules & Store Operations (PO 01/11/2026)", () => {
         expect(t.status).toBe("DONE")
       }
     }
+  })
+
+  it("Hồ sơ & Thương hiệu: hành trình 3 bước thay lưới cũ; nội dung cũ PHÁT_TRIỂN_SAU chỉ dev thấy (PO 08/11/2026)", () => {
+    const dev = getAllBusinessModules().find((m) => m.key === "brand")!
+    expect(dev.journey).toBe("BRAND_KIT")
+    expect(dev.tools).toEqual([])
+    expect(dev.assets).toEqual([])
+    expect(dev.deferredAssets).toHaveLength(16)
+    expect(dev.deferredTools.filter((t) => !t.isRoadmap).map((t) => t.id).sort((a, b) => a - b)).toEqual([11, 45, 51, 52, 64])
+
+    const prod = getVisibleBusinessModules(false).find((m) => m.key === "brand")!
+    expect(prod.journey).toBe("BRAND_KIT")
+    expect(prod.deferredTools).toEqual([])
+    expect(prod.deferredAssets).toEqual([])
+
+    // Các nhóm khác không đổi
+    for (const m of getAllBusinessModules().filter((x) => x.key !== "brand")) {
+      expect(m.journey).toBeNull()
+      expect(m.deferredTools).toEqual([])
+    }
+  })
+
+  it("số liệu đầu trang không đếm công cụ PHÁT_TRIỂN_SAU", () => {
+    const hidden = deferredToolIds()
+    expect([...hidden].sort((a, b) => a - b)).toEqual([11, 45, 51, 52, 64])
+    const all = countByStatus()
+    const shown = countByStatus(hidden)
+    const total = (c: Record<string, number>) => Object.values(c).reduce((a, b) => a + b, 0)
+    expect(total(all)).toBe(67)
+    expect(total(shown)).toBe(67 - 5)
   })
 })

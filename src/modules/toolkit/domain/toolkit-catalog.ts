@@ -476,8 +476,8 @@ export function getVisibleGroups(isDev: boolean): ToolGroup[] {
 }
 
 /** Đếm số lượng theo trạng thái */
-export function countByStatus(): Record<ToolStatus, number> {
-  const all = getAllTools()
+export function countByStatus(exclude: ReadonlySet<number> = new Set()): Record<ToolStatus, number> {
+  const all = getAllTools().filter((t) => !exclude.has(t.id)) // bỏ công cụ PHÁT_TRIỂN_SAU (business-modules.deferredToolIds)
   return {
     DONE: all.filter((t) => t.status === "DONE").length,
     IN_PROGRESS: all.filter((t) => t.status === "IN_PROGRESS").length,

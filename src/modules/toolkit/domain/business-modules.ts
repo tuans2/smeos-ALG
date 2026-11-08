@@ -26,6 +26,7 @@ import {
   getAssetTypesByModule,
 } from "@/modules/marketing-center/domain/asset-types"
 import { BUSINESS_MODULE_ROADMAP } from "./business-module-roadmap"
+import { deferredContentOf, type ModuleJourney } from "./deferred-module-content"
 import { STORE_OPERATIONS_TOOL_IDS } from "./store-operations"
 import { getAllTools, type ToolDefinition } from "./toolkit-catalog"
 
@@ -103,6 +104,11 @@ export interface BusinessModule {
   readonly icon: string
   readonly tools: readonly ModuleTool[]
   readonly assets: readonly AssetTypeDefinition[]
+  /** Hành trình thay cho lưới ấn phẩm/công cụ (PO 08/11/2026); null = nhóm hiển thị như cũ */
+  readonly journey: ModuleJourney | null
+  /** Nội dung cũ gắn PHÁT_TRIỂN_SAU — chỉ môi trường phát triển nhận được (deferred-module-content.ts) */
+  readonly deferredTools: readonly ModuleTool[]
+  readonly deferredAssets: readonly AssetTypeDefinition[]
 }
 
 function asModuleTool(tool: ToolDefinition): ModuleTool {
@@ -140,6 +146,8 @@ export function getAllBusinessModules(): readonly BusinessModule[] {
     )
 
     const assets = getAssetTypesByModule(spec.key)
+    const tools = [...existingTools, ...roadmapTools]
+    const deferred = deferredContentOf(spec.key)
 
     return {
       key: spec.key,
@@ -147,8 +155,11 @@ export function getAllBusinessModules(): readonly BusinessModule[] {
       name: spec.name,
       purpose: spec.purpose,
       icon: spec.icon,
-      tools: [...existingTools, ...roadmapTools],
-      assets,
+      tools: deferred ? [] : tools,
+      assets: deferred ? [] : assets,
+      journey: deferred?.journey ?? null,
+      deferredTools: deferred ? tools : [],
+      deferredAssets: deferred ? assets : [],
     }
   })
 }
@@ -176,9 +187,11 @@ export function getVisibleBusinessModules(isDev: boolean): readonly BusinessModu
         ...mod,
         tools: prodTools,
         assets: prodAssets,
+        deferredTools: [],
+        deferredAssets: [],
       }
     })
-    .filter((mod) => mod.tools.length > 0 || mod.assets.length > 0)
+    .filter((mod) => mod.journey !== null || mod.tools.length > 0 || mod.assets.length > 0)
 }
 
 export function countModuleTools(module: BusinessModule): number {
@@ -187,4 +200,9 @@ export function countModuleTools(module: BusinessModule): number {
 
 export function countModuleAssets(module: BusinessModule): number {
   return module.assets.length
+}
+
+/** Mã công cụ thuộc nội dung PHÁT_TRIỂN_SAU — không tính vào số liệu đầu trang /cong-cu. */
+export function deferredToolIds(): ReadonlySet<number> {
+  return new Set(BUSINESS_MODULE_SPECS.filter((spec) => deferredContentOf(spec.key)).flatMap((spec) => spec.toolIds))
 }

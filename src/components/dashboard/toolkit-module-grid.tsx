@@ -50,8 +50,9 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
         </Button>
       </h3>
       <span className="mt-1 sm:mt-2 text-caption text-text-muted">
-        {readyAssets > 0 ? `${readyAssets} ấn phẩm · ` : ""}
-        {toolsCount} công cụ
+        {module.journey === "BRAND_KIT" ? "3 bước: Hồ sơ · Nhận diện · Landing" : (
+          <>{readyAssets > 0 ? `${readyAssets} ấn phẩm · ` : ""}{toolsCount} công cụ</>
+        )}
       </span>
     </div>
   )
