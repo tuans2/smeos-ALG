@@ -1,4 +1,3 @@
-
 import { validationFailed } from "@/core/http/errors"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"

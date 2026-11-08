@@ -1,4 +1,3 @@
-
 import { activationWarningsFor } from "@/modules/products/use-cases/get-product-master-index"
 import { validationFailed } from "@/core/http/errors"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"

@@ -3,6 +3,7 @@ import path from "node:path"
 
 import { describe, expect, it } from "vitest"
 
+import { PUBLIC, SESSION_ONLY } from "@/app/api/v1/_contracts/internal-op"
 import { buildInternalOpenApi, INTERNAL_COVERED_PREFIXES, INTERNAL_OPENAPI_PATH, INTERNAL_OPERATIONS } from "@/app/api/v1/_contracts/internal-openapi"
 import { serializeOpenApi } from "@/core/http/openapi"
 
@@ -40,11 +41,14 @@ describe("OpenAPI nội bộ — API tiệm", () => {
     expect(new Set(fromRegistry).size).toBe(fromRegistry.length)
   })
 
-  it("operationId duy nhất; mọi operation khai 401, 403, 409 và lệnh ghi khai 402", () => {
+  it("operationId duy nhất; route của tổ chức khai 401, 403, 409 và lệnh ghi khai 402; route chỉ cần phiên khai 401", () => {
     const ids = INTERNAL_OPERATIONS.map((op) => op.operationId)
     expect(new Set(ids).size).toBe(ids.length)
     for (const op of INTERNAL_OPERATIONS) {
-      expect(op.errors, op.operationId).toEqual(expect.arrayContaining(op.method === "get" ? [401, 403, 409] : [401, 402, 403, 409]))
+      const cap = op.extensions?.["x-capability"]
+      if (cap === PUBLIC) expect(op.security, op.operationId).toEqual([])
+      else if (cap === SESSION_ONLY) expect(op.errors, op.operationId).toContain(401)
+      else expect(op.errors, op.operationId).toEqual(expect.arrayContaining(op.method === "get" ? [401, 403, 409] : [401, 402, 403, 409]))
     }
   })
 

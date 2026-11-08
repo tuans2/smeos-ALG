@@ -1,4 +1,3 @@
-
 import { defineRoute } from "@/core/http/define-route"
 import { jsonResponse } from "@/core/http/response"
 import { getStandardOrderVat, setStandardOrderVat } from "@/modules/orders/use-cases/standard-order-vat"
