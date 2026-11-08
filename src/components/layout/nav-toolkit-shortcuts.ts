@@ -9,6 +9,8 @@
  */
 
 import { getAllTools } from "@/modules/toolkit/domain/toolkit-catalog"
+import { DEFERRED_TOOL_HREFS } from "@/modules/toolkit/domain/deferred-module-content"
+import { isDevEnvironment } from "@/lib/dev-environment"
 import type { NavEntry } from "./nav-model"
 
 export const MAX_SHORTCUTS = 5
@@ -27,7 +29,9 @@ export const DEFAULT_SHORTCUT_KEYS: readonly string[] = [
  * để hiển thị đầy đủ trong danh sách chọn lối tắt (mini picker) và sidebar shortcuts.
  */
 export function getAllToolkitNavEntries(): NavEntry[] {
-  return getAllTools().map((t) => {
+  // Lối vào PHÁT_TRIỂN_SAU (thư viện thương hiệu, danh thiếp) chỉ hiện ở môi trường phát triển
+  const tools = isDevEnvironment() ? getAllTools() : getAllTools().filter((t) => !DEFERRED_TOOL_HREFS.includes(t.href ?? ""))
+  return tools.map((t) => {
     // Map các route quen thuộc sang navKey tương thích với sidebar StoreOS
     const navKey =
       t.href === "/creative-studio"

@@ -8,21 +8,17 @@ import { Copy } from "@/components/ui/icon-set/copy"
 import { ExternalLink } from "@/components/ui/icon-set/external-link"
 import { Globe } from "@/components/ui/icon-set/globe"
 import { Plus } from "@/components/ui/icon-set/plus"
-import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { fontStack } from "@/modules/brand-kit/domain/logo-svg"
 import { readableTextOn } from "@/modules/brand-kit/domain/color-math"
 import type { BrandKitView } from "@/modules/brand-kit/use-cases/get-brand-kit"
 import { FirstOptionsCard } from "../first-options-card"
+import { LANDING_LAYOUT_HINT, confirmPublishLanding } from "../journey/journey-copy"
 import type { BrandKitState } from "../use-brand-kit"
 import { Tile, TileIcon, TilePill } from "./tile"
+import { RefreshBanner } from "../journey/refresh-banner"
 
 type Option = BrandKitView["landing"]["options"][number]
 
-const LAYOUT_HINT: Record<Option["style_key"], string> = {
-  LUXURY: "Ảnh lớn, nhiều khoảng trắng, chữ có chân",
-  YOUTHFUL: "Lưới khối nhiều màu, nút bấm nổi bật",
-  RUSTIC: "Tông ấm, kể chuyện tay nghề",
-}
 
 /** Bước 3 trên /cong-cu: trang chính thức đang chạy + ô giao diện để chọn và xuất bản (hỏi trước — R3). */
 export function LandingTiles({ kit }: { kit: BrandKitState }) {
@@ -70,13 +66,7 @@ export function LandingTiles({ kit }: { kit: BrandKitState }) {
   }
 
   const select = async (id: string) => {
-    const ok = await confirm({
-      title: l.published_path ? "Đổi giao diện trang chính thức?" : "Xuất bản Landing page chính thức?",
-      consequence: l.published_path
-        ? "Trang giữ nguyên đường dẫn đã chia sẻ, chỉ đổi giao diện và nội dung theo phương án mới."
-        : "Trang sẽ có đường dẫn công khai — ai có link hoặc mã QR đều xem được tên cửa hàng, thông tin liên hệ, sản phẩm chủ đạo và giá. Bạn có thể đổi phương án sau.",
-      confirmLabel: l.published_path ? "Đổi giao diện" : "Xuất bản",
-    })
+    const ok = await confirm(confirmPublishLanding(Boolean(l.published_path)))
     if (ok) await kit.select("landing", id)
   }
 
@@ -88,7 +78,7 @@ export function LandingTiles({ kit }: { kit: BrandKitState }) {
       tone={o.selected ? "selected" : "default"}
       className="min-h-0"
       pill={<TilePill tone={o.selected ? "ok" : "muted"}>{o.selected ? "Đang dùng" : "Phương án"}</TilePill>}
-      preview={LAYOUT_HINT[o.style_key]}
+      preview={LANDING_LAYOUT_HINT[o.style_key]}
       footer="Trang chính thức"
       footerAction={
         <Button type="button" variant="ghost" size="xs" className="font-bold text-primary" disabled={busy || o.selected} onClick={() => void select(o.id)}>
@@ -138,14 +128,7 @@ export function LandingTiles({ kit }: { kit: BrandKitState }) {
         </div>
       )}
 
-      {l.profile_changed && l.can_refresh && (
-        <div role="status" className="flex flex-col gap-3 rounded-2xl border border-warning-border bg-warning-bg p-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-body-sm text-warning-text">Hồ sơ hoặc Bộ nhận diện đã đổi sau lần tạo gần nhất.</p>
-          <Button type="button" variant="outline" size="sm" className="shrink-0 gap-2" disabled={busy} onClick={() => void kit.generate("landing", "refresh")}>
-            <RefreshCw size={16} aria-hidden /> Tạo lại theo hồ sơ mới (miễn phí)
-          </Button>
-        </div>
-      )}
+      <RefreshBanner kind="landing" show={l.profile_changed} canRefresh={l.can_refresh} busy={Boolean(kit.busy)} onRefresh={() => void kit.generate("landing", "refresh")} />
 
       <section aria-labelledby="bk-landing">
         <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">

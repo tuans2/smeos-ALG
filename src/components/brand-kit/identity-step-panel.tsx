@@ -8,16 +8,16 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Download } from "@/components/ui/icon-set/download"
 import { Palette } from "@/components/ui/icon-set/palette"
-import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { StoreShareLinkCard } from "@/components/profiles/store-share-link-card"
-import { evaluateStoreProfile } from "@/modules/profiles/domain/store-profile-completeness"
 import { SOCIAL_COVER_SIZE } from "@/modules/brand-kit/domain/social-cover-svg"
 import type { TenantProfileState } from "@/lib/hooks/use-tenant-profile"
 import type { BrandKitState } from "./use-brand-kit"
 import { IdentityOptionCard } from "./identity-option-card"
 import { FirstOptionsCard } from "./first-options-card"
+import { CONFIRM_CHANGE_IDENTITY, shareReadiness } from "./journey/journey-copy"
 import { coverSvgFor, logoSvgFor, type ShopFacts } from "./identity-kit-previews"
 import { downloadPng, downloadSvg, fileSlug } from "./svg-file"
+import { RefreshBanner } from "./journey/refresh-banner"
 
 interface IdentityStepPanelProps {
   kit: BrandKitState
@@ -38,11 +38,7 @@ export function IdentityStepPanel({ kit, profile, onNext }: IdentityStepPanelPro
 
   const select = async (optionId: string) => {
     if (selected) {
-      const ok = await confirm({
-        title: "Đổi bộ nhận diện chính thức?",
-        consequence: "Màu, phông chữ, khẩu hiệu và logo của cửa hàng sẽ đổi theo phương án mới ở mọi nơi: danh thiếp, trang chia sẻ, Landing page và Cài đặt. Bạn có thể chọn lại phương án cũ bất cứ lúc nào.",
-        confirmLabel: "Đổi bộ nhận diện",
-      })
+      const ok = await confirm(CONFIRM_CHANGE_IDENTITY)
       if (!ok) return
     }
     if (await kit.select("identity", optionId)) await profile.reload()
@@ -65,25 +61,16 @@ export function IdentityStepPanel({ kit, profile, onNext }: IdentityStepPanelPro
   return (
     <div className="space-y-6">
       {dialog}
-      {id.profile_changed && (
-        <div role="status" className="rounded-2xl border border-warning-border bg-warning-bg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <p className="text-body-sm text-warning-text">Hồ sơ cửa hàng đã thay đổi sau lần tạo gần nhất.</p>
-          {id.can_refresh && (
-            <Button type="button" variant="outline" size="sm" className="gap-2 shrink-0" disabled={Boolean(kit.busy)} onClick={() => void kit.generate("identity", "refresh")}>
-              <RefreshCw size={16} aria-hidden /> Tạo lại theo hồ sơ mới (miễn phí)
-            </Button>
-          )}
-        </div>
-      )}
+      <RefreshBanner kind="identity" show={id.profile_changed} canRefresh={id.can_refresh} busy={Boolean(kit.busy)} onRefresh={() => void kit.generate("identity", "refresh")} />
 
       {selected && (
         <section className="rounded-2xl bg-surface shadow-sm p-5 sm:p-6 space-y-4" aria-labelledby="identity-official-title">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 id="identity-official-title" className="text-title-sm font-bold text-text">Bộ nhận diện đang dùng: {selected.style_label}</h2>
-              <p className="text-caption text-text-muted mt-1">Đã áp dụng cho danh thiếp, trang chia sẻ và Cài đặt thương hiệu.</p>
+              <p className="text-caption text-text-muted mt-1">Đã áp dụng cho danh thiếp, trang chia sẻ và Landing page.</p>
             </div>
-            <Button type="button" onClick={onNext} className="gap-2 shrink-0">Tạo Landing page <ArrowRight size={16} aria-hidden /></Button>
+            <Button type="button" onClick={onNext} disabled={Boolean(kit.busy)} className="gap-2 shrink-0">{view.landing.options.length ? "Xem Landing page" : "Tạo Landing page"} <ArrowRight size={16} aria-hidden /></Button>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" size="sm" className="gap-2" onClick={() => downloadSvg(logoSvgFor(selected.content, shop.name), `logo-${fileSlug(shop.name)}.svg`)}>
@@ -94,10 +81,7 @@ export function IdentityStepPanel({ kit, profile, onNext }: IdentityStepPanelPro
             </Button>
             <Link href="/ho-so/danh-thiep" className="inline-flex items-center min-h-11 px-4 rounded-lg text-body-sm font-semibold text-primary hover:bg-primary/10">Mở danh thiếp</Link>
           </div>
-          <StoreShareLinkCard
-            readyToShare={evaluateStoreProfile({ business: profile.business, brand: profile.brand }).readyToShare}
-            missingEssentials={evaluateStoreProfile({ business: profile.business, brand: profile.brand }).missing.filter((m) => m.essential).map((m) => m.label)}
-          />
+          <StoreShareLinkCard {...shareReadiness(profile)} />
         </section>
       )}
 

@@ -37,8 +37,9 @@ import {
 } from "@/modules/greeting-card/domain/store-policy"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"
 import { ChainCollectionProfileManager } from "@/components/organization/chain-collection-profile-manager"
+import { isDevEnvironment } from "@/lib/dev-environment"
 
-const VALID_TABS: SettingsTab[] = [
+const VALID_TABS: SettingsTab[] = ([
   "INFO",
   "BRANDING",
   "PAYMENT",
@@ -51,7 +52,7 @@ const VALID_TABS: SettingsTab[] = [
   "COLLECTION_PROFILE",
   "FIELDS",
   "DOMAIN",
-]
+] as SettingsTab[]).filter((t) => t !== "BRANDING" || isDevEnvironment()) // PHÁT_TRIỂN_SAU (PO 08/11/2026) — xem settings-tabs-nav
 
 function CaiDatTiemContent() {
   const searchParams = useSearchParams()

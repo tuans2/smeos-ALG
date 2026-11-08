@@ -31,7 +31,7 @@ acceptance:
 - **Bước 3 — Landing page:** tương tự, 3 phương án dùng màu + khẩu hiệu của bộ nhận diện đã chọn; "Chọn và xuất bản" qua `ConfirmDialog` (R3). Đã xuất bản → "Mở trang" `/c/:slug`; đổi phương án giữ nguyên link.
 
 ## 3. Hành động
-- **Chính (1 mỗi trạng thái):** "Tạo Bộ nhận diện" (Bước 1 xong) · "Tạo 3 phương án" (bước chưa có phương án) · "Tạo Landing page" (đã chọn bộ nhận diện).
+- **Chính (1 mỗi trạng thái):** "Xác nhận hồ sơ — tạo Bộ nhận diện" (Bước 1 đủ: hệ thống tạo ngay 3 phương án rồi mở Bước 2) · "Tạo 3 phương án" (bước chưa có phương án) · "Tạo Landing page" (đã chọn bộ nhận diện: dựng ngay 3 giao diện rồi mở Bước 3).
 - **Phụ:** "Chọn phương án này" / "Chọn và xuất bản" (`secondary`), "Tạo thêm phương án" (`outline`, có giá), tải tệp, liên kết Cài đặt thương hiệu, Thư viện thương hiệu.
 
 ## 4. Trạng thái
@@ -39,9 +39,12 @@ acceptance:
 - Đang tạo / đang áp dụng: dòng `role="status"`, khoá các nút.
 - AI không chạy được khi "Tạo thêm": phương án theo mẫu + thông báo đã hoàn credit.
 
-## 5. Đồng bộ hai nơi
-- Cài đặt → Thương hiệu sửa màu, phông chữ, khẩu hiệu (`brand_profiles.slogan`) — cùng bản ghi mà Bộ nhận diện ghi.
-- `/landing-page` hiện thẻ "Trang chính thức của cửa hàng" dẫn về đây; trang chính thức đọc sống giờ mở cửa, liên hệ, ảnh, video, sản phẩm chủ đạo từ Hồ sơ.
+## 5. Chỉ hai nơi có chức năng này (PO 08/11/2026)
+- Hành trình chỉ có ở `/ho-so` (dạng tab) và nhóm "Hồ sơ & Thương hiệu" trên `/cong-cu` (dạng ô). Hai giao diện dùng chung
+  `src/components/brand-kit/journey/*` (hook `useBrandJourney`, nội dung chữ, khối "Tạo lại theo hồ sơ mới") — không lặp code.
+- Lối vào khác gắn PHÁT_TRIỂN_SAU, chỉ môi trường phát triển thấy (`DEFERRED_SURFACES`): Cài đặt → tab Thương hiệu, lối tắt
+  Thư viện thương hiệu / Danh thiếp, thẻ "Trang chính thức" trên `/landing-page`. Danh thiếp mở từ ô Danh thiếp.
+- Trang chính thức đọc sống giờ mở cửa, liên hệ, ảnh, video, sản phẩm chủ đạo từ Hồ sơ.
 
 ## 6. Quyền
 - Xem `F1`; nhập hồ sơ, sinh/chọn Bộ nhận diện `F2`; sinh Landing `J7`; xuất bản Landing `J1`.

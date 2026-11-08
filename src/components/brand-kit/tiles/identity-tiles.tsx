@@ -7,30 +7,31 @@ import { CostPreview } from "@/components/ui/cost-preview"
 import { Dialog } from "@/components/ui/dialog"
 import { Disclosure } from "@/components/ui/disclosure"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Check } from "@/components/ui/icon-set/check"
 import { Copy } from "@/components/ui/icon-set/copy"
 import { Download } from "@/components/ui/icon-set/download"
 import { Palette } from "@/components/ui/icon-set/palette"
 import { Plus } from "@/components/ui/icon-set/plus"
-import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { StoreShareLinkCard } from "@/components/profiles/store-share-link-card"
 import type { TenantProfileState } from "@/lib/hooks/use-tenant-profile"
 import { SOCIAL_COVER_SIZE } from "@/modules/brand-kit/domain/social-cover-svg"
-import { evaluateStoreProfile } from "@/modules/profiles/domain/store-profile-completeness"
 import type { BrandKitView } from "@/modules/brand-kit/use-cases/get-brand-kit"
 import { FirstOptionsCard } from "../first-options-card"
+import { CONFIRM_CHANGE_IDENTITY, shareReadiness } from "../journey/journey-copy"
 import { CoverPreview, LogoPreview, MiniBusinessCard, MiniSharePage, PaletteSwatches, coverSvgFor, logoSvgFor, type ShopFacts } from "../identity-kit-previews"
 import { downloadPng, downloadSvg, fileSlug } from "../svg-file"
 import type { BrandKitState } from "../use-brand-kit"
 import { Tile, TilePill } from "./tile"
+import { RefreshBanner } from "../journey/refresh-banner"
 
 type Option = BrandKitView["identity"]["options"][number]
 
 const copy = (text: string) => void navigator.clipboard?.writeText(text).catch(() => undefined)
 
 /** Bước 2 trên /cong-cu: chọn phong cách (ô), xem 6 thành phần của phong cách đang xem, dùng làm chính thức. */
-export function IdentityTiles({ kit, profile }: { kit: BrandKitState; profile: TenantProfileState }) {
+export function IdentityTiles({ kit, profile, onNext }: { kit: BrandKitState; profile: TenantProfileState; onNext: () => void }) {
   const [confirm, dialog] = useConfirmDialog()
   const [shareOpen, setShareOpen] = useState(false)
   const view = kit.view!
@@ -61,11 +62,7 @@ export function IdentityTiles({ kit, profile }: { kit: BrandKitState; profile: T
 
   const applyViewing = async () => {
     if (selected) {
-      const ok = await confirm({
-        title: "Đổi bộ nhận diện chính thức?",
-        consequence: "Màu, phông chữ, khẩu hiệu và logo của cửa hàng sẽ đổi theo phương án mới ở mọi nơi: danh thiếp, trang chia sẻ, Landing page và Cài đặt. Bạn có thể chọn lại phương án cũ bất cứ lúc nào.",
-        confirmLabel: "Đổi bộ nhận diện",
-      })
+      const ok = await confirm(CONFIRM_CHANGE_IDENTITY)
       if (!ok) return
     }
     if (await kit.select("identity", viewing.id)) await profile.reload()
@@ -107,14 +104,7 @@ export function IdentityTiles({ kit, profile }: { kit: BrandKitState; profile: T
   return (
     <div className="space-y-8">
       {dialog}
-      {id.profile_changed && id.can_refresh && (
-        <div role="status" className="flex flex-col gap-3 rounded-2xl border border-warning-border bg-warning-bg p-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-body-sm text-warning-text">Hồ sơ cửa hàng đã thay đổi sau lần tạo gần nhất.</p>
-          <Button type="button" variant="outline" size="sm" className="shrink-0 gap-2" disabled={busy} onClick={() => void kit.generate("identity", "refresh")}>
-            <RefreshCw size={16} aria-hidden /> Tạo lại theo hồ sơ mới (miễn phí)
-          </Button>
-        </div>
-      )}
+      <RefreshBanner kind="identity" show={id.profile_changed} canRefresh={id.can_refresh} busy={Boolean(kit.busy)} onRefresh={() => void kit.generate("identity", "refresh")} />
 
       <section aria-labelledby="bk-styles">
         <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -137,10 +127,15 @@ export function IdentityTiles({ kit, profile }: { kit: BrandKitState; profile: T
       <div className="flex flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm ring-1 ring-border/70 sm:flex-row sm:items-center sm:justify-between sm:p-5">
         <div>
           <p className="text-body font-bold text-text">Bộ nhận diện — {viewing.style_label}</p>
-          <p className="text-caption text-text-muted">{isOfficial ? "Đang là bộ chính thức, đã áp dụng cho danh thiếp, trang chia sẻ và Cài đặt." : c.rationale}</p>
+          <p className="text-caption text-text-muted">{isOfficial ? "Đang là bộ chính thức, đã áp dụng cho danh thiếp, trang chia sẻ và Landing page." : c.rationale}</p>
         </div>
-        <Button type="button" className="shrink-0 gap-2" disabled={busy || isOfficial} onClick={() => void applyViewing()}>
-          <Check size={16} aria-hidden /> {isOfficial ? "Đang là bộ chính thức" : kit.busy?.includes(":select:") ? "Đang áp dụng..." : "Dùng bộ này làm chính thức"}
+        {/* Một nút chính: chưa dùng → áp dụng bộ này; đã là bộ chính thức → sang Bước 3 (tự dựng Landing page) */}
+        <Button type="button" className="shrink-0 gap-2" disabled={busy} onClick={isOfficial ? onNext : () => void applyViewing()}>
+          {isOfficial ? (
+            <>{view.landing.options.length ? "Xem Landing page" : "Tạo Landing page"} <ArrowRight size={16} aria-hidden /></>
+          ) : (
+            <><Check size={16} aria-hidden /> {kit.busy?.includes(":select:") ? "Đang áp dụng..." : "Dùng bộ này làm chính thức"}</>
+          )}
         </Button>
       </div>
       {kit.busy && <p role="status" className="-mt-5 text-body-sm text-text-muted">{generating ? "Đang tạo phương án..." : "Đang áp dụng bộ nhận diện..."}</p>}
@@ -162,10 +157,7 @@ export function IdentityTiles({ kit, profile }: { kit: BrandKitState; profile: T
 
       {shareOpen && (
         <Dialog open onOpenChange={(o) => !o && setShareOpen(false)} title="Trang hồ sơ chia sẻ" size="lg">
-          <StoreShareLinkCard
-            readyToShare={evaluateStoreProfile({ business: profile.business, brand: profile.brand }).readyToShare}
-            missingEssentials={evaluateStoreProfile({ business: profile.business, brand: profile.brand }).missing.filter((m) => m.essential).map((m) => m.label)}
-          />
+          <StoreShareLinkCard {...shareReadiness(profile)} />
         </Dialog>
       )}
     </div>

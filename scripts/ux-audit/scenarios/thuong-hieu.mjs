@@ -38,14 +38,18 @@ export async function run({ open, shot, org }) {
   await shot("thuong-hieu-danh-thiep-chua-du", (p) => open(p, "/ho-so/danh-thiep"))
 
   await fillProfile(org)
-  await shot("thuong-hieu-buoc2-chua-co", async (p) => {
+  await shot("thuong-hieu-buoc1-du", async (p) => {
     await open(p, "/ho-so")
-    await p.getByRole("heading", { name: "Tạo Bộ nhận diện từ hồ sơ" }).waitFor()
+    await p.getByRole("button", { name: /Hồ sơ cửa hàng/ }).first().click()
+    await p.getByRole("button", { name: "Xác nhận hồ sơ — tạo Bộ nhận diện" }).waitFor()
   })
+  // Luồng chính: xác nhận hồ sơ → hệ thống tự tạo 3 phương án Bộ nhận diện và mở Bước 2
   await shot("thuong-hieu-buoc2-3-phuong-an", async (p) => {
     await open(p, "/ho-so")
-    const create = p.getByRole("button", { name: "Tạo 3 phương án" })
-    if (await create.count()) await create.click()
+    if (await p.getByRole("article").count() === 0) {
+      await p.getByRole("button", { name: /Hồ sơ cửa hàng/ }).first().click()
+      await p.getByRole("button", { name: "Xác nhận hồ sơ — tạo Bộ nhận diện" }).click()
+    }
     await p.getByRole("article").nth(2).waitFor({ timeout: 60000 })
   })
   await shot("thuong-hieu-buoc2-da-chon", async (p) => {
@@ -74,14 +78,13 @@ export async function run({ open, shot, org }) {
     await p.getByLabel("Link của cửa hàng").waitFor()
   })
 
-  await shot("thuong-hieu-buoc3-chua-co", async (p) => {
-    await open(p, "/ho-so")
-    await p.getByRole("heading", { name: "Tạo trang chính thức của cửa hàng" }).waitFor()
-  })
+  // Đã chọn Bộ nhận diện → "Tạo Landing page" tự dựng 3 giao diện và mở Bước 3
   await shot("thuong-hieu-buoc3-3-phuong-an", async (p) => {
     await open(p, "/ho-so")
-    const create = p.getByRole("button", { name: "Tạo 3 phương án" })
-    if (await create.count()) await create.click()
+    if (await p.getByRole("button", { name: "Chọn và xuất bản" }).count() === 0) {
+      await p.getByRole("button", { name: "Bộ nhận diện thương hiệu" }).click()
+      await p.getByRole("button", { name: "Tạo Landing page" }).click()
+    }
     await p.getByRole("button", { name: "Chọn và xuất bản" }).nth(2).waitFor({ timeout: 90000 })
   })
   await shot("thuong-hieu-buoc3-xac-nhan", async (p) => {

@@ -13,15 +13,17 @@ import { BrandMaterialsSection } from "./brand-materials-section"
 interface ProfileStepPanelProps {
   view: BrandKitView
   profile: TenantProfileState
+  busy: boolean
   onSaved: () => Promise<void>
-  onNext: () => void
+  /** Xác nhận hồ sơ → hệ thống tạo ngay Bộ nhận diện (useBrandJourney.confirmProfile) */
+  onConfirm: () => void
 }
 
 /**
  * Bước 1 — Hồ sơ cửa hàng: chỗ DUY NHẤT của mục Thương hiệu mà chủ tiệm nhập liệu. Lưu ở đây hay ở
  * Cài đặt đều ghi cùng một hồ sơ, nên hai nơi luôn đồng bộ.
  */
-export function ProfileStepPanel({ view, profile, onSaved, onNext }: ProfileStepPanelProps) {
+export function ProfileStepPanel({ view, profile, busy, onSaved, onConfirm }: ProfileStepPanelProps) {
   const items = view.profile.items
   const doneCount = items.filter((i) => i.done).length
   const percent = Math.round((doneCount / items.length) * 100)
@@ -48,8 +50,8 @@ export function ProfileStepPanel({ view, profile, onSaved, onNext }: ProfileStep
             <p className="text-caption text-text-muted mt-1">Đã có {doneCount}/{items.length} mục cần thiết</p>
           </div>
           {view.profile.done && (
-            <Button type="button" onClick={onNext} className="shrink-0 gap-2">
-              Tạo Bộ nhận diện <ArrowRight size={16} aria-hidden />
+            <Button type="button" onClick={onConfirm} disabled={busy} className="shrink-0 gap-2">
+              {busy ? "Đang tạo Bộ nhận diện..." : view.identity.options.length ? "Xem Bộ nhận diện" : "Xác nhận hồ sơ — tạo Bộ nhận diện"} <ArrowRight size={16} aria-hidden />
             </Button>
           )}
         </div>

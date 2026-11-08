@@ -18,6 +18,7 @@ import { Disclosure } from "@/components/ui/disclosure"
 import { ShopReviewsManager } from "@/components/catalog/reviews/shop-reviews-manager"
 import { PageHeader } from "@/components/ui/page-header"
 import { OfficialLandingBanner } from "./official-landing-banner"
+import { isDevEnvironment } from "@/lib/dev-environment"
 
 export function LandingPageStudioClient() {
   const router = useRouter()
@@ -139,8 +140,8 @@ export function LandingPageStudioClient() {
           description="Khách mở trên điện thoại để gọi, nhắn Zalo hoặc đặt hàng. Thông tin tiệm lấy sẵn từ hồ sơ cửa hàng."
         />
 
-        {/* Trang chính thức tạo ở mục Thương hiệu (bước 3) — hai nơi nối với nhau */}
-        <OfficialLandingBanner />
+        {/* PHÁT_TRIỂN_SAU (PO 08/11/2026): thẻ dẫn về trang chính thức chỉ môi trường phát triển thấy */}
+        {isDevEnvironment() && <OfficialLandingBanner />}
 
         {/* Mục đích trang — gửi cho AI soạn nội dung (03c UX-027) */}
         <LandingTypeSelector selectedType={pageType} onSelectType={setPageType} />

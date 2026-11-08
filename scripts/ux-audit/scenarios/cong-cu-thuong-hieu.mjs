@@ -46,14 +46,18 @@ export async function run({ open, shot, org }) {
   })
 
   await fillProfile(org)
-  await shot("cc-th-buoc2-chua-co", async (p) => {
+  await shot("cc-th-buoc1-du", async (p) => {
     await openModule(p)
-    await p.getByRole("heading", { name: "Tạo Bộ nhận diện từ hồ sơ" }).waitFor()
+    await step(p, /Hồ sơ cửa hàng/)
+    await p.getByRole("button", { name: "Xác nhận hồ sơ — tạo Bộ nhận diện" }).waitFor()
   })
+  // Luồng chính: xác nhận hồ sơ → hệ thống tự tạo 3 phương án Bộ nhận diện và mở Bước 2
   await shot("cc-th-buoc2-3-phong-cach", async (p) => {
     await openModule(p)
-    const create = p.getByRole("button", { name: "Tạo 3 phương án" })
-    if (await create.count()) await create.click()
+    if (await p.getByRole("button", { name: "Dùng bộ này làm chính thức" }).count() === 0) {
+      await step(p, /Hồ sơ cửa hàng/)
+      await p.getByRole("button", { name: "Xác nhận hồ sơ — tạo Bộ nhận diện" }).click()
+    }
     await p.getByRole("button", { name: "Dùng bộ này làm chính thức" }).waitFor({ timeout: 60000 })
   })
   await shot("cc-th-buoc2-da-dung", async (p) => {
@@ -61,7 +65,7 @@ export async function run({ open, shot, org }) {
     await step(p, /Bộ nhận diện thương hiệu/)
     const use = p.getByRole("button", { name: "Dùng bộ này làm chính thức" })
     if (await use.count()) await use.click()
-    await p.getByRole("button", { name: "Đang là bộ chính thức" }).waitFor({ timeout: 60000 })
+    await p.getByRole("button", { name: /Tạo Landing page|Xem Landing page/ }).waitFor({ timeout: 60000 })
   })
   await shot("cc-th-buoc2-link-chia-se", async (p) => {
     await openModule(p)
@@ -70,14 +74,13 @@ export async function run({ open, shot, org }) {
     await p.getByRole("dialog").waitFor()
   })
 
-  await shot("cc-th-buoc3-chua-co", async (p) => {
-    await openModule(p)
-    await p.getByRole("heading", { name: "Tạo trang chính thức của cửa hàng" }).waitFor()
-  })
+  // Đã chọn Bộ nhận diện → "Tạo Landing page" tự dựng 3 giao diện và mở Bước 3
   await shot("cc-th-buoc3-3-giao-dien", async (p) => {
     await openModule(p)
-    const create = p.getByRole("button", { name: "Tạo 3 phương án" })
-    if (await create.count()) await create.click()
+    if (await p.getByRole("button", { name: "Chọn và xuất bản" }).count() === 0) {
+      await step(p, /Bộ nhận diện thương hiệu/)
+      await p.getByRole("button", { name: "Tạo Landing page" }).click()
+    }
     await p.getByRole("button", { name: "Chọn và xuất bản" }).nth(2).waitFor({ timeout: 90000 })
   })
   await shot("cc-th-buoc3-xac-nhan", async (p) => {

@@ -20,15 +20,14 @@ import {
   type StoreOperationsSection,
 } from "@/modules/toolkit/domain/store-operations"
 import { DashboardLayout } from "@/components/layout/page-layout"
+import { isDevEnvironment } from "@/lib/dev-environment"
 import { PageHeader } from "@/components/ui/page-header"
 import { EmptyState } from "@/components/ui/empty-state"
 import { ModuleGrid } from "./toolkit-module-grid"
 import { ModuleDetail } from "./toolkit-module-detail"
 import { StoreOperationsPanel } from "./store-operations-panel"
 
-function useIsDev(): boolean {
-  return process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
-}
+const useIsDev = isDevEnvironment
 
 type StatusFilter = "ALL" | ToolStatus
 

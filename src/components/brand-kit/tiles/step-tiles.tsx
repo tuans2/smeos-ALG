@@ -6,12 +6,8 @@ import { Lock } from "@/components/ui/icon-set/lock"
 import { cn } from "@/lib/utils"
 import type { BrandStep } from "@/modules/brand-kit/domain/brand-journey"
 import type { BrandKitView } from "@/modules/brand-kit/use-cases/get-brand-kit"
+import { LOCK_SHORT } from "../journey/journey-copy"
 
-const LOCK_HINT: Record<BrandStep, string> = {
-  PROFILE: "",
-  IDENTITY: "Mở khi hồ sơ đủ",
-  LANDING: "Mở khi đã chọn bộ nhận diện",
-}
 
 function stepSummary(view: BrandKitView, key: BrandStep): { text: string; percent: number } {
   if (key === "PROFILE") {
@@ -69,7 +65,7 @@ export function StepTiles({ view, current, onPick }: { view: BrandKitView; curre
                   {i + 1}. {s.label}
                 </Button>
               )}
-              <p className="truncate text-caption text-text-muted">{locked ? LOCK_HINT[s.key] : sum.text}</p>
+              <p className="truncate text-caption text-text-muted">{locked ? LOCK_SHORT[s.key] : sum.text}</p>
               {!locked && (
                 <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-alt">
                   <div className={cn("h-full rounded-full", sum.percent === 100 ? "bg-success" : "bg-primary")} style={{ width: `${sum.percent}%` }} />

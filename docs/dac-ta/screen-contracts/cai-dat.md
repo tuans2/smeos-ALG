@@ -30,6 +30,7 @@ acceptance:
   - `PUT /api/v1/business-profile` → Lưu thông tin cơ bản của tiệm (cần quyền `F2` hoặc `H4`)
   - Tab "Trường dữ liệu" (chỉ hiện khi có `D18`, mặc định Điều hành): `GET /api/v1/field-config/settings`, `POST /api/v1/field-config` (thêm trường riêng), `PUT /api/v1/field-config` (ẩn/hiện, đổi tên)
   - Tab "Thẻ Chào & quy trình" — phần bán hàng (`src/components/greeting-card/admin/brochure-commerce-settings.tsx`): Sale được xem khách nào, giảm giá tối đa mỗi đơn, người phụ trách link cũ, khu vực và phí giao, ngày lễ (phụ phí, số đơn tối đa, giờ chốt), phí chế tác theo kiểu dáng và hệ số ngày lễ, phí chế tác theo tiền nguyên liệu; chuỗi thêm cấu hình điều phối và nhận đơn gia công qua Zalo
+  - Tab "Thương hiệu" (BRANDING): **PHÁT_TRIỂN_SAU (PO 08/11/2026)** — chỉ môi trường phát triển thấy; `?tab=BRANDING` ngoài dev về tab Thông tin. Chức năng thương hiệu chỉ còn ở `/ho-so` và nhóm "Hồ sơ & Thương hiệu" trên `/cong-cu`.
   - Tab "Tên miền riêng" (chỉ hiện khi có `D19`, mặc định Điều hành; checklist ALG 10.8): `GET/POST /api/v1/custom-domains`, `POST /api/v1/custom-domains/:id/verify`, `DELETE /api/v1/custom-domains/:id` — `src/components/organization/custom-domain-settings-tab.tsx`
 - Khối: 3 khối chính:
   1. Hướng dẫn chuẩn hóa K1 (`FeatureGuidanceCard` duy nhất)

@@ -31,3 +31,18 @@ export const DEFERRED_MODULE_CONTENT: Readonly<Partial<Record<BusinessModuleKey,
 export function deferredContentOf(key: BusinessModuleKey): DeferredModuleContent | null {
   return DEFERRED_MODULE_CONTENT[key] ?? null
 }
+
+/**
+ * Lối vào khác của chức năng thương hiệu, ẩn khỏi người dùng (PHÁT_TRIỂN_SAU, PO 08/11/2026) để chức năng chỉ còn
+ * ở /ho-so và nhóm "Hồ sơ & Thương hiệu" trên /cong-cu. Code giữ nguyên; môi trường phát triển vẫn thấy.
+ * Danh thiếp vẫn mở từ ô Danh thiếp trong Bộ nhận diện.
+ */
+export const DEFERRED_SURFACES = {
+  SETTINGS_BRANDING_TAB: "Cài đặt → tab Thương hiệu (màu, phông chữ, khẩu hiệu, logo)",
+  BRAND_LIBRARY_SHORTCUT: "Lối tắt công cụ tới Thư viện thương hiệu (/ho-so/thu-vien-thuong-hieu)",
+  BUSINESS_CARD_SHORTCUT: "Lối tắt công cụ tới trang Danh thiếp (/ho-so/danh-thiep)",
+  LANDING_OFFICIAL_BANNER: "Thẻ \"Trang chính thức của cửa hàng\" trên /landing-page",
+} as const
+
+/** Đường dẫn công cụ không hiện trong danh sách lối tắt ghim (ngoài môi trường phát triển). */
+export const DEFERRED_TOOL_HREFS: readonly string[] = ["/ho-so/thu-vien-thuong-hieu", "/ho-so/danh-thiep"]

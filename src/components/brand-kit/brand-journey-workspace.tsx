@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
 import { BadgeCheck } from "@/components/ui/icon-set/badge-check"
 import { Lock } from "@/components/ui/icon-set/lock"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
@@ -9,43 +7,24 @@ import { JourneyProgress } from "@/components/journey/journey-progress"
 import { PageHeader } from "@/components/ui/page-header"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
-import type { BrandStep } from "@/modules/brand-kit/domain/brand-journey"
-import { useBrandKit } from "./use-brand-kit"
+import { LOCK_HINT } from "./journey/journey-copy"
+import { useBrandJourney } from "./journey/use-brand-journey"
 import { ProfileStepPanel } from "./profile-step-panel"
 import { IdentityStepPanel } from "./identity-step-panel"
 import { LandingStepPanel } from "./landing-step-panel"
 
-const LOCK_HINT: Record<BrandStep, string> = {
-  PROFILE: "",
-  IDENTITY: "Hoàn thành Hồ sơ cửa hàng để mở Bộ nhận diện thương hiệu.",
-  LANDING: "Chọn một Bộ nhận diện thương hiệu để mở Landing page.",
-}
-
 /**
- * Mục Thương hiệu (PO 08/11/2026): Hồ sơ cửa hàng → Bộ nhận diện → Landing page. Bước sau chỉ mở khi bước
- * trước xong (máy chủ kiểm lại). Chỉ Bước 1 có nhập liệu; hai bước sau dùng dữ liệu đã có.
+ * Mục Thương hiệu tại /ho-so (dạng tab): Hồ sơ cửa hàng → Bộ nhận diện → Landing page. Cùng hook điều khiển
+ * (`useBrandJourney`) với giao diện ô ở /cong-cu — chỉ khác cách trình bày.
  */
 export function BrandJourneyWorkspace() {
-  const kit = useBrandKit()
-  const profile = useTenantProfile()
-  const [picked, setPicked] = useState<BrandStep | null>(null)
+  const j = useBrandJourney()
+  const { kit, profile, view, step } = j
 
   if (kit.loading || profile.loading) return <SkeletonBlock lines={6} label="Đang tải mục Thương hiệu" />
-  if (kit.error || !kit.view) return <InlineError message={kit.error ?? "Không tải được mục Thương hiệu"} onRetry={() => void kit.reload()} />
+  if (kit.error || !view) return <InlineError message={kit.error ?? "Không tải được mục Thương hiệu"} onRetry={() => void kit.reload()} />
 
-  const view = kit.view
   const keys = view.steps.map((s) => s.key)
-  const unlocked = (k: BrandStep) => view.steps.find((s) => s.key === k)?.status !== "LOCKED"
-  const step: BrandStep = picked && unlocked(picked) ? picked : view.current_step
-  const go = (k: BrandStep) => { if (unlocked(k)) { setPicked(k); kit.clearNotice() } }
-  const nextLocked = view.steps.find((s) => s.status === "LOCKED")
-  // Thao tác ở một bước thì giữ nguyên bước đó (chọn xong bộ nhận diện vẫn thấy xác nhận, không tự nhảy bước)
-  const pinned: typeof kit = {
-    ...kit,
-    generate: (kind, mode) => { setPicked(step); return kit.generate(kind, mode) },
-    select: (kind, id) => { setPicked(step); return kit.select(kind, id) },
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -58,7 +37,7 @@ export function BrandJourneyWorkspace() {
         title="Xây thương hiệu cho cửa hàng"
         description="Bạn chỉ nhập thông tin ở Hồ sơ cửa hàng. Bộ nhận diện và Landing page được tạo tự động, mỗi bước có 3 phong cách để chọn."
         tips={[
-          "Bước 1: điền hồ sơ, ảnh, video và sản phẩm chủ đạo.",
+          "Bước 1: điền hồ sơ, ảnh, video và sản phẩm chủ đạo rồi bấm xác nhận.",
           "Bước 2: chọn 1 trong 3 bộ nhận diện (logo, khẩu hiệu, bộ màu…).",
           "Bước 3: chọn 1 trong 3 giao diện và xuất bản trang chính thức.",
         ]}
@@ -69,11 +48,11 @@ export function BrandJourneyWorkspace() {
           steps={view.steps.map((s) => ({ id: s.key, label: s.label }))}
           currentStepIndex={keys.indexOf(step)}
           stepStatuses={view.steps.map((s) => s.status)}
-          onStepClick={(i) => go(keys[i]!)}
+          onStepClick={(i) => j.go(keys[i]!)}
         />
-        {nextLocked && (
+        {j.nextLocked && (
           <p className="mt-2 flex items-center gap-1.5 text-caption text-text-muted">
-            <Lock size={14} aria-hidden /> {LOCK_HINT[nextLocked.key]}
+            <Lock size={14} aria-hidden /> {LOCK_HINT[j.nextLocked.key]}
           </p>
         )}
       </nav>
@@ -82,16 +61,9 @@ export function BrandJourneyWorkspace() {
         <div role="alert" className="rounded-xl border border-warning-border bg-warning-bg px-4 py-3 text-body-sm text-warning-text">{kit.notice}</div>
       )}
 
-      {step === "PROFILE" && <ProfileStepPanel view={view} profile={profile} onSaved={async () => { setPicked("PROFILE"); await kit.reload() }} onNext={() => go("IDENTITY")} />}
-      {step === "IDENTITY" && <IdentityStepPanel kit={pinned} profile={profile} onNext={() => go("LANDING")} />}
-      {step === "LANDING" && <LandingStepPanel kit={pinned} />}
-
-      <p className="text-caption text-text-muted">
-        Sửa chi tiết màu, phông chữ, khẩu hiệu ở{" "}
-        <Link href="/cai-dat?tab=BRANDING" className="font-semibold text-primary hover:underline">Cài đặt thương hiệu</Link>
-        {" "}· Lưu trữ tài liệu ở{" "}
-        <Link href="/ho-so/thu-vien-thuong-hieu" className="font-semibold text-primary hover:underline">Thư viện thương hiệu</Link>
-      </p>
+      {step === "PROFILE" && <ProfileStepPanel view={view} profile={profile} busy={Boolean(kit.busy)} onSaved={j.onProfileSaved} onConfirm={() => void j.confirmProfile()} />}
+      {step === "IDENTITY" && <IdentityStepPanel kit={kit} profile={profile} onNext={() => void j.proceedToLanding()} />}
+      {step === "LANDING" && <LandingStepPanel kit={kit} />}
     </div>
   )
 }

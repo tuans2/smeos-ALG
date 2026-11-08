@@ -15,6 +15,7 @@ import { ListChecks } from "@/components/ui/icon-set/list-checks"
 import { Globe } from "@/components/ui/icon-set/globe"
 import { useI18n } from "@/lib/i18n"
 import { useSession } from "@/lib/session"
+import { isDevEnvironment } from "@/lib/dev-environment"
 
 export type SettingsTab =
   | "INFO"          // 1. Thông tin cơ sở & Pháp lý (L1 Master)
@@ -50,7 +51,8 @@ export function SettingsTabsNav({
 
   const tabs = [
     { key: "INFO" as const, label: dict.settings.tabs.info, icon: Store },
-    { key: "BRANDING" as const, label: dict.settings.tabs.branding, icon: Palette },
+    // PHÁT_TRIỂN_SAU (PO 08/11/2026): thương hiệu chỉ còn ở /ho-so và /cong-cu — tab này chỉ môi trường phát triển thấy
+    ...(isDevEnvironment() ? [{ key: "BRANDING" as const, label: dict.settings.tabs.branding, icon: Palette }] : []),
     { key: "PAYMENT" as const, label: dict.settings.tabs.payment, icon: QrCode },
     { key: "DEPOSIT" as const, label: dict.settings.tabs.deposit, icon: DollarSign },
     { key: "PROMOTIONS" as const, label: `${dict.settings.tabs.promotions} (${policyCounts.promotions})`, icon: Gift },

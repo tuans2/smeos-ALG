@@ -7,10 +7,11 @@ import { Disclosure } from "@/components/ui/disclosure"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { ExternalLink } from "@/components/ui/icon-set/external-link"
 import { Globe } from "@/components/ui/icon-set/globe"
-import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import type { BrandKitState } from "./use-brand-kit"
 import { LandingOptionCard } from "./landing-option-card"
 import { FirstOptionsCard } from "./first-options-card"
+import { confirmPublishLanding } from "./journey/journey-copy"
+import { RefreshBanner } from "./journey/refresh-banner"
 
 /** Bước 3 — Landing page chính thức: 3 phong cách dựng từ Hồ sơ + Bộ nhận diện; chọn = xuất bản (hỏi trước). */
 export function LandingStepPanel({ kit }: { kit: BrandKitState }) {
@@ -23,13 +24,7 @@ export function LandingStepPanel({ kit }: { kit: BrandKitState }) {
   const generating = kit.busy?.startsWith("landing:") && !kit.busy.includes(":select:")
 
   const select = async (id: string) => {
-    const ok = await confirm({
-      title: l.published_path ? "Đổi giao diện trang chính thức?" : "Xuất bản Landing page chính thức?",
-      consequence: l.published_path
-        ? "Trang giữ nguyên đường dẫn đã chia sẻ, chỉ đổi giao diện và nội dung theo phương án mới."
-        : "Trang sẽ có đường dẫn công khai — ai có link hoặc mã QR đều xem được tên cửa hàng, thông tin liên hệ, sản phẩm chủ đạo và giá. Bạn có thể đổi phương án sau.",
-      confirmLabel: l.published_path ? "Đổi giao diện" : "Xuất bản",
-    })
+    const ok = await confirm(confirmPublishLanding(Boolean(l.published_path)))
     if (ok) await kit.select("landing", id)
   }
 
@@ -69,16 +64,7 @@ export function LandingStepPanel({ kit }: { kit: BrandKitState }) {
         </section>
       )}
 
-      {l.profile_changed && (
-        <div role="status" className="rounded-2xl border border-warning-border bg-warning-bg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <p className="text-body-sm text-warning-text">Hồ sơ hoặc Bộ nhận diện đã đổi sau lần tạo gần nhất.</p>
-          {l.can_refresh && (
-            <Button type="button" variant="outline" size="sm" className="gap-2 shrink-0" disabled={Boolean(kit.busy)} onClick={() => void kit.generate("landing", "refresh")}>
-              <RefreshCw size={16} aria-hidden /> Tạo lại theo hồ sơ mới (miễn phí)
-            </Button>
-          )}
-        </div>
-      )}
+      <RefreshBanner kind="landing" show={l.profile_changed} canRefresh={l.can_refresh} busy={Boolean(kit.busy)} onRefresh={() => void kit.generate("landing", "refresh")} />
 
       {kit.busy && <p role="status" className="text-body-sm text-text-muted">{generating ? "Đang dựng phương án..." : "Đang xuất bản trang..."}</p>}
 

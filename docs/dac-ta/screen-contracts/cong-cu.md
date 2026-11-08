@@ -84,3 +84,5 @@ acceptance:
   `deferredAssets`/`deferredTools`, chỉ môi trường phát triển thấy trong `Disclosure` "Phát triển sau"; số liệu đầu trang
   không đếm 5 công cụ này (`deferredToolIds`). Thẻ nhóm trên lưới ghi "3 bước: Hồ sơ · Nhận diện · Landing".
 - Kịch bản audit: `scripts/ux-audit/scenarios/cong-cu-thuong-hieu.mjs`.
+- Bước 1 đủ 8/8 → thanh "Xác nhận hồ sơ — tạo Bộ nhận diện" (tự tạo 3 phương án, mở Bước 2); Bước 2 đã chọn bộ chính thức →
+  "Tạo Landing page" (tự dựng 3 giao diện, mở Bước 3). Điều khiển chung với /ho-so: `src/components/brand-kit/journey/*`.

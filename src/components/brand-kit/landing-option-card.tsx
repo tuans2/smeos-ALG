@@ -6,15 +6,10 @@ import type { BrandKitView } from "@/modules/brand-kit/use-cases/get-brand-kit"
 import type { IdentityOptionContent } from "@/modules/brand-kit/domain/identity-option"
 import { fontStack } from "@/modules/brand-kit/domain/logo-svg"
 import { readableTextOn } from "@/modules/brand-kit/domain/color-math"
+import { LANDING_LAYOUT_HINT } from "./journey/journey-copy"
 
 type LandingOptionView = BrandKitView["landing"]["options"][number]
 
-/** Bố cục khung xem trước theo phong cách trang khách (ảnh lớn / lưới khối / kể chuyện). */
-const LAYOUT_HINT: Record<LandingOptionView["style_key"], string> = {
-  LUXURY: "Ảnh lớn, nhiều khoảng trắng, chữ có chân",
-  YOUTHFUL: "Lưới khối nhiều màu, nút bấm nổi bật",
-  RUSTIC: "Tông ấm, kể chuyện tay nghề",
-}
 
 interface LandingOptionCardProps {
   option: LandingOptionView
@@ -33,7 +28,7 @@ export function LandingOptionCard({ option, identity, shopName, busy, onSelect }
       <header className="flex items-start justify-between gap-2">
         <div>
           <h3 className="text-title-sm font-bold text-text">{option.style_label}</h3>
-          <p className="text-caption text-text-muted">{LAYOUT_HINT[option.style_key]}</p>
+          <p className="text-caption text-text-muted">{LANDING_LAYOUT_HINT[option.style_key]}</p>
         </div>
         {option.selected && (
           <span className="inline-flex items-center gap-1 text-caption font-semibold text-success-text"><CheckCircle2 size={16} aria-hidden /> Đang dùng</span>

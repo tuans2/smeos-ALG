@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import type { TenantProfileState } from "@/lib/hooks/use-tenant-profile"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import { readBrandMaterials } from "@/modules/brand-kit/domain/brand-assets"
@@ -34,7 +36,14 @@ function previewOf(field: ProfileFieldKey, view: BrandKitView, profile: TenantPr
 }
 
 /** Bước 1 trên /cong-cu: mỗi mục hồ sơ là một ô; bấm ô mở khung nhập riêng. */
-export function ProfileTiles({ view, profile, onSaved }: { view: BrandKitView; profile: TenantProfileState; onSaved: () => Promise<void> }) {
+export function ProfileTiles({ view, profile, busy, onSaved, onConfirm }: {
+  view: BrandKitView
+  profile: TenantProfileState
+  busy: boolean
+  onSaved: () => Promise<void>
+  /** Xác nhận hồ sơ → hệ thống tạo ngay Bộ nhận diện (useBrandJourney.confirmProfile) */
+  onConfirm: () => void
+}) {
   const [open, setOpen] = useState<ProfileFieldKey | null>(null)
   const doneCount = view.profile.items.filter((i) => i.done).length
 
@@ -66,6 +75,18 @@ export function ProfileTiles({ view, profile, onSaved }: { view: BrandKitView; p
 
   return (
     <div className="space-y-8">
+      {view.profile.done && (
+        <div className="flex flex-col gap-3 rounded-2xl bg-surface p-4 shadow-sm ring-1 ring-border/70 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div>
+            <p className="text-body font-bold text-text">Hồ sơ đã đủ 8/8 mục</p>
+            <p className="text-caption text-text-muted">Xác nhận để hệ thống phân tích hồ sơ và tạo 3 phương án Bộ nhận diện thương hiệu.</p>
+          </div>
+          <Button type="button" className="shrink-0 gap-2" disabled={busy} onClick={onConfirm}>
+            {busy ? "Đang tạo Bộ nhận diện..." : view.identity.options.length ? "Xem Bộ nhận diện" : "Xác nhận hồ sơ — tạo Bộ nhận diện"} <ArrowRight size={16} aria-hidden />
+          </Button>
+        </div>
+      )}
+
       <section aria-labelledby="bk-required">
         <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h2 id="bk-required" className="text-title font-extrabold text-text">Thông tin cần có</h2>
