@@ -4,14 +4,17 @@
  */
 
 /**
- * Mã đơn cổng chung `DH<yymmdd>-<4 số>` (`generateOrderCode`) trong nội dung chuyển khoản. Mã Thẻ chào có đuôi
- * 8 ký tự chữ-số nên không khớp mẫu này (và đã được bộ khớp Thẻ chào xử lý trước).
+ * Mã đơn trong nội dung chuyển khoản: cổng chung `DH<yymmdd>-<4 số>` (`generateOrderCode`) và đơn tạo ở Điều phối
+ * `FLR-<yymmdd>-<4 số>` (`coordinatorOrderCode` — PO 07/11/2026, Q2: đơn Điều phối cũng khớp chuyển khoản, audit
+ * BL-06). Ngân hàng hay bỏ dấu gạch nên chấp nhận cả `FLR2611070001`. Mã Thẻ chào có đuôi 8 ký tự chữ-số nên
+ * không khớp các mẫu này (và đã được bộ khớp Thẻ chào xử lý trước).
  */
-const STANDARD_CODE_IN_TEXT = /DH\s*(\d{6})\s*[-_.\s]?\s*(\d{4})(?![0-9A-Z])/
+const STANDARD_CODE_IN_TEXT = /(DH|FLR)\s*[-_.]?\s*(\d{6})\s*[-_.\s]?\s*(\d{4})(?![0-9A-Z])/
 
 export function extractStandardOrderCode(content: string): string | null {
   const m = STANDARD_CODE_IN_TEXT.exec(content.toUpperCase())
-  return m?.[1] && m[2] ? `DH${m[1]}-${m[2]}` : null
+  if (!m?.[1] || !m[2] || !m[3]) return null
+  return m[1] === "FLR" ? `FLR-${m[2]}-${m[3]}` : `DH${m[2]}-${m[3]}`
 }
 
 export type PaymentKind = "DEPOSIT" | "BALANCE"
