@@ -9,6 +9,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { AssetRepository } from "@/modules/assets/infra/asset-repository"
 import { getContentProduct, saveSalesPitch } from "@/modules/content-studio/use-cases/content-product"
+import { getContentBrief } from "@/modules/content-engine/use-cases/get-content-brief"
 import { pitchToRecord, readSalesPitch } from "@/modules/products/domain/sales-pitch-record"
 import type { SalesPitchData } from "@/modules/products/domain/sales-pitch-template"
 import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
@@ -128,5 +129,33 @@ describe("hành trình Tạo nội dung", () => {
       params(productId),
     )
     expect(bad.status).toBe(400)
+  })
+
+  it("Bước 3: Brief viết bài lấy dữ liệu đã duyệt (Bài giới thiệu + Thẻ chào); tổ chức khác không đọc được", async () => {
+    const { productId } = await scanned(a.ctx, { approveCard: true, approveCopy: true })
+    await prisma.product_copies.updateMany({ where: { product_id: productId }, data: { raw: { suggested_name: "Giỏ quà An Khang", key_selling_points: ["Trà ngon đóng hộp"], target_audience: { recipient: "Đối tác" } } } })
+    await saveSalesPitch(can(a), productId, pitchToRecord(pitch))
+
+    const brief = await getContentBrief(a.ctx, { productId, channels: ["facebook"] })
+    expect(brief.product.name).toBe("Giỏ quà An Khang")
+    expect(brief.product.price.exact).toBe(850_000)
+    expect(brief.passport?.sellingPoints).toEqual(["Trà ngon đóng hộp"])
+    expect(brief.passport?.recipient).toBe("Đối tác")
+
+    // Sản phẩm của A, gọi bằng ngữ cảnh B → không lấy được dữ liệu đã duyệt của A
+    const leaked = await getContentBrief(b.ctx, { productId, channels: ["facebook"] })
+    expect(leaked.passport ?? null).toBeNull()
+    expect(leaked.product.name).not.toBe("Giỏ quà An Khang")
+  })
+
+  it("Bước 3: API trả lượt bài mới nhất của sản phẩm, bỏ lượt trong thùng rác; bài đã duyệt được đếm", async () => {
+    const { productId } = await scanned(a.ctx, { approveCard: true, approveCopy: true })
+    const base = { organization_id: a.organizationId, product_id: productId, origin: "content_engine_ui", channels: ["facebook"], brief: {}, brief_version: 1, prompt_versions: {}, rubric_version: "v1", created_by: a.userId }
+    await prisma.content_generations.create({ data: { ...base, posts: [{ channel: "facebook", text: "Bài cũ", hashtags: [] }], status: "APPROVED", approved_posts: [{ channel: "facebook", text: "Bài cũ đã sửa", hashtags: ["#qua"] }], created_at: new Date(Date.now() - 60_000) } })
+    await prisma.content_generations.create({ data: { ...base, posts: [{ channel: "facebook", text: "Bài trong thùng rác", hashtags: [] }], trashed_at: new Date() } })
+
+    const view = await getContentProduct(a.ctx, productId)
+    expect(view.latest_posts).toMatchObject({ status: "APPROVED", approved_posts: [{ channel: "facebook", text: "Bài cũ đã sửa", hashtags: ["#qua"] }] })
+    expect(view.flags.approved_posts).toBe(1)
   })
 })

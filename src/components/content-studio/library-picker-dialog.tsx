@@ -20,17 +20,22 @@ function readiness(p: ContentLibraryItem): { tone: "ok" | "need" | "muted"; text
   return { tone: "muted", text: "Chưa có Bài giới thiệu" }
 }
 
+const REQUIRE_TEXT = {
+  copy: "Chỉ chọn được sản phẩm đã có Bài giới thiệu đã duyệt.",
+  pitch: "Chỉ chọn được sản phẩm đã chốt Thẻ chào sản phẩm.",
+} as const
+
 /**
  * Chọn "sản phẩm đang làm" từ Kho sản phẩm (tình huống dùng lại dữ liệu đã phân tích). Phân trang con trỏ;
- * `requireCopy` → chỉ chọn được sản phẩm đã có Bài giới thiệu đã duyệt (Bước 2–3 cần).
+ * `require` → chỉ chọn được sản phẩm đã có Bài giới thiệu (Bước 2) hoặc Thẻ chào đã chốt (Bước 3).
  */
 export function LibraryPickerDialog({
-  open, onClose, onPick, requireCopy = false, title = "Chọn từ Kho sản phẩm",
+  open, onClose, onPick, require, title = "Chọn từ Kho sản phẩm",
 }: {
   open: boolean
   onClose: () => void
   onPick: (productId: string) => void
-  requireCopy?: boolean
+  require?: "copy" | "pitch"
   title?: string
 }) {
   const [items, setItems] = useState<ContentLibraryItem[] | null>(null)
@@ -63,7 +68,7 @@ export function LibraryPickerDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose() }} size="lg" title={title}
-      description={requireCopy ? "Chỉ chọn được sản phẩm đã có Bài giới thiệu đã duyệt." : "Sản phẩm đã quét ảnh và duyệt trước đây."}>
+      description={require ? REQUIRE_TEXT[require] : "Sản phẩm đã quét ảnh và duyệt trước đây."}>
       {error && <InlineError message={error} onRetry={() => { setItems(null); void load(null) }} />}
       {items === null && <SkeletonBlock lines={4} label="Đang tải Kho sản phẩm" />}
       {items !== null && items.length === 0 && !error && (
@@ -72,7 +77,7 @@ export function LibraryPickerDialog({
       {items && items.length > 0 && (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {items.map((p) => {
-            const blocked = requireCopy && !p.has_copy
+            const blocked = (require === "copy" && !p.has_copy) || (require === "pitch" && !p.has_pitch)
             const src = safeImageSrc(p.image_url)
             const r = readiness(p)
             return (

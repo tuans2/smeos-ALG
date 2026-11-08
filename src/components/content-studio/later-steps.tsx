@@ -3,40 +3,11 @@
 import { Tile, TilePill } from "@/components/brand-kit/tiles/tile"
 import { CalendarClock } from "@/components/ui/icon-set/calendar-clock"
 import { Plug } from "@/components/ui/icon-set/plug"
-import { Send } from "@/components/ui/icon-set/send"
-import { Sparkles } from "@/components/ui/icon-set/sparkles"
-import type { ContentJourney } from "./use-content-journey"
 
 /**
- * Bước 3 và Bước 4 trong đợt đầu (PO 08/11/2026): hành trình mới đang hoàn thiện ở đợt sau (viết bài từ dữ liệu đã
- * duyệt; đăng tự động bằng module đăng bài riêng của SMEOS). Trong lúc đó các ô dẫn tới công cụ đang chạy, để user
- * không bị chặn — nói rõ là công cụ hiện có, không giả là đã xong.
+ * Bước 4 trong lúc chờ module đăng bài riêng của SMEOS (PO 08/11/2026, đợt sau — API chính thức của từng nền tảng):
+ * ô "Đang hoàn thiện" + ô dẫn tới lịch đăng đang chạy, để user không bị chặn — nói rõ là công cụ hiện có.
  */
-export function ChannelPostsStep({ journey }: { journey: ContentJourney }) {
-  const name = journey.view?.product.name
-  return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-      <Tile
-        title="Viết bài đăng cho từng nền tảng"
-        icon={Sparkles}
-        pill={<TilePill tone="need">Đang hoàn thiện</TilePill>}
-        preview={name
-          ? `Sắp có: viết bài cho "${name}" ngay tại đây từ Thẻ sản phẩm, Bài giới thiệu và Thẻ chào đã duyệt.`
-          : "Sắp có: viết bài cho từng nền tảng ngay tại đây từ dữ liệu đã duyệt trong Kho."}
-      />
-      <a href="/noi-dung" className="contents">
-        <Tile
-          title="Dùng công cụ viết bài hiện có"
-          icon={Send}
-          pill={<TilePill tone="muted">Công cụ hiện có</TilePill>}
-          preview="Mở trình viết bài đa kênh đang chạy, chọn sản phẩm trong Kho để viết."
-          footer="Mở trang Nội dung"
-        />
-      </a>
-    </div>
-  )
-}
-
 export function AutoPublishStep() {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">

@@ -1,6 +1,6 @@
 // /cong-cu → nhóm "Tạo nội dung" dạng ô 4 bước (PO 08/11/2026): Thẻ sản phẩm → Thẻ chào sản phẩm → Bài đăng đa kênh
 // → Đăng tự động. Trạng thái: chưa chọn sản phẩm (Bước 1: 2 kiểu tải + Kho), kiểu "Nhiều sản phẩm", hộp chọn từ Kho,
-// sản phẩm đã duyệt Bước 1 (Bước 2 mở, Bước 3 khoá), Thẻ chào đã lưu (Bước 3 mở), Bước 3 và Bước 4 (đợt đầu).
+// sản phẩm đã duyệt Bước 1 (Bước 2 mở, Bước 3 khoá), Thẻ chào đã lưu (Bước 3 mở), Bước 3 chưa viết / bài chờ duyệt, Bước 4.
 import { q } from "../lib.mjs"
 
 /** Sản phẩm mẫu đầu tiên của tiệm có bản quét đã duyệt → thêm Bài giới thiệu đã duyệt (Bước 1 xong). */
@@ -62,9 +62,24 @@ export async function run({ open, shot, org, uid }) {
     await nav(p).getByRole("button", { name: /Thẻ chào sản phẩm/ }).click()
     await p.getByText(/Đã lưu vào Kho sản phẩm · lần 1/).waitFor({ timeout: 30000 })
   })
-  await shot("cc-nd-buoc3", async (p) => {
+  await shot("cc-nd-buoc3-chua-viet", async (p) => {
     await openModule(p, withProduct)
     await nav(p).getByRole("button", { name: /Bài đăng đa kênh/ }).click()
+    await p.getByText("Viết cho nền tảng nào?").waitFor()
+  })
+  // Một lượt bài máy viết (chờ duyệt) — xem trước theo nền tảng, nút "Duyệt 2 bài"
+  await q(
+    `INSERT INTO content_generations (id, organization_id, product_id, origin, channels, brief, brief_version, prompt_versions, rubric_version, posts, overall_score, status, created_by, created_at, updated_at)
+     VALUES (gen_random_uuid(), $1, $2, 'content_engine_ui', '["facebook","zalo"]', '{}', 1, '{}', 'v1', $3, 86, 'DRAFT', $4, now(), now())`,
+    [org, productId, JSON.stringify([
+      { channel: "facebook", text: "Bó hồng Pastel tông nhẹ nhàng — món quà sinh nhật dịu dàng. Đặt trước để giao đúng giờ.", hashtags: ["#hoasinhnhat", "#bohong"] },
+      { channel: "zalo", text: "Chào anh/chị, tiệm có mẫu Bó hồng Pastel 450.000đ, giao trong ngày. Anh/chị cần đặt cho dịp nào ạ?", hashtags: [] },
+    ]), uid],
+  )
+  await shot("cc-nd-buoc3-cho-duyet", async (p) => {
+    await openModule(p, withProduct)
+    await nav(p).getByRole("button", { name: /Bài đăng đa kênh/ }).click()
+    await p.getByRole("button", { name: "Duyệt 2 bài" }).waitFor({ timeout: 30000 })
   })
   await shot("cc-nd-buoc4", async (p) => {
     await openModule(p, withProduct)

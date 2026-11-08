@@ -52,6 +52,15 @@ export class ContentStudioRepository {
     })
   }
 
+  /** Lượt bài đăng đa kênh mới nhất của sản phẩm (bỏ bản trong thùng rác). */
+  latestGeneration(ctx: TenantContext, productId: string) {
+    return this.db.content_generations.findFirst({
+      where: scopedWhere(ctx, { product_id: productId, trashed_at: null }),
+      orderBy: [{ created_at: "desc" }, { id: "desc" }],
+      select: { id: true, status: true, channels: true, posts: true, approved_posts: true, overall_score: true, created_at: true },
+    })
+  }
+
   /** Mã sản phẩm có Bài giới thiệu đã duyệt — trong một danh sách cho trước. */
   async productsWithApprovedCopy(ctx: TenantContext, productIds: readonly string[]): Promise<Set<string>> {
     if (productIds.length === 0) return new Set()

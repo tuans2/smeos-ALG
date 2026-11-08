@@ -102,9 +102,14 @@ acceptance:
   mở Bước 2.
 - Bước 2: Thẻ chào sản phẩm (tư vấn bán hàng, `SalesPitchCard` — không phải thiệp) dựng từ dữ liệu đã duyệt + hồ sơ cửa
   hàng; chốt thẻ → lưu `products.attributes.sales_pitch` (Kho sản phẩm, có số lần chốt). Thay cho bản lưu cũ ở localStorage.
-- Bước 3, 4 (đợt đầu): ô "Đang hoàn thiện" + ô dẫn tới công cụ hiện có (`/noi-dung`, `/lich-dang`) — nói rõ là công cụ hiện có.
+- Bước 3 (Đợt 2): 4 ô nền tảng (Facebook, Instagram, TikTok, Zalo — chọn nhiều) + `CostPreview` → Content Engine viết từ
+  dữ liệu ĐÃ DUYỆT (Brief lấy Thẻ chào → Bài giới thiệu → Thẻ sản phẩm khi sản phẩm chưa có báo cáo thị trường,
+  `content-engine/domain/approved-product-context.ts`); xem trước + sửa từng bài bằng thẻ chuẩn `MultichannelPostCard`;
+  "Duyệt N bài" (J5) một lần; bài đã duyệt nằm trong Kho → nút "Sang Bước 4". Chưa có sản phẩm → chọn từ Kho (chỉ sản
+  phẩm đã chốt Thẻ chào) hoặc về Bước 1.
+- Bước 4 (đợt đầu): ô "Đang hoàn thiện" + ô dẫn tới lịch đăng hiện có (`/lich-dang`) — nói rõ là công cụ hiện có.
 - Hồ sơ cửa hàng chưa đủ mục thiết yếu: một dòng nhắc nhẹ dẫn `/ho-so`, không khoá bước.
-- Quyền theo mã năng lực: H1 quét, H2 sửa, H3 duyệt Thẻ, H5 viết bài, H6 duyệt bài, L1 đọc Kho, L3 chốt Thẻ chào (mẫu chính
+- Quyền theo mã năng lực: H1 quét, H2 sửa, H3 duyệt Thẻ, H5 viết Bài giới thiệu, H6 duyệt Bài giới thiệu, L1 đọc Kho, L3 chốt Thẻ chào, I1 viết bài đăng, J5 duyệt bài đăng (mẫu chính
   thức: chỉ Điều hành — luật `decideEdit` sẵn có). Thiếu quyền → câu tiếng Việt nói rõ, không ẩn im lặng.
 - **PHÁT_TRIỂN_SAU:** 10 công cụ cũ dời vào `deferredTools`, chỉ môi trường phát triển thấy; số liệu đầu trang không đếm.
   Thẻ nhóm trên lưới ghi "4 bước: Thẻ sản phẩm · Thẻ chào · Bài đăng · Đăng tự động".

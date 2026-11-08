@@ -2,12 +2,12 @@
  * Lời gọi API của hành trình Tạo nội dung — chỉ dùng endpoint sẵn có của SMEOS (kho tệp, quét ảnh, bài giới thiệu)
  * và 3 endpoint đọc/ghi gộp dưới `/api/v1/content-studio/*`. Mọi lỗi ném `Error` với câu tiếng Việt cho user.
  */
-import type { ContentLibraryItem, ContentProductView } from "@/modules/content-studio/use-cases/content-product"
+import type { ChannelPost, ContentLibraryItem, ContentProductView } from "@/modules/content-studio/use-cases/content-product"
 import type { ScanResult } from "@/modules/content-studio/use-cases/scan-results"
 import type { ScanJobStatus } from "@/modules/content-studio/domain/photo-batch"
 import type { SalesPitchRecord, StoredSalesPitch } from "@/modules/products/domain/sales-pitch-record"
 
-export type { ContentLibraryItem, ContentProductView, ScanResult }
+export type { ChannelPost, ContentLibraryItem, ContentProductView, ScanResult }
 
 type Json = Record<string, unknown>
 
@@ -109,4 +109,19 @@ export async function saveSalesPitch(productId: string, pitch: SalesPitchRecord)
     `/api/v1/content-studio/products/${encodeURIComponent(productId)}/sales-pitch`, { method: "PUT", body: JSON.stringify({ pitch }) }, "Chưa lưu được Thẻ chào sản phẩm",
   )
   return r.data
+}
+
+/** Viết bài đa kênh bằng Content Engine từ dữ liệu đã duyệt của sản phẩm (chạy tại chỗ, có thể mất vài chục giây). */
+export async function generatePosts(productId: string, channels: readonly string[], idempotencyKey: string): Promise<{ generationId: string | null; status: string }> {
+  const r = await call<{ generation_id: string | null; status: string }>(
+    "/api/v1/content-engine/generations", post({ product_id: productId, channels }, { "Idempotency-Key": idempotencyKey }), "Chưa viết được bài đăng",
+  )
+  return { generationId: r.generation_id, status: r.status }
+}
+
+/** Duyệt các bài (kèm bản user đã sửa) — chuyển lượt bài sang "đã duyệt". */
+export async function approvePosts(generationId: string, posts: readonly ChannelPost[]): Promise<void> {
+  await call(`/api/v1/content-engine/generations/${encodeURIComponent(generationId)}/approve`, post({
+    posts: posts.map((p) => ({ channel: p.channel, text: p.text, hashtags: [...p.hashtags] })),
+  }), "Chưa duyệt được bài đăng")
 }

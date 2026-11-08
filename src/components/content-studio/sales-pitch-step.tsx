@@ -41,7 +41,7 @@ export function SalesPitchStep({ journey }: { journey: ContentJourney }) {
           <Tile title="Bắt đầu từ ảnh mới" icon={Package} pill={<TilePill tone="muted">Bước 1</TilePill>}
             preview="Tải ảnh sản phẩm để tạo Thẻ sản phẩm trước." onOpen={() => journey.go("PRODUCT_CARD")} />
         </div>
-        <LibraryPickerDialog open={libraryOpen} requireCopy onClose={() => setLibraryOpen(false)} onPick={(id) => journey.setProduct(id, "SALES_PITCH")} />
+        <LibraryPickerDialog open={libraryOpen} require="copy" onClose={() => setLibraryOpen(false)} onPick={(id) => journey.setProduct(id, "SALES_PITCH")} />
       </>
     )
   }
@@ -89,7 +89,7 @@ export function SalesPitchStep({ journey }: { journey: ContentJourney }) {
 
       <SalesPitchCard key={`${view.product.id}:${saved?.version ?? 0}`} pitchData={pitch} onFinalize={(p) => void finalize(p)} />
 
-      <LibraryPickerDialog open={libraryOpen} requireCopy onClose={() => setLibraryOpen(false)} onPick={(id) => journey.setProduct(id, "SALES_PITCH")} />
+      <LibraryPickerDialog open={libraryOpen} require="copy" onClose={() => setLibraryOpen(false)} onPick={(id) => journey.setProduct(id, "SALES_PITCH")} />
     </div>
   )
 }

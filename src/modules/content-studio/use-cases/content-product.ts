@@ -17,7 +17,34 @@ export interface ContentProductView {
   readonly analysis: { id: string; approval_state: string; image_url: string | null; data: Json } | null
   readonly copy: { id: string; approval_state: string; data: Json } | null
   readonly sales_pitch: StoredSalesPitch | null
+  /** Lượt bài đăng đa kênh mới nhất (Bước 3) — `null` khi chưa viết */
+  readonly latest_posts: LatestPosts | null
   readonly flags: ContentFlagsWire
+}
+
+export interface ChannelPost {
+  readonly channel: string
+  readonly text: string
+  readonly hashtags: readonly string[]
+}
+
+export interface LatestPosts {
+  readonly generation_id: string
+  /** DRAFT | APPROVED | SCHEDULED */
+  readonly status: string
+  readonly posts: readonly ChannelPost[]
+  readonly approved_posts: readonly ChannelPost[] | null
+  readonly overall_score: number | null
+  readonly created_at: string
+}
+
+function toPosts(v: unknown): ChannelPost[] {
+  if (!Array.isArray(v)) return []
+  return v.flatMap((raw) => {
+    const r = (raw ?? {}) as Record<string, unknown>
+    if (typeof r.channel !== "string" || typeof r.text !== "string") return []
+    return [{ channel: r.channel, text: r.text, hashtags: Array.isArray(r.hashtags) ? r.hashtags.filter((h): h is string => typeof h === "string") : [] }]
+  })
 }
 
 async function loadProduct(ctx: TenantContext, productId: string) {
@@ -37,10 +64,11 @@ export async function getContentProduct(
   repo: ContentStudioRepository = getContentStudioRepository(),
 ): Promise<ContentProductView> {
   const product = await loadProduct(ctx, productId)
-  const [analysisRow, copyRow, approvedPosts] = await Promise.all([
+  const [analysisRow, copyRow, approvedPosts, generation] = await Promise.all([
     repo.latestAnalysis(ctx, productId),
     repo.latestCopy(ctx, productId),
     repo.countApprovedPosts(ctx, productId),
+    repo.latestGeneration(ctx, productId),
   ])
   const analysis = analysisRow ? await getAnalysis(ctx, analysisRow.id) : null
   const salesPitch = readSalesPitch(product.attributes)
@@ -54,6 +82,16 @@ export async function getContentProduct(
       ? { id: copyRow.id, approval_state: copyRow.approval_state, data: { ...((copyRow.raw as Json | null) ?? {}), ...((copyRow.edited as Json | null) ?? {}) } }
       : null,
     sales_pitch: salesPitch,
+    latest_posts: generation
+      ? {
+        generation_id: generation.id,
+        status: generation.status,
+        posts: toPosts(generation.posts),
+        approved_posts: generation.approved_posts ? toPosts(generation.approved_posts) : null,
+        overall_score: generation.overall_score,
+        created_at: generation.created_at.toISOString(),
+      }
+      : null,
     flags: {
       card_approved: analysis?.approval_state === "APPROVED",
       copy_approved: copyRow?.approval_state === "APPROVED",
