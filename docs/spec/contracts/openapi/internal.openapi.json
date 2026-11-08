@@ -15935,7 +15935,7 @@
       "post": {
         "operationId": "markSendLinkCopied",
         "summary": "Ghi nhận đã sao chép link",
-        "description": "Của tổ chức khác → 404.",
+        "description": "`{id}` là mã gửi (`sendCode`), không phải id phiên. Của tổ chức khác → 404.",
         "tags": [
           "Thẻ chào — bộ sưu tập & link"
         ],
