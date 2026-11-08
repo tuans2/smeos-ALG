@@ -1,12 +1,9 @@
-import { z } from "zod"
-
 import { notFound, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { BranchPortalRepository } from "@/modules/greeting-card/infra/branch-portal-repository"
-
-const schema = z.object({ chain_branch_code: z.string().min(1).max(64).nullable() })
+import { memberChainBranchBody } from "@/app/api/v1/_contracts/requests-org"
 
 /**
  * PUT /api/v1/members/[id]/chain-branch — gắn (hoặc gỡ: `null`) chi nhánh chuỗi cho một thành viên,
@@ -17,7 +14,7 @@ export const PUT = handle(async (request, context: { params: Promise<{ id: strin
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "F5")
 
-  const parsed = schema.safeParse(await request.json().catch(() => null))
+  const parsed = memberChainBranchBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const { id } = await context.params
