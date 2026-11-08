@@ -34,7 +34,7 @@ export const REQUIRED_FIELDS: readonly ProfileFieldKey[] = [
 export const OPTIONAL_FIELDS: readonly ProfileFieldKey[] = ["logo", "operating_hours", "social_links", "email"]
 
 export const PROFILE_FIELDS: Readonly<Record<ProfileFieldKey, ProfileFieldMeta>> = {
-  display_name: { label: "Tên cửa hàng", hint: "Dùng cho logo, danh thiếp và trang landing", placeholder: "Ví dụ: Tiệm hoa Mộc Lan", icon: Store, target: "BUSINESS" },
+  display_name: { label: "Tên cửa hàng", hint: "Dùng cho logo, danh thiếp và trang landing", placeholder: "Ví dụ: Cửa hàng Mộc Lan", icon: Store, target: "BUSINESS" },
   phone: { label: "Điện thoại", hint: "Khách gọi hoặc nhắn Zalo từ danh thiếp và trang landing", placeholder: "0901 234 567", icon: Phone, target: "BUSINESS" },
   address: { label: "Địa chỉ", hint: "Khách tìm đường đến cửa hàng", placeholder: "Số nhà, đường, phường, quận", icon: MapPin, target: "BUSINESS" },
   description: { label: "Giới thiệu ngắn", hint: "Hệ thống dựa vào đây để viết khẩu hiệu và câu chuyện cửa hàng", placeholder: "Cửa hàng bán gì, khác biệt ở đâu…", icon: FileText, target: "BUSINESS" },

@@ -38,7 +38,7 @@ export function paletteFor(style: BrandStyleKey, variant: number): BrandPalette 
   }
 }
 
-/** Từ chung chung không dùng làm chữ viết tắt ("Tiệm hoa Mộc Lan" → "ML"). */
+/** Từ chung chung không dùng làm chữ viết tắt ("Cửa hàng Mộc Lan" → "ML"). */
 const GENERIC_WORDS = new Set(["tiệm", "cửa", "hàng", "shop", "store", "quán", "nhà", "công", "ty", "cty", "the", "hoa"])
 
 export function initialsOf(name: string): string {

@@ -34,7 +34,7 @@ export async function downloadPng(svg: string, width: number, height: number, fi
   if (blob) save(blob, filename)
 }
 
-/** Tên tệp không dấu, gạch nối: "Tiệm Hoa Mộc Lan" → "tiem-hoa-moc-lan". */
+/** Tên tệp không dấu, gạch nối: "Cửa hàng Mộc Lan" → "cua-hang-moc-lan". */
 export function fileSlug(name: string): string {
   return name.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/gi, "d").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "thuong-hieu"
 }
