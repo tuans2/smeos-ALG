@@ -397,3 +397,18 @@ Ghi nhận:
 - Thùng rác trả envelope cũ `{ success: true }`, `PUT /storage/{key}` trả `{ ok, key }` (đã có trong `api-envelope-legacy.txt`).
 - `x-capability` của `GET · POST /storage/trash` chỉ ghi `G3`: cột năng lực của đặc tả 06 viết `` `G3` \| `L4` \| `A3` \| `B6` `` — bộ tách cột của `internal-openapi.test.ts` (và `check:docs`) cắt ở dấu `|` dù đã thoát, nên chỉ đọc được `G3`. Ba mã còn lại ghi trong mô tả operation. Nên viết lại cột đó bằng `·` khi sửa đặc tả lần tới.
 - 14 phép thử lỗi (mã lạ, khoá kho của tổ chức khác, chi nhánh lạ, `type` thư viện sai, `limit` không phải số…) không có đường nào trả 500.
+
+## 21. Nhật ký sửa — OpenAPI nội bộ, đợt Thương hiệu & dữ liệu bán hàng (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/brand-kit/*` (5 route, 5 operation), `/brand-library/*` (4 route, 6 operation), `/product-copies/*` (5 route, 6 operation) — tổng 403 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi. (Cụm nội dung còn lại — `content-engine`, `market-intelligence` — làm ở đợt sau.)
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 5 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-brand.ts` (Bộ nhận diện và Landing page dùng chung một lược đồ giống hệt), route import lại. Thân `product-copies` do route/use-case tự kiểm có lược đồ mô tả; danh sách trường sửa được đối chiếu với `validateProductCopyEdited` | `tests/unit/architecture/internal-request-parity.test.ts` (5 mẫu), `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi khai `strictObject` (`responses-brand.ts`), đối chiếu mẫu ghi từ phản hồi thật; kiểm trên CSDL thật với cổng AI giả lập (dữ liệu bán hàng trả bản cố định, khẩu hiệu/landing lùi về nội dung dựng sẵn): mục Thương hiệu từ hồ sơ trống tới xuất bản landing page, thư viện nhận diện (tạo, sửa, phiên bản, mục chuỗi), dữ liệu bán hàng (sinh, sửa, trường lạ 400, duyệt, từ chối, thiếu khoá idempotency 400) | `tests/tenant/internal-contract-brand.test.ts` |
+| API-12 | Đặc tả 06 bảng `product-copies`: `GET /product-copies` ghi "chưa gác" — mã gác `H5` ở `listProductCopies`; cột "Gác ở đâu" ghi `route` cho cả 6 dòng trong khi cả 6 gác ở use-case. Sửa theo mã | `npm run check:docs`, `internal-openapi.test.ts` |
+
+Ghi nhận:
+- `product-copies` trả thẳng dòng CSDL (không `{ data }`), `PATCH` sai thân trả lỗi chỉ có `message` (không `details`) — giữ nguyên, ghi ở OpenAPI.
+- Một lượt phân tích chỉ có một bản dữ liệu bán hàng: gọi `generate` lần hai (khoá idempotency khác) trả lại bản cũ, không gọi AI và không tạo job mới.
+- 8 phép thử lỗi (bước bị khoá, mục đã lưu trữ, mã lạ, mã không phải UUID) không có đường nào trả 500.

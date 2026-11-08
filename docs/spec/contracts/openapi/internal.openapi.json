@@ -5587,6 +5587,2638 @@
         "x-capability": "F7"
       }
     },
+    "/brand-kit": {
+      "get": {
+        "operationId": "getBrandKit",
+        "summary": "Trạng thái 3 bước Thương hiệu",
+        "description": "Hồ sơ cửa hàng → Bộ nhận diện → Landing page; mỗi bước kèm phương án đã sinh và phương án đã chọn.",
+        "tags": [
+          "Thương hiệu — 3 bước"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mục Thương hiệu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "string",
+                                "enum": [
+                                  "PROFILE",
+                                  "IDENTITY",
+                                  "LANDING"
+                                ]
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "LOCKED",
+                                  "AVAILABLE",
+                                  "INPUT_REQUIRED",
+                                  "READY",
+                                  "PROCESSING",
+                                  "COMPLETED",
+                                  "FAILED",
+                                  "RETRY"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "label",
+                              "status"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "current_step": {
+                          "type": "string",
+                          "enum": [
+                            "PROFILE",
+                            "IDENTITY",
+                            "LANDING"
+                          ]
+                        },
+                        "shop": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "phone": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "email": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "address": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "website": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "slogan": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "logo_url": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "phone",
+                            "email",
+                            "address",
+                            "website",
+                            "slogan",
+                            "logo_url"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "profile": {
+                          "type": "object",
+                          "properties": {
+                            "done": {
+                              "type": "boolean"
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "key": {
+                                    "type": "string"
+                                  },
+                                  "label": {
+                                    "type": "string"
+                                  },
+                                  "hint": {
+                                    "type": "string"
+                                  },
+                                  "done": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "label",
+                                  "hint",
+                                  "done"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "featured_products": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "active": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "name",
+                                  "active"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "done",
+                            "items",
+                            "featured_products"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "identity": {
+                          "type": "object",
+                          "properties": {
+                            "recommended_style": {
+                              "type": "string",
+                              "enum": [
+                                "LUXURY",
+                                "YOUTHFUL",
+                                "RUSTIC"
+                              ]
+                            },
+                            "selected_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "profile_changed": {
+                              "type": "boolean"
+                            },
+                            "can_refresh": {
+                              "type": "boolean"
+                            },
+                            "can_add": {
+                              "type": "boolean"
+                            },
+                            "uses_uploaded_logo": {
+                              "type": "boolean"
+                            },
+                            "options": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "batch": {
+                                    "type": "number"
+                                  },
+                                  "is_latest_batch": {
+                                    "type": "boolean"
+                                  },
+                                  "selected": {
+                                    "type": "boolean"
+                                  },
+                                  "style_label": {
+                                    "type": "string"
+                                  },
+                                  "style_description": {
+                                    "type": "string"
+                                  },
+                                  "recommended": {
+                                    "type": "boolean"
+                                  },
+                                  "content": {
+                                    "type": "object",
+                                    "properties": {
+                                      "style_key": {
+                                        "type": "string",
+                                        "enum": [
+                                          "LUXURY",
+                                          "YOUTHFUL",
+                                          "RUSTIC"
+                                        ]
+                                      },
+                                      "variant": {
+                                        "type": "number"
+                                      },
+                                      "palette": {
+                                        "type": "object",
+                                        "properties": {
+                                          "primary": {
+                                            "type": "string"
+                                          },
+                                          "secondary": {
+                                            "type": "string"
+                                          },
+                                          "accent": {
+                                            "type": "string"
+                                          },
+                                          "background": {
+                                            "type": "string"
+                                          },
+                                          "text": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": [
+                                          "primary",
+                                          "secondary",
+                                          "accent",
+                                          "background",
+                                          "text"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      "font_heading": {
+                                        "type": "string"
+                                      },
+                                      "font_body": {
+                                        "type": "string"
+                                      },
+                                      "logo_layout": {
+                                        "type": "string",
+                                        "enum": [
+                                          "MONOGRAM",
+                                          "BADGE",
+                                          "WORDMARK"
+                                        ]
+                                      },
+                                      "initials": {
+                                        "type": "string"
+                                      },
+                                      "slogan": {
+                                        "type": "string"
+                                      },
+                                      "slogan_source": {
+                                        "type": "string",
+                                        "enum": [
+                                          "ai",
+                                          "template"
+                                        ]
+                                      },
+                                      "rationale": {
+                                        "type": "string"
+                                      },
+                                      "generated_logo_asset_id": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "style_key",
+                                      "variant",
+                                      "palette",
+                                      "font_heading",
+                                      "font_body",
+                                      "logo_layout",
+                                      "initials",
+                                      "slogan",
+                                      "slogan_source",
+                                      "rationale",
+                                      "generated_logo_asset_id"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "batch",
+                                  "is_latest_batch",
+                                  "selected",
+                                  "style_label",
+                                  "style_description",
+                                  "recommended",
+                                  "content"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "recommended_style",
+                            "selected_id",
+                            "profile_changed",
+                            "can_refresh",
+                            "can_add",
+                            "uses_uploaded_logo",
+                            "options"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "landing": {
+                          "type": "object",
+                          "properties": {
+                            "selected_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "published_path": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "profile_changed": {
+                              "type": "boolean"
+                            },
+                            "can_refresh": {
+                              "type": "boolean"
+                            },
+                            "can_add": {
+                              "type": "boolean"
+                            },
+                            "sections": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "options": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "batch": {
+                                    "type": "number"
+                                  },
+                                  "is_latest_batch": {
+                                    "type": "boolean"
+                                  },
+                                  "selected": {
+                                    "type": "boolean"
+                                  },
+                                  "style_key": {
+                                    "type": "string",
+                                    "enum": [
+                                      "LUXURY",
+                                      "YOUTHFUL",
+                                      "RUSTIC"
+                                    ]
+                                  },
+                                  "style_label": {
+                                    "type": "string"
+                                  },
+                                  "headline": {
+                                    "type": "string"
+                                  },
+                                  "sub_headline": {
+                                    "type": "string"
+                                  },
+                                  "story_title": {
+                                    "type": "string"
+                                  },
+                                  "story_excerpt": {
+                                    "type": "string"
+                                  },
+                                  "perks": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "content_source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "ai",
+                                      "template"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "batch",
+                                  "is_latest_batch",
+                                  "selected",
+                                  "style_key",
+                                  "style_label",
+                                  "headline",
+                                  "sub_headline",
+                                  "story_title",
+                                  "story_excerpt",
+                                  "perks",
+                                  "content_source"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "selected_id",
+                            "published_path",
+                            "profile_changed",
+                            "can_refresh",
+                            "can_add",
+                            "sections",
+                            "options"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "pricing": {
+                          "type": "object",
+                          "properties": {
+                            "extra_option_credit": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "extra_option_credit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "steps",
+                        "current_step",
+                        "shop",
+                        "profile",
+                        "identity",
+                        "landing",
+                        "pricing"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      }
+    },
+    "/brand-kit/identity-options": {
+      "post": {
+        "operationId": "generateIdentityOptions",
+        "summary": "Sinh phương án Bộ nhận diện",
+        "description": "`initial`/`refresh`: 3 phương án miễn phí; `extra`: 1 phương án, trừ credit — bắt buộc header `Idempotency-Key` (thiếu → 400), hết credit → 422, AI không chạy được → hoàn credit (`usage.refunded`). Hồ sơ cửa hàng chưa đủ → 400 (`details.step`); hết lượt hoặc chưa có lô để thêm → 409; dồn dập → 429.",
+        "tags": [
+          "Thương hiệu — 3 bước"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "initial",
+                      "extra",
+                      "refresh"
+                    ]
+                  }
+                },
+                "required": [
+                  "mode"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Phương án mới",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "created": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "content": {
+                                "type": "object",
+                                "properties": {
+                                  "style_key": {
+                                    "type": "string",
+                                    "enum": [
+                                      "LUXURY",
+                                      "YOUTHFUL",
+                                      "RUSTIC"
+                                    ]
+                                  },
+                                  "variant": {
+                                    "type": "number"
+                                  },
+                                  "palette": {
+                                    "type": "object",
+                                    "properties": {
+                                      "primary": {
+                                        "type": "string"
+                                      },
+                                      "secondary": {
+                                        "type": "string"
+                                      },
+                                      "accent": {
+                                        "type": "string"
+                                      },
+                                      "background": {
+                                        "type": "string"
+                                      },
+                                      "text": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "primary",
+                                      "secondary",
+                                      "accent",
+                                      "background",
+                                      "text"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "font_heading": {
+                                    "type": "string"
+                                  },
+                                  "font_body": {
+                                    "type": "string"
+                                  },
+                                  "logo_layout": {
+                                    "type": "string",
+                                    "enum": [
+                                      "MONOGRAM",
+                                      "BADGE",
+                                      "WORDMARK"
+                                    ]
+                                  },
+                                  "initials": {
+                                    "type": "string"
+                                  },
+                                  "slogan": {
+                                    "type": "string"
+                                  },
+                                  "slogan_source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "ai",
+                                      "template"
+                                    ]
+                                  },
+                                  "rationale": {
+                                    "type": "string"
+                                  },
+                                  "generated_logo_asset_id": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "style_key",
+                                  "variant",
+                                  "palette",
+                                  "font_heading",
+                                  "font_body",
+                                  "logo_layout",
+                                  "initials",
+                                  "slogan",
+                                  "slogan_source",
+                                  "rationale",
+                                  "generated_logo_asset_id"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "content"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "usage": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "costCredit": {
+                                  "type": "number"
+                                },
+                                "balanceAfter": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "refunded": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "costCredit",
+                                "balanceAfter",
+                                "refunded"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "created",
+                        "usage"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/brand-kit/identity-options/{id}/select": {
+      "post": {
+        "operationId": "selectIdentityOption",
+        "summary": "Chọn Bộ nhận diện chính thức",
+        "description": "Ghi màu, phông chữ, khẩu hiệu và logo (lưu vào kho) vào hồ sơ thương hiệu. Bước bị khoá → 400; dồn dập → 429. Của tổ chức khác → 404.",
+        "tags": [
+          "Thương hiệu — 3 bước"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Phương án đã chọn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "content": {
+                          "type": "object",
+                          "properties": {
+                            "style_key": {
+                              "type": "string",
+                              "enum": [
+                                "LUXURY",
+                                "YOUTHFUL",
+                                "RUSTIC"
+                              ]
+                            },
+                            "variant": {
+                              "type": "number"
+                            },
+                            "palette": {
+                              "type": "object",
+                              "properties": {
+                                "primary": {
+                                  "type": "string"
+                                },
+                                "secondary": {
+                                  "type": "string"
+                                },
+                                "accent": {
+                                  "type": "string"
+                                },
+                                "background": {
+                                  "type": "string"
+                                },
+                                "text": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "primary",
+                                "secondary",
+                                "accent",
+                                "background",
+                                "text"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "font_heading": {
+                              "type": "string"
+                            },
+                            "font_body": {
+                              "type": "string"
+                            },
+                            "logo_layout": {
+                              "type": "string",
+                              "enum": [
+                                "MONOGRAM",
+                                "BADGE",
+                                "WORDMARK"
+                              ]
+                            },
+                            "initials": {
+                              "type": "string"
+                            },
+                            "slogan": {
+                              "type": "string"
+                            },
+                            "slogan_source": {
+                              "type": "string",
+                              "enum": [
+                                "ai",
+                                "template"
+                              ]
+                            },
+                            "rationale": {
+                              "type": "string"
+                            },
+                            "generated_logo_asset_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "style_key",
+                            "variant",
+                            "palette",
+                            "font_heading",
+                            "font_body",
+                            "logo_layout",
+                            "initials",
+                            "slogan",
+                            "slogan_source",
+                            "rationale",
+                            "generated_logo_asset_id"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "logo_asset_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "content",
+                        "logo_asset_id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/brand-kit/landing-options": {
+      "post": {
+        "operationId": "generateLandingOptions",
+        "summary": "Sinh phương án Landing page chính thức",
+        "description": "`initial`/`refresh`: 3 phương án miễn phí; `extra`: 1 phương án, trừ credit — bắt buộc header `Idempotency-Key` (thiếu → 400), hết credit → 422, AI không chạy được → hoàn credit (`usage.refunded`). Chưa chọn Bộ nhận diện → 400 (`details.step`); hết lượt hoặc chưa có lô để thêm → 409; dồn dập → 429.",
+        "tags": [
+          "Thương hiệu — 3 bước"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "initial",
+                      "extra",
+                      "refresh"
+                    ]
+                  }
+                },
+                "required": [
+                  "mode"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Phương án mới",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "created": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "content": {
+                                "type": "object",
+                                "properties": {
+                                  "style_key": {
+                                    "type": "string",
+                                    "enum": [
+                                      "LUXURY",
+                                      "YOUTHFUL",
+                                      "RUSTIC"
+                                    ]
+                                  },
+                                  "variant": {
+                                    "type": "number"
+                                  },
+                                  "archetype_id": {
+                                    "type": "string"
+                                  },
+                                  "style_id": {
+                                    "type": "string"
+                                  },
+                                  "template_id": {
+                                    "type": "string"
+                                  },
+                                  "headline": {
+                                    "type": "string"
+                                  },
+                                  "sub_headline": {
+                                    "type": "string"
+                                  },
+                                  "generated_package": {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  },
+                                  "identity_option_id": {
+                                    "type": "string"
+                                  },
+                                  "content_source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "ai",
+                                      "template"
+                                    ]
+                                  },
+                                  "published_slug": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "style_key",
+                                  "variant",
+                                  "archetype_id",
+                                  "style_id",
+                                  "template_id",
+                                  "headline",
+                                  "sub_headline",
+                                  "generated_package",
+                                  "identity_option_id",
+                                  "content_source",
+                                  "published_slug"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "content"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "usage": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "costCredit": {
+                                  "type": "number"
+                                },
+                                "balanceAfter": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "refunded": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "costCredit",
+                                "balanceAfter",
+                                "refunded"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "created",
+                        "usage"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "J7"
+      }
+    },
+    "/brand-kit/landing-options/{id}/select": {
+      "post": {
+        "operationId": "selectLandingOption",
+        "summary": "Chọn và xuất bản Landing page chính thức",
+        "description": "Xuất bản tại `/c/:slug`; đổi phương án giữ nguyên đường dẫn. Bước bị khoá → 400; dồn dập → 429. Của tổ chức khác → 404.",
+        "tags": [
+          "Thương hiệu — 3 bước"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trang đã xuất bản",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "path": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "slug",
+                        "path"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "J1"
+      }
+    },
+    "/brand-library": {
+      "get": {
+        "operationId": "listBrandLibrary",
+        "summary": "Thư viện nhận diện của tổ chức",
+        "tags": [
+          "Thương hiệu — thư viện nhận diện"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include_archived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mục",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string",
+                            "enum": [
+                              "LOGO",
+                              "COLOR",
+                              "FONT",
+                              "IMAGE",
+                              "TEMPLATE",
+                              "GUIDELINE",
+                              "COPY"
+                            ]
+                          },
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "share_with_members": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "ACTIVE",
+                              "ARCHIVED"
+                            ]
+                          },
+                          "current_version": {
+                            "type": "number"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "latest": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "version": {
+                                    "type": "number"
+                                  },
+                                  "text_value": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "file_url": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "note": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "created_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                  }
+                                },
+                                "required": [
+                                  "version",
+                                  "text_value",
+                                  "file_url",
+                                  "note",
+                                  "created_at"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "category",
+                          "description",
+                          "share_with_members",
+                          "status",
+                          "current_version",
+                          "updated_at",
+                          "latest"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "post": {
+        "operationId": "createBrandLibraryItem",
+        "summary": "Thêm mục nhận diện (phiên bản 1)",
+        "description": "Ảnh (`asset_id`) chỉ nhận JPG, PNG, WebP của chính tổ chức — khác → 400.",
+        "tags": [
+          "Thương hiệu — thư viện nhận diện"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "LOGO",
+                      "COLOR",
+                      "FONT",
+                      "IMAGE",
+                      "TEMPLATE",
+                      "GUIDELINE",
+                      "COPY"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "asset_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "text_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "title",
+                  "category"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mục kèm phiên bản",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                          "enum": [
+                            "LOGO",
+                            "COLOR",
+                            "FONT",
+                            "IMAGE",
+                            "TEMPLATE",
+                            "GUIDELINE",
+                            "COPY"
+                          ]
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "share_with_members": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ACTIVE",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "current_version": {
+                          "type": "number"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "latest": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "type": "number"
+                                },
+                                "text_value": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "file_url": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "note": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "created_at": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                }
+                              },
+                              "required": [
+                                "version",
+                                "text_value",
+                                "file_url",
+                                "note",
+                                "created_at"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "versions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "version": {
+                                "type": "number"
+                              },
+                              "text_value": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "file_url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "note": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              }
+                            },
+                            "required": [
+                              "version",
+                              "text_value",
+                              "file_url",
+                              "note",
+                              "created_at"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "category",
+                        "description",
+                        "share_with_members",
+                        "status",
+                        "current_version",
+                        "updated_at",
+                        "latest",
+                        "versions"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/brand-library/{id}": {
+      "get": {
+        "operationId": "getBrandLibraryItem",
+        "summary": "Một mục kèm các phiên bản",
+        "description": "Của tổ chức khác → 404.",
+        "tags": [
+          "Thương hiệu — thư viện nhận diện"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mục kèm phiên bản",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                          "enum": [
+                            "LOGO",
+                            "COLOR",
+                            "FONT",
+                            "IMAGE",
+                            "TEMPLATE",
+                            "GUIDELINE",
+                            "COPY"
+                          ]
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "share_with_members": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ACTIVE",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "current_version": {
+                          "type": "number"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "latest": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "type": "number"
+                                },
+                                "text_value": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "file_url": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "note": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "created_at": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                }
+                              },
+                              "required": [
+                                "version",
+                                "text_value",
+                                "file_url",
+                                "note",
+                                "created_at"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "versions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "version": {
+                                "type": "number"
+                              },
+                              "text_value": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "file_url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "note": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              }
+                            },
+                            "required": [
+                              "version",
+                              "text_value",
+                              "file_url",
+                              "note",
+                              "created_at"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "category",
+                        "description",
+                        "share_with_members",
+                        "status",
+                        "current_version",
+                        "updated_at",
+                        "latest",
+                        "versions"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "patch": {
+        "operationId": "updateBrandLibraryItem",
+        "summary": "Sửa tên, mô tả, chia sẻ, lưu trữ",
+        "description": "Của tổ chức khác → 404.",
+        "tags": [
+          "Thương hiệu — thư viện nhận diện"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "share_with_members": {
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ACTIVE",
+                      "ARCHIVED"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mục kèm phiên bản",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                          "enum": [
+                            "LOGO",
+                            "COLOR",
+                            "FONT",
+                            "IMAGE",
+                            "TEMPLATE",
+                            "GUIDELINE",
+                            "COPY"
+                          ]
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "share_with_members": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ACTIVE",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "current_version": {
+                          "type": "number"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "latest": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "type": "number"
+                                },
+                                "text_value": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "file_url": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "note": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "created_at": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                }
+                              },
+                              "required": [
+                                "version",
+                                "text_value",
+                                "file_url",
+                                "note",
+                                "created_at"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "versions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "version": {
+                                "type": "number"
+                              },
+                              "text_value": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "file_url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "note": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              }
+                            },
+                            "required": [
+                              "version",
+                              "text_value",
+                              "file_url",
+                              "note",
+                              "created_at"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "category",
+                        "description",
+                        "share_with_members",
+                        "status",
+                        "current_version",
+                        "updated_at",
+                        "latest",
+                        "versions"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/brand-library/{id}/versions": {
+      "post": {
+        "operationId": "addBrandLibraryVersion",
+        "summary": "Thêm phiên bản mới",
+        "description": "Bản cũ giữ nguyên để xem lại. Mục đã lưu trữ → 400. Của tổ chức khác → 404.",
+        "tags": [
+          "Thương hiệu — thư viện nhận diện"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "text_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mục kèm phiên bản",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                          "enum": [
+                            "LOGO",
+                            "COLOR",
+                            "FONT",
+                            "IMAGE",
+                            "TEMPLATE",
+                            "GUIDELINE",
+                            "COPY"
+                          ]
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "share_with_members": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ACTIVE",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "current_version": {
+                          "type": "number"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "latest": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "type": "number"
+                                },
+                                "text_value": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "file_url": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "note": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "created_at": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                }
+                              },
+                              "required": [
+                                "version",
+                                "text_value",
+                                "file_url",
+                                "note",
+                                "created_at"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "versions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "version": {
+                                "type": "number"
+                              },
+                              "text_value": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "file_url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "note": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              }
+                            },
+                            "required": [
+                              "version",
+                              "text_value",
+                              "file_url",
+                              "note",
+                              "created_at"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "title",
+                        "category",
+                        "description",
+                        "share_with_members",
+                        "status",
+                        "current_version",
+                        "updated_at",
+                        "latest",
+                        "versions"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/brand-library/chain": {
+      "get": {
+        "operationId": "listChainBrandLibrary",
+        "summary": "Tài nguyên chuỗi đã chia sẻ (chỉ đọc)",
+        "description": "Cửa hàng thành viên; `data: null` khi không thuộc chuỗi.",
+        "tags": [
+          "Thương hiệu — thư viện nhận diện"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mục của chuỗi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "chain_name": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "type": "string"
+                                  },
+                                  "category": {
+                                    "type": "string",
+                                    "enum": [
+                                      "LOGO",
+                                      "COLOR",
+                                      "FONT",
+                                      "IMAGE",
+                                      "TEMPLATE",
+                                      "GUIDELINE",
+                                      "COPY"
+                                    ]
+                                  },
+                                  "description": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "share_with_members": {
+                                    "type": "boolean"
+                                  },
+                                  "status": {
+                                    "type": "string",
+                                    "enum": [
+                                      "ACTIVE",
+                                      "ARCHIVED"
+                                    ]
+                                  },
+                                  "current_version": {
+                                    "type": "number"
+                                  },
+                                  "updated_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                  },
+                                  "latest": {
+                                    "anyOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "version": {
+                                            "type": "number"
+                                          },
+                                          "text_value": {
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ]
+                                          },
+                                          "file_url": {
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ]
+                                          },
+                                          "note": {
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ]
+                                          },
+                                          "created_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                          }
+                                        },
+                                        "required": [
+                                          "version",
+                                          "text_value",
+                                          "file_url",
+                                          "note",
+                                          "created_at"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "title",
+                                  "category",
+                                  "description",
+                                  "share_with_members",
+                                  "status",
+                                  "current_version",
+                                  "updated_at",
+                                  "latest"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "chain_name",
+                            "items"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      }
+    },
     "/chain/collection-profile": {
       "get": {
         "operationId": "getChainCollectionProfile",
@@ -89459,6 +92091,1199 @@
           }
         },
         "x-capability": "L6"
+      }
+    },
+    "/product-copies": {
+      "get": {
+        "operationId": "listProductCopies",
+        "summary": "Dữ liệu bán hàng của tổ chức",
+        "description": "Mã năng lực kiểm ở use-case. Lọc theo sản phẩm và trạng thái duyệt.",
+        "tags": [
+          "Dữ liệu bán hàng sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "approval_state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bản dữ liệu bán hàng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organization_id": {
+                            "type": "string"
+                          },
+                          "analysis_id": {
+                            "type": "string"
+                          },
+                          "product_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "raw": {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "additionalProperties": {}
+                          },
+                          "edited": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {}
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "approval_state": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "APPROVED",
+                              "REJECTED"
+                            ]
+                          },
+                          "approved_by": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "approved_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "profile_version": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "reject_reason": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "job_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "model_key": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "provider": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "cost_usd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "latency_ms": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organization_id",
+                          "analysis_id",
+                          "product_id",
+                          "raw",
+                          "edited",
+                          "approval_state",
+                          "approved_by",
+                          "approved_at",
+                          "profile_version",
+                          "reject_reason",
+                          "job_id",
+                          "model_key",
+                          "provider",
+                          "cost_usd",
+                          "latency_ms",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "H5"
+      }
+    },
+    "/product-copies/{id}": {
+      "get": {
+        "operationId": "getProductCopy",
+        "summary": "Một bản dữ liệu bán hàng",
+        "description": "Mã năng lực kiểm ở use-case. Trả thẳng bản ghi (không bọc `{ data }`). Của tổ chức khác → 404.",
+        "tags": [
+          "Dữ liệu bán hàng sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bản ghi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "analysis_id": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "raw": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "edited": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "approval_state": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "APPROVED",
+                        "REJECTED"
+                      ]
+                    },
+                    "approved_by": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "approved_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "profile_version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reject_reason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "model_key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "latency_ms": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "analysis_id",
+                    "product_id",
+                    "raw",
+                    "edited",
+                    "approval_state",
+                    "approved_by",
+                    "approved_at",
+                    "profile_version",
+                    "reject_reason",
+                    "job_id",
+                    "model_key",
+                    "provider",
+                    "cost_usd",
+                    "latency_ms",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "H5"
+      },
+      "patch": {
+        "operationId": "updateProductCopy",
+        "summary": "Sửa trường trong `edited`",
+        "description": "Mã năng lực kiểm ở use-case. Thiếu `edited` hoặc có trường lạ → 400 (lỗi chỉ có `message`, không có `details`). Của tổ chức khác → 404.",
+        "tags": [
+          "Dữ liệu bán hàng sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "edited": {
+                    "type": "object",
+                    "properties": {
+                      "suggested_name": {},
+                      "short_headline": {},
+                      "suggested_description": {},
+                      "suggested_style": {},
+                      "suggested_tags": {},
+                      "seo_keywords": {},
+                      "suggested_occasions": {},
+                      "secondary_occasions": {},
+                      "target_audience": {},
+                      "flower_meaning_story": {},
+                      "key_selling_points": {},
+                      "card_message_suggestions": {},
+                      "care_instructions": {},
+                      "suggested_price_segment": {},
+                      "suggested_price_range": {},
+                      "recommended_upsells": {}
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "edited"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bản ghi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "analysis_id": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "raw": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "edited": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "approval_state": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "APPROVED",
+                        "REJECTED"
+                      ]
+                    },
+                    "approved_by": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "approved_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "profile_version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reject_reason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "model_key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "latency_ms": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "analysis_id",
+                    "product_id",
+                    "raw",
+                    "edited",
+                    "approval_state",
+                    "approved_by",
+                    "approved_at",
+                    "profile_version",
+                    "reject_reason",
+                    "job_id",
+                    "model_key",
+                    "provider",
+                    "cost_usd",
+                    "latency_ms",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "H5"
+      }
+    },
+    "/product-copies/{id}/approve": {
+      "post": {
+        "operationId": "approveProductCopy",
+        "summary": "Duyệt — ghi vào Product Master",
+        "description": "Mã năng lực kiểm ở use-case. Ghi Product Master và nhật ký kiểm toán cùng giao dịch. Của tổ chức khác → 404.",
+        "tags": [
+          "Dữ liệu bán hàng sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bản ghi đã duyệt",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "analysis_id": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "raw": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "edited": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "approval_state": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "APPROVED",
+                        "REJECTED"
+                      ]
+                    },
+                    "approved_by": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "approved_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "profile_version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reject_reason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "model_key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "latency_ms": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "analysis_id",
+                    "product_id",
+                    "raw",
+                    "edited",
+                    "approval_state",
+                    "approved_by",
+                    "approved_at",
+                    "profile_version",
+                    "reject_reason",
+                    "job_id",
+                    "model_key",
+                    "provider",
+                    "cost_usd",
+                    "latency_ms",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "H6"
+      }
+    },
+    "/product-copies/{id}/reject": {
+      "post": {
+        "operationId": "rejectProductCopy",
+        "summary": "Từ chối",
+        "description": "Mã năng lực kiểm ở use-case. Chỉ bản đang chờ duyệt — khác → 409. Của tổ chức khác → 404.",
+        "tags": [
+          "Dữ liệu bán hàng sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bản ghi đã từ chối",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "analysis_id": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "raw": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "edited": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "approval_state": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "APPROVED",
+                        "REJECTED"
+                      ]
+                    },
+                    "approved_by": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "approved_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "profile_version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reject_reason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "model_key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "latency_ms": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "analysis_id",
+                    "product_id",
+                    "raw",
+                    "edited",
+                    "approval_state",
+                    "approved_by",
+                    "approved_at",
+                    "profile_version",
+                    "reject_reason",
+                    "job_id",
+                    "model_key",
+                    "provider",
+                    "cost_usd",
+                    "latency_ms",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "H6"
+      }
+    },
+    "/product-copies/generate": {
+      "post": {
+        "operationId": "generateProductCopy",
+        "summary": "Sinh dữ liệu bán hàng từ lượt phân tích đã duyệt",
+        "description": "Mã năng lực kiểm ở use-case. Header `Idempotency-Key` bắt buộc (thiếu → 400). Lượt phân tích đã có bản → trả lại bản đó, không gọi AI lần hai. Phân tích chưa duyệt → 422; `productId` không khớp phân tích → 409; AI không chạy được → 500 (job hỏng, hoàn credit). Của tổ chức khác → 404.",
+        "tags": [
+          "Dữ liệu bán hàng sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "analysisId": {
+                    "type": "string"
+                  },
+                  "productId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "analysisId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bản dữ liệu bán hàng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "copyId": {
+                      "type": "string"
+                    },
+                    "raw": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "needsReview": {
+                      "type": "boolean"
+                    },
+                    "modelKey": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "copyId",
+                    "raw",
+                    "needsReview",
+                    "modelKey"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "H5"
       }
     },
     "/products": {

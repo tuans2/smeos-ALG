@@ -491,12 +491,12 @@ Engine ngoài cache theo `cache_ttl_seconds`. Hết hạn mà không gọi đư�
 
 | Method | Path | Năng lực | Gác ở đâu |
 |---|---|---|---|
-| POST | `/product-copies/generate` | `H5` | route |
-| GET | `/product-copies` | **chưa gác** — xem **RS-8** | — |
-| GET | `/product-copies/:id` | `H5` | route |
-| PATCH | `/product-copies/:id` | `H5` | route |
-| POST | `/product-copies/:id/approve` | `H6` | route |
-| POST | `/product-copies/:id/reject` | `H6` | route |
+| POST | `/product-copies/generate` | `H5` | use-case |
+| GET | `/product-copies` | `H5` | use-case (`listProductCopies`; sửa 08/11/2026 — đặc tả ghi "chưa gác" là cũ) |
+| GET | `/product-copies/:id` | `H5` | use-case |
+| PATCH | `/product-copies/:id` | `H5` | use-case |
+| POST | `/product-copies/:id/approve` | `H6` | use-case |
+| POST | `/product-copies/:id/reject` | `H6` | use-case |
 
 Nhóm này kiểm quyền bằng `ctx.capabilities.has("…")` viết tay thay vì `requireCapability(ctx, "…")` như phần còn lại của hệ thống. Hai lối viết cho cùng một phép kiểm — xem **RS-9**.
 
