@@ -88,6 +88,15 @@ export class MembershipRepository {
     })
   }
 
+  /** Gửi lại lời mời chưa nhận: làm mới `invited_at` (hạn 14 ngày tính lại), vai và chi nhánh (UJ-14). */
+  async refreshInvitation(ctx: TenantContext, membershipId: string, input: { roleId: string; branchId: string | null }): Promise<memberships> {
+    await this.db.memberships.updateMany({
+      where: scopedWhere(ctx, { id: membershipId, status: "INVITED" as const }),
+      data: { invited_at: new Date(), role_id: input.roleId, branch_id: input.branchId },
+    })
+    return this.db.memberships.findFirstOrThrow({ where: scopedWhere(ctx, { id: membershipId }) })
+  }
+
   /**
    * Gỡ một thành viên — nguồn của `DELETE /members/:id` (`F4`). Đi qua
    * `deleteMany` với điều kiện tổ chức, không qua `delete` theo khoá chính,

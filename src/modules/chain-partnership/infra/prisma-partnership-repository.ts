@@ -199,9 +199,16 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     return this.mapEntity(row)
   }
 
-  async findOrganizationType(orgId: string): Promise<string | null> {
-    const org = await this.prisma.organizations.findUnique({ where: { id: orgId }, select: { type: true } })
-    return org?.type ?? null
+  findOrganization(orgId: string): Promise<{ type: string; name: string } | null> {
+    return this.prisma.organizations.findUnique({ where: { id: orgId }, select: { type: true, name: true } })
+  }
+
+  async findLinkStatus(chainOrgId: string, partnerOrgId: string): Promise<{ status: PartnershipStatus; validFrom: Date } | null> {
+    const row = await this.prisma.organization_links.findUnique({
+      where: { parent_org_id_child_org_id: { parent_org_id: chainOrgId, child_org_id: partnerOrgId } },
+      select: { status: true, valid_from: true },
+    })
+    return row ? { status: row.status, validFrom: row.valid_from } : null
   }
 
   findStoreByIdentifier(identifier: string): Promise<StoreByIdentifier | null> {
@@ -221,7 +228,11 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     commissionRate?: number | undefined
     capacityDaily?: number | undefined
     contactName?: string | undefined
+    /** `PENDING` = lời mời chờ cửa hàng đồng ý (UJ-10), tính hạn từ `valid_from`. Vắng = `ACTIVE` như trước. */
+    status?: "ACTIVE" | "PENDING" | undefined
   }): Promise<ChainPartnershipEntity> {
+    const status = params.status ?? "ACTIVE"
+    const invitedAt = status === "PENDING" ? { valid_from: new Date() } : {}
     const terms = {
       partner_code: params.partnerCode,
       link_type: toChainLinkType(params.partnershipType),
@@ -232,12 +243,13 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       const row = await this.prisma.$transaction(async (tx) => {
         const saved = await tx.organization_links.upsert({
           where: { parent_org_id_child_org_id: { parent_org_id: params.chainOrgId, child_org_id: params.partnerOrgId } },
-          update: { ...terms, status: "ACTIVE", valid_to: null, ...(params.contactName !== undefined ? { contact_name: params.contactName } : {}) },
+          update: { ...terms, ...invitedAt, status, valid_to: null, ...(params.contactName !== undefined ? { contact_name: params.contactName } : {}) },
           create: {
             ...terms,
             parent_org_id: params.chainOrgId,
             child_org_id: params.partnerOrgId,
-            status: "ACTIVE",
+            ...invitedAt,
+            status,
             contact_name: params.contactName ?? null,
           },
           select: { id: true },

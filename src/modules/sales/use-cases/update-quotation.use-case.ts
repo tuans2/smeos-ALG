@@ -1,4 +1,5 @@
 import { notFound, validationFailed } from "@/core/http/errors"
+import { updateLead } from "@/modules/acquisition/use-cases/manage-leads"
 import { assertWithinPriceBounds } from "@/modules/costing/use-cases/price-floor-guard"
 import { productLinesCeilingBase } from "../domain/quotation-price-bounds"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
@@ -34,6 +35,7 @@ export async function updateQuotationUseCase(
   input: UpdateQuotationInput,
   repo: IQuotationRepository = getQuotationRepository(),
   revisions: Pick<QuotationRevisionRepository, "add"> = new QuotationRevisionRepository(),
+  updateLeadFn: (ctx: TenantContext, leadId: string, status: string) => Promise<unknown> = followUpLead,
 ): Promise<Quotation> {
   const existing = await repo.findById(ctx, id)
   if (!existing) {
@@ -112,6 +114,20 @@ export async function updateQuotationUseCase(
   // Sửa nội dung (không phải chỉ đổi trạng thái) → lưu ảnh chụp bản trước khi sửa (checklist ALG 3.10)
   const contentChanged = Object.keys(dto).some((k) => k !== "status")
   if (contentChanged) await revisions.add(ctx, id, quotationSnapshot(existing))
-  return repo.update(ctx, id, dto)
+  const updated = await repo.update(ctx, id, dto)
+  // Khách từ chối báo giá → lead về "Theo dõi" (trước đây lead đứng ở "Đã báo giá" mãi — audit hành trình L2, UJ-13)
+  if (dto.status === "REJECTED" && existing.status !== "REJECTED" && existing.leadId) {
+    await updateLeadFn(ctx, existing.leadId, "FOLLOW_UP")
+  }
+  return updated
+}
+
+/** Lead đã ở trạng thái không chuyển được (vd. đã chốt bằng đơn khác) thì bỏ qua — không chặn việc lưu báo giá. */
+async function followUpLead(ctx: TenantContext, leadId: string, status: string): Promise<void> {
+  try {
+    await updateLead(ctx, leadId, { status })
+  } catch {
+    // giữ nguyên lead
+  }
 }
 

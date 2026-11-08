@@ -5,7 +5,7 @@
 import { AppError, validationFailed } from "@/core/http/errors"
 import { branchScopeOf } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { calculateOrderTotal, generateOrderCode } from "../domain/order-rules"
+import { calculateOrderTotal, calculateOrderTotalWithAdjustments, generateOrderCode } from "../domain/order-rules"
 import { newOrderDeliveryErrors } from "../domain/order-input-rules"
 import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
@@ -36,7 +36,8 @@ export async function createOrder(
     })
   }
 
-  const totalVnd = calculateOrderTotal(input.items)
+  // Ưu đãi + phí giao cấp đơn (đơn chuyển từ báo giá) — trước đây bị bỏ, tổng đơn lệch báo giá (UJ-08)
+  const totalVnd = calculateOrderTotalWithAdjustments(input.items, input.adjustments)
   if (totalVnd < 0) {
     throw new AppError("VALIDATION_FAILED", "Tổng tiền đơn hàng không thể là số âm.")
   }

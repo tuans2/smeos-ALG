@@ -157,6 +157,16 @@ export interface CreateOrderInput {
   ownerSaleId?: string | null | undefined
   /** `Idempotency-Key` của client (`ingestOrderOnce`) — duy nhất trong tổ chức. */
   idempotencyKey?: string | null | undefined
+  /**
+   * Ưu đãi / phí giao hàng tính trên CẢ ĐƠN (không phải dòng hàng) — hiện chỉ cổng chuyển báo giá truyền, không mở
+   * cho API tạo đơn (audit hành trình Q1, gói UJ-08). Tổng đơn = tiền hàng − ưu đãi + phí giao.
+   */
+  adjustments?: OrderAdjustments | undefined
+}
+
+export interface OrderAdjustments {
+  discountVnd: number
+  shippingFeeVnd: number
 }
 
 /** Đầu vào cổng nhận đơn chung (`use-cases/ingest-order.ts`) — nguồn bắt buộc. */

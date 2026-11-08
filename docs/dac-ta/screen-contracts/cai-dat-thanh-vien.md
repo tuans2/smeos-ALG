@@ -25,7 +25,7 @@ acceptance:
 | Mục | Hiện trạng |
 |---|---|
 | Đầu trang | PageHeader |
-| Số `variant="primary"` trong trang và mọi thành phần nó dùng (gộp cả tab, hộp thoại — không phải số nút trên một màn) | 4 |
+| Số `variant="primary"` trong trang và mọi thành phần nó dùng (gộp cả tab, hộp thoại — không phải số nút trên một màn) | 5 (thêm nút gửi trong hộp thoại mời, UJ-14) |
 | Trạng thái đang tải | có |
 | Trạng thái rỗng (`EmptyState`) | **chưa thấy trong mã** |
 | Trạng thái lỗi | có |
@@ -35,6 +35,7 @@ acceptance:
 
 - Mục menu "Đội ngũ & phân quyền" (Quản trị tiệm; chuỗi: Thiết lập chuỗi), quyền `F1`.
 - Nút "Vai trò & quyền" ở đầu trang (chỉ khi có `F5`) mở `/cai-dat/thanh-vien/vai-tro` (checklist ALG 1.13).
+- Nút phụ "Mời người đã có tài khoản" (cùng quyền với "Thêm nhân viên") mở hộp thoại mời — người được mời nhận ở mục "Tổ chức của tôi" trong menu tài khoản, hạn 14 ngày (audit hành trình UJ-14, 07/11/2026). Email chưa có tài khoản → API trả lời chỉ sang "Thêm nhân viên".
 
 ## Chưa kiểm
 - Ảnh mốc 390×844 và 1280×800, quét axe, bàn phím, đọc màn hình: chưa có ca trong `tests/e2e/ux` cho tuyến này.

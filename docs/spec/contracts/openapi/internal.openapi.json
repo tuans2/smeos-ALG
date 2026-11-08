@@ -25234,6 +25234,10 @@
                       "SUSPENDED",
                       "TERMINATED"
                     ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 500
                   }
                 },
                 "required": [

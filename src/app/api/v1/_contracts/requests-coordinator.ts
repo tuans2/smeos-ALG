@@ -60,6 +60,8 @@ export const setShipperBody = z.object({
 // partners/[id]/status/route.ts
 export const partnershipStatusBody = z.object({
   status: z.enum(["ACTIVE", "SUSPENDED", "TERMINATED"]),
+  // Lý do kiểm ở use-case SAU bước kiểm sở hữu — chuỗi khác luôn nhận 404, không 400
+  reason: z.string().max(500).optional(),
 })
 
 // partners/[id]/tools/route.ts

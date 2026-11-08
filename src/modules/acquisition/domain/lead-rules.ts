@@ -76,7 +76,8 @@ export const LEAD_TRANSITIONS: Record<LeadStatus, readonly LeadStatus[]> = {
   RECOMMENDED: ["CONSULTING", "QUOTATION_SENT", "FOLLOW_UP", "WON", "LOST", "UNQUALIFIED"],
   QUOTATION_SENT: ["CONSULTING", "FOLLOW_UP", "WON", "LOST", "UNQUALIFIED"],
   FOLLOW_UP: ["CONSULTING", "RECOMMENDED", "QUOTATION_SENT", "WON", "LOST", "UNQUALIFIED"],
-  WON: ["FOLLOW_UP"],
+  // Đơn huỷ / khách bỏ sau khi chốt → theo dõi lại hoặc không thành (UJ-13)
+  WON: ["FOLLOW_UP", "LOST"],
   LOST: ["NEW", "CONTACTED"],
   UNQUALIFIED: ["NEW", "QUALIFIED"],
 }

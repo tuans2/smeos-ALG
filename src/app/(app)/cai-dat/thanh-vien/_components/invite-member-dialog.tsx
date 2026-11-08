@@ -86,8 +86,8 @@ export function InviteMemberDialog({
     <Dialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Mời Nhân Viên Mới Vào Tiệm"
-      description="Gửi lời mời tham gia tổ chức và phân quyền vai trò cho nhân viên."
+      title="Mời người đã có tài khoản"
+      description="Dành cho người đã dùng smeOS ở cửa hàng khác. Họ nhận lời mời ở mục “Tổ chức của tôi” trong menu tài khoản, trong 14 ngày."
       size="md"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -112,7 +112,7 @@ export function InviteMemberDialog({
             required
           />
           <span className="text-caption text-text-muted">
-            Nếu email chưa từng đăng ký smeOS, hệ thống sẽ tự động khởi tạo tài khoản mới.
+            Email chưa có tài khoản thì dùng nút “Thêm nhân viên” để tạo tài khoản dùng được ngay.
           </span>
         </div>
 
