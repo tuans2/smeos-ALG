@@ -41,6 +41,22 @@ describe("Duyệt cọc theo năng lực người bấm khi tiệm bắt Điều
     expect(repo.applyProgress).toHaveBeenCalled()
   })
 
+  it("ghi cọc xong tiệm 1 cửa hàng đã tự nhận đơn → không ghi tiến độ lần hai (lỗi 409 08/11/2026)", async () => {
+    confirmDeposit.mockResolvedValueOnce({ paidVnd: 250_000, autoAccepted: true } as never)
+    const repo = repoWithOrder()
+    await expect(coordinatorAcceptBrochureOrder(admin, "o1", {}, repo, shop)).resolves.toEqual({ orderId: "o1", orderCode: "DH-1" })
+    expect(repo.applyProgress).not.toHaveBeenCalled()
+  })
+
+  it("ghi cọc không tự nhận đơn → đọc lại đơn rồi mới tiếp nhận (khoá lạc quan khớp bản mới)", async () => {
+    const repo = repoWithOrder()
+    const fresh = { ...(await repo.findBrochureOrder(admin, "o1"))!, status: "CONFIRMED", paid_vnd: 250_000 }
+    vi.mocked(repo.findBrochureOrder).mockClear().mockResolvedValueOnce({ ...fresh, status: "DRAFT", paid_vnd: 0 } as never).mockResolvedValueOnce(fresh as never)
+    await coordinatorAcceptBrochureOrder(admin, "o1", {}, repo, shop)
+    expect(repo.findBrochureOrder).toHaveBeenCalledTimes(2)
+    expect(vi.mocked(repo.applyProgress).mock.calls[0]?.[1]).toBe(fresh)
+  })
+
   it("Điều phối (không có R11) vẫn bị chặn, không tự ghi tiền", async () => {
     confirmDeposit.mockClear()
     const repo = repoWithOrder()
