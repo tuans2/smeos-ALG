@@ -37,13 +37,21 @@ function resolve(from, spec) {
 }
 const STATIC = /(^|\n)\s*(import|export)\s+(type\s+)?([\s\S]*?)\s+from\s+["']([^"']+)["']/g
 const DYNAMIC = /(?:import|require)\(\s*["']([^"']+)["']\s*\)/g
+// `{ type A, type B as C }` → chỉ import kiểu. Tách theo dấu phẩy rồi kiểm từng phần: một regex
+// lặp lồng nhau trên cả khối dễ backtrack theo cấp số mũ (CodeQL js/redos).
+function isTypeOnlyClause(clause) {
+  const t = clause.trim()
+  if (!t.startsWith("{") || !t.endsWith("}")) return false
+  const parts = t.slice(1, -1).split(",").map((p) => p.trim()).filter(Boolean)
+  return parts.length > 0 && parts.every((p) => /^type\s+[\w$]+(?:\s+as\s+\w+)?$/.test(p))
+}
 const g = {}
 for (const f of files) {
   const raw = fs.readFileSync(f, "utf8")
   const src = raw.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`])\/\/.*$/gm, "$1")
   const deps = []
   for (const m of src.matchAll(STATIC)) {
-    const typeOnly = !!m[3] || /^\{\s*(type\s+[\w$]+\s*(as\s+\w+\s*)?,?\s*)+\}$/.test(m[4].trim())
+    const typeOnly = !!m[3] || isTypeOnlyClause(m[4])
     deps.push({ spec: m[5], typeOnly, dynamic: false })
   }
   for (const m of src.matchAll(DYNAMIC)) deps.push({ spec: m[1], typeOnly: false, dynamic: true })
