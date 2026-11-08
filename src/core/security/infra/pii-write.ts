@@ -8,8 +8,8 @@ import { currentDataKey, type PiiKeyDb } from "./pii-keys"
 /**
  * ADR-014 D-P3: mỗi lệnh ghi Prisma vào cột cá nhân của `PII_FIELDS` được đổi thành bản mã ngay trong lệnh (cùng giao
  * dịch), kèm `*_hash`/`*_last4` cho số điện thoại. Từ P-5c cột chỉ còn bản mã: không xác định được tổ chức → lỗi (không
- * bao giờ ghi chữ rõ); chưa có khoá chủ → lỗi. Bản mã ghi thêm vào cột `legacyEnc` của P-5a để quay lại bản trước được
- * (bỏ ở P-5d). `PII_JSON_KEYS`: khoá cá nhân trong cột Json (vd. `metadata.customerPhone`) tách sang cột riêng.
+ * bao giờ ghi chữ rõ); chưa có khoá chủ → lỗi. Từ P-5d-1 không còn ghi bản sao `*_enc` của P-5a. `PII_JSON_KEYS`: khoá
+ * cá nhân trong cột Json (vd. `metadata.customerPhone`) tách sang cột riêng.
  */
 
 type Data = Record<string, unknown>
@@ -71,12 +71,10 @@ async function encryptData(base: PiiBaseClient, master: Buffer, model: PiiModel,
     if (!present) continue
     if (value === null) {
       out[field] = spec.json ? (isNullType(data[field]) ? data[field] : Prisma.DbNull) : null
-      if (spec.legacyEnc) out[spec.legacyEnc] = null
     } else {
       const key = await currentDataKey(base, master, organizationId)
       const sealed = encryptPii(key.key, key.version, value)
       out[field] = sealed
-      if (spec.legacyEnc) out[spec.legacyEnc] = sealed
     }
     if (spec.hash) out[spec.hash] = value !== null ? (phoneHash(master, organizationId, value) ?? "") : null
     if (spec.last4) out[spec.last4] = value !== null ? phoneLast4(value) : null

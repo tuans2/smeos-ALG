@@ -45,7 +45,9 @@ describe("P-5c — chốt rồi chép bản mã đè cột rõ", () => {
     const order = await prisma.orders.create({ data: { organization_id: a.organizationId, code: "DH-C1", total_vnd: 0, balance_vnd: 0, created_by: "t" } })
     const parts = { street: "5 Nguyễn Huệ" }
     await upsertOrderRecipient(prisma, a.organizationId, order.id, { deliveryAddress: { recipientName: "Hoa", phone: "0955555555", street: "5 Nguyễn Huệ", parts } })
-    // Trạng thái P-5b: chữ rõ ở cột chính, bản mã ở `*_enc`
+    // Trạng thái P-5b: bản mã ở `*_enc` (từ P-5d-1 ứng dụng không còn ghi — chép bằng SQL), chữ rõ ở cột chính
+    await prisma.$executeRaw`UPDATE customers SET phone_enc = phone, email_enc = email WHERE id = ${c.id}`
+    await prisma.$executeRaw`UPDATE order_recipients SET recipient_phone_enc = recipient_phone, address_line_enc = address_line, address_parts_enc = address_parts #>> '{}' WHERE order_id = ${order.id}`
     await prisma.$executeRaw`UPDATE customers SET phone = '0912345678', email = 'lan@vi-du.test' WHERE id = ${c.id}`
     await prisma.$executeRaw`UPDATE order_recipients SET recipient_phone = '0955555555', address_parts = ${JSON.stringify({ street: "5 Nguyễn Huệ", parts })}::jsonb WHERE order_id = ${order.id}`
 
@@ -69,6 +71,7 @@ describe("P-5c — chốt rồi chép bản mã đè cột rõ", () => {
     await prisma.$executeRaw`DELETE FROM customers WHERE id = 'kh-cu'`
 
     const c = await createCustomer(a.ctx, { name: "Chị Lan", phone: "0912345678" })
+    await prisma.$executeRaw`UPDATE customers SET phone_enc = phone WHERE id = ${c.id}` // trạng thái P-5b (xem ca trên)
     await expect(replay([
       `DROP INDEX "customers_organization_id_phone_hash_key"`,
       `INSERT INTO customers (id, organization_id, code, name, phone, phone_enc, phone_hash, updated_at)
