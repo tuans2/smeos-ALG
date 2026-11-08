@@ -20,11 +20,14 @@ export interface CreditPricing {
   defaultMonthlyLimit: number | null
   /** Tin nhắn gửi khách vẫn đi khi hết credit, số dư được âm tối đa chừng này credit (PO 05/11/2026); 0 = không thấu chi */
   messageOverdraftCredit: number
+  /** Credit cho mỗi phương án "Tạo thêm" ở Bộ nhận diện / Landing page của mục Thương hiệu (PO 08/11/2026); 3 phương án đầu miễn phí */
+  brandExtraOptionCredit: number
 }
 
 export const DEFAULT_CREDIT_PRICING: CreditPricing = {
   smsCredit: 0, znsCredit: 0, usdToVnd: 25_000, creditValueVnd: 1_000, smsCostVnd: 0, znsCostVnd: 0, defaultMonthlyLimit: null,
   messageOverdraftCredit: 50,
+  brandExtraOptionCredit: 1,
 }
 
 const num = (v: unknown, min: number, max: number): number | undefined =>
@@ -43,6 +46,7 @@ export function parseCreditPricing(raw: unknown): CreditPricing {
     znsCostVnd: Math.round(num(r.znsCostVnd, 0, 100_000) ?? DEFAULT_CREDIT_PRICING.znsCostVnd),
     defaultMonthlyLimit: limit === null ? null : (num(limit, 0, 10_000_000) !== undefined ? Math.round(limit as number) : null),
     messageOverdraftCredit: Math.round(num(r.messageOverdraftCredit, 0, 100_000) ?? DEFAULT_CREDIT_PRICING.messageOverdraftCredit),
+    brandExtraOptionCredit: Math.round(num(r.brandExtraOptionCredit, 0, 1000) ?? DEFAULT_CREDIT_PRICING.brandExtraOptionCredit),
   }
 }
 
@@ -57,6 +61,8 @@ export function creditPricingProblem(input: Record<string, unknown>): string | n
   }
   const o = input.messageOverdraftCredit
   if (o !== undefined && (num(o, 0, 100_000) === undefined || !Number.isInteger(o))) return "Mức thấu chi tin nhắn là số nguyên 0–100.000"
+  const be = input.brandExtraOptionCredit
+  if (be !== undefined && (num(be, 0, 1000) === undefined || !Number.isInteger(be))) return "Credit mỗi phương án tạo thêm là số nguyên 0–1.000"
   const l = input.defaultMonthlyLimit
   if (l !== undefined && l !== null && (num(l, 0, 10_000_000) === undefined || !Number.isInteger(l))) return "Hạn mức mặc định là số nguyên 0–10.000.000 hoặc bỏ trống"
   return null

@@ -8,10 +8,8 @@ import { Type, Sparkles, ShieldAlert, Check, MessageSquareQuote, CheckCircle2 } 
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
 import { isValidHexColor } from "@/modules/profiles/domain/profile-rules"
-import {
-  BrandColorsSection,
-  type BrandColors,
-} from "./brand-colors-section"
+import { BrandColorsSection, type BrandColors } from "./brand-colors-section"
+import { BrandSloganField } from "./brand-slogan-field"
 import { FLORIST_TONE_OPTIONS, FLORIST_FORBIDDEN_GROUPS } from "@/modules/profiles/domain/florist-advisor-catalog"
 import { AiRewriteInput } from "./ai-rewrite-input"
 
@@ -40,6 +38,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
   const [fontHeading, setFontHeading] = useState("Playfair Display")
   const [fontBody, setFontBody] = useState("Inter")
   const [toneOfVoice, setToneOfVoice] = useState("romantic")
+  const [slogan, setSlogan] = useState("")
   const [hashtagsText, setHashtagsText] = useState("#hoatuoi, #tiemhoa, #hoathietke, #hoasinhnhat")
   const [ctaText, setCtaText] = useState("Ghé thăm cửa hàng hoặc nhắn Zalo để được nghệ nhân tư vấn riêng!")
   const [forbiddenWords, setForbiddenWords] = useState("hoa rẻ, xả hàng tồn, phá giá")
@@ -58,6 +57,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
       setFontHeading(initialData.font_heading || "Playfair Display")
       setFontBody(initialData.font_body || "Inter")
       setToneOfVoice(initialData.tone_of_voice || "romantic")
+      setSlogan(initialData.slogan ?? "")
 
       if (initialData.hashtags) {
         const tags = Array.isArray(initialData.hashtags)
@@ -125,10 +125,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
     e.preventDefault()
     if (!validate() || !initialData) return
 
-    const hashtagsList = hashtagsText
-      .split(",")
-      .map((t) => t.trim())
-      .filter((t) => t.length > 0)
+    const hashtagsList = hashtagsText.split(",").map((t) => t.trim()).filter((t) => t.length > 0)
 
     const bannedList = forbiddenWords
       .split(",")
@@ -150,6 +147,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
       cta_templates: { default: ctaText.trim() },
       forbidden_styles: { banned_words: bannedList },
       default_offers: initialData.default_offers,
+      slogan: slogan.trim() || null,
     }
 
     const ok = await onSave(payload)
@@ -179,6 +177,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
         }
       />
 
+      <BrandSloganField value={slogan} onChange={setSlogan} />
       {/* Khối 2: Typography & Phông chữ thương hiệu */}
       <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-xs">
         <div className="flex items-center gap-2.5 pb-4 border-b border-border mb-5">

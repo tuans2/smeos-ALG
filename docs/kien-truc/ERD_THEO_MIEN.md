@@ -5,7 +5,7 @@ Sinh từ `prisma/schema.prisma` bởi `scripts/gen-erd.mjs` (kế hoạch DB, b
 (PK, FK, `organization_id`) và khoá ngoại tới bảng cha; bảng của miền khác chỉ hiện tên. Cột đầy đủ, ý nghĩa và quy tắc
 ở đặc tả `docs/dac-ta/07-database-specification.md`. `tests/unit/architecture/erd.test.ts` đỏ khi tệp này lệch schema.
 
-Tổng: 151 bảng, 10 miền.
+Tổng: 152 bảng, 10 miền.
 
 ## Tổ chức, người dùng, phân quyền
 
@@ -82,6 +82,7 @@ erDiagram
   brand_library_items
   brand_library_versions
   brand_profiles
+  brand_style_options
   campaign_packages
   campaigns
   catalog_links
@@ -208,6 +209,7 @@ erDiagram
   organizations ||--o{ branches : "organization_id"
   organizations ||--o{ brand_library_items : "organization_id"
   organizations ||--o{ brand_library_versions : "organization_id"
+  organizations ||--o{ brand_style_options : "organization_id"
   organizations ||--o{ campaign_packages : "organization_id"
   organizations ||--o{ campaigns : "organization_id"
   organizations ||--o{ capability_overrides : "organization_id"
@@ -1003,7 +1005,7 @@ erDiagram
 
 ## AI, nội dung, marketing
 
-Bảng: `ai_capabilities`, `ai_models`, `ai_policies`, `ai_requests`, `ai_evaluations`, `provider_cost_entries`, `provider_health`, `generation_jobs`, `job_events`, `journey_runs`, `content_drafts`, `content_generations`, `content_metrics`, `content_opportunities`, `campaigns`, `campaign_packages`, `brand_profiles`, `brand_library_items`, `brand_library_versions`, `video_jobs`, `video_scenes`, `voice_clones`, `music_tracks`, `topics`, `topic_scores`, `topic_signals`, `trend_signals`, `trend_timeseries`, `research_runs`, `market_sources`.
+Bảng: `ai_capabilities`, `ai_models`, `ai_policies`, `ai_requests`, `ai_evaluations`, `provider_cost_entries`, `provider_health`, `generation_jobs`, `job_events`, `journey_runs`, `content_drafts`, `content_generations`, `content_metrics`, `content_opportunities`, `campaigns`, `campaign_packages`, `brand_profiles`, `brand_style_options`, `brand_library_items`, `brand_library_versions`, `video_jobs`, `video_scenes`, `voice_clones`, `music_tracks`, `topics`, `topic_scores`, `topic_signals`, `trend_signals`, `trend_timeseries`, `research_runs`, `market_sources`.
 
 ```mermaid
 erDiagram
@@ -1081,6 +1083,10 @@ erDiagram
     String id PK
     String organization_id FK
   }
+  brand_style_options {
+    String id PK
+    String organization_id FK
+  }
   brand_library_items {
     String id PK
     String organization_id FK
@@ -1151,6 +1157,7 @@ erDiagram
   organizations ||--o{ ai_requests : "organization_id"
   organizations ||--o{ brand_library_items : "organization_id"
   organizations ||--o{ brand_library_versions : "organization_id"
+  organizations ||--o{ brand_style_options : "organization_id"
   organizations ||--o{ campaign_packages : "organization_id"
   organizations ||--o{ campaigns : "organization_id"
   organizations ||--o{ content_drafts : "organization_id"

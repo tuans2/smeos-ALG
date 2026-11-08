@@ -293,6 +293,7 @@ model organizations {
   organization_links_as_parent                     organization_links[]            @relation("OrgLinkParent")
   organization_links_as_child                      organization_links[]            @relation("OrgLinkChild")
   custom_domains                                   custom_domains[]
+  brand_style_options                              brand_style_options[]
 
   @@index([industry_key])
 }
@@ -1038,13 +1039,41 @@ model brand_profiles {
   // với product-copy-adapter.ts coi cta_templates là string[] câu CTA. Đọc có dự phòng dữ
   // liệu cũ trong cta_templates cho tổ chức đã lưu trước 17/09 — xem sales-defaults-form.tsx.
   forbidden_styles Json?
-  brand_assets     Json? // { storefront_photos?: string[], intro_video?: string, qr_code?: string } — Nguyên liệu thương hiệu cấp Tiệm (Master Assets, đặc tả FLORAOS_BUSINESS_PROFILE_AND_INPUT_SPEC mục 4.1)
+  brand_assets     Json? // { storefront_photos?: string[], intro_video?: string, qr_code?: string, featured_product_ids?: string[] } — Nguyên liệu thương hiệu cấp Tiệm (Master Assets, đặc tả FLORAOS_BUSINESS_PROFILE_AND_INPUT_SPEC mục 4.1); featured_product_ids = sản phẩm chủ đạo (Thương hiệu bước 1, PO 08/11/2026)
+  /// Câu khẩu hiệu chính thức — Bộ nhận diện (Thương hiệu bước 2) ghi khi chủ tiệm chọn phương án; sửa được ở Cài đặt. PUT bỏ trống (undefined) thì giữ giá trị đang lưu.
+  slogan           String?
   created_at       DateTime @default(now()) @db.Timestamptz(3)
   updated_at       DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
   @@unique([organization_id])
+}
+
+/**
+ * Phương án theo phong cách của mục Thương hiệu (PO 08/11/2026): bước 2 Bộ nhận diện (`kind = IDENTITY`)
+ * và bước 3 Landing page chính thức (`kind = LANDING`). Lượt đầu sinh 3 phương án miễn phí (`batch = 1`);
+ * mỗi lượt "Tạo thêm" là một job tại chỗ trừ credit (`job_id`). Chủ tiệm chọn một phương án mỗi loại
+ * (`selected_at`) — bản chính thức vẫn đọc từ `brand_profiles`/`catalog_links`, bảng này chỉ giữ lựa chọn
+ * và nội dung đã sinh. `profile_fingerprint` = dấu hồ sơ lúc sinh, để báo "hồ sơ đã đổi".
+ */
+model brand_style_options {
+  id                  String    @id @default(uuid())
+  organization_id     String
+  kind                String // IDENTITY | LANDING — CHECK trong migration
+  style_key           String // LUXURY | YOUTHFUL | RUSTIC (brand-kit/domain/brand-styles.ts)
+  batch               Int       @default(1)
+  content             Json
+  profile_fingerprint String
+  job_id              String?
+  selected_at         DateTime? @db.Timestamptz(3)
+  created_by          String
+  created_at          DateTime  @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, kind, created_at])
 }
 
 // ── P5 — Sản phẩm và phân tích ảnh (M01) ────────────────────────────────────

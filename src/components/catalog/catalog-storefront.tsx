@@ -16,6 +16,7 @@ import {
   LandingTemplateLead,
   LandingTemplateVideo,
   LandingTemplateGallery,
+  LandingTemplateStoreInfo,
 } from "./landing-templates"
 import type { GalleryPhotoItem } from "./landing-templates/landing-template-gallery"
 import { CatalogProductListView } from "./catalog-product-list-view"
@@ -107,7 +108,9 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
   const { catalog, shop } = initialData
   const campaign = initialData.campaignConfig
   const customHeroImageUrl = campaign?.customHeroImageUrl as string | undefined
-  const videoUrl = campaign?.videoUrl as string | undefined
+  // Landing page chính thức: ảnh, video, thông tin cửa hàng đọc sống từ Hồ sơ (mục Thương hiệu)
+  const storeInfo = initialData.storeInfo
+  const videoUrl = storeInfo?.introVideo ?? (campaign?.videoUrl as string | undefined)
   const generatedPackage = campaign?.generatedPackage as GeneratedLandingPackage | undefined
   const enabledSections = campaign?.enabledSections as Record<string, boolean> | undefined
 
@@ -117,7 +120,8 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
       typeof url === "string" && url.trim().length > 0 && !url.startsWith("blob:") && !url.startsWith("data:")
     )
 
-  const galleryPhotos: GalleryPhotoItem[] = products
+  const storePhotos: GalleryPhotoItem[] = (storeInfo?.photos ?? []).map((src) => ({ src, title: shop.name, caption: "Không gian cửa hàng" }))
+  const galleryPhotos: GalleryPhotoItem[] = storePhotos.length > 0 ? storePhotos : products
     .filter((p): p is typeof p & { imageUrl: string } =>
       typeof p.imageUrl === "string" && p.imageUrl.trim().length > 0 &&
       !p.imageUrl.startsWith("blob:") && !p.imageUrl.startsWith("data:")
@@ -126,7 +130,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
 
   const storyImageUrl = realProductImageUrls[0] ?? null
   // Hero chỉ dùng ảnh thật (ảnh tiệm tải lên hoặc ảnh sản phẩm) — không ảnh minh hoạ thay thế
-  const heroImageUrl = customHeroImageUrl || realProductImageUrls[0] || null
+  const heroImageUrl = storeInfo?.photos[0] || customHeroImageUrl || realProductImageUrls[0] || null
   const heroHeadline = generatedPackage?.hero?.headline || catalog.name
   const heroSubHeadline = generatedPackage?.hero?.subHeadline || catalog.description
 
@@ -223,6 +227,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         {campaign && enabledSections?.faq !== false && generatedPackage?.faq && (
           <LandingTemplateFaq faq={generatedPackage.faq} archetypeId={campaign.archetype} />
         )}
+        {storeInfo && <LandingTemplateStoreInfo info={storeInfo} shopName={shop.name} />}
         {/* Nút "Liên hệ / Cần tư vấn" — Điều hành bật tắt theo nguồn (Đơn hàng › Cài đặt) */}
         {campaign && enabledSections?.lead !== false && entry.contact && (
           <LandingTemplateLead

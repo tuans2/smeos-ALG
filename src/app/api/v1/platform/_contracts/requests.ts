@@ -23,6 +23,8 @@ export const creditPricingBody = z.object({
   defaultMonthlyLimit: z.number().int().nullable().optional(),
   /** Tin nhắn gửi khách được âm số dư tối đa chừng này credit */
   messageOverdraftCredit: z.number().int().optional(),
+  /** Credit mỗi phương án "Tạo thêm" ở mục Thương hiệu */
+  brandExtraOptionCredit: z.number().int().optional(),
 })
 
 // custom-domains/[id]/lock/route.ts

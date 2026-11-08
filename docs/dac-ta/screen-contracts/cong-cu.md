@@ -71,3 +71,18 @@ acceptance:
 ## 9. Dữ liệu và quyền
 - Nguồn sự thật: `src/modules/marketing-center/domain/asset-types/` và `src/modules/toolkit/domain/business-modules.ts`.
 - Bảo đảm cô lập tenant: không cho phép can thiệp hoặc rò rỉ dữ liệu ngoài tổ chức.
+
+## 10. Nhóm "Hồ sơ & Thương hiệu" dạng ô (PO 08/11/2026)
+- **Thay thế** lưới 16 loại ấn phẩm + "Công cụ hỗ trợ" của nhóm này bằng hành trình 3 bước dạng ô
+  (`src/components/brand-kit/tiles/*`): hàng 3 ô bước (khoá tuần tự) → lưới ô của bước đang mở.
+  - Bước 1: 8 ô "Thông tin cần có" + 4 ô "Thêm nếu có"; bấm ô mở `Dialog` nhập riêng mục đó.
+  - Bước 2: ô phong cách (3 + "Tạo thêm" kèm `CostPreview`), thanh "Dùng bộ này làm chính thức" (nút chính duy nhất),
+    6 ô thành phần (Logo, Khẩu hiệu, Bộ màu, Danh thiếp, Trang hồ sơ chia sẻ, Ảnh bìa) có tải / sao chép.
+  - Bước 3: ô trang chính thức đang hoạt động, ô giao diện + "Tạo thêm", 8 ô cấu trúc trang; xuất bản qua `ConfirmDialog` (R3).
+- **Cùng code với `/ho-so`** (hook `useBrandKit`, `GET/POST /api/v1/brand-kit*`, luật `lockedReason`), khác cách trình bày.
+- **PHÁT_TRIỂN_SAU:** nội dung cũ của nhóm không xoá — `src/modules/toolkit/domain/deferred-module-content.ts` dời vào
+  `deferredAssets`/`deferredTools`, chỉ môi trường phát triển thấy trong `Disclosure` "Phát triển sau"; số liệu đầu trang
+  không đếm 5 công cụ này (`deferredToolIds`). Thẻ nhóm trên lưới ghi "3 bước: Hồ sơ · Nhận diện · Landing".
+- Kịch bản audit: `scripts/ux-audit/scenarios/cong-cu-thuong-hieu.mjs`.
+- Bước 1 đủ 8/8 → thanh "Xác nhận hồ sơ — tạo Bộ nhận diện" (tự tạo 3 phương án, mở Bước 2); Bước 2 đã chọn bộ chính thức →
+  "Tạo Landing page" (tự dựng 3 giao diện, mở Bước 3). Điều khiển chung với /ho-so: `src/components/brand-kit/journey/*`.

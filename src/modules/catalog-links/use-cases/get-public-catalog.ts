@@ -1,4 +1,5 @@
 import type { ICatalogLinkRepository } from "../domain/repositories/catalog-link-repository.interface"
+import { buildOfficialStoreInfo, type PublicOfficialStoreInfo } from "./official-store-info"
 import { parseEntryActionsSettings, resolveEntryActions, type EntryActions } from "@/modules/orders/domain/entry-actions"
 import { getCatalogLinkRepository } from "../infra/catalog-link-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
@@ -63,6 +64,8 @@ export type PublicCatalogResult =
       entryActions?: EntryActions | undefined
       /** Đánh giá khách do chủ tiệm nhập, đang bật hiển thị */
       reviews?: PublicShopReview[] | undefined
+      /** Landing page chính thức (mục Thương hiệu): thông tin cửa hàng đọc sống từ Hồ sơ */
+      storeInfo?: PublicOfficialStoreInfo | undefined
     }
   | {
       status: "REVOKED"
@@ -297,6 +300,9 @@ export async function getPublicCatalog(
     shop,
     products,
     reviews: await getPublicReviewsForOrganization(link.organization_id),
+    storeInfo: filters.store_official === true
+      ? await buildOfficialStoreInfo({ orgName: org?.name ?? "", business: bizProfile, brand: brandProfile }, (u) => signStoragePath(storage, u))
+      : undefined,
     campaignConfig:
       filters.occasion || filters.archetype || filters.generatedPackage || resolvedHeroImageUrl || filters.videoUrl
         ? {

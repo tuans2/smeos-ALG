@@ -1,10 +1,10 @@
-import { StoreProfileOverview } from "@/components/profiles/store-profile-overview"
+import { BrandJourneyWorkspace } from "@/components/brand-kit/brand-journey-workspace"
 
-/** Công cụ 51 — tổng quan hồ sơ cửa hàng và thương hiệu; sửa chi tiết ở /cai-dat. */
+/** Công cụ 51 — mục Thương hiệu 3 bước: Hồ sơ cửa hàng → Bộ nhận diện → Landing page (PO 08/11/2026). */
 export default function HoSoPage() {
   return (
-    <div className="p-4 sm:p-6 max-w-3xl mx-auto w-full">
-      <StoreProfileOverview />
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto w-full">
+      <BrandJourneyWorkspace />
     </div>
   )
 }

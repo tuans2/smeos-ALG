@@ -193,6 +193,8 @@ export const brandProfileResponse = z
     default_offers: jsonRecord,
     forbidden_styles: jsonRecord,
     brand_assets: jsonRecord,
+    /** Câu khẩu hiệu chính thức (mục Thương hiệu, 08/11/2026) */
+    slogan: z.string().nullable(),
   })
   .nullable()
 

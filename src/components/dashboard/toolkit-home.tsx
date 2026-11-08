@@ -10,6 +10,7 @@ import {
   type ToolStatus,
 } from "@/modules/toolkit/domain/toolkit-catalog"
 import {
+  deferredToolIds,
   getVisibleBusinessModules,
   type BusinessModule,
   type ModuleTool,
@@ -19,15 +20,14 @@ import {
   type StoreOperationsSection,
 } from "@/modules/toolkit/domain/store-operations"
 import { DashboardLayout } from "@/components/layout/page-layout"
+import { isDevEnvironment } from "@/lib/dev-environment"
 import { PageHeader } from "@/components/ui/page-header"
 import { EmptyState } from "@/components/ui/empty-state"
 import { ModuleGrid } from "./toolkit-module-grid"
 import { ModuleDetail } from "./toolkit-module-detail"
 import { StoreOperationsPanel } from "./store-operations-panel"
 
-function useIsDev(): boolean {
-  return process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview"
-}
+const useIsDev = isDevEnvironment
 
 type StatusFilter = "ALL" | ToolStatus
 
@@ -41,7 +41,8 @@ const FILTER_OPTIONS: { id: StatusFilter; label: string }[] = [
 
 function ToolkitStats({ isDev }: { isDev: boolean }) {
   if (!isDev) return null
-  const counts = countByStatus()
+  // Không đếm công cụ PHÁT_TRIỂN_SAU (PO 08/11/2026) — số liệu khớp những gì người dùng thấy
+  const counts = countByStatus(deferredToolIds())
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

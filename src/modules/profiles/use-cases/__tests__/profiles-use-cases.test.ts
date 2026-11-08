@@ -63,6 +63,7 @@ describe("profiles: Brand Profile use-cases with DI", () => {
       default_offers: null,
       forbidden_styles: null,
       brand_assets: null,
+      slogan: null,
       created_at: new Date(),
       updated_at: new Date(),
     })
@@ -92,6 +93,7 @@ describe("profiles: Brand Profile use-cases with DI", () => {
       default_offers: null,
       forbidden_styles: null,
       brand_assets: null,
+      slogan: null,
       created_at: new Date(),
       updated_at: new Date(),
     })

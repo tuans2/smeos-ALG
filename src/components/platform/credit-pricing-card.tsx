@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
-interface Pricing { smsCredit: number; znsCredit: number; usdToVnd: number; creditValueVnd: number; smsCostVnd: number; znsCostVnd: number; defaultMonthlyLimit: number | null; messageOverdraftCredit: number }
+interface Pricing { smsCredit: number; znsCredit: number; usdToVnd: number; creditValueVnd: number; smsCostVnd: number; znsCostVnd: number; defaultMonthlyLimit: number | null; messageOverdraftCredit: number; brandExtraOptionCredit: number }
 const FIELDS: Array<{ key: keyof Pricing; label: string; hint: string }> = [
   { key: "smsCredit", label: "Credit mỗi tin SMS", hint: "0 = không thu" },
   { key: "znsCredit", label: "Credit mỗi tin Zalo ZNS", hint: "0 = không thu" },
@@ -16,6 +16,7 @@ const FIELDS: Array<{ key: keyof Pricing; label: string; hint: string }> = [
   { key: "znsCostVnd", label: "Giá vốn mỗi tin ZNS (đ)", hint: "Chi phí tham chiếu" },
   { key: "defaultMonthlyLimit", label: "Hạn mức credit/tháng mặc định", hint: "Bỏ trống = không giới hạn" },
   { key: "messageOverdraftCredit", label: "Mức thấu chi tin nhắn (credit)", hint: "Hết credit vẫn gửi tin khách tới mức âm này; 0 = dừng gửi" },
+  { key: "brandExtraOptionCredit", label: "Credit mỗi phương án tạo thêm (Thương hiệu)", hint: "Bộ nhận diện và Landing page; 3 phương án đầu miễn phí" },
 ]
 
 /** Console → Mức dùng → Quy đổi credit (PO Q10, checklist ALG 10.3, 10.4). Sửa cần `N3`. */
