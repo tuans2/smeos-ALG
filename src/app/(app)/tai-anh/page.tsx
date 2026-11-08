@@ -7,9 +7,10 @@ import { Camera, ChevronRight, Check, AlertTriangle, Sparkles, ArrowLeft, X, Upl
 import { type ResultField, type ResultFieldItem, type ResultImage, type JudgmentState } from "@/components/result/result-card"
 import { mapAnalysisFromSchema } from "@/modules/products/domain/analysis-schema-mapper"
 import { SalesPitchCard } from "@/components/sales/sales-pitch-card"
-import { buildSalesPitchData, type SalesPitchOverrides, type SalesPitchData, type TenantSalesDefaults } from "@/modules/products/domain/sales-pitch-template"
-import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
-import { extractBrandCtaPhrase } from "@/modules/profiles/domain/profile-rules"
+import { buildSalesPitchData, type SalesPitchOverrides, type SalesPitchData } from "@/modules/products/domain/sales-pitch-template"
+import { useTenantSalesDefaults } from "@/lib/hooks/use-tenant-sales-defaults"
+import { mapProductCopyToFields } from "@/modules/products/domain/product-copy-fields"
+import { applyFieldAdd, applyFieldChange, applyFieldRemove, applyItemChange } from "@/modules/products/domain/analysis-field-edits"
 import { FlowSteps, type FlowStep } from "@/components/flow/flow-steps"
 import { buildHandoffSearchParams } from "@/modules/creative-production/domain/build-handoff-url"
 import { Button } from "@/components/ui/button"
@@ -87,58 +88,6 @@ function mapSalesFields(raw: Record<string, unknown>): ResultField[] {
 }
 
 // ============================================================
-// FIELD MAPPER — product copy → ResultField[] (M01b)
-// ============================================================
-
-function mapProductCopyToFields2(copy: Record<string, unknown>, analysisRaw: Record<string, unknown> | null): ResultField[] {
-  const identity = analysisRaw ? (analysisRaw.identity as Record<string, unknown> | undefined) ?? {} : {}
-  const rawTags = (copy.suggested_tags as string[]) ?? []
-  const tags = Array.isArray(rawTags)
-    ? rawTags.map((t, i) => ({ id: `tag-${i}`, value: typeof t === "string" ? t : String(t) }))
-    : []
-  const rawOccasions = (copy.suggested_occasions as string[]) ?? []
-  const occasions = Array.isArray(rawOccasions)
-    ? rawOccasions.map((o, i) => ({ id: `occ-${i}`, value: typeof o === "string" ? o : String(o) }))
-    : []
-
-  const rawPoints = (copy.key_selling_points as string[]) ?? []
-  const keyPoints = Array.isArray(rawPoints)
-    ? rawPoints.map((p, i) => ({ id: `usp-${i}`, value: typeof p === "string" ? p : String(p) }))
-    : []
-
-  const targetAudience = (copy.target_audience as Record<string, string> | undefined)
-  const audienceText = targetAudience && typeof targetAudience === "object"
-    ? `Người nhận: ${targetAudience.recipient || "—"} | Người mua: ${targetAudience.buyer_persona || "—"}`
-    : (copy.target_audience ? String(copy.target_audience) : "")
-
-  const priceRange = (copy.suggested_price_range as Record<string, number> | undefined)
-  const priceRangeText = priceRange && typeof priceRange === "object"
-    ? `${(priceRange.min_price || 0).toLocaleString("vi-VN")}đ - ${(priceRange.target_price || 0).toLocaleString("vi-VN")}đ - ${(priceRange.max_price || 0).toLocaleString("vi-VN")}đ`
-    : ""
-
-  const fields: ResultField[] = [
-    { key: "suggested_name", label: "Tên sản phẩm gợi ý", type: "text", editable: true, value: (copy.suggested_name as string) ?? (identity.category as string) ?? "—" },
-    { key: "short_headline", label: "Slogan / Tagline", type: "text", editable: true, value: (copy.short_headline as string) ?? "" },
-    { key: "suggested_description", label: "Mô tả sản phẩm", type: "textarea", editable: true, value: (copy.suggested_description as string) ?? "" },
-    { key: "flower_meaning_story", label: "Câu chuyện & cảm hứng sản phẩm", type: "textarea", editable: true, value: (copy.flower_meaning_story as string) ?? "" },
-    { key: "key_selling_points", label: "Điểm bán hàng nổi bật (USP)", type: "list", editable: true, value: keyPoints, placeholder: "Thêm USP..." },
-    { key: "suggested_style", label: "Phong cách thiết kế", type: "text", editable: true, value: (copy.suggested_style as string) ?? (identity.phong_cach as string) ?? "—" },
-    { key: "suggested_tags", label: "Thẻ phân loại / SEO", type: "list", editable: true, value: tags, confidence: null, placeholder: "Thêm thẻ..." },
-    { key: "suggested_occasions", label: "Dịp phù hợp", type: "list", editable: true, value: occasions, confidence: null, placeholder: "Thêm dịp..." },
-    { key: "suggested_price_segment", label: "Phân khúc giá gợi ý", type: "readonly", editable: false, value: (copy.suggested_price_segment as string) ?? "standard" },
-  ]
-
-  if (audienceText) {
-    fields.splice(5, 0, { key: "target_audience", label: "Đối tượng khách hàng mục tiêu", type: "text", editable: true, value: audienceText })
-  }
-  if (priceRangeText) {
-    fields.push({ key: "suggested_price_range", label: "Dải giá đề xuất (Min - Chuẩn - Max)", type: "readonly", editable: false, value: priceRangeText })
-  }
-
-  return fields
-}
-
-// ============================================================
 // MOCK DATA — chỉ dùng khi chưa có phân tích thật
 // ============================================================
 
@@ -162,9 +111,6 @@ type Phase =
   | "result2"
   | "saved"
   | "error"
-
-/** Một dòng thô trong `bom.flowers/foliage/accessories` của kết quả phân tích (JSON). */
-type BomRow = Record<string, unknown>
 
 // Khoá idempotency cho một lượt tạo phân tích — gọi trong handler, không trong render.
 function newAnalysisIdempotencyKey(): string {
@@ -205,89 +151,8 @@ export default function TaiAnhPage() {
     })
   }
 
-  // Hồ sơ tenant thật (business_profiles/brand_profiles) — bắt buộc nối vào
-  // buildSalesPitchData() để Thẻ chào A6 / kịch bản Zalo không rơi về tên
-  // tiệm/hotline giả khi gửi cho khách hàng thật (vá lỗi rà soát 17/09/2026).
-  const { business: tenantBusiness, brand: tenantBrand } = useTenantProfile()
-
-  // Danh mục dịp của tenant (nợ #104, "giọng theo dịp") — nạp riêng, không
-  // qua useTenantProfile() vì occasions là một DANH SÁCH, không phải hồ sơ
-  // đơn như business/brand. Lỗi tải bị nuốt có chủ đích: đây là một tính
-  // năng bổ trợ (chỉnh tông giọng), không được làm hỏng luồng tạo Thẻ chào
-  // chính nếu API occasions tạm thời lỗi — rơi về NEUTRAL cho mọi dịp là an
-  // toàn (giữ nguyên kịch bản mặc định hiện có).
-  const [tenantOccasions, setTenantOccasions] = useState<Array<{ name: string; register: "FESTIVE" | "NEUTRAL" | "SOLEMN" }>>([])
-  useEffect(() => {
-    let cancelled = false
-    fetch("/api/v1/occasions")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json) => {
-        if (cancelled || !json?.data) return
-        const rows = (json.data as Array<{ name: string; register: string; is_active: boolean }>)
-          .filter((o) => o.is_active)
-          .map((o) => ({ name: o.name, register: o.register as "FESTIVE" | "NEUTRAL" | "SOLEMN" }))
-        setTenantOccasions(rows)
-      })
-      .catch(() => { /* rơi về NEUTRAL, không chặn luồng chính — xem chú thích trên */ })
-    return () => { cancelled = true }
-  }, [session.organization?.id])
-
-  // Câu chào mở đầu kịch bản Zalo ghi đè theo tenant (nợ #99, Giai đoạn 3 —
-  // field đầu tiên của `template_overrides`, họ ST). Lỗi tải bị nuốt có chủ
-  // đích, cùng lý do như occasions ở trên: đây là một tuỳ chỉnh bổ trợ,
-  // không được làm hỏng luồng tạo Thẻ chào chính — thiếu thì rơi về kịch bản
-  // mặc định hệ thống (không có dòng chào riêng), không bịa câu chào thay tenant.
-  const [tenantGreetingLine, setTenantGreetingLine] = useState<string | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    fetch("/api/v1/template-overrides?templateKey=sales_pitch_zalo")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json) => {
-        if (cancelled || !json?.data) return
-        const rows = json.data as Array<{ field_key: string; value: string }>
-        const greeting = rows.find((r) => r.field_key === "greeting_line")
-        setTenantGreetingLine(greeting?.value ?? null)
-      })
-      .catch(() => { /* giữ null, rơi về kịch bản mặc định — xem chú thích trên */ })
-    return () => { cancelled = true }
-  }, [session.organization?.id])
-
-  const tenantSalesDefaults: TenantSalesDefaults | null = useMemo(() => {
-    if (!tenantBusiness && !tenantBrand) return null
-    // Quà tặng/cam kết: đọc `default_offers` (nợ #102, 17/09); dự phòng đọc
-    // vị trí cũ `cta_templates.free_gifts`/`.guarantees` cho tổ chức đã lưu
-    // trước bản sửa, để không rơi về mặc định hệ thống một cách bất ngờ.
-    const offers = (tenantBrand?.default_offers as { free_gifts?: string[]; guarantees?: string[] } | null) ?? null
-    const legacyCta = (tenantBrand?.cta_templates as { free_gifts?: string[]; guarantees?: string[] } | null) ?? null
-    const freeGifts = offers?.free_gifts ?? legacyCta?.free_gifts ?? null
-    const guarantees = offers?.guarantees ?? legacyCta?.guarantees ?? null
-
-    // Câu kêu gọi hành động: `cta_templates` đúng nghĩa (nợ #102) là MỘT
-    // câu, lưu ở hình dạng thật `{ default: string }` do brand-profile-form
-    // ghi — không phải mảng. Đọc qua cùng hàm thuần dùng ở M01b
-    // (`generate-product-copy.ts`) để không lặp lại lỗi ép kiểu sai hình
-    // dạng đã gây vỡ runtime (nợ #103); hình dạng cũ trước 17/09
-    // ({free_gifts, guarantees} lồng trong cta_templates) không phải một
-    // câu CTA nên bị bỏ qua an toàn ở đây, giống hàm dùng chung.
-    const ctaPhrase = extractBrandCtaPhrase(tenantBrand?.cta_templates ?? null)
-    const ctaPhrases = ctaPhrase ? [ctaPhrase] : null
-
-    return {
-      shopName: tenantBusiness?.display_name ?? null,
-      shopHotline: tenantBusiness?.phone ?? null,
-      freeGifts: Array.isArray(freeGifts) && freeGifts.length > 0 ? freeGifts : null,
-      guarantees: Array.isArray(guarantees) && guarantees.length > 0 ? guarantees : null,
-      ctaPhrases,
-      // nợ #104: danh mục dịp -> tông giọng. Nạp độc lập với
-      // tenantBusiness/tenantBrand nên KHÔNG được gộp vào điều kiện
-      // "!tenantBusiness && !tenantBrand" phía trên — một tổ chức có thể đã
-      // cấu hình dịp mà chưa nhập hồ sơ business/brand.
-      occasionRegistry: tenantOccasions.length > 0 ? tenantOccasions : null,
-      // nợ #99: cùng lý do occasionRegistry ở trên — nạp độc lập, không gộp
-      // vào điều kiện "!tenantBusiness && !tenantBrand" phía trên.
-      greetingLine: tenantGreetingLine,
-    }
-  }, [tenantBusiness, tenantBrand, tenantOccasions, tenantGreetingLine])
+  // Hồ sơ mặc định của cửa hàng cho Thẻ chào (dùng chung với hành trình Tạo nội dung trên /cong-cu)
+  const tenantSalesDefaults = useTenantSalesDefaults()
 
   const [phase, setPhase] = useState<Phase>("upload")
   const [assets, setAssets] = useState<Array<{ id: string; name: string; storage_key: string }>>([])
@@ -817,92 +682,11 @@ export default function TaiAnhPage() {
 
   // --- Field change handlers ---
   function handleItemChange1(key: string, itemId: string, item: ResultFieldItem) {
-    setAnalysisData((prev) => {
-      if (!prev) return prev
-      const bom = { ...((prev.bom as Record<string, unknown>) ?? {}) }
-
-      if (key === "flowers") {
-        const flowers = Array.isArray(bom.flowers) ? [...bom.flowers] : []
-        const idx = flowers.findIndex((f: BomRow, i: number) => (f.id ? f.id === itemId : `flower-${i}` === itemId))
-        if (idx >= 0) {
-          flowers[idx] = {
-            ...flowers[idx],
-            name: item.name,
-            dvt_dem: item.unit,
-            quantity: item.quantity,
-            count: item.quantity,
-          }
-        }
-        bom.flowers = flowers
-        const newTotal = flowers.reduce((sum: number, f: BomRow) => sum + (Number(f.quantity ?? f.count) || 0), 0)
-        return {
-          ...prev,
-          bom,
-          flower_count: newTotal,
-          total_stems: newTotal,
-        }
-      }
-
-      if (key === "foliage") {
-        const foliage = Array.isArray(bom.foliage) ? [...bom.foliage] : []
-        const idx = foliage.findIndex((f: BomRow, i: number) => (f.id ? f.id === itemId : `foliage-${i}` === itemId))
-        if (idx >= 0) {
-          foliage[idx] = {
-            ...foliage[idx],
-            name: item.name,
-            dvt_dem: item.unit,
-            quantity: item.quantity,
-            count: item.quantity,
-          }
-        }
-        bom.foliage = foliage
-        return { ...prev, bom }
-      }
-
-      if (key === "accessories") {
-        const accessories = Array.isArray(bom.accessories) ? [...bom.accessories] : []
-        const idx = accessories.findIndex((a: BomRow, i: number) => (a.id ? a.id === itemId : `accessory-${i}` === itemId))
-        if (idx >= 0) {
-          accessories[idx] = {
-            ...accessories[idx],
-            name: item.name,
-            quantity: item.quantity,
-          }
-        }
-        bom.accessories = accessories
-        return { ...prev, bom }
-      }
-
-      return prev
-    })
+    setAnalysisData((prev) => (prev ? applyItemChange(prev, key, itemId, item) : prev))
   }
 
   function handleFieldChange1(key: string, value: string | number | string[]) {
-    setAnalysisData((prev) => {
-      if (!prev) return prev
-      const identity = { ...((prev.identity as Record<string, unknown>) ?? {}) }
-      const bom = { ...((prev.bom as Record<string, unknown>) ?? {}) }
-
-      if (["category", "shape", "facing", "container", "phong_cach", "dip_su_dung"].includes(key)) {
-        identity[key] = value
-        return { ...prev, identity }
-      }
-      if (key === "materials_note") {
-        bom.materials_note = value
-        return { ...prev, bom }
-      }
-      if (key.startsWith("checklist.")) {
-        const checklist = { ...((prev.checklist as Record<string, unknown>) ?? {}) }
-        checklist[key.slice("checklist.".length)] = value
-        return { ...prev, checklist }
-      }
-      if (key === "so_tang_lop") {
-        const san_xuat = { ...((prev.san_xuat as Record<string, unknown>) ?? {}) }
-        san_xuat.so_tang_lop = typeof value === "number" ? value : Number(value) || null
-        return { ...prev, san_xuat }
-      }
-      return { ...prev, [key]: value }
-    })
+    setAnalysisData((prev) => (prev ? applyFieldChange(prev, key, value) : prev))
   }
 
   function handleFieldChange2(key: string, value: string | number | string[]) {
@@ -910,62 +694,7 @@ export default function TaiAnhPage() {
   }
 
   function handleFieldAdd1(key: string, item: ResultFieldItem) {
-    setAnalysisData((prev) => {
-      if (!prev) return prev
-      const bom = { ...((prev.bom as Record<string, unknown>) ?? {}) }
-
-      if (key === "flowers") {
-        const flowers = Array.isArray(bom.flowers) ? [...bom.flowers] : []
-        flowers.push({
-          id: item.id,
-          name: item.name || "Hoa mới",
-          dvt_dem: item.unit || "bông",
-          quantity: item.quantity ?? 1,
-          count: item.quantity ?? 1,
-          role: "hoa phụ",
-        })
-        bom.flowers = flowers
-        const newTotal = flowers.reduce((sum: number, f: BomRow) => sum + (Number(f.quantity ?? f.count) || 0), 0)
-        return { ...prev, bom, flower_count: newTotal, total_stems: newTotal }
-      }
-
-      if (key === "foliage") {
-        const foliage = Array.isArray(bom.foliage) ? [...bom.foliage] : []
-        foliage.push({
-          id: item.id,
-          name: item.name || "Lá mới",
-          dvt_dem: item.unit || "cành",
-          quantity: item.quantity ?? 1,
-          count: item.quantity ?? 1,
-          role: "lá phụ",
-        })
-        bom.foliage = foliage
-        return { ...prev, bom }
-      }
-
-      if (key === "accessories") {
-        const accessories = Array.isArray(bom.accessories) ? [...bom.accessories] : []
-        accessories.push({
-          id: item.id,
-          name: item.name || "Phụ kiện mới",
-          quantity: item.quantity ?? 1,
-        })
-        bom.accessories = accessories
-        return { ...prev, bom }
-      }
-
-      if (key === "wrapping") {
-        const wrapping = Array.isArray(bom.wrapping) ? [...bom.wrapping] : []
-        wrapping.push({
-          layer: `Lớp ${wrapping.length + 1}`,
-          material: item.value || "Giấy gói",
-        })
-        bom.wrapping = wrapping
-        return { ...prev, bom }
-      }
-
-      return prev
-    })
+    setAnalysisData((prev) => (prev ? applyFieldAdd(prev, key, item) : prev))
   }
 
   function handleFieldAdd2(key: string, item: ResultFieldItem) {
@@ -977,45 +706,7 @@ export default function TaiAnhPage() {
   }
 
   function handleFieldRemove1(key: string, itemId: string) {
-    setAnalysisData((prev) => {
-      if (!prev) return prev
-      const bom = { ...((prev.bom as Record<string, unknown>) ?? {}) }
-
-      if (key === "flowers") {
-        const flowers = (Array.isArray(bom.flowers) ? bom.flowers : []).filter(
-          (f: BomRow, i: number) => (f.id ? f.id !== itemId : `flower-${i}` !== itemId)
-        )
-        bom.flowers = flowers
-        const newTotal = flowers.reduce((sum: number, f: BomRow) => sum + (Number(f.quantity ?? f.count) || 0), 0)
-        return { ...prev, bom, flower_count: newTotal, total_stems: newTotal }
-      }
-
-      if (key === "foliage") {
-        const foliage = (Array.isArray(bom.foliage) ? bom.foliage : []).filter(
-          (f: BomRow, i: number) => (f.id ? f.id !== itemId : `foliage-${i}` !== itemId)
-        )
-        bom.foliage = foliage
-        return { ...prev, bom }
-      }
-
-      if (key === "accessories") {
-        const accessories = (Array.isArray(bom.accessories) ? bom.accessories : []).filter(
-          (a: BomRow, i: number) => (a.id ? a.id !== itemId : `accessory-${i}` !== itemId)
-        )
-        bom.accessories = accessories
-        return { ...prev, bom }
-      }
-
-      if (key === "wrapping") {
-        const wrapping = (Array.isArray(bom.wrapping) ? bom.wrapping : []).filter(
-          (_: unknown, i: number) => `wrapping-${i}` !== itemId
-        )
-        bom.wrapping = wrapping
-        return { ...prev, bom }
-      }
-
-      return prev
-    })
+    setAnalysisData((prev) => (prev ? applyFieldRemove(prev, key, itemId) : prev))
   }
 
   function handleFieldRemove2(key: string, itemId: string) {
@@ -1700,7 +1391,7 @@ export default function TaiAnhPage() {
               <div className="flex flex-col items-center gap-5">
                 <CommercialContentCard
                   imageUrl={analysisImageUrl ?? undefined}
-                  fields={productCopyData ? mapProductCopyToFields2(productCopyData as Record<string, unknown>, analysisData) : MOCK_COPY_FIELDS_PLACEHOLDER}
+                  fields={productCopyData ? mapProductCopyToFields(productCopyData as Record<string, unknown>, analysisData) : MOCK_COPY_FIELDS_PLACEHOLDER}
                   judgment={judgment2}
                   qualityScore={89}
                   qualityLabel="Nội dung phù hợp giọng thương hiệu"
