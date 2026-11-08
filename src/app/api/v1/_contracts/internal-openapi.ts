@@ -1,6 +1,7 @@
 import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi"
 
 import { ORDER_OPERATIONS } from "./ops-orders"
+import { PRODUCT_OPERATIONS } from "./ops-products"
 
 /**
  * OpenAPI 3.1 nội bộ của API tiệm `/api/v1/*` — chỉ giao diện SMEOS gọi (PO 07/11/2026). Tệp sinh ra:
@@ -10,9 +11,9 @@ import { ORDER_OPERATIONS } from "./ops-orders"
  */
 export const INTERNAL_OPENAPI_PATH = "docs/spec/contracts/openapi/internal.openapi.json"
 
-export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations"] as const
+export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products"] as const
 
-export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS]
+export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS]
 
 export function buildInternalOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({

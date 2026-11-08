@@ -1,8 +1,9 @@
 import { AppError, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
+import { BULK_MAX_IDS } from "../domain/product-bulk"
 import { updateProduct } from "./update-product"
 
-export const BULK_MAX_IDS = 100
+export { BULK_MAX_IDS }
 export type BulkStatus = "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED"
 
 /**

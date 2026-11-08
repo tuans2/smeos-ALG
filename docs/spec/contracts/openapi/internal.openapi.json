@@ -6474,6 +6474,4723 @@
         "x-capability": "R1"
       }
     },
+    "/products": {
+      "get": {
+        "operationId": "listProducts",
+        "summary": "Danh sách sản phẩm",
+        "description": "`proposal` lọc mẫu đề xuất. Lọc toàn kho `occasion`/`price_range`/`sort` quét tối đa 3.000 mẫu, `cursor` dạng `o:<n>`, trả thêm `total`, `truncated`. Thiếu `L5`: `cost_price_vnd` trả `null`, `attributes` bỏ khoá giá (kê trong `redacted_fields`).",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "branch_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "ACTIVE",
+                "PAUSED",
+                "ARCHIVED"
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "occasion_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "color",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "collection",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "price_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "price_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "proposal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "rejected",
+                "expired"
+              ]
+            }
+          },
+          {
+            "name": "occasion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "price_range",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trang sản phẩm",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "shape": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "facing": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "container": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "branch_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "masterImageUrl": {
+                            "type": "string"
+                          },
+                          "price_vnd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "driveLink": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "partner_tier_bonus": {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "surcharge_groups": {
+                                    "type": "array",
+                                    "items": {}
+                                  },
+                                  "optimal_price_ratio": {
+                                    "type": "number"
+                                  },
+                                  "floor_ceiling_ratio": {
+                                    "type": "object",
+                                    "properties": {
+                                      "floorRatio": {
+                                        "type": "number"
+                                      },
+                                      "ceilingRatio": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "floorRatio",
+                                      "ceilingRatio"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "required": [
+                                  "partner_tier_bonus",
+                                  "surcharge_groups",
+                                  "optimal_price_ratio",
+                                  "floor_ceiling_ratio"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "redacted_fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "attributes": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {}
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "availability_config": {},
+                          "commerce": {
+                            "type": "object",
+                            "properties": {
+                              "barcode": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "cost_price_vnd": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "vat_percent": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "weight_grams": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "tags": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "barcode",
+                              "cost_price_vnd",
+                              "vat_percent",
+                              "weight_grams",
+                              "tags"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "name",
+                          "category",
+                          "shape",
+                          "facing",
+                          "container",
+                          "status",
+                          "branch_id",
+                          "price_vnd",
+                          "pricing",
+                          "redacted_fields",
+                          "commerce"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "total": {
+                      "type": "number"
+                    },
+                    "truncated": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L1"
+      },
+      "post": {
+        "operationId": "createProduct",
+        "summary": "Tạo sản phẩm",
+        "description": "Gửi `cost_price_vnd` cần thêm `L5`. Người thiếu `H3` tạo → mẫu mang nhãn đề xuất, báo Điều hành. Ảnh/chi nhánh của tổ chức khác → 404.",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "maxLength": 64
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "branch_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "category": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "shape": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "facing": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "container": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "DRAFT",
+                      "ACTIVE",
+                      "PAUSED",
+                      "ARCHIVED"
+                    ]
+                  },
+                  "attributes": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "image_asset_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "barcode": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z-]{4,32}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "cost_price_vnd": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "vat_percent": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "weight_grams": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "tags": {
+                    "maxItems": 40,
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sản phẩm đã tạo",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "branch_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "shape": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "facing": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "container": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "DRAFT",
+                        "ACTIVE",
+                        "PAUSED",
+                        "ARCHIVED"
+                      ]
+                    },
+                    "attributes": {},
+                    "availability_config": {},
+                    "barcode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_price_vnd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "vat_percent": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "weight_grams": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "branch_id",
+                    "code",
+                    "name",
+                    "category",
+                    "shape",
+                    "facing",
+                    "container",
+                    "status",
+                    "attributes",
+                    "availability_config",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L2"
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "operationId": "getProduct",
+        "summary": "Chi tiết sản phẩm",
+        "description": "Thiếu `L5`: `cost_price_vnd` trả `null`, `attributes` bỏ khoá giá (kê trong `redacted_fields`). Tổ chức khác → 404.",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sản phẩm",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "shape": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "facing": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "container": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "branch_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "masterImageUrl": {
+                      "type": "string"
+                    },
+                    "price_vnd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "driveLink": {
+                      "type": "string"
+                    },
+                    "pricing": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "partner_tier_bonus": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            "surcharge_groups": {
+                              "type": "array",
+                              "items": {}
+                            },
+                            "optimal_price_ratio": {
+                              "type": "number"
+                            },
+                            "floor_ceiling_ratio": {
+                              "type": "object",
+                              "properties": {
+                                "floorRatio": {
+                                  "type": "number"
+                                },
+                                "ceilingRatio": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "floorRatio",
+                                "ceilingRatio"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "partner_tier_bonus",
+                            "surcharge_groups",
+                            "optimal_price_ratio",
+                            "floor_ceiling_ratio"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "redacted_fields": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "attributes": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "availability_config": {},
+                    "commerce": {
+                      "type": "object",
+                      "properties": {
+                        "barcode": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_price_vnd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "vat_percent": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "weight_grams": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "barcode",
+                        "cost_price_vnd",
+                        "vat_percent",
+                        "weight_grams",
+                        "tags"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "code",
+                    "name",
+                    "category",
+                    "shape",
+                    "facing",
+                    "container",
+                    "status",
+                    "branch_id",
+                    "price_vnd",
+                    "pricing",
+                    "redacted_fields",
+                    "commerce"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L1"
+      },
+      "patch": {
+        "operationId": "updateProduct",
+        "summary": "Sửa sản phẩm",
+        "description": "Chuyển `ARCHIVED` cần thêm `L4`; sửa `cost_price_vnd` cần thêm `L5`. Mở bán khi chưa đủ điều kiện vẫn lưu, trả `readiness_warnings`. Tổ chức khác → 404.",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "branch_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "category": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "shape": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "facing": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "container": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "DRAFT",
+                      "ACTIVE",
+                      "PAUSED",
+                      "ARCHIVED"
+                    ]
+                  },
+                  "attributes": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "image_asset_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "availability_config": {},
+                  "barcode": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^[0-9A-Za-z-]{4,32}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "cost_price_vnd": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "vat_percent": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "weight_grams": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "tags": {
+                    "maxItems": 40,
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sản phẩm sau khi sửa",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "branch_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "shape": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "facing": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "container": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "DRAFT",
+                        "ACTIVE",
+                        "PAUSED",
+                        "ARCHIVED"
+                      ]
+                    },
+                    "attributes": {},
+                    "availability_config": {},
+                    "barcode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_price_vnd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "vat_percent": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "weight_grams": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "readiness_warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "branch_id",
+                    "code",
+                    "name",
+                    "category",
+                    "shape",
+                    "facing",
+                    "container",
+                    "status",
+                    "attributes",
+                    "availability_config",
+                    "created_at",
+                    "updated_at",
+                    "readiness_warnings"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L3"
+      }
+    },
+    "/products/{id}/approve": {
+      "post": {
+        "operationId": "approveProductProposal",
+        "summary": "Duyệt mẫu đề xuất vào danh mục chính thức",
+        "description": "Không có đề xuất chờ duyệt → 422. Tổ chức khác → 404.",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sản phẩm đã duyệt",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "branch_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "shape": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "facing": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "container": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "DRAFT",
+                        "ACTIVE",
+                        "PAUSED",
+                        "ARCHIVED"
+                      ]
+                    },
+                    "attributes": {},
+                    "availability_config": {},
+                    "barcode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_price_vnd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "vat_percent": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "weight_grams": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "branch_id",
+                    "code",
+                    "name",
+                    "category",
+                    "shape",
+                    "facing",
+                    "container",
+                    "status",
+                    "attributes",
+                    "availability_config",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "H3"
+      }
+    },
+    "/products/{id}/change-requests": {
+      "get": {
+        "operationId": "listProductChangeRequests",
+        "summary": "Đề xuất sửa đang chờ của một mẫu",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đề xuất",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "productId": {
+                            "type": "string"
+                          },
+                          "productName": {
+                            "type": "string"
+                          },
+                          "productCode": {
+                            "type": "string"
+                          },
+                          "proposedBy": {
+                            "type": "string"
+                          },
+                          "changes": {},
+                          "fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "label": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "label"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "note": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "productId",
+                          "productName",
+                          "productCode",
+                          "proposedBy",
+                          "changes",
+                          "fields",
+                          "status",
+                          "note",
+                          "createdAt",
+                          "expiresAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "H3"
+      },
+      "post": {
+        "operationId": "submitProductChangeRequest",
+        "summary": "Đề xuất sửa mẫu chính thức",
+        "description": "Bản gốc giữ nguyên, báo Điều hành. Không có thay đổi → 422. Tổ chức khác → 404.",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "category": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "shape": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "facing": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "container": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "attributes": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "image_asset_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đề xuất đã tạo",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "product_id": {
+                      "type": "string"
+                    },
+                    "proposed_by": {
+                      "type": "string"
+                    },
+                    "changes": {},
+                    "base_updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "applied_fields": {},
+                    "reviewed_by": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reviewed_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "expires_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "status",
+                    "created_at",
+                    "updated_at",
+                    "product_id",
+                    "proposed_by",
+                    "changes",
+                    "base_updated_at",
+                    "applied_fields",
+                    "reviewed_by",
+                    "reviewed_at",
+                    "note",
+                    "expires_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L3"
+      }
+    },
+    "/products/{id}/master-index": {
+      "get": {
+        "operationId": "getProductMasterIndex",
+        "summary": "Hồ sơ đầy đủ của một sản phẩm",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hồ sơ sản phẩm",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "item": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "DRAFT",
+                            "ACTIVE",
+                            "PAUSED",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "hasApprovedCopy": {
+                          "type": "boolean"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "shape": {
+                          "type": "string"
+                        },
+                        "facing": {
+                          "type": "string"
+                        },
+                        "container": {
+                          "type": "string"
+                        },
+                        "style": {
+                          "type": "string"
+                        },
+                        "occasions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "masterImageUrl": {
+                          "type": "string"
+                        },
+                        "colorPalette": {
+                          "type": "object",
+                          "properties": {
+                            "primaryColor": {
+                              "type": "string"
+                            },
+                            "secondaryColor": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "primaryColor"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "bom": {
+                          "type": "object",
+                          "properties": {
+                            "flowers": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "flowerName": {
+                                    "type": "string"
+                                  },
+                                  "quantity": {
+                                    "type": "number"
+                                  },
+                                  "unit": {
+                                    "type": "string",
+                                    "enum": [
+                                      "bông",
+                                      "cành",
+                                      "lá",
+                                      "cây"
+                                    ]
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  },
+                                  "role": {
+                                    "type": "string",
+                                    "enum": [
+                                      "Chủ đạo",
+                                      "Phụ",
+                                      "Điểm xuyến",
+                                      "Lấp đầy"
+                                    ]
+                                  },
+                                  "shade": {
+                                    "type": "string"
+                                  },
+                                  "budCount": {
+                                    "type": "number"
+                                  },
+                                  "damagedCount": {
+                                    "type": "number"
+                                  },
+                                  "variety": {
+                                    "type": "string"
+                                  },
+                                  "stemLengthCm": {
+                                    "type": "number"
+                                  },
+                                  "substitutionAllowed": {
+                                    "type": "boolean"
+                                  },
+                                  "substitutionPriority": {
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "flowerName",
+                                  "quantity",
+                                  "unit",
+                                  "color",
+                                  "role"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "foliage": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "quantity": {
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ]
+                                  },
+                                  "unit": {
+                                    "type": "string",
+                                    "enum": [
+                                      "bông",
+                                      "cành",
+                                      "lá",
+                                      "cây"
+                                    ]
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  },
+                                  "role": {
+                                    "type": "string",
+                                    "enum": [
+                                      "Lấp đầy",
+                                      "Nền",
+                                      "Viền",
+                                      "Điểm nhấn"
+                                    ]
+                                  },
+                                  "substitutionAllowed": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "quantity",
+                                  "unit",
+                                  "color",
+                                  "role"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "wrapping": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "layer": {
+                                    "type": "string"
+                                  },
+                                  "material": {
+                                    "type": "string"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  },
+                                  "texture": {
+                                    "type": "string"
+                                  },
+                                  "pattern": {
+                                    "type": "string"
+                                  },
+                                  "quantity": {
+                                    "type": "number"
+                                  },
+                                  "substitutionAllowed": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "layer",
+                                  "material",
+                                  "color",
+                                  "texture"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "wrapStyle": {
+                              "type": "string"
+                            },
+                            "ribbon": {
+                              "type": "string"
+                            },
+                            "accessories": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "material": {
+                                    "type": "string"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  },
+                                  "quantity": {
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ]
+                                  },
+                                  "printedText": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "substitutionAllowed": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "material",
+                                  "color",
+                                  "quantity",
+                                  "printedText"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "tierCount": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "flowers",
+                            "foliage",
+                            "wrapping",
+                            "wrapStyle",
+                            "ribbon",
+                            "accessories"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "pricing": {
+                          "type": "object",
+                          "properties": {
+                            "costPriceVnd": {
+                              "type": "number"
+                            },
+                            "quotePriceVnd": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "quotePriceVnd"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "variants": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "size": {
+                                "type": "string"
+                              },
+                              "multiplier": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "multiplier"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "stock": {
+                          "type": "object",
+                          "properties": {
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "IN_STOCK",
+                                "PRE_ORDER_ONLY",
+                                "OUT_OF_STOCK"
+                              ]
+                            },
+                            "quantityAvailable": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "status"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "galleryImages": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "GALLERY",
+                                  "CATALOG",
+                                  "SOCIAL",
+                                  "REFERENCE"
+                                ]
+                              },
+                              "url": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "role",
+                              "url"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "freshnessGuaranteeDays": {
+                          "type": "number"
+                        },
+                        "warningTags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "dimensions": {
+                          "type": "object",
+                          "properties": {
+                            "heightCm": {
+                              "type": "number"
+                            },
+                            "widthCm": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "heightCm",
+                            "widthCm"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "substitutionPolicy": {
+                          "type": "object",
+                          "properties": {
+                            "allowed": {
+                              "type": "boolean"
+                            },
+                            "note": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "allowed"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "code",
+                        "name",
+                        "status",
+                        "category",
+                        "shape",
+                        "facing",
+                        "style",
+                        "occasions",
+                        "colorPalette",
+                        "bom",
+                        "pricing",
+                        "variants",
+                        "galleryImages",
+                        "warningTags",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "item"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L1"
+      }
+    },
+    "/products/{id}/reject": {
+      "post": {
+        "operationId": "rejectProductProposal",
+        "summary": "Từ chối mẫu đề xuất (bắt buộc lý do)",
+        "description": "Mẫu tạm ẩn (`DRAFT`), báo người đề xuất; 30 ngày sau vào thùng rác. Tổ chức khác → 404.",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sản phẩm đã từ chối",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "branch_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "shape": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "facing": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "container": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "DRAFT",
+                        "ACTIVE",
+                        "PAUSED",
+                        "ARCHIVED"
+                      ]
+                    },
+                    "attributes": {},
+                    "availability_config": {},
+                    "barcode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_price_vnd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "vat_percent": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "weight_grams": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "branch_id",
+                    "code",
+                    "name",
+                    "category",
+                    "shape",
+                    "facing",
+                    "container",
+                    "status",
+                    "attributes",
+                    "availability_config",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "H3"
+      }
+    },
+    "/products/{id}/revisions": {
+      "get": {
+        "operationId": "listProductRevisions",
+        "summary": "50 phiên bản gần nhất của mẫu",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Phiên bản, mới nhất trước",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          },
+                          "actorId": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "snapshot": {}
+                        },
+                        "required": [
+                          "id",
+                          "reason",
+                          "actorId",
+                          "createdAt",
+                          "snapshot"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "H3"
+      }
+    },
+    "/products/{id}/revisions/{revisionId}/restore": {
+      "post": {
+        "operationId": "restoreProductRevision",
+        "summary": "Khôi phục một phiên bản",
+        "description": "Giữ trạng thái bán và nhãn đề xuất hiện tại; bản hiện tại được lưu thành phiên bản trước khi ghi. Tổ chức khác → 404.",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revisionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sản phẩm sau khi khôi phục",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "branch_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "shape": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "facing": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "container": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "DRAFT",
+                        "ACTIVE",
+                        "PAUSED",
+                        "ARCHIVED"
+                      ]
+                    },
+                    "attributes": {},
+                    "availability_config": {},
+                    "barcode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cost_price_vnd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "vat_percent": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "weight_grams": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "branch_id",
+                    "code",
+                    "name",
+                    "category",
+                    "shape",
+                    "facing",
+                    "container",
+                    "status",
+                    "attributes",
+                    "availability_config",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "H3"
+      }
+    },
+    "/products/batch-import": {
+      "post": {
+        "operationId": "batchImportProducts",
+        "summary": "Nhập hàng loạt (tối đa 500 dòng)",
+        "description": "Mỗi lần gọi là một lô (`batch_id`) hoàn tác được trong 24 giờ; tệp không gắn/gỡ được nhãn đề xuất.",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 500,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "category": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "shape": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "facing": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "container": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "DRAFT",
+                            "ACTIVE",
+                            "PAUSED",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "attributes": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "image_asset_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "name"
+                      ]
+                    }
+                  },
+                  "skip_duplicates": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "overwrite_existing_images": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "overwrite_existing": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "items"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Kết quả theo dòng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "batch_id": {
+                      "type": "string"
+                    },
+                    "total_requested": {
+                      "type": "number"
+                    },
+                    "created_count": {
+                      "type": "number"
+                    },
+                    "updated_count": {
+                      "type": "number"
+                    },
+                    "skipped_count": {
+                      "type": "number"
+                    },
+                    "images_attached_count": {
+                      "type": "number"
+                    },
+                    "drive_links_updated_count": {
+                      "type": "number"
+                    },
+                    "failed_count": {
+                      "type": "number"
+                    },
+                    "created": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "name"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "updated": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "skipped": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "failed": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "error"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "batch_id",
+                    "total_requested",
+                    "created_count",
+                    "updated_count",
+                    "skipped_count",
+                    "images_attached_count",
+                    "drive_links_updated_count",
+                    "failed_count",
+                    "created",
+                    "updated",
+                    "skipped",
+                    "failed"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "L2 + H3"
+      }
+    },
+    "/products/bulk-status": {
+      "post": {
+        "operationId": "bulkUpdateProductStatus",
+        "summary": "Đổi trạng thái hàng loạt",
+        "description": "Chuyển `ARCHIVED` cần thêm `L4`. Từng dòng qua cùng luật sửa sản phẩm; mở bán kèm `warnings` các mẫu còn thiếu điều kiện.",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "DRAFT",
+                      "ACTIVE",
+                      "PAUSED",
+                      "ARCHIVED"
+                    ]
+                  }
+                },
+                "required": [
+                  "ids",
+                  "status"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dòng đã đổi và dòng hỏng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "updated": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "failed": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "missing": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "missing"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "updated",
+                    "failed",
+                    "warnings"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "L3"
+      }
+    },
+    "/products/drive-thumbnails": {
+      "post": {
+        "operationId": "resolveDriveThumbnails",
+        "summary": "Phân giải ảnh thu nhỏ của tối đa 50 thư mục Drive",
+        "description": "60 lần/phút/người dùng.",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "folder_ids": {
+                    "minItems": 1,
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "folder_ids"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "URL ảnh theo thư mục (`null` khi không có ảnh)",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "thumbnails": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "thumbnails"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "L2"
+      }
+    },
+    "/products/export": {
+      "get": {
+        "operationId": "exportProducts",
+        "summary": "Xuất CSV danh sách sản phẩm",
+        "description": "Cột giá chỉ khi có `L5`; tối đa 5.000 dòng (header `X-Export-Truncated: 1` khi bị cắt).",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "ACTIVE",
+                "PAUSED",
+                "ARCHIVED"
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tệp CSV",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "text/csv; charset=utf-8": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "R13"
+      }
+    },
+    "/products/import-batches": {
+      "get": {
+        "operationId": "listImportBatches",
+        "summary": "10 lô nhập gần nhất",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lô nhập, `canUndo` trong 24 giờ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "createdCount": {
+                            "type": "number"
+                          },
+                          "updatedCount": {
+                            "type": "number"
+                          },
+                          "undoneAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "canUndo": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "createdAt",
+                          "createdCount",
+                          "updatedCount",
+                          "undoneAt",
+                          "canUndo"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "H3"
+      }
+    },
+    "/products/import-batches/{id}/undo": {
+      "post": {
+        "operationId": "undoImportBatch",
+        "summary": "Hoàn tác lô nhập",
+        "description": "Mẫu tạo ra vào thùng rác, mẫu bị cập nhật trả về bản trước lô; quá 24 giờ hoặc đã hoàn tác → 422. Tổ chức khác → 404.",
+        "tags": [
+          "Sản phẩm — duyệt, phiên bản, nhập hàng loạt"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Số mẫu đã xử lý",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "trashed": {
+                      "type": "number"
+                    },
+                    "restored": {
+                      "type": "number"
+                    },
+                    "failedCount": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "trashed",
+                    "restored",
+                    "failedCount"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "H3"
+      }
+    },
+    "/products/master-index": {
+      "get": {
+        "operationId": "listProductMasterIndex",
+        "summary": "Hồ sơ đầy đủ (công thức, ảnh, giá, màu) toàn tổ chức",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hồ sơ sản phẩm",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "DRAFT",
+                              "ACTIVE",
+                              "PAUSED",
+                              "ARCHIVED"
+                            ]
+                          },
+                          "hasApprovedCopy": {
+                            "type": "boolean"
+                          },
+                          "category": {
+                            "type": "string"
+                          },
+                          "shape": {
+                            "type": "string"
+                          },
+                          "facing": {
+                            "type": "string"
+                          },
+                          "container": {
+                            "type": "string"
+                          },
+                          "style": {
+                            "type": "string"
+                          },
+                          "occasions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "masterImageUrl": {
+                            "type": "string"
+                          },
+                          "colorPalette": {
+                            "type": "object",
+                            "properties": {
+                              "primaryColor": {
+                                "type": "string"
+                              },
+                              "secondaryColor": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "primaryColor"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "bom": {
+                            "type": "object",
+                            "properties": {
+                              "flowers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "flowerName": {
+                                      "type": "string"
+                                    },
+                                    "quantity": {
+                                      "type": "number"
+                                    },
+                                    "unit": {
+                                      "type": "string",
+                                      "enum": [
+                                        "bông",
+                                        "cành",
+                                        "lá",
+                                        "cây"
+                                      ]
+                                    },
+                                    "color": {
+                                      "type": "string"
+                                    },
+                                    "role": {
+                                      "type": "string",
+                                      "enum": [
+                                        "Chủ đạo",
+                                        "Phụ",
+                                        "Điểm xuyến",
+                                        "Lấp đầy"
+                                      ]
+                                    },
+                                    "shade": {
+                                      "type": "string"
+                                    },
+                                    "budCount": {
+                                      "type": "number"
+                                    },
+                                    "damagedCount": {
+                                      "type": "number"
+                                    },
+                                    "variety": {
+                                      "type": "string"
+                                    },
+                                    "stemLengthCm": {
+                                      "type": "number"
+                                    },
+                                    "substitutionAllowed": {
+                                      "type": "boolean"
+                                    },
+                                    "substitutionPriority": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "flowerName",
+                                    "quantity",
+                                    "unit",
+                                    "color",
+                                    "role"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "foliage": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "quantity": {
+                                      "type": [
+                                        "number",
+                                        "null"
+                                      ]
+                                    },
+                                    "unit": {
+                                      "type": "string",
+                                      "enum": [
+                                        "bông",
+                                        "cành",
+                                        "lá",
+                                        "cây"
+                                      ]
+                                    },
+                                    "color": {
+                                      "type": "string"
+                                    },
+                                    "role": {
+                                      "type": "string",
+                                      "enum": [
+                                        "Lấp đầy",
+                                        "Nền",
+                                        "Viền",
+                                        "Điểm nhấn"
+                                      ]
+                                    },
+                                    "substitutionAllowed": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "quantity",
+                                    "unit",
+                                    "color",
+                                    "role"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "wrapping": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "layer": {
+                                      "type": "string"
+                                    },
+                                    "material": {
+                                      "type": "string"
+                                    },
+                                    "color": {
+                                      "type": "string"
+                                    },
+                                    "texture": {
+                                      "type": "string"
+                                    },
+                                    "pattern": {
+                                      "type": "string"
+                                    },
+                                    "quantity": {
+                                      "type": "number"
+                                    },
+                                    "substitutionAllowed": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "layer",
+                                    "material",
+                                    "color",
+                                    "texture"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "wrapStyle": {
+                                "type": "string"
+                              },
+                              "ribbon": {
+                                "type": "string"
+                              },
+                              "accessories": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "material": {
+                                      "type": "string"
+                                    },
+                                    "color": {
+                                      "type": "string"
+                                    },
+                                    "quantity": {
+                                      "type": [
+                                        "number",
+                                        "null"
+                                      ]
+                                    },
+                                    "printedText": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "unit": {
+                                      "type": "string"
+                                    },
+                                    "substitutionAllowed": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "material",
+                                    "color",
+                                    "quantity",
+                                    "printedText"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "tierCount": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "flowers",
+                              "foliage",
+                              "wrapping",
+                              "wrapStyle",
+                              "ribbon",
+                              "accessories"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "pricing": {
+                            "type": "object",
+                            "properties": {
+                              "costPriceVnd": {
+                                "type": "number"
+                              },
+                              "quotePriceVnd": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "quotePriceVnd"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "variants": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "size": {
+                                  "type": "string"
+                                },
+                                "multiplier": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name",
+                                "multiplier"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "stock": {
+                            "type": "object",
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "IN_STOCK",
+                                  "PRE_ORDER_ONLY",
+                                  "OUT_OF_STOCK"
+                                ]
+                              },
+                              "quantityAvailable": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "status"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "galleryImages": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "role": {
+                                  "type": "string",
+                                  "enum": [
+                                    "GALLERY",
+                                    "CATALOG",
+                                    "SOCIAL",
+                                    "REFERENCE"
+                                  ]
+                                },
+                                "url": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "role",
+                                "url"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "freshnessGuaranteeDays": {
+                            "type": "number"
+                          },
+                          "warningTags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "dimensions": {
+                            "type": "object",
+                            "properties": {
+                              "heightCm": {
+                                "type": "number"
+                              },
+                              "widthCm": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "heightCm",
+                              "widthCm"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "substitutionPolicy": {
+                            "type": "object",
+                            "properties": {
+                              "allowed": {
+                                "type": "boolean"
+                              },
+                              "note": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "allowed"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "code",
+                          "name",
+                          "status",
+                          "category",
+                          "shape",
+                          "facing",
+                          "style",
+                          "occasions",
+                          "colorPalette",
+                          "bom",
+                          "pricing",
+                          "variants",
+                          "galleryImages",
+                          "warningTags",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L1"
+      }
+    },
+    "/products/one-image-kit": {
+      "post": {
+        "operationId": "startOneImageKit",
+        "summary": "Gửi một ảnh đi nhận diện",
+        "description": "Header `Idempotency-Key` bắt buộc. Trừ credit theo bảng giá; hết credit → 422 `QUOTA_EXCEEDED`. Mã năng lực kiểm ở use-case.",
+        "tags": [
+          "Sản phẩm — từ 1 ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Job nhận diện đã xếp hàng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "jobId": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "engine": {
+                          "type": "string",
+                          "enum": [
+                            "openai_structured",
+                            "openai_direct",
+                            "local_cv"
+                          ]
+                        },
+                        "usage": {
+                          "type": "object",
+                          "properties": {
+                            "costCredit": {
+                              "type": "number"
+                            },
+                            "balanceAfter": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "costCredit",
+                            "balanceAfter"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "jobId",
+                        "status",
+                        "engine",
+                        "usage"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "H1"
+      },
+      "get": {
+        "operationId": "getOneImageKitProgress",
+        "summary": "Tiến độ nhận diện và tóm tắt kết quả",
+        "tags": [
+          "Sản phẩm — từ 1 ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
+          {
+            "name": "asset_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trạng thái job; `analysis` khi đã có kết quả",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "jobStatus": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "PROCESSING",
+                            "COMPLETED",
+                            "FAILED",
+                            "CANCELLED"
+                          ]
+                        },
+                        "analysis": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "approvalState": {
+                                  "type": "string",
+                                  "enum": [
+                                    "PENDING",
+                                    "APPROVED",
+                                    "REJECTED"
+                                  ]
+                                },
+                                "imageUrl": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "category": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "flowers": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "quantity": {
+                                        "type": "number"
+                                      },
+                                      "unit": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "role": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "quantity",
+                                      "unit",
+                                      "role"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "approvalState",
+                                "imageUrl",
+                                "category",
+                                "flowers"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "jobStatus",
+                        "analysis"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "H1"
+      }
+    },
+    "/products/one-image-kit/run": {
+      "post": {
+        "operationId": "runOneImageKit",
+        "summary": "Chạy chuỗi sau nhận diện: thẻ sản phẩm, nội dung, giá vốn, bài đăng, thẻ in",
+        "description": "Header `Idempotency-Key` bắt buộc. Bước hỏng vẫn trả 200 với `status = FAILED`, `failedStep` và các đầu ra đã có.",
+        "tags": [
+          "Sản phẩm — từ 1 ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "analysis_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "analysis_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả từng bước",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "READY",
+                            "FAILED"
+                          ]
+                        },
+                        "outputs": {
+                          "type": "object",
+                          "properties": {
+                            "productId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "copyId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "cost": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "totalVnd": {
+                                      "type": "number"
+                                    },
+                                    "complete": {
+                                      "type": "boolean"
+                                    },
+                                    "missingPrices": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "unmatched": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "totalVnd",
+                                    "complete",
+                                    "missingPrices",
+                                    "unmatched"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "contentGenerationId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "posts": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "channel": {
+                                    "type": "string"
+                                  },
+                                  "text": {
+                                    "type": "string"
+                                  },
+                                  "hashtags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "needsReview": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "channel",
+                                  "text",
+                                  "hashtags",
+                                  "needsReview"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "printRenditionId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "productId",
+                            "copyId",
+                            "cost",
+                            "contentGenerationId",
+                            "posts",
+                            "printRenditionId"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "failedStep": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "PRODUCT",
+                                "COPY",
+                                "COST",
+                                "POSTS",
+                                "CARD"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "error": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "outputs",
+                        "failedStep",
+                        "error"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "H3"
+      }
+    },
     "/quotations": {
       "get": {
         "operationId": "listQuotations",
@@ -9231,6 +13948,30 @@
       "Error422": {
         "description": "Vi phạm luật nghiệp vụ hoặc hết hạn mức (`UNPROCESSABLE_ENTITY`, `QUOTA_EXCEEDED`)",
         "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error429": {
+        "description": "Quá tần suất (`RATE_LIMITED`) — chờ theo `Retry-After`",
+        "headers": {
+          "RateLimit-Limit": {
+            "$ref": "#/components/headers/RateLimitLimit"
+          },
+          "RateLimit-Remaining": {
+            "$ref": "#/components/headers/RateLimitRemaining"
+          },
+          "RateLimit-Reset": {
+            "$ref": "#/components/headers/RateLimitReset"
+          },
+          "Retry-After": {
+            "$ref": "#/components/headers/RetryAfter"
+          }
+        },
         "content": {
           "application/json": {
             "schema": {

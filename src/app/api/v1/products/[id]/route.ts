@@ -1,15 +1,13 @@
-import { z } from "zod"
 
 import { activationWarningsFor } from "@/modules/products/use-cases/get-product-master-index"
 import { validationFailed } from "@/core/http/errors"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
-import { commerceInputShape, pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"
+import { pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getProduct } from "@/modules/products/use-cases/get-product"
 import { updateProduct } from "@/modules/products/use-cases/update-product"
-
-const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"] as const
+import { patchProductBody } from "@/app/api/v1/_contracts/requests-products"
 
 /** `GET /products/:id` (`L1`, đặc tả 06 mục 6) — M03, redaction theo `L5`. */
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
@@ -18,21 +16,6 @@ export const GET = handle(async (request, context: { params: Promise<{ id: strin
 
   const { id } = await context.params
   return jsonResponse(await getProduct(ctx, id))
-})
-
-const patchSchema = z.object({
-  code: z.string().min(1).optional(),
-  name: z.string().min(1).optional(),
-  branch_id: z.string().min(1).nullable().optional(),
-  category: z.string().min(1).nullable().optional(),
-  shape: z.string().min(1).nullable().optional(),
-  facing: z.string().min(1).nullable().optional(),
-  container: z.string().min(1).nullable().optional(),
-  status: z.enum(PRODUCT_STATUS).optional(),
-  attributes: z.record(z.string(), z.unknown()).nullable().optional(),
-  image_asset_id: z.string().min(1).nullable().optional(),
-  availability_config: z.unknown().optional(),
-  ...commerceInputShape,
 })
 
 /**
@@ -47,7 +30,7 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
   requireCapability(ctx, "L3")
 
   const { id } = await context.params
-  const parsed = patchSchema.safeParse(await request.json().catch(() => null))
+  const parsed = patchProductBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   if (parsed.data.status === "ARCHIVED") requireCapability(ctx, "L4")
