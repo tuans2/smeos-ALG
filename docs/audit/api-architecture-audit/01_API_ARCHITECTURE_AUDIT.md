@@ -355,3 +355,16 @@ Phát hiện khi viết hợp đồng (chưa sửa):
 - `PUT /chain/collection-profile` và `POST /chain/collection-profile/preview`: thiếu `rules` hoặc không phải mảng → route ném `Error` trần → 500 (đã thử). `PUT` với quy tắc sai luật → `publish-chain-collection-profile.ts` cũng ném `Error` trần → 500 (đọc mã); `/preview` trả lỗi đó trong `validation.issues`.
 - `POST /chain/partner-stores` trùng mã cửa hàng trong tổ chức → 500 (vỡ ràng buộc duy nhất), không phải 409 như `POST /branches` (đã thử).
 - `get-store-folder-data.ts` lùi về giá cố định 250.000đ khi sản phẩm tồn kho chưa có `price_vnd` — số bịa hiện trên thư mục dữ liệu cửa hàng (trái quyết định nợ #87 "không bịa giá").
+
+## 18. Nhật ký sửa — OpenAPI nội bộ, đợt tính giá & bảng giá (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/costing/*` (9 route, 11 operation), `/pricing-rules` (1 route, 2 operation), `/price-lists/*` (2 route, 6 operation) — tổng 350 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 7 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-costing.ts`, route import lại; thân bảng giá giữ ở `price-lists/schema.ts` (dùng chung POST/PUT kèm hàm đổi) và được xuất lại. Phản hồi khai `strictObject` (`responses-costing.ts`), viết từ kiểu TS rồi đối chiếu với mẫu ghi từ phản hồi thật (`CAPTURE_CONTRACT_DIR`) | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật: hồ sơ ngành, nguyên liệu (tạo, sửa giá, cảnh báo biến động, lịch sử), công thức (bản nháp từ BOM, lưu, đọc lại), giá vốn + kịch bản giá (kèm giá đối thủ), áp giá, dự toán mua + đánh dấu đã mua, quy tắc giá, bảng giá (tạo, danh sách, bản in, sửa, bật/tắt, bỏ) | `tests/tenant/internal-contract-costing.test.ts` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `GET /pricing-rules?branch_id=` nhận mã chi nhánh của tổ chức khác hoặc không tồn tại → 200, lặp lại mã đó ở `branch_id` và trả cấu hình của tổ chức phiên (không lộ dữ liệu tổ chức khác — dòng quy tắc vẫn lọc theo phiên). `PUT` đã kiểm chi nhánh → 404; `GET` nên làm như vậy (luật 2 CLAUDE.md: khác tổ chức → 404).
+- Envelope trộn: `/pricing-rules` và `/price-lists/*` trả thẳng đối tượng (không `{ data }`), `DELETE /price-lists/:id` trả `{ ok: true }` — đã có trong `api-envelope-legacy.txt`, ghi rõ ở OpenAPI.

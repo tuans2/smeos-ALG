@@ -31924,6 +31924,1918 @@
         "x-capability": "R12"
       }
     },
+    "/costing/materials": {
+      "get": {
+        "operationId": "listMaterials",
+        "summary": "Nguyên liệu kèm cảnh báo biến động giá",
+        "description": "Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nguyên liệu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "string"
+                          },
+                          "categoryKey": {
+                            "type": "string"
+                          },
+                          "unitCostVnd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "onHandQty": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "active": {
+                            "type": "boolean"
+                          },
+                          "supplierName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "priceChange": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "previousVnd": {
+                                    "type": "number"
+                                  },
+                                  "currentVnd": {
+                                    "type": "number"
+                                  },
+                                  "changePercent": {
+                                    "type": "number"
+                                  },
+                                  "alert": {
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "previousVnd",
+                                  "currentVnd",
+                                  "changePercent",
+                                  "alert"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "unit",
+                          "categoryKey",
+                          "unitCostVnd",
+                          "onHandQty",
+                          "active",
+                          "supplierName",
+                          "priceChange"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L5"
+      },
+      "post": {
+        "operationId": "createMaterial",
+        "summary": "Thêm nguyên liệu",
+        "description": "Có đơn giá thì ghi mốc lịch sử đầu tiên. Nhóm nguyên liệu không thuộc ngành → 400. Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30
+                  },
+                  "category_key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "unit_cost_vnd": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "supplier_name": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 120
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "on_hand_qty": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "unit",
+                  "category_key"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Nguyên liệu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "unit": {
+                          "type": "string"
+                        },
+                        "categoryKey": {
+                          "type": "string"
+                        },
+                        "unitCostVnd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "onHandQty": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "active": {
+                          "type": "boolean"
+                        },
+                        "supplierName": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "unit",
+                        "categoryKey",
+                        "unitCostVnd",
+                        "onHandQty",
+                        "active",
+                        "supplierName"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L6"
+      }
+    },
+    "/costing/materials/{id}": {
+      "patch": {
+        "operationId": "updateMaterial",
+        "summary": "Sửa nguyên liệu",
+        "description": "Đổi đơn giá ghi thêm một mốc lịch sử. Của tổ chức khác → 404. Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "unit": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30
+                  },
+                  "category_key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "unit_cost_vnd": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "supplier_name": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 120
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "on_hand_qty": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Nguyên liệu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "unit": {
+                          "type": "string"
+                        },
+                        "categoryKey": {
+                          "type": "string"
+                        },
+                        "unitCostVnd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "onHandQty": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "active": {
+                          "type": "boolean"
+                        },
+                        "supplierName": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "unit",
+                        "categoryKey",
+                        "unitCostVnd",
+                        "onHandQty",
+                        "active",
+                        "supplierName"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L6"
+      }
+    },
+    "/costing/materials/{id}/history": {
+      "get": {
+        "operationId": "getMaterialPriceHistory",
+        "summary": "Lịch sử đơn giá nguyên liệu",
+        "description": "Mới nhất trước. Của tổ chức khác → 404.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mốc giá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "unitCostVnd": {
+                            "type": "number"
+                          },
+                          "effectiveAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "unitCostVnd",
+                          "effectiveAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L5"
+      }
+    },
+    "/costing/needs": {
+      "get": {
+        "operationId": "getMaterialNeeds",
+        "summary": "Dự toán mua nguyên liệu cho đơn giao trong khoảng ngày",
+        "description": "Đơn `CONFIRMED`/`PROCESSING`. Ngày sai định dạng hoặc `from` > `to` → 400. Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dự toán",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "needs": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "materialId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "string"
+                              },
+                              "requiredQty": {
+                                "type": "number"
+                              },
+                              "onHandQty": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "toBuyQty": {
+                                "type": "number"
+                              },
+                              "estimatedCostVnd": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "orderIds": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "materialId",
+                              "name",
+                              "unit",
+                              "requiredQty",
+                              "onHandQty",
+                              "toBuyQty",
+                              "estimatedCostVnd",
+                              "orderIds"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "productsWithoutRecipe": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "totalEstimatedVnd": {
+                          "type": "number"
+                        },
+                        "costIncomplete": {
+                          "type": "boolean"
+                        },
+                        "perishable": {
+                          "type": "boolean"
+                        },
+                        "orderCount": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "needs",
+                        "productsWithoutRecipe",
+                        "totalEstimatedVnd",
+                        "costIncomplete",
+                        "perishable",
+                        "orderCount"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L5"
+      }
+    },
+    "/costing/needs/purchase": {
+      "post": {
+        "operationId": "recordMaterialPurchase",
+        "summary": "Đánh dấu đã mua theo dự toán",
+        "description": "Cộng tồn; có giá mua thì cập nhật đơn giá + lịch sử nguồn `PURCHASE`. Nguyên liệu của tổ chức khác → 404. Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "minItems": 1,
+                    "maxItems": 200,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "material_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "quantity": {
+                          "type": "number",
+                          "exclusiveMinimum": 0,
+                          "maximum": 1000000
+                        },
+                        "unit_cost_vnd": {
+                          "anyOf": [
+                            {
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "material_id",
+                        "quantity"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "items"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Số nguyên liệu đã cập nhật",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "updated": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "updated"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L6"
+      }
+    },
+    "/costing/products/{productId}/cost": {
+      "get": {
+        "operationId": "getProductCost",
+        "summary": "Giá vốn phân rã và kịch bản giá bán",
+        "description": "`competitor_vnd` (> 0) thêm kịch bản giá đối thủ. Thiếu đơn giá → `missingPrices`, không có kịch bản. Của tổ chức khác → 404. Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "competitor_vnd",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Giá vốn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "product": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "priceVnd": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "priceVnd"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "hasRecipe": {
+                          "type": "boolean"
+                        },
+                        "cost": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "lines": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "materialId": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "quantity": {
+                                        "type": "number"
+                                      },
+                                      "unit": {
+                                        "type": "string"
+                                      },
+                                      "unitCostVnd": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "lineCostVnd": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "materialId",
+                                      "name",
+                                      "quantity",
+                                      "unit",
+                                      "unitCostVnd",
+                                      "lineCostVnd"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "materialVnd": {
+                                  "type": "number"
+                                },
+                                "wasteVnd": {
+                                  "type": "number"
+                                },
+                                "laborVnd": {
+                                  "type": "number"
+                                },
+                                "packagingVnd": {
+                                  "type": "number"
+                                },
+                                "overheadVnd": {
+                                  "type": "number"
+                                },
+                                "totalVnd": {
+                                  "type": "number"
+                                },
+                                "missingPrices": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "laborMissing": {
+                                  "type": "boolean"
+                                },
+                                "complete": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "lines",
+                                "materialVnd",
+                                "wasteVnd",
+                                "laborVnd",
+                                "packagingVnd",
+                                "overheadVnd",
+                                "totalVnd",
+                                "missingPrices",
+                                "laborMissing",
+                                "complete"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "scenarios": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "string"
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "priceVnd": {
+                                "type": "number"
+                              },
+                              "profitVnd": {
+                                "type": "number"
+                              },
+                              "marginPercent": {
+                                "type": "number"
+                              },
+                              "warnings": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "label",
+                              "priceVnd",
+                              "profitVnd",
+                              "marginPercent",
+                              "warnings"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "product",
+                        "hasRecipe",
+                        "cost",
+                        "scenarios"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L5"
+      }
+    },
+    "/costing/products/{productId}/price": {
+      "post": {
+        "operationId": "applyProductPrice",
+        "summary": "Áp giá bán đã chọn",
+        "description": "Ghi `attributes.price` và nhật ký kiểm toán `product.price.apply` (giá cũ/mới, giá vốn lúc áp) cùng giao dịch. Của tổ chức khác → 404. Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "price_vnd": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000000000
+                  },
+                  "scenario": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30
+                  }
+                },
+                "required": [
+                  "price_vnd",
+                  "scenario"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Giá cũ và mới",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "previousPriceVnd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "priceVnd": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "previousPriceVnd",
+                        "priceVnd"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L3"
+      }
+    },
+    "/costing/profile": {
+      "get": {
+        "operationId": "getCostingProfile",
+        "summary": "Hồ sơ tính giá theo ngành của cửa hàng",
+        "description": "Mặc định của ngành ghi đè bằng quy tắc giá của cửa hàng. Ngành chưa hỗ trợ → `supported: false` (vẫn 200).",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hồ sơ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "supported": {
+                          "type": "boolean"
+                        },
+                        "industryKey": {
+                          "type": "string"
+                        },
+                        "spec": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "materialCategories": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "key": {
+                                        "type": "string"
+                                      },
+                                      "label": {
+                                        "type": "string"
+                                      },
+                                      "defaultUnit": {
+                                        "type": "string"
+                                      },
+                                      "defaultWastePercent": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "key",
+                                      "label",
+                                      "defaultUnit",
+                                      "defaultWastePercent"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "laborModel": {
+                                  "type": "string",
+                                  "enum": [
+                                    "PER_COMPLEXITY",
+                                    "PER_MINUTE"
+                                  ]
+                                },
+                                "defaultOverheadPercent": {
+                                  "type": "number"
+                                },
+                                "defaultPackagingVnd": {
+                                  "type": "number"
+                                },
+                                "priceRoundingVnd": {
+                                  "type": "number"
+                                },
+                                "priceScenarios": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "key": {
+                                        "type": "string"
+                                      },
+                                      "label": {
+                                        "type": "string"
+                                      },
+                                      "marginPercent": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "key",
+                                      "label",
+                                      "marginPercent"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "priceChangeAlertPercent": {
+                                  "type": "number"
+                                },
+                                "perishable": {
+                                  "type": "boolean"
+                                },
+                                "bomAdapter": {
+                                  "type": "string"
+                                },
+                                "starterMaterials": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "categoryKey": {
+                                        "type": "string"
+                                      },
+                                      "unit": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "categoryKey",
+                                      "unit"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "materialCategories",
+                                "laborModel",
+                                "defaultOverheadPercent",
+                                "defaultPackagingVnd",
+                                "priceRoundingVnd",
+                                "priceScenarios",
+                                "priceChangeAlertPercent",
+                                "perishable",
+                                "bomAdapter",
+                                "starterMaterials"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "config": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "laborModel": {
+                                  "type": "string",
+                                  "enum": [
+                                    "PER_COMPLEXITY",
+                                    "PER_MINUTE"
+                                  ]
+                                },
+                                "laborRatePerHourVnd": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "laborByComplexityVnd": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "EASY": {
+                                          "type": "number"
+                                        },
+                                        "MEDIUM": {
+                                          "type": "number"
+                                        },
+                                        "HARD": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "required": [
+                                        "EASY",
+                                        "MEDIUM",
+                                        "HARD"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "overheadPercent": {
+                                  "type": "number"
+                                },
+                                "packagingVnd": {
+                                  "type": "number"
+                                },
+                                "wastePercentByCategory": {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {
+                                    "type": "number"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "laborModel",
+                                "laborRatePerHourVnd",
+                                "laborByComplexityVnd",
+                                "overheadPercent",
+                                "packagingVnd",
+                                "wastePercentByCategory"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "supported",
+                        "industryKey",
+                        "spec",
+                        "config"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L1"
+      }
+    },
+    "/costing/recipes/{productId}": {
+      "get": {
+        "operationId": "getRecipe",
+        "summary": "Công thức sản phẩm, hoặc bản nháp từ BOM AI",
+        "description": "Của tổ chức khác → 404. Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Công thức",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "product": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "recipe": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "productId": {
+                                  "type": "string"
+                                },
+                                "version": {
+                                  "type": "number"
+                                },
+                                "note": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "wastePercent": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "laborMinutes": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "lines": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "materialId": {
+                                        "type": "string"
+                                      },
+                                      "quantity": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "materialId",
+                                      "quantity"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "productId",
+                                "version",
+                                "note",
+                                "wastePercent",
+                                "laborMinutes",
+                                "lines"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "draft": {
+                          "anyOf": [
+                            {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "quantity": {
+                                    "type": "number"
+                                  },
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "categoryKey": {
+                                    "type": "string"
+                                  },
+                                  "materialId": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "quantity",
+                                  "unit",
+                                  "categoryKey",
+                                  "materialId"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "product",
+                        "recipe",
+                        "draft"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L1"
+      },
+      "put": {
+        "operationId": "saveRecipe",
+        "summary": "Lưu công thức (thay toàn bộ, tăng phiên bản)",
+        "description": "Dòng số lượng 0 bị bỏ. Sản phẩm hoặc nguyên liệu của tổ chức khác → 404. Ngành của cửa hàng chưa có công cụ tính giá → 422.",
+        "tags": [
+          "Tính giá — nguyên liệu & giá vốn"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "lines": {
+                    "maxItems": 200,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "material_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "quantity": {
+                          "type": "number",
+                          "exclusiveMinimum": 0,
+                          "maximum": 100000
+                        }
+                      },
+                      "required": [
+                        "material_id",
+                        "quantity"
+                      ]
+                    }
+                  },
+                  "waste_percent": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 99.99
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "labor_minutes": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 100000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "note": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 500
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "lines"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Phiên bản mới",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "version"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "L3"
+      }
+    },
     "/creative-production/content-drafts": {
       "get": {
         "operationId": "getContentDraft",
@@ -80846,6 +82758,1616 @@
           }
         },
         "x-capability": "F2"
+      }
+    },
+    "/price-lists": {
+      "get": {
+        "operationId": "listPriceLists",
+        "summary": "Bảng giá sản phẩm",
+        "description": "Kèm danh mục sản phẩm để chọn. Thân không bọc `{ data }` riêng cho từng bảng.",
+        "tags": [
+          "Quy tắc giá & bảng giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bảng giá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "heading": {
+                            "type": "string"
+                          },
+                          "note": {
+                            "type": "string"
+                          },
+                          "categories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "productIds": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "validFrom": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "validTo": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "showPeakPrice": {
+                            "type": "boolean"
+                          },
+                          "showPromotions": {
+                            "type": "boolean"
+                          },
+                          "active": {
+                            "type": "boolean"
+                          },
+                          "archived": {
+                            "type": "boolean"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "ACTIVE",
+                              "PAUSED",
+                              "SCHEDULED",
+                              "EXPIRED"
+                            ]
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "heading",
+                          "note",
+                          "categories",
+                          "productIds",
+                          "validFrom",
+                          "validTo",
+                          "showPeakPrice",
+                          "showPromotions",
+                          "active",
+                          "archived",
+                          "status",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "categories"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L1"
+      },
+      "post": {
+        "operationId": "createPriceList",
+        "summary": "Tạo bảng giá",
+        "description": "Tối đa 50 bảng mỗi cửa hàng → 409. Ngày sai hoặc `valid_from` > `valid_to` → 400.",
+        "tags": [
+          "Quy tắc giá & bảng giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "heading": {
+                    "type": "string",
+                    "maxLength": 400
+                  },
+                  "note": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "categories": {
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 100
+                    }
+                  },
+                  "product_ids": {
+                    "anyOf": [
+                      {
+                        "maxItems": 500,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 64
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_from": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_to": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "show_peak_price": {
+                    "type": "boolean"
+                  },
+                  "show_promotions": {
+                    "type": "boolean"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bảng giá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "heading": {
+                      "type": "string"
+                    },
+                    "note": {
+                      "type": "string"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "productIds": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "validFrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "validTo": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "showPeakPrice": {
+                      "type": "boolean"
+                    },
+                    "showPromotions": {
+                      "type": "boolean"
+                    },
+                    "active": {
+                      "type": "boolean"
+                    },
+                    "archived": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE",
+                        "PAUSED",
+                        "SCHEDULED",
+                        "EXPIRED"
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "heading",
+                    "note",
+                    "categories",
+                    "productIds",
+                    "validFrom",
+                    "validTo",
+                    "showPeakPrice",
+                    "showPromotions",
+                    "active",
+                    "archived",
+                    "status",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "L3"
+      }
+    },
+    "/price-lists/{id}": {
+      "get": {
+        "operationId": "getPriceListDocument",
+        "summary": "Bảng giá dựng sẵn để xem/in",
+        "description": "Dựng từ giá đang bán của sản phẩm và ưu đãi đang bật. Của tổ chức khác → 404.",
+        "tags": [
+          "Quy tắc giá & bảng giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bảng giá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "priceList": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "heading": {
+                          "type": "string"
+                        },
+                        "note": {
+                          "type": "string"
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "productIds": {
+                          "anyOf": [
+                            {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "validFrom": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "validTo": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "showPeakPrice": {
+                          "type": "boolean"
+                        },
+                        "showPromotions": {
+                          "type": "boolean"
+                        },
+                        "active": {
+                          "type": "boolean"
+                        },
+                        "archived": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ACTIVE",
+                            "PAUSED",
+                            "SCHEDULED",
+                            "EXPIRED"
+                          ]
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "heading",
+                        "note",
+                        "categories",
+                        "productIds",
+                        "validFrom",
+                        "validTo",
+                        "showPeakPrice",
+                        "showPromotions",
+                        "active",
+                        "archived",
+                        "status",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "category": {
+                            "type": "string"
+                          },
+                          "rows": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "productId": {
+                                  "type": "string"
+                                },
+                                "code": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "mode": {
+                                  "type": "string",
+                                  "enum": [
+                                    "FIXED",
+                                    "RANGE",
+                                    "CONTACT"
+                                  ]
+                                },
+                                "priceVnd": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "peakPriceVnd": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "options": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "priceVnd": {
+                                        "type": "number"
+                                      },
+                                      "peakPriceVnd": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "priceVnd",
+                                      "peakPriceVnd"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "productId",
+                                "code",
+                                "name",
+                                "mode",
+                                "priceVnd",
+                                "peakPriceVnd",
+                                "options"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "category",
+                          "rows"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "promotions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "customerText": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "percent": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "customerText",
+                          "kind",
+                          "percent"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "value",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "productCount": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "priceList",
+                    "groups",
+                    "promotions",
+                    "categories",
+                    "productCount"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L1"
+      },
+      "put": {
+        "operationId": "updatePriceList",
+        "summary": "Sửa toàn bộ cấu hình bảng giá",
+        "description": "Mỗi lần sửa là một phiên bản mới. Của tổ chức khác → 404.",
+        "tags": [
+          "Quy tắc giá & bảng giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "heading": {
+                    "type": "string",
+                    "maxLength": 400
+                  },
+                  "note": {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "categories": {
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 100
+                    }
+                  },
+                  "product_ids": {
+                    "anyOf": [
+                      {
+                        "maxItems": 500,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "maxLength": 64
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_from": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_to": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "show_peak_price": {
+                    "type": "boolean"
+                  },
+                  "show_promotions": {
+                    "type": "boolean"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bảng giá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "heading": {
+                      "type": "string"
+                    },
+                    "note": {
+                      "type": "string"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "productIds": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "validFrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "validTo": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "showPeakPrice": {
+                      "type": "boolean"
+                    },
+                    "showPromotions": {
+                      "type": "boolean"
+                    },
+                    "active": {
+                      "type": "boolean"
+                    },
+                    "archived": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE",
+                        "PAUSED",
+                        "SCHEDULED",
+                        "EXPIRED"
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "heading",
+                    "note",
+                    "categories",
+                    "productIds",
+                    "validFrom",
+                    "validTo",
+                    "showPeakPrice",
+                    "showPromotions",
+                    "active",
+                    "archived",
+                    "status",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "L3"
+      },
+      "patch": {
+        "operationId": "togglePriceList",
+        "summary": "Bật/tắt bảng giá",
+        "description": "Của tổ chức khác → 404.",
+        "tags": [
+          "Quy tắc giá & bảng giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "active"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bảng giá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "heading": {
+                      "type": "string"
+                    },
+                    "note": {
+                      "type": "string"
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "productIds": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "validFrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "validTo": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "showPeakPrice": {
+                      "type": "boolean"
+                    },
+                    "showPromotions": {
+                      "type": "boolean"
+                    },
+                    "active": {
+                      "type": "boolean"
+                    },
+                    "archived": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE",
+                        "PAUSED",
+                        "SCHEDULED",
+                        "EXPIRED"
+                      ]
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "heading",
+                    "note",
+                    "categories",
+                    "productIds",
+                    "validFrom",
+                    "validTo",
+                    "showPeakPrice",
+                    "showPromotions",
+                    "active",
+                    "archived",
+                    "status",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "L3"
+      },
+      "delete": {
+        "operationId": "archivePriceList",
+        "summary": "Bỏ bảng giá khỏi danh sách",
+        "description": "Lịch sử phiên bản vẫn giữ. Trả 200 `{ ok: true }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`). Của tổ chức khác → 404.",
+        "tags": [
+          "Quy tắc giá & bảng giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đã bỏ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L3"
+      }
+    },
+    "/pricing-rules": {
+      "get": {
+        "operationId": "getPricingRules",
+        "summary": "Quy tắc giá hiệu lực",
+        "description": "Theo tổ chức; `branch_id` (hoặc chi nhánh của phiên) lấy cấu hình của chi nhánh. Thân không bọc `{ data }`.",
+        "tags": [
+          "Quy tắc giá & bảng giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "branch_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quy tắc giá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "branch_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "partner_tier_bonus": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    },
+                    "surcharge_groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "options"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "optimal_price_ratio": {
+                      "type": "number"
+                    },
+                    "floor_ceiling_ratio": {
+                      "type": "object",
+                      "properties": {
+                        "floorRatio": {
+                          "type": "number"
+                        },
+                        "ceilingRatio": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "floorRatio",
+                        "ceilingRatio"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "customer_tier_discount": {
+                      "type": "object",
+                      "properties": {
+                        "NEW": {
+                          "type": "number"
+                        },
+                        "BRONZE": {
+                          "type": "number"
+                        },
+                        "SILVER": {
+                          "type": "number"
+                        },
+                        "GOLD": {
+                          "type": "number"
+                        },
+                        "VIP": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "NEW",
+                        "BRONZE",
+                        "SILVER",
+                        "GOLD",
+                        "VIP"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "peak_hour_surcharge": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "startHour": {
+                            "type": "number"
+                          },
+                          "endHour": {
+                            "type": "number"
+                          },
+                          "vnd": {
+                            "type": "number"
+                          },
+                          "label": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "startHour",
+                          "endHour",
+                          "vnd",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "branch_id",
+                    "partner_tier_bonus",
+                    "surcharge_groups",
+                    "optimal_price_ratio",
+                    "floor_ceiling_ratio",
+                    "customer_tier_discount",
+                    "peak_hour_surcharge"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "L5"
+      },
+      "put": {
+        "operationId": "putPricingRule",
+        "summary": "Ghi một quy tắc giá",
+        "description": "Mỗi lần ghi một dòng mới (chèn-chỉ). Khoá lạ hoặc giá trị sai → 400; chi nhánh của tổ chức khác, hoặc người bị giới hạn chi nhánh ghi quy tắc toàn tổ chức → 404.",
+        "tags": [
+          "Quy tắc giá & bảng giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "value": {},
+                  "branch_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "key",
+                  "value"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quy tắc giá sau khi ghi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "branch_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "partner_tier_bonus": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "number"
+                      }
+                    },
+                    "surcharge_groups": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "label": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "label",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "options"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "optimal_price_ratio": {
+                      "type": "number"
+                    },
+                    "floor_ceiling_ratio": {
+                      "type": "object",
+                      "properties": {
+                        "floorRatio": {
+                          "type": "number"
+                        },
+                        "ceilingRatio": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "floorRatio",
+                        "ceilingRatio"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "customer_tier_discount": {
+                      "type": "object",
+                      "properties": {
+                        "NEW": {
+                          "type": "number"
+                        },
+                        "BRONZE": {
+                          "type": "number"
+                        },
+                        "SILVER": {
+                          "type": "number"
+                        },
+                        "GOLD": {
+                          "type": "number"
+                        },
+                        "VIP": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "NEW",
+                        "BRONZE",
+                        "SILVER",
+                        "GOLD",
+                        "VIP"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "peak_hour_surcharge": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "startHour": {
+                            "type": "number"
+                          },
+                          "endHour": {
+                            "type": "number"
+                          },
+                          "vnd": {
+                            "type": "number"
+                          },
+                          "label": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "startHour",
+                          "endHour",
+                          "vnd",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "branch_id",
+                    "partner_tier_bonus",
+                    "surcharge_groups",
+                    "optimal_price_ratio",
+                    "floor_ceiling_ratio",
+                    "customer_tier_discount",
+                    "peak_hour_surcharge"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "L6"
       }
     },
     "/products": {

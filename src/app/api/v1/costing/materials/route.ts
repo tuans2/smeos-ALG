@@ -1,7 +1,7 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
+import { createMaterialBody } from "@/app/api/v1/_contracts/requests-costing"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { createMaterial, listMaterialsWithAlerts } from "@/modules/costing/use-cases/costing-service"
 
@@ -13,20 +13,11 @@ export const GET = handle(async (request) => {
   return jsonResponse({ data: await listMaterialsWithAlerts(ctx, includeInactive) })
 })
 
-const createSchema = z.object({
-  name: z.string().min(1).max(120),
-  unit: z.string().min(1).max(30),
-  category_key: z.string().min(1),
-  unit_cost_vnd: z.number().nonnegative().nullable().optional(),
-  supplier_name: z.string().max(120).nullable().optional(),
-  on_hand_qty: z.number().nonnegative().nullable().optional(),
-})
-
 /** `POST /costing/materials` (`L6`) — thêm nguyên liệu; có đơn giá thì ghi mốc giá đầu tiên. */
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "L6")
-  const parsed = createSchema.safeParse(await request.json().catch(() => null))
+  const parsed = createMaterialBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   const d = parsed.data
   const material = await createMaterial(ctx, {
