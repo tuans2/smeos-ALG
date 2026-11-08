@@ -8,6 +8,7 @@ import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Wand2 } from "@/components/ui/icon-set/wand2"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { rewriteBlockedMessage } from "@/lib/ai-rewrite-error"
 
 export interface AiRewriteInputProps {
   value: string
@@ -34,12 +35,15 @@ export function AiRewriteInput({
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [showDropdown, setShowDropdown] = useState(false)
   const [selectedStyle, setSelectedStyle] = useState<"luxurious" | "sweet" | "concise" | "creative">("luxurious")
+  // Hết credit / thiếu quyền: báo lý do, không hiện gợi ý dựng sẵn
+  const [blockedMessage, setBlockedMessage] = useState<string | null>(null)
 
   const handleRewrite = async (styleOverride?: "luxurious" | "sweet" | "concise" | "creative") => {
     if (!value.trim()) return
     const targetStyle = styleOverride || selectedStyle
     setLoading(true)
     setShowDropdown(true)
+    setBlockedMessage(null)
 
     try {
       const res = await fetch("/api/v1/content-engine/rewrite", {
@@ -52,6 +56,12 @@ export function AiRewriteInput({
         }),
       })
 
+      const blocked = res.ok ? null : await rewriteBlockedMessage(res)
+      if (blocked) {
+        setBlockedMessage(blocked)
+        setShowDropdown(false)
+        return
+      }
       if (!res.ok) throw new Error("Yêu cầu viết lại không thành công")
       const data = await res.json()
       if (Array.isArray(data.suggestions) && data.suggestions.length > 0) {
@@ -127,6 +137,12 @@ export function AiRewriteInput({
 
       {helperText && (
         <p className="text-caption text-text-muted">{helperText}</p>
+      )}
+
+      {blockedMessage && (
+        <p role="alert" className="text-caption text-danger">
+          {blockedMessage}
+        </p>
       )}
 
       {/* Popover / Panel gợi ý của AI */}
