@@ -57,6 +57,11 @@ export async function seedSubcontractInvite(organizationId: string, userId: stri
       `INSERT INTO order_coordinations (id, organization_id, order_id, updated_at, metadata) VALUES ($1, $2, $3, now(), $4)`,
       [randomUUID(), organizationId, orderId, JSON.stringify({ subcontract_dispatch: dispatch })],
     )
+    // Quyền xem đơn của chi nhánh được mời (ADR-014 P-4) — luồng thật cấp trong `updateSubcontractState`
+    await db.query(
+      `INSERT INTO shared_order_access (id, organization_id, order_id, branch_key, level, updated_at) VALUES ($1, $2, $3, $4, 'INVITED', now())`,
+      [randomUUID(), organizationId, orderId, branchId],
+    )
   })
   const params = new URLSearchParams({ branch: branchId, t: branchToken(secret, organizationId, orderCode, branchId) })
   return `/subcontract/${encodeURIComponent(orderCode)}?${params.toString()}`

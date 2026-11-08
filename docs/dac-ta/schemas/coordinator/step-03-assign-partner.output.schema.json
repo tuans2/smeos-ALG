@@ -1408,7 +1408,7 @@
         "id": "6f1c2b1e-0a4d-4c55-9d0e-3b1f9a7c2d10",
         "orderCode": "FLR-260925-0001",
         "stage": "IN_PRODUCTION",
-        "stageLabel": "Đang cắm hoa",
+        "stageLabel": "Đang chế tác",
         "riskLevel": "NORMAL",
         "riskReason": null,
         "timeRemaining": null,
@@ -1434,7 +1434,7 @@
           "phone": "0912345678"
         },
         "partnerName": "Flora Boutique Ba Đình",
-        "productTitle": "Bó hoa hồng Pastel",
+        "productTitle": "Sản phẩm hồng Pastel",
         "sampleImageUrl": null,
         "finishedImageUrls": [],
         "productionProgress": 0,

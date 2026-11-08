@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { enumParam } from "@/core/http/query-params"
 import { QUOTATION_STATUSES } from "@/modules/sales/domain/quotation"
@@ -7,36 +6,7 @@ import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { createQuotationUseCase } from "@/modules/sales/use-cases/create-quotation.use-case"
 import { listQuotationsUseCase } from "@/modules/sales/use-cases/list-quotations.use-case"
-
-const quotationItemSchema = z.object({
-  product_id: z.string().nullable().optional(),
-  productId: z.string().nullable().optional(),
-  name: z.string().min(1, "Tên sản phẩm không được để trống").max(200),
-  variant_label: z.string().max(80).nullable().optional(),
-  variantLabel: z.string().max(80).nullable().optional(),
-  qty: z.number().int().min(1, "Số lượng phải từ 1 trở lên"),
-  unit_price: z.number().min(0, "Đơn giá không thể âm").optional(),
-  unitPrice: z.number().min(0, "Đơn giá không thể âm").optional(),
-  note: z.string().nullable().optional(),
-})
-
-const createQuotationSchema = z.object({
-  lead_id: z.string().nullable().optional(),
-  leadId: z.string().nullable().optional(),
-  customer_id: z.string().nullable().optional(),
-  customerId: z.string().nullable().optional(),
-  asset_usage_id: z.string().nullable().optional(),
-  assetUsageId: z.string().nullable().optional(),
-  valid_until: z.string().nullable().optional(),
-  validUntil: z.string().nullable().optional(),
-  discount_amount: z.number().min(0).optional(),
-  discountAmount: z.number().min(0).optional(),
-  shipping_fee: z.number().min(0).max(100_000_000).optional(),
-  shippingFee: z.number().min(0).max(100_000_000).optional(),
-  terms: z.string().nullable().optional(),
-  notes: z.string().nullable().optional(),
-  items: z.array(quotationItemSchema).min(1, "Báo giá phải có ít nhất một sản phẩm"),
-})
+import { createQuotationBody } from "@/app/api/v1/_contracts/requests-orders"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -83,7 +53,7 @@ export const POST = handle(async (request) => {
     throw validationFailed({ body: "Dữ liệu yêu cầu không hợp lệ" })
   }
 
-  const parsed = createQuotationSchema.safeParse(raw)
+  const parsed = createQuotationBody.safeParse(raw)
   if (!parsed.success) {
     const details: Record<string, string> = {}
     for (const issue of parsed.error.issues) {

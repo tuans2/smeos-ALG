@@ -36,9 +36,10 @@ import {
   ensureRule,
   ensureTransition,
   getOrderView,
-  loadOrderOrThrow,
+  loadEditableOrderOrThrow,
   runCoordinatorTx,
 } from "./shared"
+import { returnStock } from "@/modules/orders/infra/order-stock"
 
 function currentAxes(row: CoordinatorOrderRow) {
   return { status: row.status, productionStatus: row.production_status, deliveryStatus: row.delivery_status }
@@ -95,7 +96,7 @@ export async function assignPartner(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const partner = await repo.findPartner(ctx, input.partnerId)
     if (!partner) throw notFound()
     const stage = row.coordination!.stage
@@ -162,7 +163,7 @@ export async function recordProductionUpdate(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const stage = row.coordination!.stage
 
     if (input.action === "REPORT_MATERIAL_ISSUE") {
@@ -210,7 +211,7 @@ export async function recordQcInspection(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const c = row.coordination!
     const images = Array.isArray(c.finished_asset_ids)
       ? (c.finished_asset_ids as unknown[]).filter((v): v is string => typeof v === "string")
@@ -255,7 +256,7 @@ export async function closeCoordinatorOrder(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const facts = await repo.facts(ctx, row)
     ensureRule(
       checkClosure({
@@ -292,7 +293,7 @@ export async function cancelCoordinatorOrder(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const from = row.coordination!.stage
     ensureRule(checkCancellation({ stage: from, reason: input.reason }))
     await transition(ctx, repo, row, "CANCELLED", `Huỷ đơn: ${input.reason.trim()}`, {
@@ -302,5 +303,7 @@ export async function cancelCoordinatorOrder(
     await audit(ctx, tx, "coordinator.order.cancel", row.id, { stage: from }, { stage: "CANCELLED", reason: input.reason.trim() })
     return row.id
   })
+  // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) — đánh dấu theo dòng nên gọi lại không hoàn hai lần
+  await returnStock(ctx.organizationId, orderId)
   return getOrderView(ctx, orderId)
 }

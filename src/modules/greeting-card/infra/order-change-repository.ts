@@ -20,6 +20,7 @@ import {
   type OrderChangePayload,
 } from "../domain/order-change-request"
 import { CUSTOMER_SENDER_ID } from "../domain/internal-message"
+import { storedDeliveryAddress, upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 
 export const CHANGE_REQUEST_KIND = "ORDER_CHANGE_REQUEST"
 export const CHANGE_DECISION_KIND = "ORDER_CHANGE_DECISION"
@@ -176,13 +177,14 @@ export class OrderChangeRepository {
           },
           data: {
             delivery_window: cols.delivery_window as Prisma.InputJsonValue,
-            delivery_address: cols.delivery_address as unknown as Prisma.InputJsonValue,
+            delivery_address: storedDeliveryAddress(cols.delivery_address), // P-3c: người nhận chỉ ở order_recipients
             card_message: cols.card_message,
             ...(feeDeltaVnd > 0 ? { total_vnd: newTotal, balance_vnd: newTotal - Number(order.paid_vnd), vat_amount_vnd: newVatVnd } : {}),
             pricing_rule_ref: nextRef as Prisma.InputJsonValue,
           },
         })
         if (moved.count === 0) throw conflict("Đơn vừa thay đổi, vui lòng tải lại")
+        await upsertOrderRecipient(tx, ctx.organizationId, order.id, { deliveryAddress: cols.delivery_address })
       }
 
       const decided: OrderChangePayload = {

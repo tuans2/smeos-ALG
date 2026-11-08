@@ -7,6 +7,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { withIndustryKey } from "@/modules/organization/domain/industry-key"
 import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import { OPEN_LEAD_STATUSES } from "@/modules/acquisition/domain/lead-recovery"
+import { phoneEquals } from "@/core/security/pii-lookup"
 
 export class PublicOrderRepository {
   async orgSettings(organizationId: string): Promise<unknown> {
@@ -17,14 +18,14 @@ export class PublicOrderRepository {
   /** Đơn công khai (catalog/landing) của cùng SĐT trong khoảng gần đây — chặn gửi dồn. */
   async countRecentByPhone(organizationId: string, phone: string, since: Date): Promise<number> {
     return prisma.orders.count({
-      where: { organization_id: organizationId, source: { in: ["CATALOG", "LANDING"] }, created_at: { gte: since }, customer: { phone } },
+      where: { organization_id: organizationId, source: { in: ["CATALOG", "LANDING"] }, created_at: { gte: since }, customer: phoneEquals(organizationId, phone) }, // P-5b
     })
   }
 
   /** Lead đang mở của cùng SĐT — đơn gắn vào lead đó (§3.1: "khách bấm Đặt hàng → gắn vào lead đang mở"). */
   async openLeadId(organizationId: string, phone: string): Promise<string | null> {
     const lead = await prisma.leads.findFirst({
-      where: { organization_id: organizationId, phone, status: { in: [...OPEN_LEAD_STATUSES] }, converted_order_id: null },
+      where: { organization_id: organizationId, status: { in: [...OPEN_LEAD_STATUSES] }, converted_order_id: null, AND: [phoneEquals(organizationId, phone)] }, // P-5b
       orderBy: { created_at: "desc" },
       select: { id: true },
     })

@@ -14,6 +14,8 @@ export interface CreditEntryMeta {
   reason?: string | null | undefined
   reference?: string | null | undefined
   actorId?: string | null | undefined
+  /** Hoàn: thời điểm đã trừ khoản này — trả lại hạn mức của ĐÚNG tháng đó, không phải tháng hiện tại (audit BL-17). */
+  chargedAt?: Date | null | undefined
 }
 
 export type OrganizationType =

@@ -16,6 +16,7 @@ import { NHAN_TINH_NANG } from "@/lib/feature-labels"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology, type IndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { PageHeader } from "@/components/ui/page-header"
+import { jobStageLabel } from "@/modules/jobs/domain/job-stage-labels"
 
 type JobDetail = {
   id: string
@@ -206,7 +207,7 @@ export default function JobDetailPage() {
                   <div className="flex-1">
                     <div className="text-body-sm font-bold text-danger">Tác vụ gặp lỗi khi đang xử lý</div>
                     <div className="mt-1 text-caption text-text leading-relaxed">
-                      {job.stage ? `Dừng lại ở giai đoạn "${job.stage}". ` : ""}
+                      {job.stage ? `Dừng lại ở giai đoạn "${jobStageLabel(job.stage)}". ` : ""}
                       {job.error ? `Chi tiết lỗi: ${job.error}` : "Vui lòng bấm 'Chạy lại' để thử lại tác vụ."}
                     </div>
                   </div>
@@ -258,7 +259,7 @@ export default function JobDetailPage() {
                 {job.stage && (
                   <div className="flex justify-between py-2">
                     <span className="text-text-muted">Giai đoạn</span>
-                    <span className="font-semibold text-text">{job.stage}</span>
+                    <span className="font-semibold text-text">{jobStageLabel(job.stage)}</span>
                   </div>
                 )}
                 {job.result && (

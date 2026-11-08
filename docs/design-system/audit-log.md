@@ -279,3 +279,21 @@ Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip 
 ### Đợt 5 (06/11/2026) — tách hộp "Tiếp nhận đơn hàng" (k11)
 
 - `sales-order-intake-modal.tsx` 1.281 → 71 dòng: state/tải dữ liệu/gửi vào `use-sales-order-intake-form.ts`; giao diện thành 4 phần `sales-order-intake-{customer,product,bom,details}-section.tsx`; kiểu dùng chung `sales-order-intake-types.ts`. Mọi tệp ≤ 350 dòng; bỏ khỏi `file-size-baseline.json`. JSX và xử lý giữ nguyên (tách cơ học), test khoá hành vi B5 vẫn qua.
+
+## `/audit` — Nhật ký kiểm toán: tab "Truy cập của nền tảng" (07/11/2026, ADR-013 D-I5, D-60)
+
+Kịch bản `scripts/ux-audit/scenarios/nhat-ky.mjs`: tab "Thao tác trong tổ chức", tab "Truy cập của nền tảng" rỗng và có
+dữ liệu (một người vận hành mở hồ sơ, xem đơn hàng, tải dữ liệu khách hàng). Sau sửa: 6/6 trạng thái axe sạch, không
+tràn ngang ở 390px và 1280px. So với bản trước (audit `/audit` ở commit chưa có tab): lỗi axe ô chọn và cảnh báo
+"đồng hồ" đã có từ trước.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| AUD-01 | P1 | 390px: thanh tab hai nhãn `whitespace-nowrap` tràn ngang (393px) | Tab chia đôi chiều ngang, cho xuống dòng trên điện thoại |
+| AUD-02 | P1 | Tab đang chọn không có dấu hiệu nhìn thấy: Base UI đánh dấu `data-active`, còn `TabsTrigger` dùng chung tô `data-[selected]` (không bao giờ khớp) — chỉ có `aria-selected` | Sửa ở `src/components/ui/tabs.tsx` (PO duyệt 07/11/2026): bộ chọn `data-[active]`; test `navigation-tabs.test.tsx`. Ảnh hưởng 2 màn dùng `Tabs` chung: `/audit` và Thư viện giao diện của Console (`/van-hanh/thu-vien-giao-dien`); các thanh tab khác (`TabActionHeader`…) không dùng component này |
+| AUD-03 | P2 | axe `button-name`: ô chọn "Loại thao tác" không có tên truy cập (có từ trước) | `aria-label="Loại thao tác"` |
+| AUD-04 | P3 | Nút "Làm mới" trong tab mới xuống dòng ở 390px | `shrink-0 whitespace-nowrap` |
+| AUD-05 | — | Cảnh báo nội dung "đồng hồ đếm ngược" ở tab thứ nhất | Báo nhầm: biểu thức `HH:MM:SS` khớp thời điểm thật của bản ghi kiểm toán, không phải đồng hồ |
+
+Thư viện giao diện của Console chưa audit lại (cần phiên người vận hành nền tảng). **Ngoài phạm vi, chưa sửa:** ô "Loại thao tác" hiện giá trị `ALL` thay vì nhãn "Tất cả" khi chưa chọn (có từ trước).
+Chưa kiểm thủ công: bàn phím (chuyển tab bằng phím mũi tên), zoom 200%, trình đọc màn hình.

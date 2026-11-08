@@ -5,7 +5,7 @@ import { conflict, notFound } from "@/core/http/errors"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import type { DiscountPayload } from "../domain/discount-request"
+import { priorDiscountsOf, type DiscountPayload } from "../domain/discount-request"
 import type { MessageRole } from "../domain/internal-message"
 
 type Loose = Record<string, unknown>
@@ -29,7 +29,7 @@ export class DiscountRepository {
     // Gốc tính giảm là giá TRƯỚC thuế — VAT không bị tính phần trăm giảm
     const base = typeof manual.baseTotalVnd === "number" ? manual.baseTotalVnd : Number(o.total_vnd) - Number(o.vat_amount_vnd)
     const lines = o.items.map((i) => ({ productId: i.product_id, quantity: i.quantity }))
-    return { id: o.id, code: o.code, status: o.status, totalVnd: Number(o.total_vnd), paidVnd: Number(o.paid_vnd), baseTotalVnd: base, lines }
+    return { id: o.id, code: o.code, status: o.status, totalVnd: Number(o.total_vnd), paidVnd: Number(o.paid_vnd), baseTotalVnd: base, lines, prior: priorDiscountsOf(o.pricing_rule_ref) }
   }
 
   async createRequest(ctx: TenantContext, input: { orderId: string; senderRole: MessageRole; reason: string; payload: DiscountPayload }) {

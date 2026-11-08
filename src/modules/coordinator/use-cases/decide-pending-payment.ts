@@ -5,7 +5,7 @@ import { assertNotSelfApproval } from "@/modules/organization/use-cases/assert-n
 import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import { PendingPaymentRepository } from "../infra/pending-payment-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
-import { audit, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
+import { audit, getOrderView, loadEditableOrderOrThrow, runCoordinatorTx } from "./shared"
 
 /**
  * `POST /coordinator/orders/:id/payments/:paymentId/decision` (R11 — trần cứng Điều hành): xác nhận
@@ -24,7 +24,7 @@ export async function decidePendingPayment(
   if (!approve && note.length < 3) throw validationFailed({ note: "Ghi lý do từ chối" })
 
   const orderId = await runCoordinatorTx(async (tx) => {
-    const row = await loadOrderOrThrow(ctx, getCoordinatorRepository(tx), orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, getCoordinatorRepository(tx), orderIdOrCode)
     const pending = new PendingPaymentRepository(tx)
     const payment = await pending.findPending(ctx, row.id, paymentId)
     if (!payment) throw notFound()

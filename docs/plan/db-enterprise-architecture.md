@@ -50,9 +50,9 @@ cần test khoá hành vi trước.
 
 ### GĐ0 — Quyết định (trước mọi PR)
 
-- [ ] PO duyệt ADR-012 (✓ 06/11/2026), ADR-013, ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
+- [ ] PO duyệt ADR-012 (✓ 06/11/2026), ADR-013 (✓ 06/11/2026), ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
 - [x] ADR-012 §6: (1) nhượng quyền không xem báo cáo chuỗi — D-53 · (2) không làm công cụ tách chi nhánh — D-54 · (3) `FLOWER_NETWORK` chỉ là nhãn, gộp về `CHAIN` — D-55
-- [ ] ADR-013 §6: chủ tổ chức xem nhật ký truy cập trong ứng dụng? mốc bật RLS chặn thật?
+- [x] ADR-013 §6: chủ tổ chức xem nhật ký truy cập trong ứng dụng — D-60 (có) · mốc bật RLS chặn thật — D-61 (theo khách enterprise đầu tiên)
 - [x] ADR-014 §6: tìm theo 4 số cuối (D-49) · hạn lưu mức thường dùng (D-50) · vùng dữ liệu B (D-51)
 - [ ] Kế toán/pháp lý xác nhận bảng hạn lưu D-50 trước khi cam kết với khách
 - [x] ADR-015 §6: gói CSDL theo giai đoạn + kênh cảnh báo (D-52)
@@ -109,20 +109,26 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 |---|---|---|
 | [ ] | I-1 [VẬN HÀNH] 5 tài khoản CSDL; mỗi dịch vụ một chuỗi kết nối | Không dịch vụ nào dùng tài khoản chủ |
 | [ ] | O-8 [VẬN HÀNH] `statement_timeout`, `idle_in_transaction_session_timeout` theo tài khoản | Truy vấn 20 s bị huỷ ở `smeos_app` |
-| [ ] | I-2 [SCHEMA] Nhật ký bất biến + `app.purge_reason` + `platform_access_logs` | Test `UPDATE audit_logs` bị từ chối; xoá ngoài đường purge bị từ chối |
-| [ ] | I-7 Test kiến trúc: route ghi có tenant phải ghi `audit_logs` hoặc có trong danh sách miễn | Test xanh |
+| [x] | I-2a [SCHEMA] Nhật ký bất biến (trigger trên `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage`) + đường xoá `app.purge_reason` (`setPurgeReason`); thu quyền UPDATE/DELETE ở `create-roles.sql` (đặc tả 07 §46) | `tests/tenant/append-only-logs.test.ts`: `UPDATE audit_logs` bị từ chối; xoá ngoài đường purge bị từ chối |
+| [x] | I-2b [SCHEMA] `platform_access_logs` (D-I5) + ghi mỗi lần nhân viên nền tảng truy cập dữ liệu một tổ chức (16 handler Console) + tab "Truy cập của nền tảng" trong `/audit` cho chủ tổ chức (D-60, G9) — đặc tả 07 §47 | `tests/tenant/platform-access-isolation.test.ts`: truy cập Console → một dòng; chủ tổ chức thấy, tổ chức khác không; `platform-access-guard.test.ts` |
+| [x] | I-7 Test kiến trúc: route ghi có tenant phải ghi `audit_logs` hoặc có trong danh sách miễn — `tests/unit/architecture/audit-boundary.test.ts`; 123 route cũ chưa ghi vào tệp nợ chỉ co lại (nợ #204) | Test xanh |
 | [ ] | I-4 Client extension đặt `app.org_id` theo giao dịch; worker đặt ngữ cảnh job; đo p95 | p95 tăng ≤ 10% |
-| [ ] | I-5 [SCHEMA] RLS chế độ ghi nhận trên CSDL khôi phục; chạy toàn bộ test + e2e | 0 vi phạm ghi nhận |
-| [ ] | Ghi dòng mới `AGENT_RULES.md` §14: bộ quét liên tenant phải chạy bằng `smeos_system` | — |
+| [ ] | I-5 [SCHEMA] RLS chế độ ghi nhận trên CSDL khôi phục; chạy toàn bộ test + e2e — **07/11/2026, phần test:** `DB_RLS_MODE=audit` + `DB_RLS_AUDIT_FILE` chạy toàn bộ `test:tenant` (195 tệp, 884 ca) + `test:platform` (14 tệp, 43 ca): lần đầu 54 sự kiện `pending` (52 URL giả trong test, 2 route Console `saas-policy` xếp nhầm) → sửa `db-context.ts` + test kiến trúc mọi route `requirePlatformContext` chạy quyền hệ thống; chạy lại **0 sự kiện**. Còn thiếu: CSDL khôi phục từ production + e2e | 0 vi phạm ghi nhận |
+| [x] | Ghi dòng mới `AGENT_RULES.md` §14: bộ quét liên tenant phải chạy bằng quyền hệ thống (`asSystemDb` trong ứng dụng, `smeos_system` cho script) — dòng 15 | — |
 
 ### GĐ4 — Dữ liệu cá nhân (ADR-014)
 
 | ☐ | Mục | Thay | Gate thêm |
 |---|---|---|---|
-| [ ] | P-2 [SCHEMA] **B5** `customers.status PROSPECT`; `customer_id` trên `leads`, `greeting_sessions`; backfill | — | Tenant test lead/phiên Thẻ chào trỏ đúng khách |
-| [ ] | P-3 [SCHEMA] **B5** `order_recipients` thay JSON địa chỉ/VAT | — | Phiếu in, theo dõi đơn, xuất đơn không đổi |
-| [ ] | P-4 [SCHEMA] `shared_order_access`; gia công dùng chia sẻ | — | Hết hạn → đối tác 404 |
-| [ ] | P-5 [SCHEMA] Mã hoá cột + `phone_hash` + `phone_last4`; đổi 4 chỗ tìm kiếm | — | Dump không có số rõ |
+| [x] | P-2 [SCHEMA] **B5** `customers.status PROSPECT`; `customer_id` trên `leads` (đã có), `greeting_sessions`; backfill; ghi kép — PO duyệt 07/11/2026, phương án A: PROSPECT chỉ là người nhận link Thẻ chào có SĐT chưa đặt đơn, lead vẫn tạo khách thường (đặc tả 07 §48) | — | `tests/tenant/customer-prospects.test.ts`: link/lead/đơn trỏ đúng khách cùng tổ chức; PROSPECT không hiện ở danh sách/xuất; backfill |
+| [x] | P-3a [SCHEMA] **B5** `order_recipients` (người nhận + VAT) + backfill + ghi kép ở 6 đường ghi; đọc chưa đổi — PO duyệt 07/11/2026 (D-63), đặc tả 07 §49 | — | `tests/tenant/order-recipients.test.ts`: mọi đường ghi; backfill khớp `recipientFromDeliveryAddress` |
+| [x] | P-3b **B5** Chuyển đọc người nhận/địa chỉ/VAT sang `order_recipients`: query extension của client Prisma cho mọi `orders.find*` + 4 chỗ chọn đơn lồng; `address_parts` giữ nguyên khoá địa chỉ (chép lại từ JSON) — đặc tả 07 §49 | — | `order-recipients.test.ts`: xoá phần cá nhân khỏi nơi cũ, màn hình vẫn đủ; `order-recipient-reads.test.ts` |
+| [x] | P-3c [SCHEMA] contract: bỏ người nhận/địa chỉ khỏi `orders.delivery_address`, bỏ cột `orders.vat_*` — PO duyệt 07/11/2026; migration chốt khớp rồi mới xoá (đặc tả 07 §49) | — | `order-recipients.test.ts`: JSON chỉ còn khoá vận hành, màn hình đủ; lệch → dừng không xoá; bỏ PII đúng `stripRecipientPii` |
+| [x] | P-4 [SCHEMA] `shared_order_access`; gia công dùng chia sẻ — PO duyệt 07/11/2026 (D-64): 7 ngày sau khi đơn đóng, chi nhánh được mời mất quyền ngay, tin mời chỉ ghi khu vực (đặc tả 07 §50) | — | `tests/tenant/shared-order-access.test.ts`: thu hồi / hết hạn → 404 |
+| [x] | P-5a [SCHEMA] Mã hoá cột dữ liệu cá nhân khách cuối (expand): `tenant_data_keys`, cột `*_enc` + `phone_hash`/`phone_last4`, ghi kép qua extension Prisma, job mã hoá dữ liệu cũ — PO duyệt 07/11/2026 (D-65), đặc tả 07 §51 | — | `tests/tenant/pii-encryption.test.ts` |
+| [x] | P-5b Đọc từ bản mã (`result` extension, cả truy vấn lồng; chưa có bản mã → cột rõ), tra cứu theo `phone_hash` (`pii-lookup.ts`), tìm theo 4 số cuối/đủ số (D-49); SQL thô không đọc cột cá nhân — đặc tả 07 §51 | — | `tests/tenant/pii-read.test.ts`: cột rõ bị sửa vẫn đọc đúng; +84 khớp đúng khách; phần giữa số không ra |
+| [x] | P-5c [SCHEMA] contract — PO duyệt 07/11/2026: bản mã chép **đè lên chính cột rõ** (cột Json giữ chuỗi bản mã; bản đang chạy lúc deploy vẫn đọc `*_enc` nên không lỗi, quay lại được); duy nhất theo `(organization_id, phone_hash)`; `PII_ENCRYPTION_KEY` bắt buộc; lọc theo cột bản mã bị chặn (`pii-guard.ts`); SĐT khách lẻ `order_coordinations.metadata.customerPhone` → cột bản mã `customer_phone` + băm; migration chốt mọi dòng đã có bản mã/băm, không trùng số rồi mới đè — đặc tả 07 §51, runbook §14 | — | `pii-contract.test.ts`: dữ liệu P-5b → chỉ còn bản mã, đọc đúng; thiếu bản mã/trùng số → dừng không đổi gì; `pii-encryption.test.ts`: SQL thô không thấy số rõ |
+| [ ] | P-5d [SCHEMA] Dọn: bỏ cột `*_enc` (bản sao bản mã cho quay lại P-5b) và nhánh tra `metadata.customerPhone` của đơn chưa qua job — sau khi P-5c chạy ổn và `pii:backfill` in 0 | — | Không còn cột `*_enc`; test đọc/tra cứu vẫn xanh |
 | [ ] | P-6 [SCHEMA] `retention_policies` + job hạn lưu (cần I-2) | P2-F2 | Dòng quá hạn xử lý; legal hold giữ |
 | [ ] | P-7 [SCHEMA] `data_subject_requests` + xoá/xuất | P2-F1 | Xoá lan sang tổ chức được chia sẻ |
 | [ ] | P-8 [PO] Chọn vùng dữ liệu; đổi mặc định `data_region` theo quyết định | — | Ghi sổ quyết định |
@@ -144,7 +150,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | [ ] | I-6 [SCHEMA] Bật RLS chặn thật trên production (mốc theo câu trả lời ADR-013 §6) | Test "bỏ `scopedWhere` → 0 dòng" chạy trên CSDL thật |
 | [ ] | O-9 [VẬN HÀNH] Thử tải quy mô mục tiêu trên CSDL khôi phục PITR | Biên bản p95 đạt SLO |
 | [ ] | O-10 Dọn `generation_jobs` cũ; bản sao đọc / phân vùng nếu chạm ngưỡng | Theo ngưỡng ADR-015 D-O6 |
-| [ ] | P3-03 ERD theo miền sinh từ schema, kiểm trong CI | Tệp sinh khớp schema |
+| [x] | P3-03 ERD theo miền sinh từ schema (`npm run gen:erd` → `docs/kien-truc/ERD_THEO_MIEN.md`, 10 miền), kiểm trong CI qua `npm test` | `tests/unit/architecture/erd.test.ts`: tệp sinh khớp schema, mỗi model đúng một miền |
 | [ ] | [PO] Quyết định lại kiểm thử bảo mật bên ngoài (D-26 hiện "không làm") cho khách enterprise | Ghi sổ quyết định |
 | [ ] | Gói bằng chứng: điền cột "Bằng chứng" của mục 1 cho DoD-1 → DoD-17 | PO ký nhận |
 

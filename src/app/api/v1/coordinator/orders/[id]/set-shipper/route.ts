@@ -7,7 +7,6 @@
  * Yêu cầu: Session đăng nhập có mã năng lực R5.
  */
 
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -22,17 +21,7 @@ import {
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
-
-const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
-
-const setShipperSchema = z.object({
-  shipperName: z.string().trim().min(2, "Tên shipper tối thiểu 2 ký tự").max(80),
-  shipperPhone: z
-    .string()
-    .trim()
-    .regex(VIETNAM_PHONE_RE, "Số điện thoại không hợp lệ (vd: 0912345678)"),
-  shipperNote: z.string().trim().max(200).optional(),
-})
+import { setShipperBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
@@ -43,9 +32,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const order = await repo.findSubcontractById(orderId, ctx.organizationId)
   if (!order) throw notFound()
 
-
   const body = await request.json().catch(() => ({}))
-  const parsed = setShipperSchema.safeParse(body)
+  const parsed = setShipperBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed(
       Object.fromEntries(parsed.error.issues.map((i) => [i.path[0] ?? "body", i.message]))

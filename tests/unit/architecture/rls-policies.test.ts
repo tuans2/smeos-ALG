@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process"
+import { readdirSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
 import { describe, expect, it } from "vitest"
 
@@ -36,5 +37,19 @@ describe("RLS theo tổ chức", () => {
     expect(dbContextForPath("/api/v1/organizations").kind).toBe("system")
     expect(dbContextForPath("/api/v1/organizations/current").kind).toBe("pending")
     expect(dbContextForPath("/api/v1/orders").kind).toBe("pending")
+  })
+
+  it("route Console (requirePlatformContext) ở bất kỳ đâu cũng chạy quyền hệ thống (I-5: 0 vi phạm ghi nhận)", () => {
+    const api = path.join(ROOT, "src/app")
+    const walk = (dir: string): string[] =>
+      readdirSync(dir).flatMap((e) => {
+        const full = path.join(dir, e)
+        return statSync(full).isDirectory() ? walk(full) : e === "route.ts" ? [full] : []
+      })
+    const pending = walk(path.join(api, "api"))
+      .filter((file) => /\brequirePlatformContext\(/.test(readFileSync(file, "utf8")))
+      .map((file) => "/" + path.relative(api, path.dirname(file)).split(path.sep).join("/"))
+      .filter((route) => dbContextForPath(route).kind !== "system")
+    expect(pending).toEqual([])
   })
 })

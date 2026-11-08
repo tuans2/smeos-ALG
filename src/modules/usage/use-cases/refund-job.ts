@@ -77,7 +77,8 @@ export async function refundJob(
       feature: job.feature,
       costUsd,
     })
-    await getOrganizationRepository(tx).refundCredit(ctx, daTru, { service: "AI", reason: lyDo, reference: jobId })
+    const chargedAt = luotHienTai(dongMoi).find((d) => d.status === "ENQUEUED")?.created_at ?? null
+    await getOrganizationRepository(tx).refundCredit(ctx, daTru, { service: "AI", reason: lyDo, reference: jobId, chargedAt })
     return true
   })
   if (!daHoan) return { refunded: false, reason: "da-hoan-truoc-do" }

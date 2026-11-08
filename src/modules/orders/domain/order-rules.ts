@@ -11,6 +11,8 @@ import type {
   OrderEventRecord,
   OrderSlaCalculation,
 } from "./order-types"
+import { vnCalendarDate } from "@/lib/vn-date"
+import { DELIVERY_STATUS_LABELS, ORDER_STATUS_LABELS, PRODUCTION_STATUS_LABELS } from "./order-status-labels"
 
 const VALID_ORDER_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
   DRAFT: ["CONFIRMED", "CANCELLED"],
@@ -31,10 +33,27 @@ const VALID_PRODUCTION_TRANSITIONS: Record<ProductionStatus, readonly Production
 
 const VALID_DELIVERY_TRANSITIONS: Record<DeliveryStatus, readonly DeliveryStatus[]> = {
   PENDING: ["DISPATCHED", "DELIVERING"],
-  DISPATCHED: ["DELIVERING", "PENDING"],
+  // DISPATCHED → DELIVERED: Điều phối ghi đã giao ngay khi có bằng chứng POD, không bắt qua DELIVERING (audit BL-03)
+  DISPATCHED: ["DELIVERING", "DELIVERED", "PENDING"],
   DELIVERING: ["DELIVERED", "FAILED"],
   DELIVERED: [],
   FAILED: ["DELIVERING", "PENDING"],
+}
+
+/**
+ * Trạng thái đơn KHÔNG được đặt tay qua sổ đơn (`PATCH /orders/:id`) — audit BL-01 (06/11/2026).
+ * Xác nhận là hệ quả của tiền về / duyệt giao trước; hoàn tất cần đã giao + thu đủ (ALG 4.26);
+ * huỷ cần quyền huỷ (R6) và lý do. Mỗi trạng thái có lối riêng mang đủ luật đó.
+ */
+const MANUAL_STATUS_BLOCKED: Partial<Record<OrderStatus, string>> = {
+  CONFIRMED: "Đơn tự được xác nhận khi ghi nhận tiền hoặc khi được duyệt giao trước, thu sau.",
+  COMPLETED: "Đơn chỉ hoàn tất ở màn Điều phối, sau khi đã giao và đã thu đủ tiền.",
+  CANCELLED: "Huỷ đơn bằng nút Huỷ đơn và nêu lý do.",
+}
+
+/** Lý do chặn khi người dùng tự đặt `next` cho trạng thái đơn ở sổ đơn, hoặc `null` nếu được phép. */
+export function manualStatusBlockReason(next: OrderStatus): string | null {
+  return MANUAL_STATUS_BLOCKED[next] ?? null
 }
 
 /** Kiểm tra luồng trạng thái đơn hàng */
@@ -47,7 +66,7 @@ export function validateOrderStatusTransition(
   if (!allowed.includes(next)) {
     return {
       valid: false,
-      reason: `Không thể chuyển trạng thái đơn hàng từ "${current}" sang "${next}". Trạng thái cho phép: ${allowed.join(", ") || "Không (đã kết thúc)"}.`,
+      reason: `Không thể chuyển đơn từ "${ORDER_STATUS_LABELS[current] ?? current}" sang "${ORDER_STATUS_LABELS[next] ?? next}". Bước được phép: ${allowed.map((s) => ORDER_STATUS_LABELS[s]).join(", ") || "không còn (đơn đã kết thúc)"}.`,
     }
   }
   return { valid: true }
@@ -63,7 +82,7 @@ export function validateProductionStatusTransition(
   if (!allowed.includes(next)) {
     return {
       valid: false,
-      reason: `Không thể chuyển trạng thái chế tác từ "${current}" sang "${next}". Trạng thái cho phép: ${allowed.join(", ")}.`,
+      reason: `Không thể chuyển tiến độ làm hàng từ "${PRODUCTION_STATUS_LABELS[current] ?? current}" sang "${PRODUCTION_STATUS_LABELS[next] ?? next}". Bước được phép: ${allowed.map((s) => PRODUCTION_STATUS_LABELS[s]).join(", ")}.`,
     }
   }
   return { valid: true }
@@ -79,7 +98,7 @@ export function validateDeliveryStatusTransition(
   if (!allowed.includes(next)) {
     return {
       valid: false,
-      reason: `Không thể chuyển trạng thái giao hàng từ "${current}" sang "${next}". Trạng thái cho phép: ${allowed.join(", ")}.`,
+      reason: `Không thể chuyển tiến độ giao hàng từ "${DELIVERY_STATUS_LABELS[current] ?? current}" sang "${DELIVERY_STATUS_LABELS[next] ?? next}". Bước được phép: ${allowed.map((s) => DELIVERY_STATUS_LABELS[s]).join(", ") || "không còn"}.`,
     }
   }
   return { valid: true }
@@ -156,12 +175,13 @@ export function calculateOrderSla(
 }
 
 /**
- * Sinh mã đơn hàng chuẩn FloraOS dạng `DH-YYMMDD-XXXX`
+ * Sinh mã đơn hàng chuẩn FloraOS dạng `DHYYMMDD-XXXX`, ngày theo giờ Việt Nam (audit BL-10).
  */
 export function generateOrderCode(seqNumber: number, date = new Date()): string {
-  const yy = String(date.getFullYear()).slice(-2)
-  const mm = String(date.getMonth() + 1).padStart(2, "0")
-  const dd = String(date.getDate()).padStart(2, "0")
+  const vn = vnCalendarDate(date)
+  const yy = String(vn.year).slice(-2)
+  const mm = String(vn.month).padStart(2, "0")
+  const dd = String(vn.day).padStart(2, "0")
   const suffix = String(seqNumber).padStart(4, "0")
   return `DH${yy}${mm}${dd}-${suffix}`
 }

@@ -23,6 +23,9 @@ for (const line of spec.split("\n")) {
   }
 }
 const codeEps = new Set()
+// Mã năng lực ghi thẳng trong từng handler: `requireCapability(ctx, "L2")` (audit API-12, 07/11/2026)
+const codeCaps = new Map()
+const MA_NANG_LUC = /\b[A-Z]{1,2}\d{1,2}[a-z]?\b/g
 const dive = (dir) => {
   for (const e of readdirSync(dir)) {
     const f = join(dir, e)
@@ -32,6 +35,12 @@ const dive = (dir) => {
       const src = readFileSync(f, "utf8")
       for (const m of src.matchAll(/export\s+(?:async\s+)?(?:function|const)\s+(GET|POST|PUT|PATCH|DELETE)\b/g))
         codeEps.add(`${m[1]} ${rel}`)
+      for (const phan of src.split(/(?=export\s+(?:async\s+)?(?:function|const)\s+(?:GET|POST|PUT|PATCH|DELETE)\b)/)) {
+        const m = phan.match(/^export\s+(?:async\s+)?(?:function|const)\s+(GET|POST|PUT|PATCH|DELETE)\b/)
+        if (!m) continue
+        const ma = [...phan.matchAll(/requireCapability\(\s*\w+\s*,\s*["']([A-Z]{1,2}\d{1,2}[a-z]?)["']/g)].map((x) => x[1])
+        if (ma.length) codeCaps.set(`${m[1]} ${rel}`, new Set(ma))
+      }
       // Route chỉ re-export handler (`export { fooPOST as POST }`) — trước 05/10/2026 lọt khỏi phép dò.
       for (const m of src.matchAll(/export\s*\{([^}]*)\}/g))
         for (const n of m[1].matchAll(/\bas\s+(GET|POST|PUT|PATCH|DELETE)\b/g)) codeEps.add(`${n[1]} ${rel}`)
@@ -46,6 +55,24 @@ const specN = new Map([...specEps].map(([k, v]) => [chuan(k), v]))
 console.log("── Endpoint")
 for (const [k, cap] of specN) if (!codeN.has(k) && !CHUA_XAY.test(cap)) bao(`đặc tả 06 có "${k}" nhưng không có route — thêm route, hoặc đánh dấu **CHƯA XÂY** ở cột năng lực`)
 for (const k of codeN) if (!specN.has(k)) bao(`route "${k}" không có trong đặc tả 06`)
+
+// Cột năng lực: mã mà handler gọi `requireCapability` phải có trong cột năng lực của đặc tả 06 (khi
+// cột có ghi mã). Trước 07/11/2026 chỉ đối chiếu path + method nên 8 dòng lệch không ai thấy (audit
+// API-12). Các dòng đó chờ PO chốt mã hay đặc tả đúng — danh sách này chỉ được co lại.
+const NANG_LUC_LECH_CHO_PO = new Set([]) // PO chốt 8 dòng ngày 07/11/2026 (audit API-12) — đặc tả theo mã
+console.log("── Cột năng lực")
+const lech = new Set()
+for (const [k, ma] of codeCaps) {
+  const cot = specN.get(chuan(k))
+  if (cot === undefined) continue
+  const maDacTa = new Set(cot.match(MA_NANG_LUC) ?? [])
+  if (maDacTa.size === 0) continue
+  const thieu = [...ma].filter((x) => !maDacTa.has(x))
+  if (thieu.length === 0) continue
+  lech.add(chuan(k))
+  if (!NANG_LUC_LECH_CHO_PO.has(chuan(k))) bao(`"${chuan(k)}": mã gọi ${thieu.join(", ")} nhưng đặc tả 06 ghi ${[...maDacTa].join(", ")} — sửa đặc tả hoặc mã`)
+}
+for (const k of NANG_LUC_LECH_CHO_PO) if (!lech.has(k)) bao(`NANG_LUC_LECH_CHO_PO còn giữ "${k}" dù đã khớp — xoá khỏi danh sách`)
 
 // ── 2. Bảng và enum ────────────────────────────────────────────────────────
 const doc = readFileSync("docs/dac-ta/07-database-specification.md", "utf8")

@@ -1,15 +1,16 @@
 # CODEOWNERS — Phân quyền phê duyệt mã nguồn SMEOS (ADR-011 D-UI-07)
 # Mọi PR chạm vào các vùng kiến trúc UI cốt lõi bắt buộc phải có PO phê duyệt.
+# PO = tài khoản GitHub @antranhub22 (chủ repo). Đổi PO thì sửa mọi dòng dưới đây.
 
 # Design Tokens SSOT
-/src/styles/tokens/ @po
-/src/app/globals.css @po
+/src/styles/tokens/ @antranhub22
+/src/app/globals.css @antranhub22
 
 # Core Design System Primitives & Components
-/src/components/ui/ @po
-/src/components/layout/ @po
+/src/components/ui/ @antranhub22
+/src/components/layout/ @antranhub22
 
 # Design System Documentation SSOT
-/docs/design-system/ @po
-/docs/dac-ta/screen-contracts/ @po
+/docs/design-system/ @antranhub22
+/docs/dac-ta/screen-contracts/ @antranhub22
 

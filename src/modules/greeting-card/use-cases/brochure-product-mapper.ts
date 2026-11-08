@@ -63,7 +63,7 @@ export function toCatalogProduct(item: CatalogItemRow, imageUrls: Map<string, st
     peakPriceVnd: pricing.peakPriceVnd,
     weekendIsPeak: pricing.weekendIsPeak,
     priceDimensions: pricing.dimensions.map((d) => ({ label: d.label, values: d.values })),
-    imageUrl: (mainImg ? imageUrls.get(mainImg.asset_id) ?? null : null) ?? fallbackImageUrl,
+    imageUrl: (mainImg ? imageUrls.get(mainImg.asset_id) : undefined) ?? fallbackImageUrl,
     driveLink,
     description: readDescription(src),
     flowersSummary: flowers.length > 0 ? flowers.join(", ") : null,

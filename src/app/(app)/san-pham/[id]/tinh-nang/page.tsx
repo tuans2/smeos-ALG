@@ -263,7 +263,7 @@ const handleMonitorJobs = () => {
         ) : (
           <EmptyState
             title="Cần phân tích ảnh trước"
-            description="Sản phẩm này chưa có kết quả phân tích ảnh được duyệt. Hãy chạy Phân tích ảnh (M01) và duyệt kết quả trước khi sử dụng các tính năng AI khác."
+            description="Sản phẩm này chưa có kết quả phân tích ảnh được duyệt. Hãy chạy Phân tích ảnh và duyệt kết quả trước khi sử dụng các tính năng AI khác."
             actionLabel="Đi đến Phân tích ảnh"
             onAction={() => router.push(("/tai-anh?product_id=" + productId + "&return=" + encodeURIComponent(window.location.pathname)) as Route)}
           />

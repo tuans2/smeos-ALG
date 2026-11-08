@@ -71,13 +71,17 @@ export async function countMonthlyCreditUnchecked(db: DbClient, orgId: string, c
     WHERE organization_id = ${orgId} AND service = 'CREDIT' AND period = ${period}`
 }
 
-/** Hoàn credit → trừ lại phần đã tính vào hạn mức kỳ hiện tại (không xuống dưới 0). */
+/**
+ * Hoàn credit → trừ lại phần đã tính vào hạn mức của kỳ chứa `chargedAt` (lúc đã trừ; mặc định bây giờ),
+ * không xuống dưới 0. Job trừ tháng 10 mà hoàn tháng 11 phải trả lại tháng 10 (audit BL-17).
+ */
 export async function releaseMonthlyCredit(
   db: DbClient, orgId: string, amount: number, service: string | null | undefined,
   only: LimitService[] = service === "AI" ? ["CREDIT", "AI"] : ["CREDIT"],
+  chargedAt: Date = new Date(),
 ): Promise<void> {
   if (amount <= 0) return
-  const period = creditPeriod()
+  const period = creditPeriod(chargedAt)
   for (const s of only) {
     await db.$executeRaw`UPDATE usage_limits SET used = GREATEST(used - ${amount}, 0), updated_at = now()
       WHERE organization_id = ${orgId} AND service = ${s} AND period = ${period}`

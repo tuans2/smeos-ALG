@@ -104,7 +104,7 @@ export interface ChainDispatchPolicy {
 
 export const DEFAULT_DISPATCH_MESSAGE_TEMPLATES: Readonly<DispatchMessageTemplates> = Object.freeze({
   inviteSubcontract:
-    "🌸 Có đơn gia công mới #{{orderCode}}\nGiao tại: {{deliveryAddress}}\nThời gian giao: {{deliveryTime}}\nThù lao: {{subcontractPriceVnd}}\nVui lòng nhận đơn trong {{timeoutMinutes}} phút.",
+    "🌸 Có đơn gia công mới #{{orderCode}}\nKhu vực giao: {{deliveryAddress}}\nThời gian giao: {{deliveryTime}}\nThù lao: {{subcontractPriceVnd}}\nVui lòng nhận đơn trong {{timeoutMinutes}} phút.",
   claimSuccess:
     "✅ Chi nhánh {{branchName}} đã nhận đơn #{{orderCode}}. Vui lòng kiểm tra kho trong {{graceMinutes}} phút và báo ngay nếu thiếu nguyên liệu.",
   prepReminder:

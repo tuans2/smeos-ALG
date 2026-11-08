@@ -17,3 +17,18 @@ export function belowFloorMessage(totalVnd: number, floorVnd: number): string | 
   if (!(floorVnd > 0) || totalVnd >= floorVnd) return null
   return `Giá ${formatCurrency(totalVnd)} thấp hơn giá sàn ${formatCurrency(floorVnd)} — cần Điều hành duyệt`
 }
+
+/**
+ * Giá trần của một mẫu = giá vốn × hệ số Trần (`floor_ceiling_ratio.ceilingRatio`), làm tròn XUỐNG nghìn — giá trần
+ * không bao giờ cao hơn thật (PO 07/11/2026, Q3: mã C9 chặn thật).
+ */
+export function ceilingPriceVnd(costVnd: number, ceilingRatio: number): number {
+  if (!(costVnd > 0) || !(ceilingRatio > 0)) return 0
+  return Math.floor((costVnd * ceilingRatio) / 1000) * 1000
+}
+
+/** Thông điệp chặn khi tiền hàng của các mẫu có giá vốn vượt trần; `null` khi hợp lệ hoặc không có trần. */
+export function aboveCeilingMessage(totalVnd: number, ceilingVnd: number): string | null {
+  if (!(ceilingVnd > 0) || totalVnd <= ceilingVnd) return null
+  return `Giá ${formatCurrency(totalVnd)} cao hơn giá trần ${formatCurrency(ceilingVnd)} — cần người có quyền đặt giá vượt trần duyệt`
+}

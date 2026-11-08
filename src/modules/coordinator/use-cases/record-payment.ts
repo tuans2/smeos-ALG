@@ -8,15 +8,17 @@
  *
  * Quyền: `kind = REFUND` đòi R10 (trần cứng điều hành) — kiểm ở route
  * (`payments/route.ts`), vì route mới biết `body.kind` trước khi gọi vào
- * đây. Use-case chỉ chặn logic nghiệp vụ (không hoàn quá số đã thu).
+ * đây. Use-case chỉ chặn logic nghiệp vụ — `planPayment`/`planRefund`, chung với sổ đơn (audit BL-05).
  */
 
 import { AppError } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
+import { planPayment, planRefund } from "@/modules/orders/workflow/standard-payment"
+import { CoordinatorPaymentRepository } from "../infra/coordinator-payment-repository"
 import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
-import { audit, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
+import { audit, concurrentUpdate, getOrderView, loadEditableOrderOrThrow, loadOrderOrThrow, runCoordinatorTx } from "./shared"
 
 /** Xác nhận tiền về — trần cứng Điều hành (`capability-catalog.ts`). Người có mã này ghi thu là có hiệu lực ngay. */
 export const PAYMENT_CONFIRM_CAPABILITY = "R11"
@@ -50,21 +52,18 @@ export async function recordCoordinatorPayment(
   input: RecordPaymentInput
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
-    const paidBefore = Number(row.paid_vnd)
-    const totalVnd = Number(row.total_vnd)
-
-    const delta = input.kind === "REFUND" ? -input.amountVnd : input.amountVnd
-    const paidAfter = paidBefore + delta
-    if (input.kind === "REFUND" && paidAfter < 0) {
-      throw new AppError("UNPROCESSABLE_ENTITY", "Không thể hoàn quá số tiền đã thu.")
-    }
-    const balanceAfter = totalVnd - paidAfter
+    const row = await loadEditableOrderOrThrow(ctx, getCoordinatorRepository(tx), orderIdOrCode)
+    const order = { totalVnd: Number(row.total_vnd), paidVnd: Number(row.paid_vnd), status: row.status }
+    // Một luật cho mọi đường ghi tiền (audit BL-05): chặn đơn huỷ, thu vượt phần còn phải thu, hoàn quá số đã thu.
+    const plan = input.kind === "REFUND" ? planRefund(order, input.amountVnd) : planPayment(order, input.amountVnd)
+    if (typeof plan === "string") throw new AppError("UNPROCESSABLE_ENTITY", `${plan}.`)
     // Sale/Điều phối ghi thu → chờ Điều hành xác nhận, chưa vào sổ (PO 04/11/2026, Q3 phương án b — ALG 1.16)
     const pending = input.kind !== "REFUND" && !hasCapability(ctx, PAYMENT_CONFIRM_CAPABILITY)
+    const after = pending
+      ? { paidVnd: order.paidVnd, balanceVnd: order.totalVnd - order.paidVnd }
+      : { paidVnd: plan.paidAfter, balanceVnd: plan.balanceAfter }
 
-    const payment = await repo.recordPayment(
+    const payment = await new CoordinatorPaymentRepository(tx).record(
       ctx,
       row.id,
       {
@@ -75,17 +74,16 @@ export async function recordCoordinatorPayment(
         evidenceAssetId: input.evidenceAssetId ?? null,
         note: input.note?.trim() || null,
       },
-      pending ? paidBefore : paidAfter,
-      pending ? totalVnd - paidBefore : balanceAfter,
-      pending ? "PENDING" : "CONFIRMED"
+      pending ? null : { expectedPaidVnd: order.paidVnd, paidAfter: plan.paidAfter, balanceAfter: plan.balanceAfter }
     )
+    if (!payment) throw concurrentUpdate()
     await audit(
       ctx,
       tx,
       input.kind === "REFUND" ? "coordinator.order.payment.refund" : pending ? "coordinator.order.payment.pending" : "coordinator.order.payment.record",
       row.id,
-      { paidVnd: paidBefore, balanceVnd: totalVnd - paidBefore },
-      { paidVnd: pending ? paidBefore : paidAfter, balanceVnd: pending ? totalVnd - paidBefore : balanceAfter, paymentId: payment.id, kind: input.kind, amountVnd: input.amountVnd }
+      { paidVnd: order.paidVnd, balanceVnd: order.totalVnd - order.paidVnd },
+      { ...after, paymentId: payment.id, kind: input.kind, amountVnd: input.amountVnd }
     )
     return row.id
   })
@@ -95,7 +93,7 @@ export async function recordCoordinatorPayment(
 export async function listCoordinatorPayments(ctx: TenantContext, orderIdOrCode: string): Promise<OrderPaymentView[]> {
   const repo = getCoordinatorRepository()
   const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
-  const rows = await repo.listPayments(ctx, row.id)
+  const rows = await new CoordinatorPaymentRepository().list(ctx, row.id)
   return rows.map((p) => ({
     id: p.id,
     status: p.status,

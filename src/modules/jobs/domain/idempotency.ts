@@ -12,3 +12,27 @@ export function readIdempotencyKey(request: Request): string | null {
   const trimmed = value.trim()
   return trimmed.length > 0 ? trimmed : null
 }
+
+/** Dạng chuẩn để so khớp: khoá sắp xếp (Postgres `jsonb` tự đổi thứ tự khoá), bỏ `undefined` như JSON. */
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical)
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .filter(([, v]) => v !== undefined)
+        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+        .map(([k, v]) => [k, canonical(v)])
+    )
+  }
+  return value
+}
+
+/**
+ * Cùng `Idempotency-Key` có phải cùng một yêu cầu không (audit API-11, PO 07/11/2026): so `payload` đã
+ * lưu với `payload` mới theo dạng chuẩn JSON. Lệch thì `enqueueJob` chỉ GHI CẢNH BÁO, vẫn trả job cũ —
+ * PO chọn đo tần suất trước khi chặn 422.
+ */
+export function samePayload(stored: unknown, incoming: unknown): boolean {
+  const normalize = (value: unknown) => JSON.stringify(canonical(JSON.parse(JSON.stringify(value ?? null))))
+  return normalize(stored) === normalize(incoming)
+}

@@ -55,13 +55,13 @@ describe("greeting-card session owner", () => {
   it("trình duyệt đầu tiên nhận phiên; trình duyệt sau bị từ chối 404", async () => {
     const { link } = await linkWithProduct(a, "chu")
     const params = { params: Promise.resolve({ sendCode: link.sendCode }) }
-    const first = await claimPOST(post("http://x/claim"), params)
+    const first = await claimPOST(post("http://x/api/v1/public/brochure/code/claim"), params)
     expect(first.status).toBe(200)
     expect(first.headers.get("set-cookie")).toContain(`fl_b_${link.sendCode}=`)
-    const second = await claimPOST(post("http://x/claim"), { params: Promise.resolve({ sendCode: link.sendCode }) })
+    const second = await claimPOST(post("http://x/api/v1/public/brochure/code/claim"), { params: Promise.resolve({ sendCode: link.sendCode }) })
     expect(second.status).toBe(404)
     // Chủ phiên xin lại (tải lại trang) vẫn được
-    const again = await claimPOST(post("http://x/claim", ownerCookie(link.sendCode)), { params: Promise.resolve({ sendCode: link.sendCode }) })
+    const again = await claimPOST(post("http://x/api/v1/public/brochure/code/claim", ownerCookie(link.sendCode)), { params: Promise.resolve({ sendCode: link.sendCode }) })
     expect(again.status).toBe(200)
     expect(await brochureViewer(link.sendCode, { ownerToken: null, staffOrganizationId: null })).toEqual({ viewer: "OTHER", shareCode: null })
   })
@@ -69,9 +69,9 @@ describe("greeting-card session owner", () => {
   it("người không có cookie chủ phiên không chọn mẫu, không ghi sự kiện được", async () => {
     const { product, link } = await linkWithProduct(a, "ngoai")
     const params = () => ({ params: Promise.resolve({ sendCode: link.sendCode }) })
-    expect((await selectPOST(post("http://x/select", {}, { productId: product.id }), params())).status).toBe(404)
-    expect((await eventPOST(post("http://x/event", {}, { event: "product_liked", productId: product.id }), params())).status).toBe(404)
-    expect((await eventPOST(post("http://x/event", ownerCookie(link.sendCode), { event: "product_liked", productId: product.id }), params())).status).toBe(200)
+    expect((await selectPOST(post("http://x/api/v1/public/brochure/code/select", {}, { productId: product.id }), params())).status).toBe(404)
+    expect((await eventPOST(post("http://x/api/v1/public/brochure/code/event", {}, { event: "product_liked", productId: product.id }), params())).status).toBe(404)
+    expect((await eventPOST(post("http://x/api/v1/public/brochure/code/event", ownerCookie(link.sendCode), { event: "product_liked", productId: product.id }), params())).status).toBe(200)
     const rows = await prisma.greeting_journey_events.findMany({ where: { organization_id: a.organizationId, event_type: "PRODUCT_LIKED" } })
     expect(rows).toHaveLength(1)
   })

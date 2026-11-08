@@ -55,6 +55,14 @@ export const ORDER_SOURCES: Readonly<Record<OrderSourceCode, OrderSourceDefiniti
   QUOTATION: { code: "QUOTATION", label: "Báo giá", entryStage: "AWAITING_PAYMENT", hasLead: true, hasCustomerEntryActions: false },
 }
 
+/**
+ * Nguồn khai được khi tạo đơn thẳng ở màn Điều phối (PO 07/11/2026, Q2: đơn tạo ở Điều phối vào thẳng điều phối).
+ * Cùng danh mục với `orders.source` — bỏ bộ mã riêng `ORDER_M10 · CHAT_M08 · CATALOG_M06` (audit BL-06).
+ * Thẻ chào có luồng riêng, không tạo ở Điều phối.
+ */
+export const COORDINATOR_ENTRY_SOURCES = ["MANUAL", "CHAT", "CATALOG", "LANDING", "SHORT_LINK", "CHANNEL", "NETWORK", "QUOTATION"] as const satisfies readonly OrderSourceCode[]
+export type CoordinatorEntrySource = (typeof COORDINATOR_ENTRY_SOURCES)[number]
+
 export function isOrderSourceCode(value: unknown): value is OrderSourceCode {
   return typeof value === "string" && (ORDER_SOURCE_CODES as readonly string[]).includes(value)
 }

@@ -5,14 +5,10 @@
 import { AppError } from "@/core/http/errors"
 import { inBranchScope } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import {
-  validateOrderStatusTransition,
-  validateProductionStatusTransition,
-  validateDeliveryStatusTransition,
-  brochureLockReason,
-} from "../domain/order-rules"
+import { brochureLockReason, manualStatusBlockReason } from "../domain/order-rules"
+import { checkLifecycleTransition } from "../domain/order-lifecycle"
 import type { OrderRecord, UpdateOrderInput } from "../domain/order-types"
-import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import type { IOrderRepository, PendingOrderEvent } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
@@ -32,68 +28,36 @@ export async function updateOrderProgress(
   const brochureLock = brochureLockReason(existing)
   if (brochureLock) throw new AppError("CONFLICT", brochureLock)
 
-  // Kiểm tra chuyển trạng thái order
   if (input.status && input.status !== existing.status) {
-    const check = validateOrderStatusTransition(existing.status, input.status)
-    if (!check.valid) {
-      throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái đơn không hợp lệ.")
-    }
+    const blocked = manualStatusBlockReason(input.status)
+    if (blocked) throw new AppError("UNPROCESSABLE_ENTITY", blocked)
   }
 
-  // Kiểm tra chuyển trạng thái production
-  if (input.productionStatus && input.productionStatus !== existing.productionStatus) {
-    const check = validateProductionStatusTransition(existing.productionStatus, input.productionStatus)
-    if (!check.valid) {
-      throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái chế tác không hợp lệ.")
+  // Một hàm kiểm cho bộ ba trục, chung với Điều phối (audit BL-03)
+  const check = checkLifecycleTransition(
+    { status: existing.status, productionStatus: existing.productionStatus, deliveryStatus: existing.deliveryStatus },
+    {
+      status: input.status ?? existing.status,
+      productionStatus: input.productionStatus ?? existing.productionStatus,
+      deliveryStatus: input.deliveryStatus ?? existing.deliveryStatus,
     }
-  }
+  )
+  if (!check.valid) throw new AppError("UNPROCESSABLE_ENTITY", check.reason)
 
-  // Kiểm tra chuyển trạng thái delivery
-  if (input.deliveryStatus && input.deliveryStatus !== existing.deliveryStatus) {
-    const check = validateDeliveryStatusTransition(existing.deliveryStatus, input.deliveryStatus)
-    if (!check.valid) {
-      throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái giao hàng không hợp lệ.")
-    }
-  }
-
-  // Ghi nhận sự kiện thay đổi
+  // Sự kiện thay đổi ghi cùng giao dịch với cập nhật (audit BL-18)
+  const events: PendingOrderEvent[] = []
+  const actorId = ctx.userId
   if (input.status && input.status !== existing.status) {
-    await repo.recordEvent(
-      ctx.organizationId,
-      orderId,
-      "order",
-      input.status,
-      ctx.userId,
-      existing.status,
-      "Cập nhật trạng thái đơn hàng"
-    )
+    events.push({ axis: "order", fromValue: existing.status, toValue: input.status, actorId, reason: "Cập nhật trạng thái đơn hàng" })
   }
-
   if (input.productionStatus && input.productionStatus !== existing.productionStatus) {
-    await repo.recordEvent(
-      ctx.organizationId,
-      orderId,
-      "production",
-      input.productionStatus,
-      ctx.userId,
-      existing.productionStatus,
-      "Cập nhật tiến độ chế tác"
-    )
+    events.push({ axis: "production", fromValue: existing.productionStatus, toValue: input.productionStatus, actorId, reason: "Cập nhật tiến độ chế tác" })
   }
-
   if (input.deliveryStatus && input.deliveryStatus !== existing.deliveryStatus) {
-    await repo.recordEvent(
-      ctx.organizationId,
-      orderId,
-      "delivery",
-      input.deliveryStatus,
-      ctx.userId,
-      existing.deliveryStatus,
-      "Cập nhật tiến độ giao hàng"
-    )
+    events.push({ axis: "delivery", fromValue: existing.deliveryStatus, toValue: input.deliveryStatus, actorId, reason: "Cập nhật tiến độ giao hàng" })
   }
 
-  const updated = await repo.update(ctx.organizationId, orderId, input)
+  const updated = await repo.update(ctx.organizationId, orderId, input, events)
   for (const eventKey of progressEvents(existing, input)) {
     // Không chờ: thông báo lỗi không làm hỏng việc cập nhật đơn
     void notify({

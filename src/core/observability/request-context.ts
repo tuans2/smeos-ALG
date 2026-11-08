@@ -14,6 +14,15 @@ export type RequestMeta = {
   /** Gắn bởi `requireTenantContext` sau khi xác thực phiên — nguồn phía máy chủ, không từ client. */
   organizationId?: string | undefined
   userId?: string | undefined
+  /** Giới hạn tần suất chặt nhất đã đếm trong request — `handle()` gắn thành header `RateLimit-*`. */
+  rateLimit?: RateLimitState | undefined
+}
+
+export type RateLimitState = {
+  readonly limit: number
+  readonly remaining: number
+  /** Thời điểm (ms epoch) cửa sổ hiện tại kết thúc. */
+  readonly resetAt: number
 }
 
 const store = new AsyncLocalStorage<RequestMeta>()
@@ -42,6 +51,19 @@ export function bindRequestActor(actor: { organizationId: string; userId: string
   if (!meta) return
   meta.organizationId = actor.organizationId
   meta.userId = actor.userId
+}
+
+/**
+ * Ghi lượt đếm của một luật giới hạn tần suất; nhiều luật trong một request thì giữ luật còn ít lượt
+ * nhất (hoà thì luật mở lại muộn hơn) — đúng luật sẽ chặn trước (không làm gì ngoài một request).
+ */
+export function recordRateLimit(state: RateLimitState): void {
+  const meta = store.getStore()
+  if (!meta) return
+  const prev = meta.rateLimit
+  if (!prev || state.remaining < prev.remaining || (state.remaining === prev.remaining && state.resetAt > prev.resetAt)) {
+    meta.rateLimit = state
+  }
 }
 
 export function requestIdOf(request: Request): string | null {

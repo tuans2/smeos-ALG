@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import {
@@ -7,30 +5,7 @@ import {
   toTenantContext,
 } from "@/modules/integration/use-cases/resolve-integration-context"
 import { registerIntegrationAsset } from "@/modules/integration/use-cases/register-asset"
-
-const postSchema = z.object({
-  asset_id: z.string().uuid(),
-  product_id: z.string().min(1).nullable().optional(),
-  parent_asset_id: z.string().uuid(),
-  kind: z.enum(["MARKETING", "CATALOG", "LANDING", "SOCIAL", "VIDEO"]),
-  storage_key: z.string().min(1),
-  mime_type: z.string().min(1),
-  width: z.number().int().positive().nullable().optional(),
-  height: z.number().int().positive().nullable().optional(),
-  aspect_ratio: z.string().nullable().optional(),
-  file_size: z.number().int().positive().nullable().optional(),
-  provider: z.string().nullable().optional(),
-  model: z.string().nullable().optional(),
-  model_version: z.string().nullable().optional(),
-  pipeline_version: z.string().nullable().optional(),
-  parameters: z.record(z.string(), z.unknown()).nullable().optional(),
-  prompt: z.string().nullable().optional(),
-  output_sha256: z.string().nullable().optional(),
-  quality_score: z.number().nullable().optional(),
-  identity_score: z.number().nullable().optional(),
-  generated_flags: z.record(z.string(), z.unknown()).nullable().optional(),
-  cost_usd: z.number().nullable().optional(),
-})
+import { registerAssetBody } from "@/modules/integration/contracts/http-requests"
 
 /**
  * `POST /integration/assets` (đặc tả 06 mục 11, đặc tả 08 mục 4): "Đăng ký asset dẫn xuất".
@@ -42,7 +17,7 @@ export const POST = handle(async (request) => {
   const ic = await requireIntegrationContext(request)
   const ctx = await toTenantContext(ic)
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = registerAssetBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const asset = await registerIntegrationAsset(ctx, {

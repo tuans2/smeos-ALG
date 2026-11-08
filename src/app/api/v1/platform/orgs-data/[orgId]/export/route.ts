@@ -15,6 +15,7 @@
 import { NextResponse } from "next/server"
 import { handle } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { recordPlatformAccess } from "@/modules/audit/use-cases/record-platform-access"
 import { exportOrgDataAsZip } from "@/modules/platform/use-cases/export-org-data-zip"
 import {
   exportPlatformOrgRecordsCsv,
@@ -29,6 +30,7 @@ export const GET = handle(async (request, { params }) => {
   const pctx = await requirePlatformContext(request)
   // Gác ngay đầu: nhánh CSV nuốt lỗi từng miền nên thiếu N1 từng ra ZIP rỗng thay vì 403.
   requirePlatformCapability(pctx, "N1")
+  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc dữ liệu tổ chức
   const { orgId } = await params
 
   const url = new URL(request.url)

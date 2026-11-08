@@ -25,6 +25,7 @@ import { resolveDispatchCraftFee, suggestCraftFee } from "./suggest-craft-fee"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { CLAIM_BUTTON_TEXT, closeCardsAfterClaim, inviteCardText, rememberInviteCard } from "./invite-cards"
 import { resolveDeliveryLocation } from "./resolve-geo-location"
+import { subcontractAreaText } from "../domain/subcontract-share"
 
 export interface DispatchSendResult {
   branchId: string
@@ -151,7 +152,7 @@ export async function startChainDispatch(
     })
     const messageText = renderDispatchMessage(policy.messageTemplates.inviteSubcontract, {
       orderCode: order.code,
-      deliveryAddress: recipientAddress,
+      deliveryAddress: subcontractAreaText(deliveryAreaOf(order.delivery_address)), // P-4: tin mời chỉ ghi khu vực
       deliveryTime,
       subcontractPriceVnd: craftFee.toLocaleString("vi-VN") + " đ",
       claimUrl,

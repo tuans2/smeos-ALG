@@ -9,6 +9,7 @@ import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcon
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, makeChainOrganization, type Tenant } from "../helpers/fixtures"
+import { syncSubcontractShares } from "../helpers/subcontract-shares"
 
 /**
  * ADR-012 D-T2 (T-4): chi nhánh nhận đơn điều phối chuỗi là dòng `branches` có `accepts_dispatch` (khoá tổ chức + mã;
@@ -105,6 +106,7 @@ describe("branches — chi nhánh nhận đơn điều phối chuỗi", () => {
         metadata: { subcontract_dispatch: { orderId: order.id, orderCode: code, dispatchStatus: "OPEN", currentRound: 1, claimedBranchId: null, claimedAt: null, graceExpiresAt: null, declinedBranchIds: [], invitedBranchIds: ["CN1"], roundExpiresAt: null } },
       },
     })
+    await syncSubcontractShares(t.organizationId, order.id)
     const token = signSubcontractBranchToken(t.organizationId, code, "CN1")
     const res = await actOnSubcontract(
       new Request(`http://localhost/api/v1/public/subcontract/${code}?t=${token}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "CLAIM", branchId: "CN1" }) }),

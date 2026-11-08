@@ -89,7 +89,7 @@ describe("greeting-card hardening", () => {
     const link = await createSendLink(a.ctx, { catalogId: catalog.id })
 
     const res = await selectPOST(
-      new Request("http://x/select", {
+      new Request("http://x/api/v1/public/brochure/code/select", {
         method: "POST",
         headers: { "content-type": "application/json", ...ownerCookie(link.sendCode) },
         body: JSON.stringify({ productId: product.id, product: { id: product.id, price: 1000 } }),
@@ -159,7 +159,7 @@ describe("greeting-card hardening", () => {
     const link = await createSendLink(a.ctx, { catalogId: catalog.id })
     await selectBrochureProduct(link.sendCode, product.id)
     const res = await orderPOST(
-      new Request("http://x/order", {
+      new Request("http://x/api/v1/public/brochure/code/order", {
         method: "POST",
         headers: { "content-type": "application/json", ...ownerCookie(link.sendCode) },
         body: JSON.stringify({ ...ORDER_INPUT, deliveryDate: "2020-01-01" }),

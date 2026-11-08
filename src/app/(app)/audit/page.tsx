@@ -19,6 +19,11 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PageHeader } from "@/components/ui/page-header"
 import { EmptyState } from "@/components/ui/empty-state"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { PlatformAccessTab } from "@/components/audit/platform-access-tab"
+
+// Hai tab chia đôi chiều ngang trên điện thoại (390px), co theo nội dung từ khổ sm
+const TAB = "flex-1 whitespace-normal text-center sm:flex-none"
 
 /** Bộ lọc loại thao tác gửi lên máy chủ (khớp đầu mã hành động — checklist ALG 1.17). */
 const ACTION_FILTERS = [
@@ -56,6 +61,8 @@ export default function AuditLogsPage() {
   const [actionFilter, setActionFilter] = useState("")
   const [fromDate, setFromDate] = useState("")
   const [toDate, setToDate] = useState("")
+  // Tab "Truy cập của nền tảng" (D-60): nhân viên nền tảng đã mở dữ liệu của tổ chức khi nào, để làm gì
+  const [tab, setTab] = useState<"org" | "platform">("org")
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -121,7 +128,7 @@ export default function AuditLogsPage() {
       />
 
       {/* Thông báo lỗi */}
-      {error && (
+      {tab === "org" && error && (
         <div className="flex items-center gap-2 p-3 text-caption bg-warning-bg text-warning border border-warning/30 rounded-xl">
           <AlertCircle size={15} />
           <span>{error}</span>
@@ -134,7 +141,7 @@ export default function AuditLogsPage() {
           title="Nhật Ký Kiểm Toán"
           description={<>Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span></>}
         />
-        <div className="flex items-center gap-2.5">
+        {tab === "org" && <div className="flex items-center gap-2.5">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-muted z-10" />
             <Input
@@ -155,14 +162,21 @@ export default function AuditLogsPage() {
             <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
             Làm mới
           </Button>
-        </div>
+        </div>}
       </div>
 
+      <Tabs value={tab} onValueChange={(v) => setTab(v === "platform" ? "platform" : "org")}>
+        <TabsList aria-label="Loại nhật ký" className="flex w-full sm:inline-flex sm:w-auto">
+          <TabsTrigger value="org" className={TAB}>Thao tác trong tổ chức</TabsTrigger>
+          <TabsTrigger value="platform" className={TAB}>Truy cập của nền tảng</TabsTrigger>
+        </TabsList>
+        <TabsContent value="platform"><PlatformAccessTab /></TabsContent>
+        <TabsContent value="org" className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end gap-3" aria-label="Bộ lọc nhật ký">
         <div className="flex flex-col gap-1 text-caption text-text-muted">
           Loại thao tác
           <Select value={actionFilter || "ALL"} onValueChange={(v: string) => setActionFilter(v === "ALL" ? "" : v)}>
-            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-56" aria-label="Loại thao tác"><SelectValue /></SelectTrigger>
             <SelectContent>
               {ACTION_FILTERS.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
             </SelectContent>
@@ -273,6 +287,8 @@ export default function AuditLogsPage() {
           </>
         )}
       </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Dialog Chi Tiết Before / After (03a §22 & Base-UI Dialog) */}
       <Dialog

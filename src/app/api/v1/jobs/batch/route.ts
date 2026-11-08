@@ -17,11 +17,13 @@
  * { job_id: string, status: JobStatus, usage: { cost_credit: number, balance_after: number } }
  */
 
-import { handle } from "@/core/http/response";
-import { AppError } from "@/core/http/errors";
+import { handle, jsonResponse } from "@/core/http/response";
+import { AppError, validationFailed } from "@/core/http/errors";
+import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
-import { resolveSession, requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
+import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
 import { getJobFeatureForModule, type ModuleKey } from "@/lib/feature-catalog";
+import { jobBatchBody } from "@/app/api/v1/_contracts/requests-ai-studio";
 
 const MODULE_RUN_CAPABILITY: Record<string, string> = {
   M01: "H1",
@@ -35,26 +37,20 @@ const MODULE_RUN_CAPABILITY: Record<string, string> = {
   M05: "L1",
 };
 
+// Audit API-05: trước đây thân chỉ ép kiểu, mảng `capabilities` không giới hạn.
+
 async function batchJobHandler(request: Request) {
-  const { resolved, ctx } = await requireTenantContext(request);
-  
-  const body = await request.json().catch(() => null);
-  if (!body) throw new AppError("VALIDATION_FAILED", "Thân yêu cầu không hợp lệ");
+  const { ctx } = await requireTenantContext(request);
 
-  const { productId, masterImageId, feature, capabilities, module } = body as {
-    productId: string;
-    masterImageId?: string;
-    feature: string;
-    capabilities: string[];
-    module: string;
-  };
+  const parsed = jobBatchBody.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues });
+  const { productId, masterImageId, feature, capabilities, module } = parsed.data;
 
-  // Validate required fields
-  if (!productId) throw new AppError("VALIDATION_FAILED", "Thiếu productId");
-  if (!feature) throw new AppError("VALIDATION_FAILED", "Thiếu feature");
-  if (!module) throw new AppError("VALIDATION_FAILED", "Thiếu module");
-  if (!Array.isArray(capabilities) || capabilities.length === 0) {
-    throw new AppError("VALIDATION_FAILED", "Danh sách capabilities rỗng");
+  // YC-U7: khoá do client gửi — tự sinh UUID khi thiếu (bản trước) làm mỗi lần bấm lại là một job
+  // mới, trừ credit hai lần. Kiểm trước khi tạo job, cùng cách `media/optimizations`.
+  const idempotencyKey = readIdempotencyKey(request);
+  if (!idempotencyKey) {
+    throw validationFailed({ "idempotency-key": "Bắt buộc trên mọi endpoint tạo job (YC-U7)" });
   }
 
   // Validate module -> feature mapping matches
@@ -85,7 +81,6 @@ async function batchJobHandler(request: Request) {
   if (masterImageId) payload.masterImageId = masterImageId;
 
   // Enqueue job (quota check + usage write + job create + NOTIFY in 1 TX)
-  const idempotencyKey = request.headers.get("idempotency-key") ?? crypto.randomUUID();
   const result = await enqueueJob(ctx, {
     feature,
     payload,
@@ -93,16 +88,13 @@ async function batchJobHandler(request: Request) {
     idempotencyKey,
   });
 
-  return new Response(JSON.stringify({
+  return jsonResponse({
     job_id: result.job.id,
     status: result.job.status,
     usage: {
       cost_credit: result.usage.costCredit,
       balance_after: result.usage.balanceAfter,
     },
-  }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
   });
 }
 

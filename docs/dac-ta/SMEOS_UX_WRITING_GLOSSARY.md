@@ -1,6 +1,6 @@
-# SMEOS — UX WRITING STANDARD & MASTER GLOSSARY
+# SMEOS — UX WRITING STANDARD (giọng điệu & mẫu câu)
 > **Mã định danh:** `DOC-ARCH-UX-WRITING-001`  
-> **Cấp thẩm quyền:** Level 2 — Architectural SSOT  
+> **Cấp thẩm quyền:** Level 3 — SUPPORTING. **Thuật ngữ (từ dùng / từ cấm, động từ thao tác) không định nghĩa ở đây** — bảng duy nhất là [`ux-patterns/glossary.md`](ux-patterns/glossary.md), lint R16 thực thi.  
 > **Áp dụng cho:** Tất cả các màn hình, thông báo, dialog và tương tác người dùng trên toàn hệ sinh thái SMEOS.
 
 ---
@@ -16,41 +16,9 @@
 
 ---
 
-## 2. BẢNG KHỬ TỪ LÓNG KỸ THUẬT (TECH JARGON ELIMINATION)
+## 2–3. THUẬT NGỮ (đã gộp)
 
-| Thuật ngữ Kỹ thuật Bị Cấm | Thay thế Chuẩn Hóa trên UI | Ngữ cảnh sử dụng |
-|---|---|---|
-| `BOM` / `Bill of Materials` | **Định lượng nguyên vật liệu** hoặc **Công thức chế tác** | Quản lý sản phẩm, tồn kho |
-| `Master Index` | **Danh mục tổng hợp** hoặc **Thư viện chuẩn** | Phân hệ ngành, template |
-| `PII` / `Personally Identifiable Information` | **Thông tin cá nhân khách hàng** | Quyền riêng tư, bảo mật |
-| `M0..M5` / `M-Phases` | **Tiến độ xử lý** (Nhận đơn → Chế tác → Giao hàng) | Tháp điều phối, trạng thái đơn |
-| `Control Tower` | **Tháp điều phối đơn** | Điều phối mạng lưới chi nhánh |
-| `Payload` / `Request body` | **Dữ liệu gửi lên** hoặc **Thông tin nhập liệu** | Form, thông báo lỗi |
-| `Tenant` | **Cửa hàng** (Tầng 4) hoặc **Doanh nghiệp / Tổ chức** (Tầng 1) | Quản trị tổ chức |
-| `Job` / `Background Task` | **Tiến trình xử lý** (ví dụ: "Đang tạo ảnh sản phẩm") | Hàng đợi AI, xử lý media |
-
----
-
-## 3. MASTER GLOSSARY (THUẬT NGỮ CHUẨN TOÀN HỆ THỐNG)
-
-### 3.1. Động từ Thao tác (Action Verbs)
-- **Tạo mới**: `Tạo {đối tượng}` (Tạo đơn hàng, Tạo sản phẩm, Tạo mã giảm giá). Tránh dùng `"Khởi tạo"`, `"Thêm mới"` tùy tiện.
-- **Lưu**: `Lưu thay đổi` (trong trang cài đặt, hồ sơ) hoặc `Lưu bản nháp`. Tránh dùng `"Cập nhật"` khi người dùng chỉ bấm lưu form.
-- **Xác nhận**: `Xác nhận {hành động}` (Xác nhận đặt cọc, Xác nhận hoàn thành).
-- **Hủy bỏ**: `Hủy bỏ` (đối với modal) hoặc `Hủy đơn hàng` (đối với quy trình kinh doanh).
-- **Xóa**: `Xóa {đối tượng}` (luôn kèm modal cảnh báo xác nhận rõ ràng).
-- **Gửi duyệt**: `Gửi duyệt` (đối với bài viết, ảnh, mẫu thiệp).
-- **Tải lại**: `Làm mới` (cho nút Refresh dữ liệu).
-
-### 3.2. Trạng thái Đơn hàng & Nghiệp vụ (Business States)
-- `DRAFT`: **Bản nháp**
-- `PENDING`: **Chờ xác nhận**
-- `PROCESSING` / `PREPARING`: **Đang chế tác** (hoặc Đang chuẩn bị)
-- `READY_FOR_DELIVERY`: **Sẵn sàng giao hàng**
-- `DELIVERING`: **Đang giao hàng**
-- `COMPLETED`: **Hoàn thành**
-- `CANCELLED`: **Đã hủy**
-- `REFUNDED`: **Đã hoàn tiền**
+Bảng khử từ lóng kỹ thuật và Master Glossary trước đây ở mục này đã gộp vào [`ux-patterns/glossary.md`](ux-patterns/glossary.md) ngày 07/11/2026. Chỗ mâu thuẫn được xử lý theo mã: `Job` → **tác vụ** (không dùng "Tiến trình xử lý"). Nhãn trạng thái đơn hàng lấy từ `src/lib/i18n/locales/vi/*.ts`.
 
 ---
 

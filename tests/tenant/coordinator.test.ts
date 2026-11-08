@@ -703,6 +703,43 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 1 })).status).toBe(201)
   })
 
+  // Audit BL-05 (06/11/2026): sổ thu Điều phối từng không chặn thu vượt / đơn huỷ, và ghi `paid_vnd`
+  // tuyệt đối tính từ lần đọc — hai lượt đồng thời mất một khoản. Nay chung luật `planPayment` + khoá lạc quan.
+  it("sổ thu: thu vượt phần còn phải thu hoặc thu vào đơn đã huỷ → 422, sổ không đổi", async () => {
+    const order = await newOrder(a, { ...ORDER_BODY, unitPriceVnd: 500_000 })
+    expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 500_001 })).status).toBe(422)
+    await prisma.orders.update({ where: { id: order.id }, data: { status: "CANCELLED" } })
+    expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 100_000 })).status).toBe(422)
+    expect(await prisma.order_payments.count({ where: { order_id: order.id } })).toBe(0)
+    expect(Number((await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })).paid_vnd)).toBe(0)
+  })
+
+  it("sổ thu: hai lượt thu đồng thời → paid_vnd luôn bằng tổng sổ, lượt thua (nếu có) nhận 409", async () => {
+    const order = await newOrder(a, { ...ORDER_BODY, unitPriceVnd: 1_000_000 })
+    const results = await Promise.all([
+      call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 400_000 }),
+      call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 400_000 }),
+    ])
+    for (const r of results) expect([201, 409]).toContain(r.status)
+    const row = await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })
+    const confirmed = await prisma.order_payments.findMany({ where: { order_id: order.id, status: "CONFIRMED" } })
+    const ledger = confirmed.reduce((sum, p) => sum + Number(p.amount_vnd), 0)
+    expect(confirmed).toHaveLength(results.filter((r) => r.status === 201).length)
+    expect(Number(row.paid_vnd)).toBe(ledger)
+    expect(Number(row.balance_vnd)).toBe(1_000_000 - ledger)
+  })
+
+  // PO 07/11/2026 — Q11: không tạo đơn với ngày giao đã qua; Q12: SĐT người nhận chỉ số Việt Nam.
+  it("tạo đơn Điều phối: hẹn giao hôm qua hoặc SĐT người nhận nước ngoài → 400, không tạo đơn", async () => {
+    const post = (body: Record<string, unknown>) =>
+      createOrder(withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify(body) }))
+    const yesterday = new Date(Date.now() - 36 * 3600_000).toISOString()
+    expect((await post({ ...ORDER_BODY, deliveryTargetAt: yesterday })).status).toBe(400)
+    expect((await post({ ...ORDER_BODY, recipientPhone: "+1 415 555 0100" })).status).toBe(400)
+    expect(await prisma.orders.count({ where: { organization_id: a.organizationId } })).toBe(0)
+    expect((await post({ ...ORDER_BODY, recipientPhone: "0901 234 567" })).status).toBe(201)
+  })
+
   it("order_info_requests: cách ly tổ chức — tổ chức B không thấy yêu cầu thông tin của tổ chức A", async () => {
     const orderA = await newOrder(a)
     await prisma.order_info_requests.create({

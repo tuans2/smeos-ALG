@@ -1,79 +1,28 @@
 "use client"
 
+import Link from "next/link"
 import { Printer } from "@/components/ui/icon-set/printer"
 import { Ban } from "@/components/ui/icon-set/ban"
-import { CheckCircle } from "@/components/ui/icon-set/check-circle"
 import { Truck } from "@/components/ui/icon-set/truck"
-import { Flower2 } from "@/components/ui/icon-set/flower2"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
-
-interface OrderStatusPatch {
-  status?: string
-  productionStatus?: string
-  deliveryStatus?: string
-}
+import { orderBookActions } from "@/modules/orders/domain/order-book-actions"
+import type { DeliveryStatus, OrderStatus } from "@/modules/orders/domain/order-types"
 
 interface OrderActionButtonsProps {
-  orderCode: string
-  orderStatus: string
-  productionStatus: string
-  deliveryStatus: string
-  actionLoading: boolean
+  orderStatus: OrderStatus
+  deliveryStatus: DeliveryStatus
   onPrint: () => void
   onCancelRequest: () => void
-  onUpdateStatus: (patch: OrderStatusPatch) => void
 }
 
-/** Thanh nút hành động 1-chạm cho chi tiết đơn hàng (K2: 1 primary + overflow). */
-export function OrderActionButtons({
-  orderCode: _orderCode,
-  orderStatus,
-  productionStatus,
-  deliveryStatus,
-  actionLoading,
-  onPrint,
-  onCancelRequest,
-  onUpdateStatus,
-}: OrderActionButtonsProps) {
+/**
+ * Thanh nút chi tiết đơn (K2: 1 nút chính + phụ). Không đổi tiến độ ở đây (PO 07/11/2026, Q8; nợ #150): đơn đã xác nhận
+ * nằm ở Điều phối — nơi đòi bằng chứng (phân công, QC, POD) và giữ bước điều phối khớp ba trục của đơn.
+ */
+export function OrderActionButtons({ orderStatus, deliveryStatus, onPrint, onCancelRequest }: OrderActionButtonsProps) {
   const { dict } = useI18n()
-  const canCancel = orderStatus !== "CANCELLED" && orderStatus !== "COMPLETED"
-
-  function renderPrimaryAction() {
-    if (productionStatus === "PENDING") {
-      return (
-        <Button size="sm" variant="primary" disabled={actionLoading}
-          onClick={() => onUpdateStatus({ productionStatus: "IN_PRODUCTION", status: "CONFIRMED" })}>
-          <Flower2 className="mr-1.5 h-4 w-4" /> {dict.orders.actions.receiveProduction}
-        </Button>
-      )
-    }
-    if (productionStatus === "IN_PRODUCTION") {
-      return (
-        <Button size="sm" variant="outline" disabled={actionLoading}
-          onClick={() => onUpdateStatus({ productionStatus: "COMPLETED" })}>
-          <CheckCircle className="mr-1.5 h-4 w-4" /> {dict.orders.actions.finishArranging}
-        </Button>
-      )
-    }
-    if (productionStatus === "COMPLETED" && deliveryStatus === "NOT_STARTED") {
-      return (
-        <Button size="sm" variant="outline" disabled={actionLoading}
-          onClick={() => onUpdateStatus({ deliveryStatus: "SHIPPING", status: "IN_PROGRESS" })}>
-          <Truck className="mr-1.5 h-4 w-4" /> {dict.orders.actions.startDelivery}
-        </Button>
-      )
-    }
-    if (deliveryStatus === "SHIPPING") {
-      return (
-        <Button size="sm" variant="outline" disabled={actionLoading}
-          onClick={() => onUpdateStatus({ deliveryStatus: "DELIVERED", status: "COMPLETED" })}>
-          <CheckCircle className="mr-1.5 h-4 w-4" /> {dict.orders.actions.deliverySuccess}
-        </Button>
-      )
-    }
-    return null
-  }
+  const actions = orderBookActions({ status: orderStatus, deliveryStatus })
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
@@ -81,7 +30,7 @@ export function OrderActionButtons({
         <Button variant="outline" size="sm" onClick={onPrint}>
           <Printer className="mr-1.5 h-4 w-4" /> {dict.orders.actions.printA6}
         </Button>
-        {canCancel && (
+        {actions.canCancel && (
           <Button variant="outline" size="sm"
             className="text-danger hover:bg-danger-bg border-danger/30"
             onClick={onCancelRequest}>
@@ -89,8 +38,11 @@ export function OrderActionButtons({
           </Button>
         )}
       </div>
-      <div className="flex gap-2">{renderPrimaryAction()}</div>
+      {actions.followInCoordinator && (
+        <Link href="/dieu-phoi" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-body-sm font-semibold text-primary-foreground hover:bg-primary/90">
+          <Truck className="h-4 w-4" /> {dict.orders.actions.followInCoordinator}
+        </Link>
+      )}
     </div>
   )
 }
-

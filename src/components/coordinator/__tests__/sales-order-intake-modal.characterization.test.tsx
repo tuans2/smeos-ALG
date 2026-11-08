@@ -25,7 +25,7 @@ describe("Hộp tiếp nhận đơn hàng — hành vi hiện có", () => {
   it("mở → tiêu đề, mô tả, biểu mẫu với nút huỷ và nút tạo đơn", () => {
     const html = renderToStaticMarkup(<SalesOrderIntakeModal {...props} isOpen />)
     expect(html).toContain("Tiếp Nhận Đơn Hàng Mới")
-    expect(html).toContain("Tạo đơn hàng từ Sales")
+    expect(html).toContain("Tạo đơn hàng từ bộ phận bán hàng và đưa ngay vào Tháp điều phối đơn")
     expect(html).toMatch(/<form[\s\S]*Hủy bỏ[\s\S]*Khởi Tạo Đơn &amp; Đưa Vào Tháp Điều Phối[\s\S]*<\/form>/)
     expect(html).toContain("Kiểm tra đủ thông tin đầu vào")
   })

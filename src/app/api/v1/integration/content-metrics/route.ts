@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import {
@@ -7,18 +5,7 @@ import {
   toTenantContext,
 } from "@/modules/integration/use-cases/resolve-integration-context"
 import { recordContentMetrics } from "@/modules/integration/use-cases/record-content-metrics"
-
-const postSchema = z.object({
-  platform: z.string().min(1),
-  content_id: z.string().min(1),
-  metric_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  reach: z.number().int().nonnegative().nullable().optional(),
-  impressions: z.number().int().nonnegative().nullable().optional(),
-  engagement: z.number().int().nonnegative().nullable().optional(),
-  clicks: z.number().int().nonnegative().nullable().optional(),
-  conversions: z.number().int().nonnegative().nullable().optional(),
-  spend_usd: z.number().nullable().optional(),
-})
+import { contentMetricsBody } from "@/modules/integration/contracts/http-requests"
 
 /**
  * `POST /integration/content-metrics` (đặc tả 06 mục 11): "Ghi số liệu hiệu quả nội dung".
@@ -29,7 +16,7 @@ export const POST = handle(async (request) => {
   const ic = await requireIntegrationContext(request)
   const ctx = await toTenantContext(ic)
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = contentMetricsBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const row = await recordContentMetrics(ctx, {

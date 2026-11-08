@@ -41,7 +41,7 @@ acceptance:
 ## 4. Đặc tả 6 Trạng thái Giao diện (States)
 1. **Đang tải (Loading):** Khung Skeleton mô phỏng thanh stepper và khối thông tin đơn.
 2. **Rỗng (Empty):** Đơn hàng không tồn tại hoặc đã bị thu hồi.
-3. **Lỗi (Error):** Hộp cảnh báo lỗi tải dữ liệu từ API hoặc lỗi xác thực token truy cập.
+3. **Lỗi (Error):** Hộp cảnh báo lỗi tải dữ liệu từ API hoặc lỗi xác thực token truy cập. Từ 07/11/2026 (ADR-014 P-4), chi nhánh không còn quyền xem đơn (chi nhánh khác đã nhận, hết vòng mời, đã huỷ nhận, hoặc đơn đóng quá 7 ngày) cũng nhận trạng thái này (API 404).
 4. **Không có quyền (Forbidden):** Token bảo mật không trùng khớp với chi nhánh được mời.
 5. **Dữ liệu một phần (Partial):** Hiển thị trạng thái bước trước trong khi đợi đồng bộ mạng.
 6. **Thành công (Success):** Chuyển bước mượt mà kèm thông báo xác nhận thành công.

@@ -26,7 +26,8 @@ export async function requestDiscount(
   const order = await repo.orderBase(ctx, input.orderId)
   if (!order) throw notFound()
   if (order.status === "CANCELLED") throw conflict("Đơn đã huỷ")
-  const error = discountError(input.ask, order.baseTotalVnd, await maxPercent(ctx))
+  // Trần chung (PO 07/11/2026): giảm tay + các khoản giảm đã áp ≤ 50% tiền hàng
+  const error = discountError(input.ask, order.baseTotalVnd, await maxPercent(ctx), order.prior)
   if (error) throw validationFailed({ discount: error })
   if ((await repo.listPending(ctx)).some((r) => r.order_id === order.id)) throw conflict("Đơn này đang có một yêu cầu giảm giá chờ duyệt")
 
@@ -66,7 +67,7 @@ export async function decideDiscount(
   const requested = pending.payload as unknown as DiscountAsk
   const ask: DiscountAsk = input.ask ?? (typeof requested.percent === "number" ? { percent: requested.percent } : { amountVnd: requested.amountVnd })
   if (input.approve) {
-    const error = discountError(ask, order.baseTotalVnd, await maxPercent(ctx))
+    const error = discountError(ask, order.baseTotalVnd, await maxPercent(ctx), order.prior)
     if (error) throw validationFailed({ discount: error })
     // Giảm xuống dưới giá sàn chỉ người có C10 (Điều hành) duyệt được (checklist ALG 3.4, 9.11)
     await assertNotBelowFloor(ctx, order.lines ?? [], order.baseTotalVnd - discountVndOf(ask, order.baseTotalVnd))

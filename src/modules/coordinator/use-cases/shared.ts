@@ -1,6 +1,7 @@
 import { AppError, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
+import { brochureLockReason } from "@/modules/orders/domain/order-rules"
 import { getAssetRepository } from "@/modules/assets/infra/asset-repository"
 import type { CoordinatorStage } from "../domain/coordinator-types"
 import type { RuleResult } from "../domain/operation-rules"
@@ -27,6 +28,23 @@ export async function loadOrderOrThrow(
 }
 
 /** Chuyển bước sai luồng → 409 (xung đột trạng thái), không phải 500. */
+/**
+ * Như `loadOrderOrThrow` nhưng cho THAO TÁC GHI chung của Điều phối (chuyển bước, phân công, QC, giao, sự cố,
+ * thu tiền, đóng/huỷ). Đơn Thẻ chào có luật riêng (thu tiền, trả mã giảm giá, báo khách) và có phiên điều phối
+ * do luồng gia công tạo — trước đây đi vòng qua các thao tác này được (audit hành trình O5, gói UJ-02).
+ * Các route gia công của Thẻ chào không dùng hàm này.
+ */
+export async function loadEditableOrderOrThrow(
+  ctx: TenantContext,
+  repo: CoordinatorRepository,
+  idOrCode: string
+): Promise<CoordinatorOrderRow> {
+  const row = await loadOrderOrThrow(ctx, repo, idOrCode)
+  const brochureLock = brochureLockReason(row)
+  if (brochureLock) throw new AppError("CONFLICT", brochureLock)
+  return row
+}
+
 export function ensureTransition(from: CoordinatorStage, to: CoordinatorStage, facts: StageTransitionFacts): void {
   const check = checkStageTransition(from, to, facts)
   if (!check.ok) throw new AppError("CONFLICT", check.reason, { from, to })

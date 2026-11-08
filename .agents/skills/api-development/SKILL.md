@@ -15,37 +15,41 @@ description: >-
 
 ## Quick Reference (copy-paste)
 
-### Tạo API route
+### Tạo API route (route MỚI — chuẩn API Contract v1.1, PO chốt 07/11/2026)
 ```typescript
 // src/app/api/v1/<resource>/route.ts
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { z } from "zod"
+import { defineRoute } from "@/core/http/define-route"
+import { created, page } from "@/core/http/contract-responses"
+import { pageQuery, toPage } from "@/core/http/pagination"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "L1")
-  const result = await myUseCase(ctx)
-  return jsonResponse(result)
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "L1" },
+  query: z.object({ ...pageQuery, status: z.enum(["ACTIVE", "ARCHIVED"]).optional() }),
+  handler: async ({ ctx, query }) => {
+    const rows = await listItems(ctx, { take: query.limit + 1, cursor: query.cursor, status: query.status })
+    return page(toPage(rows, query.limit)) // { data, next_cursor }
+  },
+})
+
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "L2" },
+  rateLimit: { scope: "item-create", limit: 30, windowMs: 60_000, per: "user" },
+  body: z.object({ display_name: z.string().trim().min(1).max(120) }), // snake_case — sai là ném lúc nạp
+  handler: async ({ ctx, body }) => created(await createItem(ctx, body)),
 })
 ```
+- `auth`: `tenant` (mã năng lực, hoặc `capability: null` + `reason` cho dữ liệu của chính mình), `platform`, `integration`, `public` (bắt buộc `rateLimit` theo IP), `cron`, `custom` (webhook/URL ký, kèm `reason`).
+- Tạo job / trừ credit: `idempotency: "required"` → handler nhận `idempotencyKey`; trả `accepted({ job_id, status })` (202).
+- Thành công `{ data }` / `{ data, next_cursor }`; lỗi vẫn ném `AppError`. Cấm `NextResponse.json`, `{ success }`, `{ ok }`, `{ error: "chuỗi" }` — `tests/unit/architecture/route-contract-ratchet.test.ts` chặn.
+- Route cũ (có trước 07/11/2026) nằm trong `tests/unit/architecture/route-contract-legacy.txt`; sửa route cũ thì nên chuyển sang `defineRoute` và xoá dòng — chỉ khi không đổi hợp đồng client đang dùng.
 
-### Route danh sách có Cursor Pagination (chuẩn từ products/route.ts)
+### Route cũ — mẫu `handle()` (chỉ khi sửa route có sẵn)
 ```typescript
-// src/app/api/v1/<resource>/route.ts
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "L1")
-
-  const url = new URL(request.url)
-  const limit = url.searchParams.has("limit") ? Number(url.searchParams.get("limit")) : 20
-  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
-    throw validationFailed({ limit: "Phải là số nguyên từ 1 đến 100" })
-  }
-  const cursor = url.searchParams.get("cursor") ?? undefined
-
-  const result = await listItemsUseCase(ctx, { limit, cursor })
-  return jsonResponse(result)
+  return jsonResponse(await myUseCase(ctx))
 })
 ```
 
@@ -87,7 +91,7 @@ export const MyRepository = {
 ### 1. Route Pattern
 - Mọi route PHẢI qua `requireTenantContext()` → `requireCapability()`.
 - Khoá bằng test: `tests/unit/architecture/route-capability-guard.test.ts` đỏ khi route mới không gọi gác quyền. Ngoại lệ có chủ đích (webhook, URL ký, đăng nhập…) ghi vào `NO_CAPABILITY_GUARD` kèm lý do.
-- Route wrapper `handle()` tự bắt `AppError` và format response.
+- Route wrapper `handle()` tự bắt `AppError` và format response; `ZodError` và JSON hỏng tự thành 400 (07/11/2026). Route mới dùng `defineRoute` (bọc `handle()`).
 - Route dưới `/api/v1/`. Endpoint duyệt tách: `/x/[id]/approve`.
 
 ### 2. Error Handling
@@ -105,8 +109,12 @@ export const MyRepository = {
 - Path alias `@/` (không relative). Dùng `import type` cho types.
 - Thứ tự: External → Core → Modules → Components → Lib.
 
+### 4b. Integration API & OpenAPI (07/11/2026)
+- Lược đồ thân/phản hồi của `/api/v1/integration/*` nằm ở `src/modules/integration/contracts/` (`http-requests.ts`, `http-responses.ts`); route import, không tự khai.
+- Thêm/sửa route `/integration/*` → thêm operation ở `integration-openapi.ts` → `npm run gen:openapi` → commit tệp `docs/spec/contracts/openapi/integration.openapi.json`. `tests/unit/integration/integration-openapi.test.ts` đỏ nếu quên.
+
 ### 5. Pagination (cursor-based)
-- Mọi list endpoint PHẢI có `cursor` + `limit` (max 100).
+- Mọi list endpoint PHẢI có `cursor` + `limit` (1–100, **mặc định 25** — đặc tả 06 §2, PO chốt 07/11/2026). Route mới: `pageQuery` + `toPage` (`src/core/http/pagination.ts`), con trỏ mờ.
 - Dùng cursor-based (không offset) — ổn định khi data thêm/xóa.
 
 ### 6. Transaction

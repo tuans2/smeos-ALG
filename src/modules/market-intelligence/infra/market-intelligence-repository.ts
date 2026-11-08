@@ -203,7 +203,7 @@ export class MarketIntelligenceRepository implements IMarketIntelligenceReposito
           take: 20,
         },
         pricing_rules: { select: { key: true, value: true }, take: 5 },
-        customers: { select: { tier: true }, take: 100 },
+        customers: { where: { status: "ACTIVE" }, select: { tier: true }, take: 100 },
       },
     })
     return orgs.map(withIndustryKey)

@@ -23,7 +23,7 @@ export async function findForeignQuotationReferences(
       ? prisma.leads.findFirst({ where: scopedWhere(ctx, { id: refs.leadId }), select: { id: true } })
       : null,
     refs.customerId
-      ? prisma.customers.findFirst({ where: scopedWhere(ctx, { id: refs.customerId }), select: { id: true } })
+      ? prisma.customers.findFirst({ where: scopedWhere(ctx, { id: refs.customerId, status: "ACTIVE" as const }), select: { id: true } })
       : null,
     refs.assetUsageId
       ? prisma.asset_usages.findFirst({

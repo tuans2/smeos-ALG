@@ -16,18 +16,20 @@ acceptance:
 
 # Screen Contract — Nhật Ký Kiểm Toán Tổ Chức
 
-**Tuyến:** `/audit` · **Tệp chính:** `src/app/(app)/audit/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D8
+**Tuyến:** `/audit` · **Tệp chính:** `src/app/(app)/audit/page.tsx`, `src/components/audit/platform-access-tab.tsx` · **Cập nhật:** 07/11/2026 (tab truy cập của nền tảng, D-60) · **Thẻ:** T5.D8
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `operations_manager`, `store_manager` · Vai phụ: `platform_admin`
 - Phạm vi: organization
 - Việc chính: Tra cứu lịch sử thay đổi bất biến (audit trail) của các thực thể quan trọng (cấu hình AI, bộ máy, duyệt ảnh, thành viên) trong tổ chức.
-- Câu hỏi chính: Ai đã thực hiện thao tác gì, vào thời điểm nào, dữ liệu trước và sau khi đổi khác nhau ra sao?
+- Câu hỏi chính: Ai đã thực hiện thao tác gì, vào thời điểm nào, dữ liệu trước và sau khi đổi khác nhau ra sao? Nhân viên nền tảng đã mở dữ liệu của tổ chức khi nào, để làm gì (tab thứ hai, D-60)?
 - Mật độ: EXPERT (bảng dữ liệu kỹ thuật, modal xem JSON đối chiếu before/after).
 
 ## 2. Hiện trạng (audit)
 - API:
   - `GET /api/v1/audit-logs` → Danh sách bản ghi kiểm toán của tổ chức (cần quyền `G9`)
+  - `GET /api/v1/audit-logs/platform-access` → Các lượt nhân viên nền tảng truy cập dữ liệu tổ chức (`G9`, ADR-013 D-I5, D-60)
+- Tab (03c §5b — hai nhóm dữ liệu ngang hàng): "Thao tác trong tổ chức" (mặc định, nội dung cũ) · "Truy cập của nền tảng" (danh sách chỉ đọc: mục đích bằng chữ, người vận hành, thời điểm; "Xem thêm" theo trang). Ô tìm kiếm và nút "Làm mới" ở hàng tiêu đề chỉ hiện ở tab thứ nhất; tab thứ hai có nút "Làm mới" riêng.
 - Khối: 3 khối (Hướng dẫn K1 `FeatureGuidanceCard`, Thanh tìm kiếm lọc thao tác, Bảng danh sách nhật ký & Modal Base-UI xem chi tiết)
 - Nút primary: Không có nút primary (trang tra cứu giám sát)
 - Phân quyền: Gác quyền `G9`
@@ -53,7 +55,7 @@ acceptance:
 - Tải: `SkeletonBlock` 5 dòng.
 - Không quyền: Màn hình khóa với icon `Lock` và giải thích rõ cần mã năng lực `G9`.
 - Rỗng: Thông báo chưa có sự kiện kiểm toán hoặc không tìm thấy kết quả.
-- Lỗi: Alert box màu đỏ nổi bật.
+- Lỗi: Alert box màu đỏ nổi bật. Tab "Truy cập của nền tảng": `InlineError` có nút tải lại; rỗng: `EmptyState` "Chưa có lượt truy cập nào"; tải: `SkeletonBlock` 4 dòng.
 
 ## 7. Responsive
 - 390px: Bảng chuyển sang chế độ thẻ di động (Mobile Card View) hiển thị thời gian, hành động và nút xem chi tiết.

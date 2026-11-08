@@ -1,10 +1,8 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { isHttps, serializeOwnerCookie, unlockBrochureSession } from "@/modules/greeting-card/use-cases/brochure-owner"
-
-const bodySchema = z.object({ phoneLast4: z.string().regex(/^\d{4}$/) })
+import { brochureUnlockBody } from "@/app/api/v1/public/_contracts/requests"
 
 /**
  * POST /api/v1/public/brochure/[sendCode]/unlock — `{ phoneLast4 }`: mở lại link riêng đã có đơn ở
@@ -16,7 +14,7 @@ export const POST = handle<[{ params: Promise<{ sendCode: string }> }]>(async (r
   const key = sendCode.toUpperCase().slice(0, 40)
   await enforceRateLimit(request, { scope: `brochure-unlock:${key}`, limit: 5, windowMs: 15 * 60_000 })
   await enforceRateLimit(request, { scope: `brochure-unlock-code:${key}`, limit: 10, windowMs: 86_400_000, key: "global" })
-  const parsed = bodySchema.safeParse(await request.json().catch(() => null))
+  const parsed = brochureUnlockBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ phoneLast4: "Nhập đúng 4 số cuối số điện thoại" })
   const cookie = await unlockBrochureSession(sendCode, parsed.data.phoneLast4)
   return jsonResponse({ unlocked: true }, { headers: { "set-cookie": serializeOwnerCookie(cookie, isHttps(request)) } })
