@@ -11,7 +11,6 @@
 
 import { prepareLateDeliveryDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
 import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -27,12 +26,7 @@ import {
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
-
-const decisionSchema = z.object({
-  step: z.enum(["QC", "SHIPPER", "POD"]),
-  decision: z.enum(["APPROVE", "REJECT"]),
-  reviewNote: z.string().trim().max(300).optional(),
-})
+import { bypassDecisionBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 const STEP_LABEL = { QC: "ảnh thành phẩm", SHIPPER: "thông tin shipper", POD: "ảnh giao hàng" } as const
 
@@ -42,7 +36,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const { id: orderId } = await context.params
 
   const body = await request.json().catch(() => ({}))
-  const parsed = decisionSchema.safeParse(body)
+  const parsed = bypassDecisionBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const { step, decision, reviewNote } = parsed.data

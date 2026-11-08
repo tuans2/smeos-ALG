@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { assertNotSelfApproval } from "@/modules/organization/use-cases/assert-not-self-approval"
 import { AppError, notFound, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -7,12 +6,7 @@ import { CancellationRepository } from "@/modules/greeting-card/infra/cancellati
 import { canDecideCancellation, isInTransit } from "@/modules/greeting-card/domain/cancellation-request"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
-
-const decisionSchema = z.object({
-  approve: z.boolean(),
-  note: z.string().max(1000).optional().default(""),
-  actualRefundVnd: z.number().int().nonnegative().max(10_000_000_000).optional(),
-})
+import { cancellationDecisionBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 /**
  * `POST /api/v1/greeting-card/cancellation-requests/:id/decision`
@@ -22,7 +16,7 @@ const decisionSchema = z.object({
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
   const { id } = await context.params
-  const parsed = decisionSchema.safeParse(await request.json().catch(() => null))
+  const parsed = cancellationDecisionBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const repo = new CancellationRepository()

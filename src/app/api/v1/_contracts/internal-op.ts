@@ -11,19 +11,23 @@ export type Op = Omit<OpenApiOperation, "tags" | "responses" | "security" | "err
   /** Mã năng lực (`R1`, "`R15` hoặc `Q1`"…); `null` khi `auth` là `session`/`public`. */
   cap: string | null
   errors?: number[]
-  /** `tenant` (mặc định) · `session`: chỉ cần phiên, chưa cần tổ chức · `public`: không cần phiên. */
-  auth?: "tenant" | "session" | "public"
+  /**
+   * `tenant` (mặc định) · `session`: chỉ cần phiên, chưa cần tổ chức · `public`: không cần phiên · `platform`: phiên
+   * người vận hành nền tảng (mã `N*`).
+   */
+  auth?: "tenant" | "session" | "public" | "platform"
 }
 export const SESSION_ONLY = "phiên đăng nhập"
 export const PUBLIC = "công khai"
 
 export const op = (tag: string, o: Op): OpenApiOperation => {
   const { ok, cap, errors = [], auth = "tenant", ...rest } = o
-  const base = auth === "public" ? [] : auth === "session" ? [401] : o.method === "get" ? [401, 403, 409] : [401, 402, 403, 409]
+  const base =
+    auth === "public" ? [] : auth === "session" ? [401] : auth === "platform" ? [401, 403] : o.method === "get" ? [401, 403, 409] : [401, 402, 403, 409]
   return {
     ...rest,
     tags: [tag],
-    security: auth === "public" ? [] : ["tenantSession"],
+    security: auth === "public" ? [] : auth === "platform" ? ["platformSession"] : ["tenantSession"],
     responses: { [ok[0]]: ok[1] },
     errors: [...new Set([...base, ...errors])].sort((a, b) => a - b),
     extensions: { "x-capability": auth === "public" ? PUBLIC : auth === "session" ? SESSION_ONLY : (cap ?? SESSION_ONLY) },

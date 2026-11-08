@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -9,17 +8,9 @@ import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee
 import { suggestCraftFee } from "@/modules/greeting-card/use-cases/suggest-craft-fee"
 import { listLinkedTelegramChatIds } from "@/modules/greeting-card/infra/telegram-linked-chats"
 import { rankBranchesForOrder, startChainDispatch } from "@/modules/greeting-card/use-cases/start-chain-dispatch"
+import { chainDispatchBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 
 type RouteCtx = { params: Promise<{ id: string }> }
-
-const dispatchSchema = z.object({
-  /**
-   * Danh sách branchId đã được Điều hành DUYỆT để phát lệnh.
-   * Bắt buộc từ 1–10 chi nhánh.
-   */
-  approvedBranchIds: z.array(z.string().min(1)).min(1).max(10),
-  subcontractPriceVnd: z.number().int().min(0).optional(),
-})
 
 /**
  * GET /api/v1/greeting-card/orders/[id]/chain-dispatch
@@ -97,7 +88,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
 
   const { id } = await context.params
   const body = await request.json().catch(() => ({}))
-  const parsed = dispatchSchema.safeParse(body)
+  const parsed = chainDispatchBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const { approvedBranchIds, subcontractPriceVnd } = parsed.data

@@ -1,15 +1,10 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { setPartnerUnlockedTools } from "@/modules/chain-partnership/infra/partner-tool-settings-repository"
 import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
-
-const updateToolsSchema = z.object({
-  // Mã công cụ là navKey dạng chữ thường-gạch-ngang; giới hạn độ dài để không ghi rác vào settings
-  unlockedTools: z.array(z.string().regex(/^[a-z0-9-]{1,64}$/)).max(200),
-})
+import { partnerToolsBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 export const PATCH = handle(async (request, { params }: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request)
@@ -29,7 +24,7 @@ export const PATCH = handle(async (request, { params }: { params: Promise<{ id: 
   }
 
   const rawBody = (await request.json()) as unknown
-  const parsed = updateToolsSchema.safeParse(rawBody)
+  const parsed = partnerToolsBody.safeParse(rawBody)
 
   if (!parsed.success) {
     throw validationFailed({ reason: "Dữ liệu danh mục công cụ không hợp lệ" })
