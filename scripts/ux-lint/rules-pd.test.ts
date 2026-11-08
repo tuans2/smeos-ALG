@@ -16,6 +16,18 @@ describe("UX Lint R13–R16 (03c §7)", () => {
     expect(run(checkR13, `window.confirm("x")`, "src/components/ui/confirm-dialog.tsx")).toHaveLength(0)
   })
 
+  it("R13 bắt cả alert() và prompt() của trình duyệt (tham số chuỗi hay biểu thức)", () => {
+    expect(run(checkR13, `alert("Lỗi")`)).toHaveLength(1)
+    expect(run(checkR13, `alert(err instanceof Error ? err.message : "Lỗi")`)).toHaveLength(1)
+    expect(run(checkR13, `window.alert(msg)`)).toHaveLength(1)
+    expect(run(checkR13, `const v = window.prompt("Tên view")?.trim()`)).toHaveLength(1)
+    expect(run(checkR13, `const reason = prompt("Lý do:")`)).toHaveLength(1)
+    expect(run(checkR13, `toast.error("Lỗi"); const [askText] = usePromptDialog()`)).toHaveLength(0)
+    expect(run(checkR13, `const [prompt, dialog] = usePromptDialog()\nawait prompt({})`)).toHaveLength(0)
+    expect(run(checkR13, `window.alert("x")`, "src/components/ui/toast.tsx")).toHaveLength(0)
+    expect(run(checkR13, `alert("x")`)[0]?.message).toContain("useToast")
+  })
+
   it("R14 bắt so sánh với trạng thái tác vụ tự đặt", () => {
     expect(run(checkR14, `if (s.status === "done") {}`)).toHaveLength(1)
     expect(run(checkR14, `if ("processing" !== step) {}`)).toHaveLength(1)
@@ -36,5 +48,26 @@ describe("UX Lint R13–R16 (03c §7)", () => {
     expect(run(checkR16, `const a = <p>{items.map((v) => \`job \${v.id}\`)}</p>`)).toHaveLength(1)
     expect(run(checkR16, `const a = <a href="/job" onClick={() => router.push("/job")}>Tác vụ</a>`)).toHaveLength(0)
     expect(run(checkR16, `const a = <p className="render-box">Đang dựng video</p>`)).toHaveLength(0)
+  })
+
+  it("R16 bắt thuật ngữ kỹ thuật gộp từ chuẩn viết UX (BOM, PII, tenant, Control Tower, M0–M5…)", () => {
+    expect(run(checkR16, `const a = <p>Định lượng theo BOM</p>`)).toHaveLength(1)
+    expect(run(checkR16, `const a = <p>Ẩn PII của khách</p>`)).toHaveLength(1)
+    expect(run(checkR16, `const a = <p>Dữ liệu riêng của từng tenant</p>`)).toHaveLength(1)
+    expect(run(checkR16, `const a = <h2 title="Control Tower">Điều phối</h2>`)).toHaveLength(1)
+    expect(run(checkR16, `const a = <p>Nhắc ở mốc M2</p>`)).toHaveLength(1)
+    expect(run(checkR16, `const a = <p>Payload không hợp lệ</p>`)).toHaveLength(1)
+    expect(run(checkR16, `const a = <p>Định lượng nguyên vật liệu cho cửa hàng</p>`)).toHaveLength(0)
+    expect(run(checkR16, `const a = <p className="m-2 tenant-box">Cỡ M20</p>`)).toHaveLength(0)
+  })
+
+  it("R16 soát chữ hiển thị khai trong mảng/object (label, title, description…), bỏ qua khoá không hiển thị", () => {
+    expect(run(checkR16, `const TABS = [{ id: "INTAKE", label: "P1 Tiếp nhận" }]`)).toHaveLength(1)
+    expect(run(checkR16, `const STEPS = [{ title: "M01: Duyệt thành phần" }]`)).toHaveLength(1)
+    expect(run(checkR16, `const X = { description: \`Tab \${n} (M04b)\` }`)).toHaveLength(1)
+    expect(run(checkR16, `const X = { label: "Cấp độ Rủi ro Cao (R1)" }`)).toHaveLength(1)
+    expect(run(checkR16, `const X = { label: "Sale Pitch" }`)).toHaveLength(1)
+    expect(run(checkR16, `const X = { id: "P1 Tiếp nhận", code: "M01", stage: "R1" }`)).toHaveLength(0)
+    expect(run(checkR16, `const X = { subtitle: "Local Metal GPU (Apple M3)" }`)).toHaveLength(0)
   })
 })

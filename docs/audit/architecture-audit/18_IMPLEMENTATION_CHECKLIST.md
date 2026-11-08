@@ -180,7 +180,7 @@ không sinh check nào thì không deploy. Ruleset `main` ở P0-03 vẫn nên b
 - [ ] **P2-A8 Khoá công cụ phủ API** (D-35): thêm API cho Thẻ chào, quét ảnh, mẫu · bỏ `system-optimizer` · test
 - [ ] **P2-A9 Nav Mẹ lọc mã N + sửa 2 liên kết hỏng**
 - [ ] **P2-A10 Áp ma trận Thanh toán, Phí gia công** (ngoài Thẻ chào) + tenant test
-- [ ] **P2-A11 Bộ test đối chiếu tầng** (mỗi trục × Mẹ/Chuỗi/Cửa hàng) xanh trong CI
+- [x] **P2-A11 Bộ test đối chiếu tầng** (mỗi trục × Mẹ/Chuỗi/Cửa hàng) xanh trong CI — `tests/tenant/tier-consistency.test.ts`
 
 ## 5. GĐ2-B — Thương mại
 

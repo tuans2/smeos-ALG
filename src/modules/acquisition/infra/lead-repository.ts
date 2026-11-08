@@ -1,6 +1,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy/tenant-context"
 import type { LeadSource, LeadStatus, Utm } from "../domain/lead-rules"
+import { phoneEquals } from "@/core/security/pii-lookup"
 
 export interface NewLeadRow {
   organizationId: string
@@ -87,7 +88,7 @@ export class LeadRepository {
   }
 
   async countRecentByPhone(organizationId: string, phone: string, since: Date): Promise<number> {
-    return prisma.leads.count({ where: { organization_id: organizationId, phone, created_at: { gte: since } } })
+    return prisma.leads.count({ where: { organization_id: organizationId, created_at: { gte: since }, AND: [phoneEquals(organizationId, phone)] } }) // P-5b
   }
 
   async list(ctx: TenantContext, opts: { status?: LeadStatus | readonly LeadStatus[] | undefined; limit: number; cursor?: string | undefined }) {

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
@@ -31,6 +32,7 @@ export function PrintWorkflow({
   storeName,
   onSuccessExport,
 }: PrintWorkflowProps) {
+  const toast = useToast()
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1)
   const [presetCode, setPresetCode] = useState<PrintPresetCode>(initialPresetCode)
   const [material, setMaterial] = useState<string>("couche-300")
@@ -145,7 +147,7 @@ export function PrintWorkflow({
         onSuccessExport()
       }
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Đã có lỗi khi xuất bản in")
+      toast.error(err instanceof Error ? err.message : "Đã có lỗi khi xuất bản in")
     } finally {
       setIsExporting(false)
     }

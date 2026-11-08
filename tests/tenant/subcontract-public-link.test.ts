@@ -7,6 +7,7 @@ import { SUBCONTRACT_TOKEN_HEADER, signSubcontractBranchToken } from "@/modules/
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, readJson, type Tenant } from "../helpers/fixtures"
+import { syncSubcontractShares } from "../helpers/subcontract-shares"
 
 /** Cùng một mã đơn ở hai tổ chức — mã đơn chỉ duy nhất trong một tổ chức. */
 const CODE = "DH261021-0001"
@@ -31,6 +32,7 @@ async function seedDispatchedOrder(t: Tenant, label: string, dispatched = true):
         : {},
     },
   })
+  await syncSubcontractShares(t.organizationId, order.id)
   return { branchId: branch.id }
 }
 
@@ -100,7 +102,7 @@ describe("link Thẻ Gia Công công khai", () => {
     expect((coord?.metadata as Record<string, Record<string, unknown>>).subcontract_dispatch?.dispatchStatus).toBe("OPEN")
   })
 
-  it("đơn đã có chi nhánh khác nhận: chi nhánh được mời KHÔNG thấy SĐT, ảnh QC, shipper; không xin bỏ qua được", async () => {
+  it("đơn đã có chi nhánh khác nhận: chi nhánh được mời mất quyền xem (404, P-4), không xin bỏ qua được; chi nhánh làm đơn thấy đủ", async () => {
     const other = await prisma.branches.create({ data: { organization_id: a.organizationId, name: "Chi nhánh khác", code: "CN-X" } })
     const order = await prisma.orders.findFirstOrThrow({ where: { organization_id: a.organizationId } })
     await prisma.orders.update({
@@ -117,12 +119,10 @@ describe("link Thẻ Gia Công công khai", () => {
         },
       },
     })
+    await syncSubcontractShares(a.organizationId, order.id)
 
-    const outsider = (await readJson(await view(other.id, signSubcontractBranchToken(a.organizationId, CODE, other.id)))).data as Record<string, unknown>
-    expect(outsider.isPhoneMasked).toBe(true)
-    expect(outsider.recipientPhone).not.toBe("0912345678")
-    expect(outsider.qcPhotos).toEqual([])
-    expect(outsider.shipperInfo).toBeNull()
+    // Trước P-4: chi nhánh được mời vẫn mở được thẻ (SĐT che) tới hết hạn link; nay mất quyền ngay khi chi nhánh khác nhận
+    expect((await view(other.id, signSubcontractBranchToken(a.organizationId, CODE, other.id))).status).toBe(404)
 
     const owner = (await readJson(await view(branchA, signSubcontractBranchToken(a.organizationId, CODE, branchA)))).data as Record<string, unknown>
     expect(owner.isPhoneMasked).toBe(false)
@@ -136,6 +136,6 @@ describe("link Thẻ Gia Công công khai", () => {
       }),
       { params: Promise.resolve({ orderCode: CODE }) }
     )
-    expect(bypass.status).toBe(409)
+    expect(bypass.status).toBe(404)
   })
 })

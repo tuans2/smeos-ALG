@@ -222,7 +222,7 @@ export class OrganizationRepository implements IOrganizationRepository {
     if (result.count === 0) return
     await appendCreditEntry(this.db, organizationId, "REFUND", amount, meta)
     // Hoàn lượt dùng → trả lại phần đã tính vào hạn mức tháng
-    await releaseMonthlyCredit(this.db, organizationId, amount, meta.service)
+    await releaseMonthlyCredit(this.db, organizationId, amount, meta.service, undefined, meta.chargedAt ?? undefined)
   }
 
 

@@ -4,20 +4,25 @@
  */
 
 import type { CustomerTier, CustomerConsentItem } from "./customer-master-index"
+import {
+  DEFAULT_CUSTOMER_TIER_THRESHOLDS,
+  type CustomerTierThresholds,
+} from "@/modules/organization/domain/industry-customer-tiers"
 
 /**
- * Phân hạng khách hàng tự động theo RFM (Frequency & Monetary):
- * - VIP: >= 10.000.000 đ hoặc >= 10 đơn
- * - GOLD: >= 5.000.000 đ hoặc >= 5 đơn
- * - SILVER: >= 2.000.000 đ hoặc >= 3 đơn
- * - BRONZE: >= 500.000 đ hoặc >= 1 đơn
- * - NEW: Chưa phát sinh đơn
+ * Phân hạng khách hàng tự động theo RFM (Frequency & Monetary). Ngưỡng theo ngành của tiệm (PO 07/11/2026, Q6);
+ * mặc định (ngành hoa): VIP ≥ 10.000.000 đ hoặc ≥ 10 đơn · GOLD ≥ 5 tr / 5 đơn · SILVER ≥ 2 tr / 3 đơn ·
+ * BRONZE ≥ 500.000 đ / 1 đơn · NEW chưa phát sinh. `totalSpentVnd` là tiền ĐÃ THU, không gồm phần còn nợ.
  */
-export function deriveCustomerTier(totalSpentVnd: number, orderCount: number): CustomerTier {
-  if (totalSpentVnd >= 10_000_000 || orderCount >= 10) return "VIP"
-  if (totalSpentVnd >= 5_000_000 || orderCount >= 5) return "GOLD"
-  if (totalSpentVnd >= 2_000_000 || orderCount >= 3) return "SILVER"
-  if (totalSpentVnd >= 500_000 || orderCount >= 1) return "BRONZE"
+export function deriveCustomerTier(
+  totalSpentVnd: number,
+  orderCount: number,
+  thresholds: CustomerTierThresholds = DEFAULT_CUSTOMER_TIER_THRESHOLDS
+): CustomerTier {
+  for (const tier of ["VIP", "GOLD", "SILVER", "BRONZE"] as const) {
+    const t = thresholds[tier]
+    if (totalSpentVnd >= t.spentVnd || orderCount >= t.orders) return tier
+  }
   return "NEW"
 }
 

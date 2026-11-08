@@ -5,6 +5,10 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { vnDayBounds } from "@/lib/vn-date"
+import { takeStock } from "./order-stock"
+import { storedDeliveryAddress, upsertOrderRecipient } from "./order-recipient-repository"
+import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "./order-recipient-view"
 import type {
   Prisma,
   order_assignments,
@@ -22,7 +26,7 @@ import type {
   OrderEventRecord,
   OrderEventAxis,
 } from "../domain/order-types"
-import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import type { IOrderRepository, PendingOrderEvent } from "../domain/repositories/order-repository.interface"
 import { linkLeadToOrder } from "./order-lead-link"
 import { buildOrderListWhere } from "./order-list-where"
 
@@ -91,15 +95,13 @@ function mapPrismaOrder(row: OrderRow): OrderRecord {
 
 export class OrderRepository implements IOrderRepository {
   async countTodayOrders(organizationId: string, date = new Date()): Promise<number> {
-    const startOfDay = new Date(date)
-    startOfDay.setHours(0, 0, 0, 0)
-    const endOfDay = new Date(date)
-    endOfDay.setHours(23, 59, 59, 999)
+    // Ngày Việt Nam, khớp ngày trong mã `generateOrderCode` (audit BL-10)
+    const { start, end } = vnDayBounds(date)
 
     return prisma.orders.count({
       where: {
         organization_id: organizationId,
-        created_at: { gte: startOfDay, lte: endOfDay },
+        created_at: { gte: start, lt: end },
       },
     })
   }
@@ -121,15 +123,15 @@ export class OrderRepository implements IOrderRepository {
           total_vnd: totalVnd,
           balance_vnd: totalVnd,
           pricing_rule_ref: (input.pricingRuleRef as unknown as Prisma.InputJsonValue) ?? null,
-          voucher_id: input.voucherId ?? null,
           card_message: input.cardMessage ?? null,
           internal_note: input.internalNote ?? null,
           delivery_window: (input.deliveryWindow as unknown as Prisma.InputJsonValue) ?? null,
-          delivery_address: (input.deliveryAddress as unknown as Prisma.InputJsonValue) ?? null,
+          delivery_address: storedDeliveryAddress(input.deliveryAddress), // P-3c: người nhận chỉ ở order_recipients
           created_by: createdBy,
           ...(input.source ? { source: input.source } : {}),
           owner_sale_id: input.ownerSaleId ?? null,
           lead_id: input.leadId ?? null,
+          idempotency_key: input.idempotencyKey ?? null,
           events: {
             create: {
               axis: "order",
@@ -142,10 +144,12 @@ export class OrderRepository implements IOrderRepository {
       })
 
       if (input.leadId) await linkLeadToOrder(tx, organizationId, input.leadId, ord.id)
+      await upsertOrderRecipient(tx, organizationId, ord.id, { deliveryAddress: input.deliveryAddress ?? null })
 
       if (input.items && input.items.length > 0) {
+        const stock = await takeStock(tx, organizationId, input.branchId ?? null, input.items) // Q9: trừ tồn cùng giao dịch
         await tx.order_items.createMany({
-          data: input.items.map((it) => ({
+          data: input.items.map((it, i) => ({
             organization_id: organizationId,
             order_id: ord.id,
             product_id: it.productId ?? null,
@@ -153,7 +157,7 @@ export class OrderRepository implements IOrderRepository {
             description: it.description ?? null,
             quantity: it.quantity,
             unit_price_vnd: it.unitPriceVnd,
-            metadata: (it.metadata as unknown as Prisma.InputJsonValue) ?? undefined,
+            metadata: (stock[i] ? { ...(it.metadata ?? {}), stock: stock[i] } : it.metadata) as unknown as Prisma.InputJsonValue ?? undefined,
           })),
         })
       }
@@ -178,6 +182,14 @@ export class OrderRepository implements IOrderRepository {
         assignments: true,
         events: { orderBy: { created_at: "asc" } },
       },
+    })
+    return row ? mapPrismaOrder(row) : null
+  }
+
+  async findByIdempotencyKey(organizationId: string, key: string): Promise<OrderRecord | null> {
+    const row = await prisma.orders.findUnique({
+      where: { organization_id_idempotency_key: { organization_id: organizationId, idempotency_key: key } },
+      include: { items: true, events: true },
     })
     return row ? mapPrismaOrder(row) : null
   }
@@ -220,7 +232,8 @@ export class OrderRepository implements IOrderRepository {
   async update(
     organizationId: string,
     id: string,
-    input: UpdateOrderInput
+    input: UpdateOrderInput,
+    events: readonly PendingOrderEvent[] = []
   ): Promise<OrderRecord> {
     // Đảm bảo cô lập tenant: đơn phải thuộc tổ chức
     const existing = await prisma.orders.findFirst({
@@ -238,19 +251,28 @@ export class OrderRepository implements IOrderRepository {
     if (input.cardMessage !== undefined) data.card_message = input.cardMessage
     if (input.internalNote !== undefined) data.internal_note = input.internalNote
     if (input.deliveryWindow !== undefined) data.delivery_window = input.deliveryWindow as unknown as Prisma.InputJsonValue
-    if (input.deliveryAddress !== undefined) data.delivery_address = input.deliveryAddress as unknown as Prisma.InputJsonValue
+    if (input.deliveryAddress !== undefined) data.delivery_address = storedDeliveryAddress(input.deliveryAddress) // P-3c
 
-    const row = await prisma.orders.update({
-      where: { id },
-      data,
-      include: {
-        items: true,
-        assignments: true,
-        events: { orderBy: { created_at: "asc" } },
-      },
+    // Sự kiện + người nhận + đơn: một giao dịch (audit BL-18)
+    const row = await prisma.$transaction(async (tx) => {
+      if (events.length > 0) {
+        await tx.order_events.createMany({
+          data: events.map((e) => ({ organization_id: organizationId, order_id: id, axis: e.axis, from_value: e.fromValue, to_value: e.toValue, actor_id: e.actorId, reason: e.reason })),
+        })
+      }
+      if (input.deliveryAddress !== undefined) await upsertOrderRecipient(tx, organizationId, id, { deliveryAddress: input.deliveryAddress })
+      return tx.orders.update({
+        where: { id },
+        data,
+        include: {
+          items: true,
+          assignments: true,
+          events: { orderBy: { created_at: "asc" } },
+          recipient: RECIPIENT_VIEW_SELECT, // `update` không qua extension đọc — ghép tay
+        },
+      })
     })
-
-    return mapPrismaOrder(row)
+    return mapPrismaOrder(withDeliveryView(row))
   }
 
   async createAssignment(

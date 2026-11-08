@@ -11,6 +11,8 @@ import type { Prisma } from "@/generated/prisma/client"
 import { withIndustryKey, withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
 import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
+import { subcontractShares } from "../domain/subcontract-share"
+import { hasActiveOrderShare, syncOrderShares } from "@/modules/orders/infra/shared-order-access-repository"
 import type { ISubcontractClaimStore } from "../use-cases/dispatch-subcontract-order"
 import type { DeliveryGeoEntry, IDeliveryGeoStore } from "../use-cases/resolve-geo-location"
 import { queueOrderNotification } from "../use-cases/notify-customer"
@@ -77,6 +79,7 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
         })
       }
       accepted = await this.syncOrderWithDispatch(tx, ctx, next)
+      await syncOrderShares(tx, ctx.organizationId, orderId, subcontractShares(next)) // P-4: quyền xem theo phiên
       return result
     })
     // Gửi sau khi giao dịch đã ghi — giao dịch huỷ thì không báo khách
@@ -85,6 +88,16 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
   }
 
   /** Ghi trạng thái chỉ khi trạng thái hiện tại (dưới khoá dòng) còn là `expectedStatus`. */
+  /** P-4: chi nhánh `branchKey` còn được xem đơn (Thẻ Gia Công) — quyền chưa thu hồi, chưa quá hạn sau khi đơn đóng. */
+  async hasBranchShare(organizationId: string, orderId: string, branchKey: string, now = new Date()): Promise<boolean> {
+    return hasActiveOrderShare(this.db, organizationId, orderId, branchKey, now)
+  }
+
+  /** P-4: cấp/thu quyền xem theo phiên điều phối đang lưu (dữ liệu dựng sẵn, công cụ vận hành). */
+  async syncSharesFromState(ctx: TenantContext, orderId: string): Promise<void> {
+    await syncOrderShares(this.db, ctx.organizationId, orderId, subcontractShares(await this.loadSubcontractState(ctx, orderId)))
+  }
+
 
   async loadDeliveryGeo(ctx: TenantContext, orderId: string): Promise<DeliveryGeoEntry | null> {
     const coordination = await this.db.order_coordinations.findFirst({

@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -12,22 +10,7 @@ import {
 } from "@/modules/media/domain/variant-rules"
 import { requestVariantBatch } from "@/modules/media/use-cases/request-variants"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-
-const presetsSchema = z.union([z.literal("all"), z.array(z.enum(VARIANT_PRESET_IDS)).min(1)])
-const ratiosSchema = z.union([z.literal("all"), z.array(z.enum(VARIANT_RATIOS)).min(1)])
-
-const postSchema = z.object({
-  master_asset_id: z.string().min(1),
-  presets: presetsSchema.default("all"),
-  ratios: ratiosSchema.default("all"),
-  watermark: z.boolean().default(true),
-  // AIC-14 — chốt 18/09 (AskUserQuestion): chỉ chỉnh vùng nền, mặc định tắt.
-  auto_enhance: z.boolean().default(false),
-  // Nợ #130e (Đợt 2, 25/09/2026): lấy cỡ cảnh / ánh sáng / bảng màu của ĐÚNG
-  // cảnh trong kịch bản Chặng 05 cho cả lô. Bỏ trống = mặc định như Đợt 1.
-  scene_plan_id: z.string().trim().min(1).max(160).optional(),
-  scene_index: z.number().int().min(1).max(5).optional(),
-})
+import { variantBatchBody } from "@/app/api/v1/_contracts/requests-media"
 
 /**
  * `POST /media/variants/batch` (`I4`) — chạy lô nhiều tổ hợp preset×ratio
@@ -50,7 +33,7 @@ export const POST = handle(async (request) => {
     throw validationFailed({ "idempotency-key": "Bắt buộc trên mọi endpoint tạo job (YC-U7)" })
   }
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = variantBatchBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const presets = parsed.data.presets === "all" ? VARIANT_PRESET_IDS : parsed.data.presets

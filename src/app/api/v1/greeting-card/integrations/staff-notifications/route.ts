@@ -1,21 +1,13 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-import { STAFF_NOTIFY_CHANNELS, STAFF_NOTIFY_EVENTS } from "@/modules/greeting-card/domain/staff-notification-types"
 import {
   getStaffNotificationSettings,
   updateStaffNotificationSettings,
 } from "@/modules/greeting-card/use-cases/staff-notification-settings"
-
-const updateSchema = z.object({
-  enabled: z.boolean(),
-  channels: z.array(z.enum(STAFF_NOTIFY_CHANNELS)),
-  events: z.record(z.enum(STAFF_NOTIFY_EVENTS), z.boolean()).optional(),
-  credentials: z.record(z.string(), z.unknown()).optional(),
-})
+import { staffNotifyBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 /**
  * GET /api/v1/greeting-card/integrations/staff-notifications
@@ -38,7 +30,7 @@ export const PUT = handle(async (request: Request) => {
   requireCapability(ctx, GREETING_CARD_CAPABILITY.integrationManage)
 
   const body = await request.json().catch(() => null)
-  const parsed = updateSchema.safeParse(body)
+  const parsed = staffNotifyBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

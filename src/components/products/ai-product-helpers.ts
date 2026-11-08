@@ -5,6 +5,7 @@
 
 import type { ProductPricing } from "@/modules/products/domain/product-pricing"
 import { pricingAttributes } from "./pricing/pricing-form"
+import { emptyUnlessRewriteBlocked } from "@/lib/ai-rewrite-error"
 
 export const CATEGORIES = [
   "Sản phẩm",
@@ -152,22 +153,16 @@ export async function callContentEngineMarketing(
   summaryContext: string,
   style: "luxurious" | "sweet" | "creative" | "concise" = "luxurious"
 ): Promise<string[]> {
-  try {
-    const res = await fetch("/api/v1/content-engine/rewrite", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: summaryContext,
-        field_type: "description",
-        style,
-      }),
-    })
-    if (!res.ok) return []
-    const data = await res.json()
-    return Array.isArray(data.suggestions) ? data.suggestions : []
-  } catch {
-    return []
-  }
+  const res = await fetch("/api/v1/content-engine/rewrite", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text: summaryContext, field_type: "description", style }),
+  }).catch(() => null)
+  if (!res) return []
+  // Hết credit / thiếu quyền → ném lỗi kèm câu báo (nơi gọi hiện ra); lỗi khác vẫn trả rỗng như trước
+  if (!res.ok) return emptyUnlessRewriteBlocked(res)
+  const data = (await res.json().catch(() => null)) as { suggestions?: unknown } | null
+  return Array.isArray(data?.suggestions) ? data.suggestions : []
 }
 
 /**

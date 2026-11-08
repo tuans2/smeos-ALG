@@ -39,7 +39,10 @@ import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { sweepProductProposalsIfDue } from "@/modules/products/use-cases/sweep-product-proposals"
 import { scanStuckJobs } from "@/modules/jobs/use-cases/scan-stuck-jobs"
+import { expireOverdueQuotations } from "@/modules/sales/use-cases/expire-quotations"
+import { sweepSubscriptions } from "@/modules/subscription/use-cases/sweep-subscriptions"
 import { sweepStorageLifecycle } from "@/modules/storage/use-cases/sweep-storage-lifecycle"
+import { runPiiBackfill } from "@/core/security/infra/pii-backfill"
 
 /** Kích thước một trang truy vấn — nhỏ để giới hạn bộ nhớ, lặp tới khi hết tập cần xử lý */
 const PAGE_SIZE = 50
@@ -315,6 +318,14 @@ export const POST = handle(async (request) => {
   const storageLifecycle = await sweepStorageLifecycle(now)
   // E5.3: khoá idempotent quá 30 ngày.
   const idempotencyKeysPurged = await purgeExpiredIdempotencyKeys(now).catch(() => null)
+  // ADR-014 P-5a: mã hoá theo lô cột cá nhân còn chữ rõ (dữ liệu cũ, lệnh ghi không rõ tổ chức)
+  const piiEncrypted = await runPiiBackfill().catch((error: unknown) => {
+    log.error("chain_dispatch_sweep.pii_backfill_failed", { error: error instanceof Error ? error.message : String(error) })
+    return null
+  })
+  // Audit hành trình UJ-11: báo giá hết hạn và vòng đời gói chạy đúng hạn, không chờ người mở màn hình
+  const quotationsExpired = await expireOverdueQuotations(now)
+  const subscriptions = await sweepSubscriptions(now)
 
   return jsonResponse({
     ok: true,
@@ -326,6 +337,9 @@ export const POST = handle(async (request) => {
     stuckJobsFailed,
     storageLifecycle,
     idempotencyKeysPurged,
+    piiEncrypted,
+    quotationsExpired,
+    subscriptions,
     complete: sweep.complete,
     productProposals: productProposals ?? undefined,
     sentDetails: sentDetails.length > 0 ? sentDetails.slice(0, MAX_REPORTED) : undefined,

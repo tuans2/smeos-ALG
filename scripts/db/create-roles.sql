@@ -19,6 +19,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO smeos_app
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO smeos_app, smeos_worker, smeos_system;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO smeos_readonly;
 
+-- Nhật ký bất biến (ADR-013 D-I4): web và worker chỉ thêm dòng. Xoá chỉ qua đường purge (`app.purge_reason`) chạy bằng
+-- smeos_system; trigger `smeos_append_only_guard` vẫn chặn mọi tài khoản kể cả khi quyền bị cấp lại nhầm.
+REVOKE UPDATE, DELETE ON "audit_logs", "platform_audit_logs", "order_events", "job_events", "usage" FROM smeos_app, smeos_worker;
+
 -- Bảng tạo sau này (migration chạy bằng chủ sở hữu) tự có cùng quyền
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO smeos_app, smeos_worker, smeos_system;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO smeos_app, smeos_worker, smeos_system;

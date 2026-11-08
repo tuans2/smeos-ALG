@@ -84,7 +84,8 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
         <span className="min-w-0 flex-1 truncate text-body-sm font-semibold text-text" title="Trợ lý AI 24/7">
           smeOS Copilot
         </span>
-        <kbd className="shrink-0 rounded border border-border bg-surface-alt px-1.5 py-px font-mono text-caption text-text-muted">
+        {/* Nền surface: text-muted trên surface-alt chỉ ~4,3:1 ở modern-slate/pure-swiss (< 4,5:1 AA) */}
+        <kbd className="shrink-0 rounded border border-border bg-surface px-1.5 py-px font-mono text-caption text-text-muted">
           ⌘K
         </kbd>
       </Button>

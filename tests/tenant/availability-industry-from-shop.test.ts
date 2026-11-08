@@ -18,7 +18,7 @@ describe("kiểm khả dụng công khai theo ngành của tiệm", () => {
   beforeEach(async () => {
     await resetDatabase()
     a = await createTenant("alpha")
-    await prisma.organizations.update({ where: { id: a.organizationId }, data: { settings: { industry: "HOMESTAY" } } })
+    await prisma.organizations.update({ where: { id: a.organizationId }, data: { industry_key: "HOMESTAY" } }) // T-6c-2: ngành chỉ ở cột
   })
 
   afterAll(async () => {

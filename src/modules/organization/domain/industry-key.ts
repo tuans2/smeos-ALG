@@ -3,11 +3,11 @@
  *
  * Đọc (T-6b, T-6c-1): mã cũ đọc `settings.industry` ở rất nhiều nơi. Thay vì đổi chữ ký từng nơi, tầng infra gọi
  * `withIndustryKey` (hoặc `withOrganizationIndustry` cho dòng lồng `organization`) ngay khi đọc: `settings.industry`
- * được lấy từ cột, nên mọi nơi đọc phía sau dùng cột mà không đổi. Cột trống → giữ nguyên `settings` (dự phòng
- * cho dòng cũ tới T-6c-2).
+ * được lấy từ cột, nên mọi nơi đọc phía sau dùng cột mà không đổi. T-6c-2: cột là nguồn DUY NHẤT — cột trống thì
+ * `settings.industry` bị bỏ (khoá sót trong JSON không còn tác dụng).
  *
  * Ghi (T-6c-1): `splitIndustrySettings` tách `industry` khỏi settings trước khi ghi — cột nhận mã, JSON không còn
- * khoá `industry`. T-6c-2 xoá `settings.industry` còn lại trong CSDL và trigger đồng bộ.
+ * khoá `industry`. T-6c-2 đã xoá `settings.industry` còn lại trong CSDL và trigger đồng bộ.
  *
  * Luật thuần — không import Prisma.
  */
@@ -19,20 +19,21 @@ function settingsObject(settings: unknown): Record<string, unknown> | null {
   return settings && typeof settings === "object" && !Array.isArray(settings) ? (settings as Record<string, unknown>) : null
 }
 
-/** Khoá ngành của một dòng tổ chức: cột trước, `settings.industry` sau, không có thì `null`. */
+/** Khoá ngành của một dòng tổ chức — chỉ từ cột `industry_key` (T-6c-2); không có thì `null`. */
 export function industryKeyOf(org: SettingsCarrier | null | undefined): string | null {
-  if (!org) return null
-  if (org.industry_key) return org.industry_key
-  const industry = settingsObject(org.settings)?.industry
-  return typeof industry === "string" ? industry : null
+  return org?.industry_key ?? null
 }
 
-/** Bản sao dòng tổ chức có `settings.industry` = cột `industry_key` (khi cột có giá trị). */
+/** Bản sao dòng tổ chức có `settings.industry` = cột `industry_key`; cột trống → không có `settings.industry`. */
 export function withIndustryKey<T extends SettingsCarrier>(org: T): T {
-  if (!org.industry_key) return org
-  const settings = settingsObject(org.settings) ?? {}
-  if (settings.industry === org.industry_key) return org
-  return { ...org, settings: { ...settings, industry: org.industry_key } }
+  const settings = settingsObject(org.settings)
+  if (!org.industry_key) {
+    if (!settings || !("industry" in settings)) return org
+    const { industry: _dropped, ...rest } = settings
+    return { ...org, settings: rest }
+  }
+  if (settings?.industry === org.industry_key) return org
+  return { ...org, settings: { ...(settings ?? {}), industry: org.industry_key } }
 }
 
 /** Như `withIndustryKey` cho dòng có quan hệ lồng `organization` (phiên, catalog, đơn…). */

@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest"
-import { decisionsFromSettings, effectiveDecision, parseDecisions, validateDecisions, type UpperLayer } from "./governance-decisions"
+import type { DecisionRecord } from "@/core/governance/decision-record"
+
+import { decisionsFromRecords, effectiveDecision, parseDecisions, validateDecisions, type UpperLayer } from "./governance-decisions"
 
 const upper: UpperLayer[] = [
   { tier: "MOTHER", decisions: { overrides: {}, locks: { deposit_min: { enabled: true } } } },
@@ -34,8 +36,20 @@ describe("governance-decisions", () => {
       overrides: { ok: true },
       locks: { l: { enabled: false } },
     })
-    expect(decisionsFromSettings({ governance_matrix: { PAYMENTS: { overrides: { a: true } } } }, "PAYMENTS").overrides).toEqual({ a: true })
-    expect(decisionsFromSettings(null, "PAYMENTS")).toEqual({ overrides: {}, locks: {} })
+  })
+
+  it("dựng quyết định từ bản ghi governance_decisions: đúng hệ thống, đúng dạng, bỏ dòng lạ (T-7b)", () => {
+    const rec = (system: string, decisionKey: string, locked: boolean, value: DecisionRecord["value"]): DecisionRecord =>
+      ({ system: system as DecisionRecord["system"], decisionKey, tier: "CHAIN", scope: "org:o", locked, value, decidedBy: null })
+    const records = [
+      rec("matrix:PAYMENTS", "a", false, { enabled: true }),
+      rec("matrix:PAYMENTS", "b", true, { enabled: false }),
+      rec("matrix:PROMOTIONS", "c", false, { enabled: false }),
+      rec("matrix:PAYMENTS", "bad key", false, { enabled: true }),
+      rec("matrix:PAYMENTS", "d", false, { enabled: "yes" }),
+    ]
+    expect(decisionsFromRecords(records, "PAYMENTS")).toEqual({ overrides: { a: true }, locks: { b: { enabled: false } } })
+    expect(decisionsFromRecords([], "PAYMENTS")).toEqual({ overrides: {}, locks: {} })
   })
 })
 
@@ -43,7 +57,7 @@ describe("quy chuẩn bất biến của nền tảng", () => {
   it("tầng dưới không ghi đè được, kể cả tầng Mẹ đã lưu mở", async () => {
     const { withBuiltInLocks, isGovernedItemEnabled, validateDecisions: v } = await import("./governance-decisions")
     const upper = withBuiltInLocks("PROMOTIONS", [{ tier: "MOTHER", decisions: { overrides: {}, locks: { MAX_DISCOUNT_PERCENT: { enabled: false } } } }])
-    expect(isGovernedItemEnabled("MAX_DISCOUNT_PERCENT", { governance_matrix: { PROMOTIONS: { overrides: { MAX_DISCOUNT_PERCENT: false } } } }, "PROMOTIONS", upper)).toBe(true)
+    expect(isGovernedItemEnabled("MAX_DISCOUNT_PERCENT", { overrides: { MAX_DISCOUNT_PERCENT: false }, locks: {} }, "PROMOTIONS", upper)).toBe(true)
     expect(v({ overrides: { MAX_DISCOUNT_PERCENT: false }, locks: {} }, "CHAIN", upper)).toEqual([{ key: "MAX_DISCOUNT_PERCENT", reason: "LOCKED_BY_UPPER" }])
   })
 })

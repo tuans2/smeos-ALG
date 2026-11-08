@@ -4,14 +4,17 @@
  */
 
 /**
- * Mã đơn cổng chung `DH<yymmdd>-<4 số>` (`generateOrderCode`) trong nội dung chuyển khoản. Mã Thẻ chào có đuôi
- * 8 ký tự chữ-số nên không khớp mẫu này (và đã được bộ khớp Thẻ chào xử lý trước).
+ * Mã đơn trong nội dung chuyển khoản: cổng chung `DH<yymmdd>-<4 số>` (`generateOrderCode`) và đơn tạo ở Điều phối
+ * `FLR-<yymmdd>-<4 số>` (`coordinatorOrderCode` — PO 07/11/2026, Q2: đơn Điều phối cũng khớp chuyển khoản, audit
+ * BL-06). Ngân hàng hay bỏ dấu gạch nên chấp nhận cả `FLR2611070001`. Mã Thẻ chào có đuôi 8 ký tự chữ-số nên
+ * không khớp các mẫu này (và đã được bộ khớp Thẻ chào xử lý trước).
  */
-const STANDARD_CODE_IN_TEXT = /DH\s*(\d{6})\s*[-_.\s]?\s*(\d{4})(?![0-9A-Z])/
+const STANDARD_CODE_IN_TEXT = /(DH|FLR)\s*[-_.]?\s*(\d{6})\s*[-_.\s]?\s*(\d{4})(?![0-9A-Z])/
 
 export function extractStandardOrderCode(content: string): string | null {
   const m = STANDARD_CODE_IN_TEXT.exec(content.toUpperCase())
-  return m?.[1] && m[2] ? `DH${m[1]}-${m[2]}` : null
+  if (!m?.[1] || !m[2] || !m[3]) return null
+  return m[1] === "FLR" ? `FLR-${m[2]}-${m[3]}` : `DH${m[2]}-${m[3]}`
 }
 
 export type PaymentKind = "DEPOSIT" | "BALANCE"
@@ -34,4 +37,15 @@ export function planPayment(order: { totalVnd: number; paidVnd: number; status: 
   if (amountVnd > balance) return "Số tiền vượt phần còn phải thu"
   const paidAfter = order.paidVnd + amountVnd
   return { kind: order.paidVnd > 0 ? "BALANCE" : "DEPOSIT", paidAfter, balanceAfter: order.totalVnd - paidAfter, firstPayment: order.paidVnd <= 0 }
+}
+
+/**
+ * Kiểm khoản hoàn và tính số đã thu/còn lại sau hoàn; trả lý do (tiếng Việt) nếu không hoàn được.
+ * Cùng tệp với `planPayment` để mọi đường ghi tiền (sổ đơn, Điều phối) dùng chung một luật (audit BL-05).
+ */
+export function planRefund(order: { totalVnd: number; paidVnd: number }, amountVnd: number): { paidAfter: number; balanceAfter: number } | string {
+  if (!Number.isInteger(amountVnd) || amountVnd <= 0) return "Số tiền phải là số nguyên dương"
+  if (amountVnd > order.paidVnd) return "Không thể hoàn quá số tiền đã thu"
+  const paidAfter = order.paidVnd - amountVnd
+  return { paidAfter, balanceAfter: order.totalVnd - paidAfter }
 }

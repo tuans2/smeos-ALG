@@ -51,12 +51,14 @@ describe("organizations/current/governance-matrix", () => {
     expect((await put(store, { overrides: { vietqr: false }, locks: {} })).status).toBe(200)
   })
 
-  it("chỉ đổi nhánh governance_matrix của chính tổ chức, giữ các khoá settings khác", async () => {
+  it("chỉ ghi quyết định của chính tổ chức vào governance_decisions; settings không đổi (ADR-012 T-7c)", async () => {
+    const before = await prisma.organizations.findUniqueOrThrow({ where: { id: store.organizationId } })
     await put(store, { overrides: { vietqr: false }, locks: {} })
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: store.organizationId } })
-    expect(org.settings).toMatchObject({ industry: "FLORAL", governance_matrix: { PAYMENTS: { overrides: { vietqr: false } } } })
-    const other = await prisma.organizations.findUniqueOrThrow({ where: { id: outsider.organizationId } })
-    expect(JSON.stringify(other.settings ?? {})).not.toContain("governance_matrix")
+    expect(org.settings).toEqual(before.settings)
+    const rows = await prisma.governance_decisions.findMany({ where: { system: "matrix:PAYMENTS" } })
+    expect(rows.map((r) => [r.scope, r.decision_key, r.value])).toEqual([[`org:${store.organizationId}`, "vietqr", { enabled: false }]])
+    expect(await prisma.governance_decisions.count({ where: { scope: `org:${outsider.organizationId}` } })).toBe(0)
   })
 
   it("sai loại ma trận → 400", async () => {

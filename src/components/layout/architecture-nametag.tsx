@@ -65,7 +65,8 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: "SaaS Mother",
         title: "Hệ điều hành Nền tảng Mẹ",
         badgeClass:
-          "bg-primary/10 text-primary border-primary/20",
+          // primary-dark: text-primary trên nền primary/10 chỉ ~4,3:1 ở preset modern-slate (< 4,5:1 AA)
+          "bg-primary/10 text-primary-dark border-primary/20",
       }
     }
 

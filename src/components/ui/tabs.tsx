@@ -38,7 +38,8 @@ export const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>
         "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-body-sm font-semibold transition-all",
         "text-text-muted hover:text-text hover:bg-surface/50",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-        "data-[selected]:bg-surface data-[selected]:text-primary data-[selected]:shadow-sm data-[selected]:border data-[selected]:border-border",
+        // Base UI đánh dấu tab đang mở bằng `data-active` (không có `data-selected`) — audit-log AUD-02, 07/11/2026
+        "data-[active]:bg-surface data-[active]:text-primary data-[active]:shadow-sm data-[active]:border data-[active]:border-border",
         "disabled:pointer-events-none disabled:opacity-50",
         className
       )}

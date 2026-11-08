@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed, notFound } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -8,14 +7,7 @@ import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-c
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { catalogPolicyKeysChanged } from "@/modules/greeting-card/domain/catalog-policy-keys"
 import { deleteGreetingCatalog, restoreGreetingCatalog } from "@/modules/greeting-card/use-cases/delete-greeting-catalog"
-
-const updateCatalogSchema = z.object({
-  name: z.string().trim().min(2).max(120).optional(),
-  description: z.string().max(1000).nullable().optional(),
-  type: z.enum(["STANDARD", "CLIENT"]).optional(),
-  isActive: z.boolean().optional(),
-  filters: z.record(z.string(), z.unknown()).nullable().optional(),
-})
+import { updateCatalogBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 type Context = { params: Promise<{ id: string }> }
 
@@ -34,7 +26,7 @@ export const PATCH = handle(async (request: Request, context: Context) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.manage)
   const body = await request.json().catch(() => ({}))
-  const parsed = updateCatalogSchema.safeParse(body)
+  const parsed = updateCatalogBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   // Ẩn/hiện luôn đi qua use-case (kiểm người tạo/L4 + audit); trường còn lại cập nhật thường

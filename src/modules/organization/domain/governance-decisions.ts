@@ -8,6 +8,7 @@
  * Pure — không phụ thuộc Prisma.
  */
 
+import type { DecisionRecord } from "@/core/governance/decision-record"
 import { resolveLayered, winningLock, type GovernanceTier } from "@/core/governance/layered-resolver"
 
 export const GOVERNANCE_SYSTEMS = ["PROMOTIONS", "COMMITMENTS", "POLICIES", "PAYMENTS", "CRAFT_FEES", "TEMPLATES"] as const
@@ -48,10 +49,19 @@ export function parseDecisions(raw: unknown): GovernanceDecisions {
   return out
 }
 
-/** Quyết định của tầng `system` trong `organizations.settings.governance_matrix`. */
-export function decisionsFromSettings(settings: unknown, system: GovernanceSystem): GovernanceDecisions {
-  const matrix = settings && typeof settings === "object" ? (settings as { governance_matrix?: unknown }).governance_matrix : null
-  return parseDecisions(matrix && typeof matrix === "object" ? (matrix as Record<string, unknown>)[system] : null)
+/**
+ * Quyết định của ma trận `system` dựng từ bản ghi `governance_decisions` hiện hành của MỘT phạm vi (ADR-012 T-7b):
+ * `locked = false` là ghi đè, `locked = true` là khoá; dòng không đúng dạng `{enabled: boolean}` bị bỏ.
+ */
+export function decisionsFromRecords(records: readonly DecisionRecord[], system: GovernanceSystem): GovernanceDecisions {
+  const out = emptyDecisions()
+  for (const r of records) {
+    const enabled = r.value?.["enabled"]
+    if (r.system !== `matrix:${system}` || typeof enabled !== "boolean" || !KEY_RE.test(r.decisionKey)) continue
+    if (r.locked) out.locks[r.decisionKey] = { enabled }
+    else out.overrides[r.decisionKey] = enabled
+  }
+  return out
 }
 
 export type UpperLayer = { tier: GovernanceLayerTier; decisions: GovernanceDecisions }
@@ -118,7 +128,13 @@ export function effectiveDecision(
 /** Các ma trận mà luồng bán hàng (trang khách, báo giá, đặt đơn) đọc khi lọc mục hiện cho khách. */
 export const POLICY_SYSTEMS = ["PROMOTIONS", "COMMITMENTS", "POLICIES"] as const
 export type PolicySystem = (typeof POLICY_SYSTEMS)[number]
-export type PolicyGovernanceUpper = Partial<Record<PolicySystem, UpperLayer[]>>
+/**
+ * Ma trận cho luồng bán hàng: tầng trên theo hệ thống, kèm `own` — quyết định của chính tiệm (T-7b: đọc từ
+ * `governance_decisions`, không còn từ `settings.governance_matrix`). Thiếu `own` = tiệm chưa có quyết định riêng.
+ */
+export type PolicyGovernanceUpper = Partial<Record<PolicySystem, UpperLayer[]>> & {
+  readonly own?: Partial<Record<PolicySystem, GovernanceDecisions>> | undefined
+}
 
 /** Trần chiết khấu nền tảng (mục `MAX_DISCOUNT_PERCENT` của ma trận Ưu đãi). */
 export const PLATFORM_MAX_DISCOUNT_PERCENT = 50
@@ -146,12 +162,12 @@ export function withBuiltInLocks(system: GovernanceSystem, upper: readonly Upper
   return [builtInMotherLayer(system), ...upper]
 }
 
-/** Mục của ma trận có đang bật cho tổ chức có `settings` này không (mặc định bật). */
+/** Mục của ma trận có đang bật cho tổ chức có quyết định riêng `own` này không (mặc định bật). */
 export function isGovernedItemEnabled(
   key: string,
-  settings: unknown,
+  own: GovernanceDecisions | undefined,
   system: GovernanceSystem,
   upper: readonly UpperLayer[] = []
 ): boolean {
-  return effectiveDecision(key, true, decisionsFromSettings(settings, system), "STORE", withBuiltInLocks(system, upper)).enabled
+  return effectiveDecision(key, true, own ?? emptyDecisions(), "STORE", withBuiltInLocks(system, upper)).enabled
 }

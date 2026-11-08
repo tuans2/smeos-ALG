@@ -1,9 +1,9 @@
-import { z } from "zod"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { isBrochureOwner } from "@/modules/greeting-card/use-cases/brochure-owner"
 import { getBrochureTracking } from "@/modules/greeting-card/use-cases/get-brochure-tracking"
+import { trackingVerifyBody } from "@/app/api/v1/public/_contracts/requests"
 
 /**
  * GET /api/v1/public/brochure/tracking/[code] — khách theo dõi đơn theo mã đơn.
@@ -20,8 +20,6 @@ export const GET = handle<[{ params: Promise<{ code: string }> }]>(async (reques
   return jsonResponse(data)
 })
 
-const verifySchema = z.object({ phoneLast4: z.string().regex(/^\d{4}$/, "Nhập đúng 4 số cuối") })
-
 /**
  * POST /api/v1/public/brochure/tracking/[code] — `{ phoneLast4 }`: 4 số cuối SĐT người đặt.
  * Sai → 404 (không nói là sai số hay sai mã). Giới hạn chặt để không dò được 10.000 khả năng.
@@ -32,7 +30,7 @@ export const POST = handle<[{ params: Promise<{ code: string }> }]>(async (reque
   await enforceRateLimit(request, { scope: `brochure-tracking-verify:${codeKey}`, limit: 5, windowMs: 15 * 60_000 })
   // Trần CHUNG mọi IP cho từng mã đơn: đổi IP không dò được đủ 10.000 khả năng của 4 số cuối
   await enforceRateLimit(request, { scope: `brochure-tracking-verify-code:${codeKey}`, limit: 10, windowMs: 86_400_000, key: "global" })
-  const parsed = verifySchema.safeParse(await request.json().catch(() => null))
+  const parsed = trackingVerifyBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ phoneLast4: "Nhập đúng 4 số cuối" })
   const data = await getBrochureTracking(code, { phoneLast4: parsed.data.phoneLast4 })
   if (data.status === "NOT_FOUND" || !data.order.verified) throw notFound()

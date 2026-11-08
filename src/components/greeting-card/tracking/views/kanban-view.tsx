@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import React, { useCallback, useState } from "react"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { formatMinutes } from "@/modules/greeting-card/domain/step-sla"
@@ -20,6 +21,7 @@ interface KanbanViewProps {
 /** Kanban 9 bước: phân tầng hiển thị theo thời gian để tập trung vào đơn cần xử lý ngay. */
 export function KanbanView({ qs, onOpen, canDecide = false, onDismiss }: KanbanViewProps) {
   // Số thẻ đang mở của từng cột ("Xem thêm"); đổi bộ lọc thì thu lại như ban đầu
+  const toast = useToast()
   const [expanded, setExpanded] = useState<{ qs: string; byStep: Record<string, number> }>({ qs, byStep: {} })
   const byStep = expanded.qs === qs ? expanded.byStep : {}
   const expand = Object.entries(byStep).map(([step, n]) => `${step}:${n}`).join(",")
@@ -38,13 +40,13 @@ export function KanbanView({ qs, onOpen, canDecide = false, onDismiss }: KanbanV
       const r = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
       if (!r.ok) {
         const err = (await r.json().catch(() => null)) as { error?: { message?: string } } | null
-        window.alert(err?.error?.message ?? "Không thực hiện được, vui lòng thử lại.")
+        toast.error(err?.error?.message ?? "Không thực hiện được, vui lòng thử lại.")
       }
     } catch {
-      window.alert("Mất kết nối, vui lòng thử lại.")
+      toast.error("Mất kết nối, vui lòng thử lại.")
     }
     res.mutate?.()
-  }, [res])
+  }, [res, toast])
 
   const target = (item: TrackingViewItem) => ({ id: item.orderId ?? item.sessionId, type: item.orderId ? "ORDER" : "SESSION" })
   const handleDecide = useCallback((item: TrackingViewItem, approve: boolean) => post("/api/v1/greeting-card/tracking/decide-dismiss", { ...target(item), approve }), [post])

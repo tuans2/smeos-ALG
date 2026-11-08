@@ -41,7 +41,7 @@ Mọi hành động có hậu quả MUST được gắn một mức rủi ro tro
 | **R2 Trung bình** | Tạo nhiều biến thể tốn quota, ghi đè nháp | Xem trước chi phí/ảnh hưởng (UX-019); **ưu tiên Hoàn tác** hơn hộp xác nhận |
 | **R3 Cao** | Thanh toán, xóa, xuất bản công khai, gửi ra ngoài, đổi quyền | `ConfirmDialog` nêu rõ hành động + hậu quả; ghi nhật ký (UX-020) |
 
-- Cấm `window.confirm()` trong mã mới (lint R13).
+- Cấm `window.confirm()`, `window.alert()`, `window.prompt()` trong mã mới (lint R13) — dùng `ConfirmDialog`, `useToast()`, `usePromptDialog()`.
 - Không thêm hộp xác nhận cho thao tác R1.
 - Tự động hóa (SYS) không được tự thực hiện hành động R3 khi chưa có ủy quyền.
 
@@ -114,7 +114,7 @@ Khi một lựa chọn (chế độ AI/thủ công, loại sản phẩm, kênh�
 
 | Mã | Luật | Nguồn |
 |---|---|---|
-| R13 | `confirm(`/`window.confirm` trong `.tsx` → dùng `ConfirmDialog` | UX-015 |
+| R13 | `confirm(`/`alert(`/`prompt(` (cả dạng `window.`) trong `.tsx` → `ConfirmDialog` / `useToast()` / `usePromptDialog()` | UX-015 |
 | R14 | Chuỗi trạng thái tác vụ ngoài từ vựng chuẩn trong component → dùng `task-state.ts` | UX-016 |
 | R15 | `<details>` tự viết cho cài đặt → dùng `Disclosure` | UX-017 |
 | R16 | Từ cấm theo từ điển thuật ngữ trong nhãn UI (Worker, render, job, P\d) | UX-026 |

@@ -22,6 +22,11 @@ export interface ResolveEffectiveNotificationInput {
   roleKey: string
   storeOrgId: string
   parentOrgId?: string | undefined
+  /**
+   * Chuỗi cha chính của tổ chức nhận: khoá cứng CHAIN/INDUSTRY đặt ở chuỗi này áp xuống (P2-A11, PO 06/11/2026).
+   * Chỉ dùng cho phạm vi khoá — chính sách tổ chức (`orgPolicy`) vẫn chỉ đọc theo `parentOrgId`.
+   */
+  lockParentOrgId?: string | undefined
 }
 
 export async function resolveEffectiveNotification(
@@ -75,7 +80,7 @@ export async function resolveEffectiveNotification(
     userId,
     roleKey,
     storeOrgId,
-    parentOrgId,
+    parentOrgId: parentOrgId ?? input.lockParentOrgId,
     channelActivations,
     hardLocks,
     userPreference,

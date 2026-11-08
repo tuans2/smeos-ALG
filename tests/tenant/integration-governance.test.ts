@@ -2,6 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { GET as getHub } from "@/app/api/v1/integrations/route"
 import { GET as getGovernance, PUT as putGovernance } from "@/app/api/v1/integrations/governance/route"
+import { currentDecisions } from "@/core/governance/infra/decision-log"
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, linkPartner, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
@@ -42,9 +43,9 @@ describe("cách ly tenant — khoá tích hợp theo tầng (Trung tâm Tích h�
     expect(await availabilityOf(storeA, "facebook_messenger")).toBe("LOCKED_BY_UPPER")
     expect(await availabilityOf(storeB, "facebook_messenger")).not.toBe("LOCKED_BY_UPPER")
 
-    const rows = await prisma.integration_governance.findMany()
+    const rows = await currentDecisions(prisma, { systems: ["integration"] })
     expect(rows).toHaveLength(1)
-    expect(rows[0]).toMatchObject({ tier: "CHAIN", scope_id: `org:${chainA.organizationId}`, mode: "FORBID" }) // địa chỉ phạm vi D-T5 (ADR-012 T-6b)
+    expect(rows[0]).toMatchObject({ tier: "CHAIN", scope: `org:${chainA.organizationId}`, value: { mode: "FORBID" } }) // địa chỉ phạm vi D-T5
 
     const itemsB = (await readJson(await getGovernance(withSession(`${BASE}/governance`, chainB.token)))) as {
       items: Array<{ connectorKey: string; mode: string }>
@@ -55,14 +56,14 @@ describe("cách ly tenant — khoá tích hợp theo tầng (Trung tâm Tích h�
   it("cửa hàng không đọc/không đặt được khoá cho tầng dưới", async () => {
     expect((await getGovernance(withSession(`${BASE}/governance`, storeA.token))).status).toBe(404)
     expect((await put(storeA, { connectorKey: "facebook_messenger", mode: "FORBID" })).status).toBe(422)
-    expect(await prisma.integration_governance.count()).toBe(0)
+    expect(await prisma.governance_decisions.count({ where: { system: "integration" } })).toBe(0)
   })
 
-  it("chuỗi cho phép lại → cửa hàng thành viên hết bị khoá, bảng không giữ dòng thừa", async () => {
+  it("chuỗi cho phép lại → cửa hàng thành viên hết bị khoá; không còn khoá hiện hành (dòng gỡ giữ lịch sử)", async () => {
     await put(chainA, { connectorKey: "zalo_oa", mode: "INHERIT_ONLY" })
     expect(await availabilityOf(storeA, "zalo_oa")).toBe("INHERITED")
     await put(chainA, { connectorKey: "zalo_oa", mode: "ALLOW_OWN" })
     expect(await availabilityOf(storeA, "zalo_oa")).not.toBe("INHERITED")
-    expect(await prisma.integration_governance.count()).toBe(0)
+    expect(await currentDecisions(prisma, { systems: ["integration"] })).toEqual([])
   })
 })

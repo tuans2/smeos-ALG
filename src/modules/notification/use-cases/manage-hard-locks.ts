@@ -59,8 +59,10 @@ export async function removeHardLock(
     channel: NotifyChannel
     tier: NotificationTier
     scopeId: string
+    /** Người gỡ — ghi vào dòng gỡ của `governance_decisions` (ADR-012 T-7a). */
+    removedBy?: string | undefined
   },
   repo: INotificationPreferenceRepository = getNotificationPreferenceRepository()
 ): Promise<void> {
-  await repo.deleteHardLock(input.eventKey, input.channel, input.tier, input.scopeId)
+  await repo.deleteHardLock(input.eventKey, input.channel, input.tier, input.scopeId, input.removedBy ?? null)
 }

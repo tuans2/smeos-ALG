@@ -40,7 +40,7 @@ export async function shopPromotionPolicy(
   const raw = await repo.findByOrganizationId(organizationId)
   const upper = await loadPolicyGovernance(organizationId)
   if (!raw) return { promotions: [], maxDiscountPercent: PLATFORM_MAX_DISCOUNT_PERCENT }
-  const capOn = isGovernedItemEnabled("MAX_DISCOUNT_PERCENT", raw.settings, "PROMOTIONS", upper.PROMOTIONS)
+  const capOn = isGovernedItemEnabled("MAX_DISCOUNT_PERCENT", upper.own?.PROMOTIONS, "PROMOTIONS", upper.PROMOTIONS)
   return {
     promotions: resolveAppliedPolicies(undefined, raw.settings, raw.industry, upper).promotions,
     maxDiscountPercent: capOn ? PLATFORM_MAX_DISCOUNT_PERCENT : null,

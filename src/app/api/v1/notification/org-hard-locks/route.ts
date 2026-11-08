@@ -77,6 +77,7 @@ export const DELETE = handle(async (request) => {
     channel: body.channel as NotifyChannel,
     tier: "CHAIN",
     scopeId: ctx.organizationId,
+    removedBy: ctx.userId,
   })
 
   return jsonResponse({ success: true, removed: body })

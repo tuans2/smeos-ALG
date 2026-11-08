@@ -8,6 +8,7 @@ import { CATALOG_ITEMS_INCLUDE, GreetingCatalogRepository } from "./greeting-cat
 import type { GreetingSessionStatus, ProductSnapshot } from "../domain/greeting-card-types"
 import { withIndustryKey, withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
 import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
+import { withSessionCustomer } from "./session-customer"
 
 const SEND_CODE_ATTEMPTS = 5
 
@@ -20,7 +21,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
    */
   private async createSessionWithFreshCode(
     prefix: string | undefined,
-    build: (sendCode: string) => Prisma.greeting_sessionsUncheckedCreateInput
+    build: (sendCode: string) => Prisma.greeting_sessionsUncheckedCreateInput, linkCustomer = true // P-2: false = gắn khách lúc đặt đơn
   ) {
     for (let attempt = 0; attempt < SEND_CODE_ATTEMPTS; attempt++) {
       const sendCode = generateSendCode(prefix)
@@ -30,7 +31,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       })
       if (taken) continue
       try {
-        return await this.db.greeting_sessions.create({ data: build(sendCode) })
+        return await this.db.greeting_sessions.create({ data: linkCustomer ? await withSessionCustomer(this.db, build(sendCode)) : build(sendCode) })
       } catch (error) {
         if (!isUniqueViolation(error)) throw error
       }
@@ -60,8 +61,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       catalog_id: catalog.id,
       send_code: sendCode,
       sale_id: input.saleId,
-      customer_name: input.customerName ?? null,
-      customer_phone: input.customerPhone ?? null,
+      customer_name: input.customerName ?? null, customer_phone: input.customerPhone ?? null,
       expires_at: input.expiresAt ?? null,
       status: "CREATED",
     }))
@@ -122,7 +122,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       selected_product_id: input.productId,
       product_snapshot: input.snapshot as unknown as Prisma.InputJsonValue,
       selected_at: new Date(),
-    }))
+    }), false) // link công khai: phiên tạo ngay trước đơn; đơn bị chặn thì không để lại hồ sơ khách
   }
 
   /**

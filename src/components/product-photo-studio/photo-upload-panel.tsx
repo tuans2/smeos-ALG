@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { IconTile } from "@/components/ui/app-icon"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef, useState } from "react"
@@ -14,6 +15,7 @@ interface PhotoUploadPanelProps {
 }
 
 export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelProps) {
+  const toast = useToast()
   const [dragOver, setDragOver] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
   const [fileDetails, setFileDetails] = useState<{
@@ -27,7 +29,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
 
   const processFile = (file: File) => {
     if (!file.type.startsWith("image/")) {
-      alert("Vui lòng tải lên định dạng hình ảnh hợp lệ (JPG, PNG, WEBP).")
+      toast.error("Vui lòng tải lên định dạng hình ảnh hợp lệ (JPG, PNG, WEBP).")
       return
     }
 

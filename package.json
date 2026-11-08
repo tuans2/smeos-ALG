@@ -29,13 +29,15 @@
     "check:tokens-doc": "tsx scripts/gen-design-tokens-doc.ts --check",
     "new:industry": "tsx scripts/new-industry.ts",
     "setup:hooks": "tsx scripts/setup-hooks.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node node_modules/typescript-7/lib/tsc.js --noEmit",
     "test": "vitest run --exclude 'tests/tenant/**' --exclude 'tests/platform/**' --exclude 'node_modules/**'",
     "test:harvest": "tsx --test tests/maChucNang.test.ts",
     "test:tenant": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}\" vitest run tests/tenant",
     "test:platform": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}\" vitest run tests/platform",
     "db:test:setup": "bash scripts/dung-db-test.sh",
     "gen:tenant-registry": "node scripts/gen-tenant-table-registry.mjs",
+    "gen:erd": "node scripts/gen-erd.mjs",
+    "pii:backfill": "tsx --env-file-if-exists=.env scripts/pii-backfill.ts",
     "check:migrations": "node scripts/check-migrations.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ux": "playwright test tests/e2e/ux",
@@ -76,6 +78,8 @@
     "check:schemas:coordinator": "tsx scripts/gen-coordinator-schemas.ts --check",
     "gen:schemas:content-engine": "tsx scripts/gen-content-engine-schemas.ts",
     "check:schemas:content-engine": "tsx scripts/gen-content-engine-schemas.ts --check",
+    "gen:openapi": "tsx scripts/gen-openapi.ts",
+    "check:openapi": "tsx scripts/gen-openapi.ts --check",
     "check:docs": "node scripts/check-docs.mjs",
     "seed:field-registry": "tsx --env-file-if-exists=.env scripts/nap-danh-muc-truong.ts",
     "check:field-registry": "tsx --env-file-if-exists=.env scripts/check-field-registry.ts",
@@ -129,6 +133,7 @@
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
+    "typescript-7": "npm:typescript@^7.0.2",
     "vitest": "^5.0.5"
   }
 }

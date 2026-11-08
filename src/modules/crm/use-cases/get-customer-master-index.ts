@@ -18,10 +18,6 @@ export async function getCustomerMasterIndex(
     throw notFound()
   }
 
-  // Tự động đồng bộ chi tiêu mới nhất từ đơn hàng M10
-  await repo.syncMetricsFromOrders(ctx, id)
-
-  // Đọc lại sau khi sync
-  const refreshed = await repo.getById(ctx, id)
-  return refreshed ?? customer
+  // Đọc không ghi (audit BL-14): chỉ số khách do bộ quét nền tính lại khi đơn đổi (`customer-metrics-sweep.ts`)
+  return customer
 }

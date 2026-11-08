@@ -1,6 +1,6 @@
 # smeOS Design System — Single Source of Truth (SSOT)
 
-> **Cấp thẩm quyền:** `CANONICAL` · **Cấp bậc tài liệu:** `Level 3` · **Phiên bản:** `1.0.0-draft` (theo ADR-011)  
+> **Cấp thẩm quyền:** `CANONICAL` · **Cấp bậc tài liệu:** `Level 3` · **Phiên bản:** `1.3.3` (theo ADR-011 D-UI-12; lịch sử ở `CHANGELOG.md`)  
 > **Chủ quản:** Product Owner / Lead UI-UX Architect  
 > **Nguyên tắc cốt lõi:** **Code là nguồn sự thật**. Tài liệu này đóng vai trò chỉ mục trung tâm và hợp đồng quy chuẩn (Contract) cho toàn bộ giao diện của nền tảng SaaS Đa ngành SMEOS.
 
@@ -25,9 +25,9 @@
 |---|---|---|:---:|
 | **Design Tokens** | `src/styles/tokens/*.css` (`globals.css`) | [tokens.md](tokens.md) *(sinh tự động từ CSS)* | 🟡 Đang hoàn thiện GĐ 1 |
 | **Component Primitives** | `src/components/ui/` | [components/](components/) *(Hợp đồng từng component)* | 🟡 Đang hoàn thiện GĐ 2 |
-| **Bố cục & Archetypes** | `src/components/layout/` | [layouts.md](layouts.md) *(Archetype A–F, AppShell)* | 🟡 Đang hoàn thiện GĐ 3 |
-| **Quy chuẩn Responsive** | `src/styles/tokens/breakpoints.css` | [responsive.md](responsive.md) *(360px → 1440px)* | 🟢 Chuẩn hóa ADR-011 |
-| **Quy chuẩn Trợ năng (A11y)**| `src/components/ui/live-region.tsx` | [accessibility.md](accessibility.md) *(WCAG 2.2 AA)* | 🟢 Chuẩn hóa ADR-011 |
+| **Bố cục & Archetypes** | `src/components/layout/` | [layouts.md](layouts.md) *(Archetype A–F, AppShell)* | 🟢 Đối chiếu mã 07/11/2026 |
+| **Quy chuẩn Responsive** | Điểm ngắt mặc định Tailwind v4 (không ghi đè trong `src/styles/tokens/`) | [responsive.md](responsive.md) *(360px → 1440px)* | 🟡 Mới kiểm tự động 390 và 1280px |
+| **Quy chuẩn Trợ năng (A11y)**| `src/components/ui/live-region.tsx` | [accessibility.md](accessibility.md) *(WCAG 2.2 AA)* | 🟡 Chưa kiểm trình đọc màn hình |
 | **Hợp đồng Màn hình** | `docs/dac-ta/screen-contracts/` | `docs/dac-ta/screen-contracts/_TEMPLATE.md` | 🟡 Di trú v2 GĐ 4 |
 | **Lịch sử & Thay đổi** | `CHANGELOG.md` | [CHANGELOG.md](CHANGELOG.md) | 🟢 Bắt đầu từ v1.0.0 |
 | **Nhật ký Audit Gốc** | `docs/design-system/audit-log.md` | [audit-log.md](audit-log.md) *(MEUX Deep Audit)* | 📁 Lưu trữ tham khảo |
@@ -39,6 +39,8 @@
 - **Quy trình thêm/sửa Token**:
   - Tuyệt đối cấm lập trình viên hoặc AI Agent tự ý bổ sung token vào `globals.css`.
   - Mọi thay đổi hoặc bổ sung token phải thông qua Pull Request chạm vào `src/styles/tokens/`, được kiểm tra độ tương phản tự động và có **PO phê duyệt** (`CODEOWNERS`).
+- **Bản chép giá trị preset và density**: `src/lib/ui-system/presets.ts` chép màu, bo góc, bóng đổ, phông của 3 preset chỉ để UI Studio hiển thị; `DENSITY_CONFIG` (`src/lib/ui-system/tokens.ts`) chép đệm bảng, đệm thẻ, khoảng cách trường của `density.css`. Giá trị có hiệu lực là CSS. Sửa CSS trước rồi chép lại — `src/lib/ui-system/presets-css-parity.test.ts` đỏ khi hai nơi lệch.
+- **Liên kết trong tài liệu này**: mọi liên kết tương đối phải trỏ tới tệp có thật (`tests/unit/architecture/design-system-ssot.test.ts`).
 - **Quy trình Deprecation**:
   - Không xóa bỏ đột ngột component hoặc prop đang dùng.
   - Phải gắn thẻ `@deprecated` kèm hướng dẫn thay thế trong ít nhất một bản minor trước khi gỡ bỏ ở bản major tiếp theo.
@@ -49,7 +51,7 @@
 
 Mọi đóng góp mã nguồn liên quan đến giao diện bắt buộc vượt qua các cổng kiểm soát:
 1. `npm run lint:ux -- --check`: Kiểm chuẩn 100% token ngữ nghĩa, cỡ chữ, chống jargon và chống alias lách luật.
-2. `npm run check:screen-contracts`: Đảm bảo mọi `page.tsx` đều có Screen Contract v2 hợp lệ.
+2. `npm run check:screen-contracts -- --check`: Đảm bảo mọi `page.tsx` đều có Screen Contract v2 hợp lệ hoặc miễn trừ có lý do (đỏ cả khi trang chỉ có contract v1). Chạy trong job `web` của `ci.yml`.
 3. `npm run test:e2e:ux`: Chạy kiểm thử tự động visual snapshot 2 khổ (390px, 1280px) và quét `axe-core` đạt 0 lỗi Critical/Serious.
 4. `npm run check:layers`: Ngăn ngừa vi phạm ranh giới kiến trúc (cấm UI import trực tiếp từ `infra/`).
 

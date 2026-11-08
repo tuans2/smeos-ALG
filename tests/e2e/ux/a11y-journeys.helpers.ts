@@ -119,9 +119,16 @@ export async function motionIssues(page: Page): Promise<string[]> {
   )
 }
 
-/** Áp preset giao diện trên trang đang mở. */
+/**
+ * Áp preset giao diện trên trang đang mở. Đổi mọi phần tử mang `data-theme`, không chỉ `<html>`:
+ * khung `AppShell` gắn `data-theme` riêng (theme của tầng), nên chỉ đổi `<html>` thì nội dung trong
+ * shell vẫn giữ preset cũ và phép đo "3 preset" thực chất chỉ đo một preset.
+ */
 export async function applyPreset(page: Page, preset: string): Promise<void> {
-  await page.evaluate((p) => document.documentElement.setAttribute("data-theme", p), preset)
+  await page.evaluate((p) => {
+    document.documentElement.setAttribute("data-theme", p)
+    for (const el of document.querySelectorAll("[data-theme]")) el.setAttribute("data-theme", p)
+  }, preset)
   await page.waitForTimeout(150)
 }
 

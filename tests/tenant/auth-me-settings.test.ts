@@ -23,8 +23,8 @@ describe("GET /auth/me chỉ trả phần cấu hình giao diện cần", () => 
     await prisma.organizations.update({
       where: { id: shop.organizationId },
       data: {
+        industry_key: "FASHION", // ADR-012 T-6c-2: ngành chỉ ở cột
         settings: {
-          industry: "FASHION",
           industry_locked: true,
           coordinator_channel: { telegramChatId: "123456", phone: "0901234567" },
           craft_fee_policy: { method: "TIERED" },

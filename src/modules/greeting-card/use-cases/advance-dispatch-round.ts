@@ -15,6 +15,7 @@ import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-
 import type { InviteCardRef, SubcontractOrderState } from "../domain/subcontract-order"
 import { CLAIM_BUTTON_TEXT, closeCardsAfterClaim, expireRoundCards, inviteCardText, rememberInviteCard } from "./invite-cards"
 import type { AdministrativeArea } from "../domain/area-match"
+import { subcontractAreaText } from "../domain/subcontract-share"
 
 export interface AdvanceDispatchRoundInput {
   state: SubcontractOrderState
@@ -114,7 +115,7 @@ export async function advanceExpiredDispatchRound(
     })
     const messageText = renderDispatchMessage(policy.messageTemplates.inviteSubcontract, {
       orderCode: state.orderCode,
-      deliveryAddress: input.deliveryAddress,
+      deliveryAddress: subcontractAreaText(input.deliveryArea), // P-4: tin mời chỉ ghi khu vực
       deliveryTime: input.deliveryTime,
       subcontractPriceVnd: (state.subcontractPriceVnd ?? 0).toLocaleString("vi-VN") + " đ",
       claimUrl,

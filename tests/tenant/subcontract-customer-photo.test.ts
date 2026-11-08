@@ -15,6 +15,7 @@ import { SUBCONTRACT_TOKEN_HEADER, signSubcontractBranchToken } from "@/modules/
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, makeChainOrganization, seedChainBranch, withSession, type Tenant } from "../helpers/fixtures"
+import { syncSubcontractShares } from "../helpers/subcontract-shares"
 
 const CODE = "DH261022-0401"
 const BRANCH = "CN1"
@@ -45,6 +46,7 @@ async function seedOrder(t: Tenant) {
       metadata: { subcontract_dispatch: { orderId: order.id, orderCode: CODE, dispatchStatus: "COMMITTED", claimedBranchId: BRANCH, claimedBranchName: "Chi nhánh 1" } },
     },
   })
+  await syncSubcontractShares(t.organizationId, order.id)
   return order.id
 }
 

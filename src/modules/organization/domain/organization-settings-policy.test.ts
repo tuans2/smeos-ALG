@@ -26,6 +26,9 @@ describe("luật sửa settings của tổ chức", () => {
     // AUD-017: thêm unlocked_tools từng làm rơi lead_captured_at khỏi danh sách
     expect(settingsPatchViolation({ lead_captured_at: "2026-01-01T00:00:00Z" }, {}, tenant)).toMatch(/lead_captured_at/)
     expect(settingsPatchViolation({ unlocked_tools: [] }, {}, tenant)).toMatch(/unlocked_tools/)
+    // ADR-012 T-7a: ma trận quản trị chỉ ghi qua route riêng (kiểm khoá tầng trên + ghi kép governance_decisions)
+    expect(settingsPatchViolation({ governance_matrix: { PAYMENTS: { overrides: {}, locks: {} } } }, {}, tenant)).toMatch(/governance_matrix/)
+    expect(settingsPatchViolation({ governance_matrix: {} }, {}, operator)).toMatch(/governance_matrix/)
   })
 
   it("ngành chưa khoá: tenant đổi được; khoá cấu hình thường luôn được", () => {

@@ -67,7 +67,7 @@ Phạm vi xem của sale: `assertOrderInScope` / `resolveSaleScope` theo cài đ
 | Tạo khách | `name`, `phone`, `email?`, `address?`, `tags`, sở thích hoa/màu | Chuẩn hoá SĐT, mã khách | `Q2`; tên bắt buộc; SĐT VN hợp lệ; SĐT duy nhất/tổ chức | Implemented |
 | Danh sách / chi tiết / sửa | `tier?`, `search` | Tìm theo tên/SĐT/mã | `Q1` / `Q3` | Implemented |
 | Xoá khách | `id` | `prisma.customers.delete` (xoá cứng; dịp và consent xoá theo cascade) | `Q4` (trần cứng ĐH) | Implemented |
-| Phân tầng | — | `deriveCustomerTier`: VIP ≥ 10 tr hoặc ≥ 10 đơn; GOLD ≥ 5 tr/5 đơn; SILVER ≥ 2 tr/3 đơn; BRONZE ≥ 500 k/1 đơn | — | Implemented |
+| Phân tầng | — | `deriveCustomerTier` theo ngưỡng ngành (`customerTiers` của plugin ngành; mặc định = ngành hoa: VIP ≥ 10 tr hoặc ≥ 10 đơn; GOLD ≥ 5 tr/5 đơn; SILVER ≥ 2 tr/3 đơn; BRONZE ≥ 500 k/1 đơn). Chi tiêu = tiền đã thu; bộ quét nền `customer-metrics-sweep.ts` tính lại khi đơn đổi, GET không ghi (PO 07/11/2026, Q6) | — | Implemented |
 | Dịp kỷ niệm | `name`, `date`, `is_recurring`, `reminder_days_before`, người nhận | Ghi `customer_occasions` | `Q6` | Implemented |
 | Nhắc sắp tới | — | Quét tối đa 200 khách, dịp trong 14 ngày tới | `Q7` | Implemented |
 | Đồng ý nhận tin | `channel ∈ {ZALO_ZNS, SMS, PHONE_CALL, PROMOTION}`, `granted` | Upsert `customer_consents` | `Q9` | Implemented |

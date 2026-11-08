@@ -7,6 +7,7 @@ import { Copy } from "@/components/ui/icon-set/copy"
 import { Check } from "@/components/ui/icon-set/check"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { ChannelIntegrationCard } from "@/components/chat/channel-integration-card"
 import { PublicChatSurfaceSettings } from "@/components/chat/public-chat-surface-settings"
 import { ChannelConfigModal } from "@/components/chat/channel-config-modal"
@@ -19,6 +20,7 @@ import type { ChannelConfig } from "@/modules/chat-assistant/domain/channel-inte
  */
 export function ChatChannelsPanel() {
   const { t } = useI18n()
+  const toast = useToast()
   const [channels, setChannels] = useState<ChannelStatusItem[]>([])
   const [loading, setLoading] = useState(true)
   const [updatingChannel, setUpdatingChannel] = useState<string | null>(null)
@@ -63,12 +65,12 @@ export function ChatChannelsPanel() {
 
       const data = await res.json()
       if (!res.ok) {
-        alert(data.error || "Không thể thay đổi trạng thái kênh")
+        toast.error(data.error || "Không thể thay đổi trạng thái kênh")
       } else {
         loadChannels()
       }
     } catch {
-      alert("Lỗi kết nối máy chủ")
+      toast.error("Không kết nối được máy chủ. Hãy thử lại.")
     } finally {
       setUpdatingChannel(null)
     }

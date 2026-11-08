@@ -1,11 +1,12 @@
 /**
- * Khoá tích hợp theo tầng — bảng cấp nền tảng `integration_governance` (không có organization_id,
- * xem đặc tả 07). Phạm vi tầng Chuỗi là id tổ chức chuỗi, chỉ ghi được từ phiên của chính chuỗi đó.
- * `scope_id` lưu theo địa chỉ phạm vi D-T5 (`platform`, `industry:<key>`, `org:<id>`; ADR-012 T-6b) — đổi qua lại
- * với dạng domain ("GLOBAL", "industry:<key>", id tổ chức) ngay ở đây.
+ * Khoá tích hợp theo tầng — lưu ở `governance_decisions` (ADR-012 D-T10; T-7c bỏ bảng `integration_governance`).
+ * Phạm vi tầng Chuỗi là id tổ chức chuỗi, chỉ ghi được từ phiên của chính chuỗi đó. Phạm vi lưu theo địa chỉ D-T5
+ * (`platform`, `industry:<key>`, `org:<id>`) — đổi qua lại với dạng domain ("GLOBAL", id tổ chức) ngay ở đây.
  */
 
-import { fromScopeKey, storedScopeIds, toScopeKey } from "@/core/governance/scope-key"
+import { integrationRecord } from "@/core/governance/decision-record"
+import { currentDecisions, recordDecisions } from "@/core/governance/infra/decision-log"
+import { fromScopeKey, toScopeKey } from "@/core/governance/scope-key"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { GovernanceTier } from "@/core/governance/layered-resolver"
 import { ACTIVE_CHAIN_LINK } from "@/modules/organization/infra/organization-links"
@@ -15,22 +16,17 @@ import type { GovernanceMode, GovernanceRow, OrgGovernanceScope } from "../domai
 export class GovernanceRepository {
   async listForScopes(scopeIds: readonly string[]): Promise<GovernanceRow[]> {
     if (scopeIds.length === 0) return []
-    const rows = await prisma.integration_governance.findMany({ where: { scope_id: { in: scopeIds.flatMap(storedScopeIds) } } })
-    return rows.map((r) => ({ connectorKey: r.connector_key, tier: r.tier as GovernanceTier, scopeId: fromScopeKey(r.scope_id), mode: r.mode }))
+    const records = await currentDecisions(prisma, { systems: ["integration"], scopes: [...new Set(scopeIds.map(toScopeKey))] })
+    return records.flatMap((r) => {
+      const mode = r.value?.["mode"]
+      if (mode !== "FORBID" && mode !== "INHERIT_ONLY") return []
+      return [{ connectorKey: r.decisionKey, tier: r.tier as GovernanceTier, scopeId: fromScopeKey(r.scope), mode }]
+    })
   }
 
-  /** ALLOW_OWN là mặc định — xoá dòng thay vì lưu, để bảng chỉ giữ khoá thật. */
+  /** Một dòng `governance_decisions`; `ALLOW_OWN` là mặc định nên thành dòng gỡ (ADR-012 T-7c). */
   async set(input: { connectorKey: string; tier: GovernanceTier; scopeId: string; mode: GovernanceMode; updatedBy: string }) {
-    const key = { connector_key: input.connectorKey, tier: input.tier, scope_id: toScopeKey(input.scopeId) }
-    if (input.mode === "ALLOW_OWN") {
-      await prisma.integration_governance.deleteMany({ where: { ...key, scope_id: { in: storedScopeIds(input.scopeId) } } })
-      return
-    }
-    await prisma.integration_governance.upsert({
-      where: { connector_key_tier_scope_id: key },
-      create: { ...key, mode: input.mode, updated_by: input.updatedBy },
-      update: { mode: input.mode, updated_by: input.updatedBy },
-    })
+    await recordDecisions(prisma, [integrationRecord({ ...input, decidedBy: input.updatedBy })])
   }
 
   /** Ngành (`organizations.industry_key`) và chuỗi đang liên kết ACTIVE của một tổ chức. */

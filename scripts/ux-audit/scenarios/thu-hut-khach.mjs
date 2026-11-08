@@ -60,7 +60,8 @@ export async function run({ open, shot, org, uid }) {
     await p.getByText("Vui lòng đồng ý").waitFor()
   })
   await shot("catalog-cong-khai-da-gui", async (p) => {
-    await q("DELETE FROM leads WHERE organization_id=$1 AND phone='0912345678'", [org])
+    // ADR-014 P-5c: cột `phone` là bản mã — xoá theo 4 số cuối và tên
+    await q("DELETE FROM leads WHERE organization_id=$1 AND phone_last4='5678' AND name='Anh Minh'", [org])
     await open(p, `/c/${slug}?ref=${qrCode}`)
     await p.getByPlaceholder("Tên của bạn").fill("Anh Minh")
     await p.getByPlaceholder("Số điện thoại Zalo").fill("0912345678")

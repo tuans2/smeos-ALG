@@ -22,6 +22,9 @@ export const PLATFORM_OWNED_SETTING_KEYS = [
   // Chat Telegram đã chứng minh thuộc tổ chức — chỉ máy chủ ghi (greeting-card/infra/telegram-linked-chats.ts)
   "telegram_linked_chat_ids",
   "telegram_unlinked_chats",
+  // Ma trận quản trị chỉ ghi qua `/organizations/current/governance-matrix` (kiểm khoá tầng trên + ghi kép
+  // `governance_decisions`, ADR-012 T-7a) — ghi thẳng qua PATCH settings bỏ qua cả hai
+  "governance_matrix",
 ] as const
 
 /** Mã năng lực nền tảng được đổi ngành của tiệm đã khoá ngành. */

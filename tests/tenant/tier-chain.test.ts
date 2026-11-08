@@ -54,9 +54,9 @@ describe("resolveTierChain — chuỗi cha của một cửa hàng đối tác",
     expect((await findPrimaryChainLink(store.organizationId))?.chainOrgId).toBe(chainB.organizationId)
   })
 
-  it("đọc khoá ngành từ cấu hình tổ chức", async () => {
-    await prisma.organizations.update({ where: { id: store.organizationId }, data: { settings: { industry: "flower" } } })
-    expect((await resolveTierChain(store.organizationId))?.industryKey).toBe("flower")
+  it("đọc khoá ngành từ cột industry_key; settings.industry sót lại không có tác dụng (T-6c-2)", async () => {
+    await prisma.organizations.update({ where: { id: store.organizationId }, data: { industry_key: "HOMESTAY", settings: { industry: "flower" } } })
+    expect((await resolveTierChain(store.organizationId))?.industryKey).toBe("HOMESTAY")
   })
 
   it("tổ chức không tồn tại: null", async () => {

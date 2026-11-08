@@ -2,6 +2,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { ACTIVE_DISPATCH_STATUSES } from "./chain-dispatch-sweep-query"
 import { dispatchBranchIdByCode } from "./dispatch-branch-lookup"
+import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "@/modules/orders/infra/order-recipient-view"
 
 /** Trần số đơn trả về cho trang cửa hàng — danh sách luôn có giới hạn */
 export const PORTAL_MAX_ORDERS = 100
@@ -65,7 +66,7 @@ export class BranchPortalRepository {
    * Lọc trong DB theo JSON (`invitedBranchIds` chứa mã / `claimedBranchId` = mã), mới cập nhật trước.
    */
   async listBranchDispatches(ctx: TenantContext, branchCode: string) {
-    return this.db.order_coordinations.findMany({
+    const rows = await this.db.order_coordinations.findMany({
       where: {
         organization_id: ctx.organizationId,
         AND: [
@@ -86,10 +87,11 @@ export class BranchPortalRepository {
       select: {
         metadata: true,
         updated_at: true,
-        order: { select: { id: true, code: true, delivery_address: true, delivery_window: true, production_status: true } },
+        order: { select: { id: true, code: true, delivery_address: true, delivery_window: true, production_status: true, recipient: RECIPIENT_VIEW_SELECT } },
       },
       orderBy: { updated_at: "desc" },
       take: PORTAL_MAX_ORDERS,
     })
+    return rows.map((r) => ({ ...r, order: withDeliveryView(r.order) })) // P-3b: người nhận từ order_recipients
   }
 }

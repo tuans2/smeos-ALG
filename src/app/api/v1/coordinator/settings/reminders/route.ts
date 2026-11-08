@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -9,14 +8,7 @@ import {
   updateReminderPolicyConfig,
 } from "@/modules/coordinator/use-cases/manage-reminder-policy"
 import type { DispatchReminderPolicyConfig } from "@/modules/coordinator/domain/dispatch-reminder-types"
-
-const updatePolicySchema = z.object({
-  m0MinutesAfterPaid: z.number().int().min(0).max(1440).optional(),
-  m1MinutesBeforeDelivery: z.number().int().min(0).max(1440).optional(),
-  m2MinutesBeforeDelivery: z.number().int().min(0).max(1440).optional(),
-  m3MinutesAfterShipperAssigned: z.number().int().min(0).max(1440).optional(),
-  m5MinutesAfterDelivery: z.number().int().min(0).max(1440).optional(),
-})
+import { reminderPolicyBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 /**
  * `GET /api/v1/coordinator/settings/reminders` (D1)
@@ -41,7 +33,7 @@ export const PUT = handle(async (request) => {
   requireCapability(ctx, "R12")
 
   const raw = await request.json().catch(() => null)
-  const parsed = updatePolicySchema.safeParse(raw)
+  const parsed = reminderPolicyBody.safeParse(raw)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

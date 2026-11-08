@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useSession } from "@/lib/session"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
+import { usePromptDialog } from "@/components/ui/prompt-dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 type ProductCopy = {
@@ -75,6 +76,7 @@ export default function ProductCopyDetailPage() {
   // Local edit state
   const [localEdited, setLocalEdited] = useState<Partial<Record<ProductCopyField, string | string[]>>>({})
   const [confirm, confirmDialog] = useConfirmDialog()
+  const [askText, promptDialog] = usePromptDialog()
 
   useEffect(() => {
     async function fetchCopy() {
@@ -161,7 +163,12 @@ export default function ProductCopyDetailPage() {
 
   async function handleReject() {
     if (!canApprove) return
-    const reason = prompt("Lý do từ chối:")
+    const reason = await askText({
+      title: "Từ chối bản nội dung này?",
+      label: "Lý do từ chối",
+      confirmLabel: "Từ chối",
+      tone: "danger",
+    })
     if (!reason) return
     setActionLoading("reject")
     try {
@@ -455,6 +462,7 @@ export default function ProductCopyDetailPage() {
         </div>
       </div>
       {confirmDialog}
+      {promptDialog}
     </TooltipProvider>
   )
 }

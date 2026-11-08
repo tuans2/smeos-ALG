@@ -1,16 +1,16 @@
 /**
- * Lưu/đọc quyết định ma trận quản trị theo tầng.
- * - Tầng tổ chức: `organizations.settings.governance_matrix.<SYSTEM>` (chỉ đổi đúng nhánh đó, một câu lệnh).
- * - Tầng Mẹ: `platform_settings` khoá `governance_matrix:<SYSTEM>`.
- * - Tầng Chuỗi của một cửa hàng: tổ chức chuỗi có quan hệ đối tác ACTIVE với cửa hàng.
+ * Lưu/đọc quyết định ma trận quản trị theo tầng — bảng `governance_decisions` (ADR-012 D-T10), phạm vi `org:<id>`
+ * (tổ chức) hoặc `platform` (Mẹ). T-7c đã bỏ nơi lưu cũ (`settings.governance_matrix`, `platform_settings`
+ * `governance_matrix:*`). Tầng Chuỗi của một cửa hàng: chuỗi cha chính (`findPrimaryChainLink`).
  */
-import type { Prisma } from "@/generated/prisma/client"
+import { matrixRecords } from "@/core/governance/decision-record"
+import { currentDecisions, syncDecisionScope } from "@/core/governance/infra/decision-log"
+import { organizationTierOf } from "@/core/governance/tier-of"
 import { prisma } from "@/core/tenancy/infra/prisma"
 
 import { findPrimaryChainLink } from "./tier-chain-repository"
 import {
-  decisionsFromSettings,
-  parseDecisions,
+  decisionsFromRecords,
   withBuiltInLocks,
   type GovernanceDecisions,
   type GovernanceSystem,
@@ -19,37 +19,53 @@ import {
   type UpperLayer,
 } from "../domain/governance-decisions"
 
-const motherKey = (system: GovernanceSystem) => `governance_matrix:${system}`
+const MOTHER_SCOPE = "platform"
+const orgScope = (organizationId: string) => `org:${organizationId}`
+const matrixSystem = (system: GovernanceSystem) => `matrix:${system}` as const
 
-export async function getOrgGovernance(organizationId: string, system: GovernanceSystem): Promise<GovernanceDecisions> {
-  const org = await prisma.organizations.findUnique({ where: { id: organizationId }, select: { settings: true } })
-  return decisionsFromSettings(org?.settings, system)
+async function readMatrix(system: GovernanceSystem, scope: string): Promise<GovernanceDecisions> {
+  return decisionsFromRecords(await currentDecisions(prisma, { systems: [matrixSystem(system)], scopes: [scope] }), system)
 }
 
-export async function saveOrgGovernance(organizationId: string, system: GovernanceSystem, decisions: GovernanceDecisions): Promise<boolean> {
-  const value = JSON.stringify(decisions)
-  const updated = await prisma.$executeRaw`
-    UPDATE organizations
-    SET settings = (CASE WHEN jsonb_typeof(settings) = 'object' THEN settings ELSE '{}'::jsonb END)
-      || jsonb_build_object('governance_matrix',
-           (CASE WHEN jsonb_typeof(settings->'governance_matrix') = 'object' THEN settings->'governance_matrix' ELSE '{}'::jsonb END)
-           || jsonb_build_object(${system}::text, ${value}::jsonb)),
-        updated_at = NOW()
-    WHERE id = ${organizationId}`
-  return updated === 1
+export async function getOrgGovernance(organizationId: string, system: GovernanceSystem): Promise<GovernanceDecisions> {
+  return readMatrix(system, orgScope(organizationId))
+}
+
+/**
+ * Lưu tập ghi đè + khoá của một tổ chức (ADR-012 T-7c: chỉ còn `governance_decisions`). Khoá dòng tổ chức trong giao
+ * dịch để hai lần lưu đồng thời của cùng tổ chức chạy lần lượt (trước đây lệnh UPDATE settings giữ khoá này).
+ */
+export async function saveOrgGovernance(
+  organizationId: string,
+  system: GovernanceSystem,
+  decisions: GovernanceDecisions,
+  decidedBy: string | null = null,
+): Promise<boolean> {
+  return prisma.$transaction(async (tx) => {
+    const rows = await tx.$queryRaw<Array<{ type: string }>>`SELECT "type"::text AS type FROM organizations WHERE id = ${organizationId} FOR UPDATE`
+    const org = rows[0]
+    if (!org) return false
+    const tier = organizationTierOf(org.type)
+    const scope = orgScope(organizationId)
+    await syncDecisionScope(tx, { system: matrixSystem(system), scope }, matrixRecords({ system, tier, scope, decisions, decidedBy }), decidedBy)
+    return true
+  })
 }
 
 export async function getMotherGovernance(system: GovernanceSystem): Promise<GovernanceDecisions> {
-  const row = await prisma.platform_settings.findUnique({ where: { key: motherKey(system) } })
-  return parseDecisions(row?.value)
+  return readMatrix(system, MOTHER_SCOPE)
 }
 
 export async function saveMotherGovernance(system: GovernanceSystem, decisions: GovernanceDecisions, updatedBy: string | null): Promise<void> {
-  const value = decisions as unknown as Prisma.InputJsonValue
-  await prisma.platform_settings.upsert({
-    where: { key: motherKey(system) },
-    create: { key: motherKey(system), value, updated_by: updatedBy },
-    update: { value, updated_by: updatedBy },
+  await prisma.$transaction(async (tx) => {
+    // Hai lần lưu đồng thời cùng ma trận của Mẹ chạy lần lượt (khoá theo giao dịch)
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`governance:${matrixSystem(system)}:${MOTHER_SCOPE}`}))`
+    await syncDecisionScope(
+      tx,
+      { system: matrixSystem(system), scope: MOTHER_SCOPE },
+      matrixRecords({ system, tier: "MOTHER", scope: MOTHER_SCOPE, decisions, decidedBy: updatedBy }),
+      updatedBy,
+    )
   })
 }
 
@@ -58,25 +74,29 @@ export async function getUpperLayers(organizationId: string, system: GovernanceS
   const layers: UpperLayer[] = withBuiltInLocks(system, [{ tier: "MOTHER", decisions: await getMotherGovernance(system) }])
   if (!includeChain) return layers
   const link = await findPrimaryChainLink(organizationId)
-  if (link) layers.push({ tier: "CHAIN", decisions: decisionsFromSettings(link.chainSettings, system) })
+  if (link) layers.push({ tier: "CHAIN", decisions: await readMatrix(system, orgScope(link.chainOrgId)) })
   return layers
 }
 
 /**
- * Tầng trên của nhiều ma trận cùng lúc (2 truy vấn) — dùng ở luồng bán hàng công khai, nơi mỗi lần
- * tải trang/báo giá cần cả Ưu đãi, Cam kết và Chính sách.
+ * Ma trận của nhiều hệ thống cùng lúc (2 truy vấn) cho luồng bán hàng công khai, nơi mỗi lần tải trang/báo giá cần cả
+ * Ưu đãi, Cam kết và Chính sách: tầng trên (Mẹ, Chuỗi) và quyết định riêng của tiệm (`own`).
  */
 export async function getPolicyGovernanceUpper(organizationId: string, systems: readonly PolicySystem[]): Promise<PolicyGovernanceUpper> {
-  const [motherRows, link] = await Promise.all([
-    prisma.platform_settings.findMany({ where: { key: { in: systems.map(motherKey) } } }),
-    findPrimaryChainLink(organizationId),
-  ])
-  const out: PolicyGovernanceUpper = {}
+  const link = await findPrimaryChainLink(organizationId)
+  const chainScope = link ? orgScope(link.chainOrgId) : null
+  const records = await currentDecisions(prisma, {
+    systems: systems.map(matrixSystem),
+    scopes: [MOTHER_SCOPE, orgScope(organizationId), ...(chainScope ? [chainScope] : [])],
+  })
+  const inScope = (scope: string) => records.filter((r) => r.scope === scope)
+  const own: Partial<Record<PolicySystem, GovernanceDecisions>> = {}
+  const out: PolicyGovernanceUpper = { own }
   for (const system of systems) {
-    const mother = motherRows.find((r) => r.key === motherKey(system))
-    const layers: UpperLayer[] = withBuiltInLocks(system, [{ tier: "MOTHER", decisions: parseDecisions(mother?.value) }])
-    if (link) layers.push({ tier: "CHAIN", decisions: decisionsFromSettings(link.chainSettings, system) })
+    const layers: UpperLayer[] = withBuiltInLocks(system, [{ tier: "MOTHER", decisions: decisionsFromRecords(inScope(MOTHER_SCOPE), system) }])
+    if (chainScope) layers.push({ tier: "CHAIN", decisions: decisionsFromRecords(inScope(chainScope), system) })
     out[system] = layers
+    own[system] = decisionsFromRecords(inScope(orgScope(organizationId)), system)
   }
   return out
 }

@@ -21,8 +21,13 @@ export function computeProductCost(
   let wasteVnd = 0
 
   for (const line of recipe.lines) {
+    if (line.quantity <= 0) continue
     const m = byId.get(line.materialId)
-    if (!m || line.quantity <= 0) continue
+    if (!m) {
+      // Nguyên liệu đã xoá/ngừng dùng: bỏ qua thì giá vốn (và giá sàn) thấp hơn thật — báo thiếu (audit BL-07)
+      missingPrices.push("Nguyên liệu không còn trong danh mục")
+      continue
+    }
     const lineCostVnd = m.unitCostVnd === null ? null : Math.round(m.unitCostVnd * line.quantity)
     lines.push({ materialId: m.id, name: m.name, quantity: line.quantity, unit: m.unit, unitCostVnd: m.unitCostVnd, lineCostVnd })
     if (lineCostVnd === null) {

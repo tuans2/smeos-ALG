@@ -44,6 +44,7 @@ describe("SubcontractOrderRepository", () => {
         findFirst: vi.fn().mockResolvedValue({ id: "branch-abc" }),
       },
       organizations: { findUnique: vi.fn().mockResolvedValue({ settings: {} }) },
+      shared_order_access: { findMany: vi.fn().mockResolvedValue([]), create: vi.fn(), update: vi.fn() },
     }
     // Giao dịch giả: chạy thẳng trên mock; SELECT … FOR UPDATE trả dòng mà findFirst đang giả lập
     mockDb.$transaction = (fn: (tx: unknown) => unknown) => fn(mockDb)
@@ -96,6 +97,10 @@ describe("SubcontractOrderRepository", () => {
       where: { organization_id: "org-1", id: "ord-123" },
       data: { branch_id: "branch-abc" },
     })
+    // P-4: chi nhánh đang giữ đơn được cấp quyền xem mức ASSIGNED
+    expect(mockDb.shared_order_access.create).toHaveBeenCalledWith({
+      data: { organization_id: "org-1", order_id: "ord-123", branch_key: "branch-abc", level: "ASSIGNED" },
+    })
   })
 
   it("saveSubcontractState tạo mới coordination và xóa branch_id khi đơn quay về OPEN", async () => {
@@ -121,6 +126,9 @@ describe("SubcontractOrderRepository", () => {
       where: { organization_id: "org-1", id: "ord-123" },
       data: { branch_id: null },
     })
+    // P-4: quay về OPEN → các chi nhánh được mời ở vòng hiện tại có quyền INVITED
+    expect(mockDb.shared_order_access.create.mock.calls.map((c: [{ data: { branch_key: string; level: string } }]) => [c[0].data.branch_key, c[0].data.level]))
+      .toEqual([["branch-abc", "INVITED"], ["branch-xyz", "INVITED"]])
   })
 
   it("findSubcontractByCode tìm đơn với include relations", async () => {

@@ -8,6 +8,7 @@ import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Database } from "@/components/ui/icon-set/database"
 import { Check } from "@/components/ui/icon-set/check"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { Checkbox } from "@/components/ui/checkbox"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 import { canOverrideIndustryLock } from "@/modules/organization/domain/organization-settings-policy"
@@ -23,6 +24,7 @@ export function IndustrySelectSection({
   onSelectIndustry,
 }: IndustrySelectSectionProps) {
   const { organization, platformCapabilities, organizationType } = useSession()
+  const toast = useToast()
   const isSuperAdmin = canOverrideIndustryLock(platformCapabilities ?? [])
   const isUnlocked = isSuperAdmin || !Boolean(organization?.industryLocked)
 
@@ -53,7 +55,7 @@ export function IndustrySelectSection({
         window.location.reload()
       }, 1000)
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Lỗi khi nạp dữ liệu mẫu")
+      toast.error(err instanceof Error ? err.message : "Không nạp được dữ liệu mẫu")
     } finally {
       setLoadingMockKey(null)
     }

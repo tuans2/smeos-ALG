@@ -66,8 +66,16 @@ const SYSTEM_PATH_PREFIXES = [
   "/api/v1/sso/", "/api/v1/chat/webhooks/", "/api/v1/chat/public/", "/api/v1/storage/", "/api/health", "/api/dev/",
 ] as const
 
-/** Chọn/tạo tổ chức của chính người dùng: đọc thành viên ở nhiều tổ chức trước khi có tổ chức đang hoạt động. */
-const SYSTEM_EXACT_PATHS = new Set(["/api/v1/organizations", "/api/v1/session/organization"])
+/**
+ * Chọn/tạo tổ chức của chính người dùng: đọc thành viên ở nhiều tổ chức trước khi có tổ chức đang hoạt động.
+ * Route Console nằm ngoài `/api/v1/platform/` (gác `requirePlatformContext`) cũng khai ở đây — test kiến trúc
+ * `rls-policies.test.ts` đòi mọi route gọi `requirePlatformContext` chạy quyền hệ thống (I-5, 07/11/2026).
+ */
+const SYSTEM_EXACT_PATHS = new Set([
+  "/api/v1/organizations",
+  "/api/v1/session/organization",
+  "/api/v1/greeting-card/integrations/staff-notifications/saas-policy",
+])
 
 export function dbContextForPath(pathname: string): DbContext {
   if (SYSTEM_EXACT_PATHS.has(pathname)) return { kind: "system", label: `route:${pathname}`, route: pathname }

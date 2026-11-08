@@ -48,7 +48,7 @@ export class NotificationPreferenceRepository implements INotificationPreference
 
   // ── Event Visibility Matrix (Mother only) ───────────────────────────────
   async getEventVisibilityMap(): Promise<Record<string, Record<NotificationSubTier, boolean>>> {
-    const rows = await prisma.notification_event_visibility.findMany()
+    const rows = await getNotificationHardLockRepository().listEventVisibility() // T-7b: governance_decisions
     const map: Record<string, Record<NotificationSubTier, boolean>> = {}
     for (const r of rows) {
       if (!map[r.event_key]) {
@@ -68,11 +68,7 @@ export class NotificationPreferenceRepository implements INotificationPreference
     visible: boolean,
     updatedBy: string
   ): Promise<void> {
-    await prisma.notification_event_visibility.upsert({
-      where: { event_key_tier: { event_key: eventKey, tier } },
-      create: { event_key: eventKey, tier, visible, updated_by: updatedBy },
-      update: { visible, updated_by: updatedBy },
-    })
+    return getNotificationHardLockRepository().setEventVisibility(eventKey, tier, visible, updatedBy)
   }
 
   // ── Hard Locks (All tiers) ──────────────────────────────────────────────
@@ -93,9 +89,10 @@ export class NotificationPreferenceRepository implements INotificationPreference
     eventKey: string,
     channel: NotifyChannel,
     tier: NotificationTier,
-    scopeId: string
+    scopeId: string,
+    removedBy: string | null = null
   ): Promise<void> {
-    return getNotificationHardLockRepository().deleteHardLock(eventKey, channel, tier, scopeId)
+    return getNotificationHardLockRepository().deleteHardLock(eventKey, channel, tier, scopeId, removedBy)
   }
 
   // ── Org Policies (Tier 2: SaaS Ngành / ChainOS) ─────────────────────────

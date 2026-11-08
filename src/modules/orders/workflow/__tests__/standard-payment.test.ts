@@ -10,6 +10,15 @@ describe("mã đơn trong nội dung chuyển khoản", () => {
     expect(extractStandardOrderCode("DH251031-00071")).toBeNull()
     expect(extractStandardOrderCode("chuyen tien hoa")).toBeNull()
   })
+
+  // PO 07/11/2026 (Q2): đơn tạo ở Điều phối (`FLR-<yymmdd>-<4 số>`) cũng khớp chuyển khoản
+  it("đọc mã đơn Điều phối FLR, cả khi ngân hàng bỏ dấu gạch", () => {
+    expect(extractStandardOrderCode("CK FLR-261107-0003 Lan")).toBe("FLR-261107-0003")
+    expect(extractStandardOrderCode("ck flr2611070003")).toBe("FLR-261107-0003")
+    expect(extractStandardOrderCode("FLR 261107 0003")).toBe("FLR-261107-0003")
+    expect(extractStandardOrderCode("FLR-261107-00031")).toBeNull()
+    expect(extractStandardOrderCode("FLR-2026-123")).toBeNull()
+  })
 })
 
 describe("kế hoạch ghi thu", () => {

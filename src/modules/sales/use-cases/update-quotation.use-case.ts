@@ -1,5 +1,6 @@
 import { notFound, validationFailed } from "@/core/http/errors"
-import { assertNotBelowFloor } from "@/modules/costing/use-cases/price-floor-guard"
+import { assertWithinPriceBounds } from "@/modules/costing/use-cases/price-floor-guard"
+import { productLinesCeilingBase } from "../domain/quotation-price-bounds"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import {
   calculateQuotationTotals,
@@ -82,8 +83,13 @@ export async function updateQuotationUseCase(
       effectiveDiscount,
       input.shippingFee ?? existing.shippingFee,
     )
-    // Giá dưới sàn: Sale bị chặn, Điều hành (C10) lưu được (checklist ALG 3.4)
-    await assertNotBelowFloor(ctx, rawItems.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })), totalAmount - shippingFee)
+    // Dưới sàn cần C10 (checklist ALG 3.4), vượt trần cần C9 (PO 07/11/2026, Q3)
+    await assertWithinPriceBounds(
+      ctx,
+      rawItems.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })),
+      totalAmount - shippingFee,
+      productLinesCeilingBase(rawItems, totalAmount - shippingFee),
+    )
 
     dto.subtotal = subtotal
     dto.discountAmount = discountAmount

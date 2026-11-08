@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -7,21 +6,7 @@ import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { ListChainPartnersUseCase } from "@/modules/chain-partnership/use-cases/list-chain-partners"
 import { ProvisionPartnerAccountUseCase } from "@/modules/chain-partnership/use-cases/provision-partner-account"
-
-const provisionSchema = z.object({
-  partnerStoreName: z.string().min(2, "Tên cửa hàng phải từ 2 ký tự"),
-  partnerCode: z.string().min(2, "Mã đối tác phải từ 2 ký tự"),
-  partnershipType: z.enum(["SUBCONTRACTOR", "FRANCHISE"]).optional(), // BRANCH bỏ — ADR-012 D-T2
-  contactName: z.string().min(2, "Tên người đại diện không được để trống"),
-  contactPhone: z.string().min(8, "Số điện thoại không hợp lệ"),
-  contactEmail: z.string().email("Email không hợp lệ"),
-  password: z.string().min(10, "Mật khẩu tối thiểu 10 ký tự").optional(),
-  address: z.string().optional(),
-  province: z.string().optional(),
-  district: z.string().optional(),
-  capacityDaily: z.number().optional(),
-  commissionRate: z.number().optional(),
-})
+import { provisionPartnerBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -60,7 +45,6 @@ export const GET = handle(async (request) => {
   })
 })
 
-
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   const body = await request.json().catch(() => null)
@@ -69,7 +53,7 @@ export const POST = handle(async (request) => {
   if (body && ("partnerStoreName" in body || "contactEmail" in body)) {
     // AUD-009: cấp tài khoản + tổ chức mới — chỉ Điều hành (F2, hardCap)
     requireCapability(ctx, "F2")
-    const parsed = provisionSchema.safeParse(body)
+    const parsed = provisionPartnerBody.safeParse(body)
     if (!parsed.success) {
       const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
       throw validationFailed({ reason: errorDetails })

@@ -5,6 +5,7 @@ import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { BundleSelector } from "@/components/product-image-set/bundle-selector"
@@ -18,6 +19,7 @@ export function ProductImageSetClient() {
   const { t, dict } = useI18n()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const toast = useToast()
   const [bundleId, setBundleId] = useState("omnichannel_default")
   const [customNote, setCustomNote] = useState("")
 
@@ -189,7 +191,7 @@ export function ProductImageSetClient() {
             originalUrl={jobResult.originalUrl || previewUrl || ""}
             result={jobResult}
             onUseInCatalog={() => {
-              alert("Đã lưu bộ ảnh vào Thư viện và sẵn sàng gắn vào Catalog!")
+              toast.success("Đã lưu bộ ảnh vào Thư viện và sẵn sàng gắn vào Catalog!")
             }}
           />
         </div>

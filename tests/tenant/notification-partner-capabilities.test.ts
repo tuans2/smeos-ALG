@@ -38,7 +38,7 @@ describe("mã năng lực cho cấu hình thông báo & đối tác chuỗi", ()
   it("nhân viên bán hàng (không có F2) không sửa được chính sách / khoá cứng của tổ chức", async () => {
     expect((await patchOrgPolicy(send(saleToken, "notification/org-policy", "PATCH", { ...lock, roleKey: "*" }))).status).toBe(403)
     expect((await postStoreLock(send(saleToken, "notification/store-hard-locks", "POST", lock))).status).toBe(403)
-    expect(await prisma.notification_hard_locks.count()).toBe(0)
+    expect(await prisma.governance_decisions.count({ where: { system: "notification.hard_lock" } })).toBe(0)
   })
 
   it("Điều hành (F2) sửa được", async () => {

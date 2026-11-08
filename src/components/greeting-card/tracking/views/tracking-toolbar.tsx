@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { usePromptDialog } from "@/components/ui/prompt-dialog"
 import { NativeSelect } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -62,14 +63,15 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
   const [saved, setSaved] = useState<SavedView[]>(() => loadSavedViews(orgId))
   const [savedOrgId, setSavedOrgId] = useState(orgId)
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [askText, promptDialog] = usePromptDialog()
 
   if (savedOrgId !== orgId) {
     setSavedOrgId(orgId)
     setSaved(loadSavedViews(orgId))
   }
 
-  function saveCurrent() {
-    const name = window.prompt("Tên view (vd. Đơn của Sale Lan)")?.trim()
+  async function saveCurrent() {
+    const name = await askText({ title: "Lưu view hiện tại", label: "Tên view", placeholder: "Vd. Đơn của Sale Lan", confirmLabel: "Lưu view" })
     if (!name) return
     const next = [...saved, { id: `u-${Date.now().toString(36)}`, name: name.slice(0, 60), state: { ...state } }]
     setSaved(next)
@@ -93,6 +95,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
 
   return (
     <div className="flex flex-col gap-2.5 rounded-2xl border border-border bg-surface p-3 shadow-xs">
+      {promptDialog}
       {/* HÀNG CHÍNH: Tìm kiếm + Lọc nhanh + View Tabs + Nút làm mới */}
       <div className="flex flex-wrap items-center justify-between gap-2.5">
         <div className="flex flex-1 flex-wrap items-center gap-2 min-w-[280px]">
@@ -238,7 +241,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
         ))}
         <Button variant="outline"
           type="button"
-          onClick={saveCurrent}
+          onClick={() => void saveCurrent()}
           className="h-auto gap-0 rounded-lg border border-dashed border-primary/50 px-2 py-0.5 text-caption font-semibold text-primary hover:bg-primary/5"
         >
           + Lưu view

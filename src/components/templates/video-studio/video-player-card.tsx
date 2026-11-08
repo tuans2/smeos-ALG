@@ -9,6 +9,7 @@ import { Volume2 } from "@/components/ui/icon-set/volume2"
 import { VolumeX } from "@/components/ui/icon-set/volume-x"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { Badge } from "@/components/ui/badge"
 
 export interface VideoPlayerCardProps {
@@ -35,6 +36,7 @@ export function VideoPlayerCard({
 }: VideoPlayerCardProps) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
+  const toast = useToast()
   const videoRef = React.useRef<HTMLVideoElement>(null)
 
   // 24/09/2026: bỏ ảnh bìa mẫu Unsplash — không có ảnh sản phẩm thì để nền trống.
@@ -63,7 +65,7 @@ export function VideoPlayerCard({
       e.stopPropagation()
     }
     if (!normalizedVideoUrl) {
-      alert("Video chưa sẵn sàng hoặc đang render. Vui lòng quay lại sau ít giây.")
+      toast.info("Video chưa sẵn sàng hoặc đang render. Vui lòng quay lại sau ít giây.")
       return
     }
     if (!videoRef.current) return

@@ -237,11 +237,12 @@ export function resolveAppliedPolicies(
   catalogFilters: unknown,
   orgSettings: unknown,
   industryKey?: string | null,
-  /** Khoá của tầng Mẹ / chuỗi trên ma trận quản trị; quyết định của chính tiệm đọc từ `orgSettings`. */
+  /** Ma trận quản trị: khoá của tầng Mẹ / chuỗi và quyết định của chính tiệm (`own`, ADR-012 T-7b). */
   governanceUpper: PolicyGovernanceUpper = {},
 ): PublicAppliedPolicies {
   const all = parseStorePolicies(orgSettings, industryKey)
-  const governed = (system: PolicySystem) => (id: string) => isGovernedItemEnabled(id, orgSettings, system, governanceUpper[system])
+  const governed = (system: PolicySystem) => (id: string) =>
+    isGovernedItemEnabled(id, governanceUpper.own?.[system], system, governanceUpper[system])
   const promoOn = governed("PROMOTIONS")
   const commitOn = governed("COMMITMENTS")
   const agreeOn = governed("POLICIES")

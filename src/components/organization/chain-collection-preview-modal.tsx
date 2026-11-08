@@ -50,11 +50,11 @@ export function ChainCollectionPreviewModal({
           {isR1 ? <ShieldAlert size={20} className="shrink-0 mt-0.5" /> : <CheckCircle2 size={20} className="shrink-0 mt-0.5" />}
           <div>
             <h4 className="font-extrabold text-body-sm">
-              {isR1 ? "Cấp độ Rủi ro Cao (R1)" : "Cấp độ Tiêu chuẩn (R2)"}
+              {isR1 ? "Cấp độ Rủi ro Cao" : "Cấp độ Tiêu chuẩn"}
             </h4>
             <p className="text-caption text-text-muted mt-0.5">
               {isR1
-                ? "Cấu hình có thu thập thông tin bảo mật S2/PII hoặc áp dụng cho cửa hàng đối tác. Cần có mục đích pháp lý rõ ràng."
+                ? "Cấu hình có thu thập thông tin nhạy cảm, thông tin cá nhân khách hàng hoặc áp dụng cho cửa hàng đối tác. Cần có mục đích pháp lý rõ ràng."
                 : "Cấu hình an toàn trong giới hạn dữ liệu công khai và nội bộ tiêu chuẩn."}
             </p>
           </div>

@@ -35,7 +35,7 @@ describe("ma trận điều hướng theo ngành lưu ở CSDL", () => {
     shop = await createTenant("nav-tiem-fnb")
     await prisma.organizations.update({
       where: { id: shop.organizationId },
-      data: { settings: { industry: "FNB", industry_locked: true } },
+      data: { industry_key: "FNB", settings: { industry_locked: true } }, // ADR-012 T-6c-2: ngành chỉ ở cột
     })
   })
 

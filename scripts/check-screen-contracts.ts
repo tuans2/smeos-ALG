@@ -231,6 +231,18 @@ export function runContractCheck(): {
   }
 }
 
+/**
+ * Lý do làm `--check` đỏ (ADR-011 D-UI-08: mọi page.tsx cần contract v2 hoặc miễn trừ).
+ * Trang chỉ khớp contract v1 (theo tên tệp/nhắc tuyến) cũng đỏ — trước đây mất front-matter v2
+ * thì trang lặng lẽ rơi về v1 và cổng vẫn đạt.
+ */
+export function contractCheckFailures(report: { missing: number; coveredV1: number }): string[] {
+  const out: string[] = []
+  if (report.missing > 0) out.push(`Phát hiện ${report.missing} trang chưa có Screen Contract!`)
+  if (report.coveredV1 > 0) out.push(`Phát hiện ${report.coveredV1} trang chỉ có Screen Contract v1 — cần front-matter v2.`)
+  return out
+}
+
 function main() {
   const args = process.argv.slice(2)
   const isJson = args.includes("--json")
@@ -277,8 +289,9 @@ function main() {
     console.log("💡 Nếu trang được miễn trừ: khai báo vào docs/dac-ta/screen-contracts/_exemptions.yaml")
   }
 
-  if (isCheck && report.missing > 0) {
-    console.error(`\n❌ [FAIL] Phát hiện ${report.missing} trang chưa có Screen Contract!`)
+  const failures = isCheck ? contractCheckFailures(report) : []
+  if (failures.length > 0) {
+    for (const f of failures) console.error(`\n❌ [FAIL] ${f}`)
     process.exit(1)
   }
 }

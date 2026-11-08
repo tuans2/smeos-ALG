@@ -4,44 +4,31 @@
  * dịch sang `AppError` (422/409), domain không biết HTTP.
  */
 
+import { vnCalendarDate } from "@/lib/vn-date"
 import type { CoordinatorStage, CoordinationRiskLevel } from "./coordinator-types"
-import { formatCurrency } from "@/lib/i18n/formatters"
+import { stageLabel } from "./stage-labels"
+import { unpaidClosureReason } from "./stage-transitions"
 
 export type RuleResult = { ok: true } | { ok: false; reason: string }
 
 // ── F04 · Nhãn và việc kế tiếp theo bước ──────────────────────────────────
 
-const STAGE_LABELS: Record<CoordinatorStage, string> = {
-  INTAKE: "Tiếp nhận đơn",
-  VALIDATING: "Đang thẩm định đơn",
-  PLANNING: "Lập kế hoạch",
-  ASSIGNING: "Chờ phân công xưởng",
-  IN_PRODUCTION: "Đang chế tác",
-  QUALITY_CHECK: "Chờ kiểm định QC",
-  DISPATCHING: "Đang giao hàng",
-  DELIVERED: "Đã giao (chờ đóng đơn)",
-  COMPLETED: "Hoàn tất",
-  EXCEPTION: "Sự cố cần xử lý",
-  CANCELLED: "Đã huỷ",
-}
 
 const NEXT_ACTIONS: Record<CoordinatorStage, string> = {
   INTAKE: "Kiểm tra thông tin đơn trước khi lập kế hoạch",
-  VALIDATING: "Bổ sung thông tin còn thiếu từ Sales",
+  VALIDATING: "Bổ sung thông tin còn thiếu từ bộ phận bán hàng",
   PLANNING: "Chốt kế hoạch sản xuất và giờ lấy hàng",
   ASSIGNING: "Phân công đối tác xưởng ngoài hoặc thợ chế tác",
-  IN_PRODUCTION: "Theo dõi xưởng chế tác theo BOM",
+  IN_PRODUCTION: "Theo dõi xưởng làm đúng công thức chế tác",
   QUALITY_CHECK: "Kiểm ảnh thành phẩm đối chiếu ảnh mẫu",
-  DISPATCHING: "Theo dõi shipper tới người nhận, thu POD",
+  DISPATCHING: "Theo dõi shipper tới người nhận, thu ảnh giao hàng",
   DELIVERED: "Nghiệm thu, đóng đơn và chốt tiền công đối tác",
   COMPLETED: "Đơn đã hoàn thành",
   EXCEPTION: "Xử lý sự cố phát sinh",
   CANCELLED: "Đơn đã huỷ",
 }
 
-export function stageLabel(stage: CoordinatorStage): string {
-  return STAGE_LABELS[stage] ?? stage
-}
+export { stageLabel }
 
 export function defaultNextAction(stage: CoordinatorStage): string {
   return NEXT_ACTIONS[stage] ?? "Tiếp tục tiến trình điều phối"
@@ -224,7 +211,7 @@ export type ExceptionSeverity = (typeof EXCEPTION_SEVERITIES)[number]
 
 export function checkOpenException(stage: CoordinatorStage): RuleResult {
   if (stage === "COMPLETED" || stage === "CANCELLED") {
-    return { ok: false, reason: `Đơn đã kết thúc (${stage}), không mở sự cố được.` }
+    return { ok: false, reason: `Đơn đã kết thúc (${stageLabel(stage)}), không mở sự cố được.` }
   }
   return { ok: true }
 }
@@ -247,7 +234,7 @@ export function checkClosure(params: {
     return { ok: false, reason: `Chỉ đóng đơn sau khi đã giao (hiện: ${params.stage}).` }
   }
   if ((params.balanceVnd ?? 0) > 0) {
-    return { ok: false, reason: `Đơn còn phải thu ${formatCurrency(params.balanceVnd!)} — chỉ hoàn tất khi đã thu đủ.` }
+    return { ok: false, reason: unpaidClosureReason(params.balanceVnd!) }
   }
   if (params.openExceptionCount > 0) {
     return { ok: false, reason: `Còn ${params.openExceptionCount} sự cố chưa xử lý.` }
@@ -263,19 +250,23 @@ export function checkClosure(params: {
 
 export function checkCancellation(params: { stage: CoordinatorStage; reason: string | null | undefined }): RuleResult {
   if (params.stage === "COMPLETED" || params.stage === "CANCELLED") {
-    return { ok: false, reason: `Đơn đã kết thúc (${params.stage}).` }
+    return { ok: false, reason: `Đơn đã kết thúc (${stageLabel(params.stage)}).` }
   }
   if (params.stage === "DELIVERED") {
-    return { ok: false, reason: "Đơn đã giao tới người nhận — không huỷ, hãy mở sự cố COMMERCIAL_ISSUE." }
+    return { ok: false, reason: "Đơn đã giao tới người nhận — không huỷ, hãy mở sự cố về thương mại." }
   }
   if (!params.reason?.trim()) return { ok: false, reason: "Huỷ đơn phải ghi lý do." }
   return { ok: true }
 }
 
-/** Mã đơn điều phối: `FLR-YYMMDD-NNNN`, tuần tự theo ngày trong một tổ chức. */
+/**
+ * Mã đơn điều phối: `FLR-YYMMDD-NNNN`, tuần tự theo ngày Việt Nam trong một tổ chức (như mã `DH…`, audit BL-10 —
+ * máy chủ chạy giờ UTC, 00:00–07:00 giờ Việt Nam từng lấy ngày hôm trước).
+ */
 export function coordinatorOrderCode(sequence: number, date = new Date()): string {
-  const yy = String(date.getFullYear()).slice(-2)
-  const mm = String(date.getMonth() + 1).padStart(2, "0")
-  const dd = String(date.getDate()).padStart(2, "0")
+  const vn = vnCalendarDate(date)
+  const yy = String(vn.year).slice(-2)
+  const mm = String(vn.month).padStart(2, "0")
+  const dd = String(vn.day).padStart(2, "0")
   return `FLR-${yy}${mm}${dd}-${String(sequence).padStart(4, "0")}`
 }

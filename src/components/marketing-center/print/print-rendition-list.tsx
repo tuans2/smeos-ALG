@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { FileDown } from "@/components/ui/icon-set/file-down"
 import { Printer } from "@/components/ui/icon-set/printer"
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
@@ -12,6 +13,7 @@ import { getPrintPreset } from "@/modules/print/domain/print-preset"
 import { formatDateTime } from "@/lib/i18n/formatters"
 
 export function PrintRenditionList() {
+  const toast = useToast()
   const [renditions, setRenditions] = useState<PrintRendition[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [downloadingId, setDownloadingId] = useState<string | null>(null)
@@ -69,7 +71,7 @@ export function PrintRenditionList() {
       link.click()
       document.body.removeChild(link)
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Không thể tải file PDF")
+      toast.error(err instanceof Error ? err.message : "Không tải được tệp PDF")
     } finally {
       setDownloadingId(null)
     }

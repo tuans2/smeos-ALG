@@ -1,20 +1,16 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
-
-const statusSchema = z.object({
-  status: z.enum(["ACTIVE", "SUSPENDED", "TERMINATED"]),
-})
+import { partnershipStatusBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 export const PATCH = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "F2")
   const { id: partnershipId } = await context.params
   const body = await request.json().catch(() => null)
-  const parsed = statusSchema.safeParse(body)
+  const parsed = partnershipStatusBody.safeParse(body)
 
   if (!parsed.success) {
     const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")

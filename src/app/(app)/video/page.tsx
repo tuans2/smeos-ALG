@@ -13,6 +13,7 @@ import { ChevronLeft } from "@/components/ui/icon-set/chevron-left"
 ;
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { VideoJobList, VideoJobSummary } from "@/components/video-studio/video-job-list";
@@ -40,6 +41,7 @@ interface VideoJobDetail extends VideoJobSummary {
 
 export default function VideoStudioPage() {
   const { t } = useI18n()
+  const toast = useToast()
   const [jobs, setJobs] = useState<VideoJobSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
@@ -160,7 +162,7 @@ export default function VideoStudioPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        alert(err.message || "Phê duyệt kịch bản thất bại");
+        toast.error(err.message || "Phê duyệt kịch bản thất bại");
         return;
       }
       const approved = await res.json();
@@ -184,7 +186,7 @@ export default function VideoStudioPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        alert(err.message || "Không thể kích hoạt dựng video");
+        toast.error(err.message || "Không thể kích hoạt dựng video");
         return;
       }
       const data = await res.json();
@@ -209,7 +211,7 @@ export default function VideoStudioPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        alert(err.message || "Chốt duyệt video thất bại");
+        toast.error(err.message || "Chốt duyệt video thất bại");
         return;
       }
       const approved = await res.json();
@@ -413,20 +415,15 @@ export default function VideoStudioPage() {
                 productName={activeJob.title}
                 price={activeJob.cost_credits ? `${activeJob.cost_credits} credits` : "0 credit"}
                 onDownload={() => {
-                  if (activeJob.final_video_view_url) {
-                    window.open(activeJob.final_video_view_url, "_blank");
-                  } else {
-                    alert("Video đang chờ render, vui lòng quay lại sau.");
-                  }
+                  if (activeJob.final_video_view_url) window.open(activeJob.final_video_view_url, "_blank");
+                  else toast.info("Video đang chờ render, vui lòng quay lại sau.");
                 }}
                 onShare={() => {
-                  // Trước đây báo "đã sao chép" mà không sao chép gì.
-                  if (activeJob.final_video_view_url) {
-                    void navigator.clipboard.writeText(new URL(activeJob.final_video_view_url, window.location.origin).toString());
-                    alert("Đã sao chép liên kết video (có hạn 1 giờ).");
-                  } else {
-                    alert("Video chưa render xong — chưa có liên kết để chia sẻ.");
-                  }
+                  if (!activeJob.final_video_view_url) return void toast.info("Video chưa render xong — chưa có liên kết để chia sẻ.");
+                  void navigator.clipboard.writeText(new URL(activeJob.final_video_view_url, window.location.origin).toString()).then(
+                    () => toast.success("Đã sao chép liên kết video (có hạn 1 giờ)."),
+                    () => toast.error("Không sao chép được liên kết. Hãy thử lại."),
+                  );
                 }}
               />
 

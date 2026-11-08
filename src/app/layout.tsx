@@ -20,8 +20,6 @@ export const metadata: Metadata = {
   description: "Nền tảng quản trị kinh doanh đa ngành cho SME",
 }
 
-import { UiSystemProvider } from "@/lib/ui-system"
-
 export default function RootLayout({
   children,
 }: {
@@ -30,9 +28,8 @@ export default function RootLayout({
   return (
     <html lang="vi" data-theme="moc-lan" data-density="comfortable">
       <body className={`min-h-dvh bg-bg text-text antialiased ${beVietnamPro.variable}`}>
-        <UiSystemProvider>
-          {children}
-        </UiSystemProvider>
+        {/* UiSystemProvider nằm trong AppShell — nơi có theme máy chủ phân giải theo tầng */}
+        {children}
       </body>
     </html>
   )

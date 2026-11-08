@@ -4,7 +4,7 @@
  */
 
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
-import { assertNotBelowFloor } from "@/modules/costing/use-cases/price-floor-guard"
+import { assertWithinPriceBounds } from "@/modules/costing/use-cases/price-floor-guard"
 import type { TenantContext } from "@/core/tenancy"
 import { ApprovalRequestRepository } from "../infra/approval-request-repository"
 
@@ -23,8 +23,11 @@ export async function quoteOrder(
   const note = typeof input.note === "string" && input.note.trim() ? input.note.trim().slice(0, 500) : null
   const order = await repo.findOrder(ctx, orderId)
   if (!order) throw notFound()
-  // Giá dưới sàn: Sale bị chặn, Điều hành (C10) báo giá được (checklist ALG 3.4)
-  await assertNotBelowFloor(ctx, (order.items ?? []).map((i) => ({ productId: i.product_id, quantity: i.quantity })), total)
+  // Dưới sàn cần C10 (checklist ALG 3.4); vượt trần cần C9 (PO 07/11/2026, Q3) — giá trọn gói chỉ so với trần khi
+  // mọi dòng đều là sản phẩm có giá vốn (dòng tự do không có trần)
+  const items = order.items ?? []
+  const allProducts = items.length > 0 && items.every((i) => i.product_id)
+  await assertWithinPriceBounds(ctx, items.map((i) => ({ productId: i.product_id, quantity: i.quantity })), total, allProducts ? total : null)
   if (!(await repo.quote(ctx, orderId, total, note))) throw unprocessable("Chỉ báo giá được đơn nháp chưa thu tiền")
   return { orderId, totalVnd: total }
 }

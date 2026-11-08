@@ -64,7 +64,7 @@ export function getEventsByTier(tier: NotificationTier): NotificationEventDefini
  * Các tầng khác luôn thấy:
  * 1. Sự kiện do chính tầng đó sở hữu (e.tier === tier)
  * 2. Sự kiện tầng trên cho phép hiển thị xuống (defaultVisibleToTiers chứa tier đó)
- * (Visibility có thể bị override bởi notification_event_visibility DB table)
+ * (Visibility có thể bị override bởi quyết định `notification.visibility` trong governance_decisions)
  */
 export function getDefaultVisibleEvents(tier: NotificationTier): NotificationEventDefinition[] {
   if (tier === "MOTHER") return listAllEvents()

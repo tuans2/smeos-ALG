@@ -1,5 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
+import { ensureProspectCustomer } from "./session-customer"
 
 /** Tên / SĐT khách ghi trên link chưa có đơn — để Sale biết link đã gửi cho ai. */
 export class LinkCustomerRepository {
@@ -17,7 +18,12 @@ export class LinkCustomerRepository {
   async update(ctx: TenantContext, sessionId: string, data: { customerName: string | null; customerPhone: string | null }) {
     const res = await this.db.greeting_sessions.updateMany({
       where: scopedWhere(ctx, { id: sessionId, order_id: null }),
-      data: { customer_name: data.customerName, customer_phone: data.customerPhone },
+      data: {
+        customer_name: data.customerName,
+        customer_phone: data.customerPhone,
+        // P-2: hồ sơ khách theo SĐT trên link (khách cũ hoặc PROSPECT); bỏ SĐT thì gỡ liên kết
+        customer_id: await ensureProspectCustomer(this.db, ctx.organizationId, data.customerPhone, data.customerName),
+      },
     })
     return res.count > 0
   }

@@ -54,7 +54,7 @@ Giới hạn của lần kiểm:
 
 - **Bàn phím:** kiểm 40 điểm dừng `Tab` đầu tiên mỗi tuyến (vòng tiêu điểm thấy được, không bị che hoàn toàn); chưa kiểm hết luồng thao tác như mở và đóng hộp thoại, chọn trong danh sách xổ.
 - **Phóng 200%:** khung 640×400 CSS px (tương đương 1280×800 ở 200%); kiểm không cuộn ngang toàn trang.
-- **Tương phản:** 3 preset ở giao diện sáng; hệ thống chưa có chế độ tối.
+- **Tương phản:** 3 preset ở giao diện sáng; hệ thống chưa có chế độ tối. Trước 06/11/2026 phép đo chỉ đổi preset trên `<html>` nên nội dung trong `AppShell` thực chất chỉ đo một preset; từ 06/11/2026 đo đủ 3 preset (CHANGELOG 1.3.1).
 - **Trang công khai:** `/b`, `/bst`, `/g` kiểm cả trạng thái có dữ liệu (bộ sưu tập và link gửi tạo qua API trong bộ kiểm) và trạng thái không tìm thấy; `/subcontract` kiểm cả trạng thái có lời mời gia công (đơn và token chi nhánh tạo trong database test) và trạng thái không tìm thấy. Ba trang không tìm thấy `/b`, `/g`, `/subcontract` không có liên kết nào để quay lại.
 - **Trình đọc màn hình** (VoiceOver, NVDA) chưa kiểm theo quyết định PO 03/11/2026.
 - **Vùng PO khoá:** các lỗi trong vùng Thẻ chào đã sửa theo duyệt của PO ngày 05/11/2026 (mốc khoá cập nhật cùng commit); bộ kiểm không còn mục `KNOWN_FROZEN` nào.

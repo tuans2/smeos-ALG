@@ -30,7 +30,7 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `partner_marketplace_share_links` | Link chia sẻ chợ đối tác (PO 01/11/2026): xem danh sách đã che không cần đăng nhập. Cấp nền tảng, không thuộc tổ chức. Tạo/huỷ `N17`. Chỉ lưu `token_hash` (SHA-256, duy nhất); `expires_at` do người tạo chọn (1–365 ngày); `revoked_at` khi huỷ; `view_count`/`last_viewed_at` |
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Trường cửa hàng tự tạo (checklist ALG 1.9) nằm trong `field_definitions` với `owner_organization_id` = tổ chức sở hữu: chỉ tổ chức đó đọc/ghi, Console nền tảng không liệt kê, hạn mức 50 trường/thực thể tính riêng từng tổ chức. Xem mục 22b |
-| `integration_governance` | Trung tâm Tích hợp (30/10/2026) — khoá/cấp sẵn tích hợp theo tầng `(connector_key, tier, scope_id)`; `scope_id` là `GLOBAL` (Mẹ), `industry:<key>` (Ngành) hoặc id tổ chức chuỗi. Cùng mẫu với `notification_*`. Xem mục 36 |
+| `governance_decisions` | Một bảng quyết định theo tầng (ADR-012 D-T10, 06/11/2026) — nơi lưu duy nhất của ma trận quản trị, khoá/hiển thị thông báo, khoá tích hợp (T-7c đã bỏ `integration_governance`, `notification_hard_locks`, `notification_event_visibility`); phạm vi ở cột `scope` dạng D-T5 (`platform`, `industry:<key>`, `org:<id>`), không phải dữ liệu riêng của một tổ chức nên không có `organization_id`. Xem mục 45 |
 
 | `platform_settings` | Cấu hình cấp nền tảng, một dòng mỗi khoá, chỉ Console vận hành ghi (mã `N12`) — vd ma trận điều hướng theo ngành áp cho MỌI tổ chức cùng ngành. Xem mục 31 |
 Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên là lỗi chặn ở review.
@@ -2242,7 +2242,7 @@ model order_coordinations {
   @@index([organization_id, risk_level])
 }
 
-Sổ thu (ĐP-4a, 26/09/2026, PO D2), migration `20260926220000_order_payments`. `orders` thêm `paid_vnd`/`balance_vnd` (Decimal); `balance_vnd = total_vnd − paid_vnd` giữ bằng CHECK ở SQL thô (không đẩy được qua `prisma db push`, cần `migrate deploy`). Mỗi lần thu/hoàn tiền là một dòng `order_payments`; `paymentStatus` (UNPAID/PARTIALLY_PAID/PAID/REFUNDED) là trường suy ra lúc đọc, không lưu.
+Sổ thu (ĐP-4a, 26/09/2026, PO D2), migration `20260926220000_order_payments`. `orders` thêm `paid_vnd`/`balance_vnd` (Decimal); `balance_vnd = total_vnd − paid_vnd`. Ghi chú cũ nói có CHECK ở migration này là sai (audit BL-05); CHECK thật `orders_money_check` (`paid_vnd ≥ 0` và `balance_vnd = total_vnd − paid_vnd`) có từ migration `20261108000000_orders_money_integrity` (PO duyệt 07/11/2026) — không đẩy được qua `prisma db push`, cần `migrate deploy`. Cùng migration: `orders.customer_id` trỏ `customers` theo khoá ghép `(customer_id, organization_id)`, `ON DELETE NO ACTION` (xoá khách thì repository gỡ khách khỏi đơn trước). Mỗi lần thu/hoàn tiền là một dòng `order_payments`; `paymentStatus` (UNPAID/PARTIALLY_PAID/PAID/REFUNDED) là trường suy ra lúc đọc, không lưu.
 
 ```prisma
 enum order_payment_kind {
@@ -2279,7 +2279,7 @@ model order_payments {
 ```prisma
 model order_coordinations {
   // … các cột đã có (xem trên) …
-  source                  String?  // ORDER_M10 · CHAT_M08 · CATALOG_M06 · MANUAL
+  source                  String?  // mã nguồn chung order-source.ts (từ 07/11/2026); đơn cũ còn ORDER_M10 · CHAT_M08 · CATALOG_M06
   source_reference        String?
   channel                 String?  // danh mục §2.15.3 (MỞ)
   order_type              String?  // danh mục §2.15.4 (CÓ HÀNH VI) — bật nhóm trường §12
@@ -3102,35 +3102,9 @@ model notification_channel_activations {
 }
 ```
 
-```prisma
-model notification_event_visibility {
-  event_key   String
-  tier        String   // INDUSTRY | CHAIN | STORE
-  visible     Boolean  @default(true)
-  updated_by  String
-  updated_at  DateTime @updatedAt
-
-  @@id([event_key, tier])
-}
-```
-
-```prisma
-model notification_hard_locks {
-  id          String   @id @default(uuid())
-  event_key   String
-  channel     String
-  tier        String   // MOTHER | INDUSTRY | CHAIN | STORE
-  scope_id    String   // organization_id hoặc "GLOBAL" nếu tier = MOTHER
-  enabled     Boolean  // true = bắt buộc BẬT | false = bắt buộc TẮT
-  locked_by   String   // user_id người đặt khóa
-  reason      String?  // Lý do khóa
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-
-  @@unique([event_key, channel, tier, scope_id])
-  @@index([tier, scope_id])
-}
-```
+Hiển thị sự kiện theo tầng và khoá cứng (trước đây hai bảng `notification_event_visibility`,
+`notification_hard_locks`) lưu ở `governance_decisions` từ ADR-012 T-7c (06/11/2026) — `system` =
+`notification.visibility` / `notification.hard_lock`. Xem mục 45.
 
 ```prisma
 model notification_org_policies {
@@ -3370,7 +3344,7 @@ model product_recipe_items {
 
 ## 36. Trung tâm Tích hợp — `integration_*` (30/10/2026)
 
-Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md` (GĐ1). Ba bảng thuộc tổ chức (`integration_connections`, `integration_events`, `integration_sync_cursors`) và một bảng cấp nền tảng (`integration_governance`, dùng từ GĐ3).
+Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md` (GĐ1). Ba bảng thuộc tổ chức (`integration_connections`, `integration_events`, `integration_sync_cursors`) và một bảng cấp nền tảng (`integration_governance`, dùng từ GĐ3 — từ 06/11/2026 gộp vào `governance_decisions`, mục 45).
 
 - `integration_connections.credential_encrypted` là bản mã secret-box (AES-256-GCM, purpose `integration:<connector_key>`); `config` không chứa bí mật; API chỉ trả `credential_hint` (4 ký tự cuối). Ngắt kết nối xoá bản mã, giữ dòng để truy vết.
 - `connection_ref` là mã ngẫu nhiên 24 byte dùng trong URL webhook công khai — không lộ `organization_id`.
@@ -3399,12 +3373,6 @@ enum integration_event_status {
   DONE
   FAILED
   DEAD
-}
-
-enum integration_governance_mode {
-  FORBID
-  INHERIT_ONLY
-  ALLOW_OWN
 }
 
 /// Một kết nối của tổ chức tới dịch vụ ngoài. Bí mật chỉ nằm trong `credential_encrypted` (secret-box);
@@ -3480,22 +3448,10 @@ model integration_sync_cursors {
   @@index([organization_id])
 }
 
-/// Bảng cấp nền tảng (không thuộc một tổ chức): khoá/cấp sẵn tích hợp theo tầng.
-/// scope_id: "GLOBAL" (Mẹ) · "industry:<key>" (Ngành) · id tổ chức chuỗi (Chuỗi). Cùng mẫu với notification_*.
-model integration_governance {
-  id            String                      @id @default(uuid())
-  connector_key String
-  tier          String
-  scope_id      String
-  mode          integration_governance_mode
-  updated_by    String
-  created_at    DateTime                    @default(now())
-  updated_at    DateTime                    @updatedAt
-
-  @@unique([connector_key, tier, scope_id])
-  @@index([scope_id])
-}
 ```
+
+Khoá/cấp sẵn tích hợp theo tầng (trước đây bảng nền tảng `integration_governance`) lưu ở `governance_decisions` từ
+ADR-012 T-7c (06/11/2026) — `system` = `integration`, `value` = `{mode: FORBID | INHERIT_ONLY}`. Xem mục 45.
 
 ## 37. Kênh bán hàng — `sales_channel_*` (31/10/2026)
 
@@ -4102,11 +4058,15 @@ số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE
   `industry_key` chỉ được ở danh sách ghi lý do (chỉ đọc một khoá không phải ngành, hoặc đọc để ghi lại).
 - Ca thử: `tests/tenant/industries.test.ts` (ghi tách ngành ra cột; đọc lồng theo cột khi JSON không còn `industry`).
 
-**T-6c-2** (contract, sau khi T-6c-1 đã deploy): migration xoá `settings.industry` còn lại (NOTICE số dòng mã lạ) và bỏ
-trigger + hàm `smeos_organizations_sync_industry_key`; bỏ dự phòng `settings.industry` ở `industryKeyOf`,
-`withIndustryKey`, `resolveTierChain` và worker.
+**T-6c-2** (contract, PO duyệt 06/11/2026, sau khi T-6c-1 #161 đã chạy trên production; không đổi schema): migration
+`20261106110000_industry_contract` (một giao dịch) bỏ trigger + hàm `smeos_organizations_sync_industry_key` TRƯỚC, chép
+bù `industry_key` cho dòng còn trống mà JSON có mã hợp lệ, báo (NOTICE) số dòng mã lạ sẽ mất, rồi xoá khoá
+`settings.industry`; chốt cuối: không còn dòng nào có khoá đó. Mã: `industryKeyOf` và `resolveTierChain` chỉ đọc cột;
+`withIndustryKey` phủ `settings.industry` = cột, cột trống thì BỎ khoá (JSON sót lại không có tác dụng); worker phân tích
+ảnh chỉ đọc `industry_key`.
 
-Ca thử: `tests/tenant/industries.test.ts` (tự cài seed + trigger từ tệp migration khi CSDL test dựng bằng `db push`).
+Ca thử: `tests/tenant/industries.test.ts` (JSON sót lại không có tác dụng; seed ngành của CSDL test ở
+`tests/helpers/industries-seed.ts`), `tests/tenant/tier-chain.test.ts`, `src/modules/organization/domain/industry-key.test.ts`.
 
 ```prisma
 model industries {
@@ -4170,3 +4130,337 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 52. Chống bấm đúp khi tạo đơn — `orders.idempotency_key` (07/11/2026)
+
+Audit API-11, PO duyệt 07/11/2026. Migration `20261107230000_orders_idempotency_key` (expand, một giao dịch): thêm cột
+`orders.idempotency_key TEXT NULL` và chỉ mục duy nhất `(organization_id, idempotency_key)`. Cột chỉ thêm, không
+backfill; NULL không đụng nhau nên đơn cũ, đơn không gửi khoá và đơn từ nguồn khác không bị chặn.
+
+- **Ghi.** `POST /api/v1/orders` đọc header `Idempotency-Key` (≤ 255 ký tự, dài hơn → 400) và chuyển xuống
+  `ingestOrderOnce` (`src/modules/orders/use-cases/ingest-order-once.ts`), rồi `OrderRepository.create` ghi vào cột.
+- **Đọc.** Khoá đã có đơn trong tổ chức → trả đơn đó (201 + `Idempotent-Replayed: true`), không tạo đơn mới. Hai
+  request cùng khoá gửi đồng thời: người thua vỡ ở chỉ mục duy nhất, giao dịch cuộn lại, use-case đọc lại và trả đơn
+  của người thắng. Nhân viên chi nhánh gửi khoá trùng đơn của chi nhánh khác → 409, không lộ đơn.
+- **Không lưu thân yêu cầu** nên không phân biệt "cùng khoá, thân khác"; giao diện sinh một khoá cho mỗi lần soạn đơn
+  (`create-order-modal.tsx`), giữ khoá khi thử lại, bỏ khi đã tạo xong. Khoá không hết hạn.
+
+Ca thử: `tests/tenant/order-idempotency.test.ts` (gửi lại, đồng thời, khoá khác/không khoá, khác tổ chức, khoá quá dài),
+`src/modules/orders/use-cases/__tests__/ingest-order-once.test.ts`.
+
+## 51. Mã hoá cột dữ liệu cá nhân — `tenant_data_keys`, cột `*_enc` / `*_hash` / `*_last4` (07/11/2026)
+
+ADR-014 D-P3, bước **P-5a** (expand). PO duyệt 07/11/2026 (D-65): phạm vi A — dữ liệu của khách cuối; khoá chủ
+`PII_ENCRYPTION_KEY`; tìm khách theo 4 số cuối hoặc đủ số; chia 3 PR (P-5a cột + ghi kép + job, P-5b đọc và tra cứu, P-5c
+bỏ cột rõ). Migration `20261107220000_pii_encryption_expand`.
+
+```prisma
+model tenant_data_keys {
+  id              String    @id @default(uuid())
+  organization_id String
+  version         Int
+  wrapped_key     String
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  retired_at      DateTime? @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, version])
+  @@index([organization_id])
+}```
+
+- Cột thêm (đều `String?`): `customers.phone_enc` `phone_hash` `phone_last4` `email_enc` `address_enc` `notes_enc`;
+  `leads.phone_enc` `phone_hash` `phone_last4` `message_enc`; `greeting_sessions.customer_phone_enc`
+  `customer_phone_hash` `customer_phone_last4`; `order_recipients.recipient_phone_enc` `address_line_enc` `address_parts_enc`
+  (JSON đã mã hoá) `vat_company_name_enc` `vat_tax_code_enc` `vat_company_address_enc` `vat_email_enc`;
+  `order_coordinations.shipper_phone_enc`. Index `(organization_id, phone_hash)` ở `customers`, `leads`, `greeting_sessions`
+  (`customer_phone_hash`), `(organization_id, phone_last4)` ở `customers`. Sổ cột: `src/core/security/pii-fields.ts`.
+- Mã hoá (`src/core/security/pii-cipher.ts`): AES-256-GCM qua `node:crypto`; bản mã `pii1.<phiên bản khoá>.<iv>.<tag>.<ct>`;
+  khoá dữ liệu 32 byte ngẫu nhiên mỗi tổ chức, lưu ở `tenant_data_keys` dạng bọc bằng khoá chủ (`v1.<iv>.<tag>.<ct>`).
+  `phone_hash` = HMAC-SHA256 số đã chuẩn hoá (chỉ chữ số, +84/84 → 0), khoá HKDF từ khoá chủ theo tổ chức; số không có chữ
+  số → chuỗi rỗng. `phone_last4` dạng rõ. Tên khách không mã hoá.
+- Ghi kép (`src/core/security/infra/pii-write.ts`, extension của client Prisma): mọi `create`/`update`/`upsert`/`*Many`
+  vào cột rõ của sổ → ghi kèm bản mã/băm cùng lệnh. Tổ chức lấy từ dữ liệu, `where`, dòng đang sửa hoặc ngữ cảnh tổ chức;
+  không xác định được → bản mã `null` (không bao giờ lệch chữ rõ), job xử lý sau.
+- Dữ liệu cũ: `encryptPendingPii` (`src/core/security/infra/pii-backfill.ts`) — lượt quét nền 5 phút
+  (`/api/v1/internal/chain-dispatch-sweep`, trường `piiEncrypted`, 200 dòng mỗi bảng) và `npm run pii:backfill` (runbook §14).
+- P-5a/P-5b: production chưa đặt khoá chủ → chưa mã hoá, log `pii.encryption_disabled`. Từ P-5c khoá là bắt buộc.
+- Đọc (P-5b, 07/11/2026): trường tính toán của client Prisma (`result` extension, `src/core/security/infra/pii-read.ts`)
+  trả giá trị giải từ `*_enc` cho mọi lệnh đọc kể cả truy vấn lồng (`include`, `select` lồng) — Prisma tự lấy thêm `*_enc`
+  và `organization_id`. Dòng chưa có bản mã → cột rõ (còn tới P-5c). Khoá dữ liệu phải ở bộ nhớ trước khi mã đọc trường:
+  `readWithPiiKeys` quét kết quả thô và nạp khoá còn thiếu bằng quyền hệ thống. Kết quả có thuộc tính symbol riêng từng
+  lần đọc (Prisma) — test so cả dòng dùng `toMatchObject` hoặc so JSON.
+- Tra cứu (P-5b): `src/core/security/pii-lookup.ts` — `phoneEquals` (đúng số, mọi cách viết, qua `*_hash`), `phoneIn`,
+  `phoneSearch` (ô tìm: đúng 4 chữ số → `*_last4`; từ 9 chữ số → đúng số; còn lại không tìm theo số — PO D-49). Dòng chưa
+  băm vẫn khớp theo cột rõ (bỏ ở P-5c). Áp ở: khách (tạo, trùng số, danh sách, xuất), đặt đơn Thẻ chào (gắn khách, chống
+  đơn rác, đơn trùng), link Thẻ chào → khách tiềm năng, tìm đơn Thẻ chào, lead (đếm, đơn công khai, phục hồi đơn hết hạn
+  thanh toán), hỏi giá sản phẩm, đơn của khách, giá theo hạng khách.
+- **Contract (P-5c, 07/11/2026)** — migration `20261108090000_pii_encryption_contract`, PO duyệt 07/11/2026:
+  - Chính cột cá nhân chứa bản mã (`customers.phone`, `email`, `address`, `notes`; `leads.phone`, `message`;
+    `greeting_sessions.customer_phone`; `order_recipients.*` của sổ — `address_parts` là chuỗi JSON bản mã;
+    `order_coordinations.shipper_phone`). Migration chép `*_enc` đè lên cột rõ, giữ `*_enc` làm bản sao (bản đang chạy lúc
+    deploy đọc `*_enc` nên không lỗi; Rollback về P-5b được). Bỏ `*_enc` ở P-5d.
+  - Chốt trước khi đè (khối `P5C-VERIFY`): mọi giá trị khác null đã có bản mã `pii1.` (và số đã có băm), không có hai khách
+    cùng `phone_hash` trong một tổ chức; sai → `RAISE`, cả giao dịch cuộn lại (runbook §14).
+  - Ràng buộc: `customers @@unique([organization_id, phone_hash])` thay `(organization_id, phone)`; index lead
+    `(organization_id, phone_hash, created_at)` thay index theo `phone`.
+  - SĐT khách lẻ của đơn điều phối (PO 07/11/2026): cột mới `order_coordinations.customer_phone` (bản mã) +
+    `customer_phone_hash`, index `(organization_id, customer_phone_hash)`. Client Prisma tách `metadata.customerPhone` khi ghi
+    `metadata` và gộp lại khi đọc (`PII_JSON_KEYS`) — mã nghiệp vụ không đổi. Dòng cũ: job `encryptPendingPii`.
+  - Ghi: khoá chủ bắt buộc (`requirePiiMasterKey`, thiếu → `PiiKeyRequiredError`); tổ chức lấy từ dữ liệu, `where`, ngữ cảnh
+    hoặc tra dòng — khớp nhiều tổ chức → `PiiOrganizationUnknownError`, không bao giờ ghi chữ rõ.
+  - Đọc: giá trị không có dạng bản mã (SQL thô, bản cũ ghi lúc deploy) trả nguyên, job mã hoá sau; bản mã không giải được
+    → lỗi (không trả rỗng).
+  - Tra cứu chỉ theo băm/4 số cuối; nhánh "dòng chưa băm khớp theo cột rõ" đã bỏ. Riêng đơn của khách còn khớp
+    `metadata.customerPhone` của đơn điều phối chưa qua job (bỏ ở P-5d).
+  - Chặn lọc/sắp xếp/`distinct`/`groupBy` theo cột cá nhân (`src/core/security/infra/pii-guard.ts`, cả `AND`/`OR`/`NOT` và
+    bộ lọc quan hệ; so với `null` được) → `PiiFilterError`.
+
+Ca thử: `tests/tenant/pii-encryption.test.ts`, `tests/tenant/pii-read.test.ts`, `tests/tenant/pii-contract.test.ts`,
+`src/core/security/__tests__/pii-cipher.test.ts`.
+
+## 50. Quyền xem đơn của chi nhánh gia công — `shared_order_access` (07/11/2026)
+
+ADR-014 D-P6, bước **P-4**. PO duyệt 07/11/2026 (D-64): làm ngay; chi nhánh làm đơn còn quyền **7 ngày** sau khi đơn
+đóng; chi nhánh được mời **mất quyền ngay** khi hết vòng hoặc chi nhánh khác nhận; tin mời Telegram/Zalo **chỉ ghi khu
+vực**. Migration `20261107200000_shared_order_access`.
+
+```prisma
+model shared_order_access {
+  id              String                    @id @default(uuid())
+  organization_id String
+  order_id        String
+  branch_key      String
+  level           shared_order_access_level
+  granted_at      DateTime                  @default(now()) @db.Timestamptz(3)
+  revoked_at      DateTime?                 @db.Timestamptz(3)
+  updated_at      DateTime                  @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, branch_key])
+  @@index([organization_id, branch_key])
+}```
+
+```prisma
+enum shared_order_access_level {
+  INVITED
+  ASSIGNED
+}```
+
+- Một dòng mỗi (đơn, chi nhánh); `branch_key` là `branches.id` hoặc mã điều phối, đúng như trong phiên điều phối và link
+  ký. Khoá ghép `(order_id, organization_id)` tới `orders`, xoá đơn → xoá quyền. Thuộc tổ chức: RLS `tenant_isolation`.
+- Ghi: `SubcontractOrderRepository.updateSubcontractState` (mọi lần đổi phiên điều phối) gọi `syncOrderShares` cùng giao
+  dịch, theo `subcontractShares` (`src/modules/greeting-card/domain/subcontract-share.ts`): phiên `OPEN` → chi nhánh được
+  mời ở vòng hiện tại (trừ đã từ chối) mức `INVITED`; `CLAIMED_GRACE`/`COMMITTED` → chỉ chi nhánh giữ đơn, mức `ASSIGNED`;
+  `ESCALATED`/`CANCELLED` → không ai. Bên không còn trong tập → `revoked_at`; được mời lại → cấp lại.
+- Đọc: `loadSubcontractOrderForBranch` (cổng mọi route `/api/v1/public/subcontract/*`) → `hasActiveOrderShare`
+  (`src/modules/orders/infra/shared-order-access-repository.ts`, luật ở `src/modules/orders/domain/order-share.ts`): thu
+  hồi → 404; đơn đóng (hoàn tất, huỷ, hoặc đã giao) → `INVITED` hết ngay, `ASSIGNED` hết sau 7 ngày tính từ sự kiện đóng
+  đầu tiên trong `order_events` (đơn cũ không có sự kiện: `updated_at`).
+- Link ký vẫn định danh chi nhánh; hạn chữ ký nâng 14 → 120 ngày (trần an toàn), quyền do bảng này quyết.
+- Khác ADR: quyền gắn chi nhánh (`branch_key`) thay cho `grantee_org_id` vì gia công hiện chỉ giao cho chi nhánh cùng tổ
+  chức; "trường được xem" theo mức (`INVITED`: SĐT người nhận che; `ASSIGNED`: đủ); hạn tính khi đọc thay cho cột.
+- Tin mời (`inviteSubcontract`): biến `{{deliveryAddress}}` nay là khu vực (`subcontractAreaText`: phường, quận, tỉnh);
+  địa chỉ đầy đủ chỉ dùng để tìm chi nhánh gần và hiện trong Thẻ Gia Công.
+
+Ca thử: `tests/tenant/shared-order-access.test.ts` (được mời/không mời, chi nhánh khác nhận, huỷ nhận, vòng mới, đơn đóng
++ 7 ngày, xoá đơn, backfill), `src/modules/greeting-card/domain/__tests__/subcontract-share.test.ts`.
+
+## 49. Người nhận và hoá đơn VAT của đơn — `order_recipients` (07/11/2026)
+
+ADR-014 D-P2, bước **P-3a** (expand). PO duyệt 07/11/2026: P-3 chia ba bước (P-3a bảng + backfill + ghi kép; P-3b
+chuyển đọc; P-3c bỏ dữ liệu cá nhân khỏi `orders.delivery_address` và các cột `orders.vat_*`), gồm cả VAT (D-63).
+Migration `20261107120000_order_recipients`.
+
+```prisma
+model order_recipients {
+  organization_id     String
+  order_id            String   @id // một dòng mỗi đơn
+  recipient_name      String?
+  recipient_phone     String?
+  address_line        String?
+  address_parts       Json?
+  vat_company_name    String?
+  vat_tax_code        String?
+  vat_company_address String?
+  vat_email           String?
+  created_at          DateTime @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, organization_id])
+  @@index([organization_id])
+}```
+
+- Một dòng mỗi đơn (`order_id` là khoá chính); khoá ghép `(order_id, organization_id)` tới `orders`, xoá đơn → xoá
+  dòng. Thuộc tổ chức: RLS `tenant_isolation` (`scripts/gen-rls-policies.mjs`).
+- Cột suy từ JSON `orders.delivery_address` bằng `recipientFromDeliveryAddress` (`src/modules/orders/domain/order-recipient.ts`):
+  tên `recipientName` → `name`; SĐT `phone` → `recipientPhone`; `address_line` (dòng hiển thị) `street` → `full_address`
+  → `fullAddress` → `address` → `formattedAddress` → ghép từ `parts`; `address_parts` giữ NGUYÊN mọi khoá địa chỉ như
+  đã lưu (`houseNumber`, `street`, `ward`, `district`, `province`, `city`, `country`, `formattedAddress`, `full_address`,
+  `fullAddress`, `address`, `parts` — từ P-3b, migration `20261107150000_order_recipients_address` chép lại). JSON là
+  chuỗi → chỉ `address_line`. Khoá vận hành (`zone`, `notes`, `mapUrl`) ở lại JSON.
+- Ghi kép (`upsertOrderRecipient`, `src/modules/orders/infra/order-recipient-repository.ts`), cùng giao dịch với lệnh ghi
+  đơn: tạo đơn nhập tay và sửa địa chỉ (`order-repository.ts`), đặt đơn Thẻ chào (`brochure-checkout-repository.ts`),
+  duyệt đổi thông tin (`order-change-repository.ts`), tạo đơn điều phối (`coordinator-query-helper.ts`), hoá đơn VAT
+  (`order-vat-repository.ts` — chỉ phần `vat_*`).
+- Đọc (P-3b, 07/11/2026): mọi lệnh `orders.find*` có trả `delivery_address` đi qua query extension của client Prisma
+  (`src/core/tenancy/infra/prisma.ts` → `src/modules/orders/infra/order-recipient-view.ts`): lấy kèm `recipient` và trả
+  về JSON ghép (`deliveryAddressView`: khoá vận hành của JSON + phần cá nhân từ bảng; đơn chưa có dòng → JSON như cũ).
+  Chọn đơn lồng trong bảng khác (`order: { select: { delivery_address } }`) dùng `RECIPIENT_VIEW_SELECT` +
+  `withDeliveryView` (`tests/unit/architecture/order-recipient-reads.test.ts` khoá). VAT đọc `order_recipients`, đơn
+  chưa có dòng → cột cũ. Dữ liệu cũ khoá `name`/`full_address` nay đọc ra thêm `recipientName`/`street`.
+- Backfill trong migration (khối `P3A-BACKFILL`, rồi `P3B-BACKFILL` chép lại phần địa chỉ, `ON CONFLICT DO UPDATE`):
+  làm đúng như `recipientFromDeliveryAddress` (test so hai bên).
+- Nơi lưu DUY NHẤT (P-3c, 07/11/2026, migration `20261107180000_order_recipients_contract`): đường ghi chỉ ghi khoá vận
+  hành vào `orders.delivery_address` (`storedDeliveryAddress` = `stripRecipientPii`), người nhận/địa chỉ/VAT vào bảng này;
+  bỏ 4 cột `orders.vat_company_name`, `vat_tax_code`, `vat_company_address`, `vat_email`. Migration chốt khớp trước (khối
+  `P3C-VERIFY` + kiểm VAT; lệch → RAISE, không xoá gì), rồi bỏ phần cá nhân khỏi JSON đơn cũ (khối `P3C-STRIP`, chuỗi →
+  NULL). `OrderRepository.update` trả về qua `withDeliveryView` (lệnh `update` không qua extension đọc).
+
+Ca thử: `tests/tenant/order-recipients.test.ts` (mọi đường ghi, khoá ghép khác tổ chức, backfill 13 dạng địa chỉ, xoá
+phần cá nhân khỏi nơi cũ mà màn hình vẫn đủ), `src/modules/orders/domain/__tests__/order-recipient.test.ts`.
+
+## 48. Một hồ sơ khách — `customers.status`, `greeting_sessions.customer_id` (07/11/2026)
+
+ADR-014 D-P2, bước **P-2** (expand). PO duyệt 07/11/2026, phương án A. Migration `20261107090000_customer_prospects`.
+
+```prisma
+enum customer_status {
+  ACTIVE
+  PROSPECT
+}
+```
+
+- `customers.status` (`customer_status`, mặc định `ACTIVE`, index `(organization_id, status)`). `PROSPECT` = người nhận
+  link Thẻ chào có SĐT mà chưa đặt đơn. Khách cũ và khách do lead tạo vẫn là `ACTIVE`.
+- Khách `PROSPECT` không hiện ở danh sách, tìm kiếm, chi tiết, xuất khách, đơn của khách, báo giá và gợi ý thị trường
+  (`status: "ACTIVE"` ở `customer-repository.ts`, `customer-export-query.ts`, `customer-orders-query.ts`,
+  `quotation-reference-guard.ts`, `market-intelligence-repository.ts`). Console (`platform-records-repository.ts`, xuất
+  dữ liệu tổ chức) vẫn thấy mọi hồ sơ.
+- Thành `ACTIVE` (cùng hồ sơ, cùng `id`): khi đặt đơn hoặc để lại lead (`findOrCreateCustomer` → `activateProspect`, lấy
+  tên/địa chỉ vừa nhập), hoặc khi nhân viên tạo khách cùng SĐT (`CustomerRepository.create` nâng thay vì báo trùng).
+- `greeting_sessions.customer_id` (`String?`, khoá ngoại tới `customers`, `ON DELETE SET NULL`, index): khách của đơn
+  (khi gắn đơn) hoặc hồ sơ theo SĐT trên link (`ensureProspectCustomer`, `src/modules/greeting-card/infra/session-customer.ts`)
+  — lúc tạo link, đặt thêm đơn, Sale ghi SĐT (link công khai: gắn lúc đơn tạo xong, đơn bị chặn thì không có hồ sơ). Link
+  chỉ có tên thì để trống. Khoá một cột như
+  `leads.customer_id`: khoá ghép với `SET NULL` sẽ xoá cả `organization_id`; cùng tổ chức do mã ghi bảo đảm.
+- Ghi kép: `customer_name`, `customer_phone` của link vẫn ghi và vẫn được đọc; bỏ ở bước contract sau.
+- Backfill trong migration (khối `P2-BACKFILL`): link có đơn → khách của đơn; link chưa có đơn → khách cùng tổ chức +
+  SĐT; chưa có → tạo `PROSPECT` (một dòng mỗi tổ chức + SĐT, tên ở link mới nhất, `ON CONFLICT DO NOTHING`).
+
+Ca thử: `tests/tenant/customer-prospects.test.ts` (gồm chạy lại khối backfill của migration).
+
+## 47. Truy cập của nhân viên nền tảng — `platform_access_logs` (06/11/2026)
+
+ADR-013 D-I5, bước **I-2b**; D-60 (PO 06/11/2026: chủ tổ chức xem ngay trong ứng dụng — tab "Truy cập của nền tảng"
+trong `/audit`, quyền `G9`; mục đích tự suy từ thao tác). Migration `20261106140000_platform_access_logs`.
+
+```prisma
+model platform_access_logs {
+  id              String   @id @default(uuid())
+  organization_id String
+  operator_id     String
+  purpose         String
+  method          String
+  route           String
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id, created_at])
+}
+```
+
+- Thuộc tổ chức: RLS `tenant_isolation` như mọi bảng tenant (`scripts/gen-rls-policies.mjs`); đọc qua `scopedWhere`.
+- Chỉ thêm dòng: trigger `platform_access_logs_append_only` (hàm `smeos_append_only_guard`, §46).
+- Ghi: `recordPlatformAccess` (`src/modules/audit/use-cases/record-platform-access.ts`) ở mọi handler
+  `platform/organizations/[id]/*` và `platform/orgs-data/[orgId]/*`, ngay sau khi giải phiên Console (xuất dữ liệu: sau
+  khi kiểm `N1`), TRƯỚC khi đọc/ghi; ghi lỗi → yêu cầu lỗi (biện pháp bù R-2). `INSERT … SELECT … WHERE` tổ chức tồn
+  tại — id sai không ghi, route vẫn 404. `purpose` là mã (`org.profile.read`, `org.records.orders.export`…); nhãn tiếng
+  Việt ở `src/modules/audit/domain/platform-access.ts`, giao diện không hiện mã.
+- Chặn hồi quy: `tests/unit/architecture/platform-access-guard.test.ts` (mỗi handler gọi đúng một lần).
+
+Ca thử: `tests/tenant/platform-access-isolation.test.ts`, `src/modules/audit/domain/platform-access.test.ts`.
+
+## 46. Nhật ký bất biến — `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage` (06/11/2026)
+
+ADR-013 D-I4, bước **I-2a** (PO duyệt ADR-013 06/11/2026; không đổi schema Prisma). Migration
+`20261106130000_append_only_logs`: hàm `smeos_append_only_guard()` + trigger `<bảng>_append_only` (`BEFORE UPDATE OR
+DELETE … FOR EACH ROW`) trên năm bảng:
+
+- `UPDATE` → luôn từ chối (mọi tài khoản, kể cả chủ sở hữu).
+- `DELETE` — kể cả xoá dây chuyền từ `orders` (→ `order_events`) và `generation_jobs` (→ `job_events`) — chỉ được khi
+  giao dịch đã đặt `app.purge_reason` (`setPurgeReason(tx, reason)`, `src/core/tenancy/infra/purge-reason.ts`; lý do:
+  `tenant_offboarding` · `test_data_cleanup` · `retention_policy`). `set_config(…, true)` chỉ sống trong giao dịch.
+- `TRUNCATE` không qua trigger theo dòng (chỉ dùng ở CSDL test, `resetDatabase`).
+- Rà mã 06/11/2026: ứng dụng, worker, test không sửa/xoá năm bảng này; chỉ `scripts/handover-clean-tenant.ts` và
+  `prisma/seed/clean-siin-store-orders.ts` xoá — cả hai đặt lý do purge đầu giao dịch.
+- Quyền: `scripts/db/create-roles.sql` thu `UPDATE, DELETE` của `smeos_app`/`smeos_worker` trên năm bảng.
+
+Ca thử: `tests/tenant/append-only-logs.test.ts` (tự cài hàm + trigger từ tệp migration và gỡ khi xong, vì CSDL test
+dựng bằng `db push`).
+
+Còn lại của I-2 (I-2b): bảng `platform_access_logs` (D-I5) và màn hình chỉ đọc cho chủ tổ chức (D-60).
+
+## 45. Một bảng quyết định theo tầng — `governance_decisions` (06/11/2026)
+
+ADR-012 D-T10, bước **T-7a (expand)** — PO duyệt đổi schema 06/11/2026. Gộp ba nơi lưu "khoá / ghi đè theo tầng":
+
+| Nơi lưu cũ | `system` | `decision_key` | `tier` · `scope` | `locked` · `value` |
+|---|---|---|---|---|
+| `organizations.settings.governance_matrix.<SYSTEM>` | `matrix:<SYSTEM>` | khoá mục | `CHAIN`/`STORE` (theo loại tổ chức) · `org:<id>` | ghi đè: `false` · `{enabled}`; khoá: `true` · `{enabled}` |
+| `platform_settings` `governance_matrix:<SYSTEM>` | `matrix:<SYSTEM>` | khoá mục | `MOTHER` · `platform` | như trên |
+| `notification_hard_locks` | `notification.hard_lock` | `<event_key>:<channel>` | `tier` · `scope_id` | `true` · `{enabled, reason}` |
+| `notification_event_visibility` | `notification.visibility` | `<event_key>:<tầng được hiển thị>` | `MOTHER` · `platform` | `false` · `{visible}` |
+| `integration_governance` | `integration` | `connector_key` | `tier` · `scope_id` | `true` · `{mode}` (`ALLOW_OWN` không lưu) |
+
+```prisma
+model governance_decisions {
+  id           String   @id @default(uuid())
+  version      BigInt   @unique @default(autoincrement())
+  system       String
+  decision_key String
+  tier         String
+  scope        String
+  locked       Boolean
+  value        Json?
+  decided_by   String?
+  decided_at   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([system, scope, decision_key, tier, locked, version])
+  @@index([scope])
+}
+```
+
+- **Chỉ thêm dòng.** Một quyết định = bộ (`system`, `decision_key`, `tier`, `scope`, `locked`); dòng hiện hành là dòng
+  `version` lớn nhất (thứ tự toàn cục, không tranh chấp khi ghi đồng thời); `value` null = đã gỡ. Lưu lại đúng giá trị
+  hiện hành không thêm dòng.
+- **Ghi kép (T-7a).** Mọi đường ghi nơi lưu cũ ghi `governance_decisions` trong CÙNG giao dịch
+  (`src/core/governance/infra/decision-log.ts`): `saveOrgGovernance`, `saveMotherGovernance`, khoá cứng thông báo
+  (đặt/gỡ — dòng gỡ ghi người gỡ), `setEventVisibility`, `GovernanceRepository.set`. `PATCH /organizations/current`
+  không còn nhận khoá `governance_matrix` (trước đây ghi thẳng được, bỏ qua kiểm khoá tầng trên) — 403.
+- **Chép dữ liệu.** Migration `20261106100000_governance_decisions` chép mọi quyết định đang có, cùng bộ lọc với
+  `parseDecisions` (6 hệ thống, khoá `^[A-Za-z0-9_.:-]{1,96}$`, giá trị boolean); dòng phạm vi dạng cũ trùng dạng mới
+  gộp về dòng cập nhật sau cùng; chốt cuối so số dòng với nguồn, lệch thì cuộn lại.
+- **T-7b — đọc từ bảng (không đổi schema).** Mọi đường đọc qua `currentDecisions` (`decision-log.ts`):
+  `getOrgGovernance`, `getMotherGovernance`, `getUpperLayers`, `getPolicyGovernanceUpper` (ma trận); `getHardLocks`,
+  `getEventVisibilityMap` (thông báo); `GovernanceRepository.listForScopes` (tích hợp). Luồng bán hàng (Thẻ chào) nhận
+  quyết định riêng của tiệm qua `PolicyGovernanceUpper.own` thay cho `settings.governance_matrix`
+  (`isGovernedItemEnabled(key, own, …)`); `decisionsFromSettings` bỏ. Nơi lưu cũ vẫn được ghi kép để quay lui được.
+  Dòng ghi thẳng vào nơi lưu cũ (không qua ghi kép) không còn tác dụng.
+- **T-7c — contract (PO duyệt 06/11/2026, sau khi T-7b #165 đã chạy ổn trên production).** Migration
+  `20261106120000_governance_decisions_contract` (một giao dịch): CHỐT TRƯỚC — quyết định hiện hành của bảng phải trùng
+  khớp phép chiếu nơi lưu cũ (như T-7a; ma trận so không kể `tier`; bỏ qua ma trận của tổ chức đã xoá), lệch thì in
+  tối đa 20 dòng lệch rồi RAISE, không xoá gì. Sau đó `DROP TABLE` `integration_governance`, `notification_event_visibility`,
+  `notification_hard_locks` + enum `integration_governance_mode`, xoá khoá `settings.governance_matrix` và các dòng
+  `platform_settings` `governance_matrix:*`. Mã bỏ ghi kép; lưu ma trận khoá dòng tổ chức (`SELECT … FOR UPDATE`) hoặc
+  khoá theo giao dịch (Mẹ) để hai lần lưu đồng thời chạy lần lượt. `PATCH /organizations/current` vẫn từ chối khoá
+  `governance_matrix`.
+
+Ca thử: `tests/tenant/governance-decisions.test.ts` (sau mỗi chuỗi thao tác qua route thật, quyết định hiện hành của
+bảng khớp nơi lưu cũ), `tests/tenant/governance-decisions-read.test.ts` (mỗi trục: chỉ bảng mới có tác dụng),
+`src/core/governance/decision-record.test.ts`, `tests/tenant/tier-consistency.test.ts`.

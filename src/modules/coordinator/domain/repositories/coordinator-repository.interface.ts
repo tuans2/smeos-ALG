@@ -69,21 +69,6 @@ export interface ICoordinatorRepository<TOrder = CoordinatorOrderView> {
   updateCustomFields(ctx: TenantContext, orderId: string, customFields: Record<string, unknown>): Promise<void>
   updateMetadata(ctx: TenantContext, orderId: string, metadata: Record<string, unknown>): Promise<void>
   
-  recordPayment(
-    ctx: TenantContext,
-    orderId: string,
-    payment: {
-      kind: "DEPOSIT" | "BALANCE" | "REFUND"
-      amountVnd: number
-      paymentMethod: string | null
-      reference: string | null
-      evidenceAssetId: string | null
-      note: string | null
-    },
-    newPaidVnd: number,
-    newBalanceVnd: number
-  ): Promise<{ id: string }>
-  
   recordEvent(
     ctx: TenantContext,
     orderId: string,

@@ -4,6 +4,65 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 
 ---
 
+## [1.3.3] - 2026-11-07
+
+### Density một nguồn; mở rộng R16
+
+#### Đã sửa
+- `DENSITY_CONFIG` (`src/lib/ui-system/tokens.ts`) lệch `density.css` ở khoảng cách trường (compact 0.75 → 0.5rem, comfortable 1 → 0.75rem) và mang chiều cao hàng bảng, chiều cao nút mà density không hề điều khiển. Nay chỉ giữ ba khoá CSS định nghĩa, theo đúng giá trị CSS; test đối chiếu trong `presets-css-parity.test.ts`. Không có mã nào đọc `DENSITY_CONFIG` nên giao diện không đổi.
+
+#### Đã đổi
+- Lint R16 soát cả giá trị chuỗi của khoá hiển thị (`label`, `title`, `description`…) trong mảng/object, thêm mã chức năng M01–M19, mức R1–R9, "Sale Pitch". Danh sách từ cấm (`GLOSSARY_BANNED`) được export để test domain dùng chung — áp cho nhãn bước và "việc kế tiếp" của điều phối.
+
+## [1.3.2] - 2026-11-07
+
+### Một nguồn sự thật cho token, tài liệu và cổng kiểm
+
+#### Đã sửa
+- `src/lib/ui-system/presets.ts` lệch CSS ở màu trạng thái (`warning`/`danger`/`success`/`info` của `modern-slate`, `pure-swiss`), bo góc `sm/md/lg`, bóng đổ và `fontDisplay` của `moc-lan`. Chép lại đúng giá trị trình duyệt dùng (CSS thắng, ADR-011 D-UI-03). Giao diện không đổi: các giá trị này chỉ để UI Studio hiển thị, và năm mẫu màu + nhãn bo góc nút UI Studio đang vẽ vốn đã khớp.
+- `.github/CODEOWNERS` gán `@po` — không phải tài khoản GitHub, nên yêu cầu PO duyệt không có hiệu lực. Nay là `@antranhub22`.
+- README trỏ tới `layouts.md`, `responsive.md`, `accessibility.md` khi chưa có, và tới `src/styles/tokens/breakpoints.css` không tồn tại; phiên bản ghi `1.0.0-draft`.
+- `check:screen-contracts` chỉ thoát mã 1 khi có `--check`, nên bước trong `ui-weekly.yml` không bao giờ đỏ; trang mất front-matter v2 lặng lẽ rơi về khớp v1 mà vẫn đạt.
+
+#### Đã thêm
+- `layouts.md`, `responsive.md`, `accessibility.md` — chỉ mục đối chiếu mã 07/11/2026, ghi rõ các chỗ lệch ADR và phần chưa kiểm.
+- Test `src/lib/ui-system/presets-css-parity.test.ts` (preset ↔ CSS) và `tests/unit/architecture/design-system-ssot.test.ts` (liên kết tài liệu, CODEOWNERS).
+- `npm run check:screen-contracts -- --check` trong job `web` của `ci.yml`; đỏ khi có trang thiếu contract hoặc chỉ có contract v1.
+
+#### Đã đổi
+- Bảng thuật ngữ duy nhất là `docs/dac-ta/ux-patterns/glossary.md`: gộp bảng khử thuật ngữ và động từ thao tác từ `SMEOS_UX_WRITING_GLOSSARY.md` (tài liệu đó chỉ còn giọng điệu và mẫu câu). Mâu thuẫn `Job` → "tác vụ" theo mã.
+- Lint R16 bắt thêm BOM, Master Index, PII, Control Tower, payload, tenant, M0–M5. 17 điểm có sẵn vào baseline ratchet (28 → 45).
+
+## [1.3.1] - 2026-11-06
+
+### Tương phản AA trên cả 3 preset
+
+#### Đã sửa
+- Phép đo "tương phản 3 preset" (`tests/e2e/ux/a11y-journeys.helpers.ts` `applyPreset`) chỉ đổi `data-theme` trên `<html>`, trong khi khung `AppShell` gắn `data-theme` riêng — nội dung trong shell chỉ được đo ở một preset. Nay đổi mọi phần tử mang `data-theme`.
+- Đo lại đủ 3 preset lộ hai cặp màu dưới 4,5:1 ở preset `modern-slate`/`pure-swiss`, dùng rộng khắp ứng dụng:
+  - `text-muted` trên `surface-alt`: `modern-slate` `#64748B` → `#5D6C81` (4,34 → 4,88:1), `pure-swiss` `#71717A` → `#696971` (4,40 → 4,95:1).
+  - `text-primary` trên nền `primary/10` (163 tệp: lựa chọn đang chọn, chip, nhãn): `modern-slate` `--color-primary` `#2563EB` → `#1554E0` (3,85–4,48 → ≥ 4,54:1; chữ trắng trên nút 5,17 → 6,22:1); `--color-selected-text` theo `--color-primary` như hai preset kia.
+- `moc-lan` không đổi (đã đạt).
+
+#### Đã đổi
+- 4 lời gọi `alert()` cuối cùng (PO duyệt 06/11/2026: Catalog `catalog-link-widgets.tsx`, công cụ ảnh sản phẩm `photo-upload-panel.tsx`, `product-photo-studio-client.tsx`, `product-image-set-client.tsx`) chuyển sang `useToast()`, giữ nguyên câu chữ và luồng. Lint R13 còn 0; baseline UX lint 32 → 28. Mốc khoá Catalog cập nhật trong `catalog-freeze.test.ts`.
+
+## [1.3.0] - 2026-11-06
+
+### Theme theo tầng có hiệu lực; bỏ hộp thoại của trình duyệt
+
+#### Đã sửa
+- Theme máy chủ phân giải theo tầng (`resolveUiTheme`: `modern-slate`/`compact` cho Console Vận hành và ChainOS) trước đây không bao giờ tới DOM: `UiSystemProvider` ở root layout luôn mang preset mặc định `moc-lan` và `AppShell` ưu tiên nó. Provider chuyển vào `AppShell` với cấu hình gốc là theme của phiên; UI Studio đè lên trên, "Khôi phục mặc định" trả về theme của tầng.
+- Density chỉ lưu khi người dùng tự chọn (khoá mới `smeos_ui_density_choice`); khoá cũ `smeos_ui_density` bị ghi tự động mỗi lần gắn nên không đọc nữa. Lựa chọn density đã lưu trước đây không được giữ.
+- Khung toast trên điện thoại cách hai mép 16px (trước tràn mép trái ở 360px).
+
+#### Đã thêm
+- `PromptDialog` / `usePromptDialog()` (`src/components/ui/prompt-dialog.tsx`) thay `window.prompt()`.
+- `ToastProvider` gắn trong `AppShell` — trước chỉ có ở trang thư viện giao diện nên `useToast()` ở nơi khác không hiển thị gì.
+
+#### Đã đổi
+- Lint R13 bắt thêm `alert()` và `prompt()`. 21 chỗ gọi đã chuyển sang Toast/PromptDialog; 4 chỗ còn lại nằm trong vùng cần PO (Catalog đang khoá, công cụ ảnh sản phẩm) và vào baseline ratchet (28 → 32).
+
 ## [1.2.0] - 2026-11-02
 
 ### Screen Contract, di trú màn hình theo tầng, cổng kiểm định kỳ (M4-00 → M4-06, V5-01 → V5-05)

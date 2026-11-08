@@ -5,6 +5,7 @@ import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { PresetSelector } from "@/components/product-photo-studio/preset-selector"
@@ -18,6 +19,7 @@ export function ProductPhotoStudioClient() {
   const { t, dict } = useI18n()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const toast = useToast()
   const [presetId, setPresetId] = useState("auto")
   const [ratioId, setRatioId] = useState("auto")
   const [customNote, setCustomNote] = useState("")
@@ -202,7 +204,7 @@ export function ProductPhotoStudioClient() {
             qcEvaluation={jobResult.qcEvaluation}
             onRetry={handleRetry}
             onApprove={() => {
-              alert("Ảnh đã được lưu và sẵn sàng sử dụng cho catalog & bài viết bán hàng!")
+              toast.success("Ảnh đã được lưu và sẵn sàng sử dụng cho catalog & bài viết bán hàng!")
             }}
             isRetrying={isProcessing}
           />

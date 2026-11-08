@@ -10,7 +10,7 @@ const env = { GOOGLE_SERVICE_ACCOUNT_JSON: JSON.stringify(sa) }
 describe("google-workspace-client", () => {
   it("chưa cấu hình tài khoản dịch vụ → vẫn tải được tệp Drive công khai qua link", async () => {
     const fetch = vi.fn(async (url: string | URL | Request) =>
-      String(url).includes("drive.usercontent.google.com") ? new Response(new Uint8Array([0xff, 0xd8, 0xff])) : new Response("", { status: 500 })
+      new URL(String(url)).hostname === "drive.usercontent.google.com" ? new Response(new Uint8Array([0xff, 0xd8, 0xff])) : new Response("", { status: 500 })
     )
     const client = createGoogleWorkspaceClient({ fetch: fetch as typeof globalThis.fetch, env: {} })
     await expect(client.downloadDriveFile("publicfile01", 100)).resolves.toEqual(new Uint8Array([0xff, 0xd8, 0xff]))

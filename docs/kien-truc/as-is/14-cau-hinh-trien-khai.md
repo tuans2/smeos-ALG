@@ -35,7 +35,7 @@ Giá trị thật trên mọi môi trường: NOT VERIFIED (không đọc `.env`
 | Sinh Prisma client | `npx prisma generate` |
 | Lược đồ | `npm run db:deploy` → `prisma migrate deploy` (CI, Render); `npx prisma db push` chỉ dùng dựng database `floraos_test` trong CI |
 | Seed | `npm run db:seed` |
-| Build | `next build` (`experimental.cpus: 2`, `typedRoutes: true`); Render đặt `NODE_OPTIONS=--max-old-space-size=2048` |
+| Build | `next build` (`experimental.cpus: 2`, `typedRoutes: true`); Render build với `NODE_OPTIONS=--max-old-space-size=4096` (trong `buildCommand`, từ 08/11/2026); tiến trình chạy giữ `--max-old-space-size=2048` |
 | Chạy web | `next start -p 3100` |
 | Worker | `python -m vision.jobs.worker` · `python -m media_ai.jobs.worker` · `python -m media_ai.video.video_worker` · `tsx src/modules/market-intelligence/jobs/worker.ts` |
 | Script vận hành tay | `nap:danh-muc`, `nap:phan-tich`, `nap:credit`, `hoan-credit`, `mat-khau`, `them-thanh-vien`, `quet-job-treo`, `gan-van-hanh-nen-tang`, `doi-chieu`, `nap:loai`, `seed:field-registry`, `check:field-registry` |

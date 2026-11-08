@@ -16,6 +16,7 @@
  */
 
 import { prisma } from "../src/core/tenancy/infra/prisma"
+import { setPurgeReason } from "../src/core/tenancy/infra/purge-reason"
 import { MOCLAN_CONSTANTS } from "../prisma/seed/dev-moclan-data"
 import { createTenantHandoverBackup } from "./handover-backup-engine"
 
@@ -238,6 +239,9 @@ export async function runHandoverCleanPipeline(options: HandoverCleanOptions = {
 
   await prisma.$transaction(
     async (tx) => {
+      // Nhật ký bất biến (ADR-013 D-I4): xoá order_events và xoá dây chuyền từ orders cần lý do purge trong giao dịch
+      await setPurgeReason(tx, "tenant_offboarding")
+
       // 1. Dọn dẹp Thẻ Chào (Greeting Card)
       await tx.greeting_journey_events.deleteMany({ where: { organization_id: orgId } })
       await tx.greeting_message_reads.deleteMany({ where: { organization_id: orgId } })

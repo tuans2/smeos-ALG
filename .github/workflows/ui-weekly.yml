@@ -65,7 +65,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Kiểm tra độ bao phủ Screen Contract v2 (100% Target)
-        run: npm run check:screen-contracts
+        run: npm run check:screen-contracts -- --check
 
       - name: Kiểm tra UX Lint Ratchet (Zero regressions)
         run: npm run lint:ux -- --check

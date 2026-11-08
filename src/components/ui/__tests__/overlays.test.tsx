@@ -29,6 +29,7 @@ import { Dialog } from "../dialog"
 import { Drawer } from "../drawer"
 import { BottomSheet } from "../bottom-sheet"
 import { ConfirmDialog } from "../confirm-dialog"
+import { PromptDialog } from "../prompt-dialog"
 
 describe("Overlay Primitives (Dialog, Drawer, BottomSheet, ConfirmDialog)", () => {
   it("renders Dialog with backdrop, title, close button, and content when open", () => {
@@ -110,5 +111,32 @@ describe("Overlay Primitives (Dialog, Drawer, BottomSheet, ConfirmDialog)", () =
     expect(html).toContain("Xóa vĩnh viễn")
     expect(html).toContain("Không, quay lại")
     expect(html).toContain("bg-danger")
+  })
+
+  it("renders PromptDialog with labelled textarea; confirm locked while required input is empty", () => {
+    const html = renderToStaticMarkup(
+      <PromptDialog
+        open={true}
+        onOpenChange={() => {}}
+        onSubmit={() => {}}
+        title="Từ chối bản nội dung này?"
+        label="Lý do từ chối"
+        confirmLabel="Từ chối"
+        tone="danger"
+      />
+    )
+
+    expect(html).toContain("Từ chối bản nội dung này?")
+    expect(html).toMatch(/<label for="([^"]+)"[^>]*>Lý do từ chối<\/label><textarea[^>]*id="\1"/)
+    expect(html).toContain('aria-required="true"')
+    expect(html).toContain("Không, quay lại")
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Từ chối<\/button>/)
+  })
+
+  it("PromptDialog không bắt buộc nhập thì nút xác nhận mở ngay", () => {
+    const html = renderToStaticMarkup(
+      <PromptDialog open onOpenChange={() => {}} onSubmit={() => {}} title="Ghi chú" label="Ghi chú" confirmLabel="Lưu" required={false} />
+    )
+    expect(html).not.toMatch(/<button[^>]*disabled=""[^>]*>Lưu<\/button>/)
   })
 })

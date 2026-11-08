@@ -5,7 +5,6 @@
  * tiệm cài (mặc định 0% — chỉ ghi nhận, không trừ). Mọi khiếu nại đều được lưu; phí chỉ bị trừ một lần (PO 22/10/2026).
  */
 
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -17,15 +16,14 @@ import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import { withCraftFeeDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
 import { craftFeePolicyOf } from "@/modules/greeting-card/use-cases/suggest-craft-fee"
-
-const complaintSchema = z.object({ reason: z.string().trim().min(5).max(500) })
+import { craftFeeComplaintBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.orderUpdate)
   const { id: orderId } = await context.params
 
-  const parsed = complaintSchema.safeParse(await request.json().catch(() => ({})))
+  const parsed = craftFeeComplaintBody.safeParse(await request.json().catch(() => ({})))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const facts = await new CraftFeeFactsRepository().loadFacts(ctx.organizationId, orderId)

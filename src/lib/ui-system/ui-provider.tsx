@@ -9,7 +9,11 @@ import type {
 } from "./types"
 import { DEFAULT_UI_CONFIG, getUiPreset, UI_PRESETS } from "./presets"
 
-const UI_DENSITY_STORAGE_KEY = "smeos_ui_density"
+/**
+ * Chỉ lưu density người dùng TỰ CHỌN. Khoá cũ `smeos_ui_density` bị ghi tự động mỗi lần gắn
+ * (gần như luôn là "comfortable"), nên đọc lại nó sẽ đè density máy chủ chọn theo tầng.
+ */
+export const UI_DENSITY_STORAGE_KEY = "smeos_ui_density_choice"
 
 const UiSystemContext = createContext<UiSystemContextValue | null>(null)
 
@@ -20,6 +24,19 @@ export function readStoredDensity(storage: Pick<Storage, "getItem"> | undefined 
     return value === "compact" || value === "comfortable" ? value : null
   } catch {
     return null
+  }
+}
+
+/** Ghi (hoặc xoá khi `null`) density người dùng tự chọn; bỏ qua khi localStorage bị chặn. */
+export function writeStoredDensity(
+  density: UiDensity | null,
+  storage: Pick<Storage, "setItem" | "removeItem"> | undefined = globalThis.localStorage,
+): void {
+  try {
+    if (density) storage?.setItem(UI_DENSITY_STORAGE_KEY, density)
+    else storage?.removeItem(UI_DENSITY_STORAGE_KEY)
+  } catch {
+    // localStorage bị chặn (chế độ riêng tư) — bỏ qua
   }
 }
 
@@ -39,13 +56,15 @@ export function UiSystemProvider({
   children: React.ReactNode
   initialConfig?: Partial<UiSystemConfig>
 }) {
-  const [config, setConfig] = useState<UiSystemConfig>(() => ({
+  // Cấu hình gốc = theme máy chủ phân giải theo tầng (AppShell truyền vào); UI Studio đè lên trên.
+  const [baseConfig] = useState<UiSystemConfig>(() => ({
     ...DEFAULT_UI_CONFIG,
     ...initialConfig,
   }))
+  const [config, setConfig] = useState<UiSystemConfig>(baseConfig)
 
-  // Density cá nhân (ADR-011 D-UI-03): đọc ngay khi gắn, trước khi effect bên dưới ghi density hiện
-  // tại vào localStorage — đọc muộn hơn thì chỉ đọc lại giá trị vừa ghi và lựa chọn của người dùng mất.
+  // Density cá nhân (ADR-011 D-UI-03): chỉ có khi người dùng đã tự chọn (setDensity ghi), nên đè được
+  // density của tầng; chưa chọn thì giữ nguyên theme máy chủ.
   useEffect(() => {
     const storedDensity = readStoredDensity()
     if (!storedDensity) return
@@ -55,17 +74,21 @@ export function UiSystemProvider({
     })
   }, [])
 
-  // Sync DOM data-attributes when preset/density modified in dev / UI studio (no inline style injection)
+  // Gắn preset/density lên <html> để portal (Dialog, Drawer…) render ngoài AppShell cũng nhận đúng token.
   useEffect(() => {
     const root = document.documentElement
     root.setAttribute("data-theme", config.preset)
     root.setAttribute("data-density", config.density)
-    try {
-      localStorage.setItem(UI_DENSITY_STORAGE_KEY, config.density)
-    } catch {
-      // Ignore storage error
-    }
   }, [config.preset, config.density])
+
+  // Rời AppShell (vd sang trang công khai) → trả <html> về mặc định như HTML máy chủ của root layout.
+  useEffect(() => {
+    return () => {
+      const root = document.documentElement
+      root.setAttribute("data-theme", DEFAULT_UI_CONFIG.preset)
+      root.setAttribute("data-density", DEFAULT_UI_CONFIG.density)
+    }
+  }, [])
 
   // Listen to external DOM changes on document.documentElement (e.g. editing data-theme / data-density in Chrome DevTools)
   // Chỉ phục vụ chỉnh tay thuộc tính trong DevTools — không theo dõi DOM ở production.
@@ -104,11 +127,13 @@ export function UiSystemProvider({
 
   const setDensity = useCallback((density: UiDensity) => {
     setConfig((prev) => ({ ...prev, density }))
+    writeStoredDensity(density)
   }, [])
 
   const resetToDefault = useCallback(() => {
-    setConfig(DEFAULT_UI_CONFIG)
-  }, [])
+    setConfig(baseConfig)
+    writeStoredDensity(null)
+  }, [baseConfig])
 
   const currentPreset = useMemo(() => getUiPreset(config.preset), [config.preset])
   const availablePresets = useMemo(() => Object.values(UI_PRESETS), [])

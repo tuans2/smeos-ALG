@@ -27,26 +27,33 @@ function violation(
   return { rule, file: context.relativeFilePath, ...at(sourceFile, node), snippet, message }
 }
 
-/** R13 — `confirm()` của trình duyệt → `ConfirmDialog` / `useConfirmDialog` (UX-015). */
+/** Hộp thoại chặn luồng của trình duyệt → thành phần chuẩn tương ứng. */
+const NATIVE_DIALOGS: Record<string, string> = {
+  confirm: "Hộp confirm() của trình duyệt — dùng ConfirmDialog/useConfirmDialog (03c UX-015).",
+  alert: "Hộp alert() của trình duyệt — dùng useToast() hoặc lỗi tại chỗ (InlineError) (03c UX-015).",
+  prompt: "Hộp prompt() của trình duyệt — dùng usePromptDialog (03c UX-015).",
+}
+
+/** R13 — `confirm()`/`alert()`/`prompt()` của trình duyệt → ConfirmDialog / Toast / PromptDialog (UX-015). */
 export const checkR13: RuleFunction = (sourceFile, context) => {
   if (isSharedUi(context)) return []
   const out: Violation[] = []
-  // Hàm cục bộ tên `confirm` (vd hành động "Xác nhận" của màn) không phải hộp của trình duyệt.
-  const declaresLocalConfirm = /\b(?:function|const|let)\s+(?:\[\s*)?confirm\b/.test(context.sourceCode)
+  // Hàm cục bộ cùng tên (vd hành động "Xác nhận" của màn, `const [confirm] = useConfirmDialog()`) không phải hộp của trình duyệt.
+  const declaresLocal = (name: string) =>
+    new RegExp(`\\b(?:function|const|let)\\s+(?:\\[\\s*)?${name}\\b`).test(context.sourceCode)
   function visit(node: ts.Node) {
     if (ts.isCallExpression(node)) {
       const callee = node.expression
-      const isBare = ts.isIdentifier(callee) && callee.text === "confirm"
-      const isWindow =
+      const bareName = ts.isIdentifier(callee) && callee.text in NATIVE_DIALOGS ? callee.text : null
+      const windowName =
         ts.isPropertyAccessExpression(callee) &&
-        callee.name.text === "confirm" &&
+        callee.name.text in NATIVE_DIALOGS &&
         ts.isIdentifier(callee.expression) &&
         (callee.expression.text === "window" || callee.expression.text === "globalThis")
-      if ((isBare && !declaresLocalConfirm) || isWindow) {
-        out.push(
-          violation("R13", sourceFile, context, node, "confirm(", "Hộp confirm() của trình duyệt — dùng ConfirmDialog/useConfirmDialog (03c UX-015)."),
-        )
-      }
+          ? callee.name.text
+          : null
+      const name = windowName ?? (bareName && !declaresLocal(bareName) ? bareName : null)
+      if (name) out.push(violation("R13", sourceFile, context, node, `${name}(`, NATIVE_DIALOGS[name]!))
     }
     ts.forEachChild(node, visit)
   }
@@ -95,12 +102,28 @@ export const checkR15: RuleFunction = (sourceFile, context) => {
 }
 
 /** R16 — từ cấm theo docs/dac-ta/ux-patterns/glossary.md (UX-026). */
-const GLOSSARY_BANNED: [RegExp, string][] = [
+export const GLOSSARY_BANNED: [RegExp, string][] = [
   [/\bWorker\b/, '"hệ thống" hoặc bỏ hẳn'],
   [/\b[Rr]ender(?:ing)?\b/, '"dựng" (Đang dựng video, Đã dựng xong)'],
   [/\bjob\b/, '"tác vụ" hoặc bỏ mã'],
   [/\bP\d\b/, "tên bước nghiệp vụ (Duyệt kịch bản, Duyệt video)"],
+  [/\bBOM\b|\bBill of Materials\b/i, '"định lượng nguyên vật liệu" hoặc "công thức chế tác"'],
+  [/\bMaster Index\b/i, '"danh mục tổng hợp" hoặc "thư viện chuẩn"'],
+  [/\bPII\b/, '"thông tin cá nhân khách hàng"'],
+  [/\bControl Tower\b/i, '"tháp điều phối đơn"'],
+  [/\b[Pp]ayload\b|\bRequest body\b/i, '"dữ liệu gửi lên" hoặc "thông tin nhập liệu"'],
+  [/\b[Tt]enants?\b/, '"cửa hàng" hoặc "doanh nghiệp / tổ chức" theo tầng'],
+  [/(?<!Apple )\bM[0-5]\b/, '"tiến độ xử lý" kèm tên bước (Nhận đơn → Chế tác → Giao hàng)'],
+  [/\bM(?:0[1-9]|1\d)[a-z]?\b/, "tên chức năng (không hiện mã nội bộ M01, M01a…)"],
+  [/\bR[1-9]\b/, 'tên mức: "rủi ro cao", "tiêu chuẩn"'],
+  [/\bSales? [Pp]itch\b/, '"kịch bản tư vấn"'],
 ]
+
+/** Thuộc tính object mang chữ hiển thị (mảng tab, bước, mục chọn…) — soát cả ngoài JSX. */
+const DISPLAY_KEYS = new Set([
+  "label", "title", "shortTitle", "subtitle", "description", "desc", "text", "message",
+  "reason", "hint", "placeholder", "tooltip", "caption", "heading", "helperText", "emptyText", "ctaLabel",
+])
 
 const VISIBLE_PROPS = new Set(["label", "title", "placeholder", "description", "aria-label"])
 
@@ -123,6 +146,13 @@ export const checkR16: RuleFunction = (sourceFile, context) => {
       const name = ts.isIdentifier(node.name) ? node.name.text : node.name.name.text
       if (VISIBLE_PROPS.has(name) && node.initializer && ts.isStringLiteral(node.initializer)) check(node.initializer.text, node)
       if (name === "className" || name === "key" || name === "href" || name === "src") return
+    } else if (ts.isPropertyAssignment(node) && !insideJsx) {
+      const key = ts.isIdentifier(node.name) || ts.isStringLiteral(node.name) ? node.name.text : ""
+      const init = node.initializer
+      if (DISPLAY_KEYS.has(key)) {
+        if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) check(init.text, init)
+        else if (ts.isTemplateExpression(init)) check([init.head.text, ...init.templateSpans.map((s) => s.literal.text)].join(" "), init, true)
+      }
     } else if (insideJsx && (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node))) {
       check(node.text, node)
     } else if (insideJsx && ts.isTemplateExpression(node)) {

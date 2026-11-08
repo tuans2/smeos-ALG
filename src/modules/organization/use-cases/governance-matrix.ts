@@ -55,7 +55,7 @@ export async function saveGovernanceMatrix(ctx: TenantContext, system: Governanc
     throw new AppError("UNPROCESSABLE_ENTITY", "Có mục đã bị cấp trên khoá hoặc không được phép khoá ở cấp này", { violations })
   }
   const before = await getOrgGovernance(ctx.organizationId, system)
-  const saved = await saveOrgGovernance(ctx.organizationId, system, next)
+  const saved = await saveOrgGovernance(ctx.organizationId, system, next, ctx.userId)
   if (!saved) throw new AppError("NOT_FOUND", "Không tìm thấy tổ chức")
   await recordAuditLog(ctx, {
     action: "organization.governance_matrix.update",

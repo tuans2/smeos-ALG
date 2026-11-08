@@ -71,6 +71,22 @@ describe("AppShell (S3-01)", () => {
     expect(html).toContain('data-density="comfortable"')
   })
 
+  // Theme máy chủ phân giải theo tầng phải tới được DOM: trước đây preset mặc định của provider
+  // ở root layout luôn đè lên, nên Console Vận hành/ChainOS không bao giờ nhận modern-slate/compact.
+  it("dùng preset và density máy chủ phân giải theo tầng, không bị preset mặc định đè", () => {
+    const html = renderToStaticMarkup(
+      <AppShell
+        theme={{ ...dummyTheme, preset: "modern-slate", density: "compact", dataTheme: "modern-slate", dataDensity: "compact" }}
+      >
+        <div>Child Content</div>
+      </AppShell>
+    )
+
+    expect(html).toContain('data-theme="modern-slate"')
+    expect(html).toContain('data-density="compact"')
+    expect(html).not.toContain('data-theme="moc-lan"')
+  })
+
   it("renders SessionTakeoverWatcher to guard active user session", () => {
     const html = renderToStaticMarkup(
       <AppShell theme={dummyTheme}>

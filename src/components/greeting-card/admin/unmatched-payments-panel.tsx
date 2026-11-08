@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { usePromptDialog } from "@/components/ui/prompt-dialog"
 import { apiSend, usePagedList } from "@/components/greeting-card/greeting-api"
 import { vnd } from "./admin-order-types"
 
@@ -20,9 +21,15 @@ interface PaymentEvent {
 export function UnmatchedPaymentsPanel() {
   const events = usePagedList<PaymentEvent>("/api/v1/greeting-card/payment-events?status=UNMATCHED", 10)
   const [error, setError] = useState<string | null>(null)
+  const [askText, promptDialog] = usePromptDialog()
 
   async function markHandled(e: PaymentEvent) {
-    const note = window.prompt("Ghi chú cách đã xử lý (vd: đã hoàn tiền, đã ghi thu tay cho đơn ...)")
+    const note = await askText({
+      title: `Đánh dấu giao dịch #${e.external_id} đã xử lý?`,
+      label: "Ghi chú cách đã xử lý",
+      placeholder: "Vd: đã hoàn tiền, đã ghi thu tay cho đơn …",
+      confirmLabel: "Đánh dấu đã xử lý",
+    })
     if (!note) return
     setError(null)
     try {
@@ -37,6 +44,7 @@ export function UnmatchedPaymentsPanel() {
 
   return (
     <section className="bg-surface rounded-2xl border border-warning/40 shadow-sm overflow-hidden">
+      {promptDialog}
       <div className="p-4 border-b border-border flex items-center gap-2 bg-warning-bg/30">
         <AlertTriangle size={18} className="text-warning" />
         <h3 className="text-body font-extrabold text-text">Giao dịch chưa khớp đơn ({events.items.length}{events.hasMore ? "+" : ""})</h3>

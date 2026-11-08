@@ -74,7 +74,8 @@ export interface INotificationPreferenceRepository {
     eventKey: string,
     channel: NotifyChannel,
     tier: NotificationTier,
-    scopeId: string
+    scopeId: string,
+    removedBy?: string | null
   ): Promise<void>
 
   // ── Org Policies (Tier 2: SaaS Ngành / ChainOS) ─────────────────────────

@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
@@ -14,18 +13,7 @@ import {
   cancelSubcontractReminderSteps,
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
-
-const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
-
-const shipperSchema = z.object({
-  branchId: z.string().trim().min(1, "Thiếu mã chi nhánh"),
-  shipperName: z.string().trim().min(2, "Tên shipper tối thiểu 2 ký tự").max(80),
-  shipperPhone: z
-    .string()
-    .trim()
-    .regex(VIETNAM_PHONE_RE, "Số điện thoại không hợp lệ (vd: 0912345678)"),
-  shipperNote: z.string().trim().max(200).optional(),
-})
+import { subcontractShipperBody } from "@/app/api/v1/public/_contracts/requests"
 
 /**
  * POST /api/v1/public/subcontract/[orderCode]/submit-shipper
@@ -39,7 +27,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
 
   const { orderCode } = await context.params
   const body = await request.json().catch(() => ({}))
-  const parsed = shipperSchema.safeParse(body)
+  const parsed = subcontractShipperBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed(Object.fromEntries(
       parsed.error.issues.map((i) => [i.path[0] ?? "body", i.message])

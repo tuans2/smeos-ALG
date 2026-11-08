@@ -1,5 +1,6 @@
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import React, { useState } from "react"
 import { CheckCircle2, Copy, Trash2 } from "@/components/ui/icons"
 import { apiSend } from "@/components/greeting-card/greeting-api"
@@ -25,6 +26,7 @@ export function TelegramLinkedChatCard({
   onRemoved: () => void
 }) {
   const [confirm, confirmDialog] = useConfirmDialog()
+  const toast = useToast()
   const [removing, setRemoving] = useState(false)
 
   const handleRemove = async () => {
@@ -34,7 +36,7 @@ export function TelegramLinkedChatCard({
       await apiSend(`/api/v1/greeting-card/integrations/telegram-dispatch?chatId=${encodeURIComponent(chat.id)}`, "DELETE", undefined, "Không gỡ được")
       onRemoved()
     } catch (err) {
-      window.alert(err instanceof Error ? err.message : "Không gỡ được")
+      toast.error(err instanceof Error ? err.message : "Không gỡ được")
     } finally {
       setRemoving(false)
     }

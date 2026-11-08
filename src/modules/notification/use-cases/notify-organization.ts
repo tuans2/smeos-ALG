@@ -41,7 +41,7 @@ export async function notifyOrganization(input: NotifyOrganizationInput, deps: N
       return 0
     }
     // Đọc dư một chút vì một số thành viên sẽ bị lọc theo vai
-    const { organizationType, members } = await deps.listMembers(input.organizationId, MAX_RECIPIENTS_PER_EVENT * 4)
+    const { organizationType, parentChainOrgId, members } = await deps.listMembers(input.organizationId, MAX_RECIPIENTS_PER_EVENT * 4)
     const recipients = selectRecipients(event, members, { organizationType, ownerUserId: input.ownerUserId ?? null })
     const deepLink = input.deepLink ?? fillDeepLink(event.deepLinkTemplate, input.linkVars ?? {})
     let sent = 0
@@ -55,6 +55,7 @@ export async function notifyOrganization(input: NotifyOrganizationInput, deps: N
           message: input.message,
           deepLink,
           parentOrgId: input.parentOrgId,
+          lockParentOrgId: parentChainOrgId ?? undefined,
         })
         if (res.dispatchedChannels.length > 0) sent++
       } catch (err) {

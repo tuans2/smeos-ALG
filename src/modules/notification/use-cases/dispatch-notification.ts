@@ -33,6 +33,8 @@ export interface DispatchNotificationInput {
   message?: string | undefined
   deepLink?: string | undefined
   parentOrgId?: string | undefined
+  /** Chuỗi cha chính của tổ chức nhận — chỉ mở phạm vi khoá cứng, không đổi chính sách mặc định (P2-A11). */
+  lockParentOrgId?: string | undefined
   metadata?: Record<string, unknown> | undefined
 }
 
@@ -46,7 +48,7 @@ export interface DispatchNotificationResult {
 export async function dispatchNotification(
   input: DispatchNotificationInput
 ): Promise<DispatchNotificationResult> {
-  const { eventKey, recipient, deepLink, parentOrgId, metadata } = input
+  const { eventKey, recipient, deepLink, parentOrgId, lockParentOrgId, metadata } = input
   const eventDef = getNotificationEvent(eventKey)
 
   const title = input.title ?? eventDef?.label ?? eventKey
@@ -63,6 +65,7 @@ export async function dispatchNotification(
       roleKey: recipient.roleKey,
       storeOrgId: recipient.organizationId,
       parentOrgId,
+      lockParentOrgId,
     })
 
     if (!resolve.enabled) {

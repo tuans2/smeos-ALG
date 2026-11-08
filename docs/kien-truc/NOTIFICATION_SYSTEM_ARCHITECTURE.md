@@ -266,37 +266,21 @@ model notification_channel_activations {
 
 ### 7.2 Visibility Matrix — Mother quyết định
 
-```prisma
-model notification_event_visibility {
-  event_key      String
-  tier           String   // INDUSTRY | CHAIN | STORE (Mother luôn thấy tất cả)
-  visible        Boolean  @default(true)
-  updated_by     String
-  updated_at     DateTime @updatedAt
-
-  @@id([event_key, tier])
-}
-```
+Lưu ở `governance_decisions` (ADR-012 D-T10; bảng riêng `notification_event_visibility` bỏ ở T-7c, 06/11/2026):
+`system = "notification.visibility"`, `decision_key = "<event_key>:<INDUSTRY|CHAIN|STORE>"`, `tier = MOTHER`,
+`scope = platform`, `value = {visible}`. Mother luôn thấy tất cả. Đặc tả 07 §45.
 
 ### 7.3 Hard Lock — Tất cả các tầng
 
-```prisma
-model notification_hard_locks {
-  id          String   @id @default(uuid())
-  event_key   String
-  channel     String
-  tier        String   // MOTHER | INDUSTRY | CHAIN | STORE
-  scope_id    String   // organization_id; "GLOBAL" nếu tier = MOTHER
-  enabled     Boolean  // true = bắt buộc BẬT | false = bắt buộc TẮT
-  locked_by   String   // user_id người đặt khóa
-  reason      String?  // Lý do — hiện cho tầng dưới
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+Lưu ở `governance_decisions` (bảng riêng `notification_hard_locks` bỏ ở T-7c): `system = "notification.hard_lock"`,
+`decision_key = "<event_key>:<channel>"`, `tier` = MOTHER | INDUSTRY | CHAIN | STORE, `scope` = `platform` (Mother) hoặc
+`org:<organization_id>`, `locked = true`, `value = {enabled, reason}` (`enabled` true = bắt buộc BẬT, false = bắt buộc
+TẮT; `reason` hiện cho tầng dưới); gỡ khoá = dòng `value` null, `decided_by` là người đặt/gỡ. Đặc tả 07 §45.
 
-  @@unique([event_key, channel, tier, scope_id])
-  @@index([tier, scope_id])
-}
-```
+Phạm vi khoá của chuỗi (P2-A11, PO 06/11/2026): `notifyOrganization` tra chuỗi cha chính của tổ chức nhận
+(`findPrimaryChainLink`, cạnh `is_primary` của `organization_links`) và truyền `lockParentOrgId`, nên khoá cứng CHAIN do
+chuỗi đặt áp xuống cửa hàng đối tác. `lockParentOrgId` chỉ mở phạm vi khoá; chính sách tổ chức (`orgPolicy`, §7.4) của
+cửa hàng đối tác không bị chính sách của chuỗi thay. Test: `tests/tenant/tier-consistency.test.ts`.
 
 ### 7.4 Cài đặt tổ chức — SaaS Ngành / ChainOS (Lớp 2)
 

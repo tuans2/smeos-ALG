@@ -4,6 +4,7 @@ import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { slugCandidates } from "@/modules/organization/domain/slug"
 import { CHAIN_LINK_TYPES, recomputePrimaryLink, toChainLinkType } from "@/modules/organization/infra/organization-links"
+import { conflict } from "@/core/http/errors"
 import { findStoreByIdentifier, type StoreByIdentifier } from "./store-identifier-lookup"
 import type {
   IChainPartnershipRepository,
@@ -22,6 +23,8 @@ import type {
  */
 const LINK_INCLUDE = { child_organization: { select: { name: true, slug: true, settings: true } } } as const
 type LinkRow = Prisma.organization_linksGetPayload<{ include: typeof LINK_INCLUDE }>
+
+const PARTNER_CODE_TAKEN_MESSAGE = "Mã đối tác đã được dùng cho một cửa hàng khác của chuỗi."
 
 async function readLink(db: Prisma.TransactionClient | PrismaClient, id: string): Promise<LinkRow> {
   return db.organization_links.findUniqueOrThrow({ where: { id }, include: LINK_INCLUDE })
@@ -196,10 +199,20 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     return this.mapEntity(row)
   }
 
+  async findOrganizationType(orgId: string): Promise<string | null> {
+    const org = await this.prisma.organizations.findUnique({ where: { id: orgId }, select: { type: true } })
+    return org?.type ?? null
+  }
+
   findStoreByIdentifier(identifier: string): Promise<StoreByIdentifier | null> {
     return findStoreByIdentifier(this.prisma, identifier)
   }
 
+  /**
+   * Tạo hoặc dùng lại liên kết của cặp chuỗi–cửa hàng (ADR-012 T-3b: liên kết lại = cùng dòng, ACTIVE trở lại).
+   * Không chép SĐT/email của tổ chức kia vào liên kết — Chuỗi tự nhập liên hệ khi cần (audit hành trình C1, UJ-01).
+   * Liên kết lại cần cửa hàng chấp nhận: làm ở UJ-10 (luồng mời–chấp nhận).
+   */
   async linkExistingStore(params: {
     chainOrgId: string
     partnerOrgId: string
@@ -208,48 +221,36 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     commissionRate?: number | undefined
     capacityDaily?: number | undefined
     contactName?: string | undefined
-    contactPhone?: string | undefined
-    contactEmail?: string | undefined
   }): Promise<ChainPartnershipEntity> {
-    const updateData: Prisma.organization_linksUncheckedUpdateInput = {
-      status: "ACTIVE",
-      valid_to: null,
+    const terms = {
       partner_code: params.partnerCode,
       link_type: toChainLinkType(params.partnershipType),
       commission_rate: params.commissionRate ? Number(params.commissionRate) : null,
       capacity_daily: params.capacityDaily ?? 10,
     }
-    if (params.contactName !== undefined) updateData.contact_name = params.contactName
-    if (params.contactPhone !== undefined) updateData.contact_phone = params.contactPhone
-    if (params.contactEmail !== undefined) updateData.contact_email = params.contactEmail
-
-    const row = await this.prisma.$transaction(async (tx) => {
-      const saved = await tx.organization_links.upsert({
-      where: {
-        parent_org_id_child_org_id: {
-          parent_org_id: params.chainOrgId,
-          child_org_id: params.partnerOrgId,
-        },
-      },
-      update: updateData,
-      create: {
-        parent_org_id: params.chainOrgId,
-        child_org_id: params.partnerOrgId,
-        partner_code: params.partnerCode,
-        link_type: toChainLinkType(params.partnershipType),
-        status: "ACTIVE",
-        commission_rate: params.commissionRate ? Number(params.commissionRate) : null,
-        capacity_daily: params.capacityDaily ?? 10,
-        contact_name: params.contactName ?? null,
-        contact_phone: params.contactPhone ?? null,
-        contact_email: params.contactEmail ?? null,
-      },
-        select: { id: true },
+    try {
+      const row = await this.prisma.$transaction(async (tx) => {
+        const saved = await tx.organization_links.upsert({
+          where: { parent_org_id_child_org_id: { parent_org_id: params.chainOrgId, child_org_id: params.partnerOrgId } },
+          update: { ...terms, status: "ACTIVE", valid_to: null, ...(params.contactName !== undefined ? { contact_name: params.contactName } : {}) },
+          create: {
+            ...terms,
+            parent_org_id: params.chainOrgId,
+            child_org_id: params.partnerOrgId,
+            status: "ACTIVE",
+            contact_name: params.contactName ?? null,
+          },
+          select: { id: true },
+        })
+        await recomputePrimaryLink(tx, params.partnerOrgId)
+        return readLink(tx, saved.id)
       })
-      await recomputePrimaryLink(tx, params.partnerOrgId)
-      return readLink(tx, saved.id)
-    })
-    return this.mapEntity(row)
+      return this.mapEntity(row)
+    } catch (error) {
+      // Mã đối tác đã dùng cho một cửa hàng khác của chuỗi (`@@unique([parent_org_id, partner_code])`)
+      if ((error as { code?: unknown } | null)?.code === "P2002") throw conflict(PARTNER_CODE_TAKEN_MESSAGE)
+      throw error
+    }
   }
 
   private mapEntity(row: LinkRow): ChainPartnershipEntity {

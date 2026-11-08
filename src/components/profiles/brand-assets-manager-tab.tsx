@@ -182,9 +182,9 @@ export function BrandAssetsManagerTab({
       <div className="rounded-xl border border-border/80 bg-surface-alt/40 p-4 flex items-center gap-3">
         <ShieldCheck size={20} className="text-success shrink-0" />
         <p className="text-caption text-text-muted leading-relaxed">
-          Tất cả tài nguyên hình ảnh & video sau khi lưu sẽ được bảo vệ tuyệt đối theo chuẩn{" "}
-          <strong className="text-text">Cách ly Tenant (Tenant Isolation)</strong> và tự động nạp qua cổng{" "}
-          <strong className="text-text">Fact: PROJECTED</strong> vào các trình tạo Landing Page, Video Marketing và Chatbot AI.
+          Ảnh và video sau khi lưu được{" "}
+          <strong className="text-text">giữ riêng cho cửa hàng của bạn</strong> và tự động dùng trong các công cụ tạo
+          Landing Page, Video Marketing và Chatbot AI.
         </p>
       </div>
     </div>

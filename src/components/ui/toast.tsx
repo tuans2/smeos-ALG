@@ -101,8 +101,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       {/* Toast Viewport at top-right / top-center on mobile */}
       <div
+        role="region"
         aria-label="Thông báo nổi"
-        className="fixed top-4 right-4 z-[var(--z-toast)] flex flex-col gap-2 max-w-sm w-full pointer-events-none px-3 sm:px-0"
+        className="fixed inset-x-4 top-4 z-[var(--z-toast)] flex flex-col gap-2 pointer-events-none sm:inset-x-auto sm:right-4 sm:w-full sm:max-w-sm"
       >
         {toasts.map((toast) => (
           <div

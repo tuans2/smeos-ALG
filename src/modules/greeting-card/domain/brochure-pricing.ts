@@ -10,6 +10,7 @@ import { promotionDiscountVnd, promotionWaivesShipping, type PromotionPricing } 
 import { parseSlotCapacity, type SlotCapacityConfig } from "./slot-capacity"
 import { tierDiscountVnd } from "@/modules/products/domain/customer-tier-pricing"
 import { parsePaymentPlans, paymentCodesEnabled, type PaymentPlanSnapshot } from "./payment-plan"
+import { PLATFORM_MAX_DISCOUNT_PERCENT } from "@/modules/organization/domain/governance-decisions"
 
 export const MAX_ORDER_QUANTITY = 20
 
@@ -202,6 +203,8 @@ export interface QuoteInput {
   tierDiscount?: { ratio: number; label: string } | null | undefined
   /** Phụ phí giờ cao điểm theo khung giờ giao (checklist ALG 3.1) */
   peakHour?: { vnd: number; label: string } | null | undefined
+  /** Giá sàn của tiền hàng (tổng sàn × số lượng); sau mọi khoản giảm tiền hàng không thấp hơn số này. */
+  floorVnd?: number | undefined
 }
 
 export interface BrochureQuote {
@@ -224,6 +227,8 @@ export interface BrochureQuote {
   tierLabel?: string
   peakHourSurchargeVnd?: number
   peakHourLabel?: string
+  /** Tổng giảm (mã + hạng + ưu đãi) đã bị chặn bởi trần tổng hoặc giá sàn (PO 07/11/2026). */
+  discountCapped?: true
   /** Phụ phí ngày lễ đã cộng vào tổng (không bị mã giảm giá trừ). */
   holidaySurchargeVnd?: number
   holidayName?: string
@@ -237,8 +242,13 @@ export interface BrochureQuote {
 export function computeQuote(input: QuoteInput): BrochureQuote {
   const quantity = Math.min(Math.max(Math.round(input.quantity), 1), MAX_ORDER_QUANTITY)
   const subtotalVnd = input.unitPriceVnd * quantity
-  const discountVnd = input.voucher ? voucherDiscountVnd(input.voucher, subtotalVnd) : 0
-  const tierVnd = input.tierDiscount ? Math.min(subtotalVnd - discountVnd, tierDiscountVnd(subtotalVnd, input.tierDiscount.ratio)) : 0
+  // Trần TỔNG giảm (PO 07/11/2026, audit BL-08): mã + hạng + ưu đãi cộng lại không quá 50% tiền hàng và tiền hàng
+  // sau giảm không dưới giá sàn. Vượt thì cắt theo thứ tự ưu đãi → hạng → mã.
+  const maxDiscountVnd = Math.max(0, Math.min(Math.floor((subtotalVnd * PLATFORM_MAX_DISCOUNT_PERCENT) / 100), subtotalVnd - (input.floorVnd ?? 0)))
+  const rawVoucherVnd = input.voucher ? voucherDiscountVnd(input.voucher, subtotalVnd) : 0
+  const discountVnd = Math.min(rawVoucherVnd, maxDiscountVnd)
+  const rawTierVnd = input.tierDiscount ? Math.min(subtotalVnd - discountVnd, tierDiscountVnd(subtotalVnd, input.tierDiscount.ratio)) : 0
+  const tierVnd = Math.min(rawTierVnd, maxDiscountVnd - discountVnd)
   const afterDiscount = subtotalVnd - discountVnd - tierVnd
   const free =
     input.shipping.freeShippingAll === true ||
@@ -246,7 +256,9 @@ export function computeQuote(input: QuoteInput): BrochureQuote {
     (input.shipping.freeShippingOverVnd !== null && afterDiscount >= input.shipping.freeShippingOverVnd)
   const shippingFeeVnd = input.zone && !free ? input.zone.feeVnd : 0
   // PO 08/10/2026: "Giảm %" tính trên TỔNG đơn (tiền hoa sau mã giảm giá + phí giao)
-  const promoVnd = promotionDiscountVnd(input.promotion, afterDiscount + shippingFeeVnd)
+  const rawPromoVnd = promotionDiscountVnd(input.promotion, afterDiscount + shippingFeeVnd)
+  const promoVnd = Math.min(rawPromoVnd, maxDiscountVnd - discountVnd - tierVnd)
+  const capped = discountVnd < rawVoucherVnd || tierVnd < rawTierVnd || promoVnd < rawPromoVnd
   const surchargeVnd = input.surcharge && input.surcharge.vnd > 0 ? input.surcharge.vnd : 0
   const peakVnd = input.peakHour && input.peakHour.vnd > 0 ? input.peakHour.vnd : 0
   return {
@@ -257,6 +269,7 @@ export function computeQuote(input: QuoteInput): BrochureQuote {
     shippingFeeVnd,
     totalVnd: afterDiscount + shippingFeeVnd - promoVnd + surchargeVnd + peakVnd,
     ...(promoVnd > 0 ? { promotionDiscountVnd: promoVnd } : {}),
+    ...(capped ? { discountCapped: true as const } : {}),
     shippingZone: input.zone ? { id: input.zone.id, name: input.zone.name } : null,
     voucherCode: input.voucher?.code ?? null,
     ...(surchargeVnd > 0 && input.surcharge ? { holidaySurchargeVnd: surchargeVnd, holidayName: input.surcharge.name } : {}),

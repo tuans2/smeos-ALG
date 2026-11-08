@@ -13,6 +13,7 @@ import {
   List,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Dialog } from "@/components/ui/dialog"
@@ -155,6 +156,7 @@ interface CreateCatalogModalProps {
 export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCatalogModalProps) {
   const { organization } = useSession()
   const ti = getIndustryTerminology(organization?.industry)
+  const toast = useToast()
   const [name, setName] = useState("")
   const [desc, setDesc] = useState("")
   const [styleVariant, setStyleVariant] = useState<CatalogStyleVariant>("MODERN_SHOWROOM")
@@ -217,7 +219,7 @@ export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCa
       }
       onCreated()
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Lỗi khi tạo catalog")
+      toast.error(err instanceof Error ? err.message : "Lỗi khi tạo catalog")
     } finally {
       setIsSubmitting(false)
     }

@@ -25,6 +25,22 @@ describe("notifyOrganization", () => {
     expect(calls.map((c) => c.recipient.roleKey)).toEqual(["store_admin", "sales"])
   })
 
+  it("chuỗi cha chính chỉ đi vào phạm vi khoá cứng, không thay parentOrgId của bên gọi (P2-A11)", async () => {
+    const listMembers = vi.fn().mockResolvedValue({
+      organizationType: "SINGLE",
+      parentChainOrgId: "chain-1",
+      members: [{ userId: "admin", systemRoleKey: "dieu_hanh" }],
+    })
+    const d = deps({ listMembers })
+    await notifyOrganization({ organizationId: "org-1", eventKey: "ORDER_RECEIVED" }, d)
+    const call = (d.dispatch as ReturnType<typeof vi.fn>).mock.calls[0]?.[0]
+    expect(call).toMatchObject({ lockParentOrgId: "chain-1", parentOrgId: undefined })
+
+    const solo = deps()
+    await notifyOrganization({ organizationId: "org-1", eventKey: "ORDER_RECEIVED" }, solo)
+    expect((solo.dispatch as ReturnType<typeof vi.fn>).mock.calls[0]?.[0].lockParentOrgId).toBeUndefined()
+  })
+
   it("không bao giờ ném lỗi về luồng nghiệp vụ", async () => {
     const d = deps({ listMembers: vi.fn().mockRejectedValue(new Error("db down")) })
     await expect(notifyOrganization({ organizationId: "org-1", eventKey: "ORDER_RECEIVED" }, d)).resolves.toBe(0)

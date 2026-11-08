@@ -78,7 +78,7 @@ export interface CreateOrderRequest {
   /** ĐP-3.16 (26/09/2026): giá trị trường tự tạo (entity ORDER), khoá `cf_...`. */
   customFields?: Record<string, unknown>
   // ── ĐP-4a.1 (26/09/2026) — T01: đủ trường P0/P1 ──
-  source?: "ORDER_M10" | "CHAT_M08" | "CATALOG_M06" | "MANUAL"
+  source?: "MANUAL" | "CHAT" | "CATALOG" | "LANDING" | "SHORT_LINK" | "CHANNEL" | "NETWORK" | "QUOTATION"
   sourceReference?: string
   channel?: string
   orderType?: string
@@ -192,3 +192,4 @@ export async function uploadCoordinatorPhoto(file: File): Promise<{ assetId: str
 export function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "Lỗi không xác định"
 }
+export { isStageAdvanceLocked } from "./coordinator-order-lock"

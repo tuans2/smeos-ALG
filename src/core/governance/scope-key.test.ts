@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { fromScopeKey, PLATFORM_SCOPE_KEY, storedScopeIds, toScopeKey } from "./scope-key"
+import { fromScopeKey, PLATFORM_SCOPE_KEY, toScopeKey } from "./scope-key"
 
 describe("địa chỉ phạm vi D-T5 (ADR-012 T-6b)", () => {
   it("dạng domain → dạng lưu", () => {
@@ -18,11 +18,5 @@ describe("địa chỉ phạm vi D-T5 (ADR-012 T-6b)", () => {
     expect(fromScopeKey("org:org-1")).toBe("org-1")
     expect(fromScopeKey("org-1")).toBe("org-1")
     expect(fromScopeKey("industry:FLORAL")).toBe("industry:FLORAL")
-  })
-
-  it("điều kiện đọc gồm cả dạng mới và dạng cũ", () => {
-    expect(storedScopeIds("GLOBAL")).toEqual(["platform", "GLOBAL"])
-    expect(storedScopeIds("org-1")).toEqual(["org:org-1", "org-1"])
-    expect(storedScopeIds("industry:FLORAL")).toEqual(["industry:FLORAL"])
   })
 })

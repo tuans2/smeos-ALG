@@ -25,7 +25,7 @@ export interface TierChain {
   readonly organizationId: string
   /** Tầng dữ liệu của tổ chức — Mẹ và Ngành không phải tổ chức tenant (`organizationTierOf`). */
   readonly tier: "CHAIN" | "STORE"
-  /** Khoá plugin ngành — `organizations.industry_key` (ADR-012 T-6a), dự phòng `settings.industry`. */
+  /** Khoá plugin ngành — `organizations.industry_key` (ADR-012 T-6a; nguồn duy nhất từ T-6c-2). */
   readonly industryKey: string | null
   readonly primaryChain: { readonly organizationId: string; readonly name: string } | null
 }
@@ -42,17 +42,15 @@ export async function findPrimaryChainLink(organizationId: string, db: DbClient 
 /** `null` khi tổ chức không tồn tại. */
 export async function resolveTierChain(organizationId: string, db: DbClient = prisma): Promise<TierChain | null> {
   const [org, link] = await Promise.all([
-    db.organizations.findUnique({ where: { id: organizationId }, select: { type: true, settings: true, industry_key: true } }),
+    db.organizations.findUnique({ where: { id: organizationId }, select: { type: true, industry_key: true } }),
     findPrimaryChainLink(organizationId, db),
   ])
   if (!org) return null
-  // ADR-012 T-6a: cột `industry_key` (khoá ngoại về `industries`); `settings.industry` chỉ là dự phòng tới T-6c
-  const settings = (org.settings as Record<string, unknown> | null) ?? {}
-  const legacy = settings["industry"]
   return {
     organizationId,
     tier: organizationTierOf(org.type),
-    industryKey: org.industry_key ?? (typeof legacy === "string" ? legacy : null),
+    // ADR-012 T-6c-2: cột `industry_key` là nguồn duy nhất (không còn dự phòng `settings.industry`)
+    industryKey: org.industry_key,
     primaryChain: link ? { organizationId: link.chainOrgId, name: link.chainName } : null,
   }
 }

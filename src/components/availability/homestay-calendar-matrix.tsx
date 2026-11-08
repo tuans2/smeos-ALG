@@ -9,6 +9,7 @@ import { Wrench } from "@/components/ui/icon-set/wrench"
 import { ChevronLeft } from "@/components/ui/icon-set/chevron-left"
 import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 import { ManualBlockModal } from "./manual-block-modal"
@@ -42,6 +43,7 @@ export function HomestayCalendarMatrix({
   const safeProducts = Array.isArray(products) ? products : []
   const safeBookings = Array.isArray(bookings) ? bookings : []
   const [confirm, confirmDialog] = useConfirmDialog()
+  const toast = useToast()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState<string | undefined>()
@@ -77,7 +79,7 @@ export function HomestayCalendarMatrix({
       }
       onRefresh()
     } catch (err: unknown) {
-      alert(err instanceof Error ? err.message : "Đã có lỗi xảy ra")
+      toast.error(err instanceof Error ? err.message : "Đã có lỗi xảy ra")
     } finally {
       setDeletingId(null)
     }

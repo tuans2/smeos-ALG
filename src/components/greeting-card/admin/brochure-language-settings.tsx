@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Globe2, Lock, CheckCircle2, AlertCircle, Save, Loader2, Sparkles, Send, Clock } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { Dialog } from "@/components/ui/dialog"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
@@ -21,6 +22,7 @@ import type { SupportedLocale } from "@/lib/i18n/types"
 export function BrochureLanguageSettings() {
   const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const [draft, setDraft] = useState<BrochureLanguagePolicy | null>(null)
+  const toast = useToast()
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
 
@@ -324,16 +326,12 @@ export function BrochureLanguageSettings() {
                   e.preventDefault()
                   setRequesting(true)
                   try {
-                    await apiSend(
-                      "/api/v1/organizations/current/language-unlock-request",
-                      "POST",
-                      { note: unlockNote.trim() || null },
-                      "Không gửi được yêu cầu mở khóa"
-                    )
+                    await apiSend("/api/v1/organizations/current/language-unlock-request", "POST",
+                      { note: unlockNote.trim() || null }, "Không gửi được yêu cầu mở khóa")
                     await org.mutate()
                     setUnlockSuccess(true)
                   } catch (err) {
-                    alert(err instanceof Error ? err.message : "Có lỗi xảy ra")
+                    toast.error(err instanceof Error ? err.message : "Không gửi được yêu cầu mở khóa")
                   } finally {
                     setRequesting(false)
                   }

@@ -8,6 +8,7 @@ import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 import { fundingSourceForWorkspace } from "@/modules/usage/domain/quota"
 import { UsageRepository, getUsageRepository } from "@/modules/usage/infra/usage-repository"
 
+import { samePayload } from "@/modules/jobs/domain/idempotency"
 import { isDuplicateIdempotencyError } from "@/modules/jobs/domain/job-rules"
 import { PostgresQueueProvider } from "@/modules/jobs/adapters/postgres-queue-provider"
 import type { generation_jobs } from "@/modules/jobs/infra/entities"
@@ -64,6 +65,10 @@ export async function enqueueJob(
       input.idempotencyKey
     )
     if (!existing) return null
+    if (!samePayload(existing.payload, input.payload) || (existing.product_id ?? null) !== (input.productId ?? null)) {
+      // Cùng khoá, khác thân: vẫn trả job cũ như trước, chỉ để lại dấu vết để đo (không ghi nội dung payload)
+      log.warn("jobs.idempotency_payload_mismatch", { feature: input.feature, job_id: existing.id })
+    }
     return { job: existing, deduped: true, usage: { costCredit: 0, balanceAfter: null } }
   }
 

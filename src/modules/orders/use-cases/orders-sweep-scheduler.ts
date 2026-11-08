@@ -1,4 +1,5 @@
 import { log } from "@/core/observability/log"
+import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 import { matchStandardBankTransfers } from "./match-standard-bank-transfers"
 import { remindCollectDue } from "./remind-collect-due"
 
@@ -19,10 +20,12 @@ export function startOrdersBankMatchSweep(): void {
   const timer = setInterval(() => {
     if (running) return
     running = true
-    matchStandardBankTransfers()
-      .then(async (r) => {
+    // Một tiến trình trong cụm chạy mỗi lượt (audit hành trình S2, UJ-11)
+    runExclusive("orders_bank_match_sweep", async () => ({ match: await matchStandardBankTransfers(), due: await remindCollectDue() }))
+      .then((out) => {
+        if (!out) return
+        const { match: r, due } = out
         if (r.matched > 0) log.info("orders.bank_match", { feature: "orders", ...r })
-        const due = await remindCollectDue()
         if (due.reminded > 0) log.info("orders.collect_due_reminded", { feature: "orders", ...due })
       })
       .catch((error: unknown) => {

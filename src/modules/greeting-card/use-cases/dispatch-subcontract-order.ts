@@ -18,11 +18,15 @@ import {
 } from "../domain/chain-dispatch-engine"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
 import { subcontractBranchUrl } from "@/modules/greeting-card/infra/subcontract-link-token"
+import { subcontractAreaText } from "../domain/subcontract-share"
+import type { AdministrativeArea } from "../domain/area-match"
 
 export interface DispatchOrderInput {
   orderId: string
   orderCode: string
   deliveryAddress: string
+  /** Phường/quận/tỉnh — tin mời chỉ ghi khu vực (P-4); địa chỉ đầy đủ chỉ dùng để tìm chi nhánh gần */
+  deliveryArea?: AdministrativeArea | null | undefined
   deliveryTime: string
   deliveryLocation?: { latitude: number; longitude: number } | null | undefined
   subcontractPriceVnd: number
@@ -172,7 +176,7 @@ export async function executeAutomatedChainDispatch(
 
     const messageText = renderDispatchMessage(policy.messageTemplates.inviteSubcontract, {
       orderCode: order.orderCode,
-      deliveryAddress: order.deliveryAddress,
+      deliveryAddress: subcontractAreaText(order.deliveryArea),
       deliveryTime: order.deliveryTime,
       subcontractPriceVnd: order.subcontractPriceVnd.toLocaleString("vi-VN") + " đ",
       claimUrl,

@@ -13,7 +13,7 @@ import { FloristJobCard } from "@/components/templates/coordinator/florist-job-c
 import { AIQCReportCard } from "@/components/templates/coordinator/ai-qc-report-card"
 import { DeliveryPODCard } from "@/components/templates/coordinator/delivery-pod-card"
 import { SalesOrderIntakeCard } from "@/components/templates/coordinator/sales-order-intake-card"
-import { coordinatorApi, errorMessage, type CoordinationOrder } from "./coordinator-api"
+import { coordinatorApi, errorMessage, isStageAdvanceLocked, type CoordinationOrder } from "./coordinator-api"
 import type { VisibleCustomField } from "./custom-fields-section"
 import {
   type DetailTab,
@@ -171,7 +171,7 @@ export function CoordinatorOrderDetailModal({
           {detailModalTab === "SALES_INTAKE" && (
             <SalesOrderIntakeCard
               orderCode={order.orderCode}
-              source="Tiếp nhận tại Control Tower"
+              source="Tiếp nhận tại Tháp điều phối đơn"
               customerName={order.customerName}
               customerTier={order.customerTier}
               recipientName={order.recipientName}
@@ -206,7 +206,7 @@ export function CoordinatorOrderDetailModal({
               riskLevel={order.riskLevel}
               riskReason={order.riskReason}
               customFields={partnerVisibleCustomFields}
-              {...(order.stage === "COMPLETED" || order.stage === "CANCELLED"
+              {...(isStageAdvanceLocked(order)
                 ? {}
                 : { onAdvanceStage: () => onAdvanceStage(order) })}
             />

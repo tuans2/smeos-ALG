@@ -17,6 +17,7 @@ import { Scissors } from "@/components/ui/icon-set/scissors"
 import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/toast"
 import { Badge } from "@/components/ui/badge"
 import type {
   AccessoryBomItem,
@@ -167,6 +168,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
   } = props
 
   const cardRef = useRef<HTMLDivElement>(null)
+  const toast = useToast()
   const [copied, setCopied] = useState(false)
 
   const formattedAddress = formatAddress(deliveryAddress)
@@ -201,9 +203,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
   const handleDownloadPng = useCallback(async () => {
     if (!cardRef.current) return
     try {
-      // `html-to-image` đã là phụ thuộc của dự án (thẻ chào Sales). Bản trước
-      // import động `html2canvas` — gói không có trong package.json — nên nút
-      // này luôn rơi vào nhánh báo lỗi.
+      // Dùng `html-to-image` (phụ thuộc sẵn có); `html2canvas` không có trong package.json.
       const { toPng } = await import("html-to-image")
       const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, backgroundColor: "#ffffff", cacheBust: true })
       const link = document.createElement("a")
@@ -212,9 +212,9 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
       link.click()
     } catch (err) {
       console.warn("Tải PNG thất bại:", err)
-      alert("Không tạo được ảnh PNG của thẻ (ảnh mẫu có thể chặn tải chéo nguồn). Dùng Copy Zalo thay thế.")
+      toast.error("Không tạo được ảnh PNG của thẻ (ảnh mẫu có thể chặn tải chéo nguồn). Dùng Copy Zalo thay thế.")
     }
-  }, [orderCode])
+  }, [orderCode, toast])
 
   const riskTone =
     riskLevel === "CRITICAL"

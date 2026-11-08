@@ -93,6 +93,13 @@ describe("Quotation Domain Rules (Pure TypeScript)", () => {
       const yesterday = new Date(Date.now() - 86400000)
       expect(isQuotationExpired({ validUntil: yesterday, status: "CONVERTED" })).toBe(false)
     })
+
+    it("báo giá khách đã đồng ý không tự hết hạn (audit hành trình Q2, UJ-04)", () => {
+      const yesterday = new Date(Date.now() - 86400000)
+      expect(isQuotationExpired({ validUntil: yesterday, status: "ACCEPTED" })).toBe(false)
+      // Nhân viên vẫn đóng tay được khi khách rút lại
+      expect(canTransitionQuotationStatus("ACCEPTED", "EXPIRED")).toBe(true)
+    })
   })
 
   describe("validateQuotationItems", () => {

@@ -80,6 +80,21 @@ describe("subcontract-order state machine", () => {
     expect(result.success).toBe(true)
   })
 
+  it("state thiếu danh sách đã từ chối (dữ liệu cũ/nhập tay) vẫn cho nhận, không ném lỗi", () => {
+    // metadata JSON có thể thiếu khoá — từng làm CLAIM ở /public/subcontract/{orderCode} trả 500
+    const legacy = { ...initialOpenState, declinedBranchIds: undefined } as unknown as SubcontractOrderState
+    expect(isSubcontractClaimable(legacy, "b1")).toBe(true)
+    const result = claimSubcontractOrder(legacy, "b1", "Chi nhánh 1", 5)
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(result.nextState.claimedBranchId).toBe("b1")
+    expect(result.nextState.declinedBranchIds).toEqual([])
+    const cancelled = cancelClaimSubcontractOrder({ ...result.nextState, declinedBranchIds: undefined } as unknown as SubcontractOrderState, "b1")
+    expect(cancelled.success).toBe(true)
+    if (!cancelled.success) return
+    expect(cancelled.nextState.declinedBranchIds).toEqual(["b1"])
+  })
+
   it("chi nhánh đã nhận được quyền hủy trong thời hạn Grace Period và đơn quay về OPEN", () => {
     const claimTime = new Date("2026-10-19T08:00:00Z")
     const graceExpiry = new Date("2026-10-19T08:05:00Z")

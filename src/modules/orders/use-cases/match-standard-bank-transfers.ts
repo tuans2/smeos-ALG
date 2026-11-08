@@ -12,6 +12,8 @@ import { extractStandardOrderCode } from "../workflow/standard-payment"
 
 export const BANK_MATCH_LOOKBACK_MS = 3 * 24 * 60 * 60 * 1000
 const BATCH = 100
+/** Trần trang mỗi lượt quét (vòng lặp có giới hạn) — 20 × 100 dòng trong cửa sổ 3 ngày. */
+export const BANK_MATCH_MAX_PAGES = 20
 const ACTOR = "system:sepay-orders"
 
 function systemContext(organizationId: string): TenantContext {
@@ -22,27 +24,43 @@ export async function matchStandardBankTransfers(
   now = new Date(),
   repo: Pick<StandardPaymentRepository, "listUnmatched" | "record"> = new StandardPaymentRepository(),
 ) {
-  const events = await repo.listUnmatched(new Date(now.getTime() - BANK_MATCH_LOOKBACK_MS), BATCH)
-  const result = { scanned: events.length, matched: 0, skipped: 0 }
-  for (const e of events) {
-    const code = extractStandardOrderCode(e.content)
-    if (!code) {
-      result.skipped += 1
-      continue
-    }
-    try {
-      await repo.record(
-        systemContext(e.organization_id),
-        { code },
-        { amountVnd: Math.round(Number(e.amount_vnd)), method: "BANK_TRANSFER", reference: `${e.provider}:${e.external_id}`, note: "Tự khớp chuyển khoản" },
-        e.id,
-      )
-      result.matched += 1
-    } catch (error: unknown) {
-      // Không tìm thấy đơn / vượt số còn phải thu / đã xử lý: để nguyên dòng "chưa khớp".
-      result.skipped += 1
-      log.info("orders.bank_match_skipped", { organizationId: e.organization_id, feature: "orders", message: error instanceof Error ? error.message : String(error) })
-    }
+  const since = new Date(now.getTime() - BANK_MATCH_LOOKBACK_MS)
+  const result = { scanned: 0, matched: 0, skipped: 0 }
+  let after: { createdAt: Date; id: string } | undefined
+  for (let page = 0; page < BANK_MATCH_MAX_PAGES; page += 1) {
+    const events = await repo.listUnmatched(since, BATCH, after)
+    result.scanned += events.length
+    for (const e of events) await matchOne(repo, e, result)
+    const last = events.at(-1)
+    if (events.length < BATCH || !last) break
+    after = { createdAt: last.created_at, id: last.id }
   }
   return result
+}
+
+type UnmatchedEvent = Awaited<ReturnType<StandardPaymentRepository["listUnmatched"]>>[number]
+
+async function matchOne(
+  repo: Pick<StandardPaymentRepository, "record">,
+  e: UnmatchedEvent,
+  result: { matched: number; skipped: number },
+): Promise<void> {
+  const code = extractStandardOrderCode(e.content)
+  if (!code) {
+    result.skipped += 1
+    return
+  }
+  try {
+    await repo.record(
+      systemContext(e.organization_id),
+      { code },
+      { amountVnd: Math.round(Number(e.amount_vnd)), method: "BANK_TRANSFER", reference: `${e.provider}:${e.external_id}`, note: "Tự khớp chuyển khoản" },
+      e.id,
+    )
+    result.matched += 1
+  } catch (error: unknown) {
+    // Không tìm thấy đơn / vượt số còn phải thu / đã xử lý: để nguyên dòng "chưa khớp".
+    result.skipped += 1
+    log.info("orders.bank_match_skipped", { organizationId: e.organization_id, feature: "orders", message: error instanceof Error ? error.message : String(error) })
+  }
 }

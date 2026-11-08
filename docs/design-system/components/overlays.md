@@ -1,6 +1,6 @@
-# Component Contract: Overlay Primitives (Dialog, Drawer, BottomSheet, ConfirmDialog)
+# Component Contract: Overlay Primitives (Dialog, Drawer, BottomSheet, ConfirmDialog, PromptDialog)
 
-- **File**: `src/components/ui/dialog.tsx`, `src/components/ui/drawer.tsx`, `src/components/ui/bottom-sheet.tsx`, `src/components/ui/confirm-dialog.tsx`
+- **File**: `src/components/ui/dialog.tsx`, `src/components/ui/drawer.tsx`, `src/components/ui/bottom-sheet.tsx`, `src/components/ui/confirm-dialog.tsx`, `src/components/ui/prompt-dialog.tsx`
 - **Thư viện gốc**: `@base-ui/react/dialog`
 - **Phiên bản**: 1.0.0
 - **Trạng thái**: STABLE (Production Ready)
@@ -62,6 +62,22 @@ export interface ConfirmDialogProps {
   tone?: "danger" | "default"
   requireText?: string
 }
+
+// PromptDialog — thay window.prompt(); thường dùng qua hook usePromptDialog()
+export interface PromptDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onSubmit: (value: string) => void // nội dung đã trim
+  title: string
+  label: string
+  description?: React.ReactNode
+  confirmLabel: string
+  cancelLabel?: string
+  placeholder?: string
+  required?: boolean // mặc định true: khoá nút xác nhận khi ô trống
+  tone?: "danger" | "default"
+}
+// const [ask, promptDialog] = usePromptDialog(); const v = await ask({...}) // null = huỷ
 ```
 
 ## 3. Variants & Sizes (Biến thể & Kích thước)
@@ -99,7 +115,7 @@ export interface ConfirmDialogProps {
 
 ## 9. Prohibited Patterns (Điều cấm kỵ)
 - CẤM tạo lớp phủ thủ công dạng `<div className="fixed inset-0 bg-black/50">` ngoài `src/components/ui/` (Vi phạm UX Lint R19).
-- CẤM sử dụng `window.confirm()` hoặc `window.alert()`.
+- CẤM sử dụng `window.confirm()`, `window.alert()` hoặc `window.prompt()` (lint R13) — dùng `ConfirmDialog`, `useToast()`, `usePromptDialog()`.
 - CẤM bỏ sót tiêu đề (`title`) trên bất kỳ hộp thoại nào.
 
 ## 10. Dependencies & Composition (Phụ thuộc & Kết hợp)
