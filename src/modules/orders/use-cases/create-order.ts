@@ -11,7 +11,7 @@ import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { findForeignOrderReferences } from "../infra/order-reference-guard"
-import { assertNotBelowFloor } from "@/modules/costing/use-cases/price-floor-guard"
+import { assertWithinPriceBounds } from "@/modules/costing/use-cases/price-floor-guard"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
@@ -21,7 +21,7 @@ export async function createOrder(
   repo: IOrderRepository = getOrderRepository(),
   notify: typeof notifyOrganization = notifyOrganization,
   findForeign: typeof findForeignOrderReferences = findForeignOrderReferences,
-  floorGuard: typeof assertNotBelowFloor = assertNotBelowFloor,
+  floorGuard: typeof assertWithinPriceBounds = assertWithinPriceBounds,
   audit: typeof recordAuditLog = recordAuditLog
 ): Promise<OrderRecord> {
   if (!input.items || input.items.length === 0) {
@@ -58,7 +58,8 @@ export async function createOrder(
     const productLines = input.items.filter((it) => it.productId)
     const productTotal = calculateOrderTotal(productLines)
     // Giá 0 = nháp chờ báo giá; bước báo giá (`quote-order.ts`) kiểm sàn
-    if (productTotal > 0) await floorGuard(ctx, productLines.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.quantity)) })), productTotal)
+    // Sàn (C10) và trần (C9, PO 07/11/2026 Q3) so với tiền của chính các dòng có sản phẩm
+    if (productTotal > 0) await floorGuard(ctx, productLines.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.quantity)) })), productTotal, productTotal)
   }
   const countToday = await repo.countTodayOrders(ctx.organizationId)
   const order = await createWithFreshCode(ctx, repo, countToday, scopedInput, totalVnd)

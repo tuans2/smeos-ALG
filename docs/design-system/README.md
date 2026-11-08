@@ -1,6 +1,6 @@
 # smeOS Design System — Single Source of Truth (SSOT)
 
-> **Cấp thẩm quyền:** `CANONICAL` · **Cấp bậc tài liệu:** `Level 3` · **Phiên bản:** `1.3.2` (theo ADR-011 D-UI-12; lịch sử ở `CHANGELOG.md`)  
+> **Cấp thẩm quyền:** `CANONICAL` · **Cấp bậc tài liệu:** `Level 3` · **Phiên bản:** `1.3.3` (theo ADR-011 D-UI-12; lịch sử ở `CHANGELOG.md`)  
 > **Chủ quản:** Product Owner / Lead UI-UX Architect  
 > **Nguyên tắc cốt lõi:** **Code là nguồn sự thật**. Tài liệu này đóng vai trò chỉ mục trung tâm và hợp đồng quy chuẩn (Contract) cho toàn bộ giao diện của nền tảng SaaS Đa ngành SMEOS.
 
@@ -39,7 +39,7 @@
 - **Quy trình thêm/sửa Token**:
   - Tuyệt đối cấm lập trình viên hoặc AI Agent tự ý bổ sung token vào `globals.css`.
   - Mọi thay đổi hoặc bổ sung token phải thông qua Pull Request chạm vào `src/styles/tokens/`, được kiểm tra độ tương phản tự động và có **PO phê duyệt** (`CODEOWNERS`).
-- **Bản chép giá trị preset**: `src/lib/ui-system/presets.ts` chép màu, bo góc, bóng đổ, phông của 3 preset chỉ để UI Studio hiển thị; giá trị có hiệu lực là CSS. Sửa CSS trước rồi chép lại — `src/lib/ui-system/presets-css-parity.test.ts` đỏ khi hai nơi lệch.
+- **Bản chép giá trị preset và density**: `src/lib/ui-system/presets.ts` chép màu, bo góc, bóng đổ, phông của 3 preset chỉ để UI Studio hiển thị; `DENSITY_CONFIG` (`src/lib/ui-system/tokens.ts`) chép đệm bảng, đệm thẻ, khoảng cách trường của `density.css`. Giá trị có hiệu lực là CSS. Sửa CSS trước rồi chép lại — `src/lib/ui-system/presets-css-parity.test.ts` đỏ khi hai nơi lệch.
 - **Liên kết trong tài liệu này**: mọi liên kết tương đối phải trỏ tới tệp có thật (`tests/unit/architecture/design-system-ssot.test.ts`).
 - **Quy trình Deprecation**:
   - Không xóa bỏ đột ngột component hoặc prop đang dùng.

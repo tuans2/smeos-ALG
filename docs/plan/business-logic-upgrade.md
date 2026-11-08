@@ -121,14 +121,14 @@ Thứ tự: WP-06 trước WP-07, WP-05b; WP-11 trước WP-09 (bộ sinh mã ch
 
 | # | Câu hỏi | Đề xuất mặc định | Chặn |
 |---|---|---|---|
-| Q1 | Huỷ đơn đã thu (ngoài Thẻ chào): hoàn ngay / giữ làm tín dụng / tạo việc chờ Điều hành? | Tạo việc "hoàn tiền chờ xử lý" cho Điều hành, ghi `REFUND` khi duyệt | WP-08 |
-| Q2 | Đơn tạo ở màn Điều phối có được vào thẳng điều phối khi chưa thu/duyệt công nợ? | Có, nhưng khai nguồn "Nội bộ" và bắt buộc qua luật giao trước | WP-09 |
-| Q3 | Mã C9 "vượt trần giá": chặn thật hay gỡ? | Gỡ khỏi danh mục, giữ cảnh báo | WP-10 |
-| Q4 | "Doanh thu" trên `/so-lieu` là thực thu hay giá trị đơn? | Hiện cả hai: "Đã thu" (chính) và "Giá trị đơn" | WP-14 |
+| Q1 | Huỷ đơn đã thu (ngoài Thẻ chào): hoàn ngay / giữ làm tín dụng / tạo việc chờ Điều hành? | **PO 07/11/2026:** giữ như cơ chế hoàn tiền hiện tại (hoàn là bước riêng ở sổ thu, `R10`) — không đổi mã | WP-08 |
+| Q2 | Đơn tạo ở màn Điều phối có được vào thẳng điều phối khi chưa thu/duyệt công nợ? | **PO 07/11/2026: có.** Nguồn theo danh mục chung (`COORDINATOR_ENTRY_SOURCES`), ghi cả `orders.source`; mã `FLR-…` theo ngày VN và tự khớp chuyển khoản | WP-09 |
+| Q3 | Mã C9 "vượt trần giá": chặn thật hay gỡ? | **PO 07/11/2026: chặn thật** — đơn, báo giá vượt giá trần cần `C9` | WP-10 |
+| Q4 | "Doanh thu" trên `/so-lieu` là thực thu hay giá trị đơn? | **PO 07/11/2026:** "Giá trị đơn" là chỉ số chính, hiện cả "Đã thu thực tế" | WP-14 |
 | Q5 | Trần tổng chiết khấu khi chồng mã + hạng + ưu đãi; có áp sàn sau giảm? Mã giảm giá ở đơn chuẩn: bỏ hay áp đủ? | **PO 07/11/2026:** đơn chuẩn bỏ `voucherId`; Thẻ chào gỡ băng — trần tổng 50% + sàn, một trần duy nhất | WP-17 |
 | Q6 | Ngưỡng hạng khách theo ngành, theo thực thu, xác minh SĐT? | **PO 07/11/2026:** cập nhật khi đơn đổi, theo thực thu, ngưỡng theo ngành (không chọn xác minh SĐT/OTP) | WP-18 |
 | Q7 | Trần công nợ mỗi khách khi giao trước, thu sau? | **PO 07/11/2026:** tiệm tự đặt, mặc định không giới hạn; luôn xét nợ quá hạn trước mọi lối tự duyệt | WP-19 |
-| Q8 | Nút ở modal `/don-hang` theo luồng nào (nợ #150)? | Ánh xạ `WAITING→ARRANGING→READY`, `PENDING→DELIVERING→DELIVERED`; hoàn tất chỉ ở Điều phối | WP-05b |
+| Q8 | Nút ở modal `/don-hang` theo luồng nào (nợ #150)? | **PO 07/11/2026 giao đề xuất — đã chọn:** modal không đổi tiến độ; đơn đã xác nhận theo dõi ở Điều phối (nút "Theo dõi ở Điều phối"), chỉ giữ In và Huỷ | WP-05b |
 | Q9 | Có quản lý tồn theo số lượng? | **PO 07/11/2026:** chỉ sản phẩm bật chế độ số lượng | WP-20 |
 | Q10 | Đơn chuẩn có tính VAT? | **PO 07/11/2026:** tính khi khách cần hoá đơn | WP-21 |
 | Q11 | Tạo đơn với ngày giao đã qua (nhập bù đơn đã giao) có được không? | **PO 07/11/2026: không** | WP-12 |
@@ -151,5 +151,5 @@ Thứ tự: WP-06 trước WP-07, WP-05b; WP-11 trước WP-09 (bộ sinh mã ch
 | P0 | WP-01 · WP-02 · WP-03 · WP-04 · WP-05a | Đã làm — PR đợt P0. Còn lại của WP-03: sửa comment CHECK ở `schema.prisma` (cần PO duyệt, gộp WP-15) và đối soát `balance_vnd` (chuyển sang WP-15) |
 | P1 | WP-06 · WP-07 · WP-10 (sàn khi tạo đơn, nguyên liệu mất) · WP-11 · WP-12 · WP-13 | Đã làm — PR đợt P1 + PR "P1 phần còn lại" (sự kiện + cập nhật đơn một giao dịch; form tạo đơn gửi `productId`, dòng trống, ngày VN; ghi `order.create` vào nhật ký kiểm toán). WP-07 nhả `product_bookings`: không cần — giữ chỗ chỉ sinh cho đơn Thẻ chào, sổ đơn không huỷ được đơn Thẻ chào (`releaseOrderBooking` không có nơi gọi — thuộc Thẻ chào, đang đóng băng) |
 | P1 → PO | WP-12: chặn ngày giao quá khứ, kiểm SĐT người nhận theo mẫu VN | PO 07/11/2026: Q11 không cho ngày giao đã qua, Q12 chỉ số Việt Nam — đã làm cho tạo đơn nhập tay/chat/Điều phối. Catalog công khai (vùng khoá Catalog) chưa chặn ngày quá khứ — cần PO duyệt sửa |
-| P1 [PO] | WP-05b · WP-08 · WP-09 · WP-10 (C9) · WP-14 | Chờ Q1–Q4, Q8 |
-| P2 | WP-15 · WP-16 (schema, PO duyệt) · WP-17 · WP-18 · WP-19 · WP-20 · WP-21 (VAT) · Catalog Q11 | Đã làm — PR đợt P2. Còn lại: đơn Thẻ chào chưa trừ/hoàn tồn (tạo/huỷ đơn Thẻ chào còn đóng băng); xác minh SĐT khi tra hạng ở trang Thẻ chào công khai (PO không chọn); ngưỡng hạng riêng cho các ngành ngoài hoa (khung đã có, chưa có số); giảm giá tay của Điều hành chưa cộng dồn với mã/hạng/ưu đãi khi kiểm trần 50% (vẫn kiểm sàn) |
+| P1 [PO] | WP-05b · WP-08 · WP-09 · WP-10 (C9) · WP-14 | Đã làm — PR "P1 quyết định PO" 07/11/2026: C9 chặn vượt trần (Q3), modal sổ đơn theo dõi ở Điều phối + đóng nợ #150 (Q8), `/so-lieu` lấy báo cáo phía máy chủ (Q4), nguồn đơn Điều phối + khớp chuyển khoản `FLR` (Q2), Q1 giữ nguyên. WP-09 không chuyển `createCoordinatorOrder` qua `ingestOrder` (PO cho vào thẳng Điều phối) |
+| P2 | WP-15 · WP-16 (schema, PO duyệt) · WP-17 · WP-18 · WP-19 · WP-20 · WP-21 (VAT) · Catalog Q11 | Đã làm — PR đợt P2. PO 07/11/2026 bỏ đóng băng Thẻ chào: đơn Thẻ chào trừ tồn khi đặt, hoàn khi huỷ / bỏ hiển thị, trừ lại khi khôi phục; giảm giá tay của Điều hành vào trần chung 50% cùng mã/hạng/ưu đãi. Còn lại: xác minh SĐT khi tra hạng ở trang Thẻ chào công khai (PO không chọn); ngưỡng hạng riêng cho các ngành ngoài hoa (PO: chưa làm) |

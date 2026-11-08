@@ -1,4 +1,5 @@
 import { log } from "@/core/observability/log"
+import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 import { recoverPaymentTimeoutLeads } from "./recover-payment-timeout-leads"
 
 const STARTED = Symbol.for("smeos.acquisition.lead-recovery")
@@ -18,9 +19,10 @@ export function startLeadRecoverySweep(): void {
   const timer = setInterval(() => {
     if (running) return
     running = true
-    recoverPaymentTimeoutLeads()
+    // Một tiến trình trong cụm chạy mỗi lượt (audit hành trình S2, UJ-11)
+    runExclusive("acquisition_lead_recovery", recoverPaymentTimeoutLeads)
       .then((r) => {
-        if (r.created > 0) log.info("acquisition.lead_recovery", { feature: "acquisition", ...r })
+        if (r && r.created > 0) log.info("acquisition.lead_recovery", { feature: "acquisition", ...r })
       })
       .catch((error: unknown) => {
         log.error("acquisition.lead_recovery_sweep_failed", { feature: "acquisition", message: error instanceof Error ? error.message : String(error) })

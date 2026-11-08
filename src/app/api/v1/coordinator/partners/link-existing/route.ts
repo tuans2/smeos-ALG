@@ -4,7 +4,6 @@ import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
-import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { LinkExistingStoreUseCase } from "@/modules/chain-partnership/use-cases/link-existing-store"
 
 const linkSchema = z.object({
@@ -26,31 +25,16 @@ export const POST = handle(async (request) => {
     throw validationFailed({ reason: errorDetails })
   }
 
-  const partnershipRepo = getChainPartnershipRepository()
-  const chatRepo = getInternalChatRepository()
-  const useCase = new LinkExistingStoreUseCase(partnershipRepo, chatRepo)
+  // Lỗi nghiệp vụ (không phải Chuỗi → 409, không tìm thấy → 404, đã liên kết → 409) đi thẳng qua `handle`;
+  // trước đây mọi lỗi bị gói thành 400 kèm câu chữ nội bộ.
+  const partnership = await new LinkExistingStoreUseCase(getChainPartnershipRepository()).execute({
+    chainOrgId: ctx.organizationId,
+    identifier: parsed.data.identifier,
+    partnerCode: parsed.data.partnerCode,
+    partnershipType: parsed.data.partnershipType,
+    commissionRate: parsed.data.commissionRate,
+    capacityDaily: parsed.data.capacityDaily,
+  })
 
-  try {
-    const partnership = await useCase.execute(
-      {
-        chainOrgId: ctx.organizationId,
-        identifier: parsed.data.identifier,
-        partnerCode: parsed.data.partnerCode,
-        partnershipType: parsed.data.partnershipType,
-        commissionRate: parsed.data.commissionRate,
-        capacityDaily: parsed.data.capacityDaily,
-      },
-      ctx.userId
-    )
-
-    return jsonResponse(
-      {
-        success: true,
-        data: partnership,
-      },
-      { status: 201 }
-    )
-  } catch (err: unknown) {
-    throw validationFailed({ reason: (err instanceof Error && err.message) || "Không thể liên kết cửa hàng này" })
-  }
+  return jsonResponse({ success: true, data: partnership }, { status: 201 })
 })

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest"
 
 // Giá sàn có test riêng (price-floor.test.ts, tests/tenant/below-floor.test.ts) — ở đây cô lập khỏi CSDL
-vi.mock("@/modules/costing/use-cases/price-floor-guard", () => ({ assertNotBelowFloor: vi.fn(async () => undefined) }))
+vi.mock("@/modules/costing/use-cases/price-floor-guard", () => ({ assertNotBelowFloor: vi.fn(async () => undefined), assertWithinPriceBounds: vi.fn(async () => undefined) }))
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { OrderRecord } from "@/modules/orders/domain/order-types"
 import type { Quotation, QuotationStatus } from "../domain/quotation"
@@ -214,6 +214,8 @@ describe("Quotation Use-Cases", () => {
 
     const fetched = await getQuotationUseCase(fakeCtx, created.id, repo)
     expect(fetched.status).toBe("EXPIRED")
+    // Đọc không ghi — việc ghi do lượt quét định kỳ (UJ-11)
+    expect((await repo.findById(fakeCtx, created.id))?.status).toBe("DRAFT")
   })
 
   it("sendQuotationUseCase: cập nhật trạng thái SENT và cập nhật lead sang QUOTATION_SENT", async () => {

@@ -190,10 +190,14 @@
     "source": {
       "type": "string",
       "enum": [
-        "ORDER_M10",
-        "CHAT_M08",
-        "CATALOG_M06",
-        "MANUAL"
+        "MANUAL",
+        "CHAT",
+        "CATALOG",
+        "LANDING",
+        "SHORT_LINK",
+        "CHANNEL",
+        "NETWORK",
+        "QUOTATION"
       ]
     },
     "sourceReference": {
@@ -270,7 +274,7 @@
       },
       "deliveryTargetTime": "17:00 hôm nay",
       "deliveryTargetAt": "2026-09-25T17:00:00+07:00",
-      "productTitle": "Bó hoa hồng Pastel",
+      "productTitle": "Sản phẩm hồng Pastel",
       "unitPriceVnd": 850000,
       "flowers": [
         {

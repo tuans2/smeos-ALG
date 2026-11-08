@@ -3,15 +3,14 @@ import type { OpenApiOperation } from "@/core/http/openapi"
 import * as req from "./requests"
 import * as res from "./responses-catalog"
 
-/** Operation Catalog công khai — vùng đóng băng: tài liệu hoá, không sửa route (audit API đợt 6). */
+/** Operation Catalog công khai — vùng đóng băng: tài liệu hoá; riêng rate limit của GET do PO cho sửa 07/11/2026. */
 export const CATALOG_OPERATIONS: OpenApiOperation[] = [
   {
     method: "get", path: "/public/catalog/{slug}", operationId: "publicGetCatalog", tags: ["Catalog công khai"],
     summary: "Trang catalog công khai của tiệm",
-    description: "Catalog đã thu hồi vẫn 200 với `status: REVOKED`. **Chưa có giới hạn tần suất** (audit API-09; route đóng băng, cần PO duyệt mới thêm).",
+    description: "Catalog đã thu hồi vẫn 200 với `status: REVOKED`. Giới hạn 60 lần/phút/IP (PO 07/11/2026, audit API-09).",
     security: [],
-    responses: { 200: { description: "Catalog đang mở hoặc đã thu hồi", schema: res.publicCatalogResponse } }, errors: [404],
-    extensions: { "x-rate-limit": "chưa có" },
+    responses: { 200: { description: "Catalog đang mở hoặc đã thu hồi", schema: res.publicCatalogResponse } }, errors: [404, 429],
   },
   {
     method: "post", path: "/public/catalog/{slug}/lead", operationId: "publicCatalogLead", tags: ["Catalog công khai"],

@@ -1,8 +1,6 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
-import { commerceInputShape, pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"
+import { pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { isPendingProposal } from "@/modules/products/domain/product-proposal"
@@ -10,9 +8,7 @@ import { createProduct } from "@/modules/products/use-cases/create-product"
 import { listProducts } from "@/modules/products/use-cases/list-products"
 import { needsScan, parseScanParams, scanProducts } from "@/modules/products/use-cases/scan-products"
 import { notifyProductProposed } from "@/modules/products/use-cases/product-proposal-notifications"
-
-const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"] as const
-const PROPOSAL_FILTERS = ["pending", "rejected", "expired"] as const
+import { PRODUCT_STATUS, PROPOSAL_FILTERS, createProductBody } from "@/app/api/v1/_contracts/requests-products"
 
 /** `GET /products` (`L1`, đặc tả 06 mục 6) — M03. Lọc `branch_id`/`status`/`category`. */
 export const GET = handle(async (request) => {
@@ -66,27 +62,12 @@ export const GET = handle(async (request) => {
   return jsonResponse(result)
 })
 
-const postSchema = z.object({
-  /** Để trống → máy chủ tự sinh mã `AUTO-…` (checklist ALG 2.1). */
-  code: z.string().trim().max(64).optional(),
-  name: z.string().min(1),
-  branch_id: z.string().min(1).nullable().optional(),
-  category: z.string().min(1).nullable().optional(),
-  shape: z.string().min(1).nullable().optional(),
-  facing: z.string().min(1).nullable().optional(),
-  container: z.string().min(1).nullable().optional(),
-  status: z.enum(PRODUCT_STATUS).optional(),
-  attributes: z.record(z.string(), z.unknown()).nullable().optional(),
-  image_asset_id: z.string().min(1).nullable().optional(),
-  ...commerceInputShape,
-})
-
 /** `POST /products` (`L2`, đặc tả 06 mục 6). */
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "L2")
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = createProductBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   if (parsed.data.cost_price_vnd !== undefined) requireCapability(ctx, "L5")
 

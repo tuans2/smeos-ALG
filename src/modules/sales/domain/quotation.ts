@@ -114,12 +114,16 @@ export function canTransitionQuotationStatus(
   return allowed ? allowed.includes(next) : false
 }
 
-/** Kiểm tra báo giá đã quá hạn hiệu lực */
+/**
+ * Kiểm tra báo giá đã quá hạn hiệu lực. Hạn hiệu lực là hạn để KHÁCH trả lời: báo giá khách đã đồng ý
+ * (`ACCEPTED`) không tự hết hạn — trước đây mở chi tiết là nó thành `EXPIRED` và không tạo đơn được nữa
+ * (audit hành trình Q2, gói UJ-04). Nhân viên vẫn đóng tay được (`ACCEPTED → EXPIRED`).
+ */
 export function isQuotationExpired(
   quotation: { validUntil?: Date | null | undefined; status: QuotationStatus },
   now: Date = new Date(),
 ): boolean {
-  if (quotation.status === "CONVERTED" || quotation.status === "REJECTED") {
+  if (quotation.status === "CONVERTED" || quotation.status === "REJECTED" || quotation.status === "ACCEPTED") {
     return false
   }
   if (!quotation.validUntil) return false

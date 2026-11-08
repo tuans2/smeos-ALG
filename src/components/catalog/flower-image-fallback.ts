@@ -17,12 +17,13 @@ export const DEFAULT_FLOWER_IMAGES: string[] = [
 ]
 
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
+import { urlHostIs } from "@/lib/url-host"
 
 export const FLORIST_STORY_IMAGE = "/images/flowers/g040.jpg"
 
 export function resolveFlowerImage(imageUrl: string | null | undefined, index: number = 0): string {
   if (imageUrl && imageUrl.trim().length > 0) {
-    if (imageUrl.includes("drive.google.com")) {
+    if (urlHostIs(imageUrl, "drive.google.com")) {
       const proxied = driveThumbProxySrc(imageUrl)
       if (proxied) return proxied
     }

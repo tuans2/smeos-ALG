@@ -19,12 +19,12 @@ export interface CoordinatorToolbarProps {
 
 const TABS = [
   { id: "ALL", label: "Tất cả" },
-  { id: "INTAKE", label: "P1 Tiếp nhận" },
-  { id: "PLANNING", label: "P2 Phân công" },
-  { id: "IN_PRODUCTION", label: "P4 Chế tác" },
-  { id: "QUALITY_CHECK", label: "P5 QC" },
-  { id: "DISPATCHING", label: "P6 Giao hàng" },
-  { id: "DELIVERED", label: "P7 Nghiệm thu" },
+  { id: "INTAKE", label: "Tiếp nhận" },
+  { id: "PLANNING", label: "Phân công" },
+  { id: "IN_PRODUCTION", label: "Chế tác" },
+  { id: "QUALITY_CHECK", label: "Kiểm định" },
+  { id: "DISPATCHING", label: "Giao hàng" },
+  { id: "DELIVERED", label: "Nghiệm thu" },
   { id: "EXCEPTION", label: "Sự cố" },
 ]
 

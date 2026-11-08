@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { log } from "@/core/observability/log"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
@@ -10,10 +9,7 @@ import {
   savePlatformNavMatrixOverrides,
 } from "@/modules/platform/infra/nav-matrix-store"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
-
-const updateMatrixSchema = z.object({
-  overrides: z.record(z.string(), z.array(z.string())),
-})
+import { navMatrixBody } from "@/app/api/v1/platform/_contracts/requests"
 
 export const GET = handle(async (request) => {
   await requirePlatformContext(request)
@@ -66,7 +62,7 @@ export const PUT = handle(async (request) => {
   // Đổi điều hướng của MỌI tổ chức trong ngành — cần mã quản trị cấu hình, không chỉ phiên nền tảng
   requirePlatformCapability(pctx, "N12")
   const rawBody = (await request.json()) as unknown
-  const parsed = updateMatrixSchema.parse(rawBody)
+  const parsed = navMatrixBody.parse(rawBody)
 
   const previousOverrides = await getPlatformNavMatrixOverrides()
   const savedOverrides = await savePlatformNavMatrixOverrides(parsed.overrides, pctx.userId)
