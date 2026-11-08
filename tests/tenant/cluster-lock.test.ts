@@ -16,13 +16,17 @@ describe("runExclusive — một tiến trình mỗi lượt", () => {
   it("hai lượt cùng lúc: một lượt chạy, lượt kia bỏ qua (null)", async () => {
     let release!: () => void
     const gate = new Promise<void>((r) => (release = r))
+    let locked!: () => void
+    const holding = new Promise<void>((r) => (locked = r))
     let runs = 0
     const first = runExclusive("test_cluster_lock", async () => {
       runs++
+      locked()
       await gate
       return "xong"
     })
-    await new Promise((r) => setTimeout(r, 200))
+    // Chờ tín hiệu phát từ bên trong lượt đầu (đã giữ khoá) thay vì ngủ cố định — CI tải nặng có thể chậm hơn 200 ms.
+    await holding
     const second = await runExclusive("test_cluster_lock", async () => {
       runs++
       return "chen"
@@ -41,8 +45,10 @@ describe("runExclusive — một tiến trình mỗi lượt", () => {
   it("khoá khác tên không chặn nhau", async () => {
     let release!: () => void
     const gate = new Promise<void>((r) => (release = r))
-    const first = runExclusive("test_lock_a", async () => { await gate; return "a" })
-    await new Promise((r) => setTimeout(r, 200))
+    let locked!: () => void
+    const holding = new Promise<void>((r) => (locked = r))
+    const first = runExclusive("test_lock_a", async () => { locked(); await gate; return "a" })
+    await holding
     expect(await runExclusive("test_lock_b", async () => "b")).toBe("b")
     release()
     expect(await first).toBe("a")
