@@ -192,3 +192,4 @@ export async function uploadCoordinatorPhoto(file: File): Promise<{ assetId: str
 export function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : "Lỗi không xác định"
 }
+export { isStageAdvanceLocked } from "./coordinator-order-lock"

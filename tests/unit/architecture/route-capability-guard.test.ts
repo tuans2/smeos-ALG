@@ -22,7 +22,6 @@ const API = path.join(ROOT, "src/app/api/v1")
 const GUARD =
   /\b(requireCapability|hasCapability|requireExecutiveRole|requirePlatformCapability|requirePlatformContext|requireIntegrationContext|requireIntegrationClient|defineRoute)\(|\bcapabilities\.has\(/
 
-const DEBT_170 = "nợ #170 — chưa gác mã năng lực, chờ PO chốt mã"
 
 /** Route không gọi gác quyền nào — có chủ đích hoặc đang là nợ. */
 const NO_CAPABILITY_GUARD: Record<string, string> = {
@@ -55,8 +54,6 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "notification/events": "chỉ đọc danh mục sự kiện tĩnh",
   "notification/channels": "chỉ đọc trạng thái bật kênh toàn sàn",
   "ux-rollout-flags": "chỉ đọc cờ giao diện đang bật cho chính tổ chức của phiên (03c E9)",
-  // Nợ #170.
-  "content-engine/rewrite": DEBT_170,
   "internal-chat/conversations/[id]/messages": "chỉ thành viên cuộc hội thoại (isParticipant trong use-case)",
   "internal-chat/conversations": "chat nội bộ cho mọi nhân viên; danh sách lọc theo người tham gia",
   "internal-chat/messages/[id]/action": "chỉ thành viên cuộc hội thoại (use-case kiểm người tham gia)",

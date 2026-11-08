@@ -2,20 +2,18 @@
  * POST /api/v1/platform/custom-domains/:id/lock (`N20`) — `{ locked: true, reason }` khoá tên miền riêng (ngừng
  * phục vụ ngay); `{ locked: false }` mở lại về "Chờ xác minh" (checklist ALG 10.8).
  */
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { setCustomDomainLock } from "@/modules/custom-domain/use-cases/platform-custom-domains"
+import { customDomainLockBody } from "@/app/api/v1/platform/_contracts/requests"
 
 type Ctx = { params: Promise<{ id: string }> }
-
-const bodySchema = z.object({ locked: z.boolean(), reason: z.string().max(1000).optional() })
 
 export const POST = handle(async (request, context: Ctx) => {
   const pctx = await requirePlatformContext(request)
   const { id } = await context.params
-  const parsed = bodySchema.safeParse(await request.json().catch(() => null))
+  const parsed = customDomainLockBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   return jsonResponse({ data: await setCustomDomainLock(pctx, id, parsed.data) })
 })

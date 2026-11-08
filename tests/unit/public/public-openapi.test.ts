@@ -13,9 +13,7 @@ import { serializeOpenApi } from "@/core/http/openapi"
 const ROOT = path.resolve(__dirname, "../../..")
 
 /** Route công khai CHƯA giới hạn tần suất — chỉ được co lại (audit API-09). */
-const NO_RATE_LIMIT: Record<string, string> = {
-  publicGetCatalog: "vùng Catalog đóng băng — thêm rate limit cần PO duyệt",
-}
+const NO_RATE_LIMIT: Record<string, string> = {}
 const PUBLIC = path.join(ROOT, "src/app/api/v1/public")
 
 function routeFiles(dir: string): string[] {

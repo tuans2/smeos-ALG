@@ -18,7 +18,7 @@ import { planPayment, planRefund } from "@/modules/orders/workflow/standard-paym
 import { CoordinatorPaymentRepository } from "../infra/coordinator-payment-repository"
 import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
-import { audit, concurrentUpdate, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
+import { audit, concurrentUpdate, getOrderView, loadEditableOrderOrThrow, loadOrderOrThrow, runCoordinatorTx } from "./shared"
 
 /** Xác nhận tiền về — trần cứng Điều hành (`capability-catalog.ts`). Người có mã này ghi thu là có hiệu lực ngay. */
 export const PAYMENT_CONFIRM_CAPABILITY = "R11"
@@ -52,7 +52,7 @@ export async function recordCoordinatorPayment(
   input: RecordPaymentInput
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
-    const row = await loadOrderOrThrow(ctx, getCoordinatorRepository(tx), orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, getCoordinatorRepository(tx), orderIdOrCode)
     const order = { totalVnd: Number(row.total_vnd), paidVnd: Number(row.paid_vnd), status: row.status }
     // Một luật cho mọi đường ghi tiền (audit BL-05): chặn đơn huỷ, thu vượt phần còn phải thu, hoàn quá số đã thu.
     const plan = input.kind === "REFUND" ? planRefund(order, input.amountVnd) : planPayment(order, input.amountVnd)

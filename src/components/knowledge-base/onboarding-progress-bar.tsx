@@ -15,13 +15,13 @@ interface OnboardingStep {
 
 export function OnboardingProgressBar() {
   const steps: OnboardingStep[] = [
-    { id: "s1", title: "M01: Duyệt BOM thành phần", completed: true, route: "/tai-anh" },
-    { id: "s2", title: "M02: Cài giá sàn & markup", completed: true, route: "/san-pham" },
-    { id: "s3", title: "M04c: Dựng video 9:16", completed: true, route: "/video" },
-    { id: "s4", title: "M06: Tải mã QR E-Catalog", completed: true, route: "/catalog" },
-    { id: "s5", title: "M08: Kích hoạt kênh Chat AI", completed: true, route: "/hoi-thoai/kenh-tich-hop" },
-    { id: "s6", title: "M09: Nạp khách & ngày kỷ niệm", completed: true, route: "/khach-hang" },
-    { id: "s7", title: "M10: In phiếu xưởng ẩn giá", completed: true, route: "/don-hang" },
+    { id: "s1", title: "Duyệt định lượng thành phần", completed: true, route: "/tai-anh" },
+    { id: "s2", title: "Cài giá sàn & markup", completed: true, route: "/san-pham" },
+    { id: "s3", title: "Dựng video 9:16", completed: true, route: "/video" },
+    { id: "s4", title: "Tải mã QR E-Catalog", completed: true, route: "/catalog" },
+    { id: "s5", title: "Kích hoạt kênh Chat AI", completed: true, route: "/hoi-thoai/kenh-tich-hop" },
+    { id: "s6", title: "Nạp khách & ngày kỷ niệm", completed: true, route: "/khach-hang" },
+    { id: "s7", title: "In phiếu xưởng ẩn giá", completed: true, route: "/don-hang" },
   ]
 
   const completedCount = steps.filter((s) => s.completed).length

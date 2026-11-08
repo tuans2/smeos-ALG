@@ -14,10 +14,10 @@ vi.mock("@/modules/integration/use-cases/resolve-integration-context", () => ({
 const link = { id: "l-1", slug: "bst-tet" }
 const createCatalogLink = vi.fn(async () => link)
 const updateCatalogLink = vi.fn(async () => link)
-const listCatalogLinks = vi.fn(async () => [link])
+const listCatalogLinks = vi.fn<(...args: unknown[]) => Promise<(typeof link)[]>>(async () => [link])
 vi.mock("@/modules/catalog-links/use-cases/create-catalog-link", () => ({ createCatalogLink: () => createCatalogLink() }))
 vi.mock("@/modules/catalog-links/use-cases/update-catalog-link", () => ({ updateCatalogLink: () => updateCatalogLink() }))
-vi.mock("@/modules/catalog-links/use-cases/list-catalog-links", () => ({ listCatalogLinks: () => listCatalogLinks() }))
+vi.mock("@/modules/catalog-links/use-cases/list-catalog-links", () => ({ listCatalogLinks: (...args: unknown[]) => listCatalogLinks(...args) }))
 
 import { GET as listRoute, POST as createRoute } from "@/app/api/v1/integration/catalog-links/route"
 import { PATCH as updateRoute } from "@/app/api/v1/integration/catalog-links/[slug]/route"
@@ -40,7 +40,7 @@ const CREATE_SAMPLES: unknown[] = [
   null,
 ]
 const UPDATE_SAMPLES: unknown[] = [{}, { name: "Mới" }, { description: null, filters: null }, { name: "" }, { filters: [1] }, null]
-const QUERY_SAMPLES = ["", "?include_revoked=true", "?include_revoked=1", "?include_revoked=khong"]
+const QUERY_SAMPLES = ["", "?include_revoked=true", "?include_revoked=1", "?include_revoked=false", "?include_revoked=0", "?include_revoked=khong"]
 
 async function verdict(response: Response): Promise<boolean> {
   if (response.status === 400) return false
@@ -68,5 +68,17 @@ describe("bản sao lược đồ Catalog khớp route đóng băng", () => {
     const route = await listRoute(new Request(`${BASE}${query}`))
     const value = Object.fromEntries(new URL(`${BASE}${query}`).searchParams)
     expect(await verdict(route)).toBe(accepts(listCatalogLinksQuery, value))
+  })
+
+  // `z.coerce.boolean()` từng đọc "false" thành true — PO 07/11/2026 cho sửa (audit đợt 4, phát hiện ngoài phạm vi)
+  it.each([
+    ["?include_revoked=false", false],
+    ["?include_revoked=0", false],
+    ["", false],
+    ["?include_revoked=true", true],
+  ] as const)("GET %s → includeRevoked %s", async (query, expected) => {
+    listCatalogLinks.mockClear()
+    await listRoute(new Request(`${BASE}${query}`))
+    expect(listCatalogLinks).toHaveBeenCalledWith(ctx, { includeRevoked: expected })
   })
 })
