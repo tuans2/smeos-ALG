@@ -146,7 +146,9 @@ describe("hợp đồng — Thẻ chào: vận hành", () => {
 
   it("việc sau huỷ: hoàn tiền", async () => {
     const o = await newOrder()
-    await prisma.orders.update({ where: { id: o.orderId }, data: { paid_vnd: 150_000 } })
+    // Giữ bất biến orders_money_check: balance_vnd = total_vnd − paid_vnd
+    const { total_vnd } = await prisma.orders.findUniqueOrThrow({ where: { id: o.orderId }, select: { total_vnd: true } })
+    await prisma.orders.update({ where: { id: o.orderId }, data: { paid_vnd: 150_000, balance_vnd: total_vnd.minus(150_000) } })
     const proposed = await proposeCancel(send("/cancellation-requests", "POST", { orderId: o.orderId, type: "FULL_REFUND", reason: "Khách huỷ", refundAmountVnd: 150_000 }))
     const requestId = ((await proposed.json()) as { data: { id: string } }).data.id
     const boss = await addStaffWithSession(t, "dieu_hanh", "dieu-hanh-hoan")
