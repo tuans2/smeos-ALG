@@ -314,3 +314,21 @@ Còn lại, chưa sửa (ngoài phạm vi đợt này):
 - `POST /video/jobs/:id/render` vẫn trả 422 khi sai trạng thái (kịch bản chưa duyệt, đang/đã render) — theo chuẩn là 409; đổi là thay mã trạng thái client đang thấy nên để đợt riêng.
 - `POST /creative-production/package`: `creativeResult`/`authenticResult` vẫn là `z.any()` — gửi đối tượng sai hình dạng (vd. thiếu `mediaPlanItems`) vẫn có thể thành 500. `mediaPlanItems[].targetPlatform` của chế độ AUTHENTIC vẫn mang tên khung cắt ngoài kiểu TS.
 - Điều phối "Nhận đơn" luôn 409 khi đơn đã tự ghi cọc (§13, đợt Thẻ chào) — lỗi nghiệp vụ, không phải 500.
+
+## 15. Nhật ký sửa — OpenAPI nội bộ, đợt thông báo & chat (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/notification/*` (11 route, 18 operation), `/chat/*` (8 route, 13 operation), `/internal-chat/*` (3 route, 5 operation) — tổng 317 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 11 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-notification.ts` và `requests-chat.ts` (route import lại). Danh sách kênh thông báo giống hệt nhau ở 5 route gom thành `notifyChannelSchema`. Thân do route tự đọc (tạo/gửi hội thoại tư vấn, chốt đơn từ chat) có lược đồ mô tả. Phản hồi khai `strictObject` (`responses-notification.ts`, `responses-chat.ts`), giữ nguyên các envelope cũ `{ success: true, … }` đã có trong `api-envelope-legacy.txt`; khung chat công khai và webhook Facebook/Zalo khai `x-legacy-error-envelope` | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật: hộp thư, SSE, tuỳ chọn, chính sách tổ chức, mặc định cửa hàng, khoá cứng hai tầng; hội thoại tư vấn (cổng AI giả lập), chốt đơn nháp, kênh, hạn mức chat công khai, khung chat công khai, đường từ chối của webhook; chat nội bộ hai tổ chức | `tests/tenant/internal-contract-notification.test.ts`, `tests/tenant/internal-contract-chat.test.ts` |
+| API-12 | Đặc tả 06 dòng `/chat/channels`: POST gác `T4` ở use-case (`configure-chat-channel.ts`), chỉ GET chưa gác — câu cũ "route không gọi qua nó" đã lỗi thời | `npm run check:docs`, `internal-openapi.test.ts` (`x-capability` ↔ đặc tả 06) |
+
+Phát hiện khi viết hợp đồng (chưa sửa — chờ PO):
+
+- **Cách ly tenant (P1)** — `POST /internal-chat/messages/{id}/action`: `HandleCardActionUseCase` không kiểm tin thuộc tổ chức nào hay người bấm có tham gia hội thoại không; `updateActionPayload` ghi theo `where: { id }` rồi đăng tin hệ thống vào hội thoại đó. Người đăng nhập ở tổ chức bất kỳ biết mã tin là ghi đè được thẻ của tổ chức khác (vi phạm luật 2 CLAUDE.md). Thêm: ghi đè toàn bộ `action_payload` (mất `orderId`/`orderCode`), mã tin không tồn tại → 500. Danh sách miễn gác trong `route-capability-guard.test.ts` ghi "use-case kiểm người tham gia" — không đúng với mã.
+- **Credit (P1)** — `checkAndDeductUsageCredit` (`chat-assistant/infra/chat-channel-repository.ts`) trừ credit rồi ghi sổ `usage` với `workspace_id: "system"`; không có workspace mã đó, khoá ngoại `usage_workspace_id_fkey` (migration `20261105160000_core_foreign_keys`, `NOT VALID` vẫn kiểm dòng mới) chặn. Mọi lượt AI trả lời qua khung chat công khai, Facebook, Zalo của tiệm còn credit: credit đã trừ, khách nhận 500 (webhook ghi `PROCESSING_FAILED`, không trả lời). Chưa có test nào phủ nhánh này trước đợt này.
+- `GET /notification/inbox` và `GET /chat/conversations`: `page`/`limit` không phải số → 500 (`parseInt`/`Number` → `NaN` vào Prisma). Hộp thư kẹp `limit` 1–100 nhưng `pagination.limit` báo lại số đã gửi; `chat/conversations` không có trần `limit`.
+- `PATCH /notification/preferences` chỉ xét khoá cứng của tầng TRÊN `STORE`, nên khoá tầng cửa hàng (`/notification/store-hard-locks`) không chặn người dùng bật lại; luật gửi (`resolveCascade`) vẫn áp khoá đó nên tuỳ chọn được lưu nhưng không có hiệu lực. Lỗi 403 ở đây trả envelope cũ `{ error: "chuỗi", reason }`.
+- `GET /notification/events?tier=` không kiểm giá trị; `GET /chat/channels` và `GET /chat/public-limits` chưa gác mã năng lực (đã ghi RS-8).

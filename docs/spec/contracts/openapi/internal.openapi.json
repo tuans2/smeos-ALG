@@ -2110,6 +2110,2467 @@
         "x-capability": "công khai"
       }
     },
+    "/chat/channels": {
+      "get": {
+        "operationId": "listChatChannels",
+        "summary": "Kênh chat, biểu phí và trạng thái",
+        "description": "Chưa gác mã năng lực (RS-8 đặc tả 06). Khoá bí mật đã che.",
+        "tags": [
+          "Trợ lý AI — kênh & hạn mức"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kênh",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "INTERNAL_DASHBOARD",
+                              "STOREFRONT_CATALOG",
+                              "LANDING_PAGE",
+                              "FACEBOOK_MESSENGER",
+                              "ZALO_OA",
+                              "EMBEDDED_WIDGET"
+                            ]
+                          },
+                          "pricing": {
+                            "type": "object",
+                            "properties": {
+                              "channel": {
+                                "type": "string",
+                                "enum": [
+                                  "INTERNAL_DASHBOARD",
+                                  "STOREFRONT_CATALOG",
+                                  "LANDING_PAGE",
+                                  "FACEBOOK_MESSENGER",
+                                  "ZALO_OA",
+                                  "EMBEDDED_WIDGET"
+                                ]
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "isFree": {
+                                "type": "boolean"
+                              },
+                              "monthlyCreditCost": {
+                                "type": "number"
+                              },
+                              "messageCreditCost": {
+                                "type": "number"
+                              },
+                              "requiresSetup": {
+                                "type": "boolean"
+                              },
+                              "guideUrl": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "channel",
+                              "name",
+                              "description",
+                              "isFree",
+                              "monthlyCreditCost",
+                              "messageCreditCost",
+                              "requiresSetup"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "isEnabled": {
+                            "type": "boolean"
+                          },
+                          "isSubscriptionActive": {
+                            "type": "boolean"
+                          },
+                          "subscriptionExpiresAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "config": {
+                            "type": "object",
+                            "properties": {
+                              "welcomeMessage": {
+                                "type": "string"
+                              },
+                              "avatarUrl": {
+                                "type": "string"
+                              },
+                              "botName": {
+                                "type": "string"
+                              },
+                              "fbPageId": {
+                                "type": "string"
+                              },
+                              "fbPageAccessToken": {
+                                "type": "string"
+                              },
+                              "fbVerifyToken": {
+                                "type": "string"
+                              },
+                              "zaloOaId": {
+                                "type": "string"
+                              },
+                              "zaloAppId": {
+                                "type": "string"
+                              },
+                              "zaloSecretKey": {
+                                "type": "string"
+                              },
+                              "zaloAccessToken": {
+                                "type": "string"
+                              },
+                              "zaloRefreshToken": {
+                                "type": "string"
+                              },
+                              "embedAllowedOrigins": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "publicSurfaces": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "publicChatLimits": {
+                                "type": "object",
+                                "properties": {
+                                  "perVisitor": {
+                                    "type": "number"
+                                  },
+                                  "perIp": {
+                                    "type": "number"
+                                  },
+                                  "approvedAt": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "perVisitor",
+                                  "perIp",
+                                  "approvedAt"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "channel",
+                          "pricing",
+                          "isEnabled",
+                          "isSubscriptionActive",
+                          "subscriptionExpiresAt",
+                          "config"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "embedSnippet": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "channels",
+                    "embedSnippet"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      },
+      "post": {
+        "operationId": "configureChatChannel",
+        "summary": "Bật/tắt và cấu hình một kênh",
+        "description": "Mã năng lực kiểm ở use-case. Bật kênh có phí trừ credit gia hạn — không đủ → 422 `QUOTA_EXCEEDED`. Khoá bí mật gửi lại dạng đã che thì giữ giá trị cũ.",
+        "tags": [
+          "Trợ lý AI — kênh & hạn mức"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "INTERNAL_DASHBOARD",
+                      "STOREFRONT_CATALOG",
+                      "LANDING_PAGE",
+                      "FACEBOOK_MESSENGER",
+                      "ZALO_OA",
+                      "EMBEDDED_WIDGET"
+                    ]
+                  },
+                  "isEnabled": {
+                    "type": "boolean"
+                  },
+                  "config": {
+                    "type": "object",
+                    "properties": {
+                      "welcomeMessage": {
+                        "type": "string"
+                      },
+                      "avatarUrl": {
+                        "type": "string"
+                      },
+                      "botName": {
+                        "type": "string"
+                      },
+                      "fbPageId": {
+                        "type": "string"
+                      },
+                      "fbPageAccessToken": {
+                        "type": "string"
+                      },
+                      "fbVerifyToken": {
+                        "type": "string"
+                      },
+                      "zaloOaId": {
+                        "type": "string"
+                      },
+                      "zaloAppId": {
+                        "type": "string"
+                      },
+                      "zaloSecretKey": {
+                        "type": "string"
+                      },
+                      "zaloAccessToken": {
+                        "type": "string"
+                      },
+                      "zaloRefreshToken": {
+                        "type": "string"
+                      },
+                      "embedAllowedOrigins": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "publicSurfaces": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "catalog",
+                            "landing_page",
+                            "store_profile",
+                            "sales_link",
+                            "greeting_catalog",
+                            "business_card"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "channel",
+                  "isEnabled"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kênh sau khi lưu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "channel": {
+                          "type": "string",
+                          "enum": [
+                            "INTERNAL_DASHBOARD",
+                            "STOREFRONT_CATALOG",
+                            "LANDING_PAGE",
+                            "FACEBOOK_MESSENGER",
+                            "ZALO_OA",
+                            "EMBEDDED_WIDGET"
+                          ]
+                        },
+                        "isEnabled": {
+                          "type": "boolean"
+                        },
+                        "config": {
+                          "type": "object",
+                          "properties": {
+                            "welcomeMessage": {
+                              "type": "string"
+                            },
+                            "avatarUrl": {
+                              "type": "string"
+                            },
+                            "botName": {
+                              "type": "string"
+                            },
+                            "fbPageId": {
+                              "type": "string"
+                            },
+                            "fbPageAccessToken": {
+                              "type": "string"
+                            },
+                            "fbVerifyToken": {
+                              "type": "string"
+                            },
+                            "zaloOaId": {
+                              "type": "string"
+                            },
+                            "zaloAppId": {
+                              "type": "string"
+                            },
+                            "zaloSecretKey": {
+                              "type": "string"
+                            },
+                            "zaloAccessToken": {
+                              "type": "string"
+                            },
+                            "zaloRefreshToken": {
+                              "type": "string"
+                            },
+                            "embedAllowedOrigins": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "publicSurfaces": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "publicChatLimits": {
+                              "type": "object",
+                              "properties": {
+                                "perVisitor": {
+                                  "type": "number"
+                                },
+                                "perIp": {
+                                  "type": "number"
+                                },
+                                "approvedAt": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "perVisitor",
+                                "perIp",
+                                "approvedAt"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "subscriptionExpiresAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "channel",
+                        "isEnabled",
+                        "config",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "channel"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "T4"
+      }
+    },
+    "/chat/conversations": {
+      "get": {
+        "operationId": "listChatConversations",
+        "summary": "Hội thoại tư vấn",
+        "description": "`status` mặc định `ACTIVE`; `limit` mặc định 50, chưa có trần; `limit` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §15).",
+        "tags": [
+          "Trợ lý AI — hội thoại"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hội thoại",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "customerId": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "WEB_WIDGET",
+                              "INTERNAL_DASHBOARD",
+                              "ZALO"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "ACTIVE",
+                              "CLOSED"
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "title",
+                          "channel",
+                          "status",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "T1"
+      },
+      "post": {
+        "operationId": "createChatConversation",
+        "summary": "Mở hội thoại tư vấn mới",
+        "description": "Thân không kiểm bằng lược đồ: trường vắng dùng mặc định.",
+        "tags": [
+          "Trợ lý AI — hội thoại"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "WEB_WIDGET",
+                      "INTERNAL_DASHBOARD",
+                      "ZALO"
+                    ]
+                  },
+                  "customerId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Hội thoại",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "conversation": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "customerId": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "channel": {
+                          "type": "string",
+                          "enum": [
+                            "WEB_WIDGET",
+                            "INTERNAL_DASHBOARD",
+                            "ZALO"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ACTIVE",
+                            "CLOSED"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "title",
+                        "channel",
+                        "status",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "conversation"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "T2"
+      }
+    },
+    "/chat/conversations/{id}/create-order": {
+      "post": {
+        "operationId": "createOrderFromChat",
+        "summary": "Chốt đơn nháp từ gợi ý trong hội thoại",
+        "description": "Thiếu `productId` hoặc sản phẩm chưa có giá bán → 400 (không tạo đơn 0đ). Hội thoại/sản phẩm của tổ chức khác → 404.",
+        "tags": [
+          "Trợ lý AI — hội thoại"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": {
+                    "type": "string"
+                  },
+                  "recipientName": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "street": {
+                    "type": "string"
+                  },
+                  "cardMessage": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "productId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đơn nháp",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "order": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "branchId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "customerId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "DRAFT",
+                            "CONFIRMED",
+                            "PROCESSING",
+                            "DELIVERED",
+                            "COMPLETED",
+                            "CANCELLED"
+                          ]
+                        },
+                        "productionStatus": {
+                          "type": "string",
+                          "enum": [
+                            "WAITING",
+                            "ASSIGNED",
+                            "ARRANGING",
+                            "QUALITY_CHECK",
+                            "READY"
+                          ]
+                        },
+                        "deliveryStatus": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "DISPATCHED",
+                            "DELIVERING",
+                            "DELIVERED",
+                            "FAILED"
+                          ]
+                        },
+                        "totalVnd": {
+                          "type": "number"
+                        },
+                        "pricingRuleRef": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "voucherId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cardMessage": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "internalNote": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "deliveryWindow": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "date": {
+                                  "type": "string"
+                                },
+                                "timeSlot": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "date"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "deliveryAddress": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "recipientName": {
+                                  "type": "string"
+                                },
+                                "phone": {
+                                  "type": "string"
+                                },
+                                "street": {
+                                  "type": "string"
+                                },
+                                "ward": {
+                                  "type": "string"
+                                },
+                                "district": {
+                                  "type": "string"
+                                },
+                                "province": {
+                                  "type": "string"
+                                },
+                                "city": {
+                                  "type": "string"
+                                },
+                                "country": {
+                                  "type": "string"
+                                },
+                                "notes": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "recipientName",
+                                "phone",
+                                "street"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "organizationId": {
+                                "type": "string"
+                              },
+                              "orderId": {
+                                "type": "string"
+                              },
+                              "productId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "variantId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "description": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "unitPriceVnd": {
+                                "type": "number"
+                              },
+                              "metadata": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "organizationId",
+                              "orderId",
+                              "quantity",
+                              "unitPriceVnd"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "assignments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "organizationId": {
+                                "type": "string"
+                              },
+                              "orderId": {
+                                "type": "string"
+                              },
+                              "assigneeId": {
+                                "type": "string"
+                              },
+                              "assignedBy": {
+                                "type": "string"
+                              },
+                              "difficulty": {
+                                "type": "string"
+                              },
+                              "assignedAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              "releasedAt": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "organizationId",
+                              "orderId",
+                              "assigneeId",
+                              "assignedBy",
+                              "assignedAt"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "organizationId": {
+                                "type": "string"
+                              },
+                              "orderId": {
+                                "type": "string"
+                              },
+                              "axis": {
+                                "type": "string",
+                                "enum": [
+                                  "order",
+                                  "production",
+                                  "delivery"
+                                ]
+                              },
+                              "fromValue": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "toValue": {
+                                "type": "string"
+                              },
+                              "actorId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "reason": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "organizationId",
+                              "orderId",
+                              "axis",
+                              "toValue",
+                              "createdAt"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "code",
+                        "status",
+                        "productionStatus",
+                        "deliveryStatus",
+                        "totalVnd",
+                        "createdBy",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "order"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "T3"
+      }
+    },
+    "/chat/conversations/{id}/messages": {
+      "get": {
+        "operationId": "listChatMessages",
+        "summary": "Tin nhắn của hội thoại",
+        "description": "Hội thoại của tổ chức khác → 404.",
+        "tags": [
+          "Trợ lý AI — hội thoại"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tin nhắn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "conversationId": {
+                            "type": "string"
+                          },
+                          "senderType": {
+                            "type": "string",
+                            "enum": [
+                              "USER",
+                              "ASSISTANT",
+                              "SYSTEM"
+                            ]
+                          },
+                          "content": {
+                            "type": "string"
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "properties": {
+                              "suggestedProducts": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "productId": {
+                                      "type": "string"
+                                    },
+                                    "productCode": {
+                                      "type": "string"
+                                    },
+                                    "productName": {
+                                      "type": "string"
+                                    },
+                                    "sampleImageUrl": {
+                                      "type": "string"
+                                    },
+                                    "priceVnd": {
+                                      "type": [
+                                        "number",
+                                        "null"
+                                      ]
+                                    },
+                                    "category": {
+                                      "type": "string"
+                                    },
+                                    "wrapStyle": {
+                                      "type": "string"
+                                    },
+                                    "reason": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "productId",
+                                    "productCode",
+                                    "productName",
+                                    "priceVnd",
+                                    "category",
+                                    "wrapStyle",
+                                    "reason"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "suggestedFlowers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "productId": {
+                                      "type": "string"
+                                    },
+                                    "productCode": {
+                                      "type": "string"
+                                    },
+                                    "productName": {
+                                      "type": "string"
+                                    },
+                                    "sampleImageUrl": {
+                                      "type": "string"
+                                    },
+                                    "priceVnd": {
+                                      "type": [
+                                        "number",
+                                        "null"
+                                      ]
+                                    },
+                                    "category": {
+                                      "type": "string"
+                                    },
+                                    "wrapStyle": {
+                                      "type": "string"
+                                    },
+                                    "reason": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "productId",
+                                    "productCode",
+                                    "productName",
+                                    "priceVnd",
+                                    "category",
+                                    "wrapStyle",
+                                    "reason"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "createdOrderId": {
+                                "type": "string"
+                              },
+                              "orderCode": {
+                                "type": "string"
+                              },
+                              "userIntent": {
+                                "type": "string"
+                              },
+                              "targetRoute": {
+                                "type": "string"
+                              },
+                              "actionLabel": {
+                                "type": "string"
+                              },
+                              "actionSteps": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "assistantType": {
+                                "type": "string",
+                                "enum": [
+                                  "OPS_COPILOT",
+                                  "SALES_CONCIERGE"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "conversationId",
+                          "senderType",
+                          "content",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "messages"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "T1"
+      },
+      "post": {
+        "operationId": "sendChatMessage",
+        "summary": "Gửi câu hỏi và nhận trả lời của trợ lý",
+        "description": "Câu hỏi rỗng → 400. Hội thoại của tổ chức khác → 404.",
+        "tags": [
+          "Trợ lý AI — hội thoại"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "assistantType": {
+                    "type": "string",
+                    "enum": [
+                      "OPS_COPILOT",
+                      "SALES_CONCIERGE"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tin của người dùng và của trợ lý",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userMessage": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "conversationId": {
+                          "type": "string"
+                        },
+                        "senderType": {
+                          "type": "string",
+                          "enum": [
+                            "USER",
+                            "ASSISTANT",
+                            "SYSTEM"
+                          ]
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "properties": {
+                            "suggestedProducts": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "productId": {
+                                    "type": "string"
+                                  },
+                                  "productCode": {
+                                    "type": "string"
+                                  },
+                                  "productName": {
+                                    "type": "string"
+                                  },
+                                  "sampleImageUrl": {
+                                    "type": "string"
+                                  },
+                                  "priceVnd": {
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ]
+                                  },
+                                  "category": {
+                                    "type": "string"
+                                  },
+                                  "wrapStyle": {
+                                    "type": "string"
+                                  },
+                                  "reason": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "productId",
+                                  "productCode",
+                                  "productName",
+                                  "priceVnd",
+                                  "category",
+                                  "wrapStyle",
+                                  "reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "suggestedFlowers": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "productId": {
+                                    "type": "string"
+                                  },
+                                  "productCode": {
+                                    "type": "string"
+                                  },
+                                  "productName": {
+                                    "type": "string"
+                                  },
+                                  "sampleImageUrl": {
+                                    "type": "string"
+                                  },
+                                  "priceVnd": {
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ]
+                                  },
+                                  "category": {
+                                    "type": "string"
+                                  },
+                                  "wrapStyle": {
+                                    "type": "string"
+                                  },
+                                  "reason": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "productId",
+                                  "productCode",
+                                  "productName",
+                                  "priceVnd",
+                                  "category",
+                                  "wrapStyle",
+                                  "reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "createdOrderId": {
+                              "type": "string"
+                            },
+                            "orderCode": {
+                              "type": "string"
+                            },
+                            "userIntent": {
+                              "type": "string"
+                            },
+                            "targetRoute": {
+                              "type": "string"
+                            },
+                            "actionLabel": {
+                              "type": "string"
+                            },
+                            "actionSteps": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "assistantType": {
+                              "type": "string",
+                              "enum": [
+                                "OPS_COPILOT",
+                                "SALES_CONCIERGE"
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "conversationId",
+                        "senderType",
+                        "content",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "assistantMessage": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "conversationId": {
+                          "type": "string"
+                        },
+                        "senderType": {
+                          "type": "string",
+                          "enum": [
+                            "USER",
+                            "ASSISTANT",
+                            "SYSTEM"
+                          ]
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "properties": {
+                            "suggestedProducts": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "productId": {
+                                    "type": "string"
+                                  },
+                                  "productCode": {
+                                    "type": "string"
+                                  },
+                                  "productName": {
+                                    "type": "string"
+                                  },
+                                  "sampleImageUrl": {
+                                    "type": "string"
+                                  },
+                                  "priceVnd": {
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ]
+                                  },
+                                  "category": {
+                                    "type": "string"
+                                  },
+                                  "wrapStyle": {
+                                    "type": "string"
+                                  },
+                                  "reason": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "productId",
+                                  "productCode",
+                                  "productName",
+                                  "priceVnd",
+                                  "category",
+                                  "wrapStyle",
+                                  "reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "suggestedFlowers": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "productId": {
+                                    "type": "string"
+                                  },
+                                  "productCode": {
+                                    "type": "string"
+                                  },
+                                  "productName": {
+                                    "type": "string"
+                                  },
+                                  "sampleImageUrl": {
+                                    "type": "string"
+                                  },
+                                  "priceVnd": {
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ]
+                                  },
+                                  "category": {
+                                    "type": "string"
+                                  },
+                                  "wrapStyle": {
+                                    "type": "string"
+                                  },
+                                  "reason": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "productId",
+                                  "productCode",
+                                  "productName",
+                                  "priceVnd",
+                                  "category",
+                                  "wrapStyle",
+                                  "reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "createdOrderId": {
+                              "type": "string"
+                            },
+                            "orderCode": {
+                              "type": "string"
+                            },
+                            "userIntent": {
+                              "type": "string"
+                            },
+                            "targetRoute": {
+                              "type": "string"
+                            },
+                            "actionLabel": {
+                              "type": "string"
+                            },
+                            "actionSteps": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "assistantType": {
+                              "type": "string",
+                              "enum": [
+                                "OPS_COPILOT",
+                                "SALES_CONCIERGE"
+                              ]
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "conversationId",
+                        "senderType",
+                        "content",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "userMessage",
+                    "assistantMessage"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "T2"
+      }
+    },
+    "/chat/public-limits": {
+      "get": {
+        "operationId": "getPublicChatLimits",
+        "summary": "Hạn mức chat công khai đang áp dụng",
+        "description": "`pending`: yêu cầu nâng đang chờ nền tảng duyệt.",
+        "tags": [
+          "Trợ lý AI — kênh & hạn mức"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hạn mức",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "current": {
+                      "type": "object",
+                      "properties": {
+                        "perVisitor": {
+                          "type": "number"
+                        },
+                        "perIp": {
+                          "type": "number"
+                        },
+                        "windowMs": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "perVisitor",
+                        "perIp",
+                        "windowMs"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "pending": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "per_visitor": {
+                              "type": "number"
+                            },
+                            "per_ip": {
+                              "type": "number"
+                            },
+                            "requested_at": {
+                              "type": "string"
+                            },
+                            "requested_by": {
+                              "type": "string"
+                            },
+                            "note": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "per_visitor",
+                            "per_ip",
+                            "requested_at",
+                            "requested_by",
+                            "note"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "current",
+                    "pending"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      },
+      "post": {
+        "operationId": "requestPublicChatLimits",
+        "summary": "Xin nâng hạn mức chat công khai",
+        "description": "Mức xin phải là một mức chọn sẵn và cao hơn mức hiện tại → không thì 400; đã có yêu cầu chờ duyệt → 409.",
+        "tags": [
+          "Trợ lý AI — kênh & hạn mức"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "perVisitor": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "perIp": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "note": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 500
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "perVisitor",
+                  "perIp"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Yêu cầu đã ghi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pending": {
+                      "type": "object",
+                      "properties": {
+                        "per_visitor": {
+                          "type": "number"
+                        },
+                        "per_ip": {
+                          "type": "number"
+                        },
+                        "requested_at": {
+                          "type": "string"
+                        },
+                        "requested_by": {
+                          "type": "string"
+                        },
+                        "note": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "per_visitor",
+                        "per_ip",
+                        "requested_at",
+                        "requested_by",
+                        "note"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "pending"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "T4"
+      }
+    },
+    "/chat/public/widget": {
+      "post": {
+        "operationId": "sendPublicChatWidgetMessage",
+        "summary": "Khung chat AI trên trang công khai",
+        "description": "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. **Lỗi đã ghi nhận (audit API §15):** tiệm còn credit thì lượt trả lời hiện luôn 500 sau khi đã trừ credit (ghi sổ `usage` vỡ khoá ngoại `workspace_id`). Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
+        "tags": [
+          "Trợ lý AI — kênh & hạn mức"
+        ],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "slug": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120
+                  },
+                  "surface": {
+                    "default": "catalog",
+                    "type": "string",
+                    "enum": [
+                      "catalog",
+                      "landing_page",
+                      "store_profile",
+                      "sales_link",
+                      "greeting_catalog",
+                      "business_card"
+                    ]
+                  },
+                  "visitorId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "slug",
+                  "visitorId",
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trả lời của trợ lý",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "replyText": {
+                      "type": "string"
+                    },
+                    "suggestedProducts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "productId": {
+                            "type": "string"
+                          },
+                          "productCode": {
+                            "type": "string"
+                          },
+                          "productName": {
+                            "type": "string"
+                          },
+                          "sampleImageUrl": {
+                            "type": "string"
+                          },
+                          "priceVnd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "category": {
+                            "type": "string"
+                          },
+                          "wrapStyle": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "productId",
+                          "productCode",
+                          "productName",
+                          "priceVnd",
+                          "category",
+                          "wrapStyle",
+                          "reason"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "conversationId": {
+                      "type": "string"
+                    },
+                    "channel": {
+                      "type": "string",
+                      "enum": [
+                        "INTERNAL_DASHBOARD",
+                        "STOREFRONT_CATALOG",
+                        "LANDING_PAGE",
+                        "FACEBOOK_MESSENGER",
+                        "ZALO_OA",
+                        "EMBEDDED_WIDGET"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "replyText",
+                    "suggestedProducts",
+                    "conversationId",
+                    "channel"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "công khai",
+        "x-legacy-error-envelope": true
+      }
+    },
+    "/chat/webhooks/facebook": {
+      "get": {
+        "operationId": "verifyFacebookWebhook",
+        "summary": "Xác minh webhook Facebook",
+        "description": "`hub.verify_token` khớp `FB_WEBHOOK_VERIFY_TOKEN` → 200 thân là `hub.challenge` (văn bản thường); khác hoặc chưa cấu hình → 403 `Forbidden`.",
+        "tags": [
+          "Webhook kênh chat"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "hub.mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hub.verify_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hub.challenge",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chuỗi challenge",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          }
+        },
+        "x-capability": "công khai",
+        "x-legacy-error-envelope": true
+      },
+      "post": {
+        "operationId": "receiveFacebookWebhook",
+        "summary": "Nhận tin Messenger",
+        "description": "Ký `X-Hub-Signature-256` (HMAC-SHA256 thân gốc với App Secret) — sai → 401. Mỗi tin (`mid`) chỉ trả lời một lần. Lỗi xử lý vẫn trả 200 để Facebook không gửi lại.",
+        "tags": [
+          "Webhook kênh chat"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Đã nhận",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "EVENT_RECEIVED",
+                        "ignored",
+                        "ok"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          }
+        },
+        "x-capability": "công khai",
+        "x-legacy-error-envelope": true
+      }
+    },
+    "/chat/webhooks/zalo": {
+      "post": {
+        "operationId": "receiveZaloWebhook",
+        "summary": "Nhận tin Zalo OA",
+        "description": "Thân không phải JSON → 400. Ký `X-ZEvent-Signature` theo App ID + Secret Key của OA tiệm đã cấu hình, sự kiện cũ bị từ chối — sai → 401. Mỗi tin chỉ trả lời một lần; lỗi xử lý vẫn trả 200.",
+        "tags": [
+          "Webhook kênh chat"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Đã nhận",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "number",
+                      "const": 0
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          }
+        },
+        "x-capability": "công khai",
+        "x-legacy-error-envelope": true
+      }
+    },
     "/coordinator/exceptions/{id}/resolve": {
       "post": {
         "operationId": "resolveCoordinatorException",
@@ -59695,6 +62156,855 @@
         "x-capability": "R1"
       }
     },
+    "/internal-chat/conversations": {
+      "get": {
+        "operationId": "listInternalConversations",
+        "summary": "Hội thoại nội bộ tôi tham gia",
+        "description": "Không cần mã năng lực. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PLATFORM_TENANT",
+                "CHAIN_PARTNER",
+                "ORDER_THREAD"
+              ]
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hội thoại",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "conversationType": {
+                            "type": "string",
+                            "enum": [
+                              "PLATFORM_TENANT",
+                              "CHAIN_PARTNER",
+                              "ORDER_THREAD"
+                            ]
+                          },
+                          "title": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "orderId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "additionalProperties": {}
+                          },
+                          "createdBy": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "lastMessageAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "unreadCount": {
+                            "type": "number"
+                          },
+                          "lastMessageSnippet": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "conversationType",
+                          "title",
+                          "orderId",
+                          "metadata",
+                          "createdBy",
+                          "createdAt",
+                          "updatedAt",
+                          "lastMessageAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "total": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data",
+                    "total"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      },
+      "post": {
+        "operationId": "createInternalConversation",
+        "summary": "Tạo hoặc lấy lại hội thoại nội bộ",
+        "description": "Không cần mã năng lực. `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi). Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "conversationType": {
+                    "type": "string",
+                    "enum": [
+                      "PLATFORM_TENANT",
+                      "CHAIN_PARTNER",
+                      "ORDER_THREAD"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "targetOrganizationId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "targetUserId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "orderId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  }
+                },
+                "required": [
+                  "conversationType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hội thoại",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "conversationType": {
+                          "type": "string",
+                          "enum": [
+                            "PLATFORM_TENANT",
+                            "CHAIN_PARTNER",
+                            "ORDER_THREAD"
+                          ]
+                        },
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "orderId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "lastMessageAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "unreadCount": {
+                          "type": "number"
+                        },
+                        "lastMessageSnippet": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "conversationType",
+                        "title",
+                        "orderId",
+                        "metadata",
+                        "createdBy",
+                        "createdAt",
+                        "updatedAt",
+                        "lastMessageAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/internal-chat/conversations/{id}/messages": {
+      "get": {
+        "operationId": "listInternalMessages",
+        "summary": "Tin nhắn của hội thoại nội bộ",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tin nhắn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "conversationId": {
+                            "type": "string"
+                          },
+                          "senderUserId": {
+                            "type": "string"
+                          },
+                          "senderRole": {
+                            "type": "string"
+                          },
+                          "senderName": {
+                            "type": "string"
+                          },
+                          "messageType": {
+                            "type": "string",
+                            "enum": [
+                              "TEXT",
+                              "IMAGE",
+                              "ACTION_CARD_ORDER",
+                              "ACTION_CARD_QC",
+                              "SYSTEM_NOTICE"
+                            ]
+                          },
+                          "content": {
+                            "type": "string"
+                          },
+                          "attachments": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "actionPayload": {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "additionalProperties": {}
+                          },
+                          "isDeleted": {
+                            "type": "boolean"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "conversationId",
+                          "senderUserId",
+                          "senderRole",
+                          "messageType",
+                          "content",
+                          "attachments",
+                          "actionPayload",
+                          "isDeleted",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      },
+      "post": {
+        "operationId": "sendInternalMessage",
+        "summary": "Gửi tin nhắn nội bộ",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Tin rỗng không kèm tệp → 400. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "default": "",
+                    "type": "string"
+                  },
+                  "messageType": {
+                    "type": "string",
+                    "enum": [
+                      "TEXT",
+                      "IMAGE",
+                      "ACTION_CARD_ORDER",
+                      "ACTION_CARD_QC",
+                      "SYSTEM_NOTICE"
+                    ]
+                  },
+                  "attachments": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "actionPayload": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tin đã gửi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "conversationId": {
+                          "type": "string"
+                        },
+                        "senderUserId": {
+                          "type": "string"
+                        },
+                        "senderRole": {
+                          "type": "string"
+                        },
+                        "senderName": {
+                          "type": "string"
+                        },
+                        "messageType": {
+                          "type": "string",
+                          "enum": [
+                            "TEXT",
+                            "IMAGE",
+                            "ACTION_CARD_ORDER",
+                            "ACTION_CARD_QC",
+                            "SYSTEM_NOTICE"
+                          ]
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "actionPayload": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        "isDeleted": {
+                          "type": "boolean"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "conversationId",
+                        "senderUserId",
+                        "senderRole",
+                        "messageType",
+                        "content",
+                        "attachments",
+                        "actionPayload",
+                        "isDeleted",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/internal-chat/messages/{id}/action": {
+      "post": {
+        "operationId": "handleInternalCardAction",
+        "summary": "Bấm nút trên thẻ hành động (nhận/từ chối đơn)",
+        "description": "Không cần mã năng lực. **Lỗi đã ghi nhận (audit API §15):** use-case chưa kiểm người tham gia lẫn tổ chức của tin — ghi đè `action_payload` của tin theo `id` rồi đăng tin hệ thống vào hội thoại đó; mã tin không tồn tại → 500. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "ACCEPT_ORDER",
+                      "REJECT_ORDER"
+                    ]
+                  },
+                  "rejectedReason": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tin sau khi cập nhật",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "conversationId": {
+                          "type": "string"
+                        },
+                        "senderUserId": {
+                          "type": "string"
+                        },
+                        "senderRole": {
+                          "type": "string"
+                        },
+                        "senderName": {
+                          "type": "string"
+                        },
+                        "messageType": {
+                          "type": "string",
+                          "enum": [
+                            "TEXT",
+                            "IMAGE",
+                            "ACTION_CARD_ORDER",
+                            "ACTION_CARD_QC",
+                            "SYSTEM_NOTICE"
+                          ]
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "actionPayload": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        "isDeleted": {
+                          "type": "boolean"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "conversationId",
+                        "senderUserId",
+                        "senderRole",
+                        "messageType",
+                        "content",
+                        "attachments",
+                        "actionPayload",
+                        "isDeleted",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
     "/jobs": {
       "get": {
         "operationId": "listJobs",
@@ -64865,6 +68175,1914 @@
           }
         },
         "x-capability": "F3"
+      }
+    },
+    "/notification/channels": {
+      "get": {
+        "operationId": "listNotificationChannels",
+        "summary": "Kênh gửi đang bật toàn sàn (chỉ đọc)",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kênh → bật",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/notification/events": {
+      "get": {
+        "operationId": "listNotificationEvents",
+        "summary": "Danh mục sự kiện thông báo của một tầng",
+        "description": "Mặc định `STORE`; đã áp ma trận hiển thị của SaaS Mother (trừ `MOTHER`, luôn thấy hết). `tier` lạ không bị chặn — trả danh sách theo luật lọc.",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "MOTHER",
+                "INDUSTRY",
+                "CHAIN",
+                "STORE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sự kiện",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "group": {
+                            "type": "string"
+                          },
+                          "tier": {
+                            "type": "string",
+                            "enum": [
+                              "MOTHER",
+                              "INDUSTRY",
+                              "CHAIN",
+                              "STORE"
+                            ]
+                          },
+                          "version": {
+                            "type": "number"
+                          },
+                          "defaultVisibleToTiers": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "INDUSTRY",
+                                "CHAIN",
+                                "STORE"
+                              ]
+                            }
+                          },
+                          "roleDefaults": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "roleKey": {
+                                  "type": "string"
+                                },
+                                "channels": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "enum": [
+                                      "APP_INBOX",
+                                      "EMAIL",
+                                      "PUSH",
+                                      "TELEGRAM",
+                                      "ZALO",
+                                      "SMS",
+                                      "WHATSAPP",
+                                      "MESSENGER"
+                                    ]
+                                  }
+                                },
+                                "priority": {
+                                  "type": "string",
+                                  "enum": [
+                                    "NORMAL",
+                                    "URGENT",
+                                    "CRITICAL"
+                                  ]
+                                },
+                                "dispatchMode": {
+                                  "type": "string",
+                                  "enum": [
+                                    "OWNER",
+                                    "BROADCAST"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "roleKey",
+                                "channels",
+                                "priority",
+                                "dispatchMode"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "deepLinkTemplate": {
+                            "type": "string"
+                          },
+                          "iconName": {
+                            "type": "string"
+                          },
+                          "deprecated": {
+                            "type": "boolean"
+                          },
+                          "replacedBy": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "label",
+                          "description",
+                          "group",
+                          "tier",
+                          "version",
+                          "defaultVisibleToTiers",
+                          "roleDefaults"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/notification/inbox": {
+      "get": {
+        "operationId": "listInbox",
+        "summary": "Hộp thư thông báo",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Phân trang theo trang: `page` (mặc định 1), `limit` (mặc định 20, máy chủ kẹp 1–100 nhưng `pagination.limit` báo lại số đã gửi). `page`/`limit` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §15).",
+        "tags": [
+          "Thông báo — hộp thư"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "unreadOnly",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tin và đếm",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "userId": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "eventKey": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "deepLink": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "priority": {
+                            "type": "string"
+                          },
+                          "isRead": {
+                            "type": "boolean"
+                          },
+                          "readAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "userId",
+                          "organizationId",
+                          "eventKey",
+                          "title",
+                          "message",
+                          "priority",
+                          "isRead",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "number"
+                        },
+                        "limit": {
+                          "type": "number"
+                        },
+                        "total": {
+                          "type": "number"
+                        },
+                        "unreadCount": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "limit",
+                        "total",
+                        "unreadCount"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "pagination"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/notification/inbox/{id}/read": {
+      "patch": {
+        "operationId": "markInboxRead",
+        "summary": "Đánh dấu một tin đã đọc",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Tin của người/tổ chức khác → 200 `success: false`, không đổi gì. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — hộp thư"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/notification/inbox/mark-all-read": {
+      "post": {
+        "operationId": "markAllInboxRead",
+        "summary": "Đánh dấu đã đọc toàn bộ",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — hộp thư"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Số tin đã đổi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "count": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/notification/org-hard-locks": {
+      "get": {
+        "operationId": "listOrgHardLocks",
+        "summary": "Khoá cứng tầng chuỗi",
+        "description": "Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá.",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Khoá cứng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventKey": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "APP_INBOX",
+                              "EMAIL",
+                              "PUSH",
+                              "TELEGRAM",
+                              "ZALO",
+                              "SMS",
+                              "WHATSAPP",
+                              "MESSENGER"
+                            ]
+                          },
+                          "tier": {
+                            "type": "string",
+                            "enum": [
+                              "MOTHER",
+                              "INDUSTRY",
+                              "CHAIN",
+                              "STORE"
+                            ]
+                          },
+                          "scopeId": {
+                            "type": "string"
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "eventKey",
+                          "channel",
+                          "tier",
+                          "scopeId",
+                          "enabled"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "post": {
+        "operationId": "setOrgHardLock",
+        "summary": "Đặt khoá cứng một sự kiện × kênh",
+        "description": "Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "APP_INBOX",
+                      "EMAIL",
+                      "PUSH",
+                      "TELEGRAM",
+                      "ZALO",
+                      "SMS",
+                      "WHATSAPP",
+                      "MESSENGER"
+                    ]
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "eventKey",
+                  "channel",
+                  "enabled"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thân đã gửi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "hardLock": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "hardLock"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      },
+      "delete": {
+        "operationId": "removeOrgHardLock",
+        "summary": "Gỡ khoá cứng một sự kiện × kênh",
+        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "APP_INBOX",
+                      "EMAIL",
+                      "PUSH",
+                      "TELEGRAM",
+                      "ZALO",
+                      "SMS",
+                      "WHATSAPP",
+                      "MESSENGER"
+                    ]
+                  }
+                },
+                "required": [
+                  "eventKey",
+                  "channel"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thân đã gửi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "removed": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "removed"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/notification/org-policy": {
+      "get": {
+        "operationId": "getOrgNotificationPolicy",
+        "summary": "Chính sách thông báo của tổ chức",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chính sách",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventKey": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "APP_INBOX",
+                              "EMAIL",
+                              "PUSH",
+                              "TELEGRAM",
+                              "ZALO",
+                              "SMS",
+                              "WHATSAPP",
+                              "MESSENGER"
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "priority": {
+                            "type": "string",
+                            "enum": [
+                              "NORMAL",
+                              "URGENT",
+                              "CRITICAL"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "eventKey",
+                          "channel",
+                          "enabled"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "patch": {
+        "operationId": "updateOrgNotificationPolicy",
+        "summary": "Đặt chính sách sự kiện × kênh × vai",
+        "description": "`roleKey` = `*` áp mọi vai. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "APP_INBOX",
+                      "EMAIL",
+                      "PUSH",
+                      "TELEGRAM",
+                      "ZALO",
+                      "SMS",
+                      "WHATSAPP",
+                      "MESSENGER"
+                    ]
+                  },
+                  "roleKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "priorityOverride": {
+                    "type": "string",
+                    "enum": [
+                      "NORMAL",
+                      "URGENT",
+                      "CRITICAL"
+                    ]
+                  }
+                },
+                "required": [
+                  "eventKey",
+                  "channel",
+                  "roleKey",
+                  "enabled"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thân đã gửi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "updated": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "updated"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/notification/preferences": {
+      "get": {
+        "operationId": "getNotificationPreferences",
+        "summary": "Tuỳ chọn nhận thông báo của tôi",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực.",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tuỳ chọn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventKey": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "APP_INBOX",
+                              "EMAIL",
+                              "PUSH",
+                              "TELEGRAM",
+                              "ZALO",
+                              "SMS",
+                              "WHATSAPP",
+                              "MESSENGER"
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "priority": {
+                            "type": "string",
+                            "enum": [
+                              "NORMAL",
+                              "URGENT",
+                              "CRITICAL"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "eventKey",
+                          "channel",
+                          "enabled"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      },
+      "patch": {
+        "operationId": "updateNotificationPreference",
+        "summary": "Bật/tắt một sự kiện × kênh cho tôi",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng ở tầng trên cửa hàng (vd. khoá tầng chuỗi của chính tổ chức) → 403 với thân `{ error: \"chuỗi\", reason }` (ngoại lệ envelope). Khoá tầng cửa hàng hiện KHÔNG chặn ở đây (lỗi đã ghi nhận, audit API §15). Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "APP_INBOX",
+                      "EMAIL",
+                      "PUSH",
+                      "TELEGRAM",
+                      "ZALO",
+                      "SMS",
+                      "WHATSAPP",
+                      "MESSENGER"
+                    ]
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "muteUntil": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                  }
+                },
+                "required": [
+                  "eventKey",
+                  "channel",
+                  "enabled"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thân đã gửi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "updated": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "updated"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/notification/store-defaults": {
+      "get": {
+        "operationId": "getStoreNotificationDefaults",
+        "summary": "Mặc định thông báo của cửa hàng theo vai",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "roleKey",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mặc định",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventKey": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "APP_INBOX",
+                              "EMAIL",
+                              "PUSH",
+                              "TELEGRAM",
+                              "ZALO",
+                              "SMS",
+                              "WHATSAPP",
+                              "MESSENGER"
+                            ]
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "priority": {
+                            "type": "string",
+                            "enum": [
+                              "NORMAL",
+                              "URGENT",
+                              "CRITICAL"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "eventKey",
+                          "channel",
+                          "enabled"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "patch": {
+        "operationId": "updateStoreNotificationDefault",
+        "summary": "Đặt mặc định cửa hàng (kèm khung giờ)",
+        "description": "Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "APP_INBOX",
+                      "EMAIL",
+                      "PUSH",
+                      "TELEGRAM",
+                      "ZALO",
+                      "SMS",
+                      "WHATSAPP",
+                      "MESSENGER"
+                    ]
+                  },
+                  "roleKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "scheduleStart": {
+                    "type": "string"
+                  },
+                  "scheduleEnd": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "eventKey",
+                  "channel",
+                  "roleKey",
+                  "enabled"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thân đã gửi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "updated": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "updated"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/notification/store-hard-locks": {
+      "get": {
+        "operationId": "listStoreHardLocks",
+        "summary": "Khoá cứng tầng cửa hàng",
+        "description": "Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá.",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Khoá cứng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "eventKey": {
+                            "type": "string"
+                          },
+                          "channel": {
+                            "type": "string",
+                            "enum": [
+                              "APP_INBOX",
+                              "EMAIL",
+                              "PUSH",
+                              "TELEGRAM",
+                              "ZALO",
+                              "SMS",
+                              "WHATSAPP",
+                              "MESSENGER"
+                            ]
+                          },
+                          "tier": {
+                            "type": "string",
+                            "enum": [
+                              "MOTHER",
+                              "INDUSTRY",
+                              "CHAIN",
+                              "STORE"
+                            ]
+                          },
+                          "scopeId": {
+                            "type": "string"
+                          },
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "reason": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "eventKey",
+                          "channel",
+                          "tier",
+                          "scopeId",
+                          "enabled"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "post": {
+        "operationId": "setStoreHardLock",
+        "summary": "Đặt khoá cứng một sự kiện × kênh",
+        "description": "Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "APP_INBOX",
+                      "EMAIL",
+                      "PUSH",
+                      "TELEGRAM",
+                      "ZALO",
+                      "SMS",
+                      "WHATSAPP",
+                      "MESSENGER"
+                    ]
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "eventKey",
+                  "channel",
+                  "enabled"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thân đã gửi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "hardLock": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "hardLock"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      },
+      "delete": {
+        "operationId": "removeStoreHardLock",
+        "summary": "Gỡ khoá cứng một sự kiện × kênh",
+        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "tags": [
+          "Thông báo — tuỳ chọn & chính sách"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventKey": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "APP_INBOX",
+                      "EMAIL",
+                      "PUSH",
+                      "TELEGRAM",
+                      "ZALO",
+                      "SMS",
+                      "WHATSAPP",
+                      "MESSENGER"
+                    ]
+                  }
+                },
+                "required": [
+                  "eventKey",
+                  "channel"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thân đã gửi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "removed": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "removed"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/notification/stream": {
+      "get": {
+        "operationId": "streamNotifications",
+        "summary": "Luồng tin mới (SSE)",
+        "description": "`text/event-stream`: sự kiện `connected` khi mở, `notification` mỗi tin mới; dòng chú thích `: ping` mỗi 25 giây. Hub trong bộ nhớ của tiến trình (AUD-007) — chỉ nhận tin phát trên cùng máy chủ.",
+        "tags": [
+          "Thông báo — hộp thư"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Luồng sự kiện",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
       }
     },
     "/orders": {
@@ -84129,6 +89347,17 @@
             "$ref": "#/components/headers/RetryAfter"
           }
         },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error500": {
+        "description": "Lỗi hệ thống (`INTERNAL`) — không lộ chi tiết",
+        "headers": {},
         "content": {
           "application/json": {
             "schema": {

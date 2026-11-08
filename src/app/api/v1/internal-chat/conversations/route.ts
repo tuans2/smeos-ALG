@@ -1,19 +1,11 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { createInternalConversationBody } from "@/app/api/v1/_contracts/requests-chat"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { isAllowedChatTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { ListUserConversationsUseCase } from "@/modules/internal-chat/use-cases/list-user-conversations"
 import { CreateOrGetConversationUseCase } from "@/modules/internal-chat/use-cases/create-or-get-conversation"
-
-const createConversationSchema = z.object({
-  conversationType: z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "ORDER_THREAD"]),
-  title: z.string().optional(),
-  targetOrganizationId: z.string().uuid().optional(),
-  targetUserId: z.string().uuid().optional(),
-  orderId: z.string().uuid().optional(),
-})
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -41,7 +33,7 @@ export const GET = handle(async (request) => {
 export const POST = handle(async (request) => {
   const { resolved, ctx } = await requireTenantContext(request)
   const body = await request.json().catch(() => null)
-  const parsed = createConversationSchema.safeParse(body)
+  const parsed = createInternalConversationBody.safeParse(body)
 
   if (!parsed.success) {
     const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")

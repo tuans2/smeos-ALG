@@ -1,12 +1,14 @@
 import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi"
 
 import { AI_STUDIO_OPERATIONS } from "./ops-ai-studio"
+import { CHAT_OPERATIONS } from "./ops-chat"
 import { COORDINATOR_OPERATIONS } from "./ops-coordinator"
 import { CREATIVE_OPERATIONS } from "./ops-creative"
 import { CRM_OPERATIONS } from "./ops-crm"
 import { GREETING_OPERATIONS } from "./ops-greeting"
 import { GREETING_ORDER_OPERATIONS } from "./ops-greeting-orders"
 import { MEDIA_OPERATIONS } from "./ops-media"
+import { NOTIFICATION_OPERATIONS } from "./ops-notification"
 import { ORDER_OPERATIONS } from "./ops-orders"
 import { ORG_OPERATIONS } from "./ops-org"
 import { PRODUCT_OPERATIONS } from "./ops-products"
@@ -19,9 +21,9 @@ import { PRODUCT_OPERATIONS } from "./ops-products"
  */
 export const INTERNAL_OPENAPI_PATH = "docs/spec/contracts/openapi/internal.openapi.json"
 
-export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video"] as const
+export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video", "notification", "chat", "internal-chat"] as const
 
-export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS]
+export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS]
 
 export function buildInternalOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({

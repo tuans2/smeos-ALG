@@ -1,5 +1,5 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { patchStoreDefaultSchema } from "@/app/api/v1/_contracts/requests-notification"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import {
@@ -7,24 +7,6 @@ import {
   updateStoreNotificationDefault,
 } from "@/modules/notification/use-cases/manage-store-defaults"
 import type { NotifyChannel } from "@/modules/notification/domain/events/_contract"
-
-const patchStoreDefaultSchema = z.object({
-  eventKey: z.string().min(1),
-  channel: z.enum([
-    "APP_INBOX",
-    "EMAIL",
-    "PUSH",
-    "TELEGRAM",
-    "ZALO",
-    "SMS",
-    "WHATSAPP",
-    "MESSENGER",
-  ]),
-  roleKey: z.string().min(1),
-  enabled: z.boolean(),
-  scheduleStart: z.string().optional(),
-  scheduleEnd: z.string().optional(),
-})
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
