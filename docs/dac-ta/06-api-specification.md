@@ -754,7 +754,7 @@ Khuôn video là enum `video_format`: `REEL_15S` · `TIKTOK_30S` · `STORY_15S` 
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| POST | `/sso/refresh` | — | Làm mới JWT `floraos_sso` cho Unified Shell |
+| POST | `/sso/refresh` | — | Làm mới JWT `smeos_sso` (cookie + thân `{ sso_token, expires_at }`) cho Unified Shell |
 | GET · POST · PUT · PATCH · DELETE | `/proxy/:path` | — | Chuyển tiếp sang engine ngoài trong Unified Shell |
 | GET · PUT | `/storage/:key` | — *(chữ ký URL)* | Đích của URL ký sẵn; `verifyStorageSignature` gác, hết hạn 15 phút |
 | GET | `/integration-tokens` | `F9` | Cấp token cho engine ngoài |

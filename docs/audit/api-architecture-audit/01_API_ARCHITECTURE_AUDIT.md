@@ -368,3 +368,18 @@ Phủ thêm 3 nhóm vào `internal.openapi.json`: `/costing/*` (9 route, 11 oper
 Phát hiện khi viết hợp đồng (chưa sửa):
 - `GET /pricing-rules?branch_id=` nhận mã chi nhánh của tổ chức khác hoặc không tồn tại → 200, lặp lại mã đó ở `branch_id` và trả cấu hình của tổ chức phiên (không lộ dữ liệu tổ chức khác — dòng quy tắc vẫn lọc theo phiên). `PUT` đã kiểm chi nhánh → 404; `GET` nên làm như vậy (luật 2 CLAUDE.md: khác tổ chức → 404).
 - Envelope trộn: `/pricing-rules` và `/price-lists/*` trả thẳng đối tượng (không `{ data }`), `DELETE /price-lists/:id` trả `{ ok: true }` — đã có trong `api-envelope-legacy.txt`, ghi rõ ở OpenAPI.
+
+## 19. Nhật ký sửa — OpenAPI nội bộ, đợt Trung tâm Tích hợp, token & SSO (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/integrations/*` (12 route, 13 operation), `/integration-tokens/*` (3 route, 4 operation), `/sso/*` (1 route, 1 operation) — tổng 368 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi. (`/integration/*` — Integration API cho bên thứ ba — đã có tệp riêng `integration.openapi.json` từ đợt 4.)
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 7 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-integrations.ts`, route import lại (đăng/gỡ tin dùng chung một lược đồ giống hệt). Phản hồi khai `strictObject` (`responses-integrations.ts`) từ kiểu TS của `integration-hub` và `integration`, đối chiếu mẫu ghi từ phản hồi thật. Mã năng lực `W1`–`W5` kiểm ở use-case — OpenAPI ghi rõ | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật, không gọi nhà cung cấp thật (đầu nối thử `test_echo`, `test_shop`): kết nối (tạo, tổng quan, kiểm tra, đổi khoá, nhật ký, phát lại, ngắt), kênh bán (đăng, tin & đơn, còn/hết hàng, gỡ), quản trị chuỗi (cửa hàng thường → 422), token (cấp, danh sách, xoay, thu hồi; tổ chức khác → 404), làm mới SSO (cookie `smeos_sso`) | `tests/tenant/internal-contract-integrations.test.ts` |
+| Tài liệu | Đặc tả 06 dòng `/sso/refresh` ghi cookie `floraos_sso` — tên cũ; mã đặt `smeos_sso` (`SSO_COOKIE`, `core/http/cookies.ts`), vẫn đọc cookie cũ để tương thích. Sửa dòng đặc tả | `npm run check:docs` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `POST /integration-tokens/:id/rotate` cấp token mới với thời hạn MẶC ĐỊNH (`resolveExpiry(now, undefined)`), không giữ `ttl_days` đã chọn lúc cấp — token cấp 30 ngày xoay ra token 90 ngày (đã thử). Người cấp token ngắn hạn có chủ đích sẽ vô tình kéo dài hạn khi xoay.
+- Chú thích đầu `sso/refresh/route.ts` vẫn nói cookie `floraos_session`/`floraos_sso` (tên cũ) — chỉ là chú thích, không đổi ở đợt này.
+- Không có đường nào trả 500 trong 12 phép thử lỗi (đầu nối lạ, khoá sai, mã không phải UUID, `ttl_days` sai, đầu nối quản trị lạ).
