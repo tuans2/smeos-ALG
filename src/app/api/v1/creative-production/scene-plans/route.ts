@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -11,6 +9,7 @@ import {
 } from "@/modules/creative-production/use-cases/generate-scene-plan"
 import { scenePlanKey } from "@/modules/creative-production/domain/scene-plan-rules"
 import { scenePlanBodySchema } from "@/modules/creative-production/contracts/stage-05-choose"
+import { scenePlanLookupQuery } from "@/app/api/v1/_contracts/requests-creative"
 
 /** Hợp đồng Chặng 05 — nguồn chuẩn ở `contracts/stage-05-choose.ts`. */
 const postSchema = scenePlanBodySchema
@@ -71,12 +70,6 @@ export const POST = handle(async (request) => {
   )
 })
 
-const lookupSchema = z.object({
-  asset_id: z.string().uuid(),
-  topic_id: z.string().trim().min(1).max(120),
-  mode: z.enum(["CREATIVE", "AUTHENTIC"]),
-})
-
 /**
  * `GET /api/v1/creative-production/scene-plans?asset_id&topic_id&mode` — tra
  * kịch bản đã có của đúng ảnh + chủ đề + mode, KHÔNG tạo job, không trừ credit.
@@ -86,7 +79,7 @@ export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "I1")
   const url = new URL(request.url)
-  const parsed = lookupSchema.safeParse({
+  const parsed = scenePlanLookupQuery.safeParse({
     asset_id: url.searchParams.get("asset_id"),
     topic_id: url.searchParams.get("topic_id"),
     mode: url.searchParams.get("mode"),

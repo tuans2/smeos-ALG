@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed, unprocessable, notFound } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
@@ -14,12 +13,7 @@ import {
 import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { BrochureOrderRepository } from "@/modules/greeting-card/infra/brochure-order-repository"
 import { dispatchAfterPaymentConfirmed } from "@/modules/greeting-card/use-cases/dispatch-after-payment"
-
-const schema = z.object({
-  note: z.string().trim().max(500).nullable().optional(),
-  /** Đang ở chế độ tự động nhưng muốn tự chọn cửa hàng cho riêng đơn này */
-  manualDispatch: z.boolean().optional(),
-})
+import { confirmDepositBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 
 /**
  * POST /api/v1/greeting-card/orders/[id]/confirm-deposit
@@ -58,7 +52,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   }
 
   const body = await request.json().catch(() => ({}))
-  const parsed = schema.safeParse(body)
+  const parsed = confirmDepositBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await coordinatorConfirmDepositPayment(ctx, id, { note: parsed.data.note })

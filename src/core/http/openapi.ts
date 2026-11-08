@@ -114,8 +114,18 @@ function operationObject(op: OpenApiOperation): Record<string, unknown> {
     tags: op.tags,
     security: op.security.map((name) => ({ [name]: [] })),
     ...(params.length ? { parameters: params } : {}),
-    ...(op.body ? { requestBody: { required: true, content: { "application/json": { schema: jsonSchema(op.body, "input") } } } } : {}),
-    ...(op.multipart ? { requestBody: { required: true, content: { "multipart/form-data": { schema: jsonSchema(op.multipart, "input") } } } } : {}),
+    // Route nhận cả JSON lẫn multipart (vd. xác nhận giao có/không ảnh) khai cả hai kiểu trong cùng `requestBody`
+    ...(op.body || op.multipart
+      ? {
+          requestBody: {
+            required: true,
+            content: {
+              ...(op.body ? { "application/json": { schema: jsonSchema(op.body, "input") } } : {}),
+              ...(op.multipart ? { "multipart/form-data": { schema: jsonSchema(op.multipart, "input") } } : {}),
+            },
+          },
+        }
+      : {}),
     responses,
     ...op.extensions,
   }

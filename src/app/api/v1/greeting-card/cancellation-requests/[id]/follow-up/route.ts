@@ -1,12 +1,10 @@
-import { z } from "zod"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { CancellationFollowUpRepository } from "@/modules/greeting-card/infra/cancellation-follow-up-repository"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-
-const schema = z.object({ note: z.string().max(1000).optional().default("") })
+import { cancellationFollowUpBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 /**
  * `POST /api/v1/greeting-card/cancellation-requests/:id/follow-up`
@@ -17,7 +15,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.orderCancel)
   const { id } = await context.params
-  const parsed = schema.safeParse(await request.json().catch(() => ({})))
+  const parsed = cancellationFollowUpBody.safeParse(await request.json().catch(() => ({})))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const repo = new CancellationFollowUpRepository()

@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed, unprocessable, notFound } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -14,10 +13,7 @@ import {
 import { coordinatorBalanceConfirmBlocker } from "@/modules/greeting-card/domain/balance-collection"
 import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { BrochureOrderRepository } from "@/modules/greeting-card/infra/brochure-order-repository"
-
-const schema = z.object({
-  note: z.string().trim().max(500).nullable().optional(),
-})
+import { confirmBalanceBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 
 /**
  * POST /api/v1/greeting-card/orders/[id]/confirm-balance
@@ -55,7 +51,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   if (blocker) throw unprocessable(blocker)
 
   const body = await request.json().catch(() => ({}))
-  const parsed = schema.safeParse(body)
+  const parsed = confirmBalanceBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await coordinatorConfirmBalancePayment(ctx, id, { note: parsed.data.note })

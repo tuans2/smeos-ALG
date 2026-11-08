@@ -1,12 +1,9 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { approveVariant } from "@/modules/media/use-cases/approve-variant"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-
-const bodySchema = z.object({ asset_id: z.string().min(1) })
+import { approveVariantBody } from "@/app/api/v1/_contracts/requests-media"
 
 /**
  * `POST /media/variants/:id/approve` (`I5`).
@@ -19,7 +16,7 @@ export const POST = handle(
     const { ctx } = await requireTenantContext(request)
     requireCapability(ctx, "I5")
 
-    const parsed = bodySchema.safeParse(await request.json().catch(() => null))
+    const parsed = approveVariantBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
     const { id } = await params
