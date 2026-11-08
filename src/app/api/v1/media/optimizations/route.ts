@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -8,11 +6,7 @@ import { isOptimizeEnhancerProvider, OPTIMIZE_ENHANCER_PROVIDERS } from "@/modul
 import { listPendingOptimizations } from "@/modules/media/use-cases/list-pending-optimizations"
 import { requestOptimization } from "@/modules/media/use-cases/request-optimization"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-
-const postSchema = z.object({
-  asset_id: z.string().min(1),
-  config: z.record(z.string(), z.unknown()).optional(),
-})
+import { optimizationBody } from "@/app/api/v1/_contracts/requests-media"
 
 /**
  * `POST /media/optimizations` (`I1`, đặc tả 06 mục 8). MỌI bộ máy — cục bộ
@@ -33,7 +27,7 @@ export const POST = handle(async (request) => {
     throw validationFailed({ "idempotency-key": "Bắt buộc trên mọi endpoint tạo job (YC-U7)" })
   }
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = optimizationBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const provider = parsed.data.config?.enhancer_provider

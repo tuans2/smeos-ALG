@@ -58211,6 +58211,2759 @@
         "x-capability": "R1"
       }
     },
+    "/media/background-removal": {
+      "post": {
+        "operationId": "removeBackgroundClosed",
+        "summary": "Đường tách nền cũ — đã đóng",
+        "description": "Luôn trả 409 kèm đường thay thế `POST /media/variants`; không cần phiên vì không chạy gì.",
+        "tags": [
+          "Ảnh — tối ưu & duyệt ảnh chính"
+        ],
+        "security": [],
+        "responses": {
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "công khai"
+      }
+    },
+    "/media/optimizations": {
+      "post": {
+        "operationId": "requestOptimization",
+        "summary": "Tối ưu ảnh gốc thành ảnh chính (xếp job)",
+        "description": "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá trả job cũ (`deduped`), không trừ credit lần hai. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429. Mọi bộ máy đi qua hàng đợi; `config.enhancer_provider` lạ → 400 trước khi trừ credit. Ảnh của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — tối ưu & duyệt ảnh chính"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "config": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Job đã xếp",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "PROCESSING",
+                        "COMPLETED",
+                        "FAILED",
+                        "CANCELLED"
+                      ]
+                    },
+                    "engine": {
+                      "type": "string"
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "cost_credit": {
+                          "type": "number"
+                        },
+                        "balance_after": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "cost_credit",
+                        "balance_after"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "job_id",
+                    "status",
+                    "engine",
+                    "usage"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "I1"
+      },
+      "get": {
+        "operationId": "listPendingOptimizations",
+        "summary": "Hàng chờ duyệt ảnh đã tối ưu",
+        "description": "Chỉ người duyệt; không phân trang con trỏ.",
+        "tags": [
+          "Ảnh — tối ưu & duyệt ảnh chính"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hàng chờ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "job_id": {
+                            "type": "string"
+                          },
+                          "result": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "completed_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "requires_warning": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "job_id",
+                          "result",
+                          "completed_at",
+                          "requires_warning"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I2"
+      }
+    },
+    "/media/optimizations/{id}": {
+      "get": {
+        "operationId": "getOptimization",
+        "summary": "Trạng thái và kết quả một lượt tối ưu",
+        "description": "`{id}` là `job_id`. Hoàn credit lúc đọc khi job hỏng/huỷ/bị Identity Guard từ chối hoặc lùi bộ máy cục bộ (một lần). Job của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — tối ưu & duyệt ảnh chính"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "stage": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "error": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "result": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "identity_guard": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "identity_score": {
+                              "type": "number"
+                            },
+                            "color_score": {
+                              "type": "number"
+                            },
+                            "geometry_score": {
+                              "type": "number"
+                            },
+                            "component_consistency": {
+                              "type": "number"
+                            },
+                            "result": {
+                              "type": "string",
+                              "enum": [
+                                "SAFE",
+                                "GOOD",
+                                "WARNING",
+                                "REJECTED"
+                              ]
+                            },
+                            "ly_do": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "provider": {
+                              "type": "string"
+                            },
+                            "model_version": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "identity_score",
+                            "color_score",
+                            "geometry_score",
+                            "component_consistency",
+                            "result",
+                            "ly_do"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "outputs": {
+                      "type": "object",
+                      "properties": {
+                        "master": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "master_url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "original_url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ratios": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "ratio_urls": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "variant_urls": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "variant_ratio_urls": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "additionalProperties": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "master",
+                        "master_url",
+                        "original_url",
+                        "ratios",
+                        "ratio_urls"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "approval": {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "enum": [
+                            "pending",
+                            "approved",
+                            "rejected"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "can_approve": {
+                          "type": "boolean"
+                        },
+                        "requires_warning": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "approved_by",
+                        "approved_at",
+                        "can_approve",
+                        "requires_warning"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "flags": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "parameters": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "applied_changes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "job_id",
+                    "status",
+                    "stage",
+                    "error",
+                    "result",
+                    "identity_guard",
+                    "outputs",
+                    "approval",
+                    "flags"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I1"
+      }
+    },
+    "/media/optimizations/{id}/approve": {
+      "post": {
+        "operationId": "approveOptimization",
+        "summary": "Duyệt ảnh chính",
+        "description": "Job chưa xong, không có phán quyết Identity Guard, bị từ chối hoặc đã duyệt → 409. Job của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — tối ưu & duyệt ảnh chính"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả sau duyệt",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "stage": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "error": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "result": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "identity_guard": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "identity_score": {
+                              "type": "number"
+                            },
+                            "color_score": {
+                              "type": "number"
+                            },
+                            "geometry_score": {
+                              "type": "number"
+                            },
+                            "component_consistency": {
+                              "type": "number"
+                            },
+                            "result": {
+                              "type": "string",
+                              "enum": [
+                                "SAFE",
+                                "GOOD",
+                                "WARNING",
+                                "REJECTED"
+                              ]
+                            },
+                            "ly_do": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "provider": {
+                              "type": "string"
+                            },
+                            "model_version": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "identity_score",
+                            "color_score",
+                            "geometry_score",
+                            "component_consistency",
+                            "result",
+                            "ly_do"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "outputs": {
+                      "type": "object",
+                      "properties": {
+                        "master": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "master_url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "original_url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ratios": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "ratio_urls": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "variant_urls": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "variant_ratio_urls": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "additionalProperties": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "master",
+                        "master_url",
+                        "original_url",
+                        "ratios",
+                        "ratio_urls"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "approval": {
+                      "type": "object",
+                      "properties": {
+                        "state": {
+                          "type": "string",
+                          "enum": [
+                            "pending",
+                            "approved",
+                            "rejected"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "can_approve": {
+                          "type": "boolean"
+                        },
+                        "requires_warning": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "state",
+                        "approved_by",
+                        "approved_at",
+                        "can_approve",
+                        "requires_warning"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "flags": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "parameters": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {}
+                    },
+                    "applied_changes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "job_id",
+                    "status",
+                    "stage",
+                    "error",
+                    "result",
+                    "identity_guard",
+                    "outputs",
+                    "approval",
+                    "flags"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I2"
+      }
+    },
+    "/media/optimizations/{id}/download": {
+      "get": {
+        "operationId": "downloadOptimization",
+        "summary": "URL tải ảnh chính hoặc một khung",
+        "description": "Identity Guard đã từ chối → 409. Job của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — tối ưu & duyệt ảnh chính"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ratio",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URL ký có hạn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "asset_id": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "url",
+                    "asset_id",
+                    "expires_in"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I3"
+      }
+    },
+    "/media/promote-to-master": {
+      "post": {
+        "operationId": "promoteOriginalToMaster",
+        "summary": "Duyệt nhanh ảnh gốc thành ảnh chính (bỏ qua tối ưu)",
+        "description": "Chỉ ảnh gốc (ORIGINAL) — loại khác → 400. Ảnh của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — tối ưu & duyệt ảnh chính"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ảnh chính đã duyệt",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "master_asset_id": {
+                      "type": "string"
+                    },
+                    "approval_state": {
+                      "type": "string",
+                      "const": "APPROVED"
+                    }
+                  },
+                  "required": [
+                    "master_asset_id",
+                    "approval_state"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "I2"
+      }
+    },
+    "/media/variants": {
+      "post": {
+        "operationId": "requestVariants",
+        "summary": "Dựng biến thể marketing từ ảnh chính (xếp job)",
+        "description": "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá trả job cũ (`deduped`), không trừ credit lần hai. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429. `variant_count` > 1 tạo n job cùng `job_group_id`, credit nhân n. Ảnh chính chưa duyệt → 409; của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — biến thể marketing"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "master_asset_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Master Image đã duyệt"
+                  },
+                  "engine": {
+                    "default": "cloud_provider",
+                    "type": "string",
+                    "enum": [
+                      "local_studio",
+                      "cloud_provider"
+                    ]
+                  },
+                  "preset": {
+                    "type": "string",
+                    "enum": [
+                      "transparent",
+                      "studio_white",
+                      "wedding",
+                      "living_room",
+                      "wood_minimal",
+                      "luxury_hotel"
+                    ]
+                  },
+                  "ratio": {
+                    "type": "string",
+                    "enum": [
+                      "1:1",
+                      "4:5",
+                      "9:16",
+                      "16:9"
+                    ]
+                  },
+                  "watermark": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "auto_enhance": {
+                    "default": false,
+                    "description": "AIC-14 — chỉ chỉnh vùng nền",
+                    "type": "boolean"
+                  },
+                  "scene_index": {
+                    "description": "Cảnh 1..5 của kịch bản (CREATIVE 5, AUTHENTIC 3)",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "scene_plan_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "scene_plan_revision": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100000
+                  },
+                  "provider_key": {
+                    "description": "Chỉ nhánh cloud_provider — nhà cung cấp thử TRƯỚC; bỏ trống = theo VARIANT_PROVIDER_ORDER (các bên vai trò tương đương, bên lỗi thì thử bên kế tiếp)",
+                    "type": "string",
+                    "enum": [
+                      "fal",
+                      "stability",
+                      "imagen"
+                    ]
+                  },
+                  "scene_prompt": {
+                    "description": "Chỉ nhánh cloud_provider — backgroundPrompt của cảnh",
+                    "type": "string",
+                    "maxLength": 600
+                  },
+                  "fill_mode": {
+                    "default": "full_frame",
+                    "description": "full_frame = hậu cảnh dựng đúng khung đích (mặc định); pad = cách cũ, đệm màu trơn",
+                    "type": "string",
+                    "enum": [
+                      "full_frame",
+                      "pad"
+                    ]
+                  },
+                  "composition": {
+                    "type": "object",
+                    "properties": {
+                      "shot": {
+                        "description": "Cỡ cảnh: cận / trung / toàn — mặc định theo kịch bản, không có thì medium",
+                        "type": "string",
+                        "enum": [
+                          "close",
+                          "medium",
+                          "wide"
+                        ]
+                      },
+                      "placement": {
+                        "description": "Vị trí sản phẩm — mặc định center",
+                        "type": "string",
+                        "enum": [
+                          "center",
+                          "left_third",
+                          "right_third"
+                        ]
+                      }
+                    }
+                  },
+                  "lighting": {
+                    "type": "object",
+                    "properties": {
+                      "direction": {
+                        "description": "Hướng nguồn sáng — quyết định hướng bóng; mặc định suy từ kịch bản, không có thì left",
+                        "type": "string",
+                        "enum": [
+                          "left",
+                          "right",
+                          "above",
+                          "front"
+                        ]
+                      },
+                      "mood": {
+                        "description": "Mô tả không khí ánh sáng (tiếng Anh) — ghép vào prompt nhà cung cấp",
+                        "type": "string",
+                        "maxLength": 120
+                      }
+                    }
+                  },
+                  "palette": {
+                    "description": "Bảng màu hậu cảnh — mặc định palette của cảnh; màu tiếng Việt thông dụng tự dịch",
+                    "maxItems": 5,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 40
+                    }
+                  },
+                  "seed": {
+                    "description": "Cùng seed → tái tạo đúng hậu cảnh; bỏ trống thì tự bốc và ghi lại vào asset (nhà cung cấp hỗ trợ seed)",
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 4294967294
+                  },
+                  "style": {
+                    "description": "Phong cách hậu cảnh (ý định FloraOS) — Stability dịch sang style_preset; phông cục bộ ghi provider_ignored",
+                    "type": "string",
+                    "enum": [
+                      "natural",
+                      "cinematic",
+                      "film",
+                      "vivid"
+                    ]
+                  },
+                  "variant_count": {
+                    "default": 1,
+                    "description": "Số phương án cho cảnh — n job con cùng job_group_id, credit nhân n. Mặc định 1 (PO chốt 24/09)",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4
+                  },
+                  "quality": {
+                    "default": "standard",
+                    "description": "high = Stability Ultra (chỉ đám mây, +2 credit/phương án — giá tạm); phông cục bộ ghi provider_ignored",
+                    "type": "string",
+                    "enum": [
+                      "standard",
+                      "high"
+                    ]
+                  },
+                  "upscale": {
+                    "default": "none",
+                    "description": "2x = khung xuất gấp đôi (9:16 → 2160×3840), tăng nét HẬU CẢNH; sản phẩm không qua mô hình siêu phân giải",
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "2x"
+                    ]
+                  },
+                  "compose_mode": {
+                    "description": "Bỏ trống = theo engine: cloud_provider → relight (NHÀ CUNG CẤP LÀM TRỌN GÓI: tách nền, dựng cảnh, chỉnh sáng, tăng nét; cổng đo hình dáng + cấu trúc + màu), local_studio → paste. paste = tự dán nguyên khối sản phẩm (giữ từng điểm ảnh); harmonize = paste + hoà bóng/độ nét cục bộ",
+                    "type": "string",
+                    "enum": [
+                      "paste",
+                      "harmonize",
+                      "relight"
+                    ]
+                  }
+                },
+                "required": [
+                  "master_asset_id",
+                  "preset",
+                  "ratio"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Job đã xếp",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "PROCESSING",
+                        "COMPLETED",
+                        "FAILED",
+                        "CANCELLED"
+                      ],
+                      "description": "Trạng thái generation_jobs lúc nhận"
+                    },
+                    "engine": {
+                      "type": "string",
+                      "enum": [
+                        "local_studio",
+                        "cloud_provider"
+                      ]
+                    },
+                    "deduped": {
+                      "type": "boolean"
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "cost_credit": {
+                          "type": "number"
+                        },
+                        "balance_after": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "cost_credit",
+                        "balance_after"
+                      ],
+                      "additionalProperties": false,
+                      "description": "cost_credit = TỔNG mọi phương án"
+                    },
+                    "job_group_id": {
+                      "description": "Nhóm các phương án; null khi variant_count = 1",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "candidates": {
+                      "minItems": 1,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "index": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 9007199254740991,
+                            "description": "Thứ tự phương án, 1..variant_count"
+                          },
+                          "job_id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "PROCESSING",
+                              "COMPLETED",
+                              "FAILED",
+                              "CANCELLED"
+                            ]
+                          },
+                          "deduped": {
+                            "type": "boolean"
+                          },
+                          "cost_credit": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "index",
+                          "job_id",
+                          "status",
+                          "deduped",
+                          "cost_credit"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Mỗi phương án một job — đọc từng job qua GET /media/variants/:id"
+                    }
+                  },
+                  "required": [
+                    "job_id",
+                    "status",
+                    "engine",
+                    "deduped",
+                    "usage",
+                    "job_group_id",
+                    "candidates"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "I4"
+      },
+      "get": {
+        "operationId": "listPendingVariants",
+        "summary": "Hàng chờ duyệt biến thể",
+        "tags": [
+          "Ảnh — biến thể marketing"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hàng chờ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "job_id": {
+                            "type": "string"
+                          },
+                          "completed_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "pending_count": {
+                            "type": "number"
+                          },
+                          "total_count": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "job_id",
+                          "completed_at",
+                          "pending_count",
+                          "total_count"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I5"
+      }
+    },
+    "/media/variants/{id}": {
+      "get": {
+        "operationId": "getVariantJob",
+        "summary": "Trạng thái và kết quả một lượt dựng biến thể",
+        "description": "`{id}` là `job_id`. Hoàn credit lúc đọc khi job hỏng/huỷ/bị cổng toàn vẹn từ chối hoặc lùi phông cục bộ (một lần). Job của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — biến thể marketing"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kết quả",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "stage": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "error": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "result": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "source": {
+                      "type": "object",
+                      "properties": {
+                        "master_asset_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "master_url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "preset": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ratio": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "watermark": {
+                          "type": "boolean"
+                        },
+                        "engine": {
+                          "type": "string",
+                          "enum": [
+                            "local_studio",
+                            "cloud_provider"
+                          ]
+                        },
+                        "scene_index": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "cloud_fallback": {
+                          "type": "boolean"
+                        },
+                        "cloud_fallback_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_group_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "candidate_index": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "candidate_count": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "direction": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "master_asset_id",
+                        "master_url",
+                        "preset",
+                        "ratio",
+                        "watermark",
+                        "engine",
+                        "scene_index",
+                        "cloud_fallback",
+                        "cloud_fallback_reason",
+                        "job_group_id",
+                        "candidate_index",
+                        "candidate_count",
+                        "direction"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "subject_integrity": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "subject_pixel_identity": {
+                              "type": "number"
+                            },
+                            "generative_fill_used": {
+                              "type": "boolean"
+                            },
+                            "source_master_asset_id": {
+                              "type": "string"
+                            },
+                            "result": {
+                              "type": "string",
+                              "enum": [
+                                "SAFE",
+                                "GOOD",
+                                "WARNING",
+                                "REJECTED"
+                              ]
+                            },
+                            "ly_do": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "method": {
+                              "type": "string",
+                              "enum": [
+                                "pixel_exact",
+                                "perceptual"
+                              ]
+                            },
+                            "perceptual": {
+                              "type": "object",
+                              "properties": {
+                                "structure_ssim": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "color_delta_e": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "shape_iou": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "structure_ssim",
+                                "color_delta_e",
+                                "shape_iou"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "ai_relit": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "subject_pixel_identity",
+                            "generative_fill_used",
+                            "source_master_asset_id",
+                            "result",
+                            "ly_do",
+                            "method",
+                            "ai_relit"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "quality_report": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "aesthetic": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "score": {
+                                      "type": "number"
+                                    },
+                                    "components": {
+                                      "type": "object",
+                                      "propertyNames": {
+                                        "type": "string"
+                                      },
+                                      "additionalProperties": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "version": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "score",
+                                    "components",
+                                    "version"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "edge_fade": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {}
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "segmentation": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {}
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "quality": {
+                              "type": "string"
+                            },
+                            "upscale": {
+                              "type": "string"
+                            },
+                            "compose_mode": {
+                              "type": "string"
+                            },
+                            "flow": {
+                              "type": "string"
+                            },
+                            "ai_relit": {
+                              "type": "boolean"
+                            },
+                            "integrity_method": {
+                              "type": "string"
+                            },
+                            "provider_steps": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {}
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "aesthetic",
+                            "edge_fade",
+                            "segmentation",
+                            "quality",
+                            "upscale",
+                            "compose_mode",
+                            "flow",
+                            "ai_relit",
+                            "integrity_method",
+                            "provider_steps"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "variants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "asset_id": {
+                            "type": "string"
+                          },
+                          "variant_key": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "background": {
+                            "type": "string"
+                          },
+                          "ratio": {
+                            "type": "string"
+                          },
+                          "watermark": {
+                            "type": "boolean"
+                          },
+                          "generative_fill_used": {
+                            "type": "boolean"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "approval_state": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "approved",
+                              "rejected"
+                            ]
+                          },
+                          "approved_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "asset_id",
+                          "variant_key",
+                          "title",
+                          "background",
+                          "ratio",
+                          "watermark",
+                          "generative_fill_used",
+                          "url",
+                          "approval_state",
+                          "approved_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "approval": {
+                      "type": "object",
+                      "properties": {
+                        "can_approve": {
+                          "type": "boolean"
+                        },
+                        "requires_warning": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "can_approve",
+                        "requires_warning"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "job_id",
+                    "status",
+                    "stage",
+                    "error",
+                    "result",
+                    "source",
+                    "subject_integrity",
+                    "quality_report",
+                    "variants",
+                    "approval"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I4"
+      }
+    },
+    "/media/variants/{id}/approve": {
+      "post": {
+        "operationId": "approveVariant",
+        "summary": "Duyệt một biến thể",
+        "description": "Job chưa xong, thiếu số đo toàn vẹn, bị từ chối hoặc biến thể đã duyệt → 409. Job của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — biến thể marketing"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả sau duyệt",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "stage": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "error": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "result": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "source": {
+                      "type": "object",
+                      "properties": {
+                        "master_asset_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "master_url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "preset": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ratio": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "watermark": {
+                          "type": "boolean"
+                        },
+                        "engine": {
+                          "type": "string",
+                          "enum": [
+                            "local_studio",
+                            "cloud_provider"
+                          ]
+                        },
+                        "scene_index": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "cloud_fallback": {
+                          "type": "boolean"
+                        },
+                        "cloud_fallback_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_group_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "candidate_index": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "candidate_count": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "direction": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "master_asset_id",
+                        "master_url",
+                        "preset",
+                        "ratio",
+                        "watermark",
+                        "engine",
+                        "scene_index",
+                        "cloud_fallback",
+                        "cloud_fallback_reason",
+                        "job_group_id",
+                        "candidate_index",
+                        "candidate_count",
+                        "direction"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "subject_integrity": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "subject_pixel_identity": {
+                              "type": "number"
+                            },
+                            "generative_fill_used": {
+                              "type": "boolean"
+                            },
+                            "source_master_asset_id": {
+                              "type": "string"
+                            },
+                            "result": {
+                              "type": "string",
+                              "enum": [
+                                "SAFE",
+                                "GOOD",
+                                "WARNING",
+                                "REJECTED"
+                              ]
+                            },
+                            "ly_do": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "method": {
+                              "type": "string",
+                              "enum": [
+                                "pixel_exact",
+                                "perceptual"
+                              ]
+                            },
+                            "perceptual": {
+                              "type": "object",
+                              "properties": {
+                                "structure_ssim": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "color_delta_e": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "shape_iou": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "structure_ssim",
+                                "color_delta_e",
+                                "shape_iou"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "ai_relit": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "subject_pixel_identity",
+                            "generative_fill_used",
+                            "source_master_asset_id",
+                            "result",
+                            "ly_do",
+                            "method",
+                            "ai_relit"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "quality_report": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "aesthetic": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "score": {
+                                      "type": "number"
+                                    },
+                                    "components": {
+                                      "type": "object",
+                                      "propertyNames": {
+                                        "type": "string"
+                                      },
+                                      "additionalProperties": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "version": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "score",
+                                    "components",
+                                    "version"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "edge_fade": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {}
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "segmentation": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {}
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "quality": {
+                              "type": "string"
+                            },
+                            "upscale": {
+                              "type": "string"
+                            },
+                            "compose_mode": {
+                              "type": "string"
+                            },
+                            "flow": {
+                              "type": "string"
+                            },
+                            "ai_relit": {
+                              "type": "boolean"
+                            },
+                            "integrity_method": {
+                              "type": "string"
+                            },
+                            "provider_steps": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {}
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "aesthetic",
+                            "edge_fade",
+                            "segmentation",
+                            "quality",
+                            "upscale",
+                            "compose_mode",
+                            "flow",
+                            "ai_relit",
+                            "integrity_method",
+                            "provider_steps"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "variants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "asset_id": {
+                            "type": "string"
+                          },
+                          "variant_key": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "background": {
+                            "type": "string"
+                          },
+                          "ratio": {
+                            "type": "string"
+                          },
+                          "watermark": {
+                            "type": "boolean"
+                          },
+                          "generative_fill_used": {
+                            "type": "boolean"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "approval_state": {
+                            "type": "string",
+                            "enum": [
+                              "pending",
+                              "approved",
+                              "rejected"
+                            ]
+                          },
+                          "approved_at": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "asset_id",
+                          "variant_key",
+                          "title",
+                          "background",
+                          "ratio",
+                          "watermark",
+                          "generative_fill_used",
+                          "url",
+                          "approval_state",
+                          "approved_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "approval": {
+                      "type": "object",
+                      "properties": {
+                        "can_approve": {
+                          "type": "boolean"
+                        },
+                        "requires_warning": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "can_approve",
+                        "requires_warning"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "job_id",
+                    "status",
+                    "stage",
+                    "error",
+                    "result",
+                    "source",
+                    "subject_integrity",
+                    "quality_report",
+                    "variants",
+                    "approval"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "I5"
+      }
+    },
+    "/media/variants/{id}/download": {
+      "get": {
+        "operationId": "downloadVariant",
+        "summary": "URL tải một biến thể",
+        "description": "Thiếu `asset_id` → 400; cổng toàn vẹn đã từ chối → 409. Job của tổ chức khác → 404.",
+        "tags": [
+          "Ảnh — biến thể marketing"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asset_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URL ký có hạn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "asset_id": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "url",
+                    "asset_id",
+                    "expires_in"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I3"
+      }
+    },
+    "/media/variants/batch": {
+      "post": {
+        "operationId": "requestVariantBatch",
+        "summary": "Dựng lô biến thể theo ma trận kiểu nền × khung",
+        "description": "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá trả job cũ (`deduped`), không trừ credit lần hai. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429. Bỏ trống `presets`/`ratios` (hoặc `\"all\"`) chạy toàn bộ ma trận; mỗi tổ hợp một job cùng `job_group_id`.",
+        "tags": [
+          "Ảnh — biến thể marketing"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "master_asset_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "presets": {
+                    "default": "all",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "all"
+                      },
+                      {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "transparent",
+                            "studio_white",
+                            "wedding",
+                            "living_room",
+                            "wood_minimal",
+                            "luxury_hotel"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "ratios": {
+                    "default": "all",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "const": "all"
+                      },
+                      {
+                        "minItems": 1,
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "1:1",
+                            "4:5",
+                            "9:16",
+                            "16:9"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "watermark": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "auto_enhance": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "scene_plan_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 160
+                  },
+                  "scene_index": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                },
+                "required": [
+                  "master_asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Các job đã xếp",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_group_id": {
+                      "type": "string"
+                    },
+                    "jobs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "job_id": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "PROCESSING",
+                              "COMPLETED",
+                              "FAILED",
+                              "CANCELLED"
+                            ]
+                          },
+                          "preset": {
+                            "type": "string"
+                          },
+                          "ratio": {
+                            "type": "string"
+                          },
+                          "deduped": {
+                            "type": "boolean"
+                          },
+                          "cost_credit": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "job_id",
+                          "status",
+                          "preset",
+                          "ratio",
+                          "deduped",
+                          "cost_credit"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "job_group_id",
+                    "jobs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "I4"
+      }
+    },
     "/members": {
       "get": {
         "operationId": "listMembers",
