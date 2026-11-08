@@ -48,7 +48,9 @@ export function StepTiles({ view, current, onPick }: { view: BrandKitView; curre
             <div
               className={cn(
                 "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-title-sm font-extrabold",
-                locked ? "border border-border bg-surface text-text-muted" : done && !active ? "bg-success-bg text-success-text" : "bg-primary text-surface",
+                locked ? "border border-border bg-surface text-text-muted"
+                  : active ? "bg-primary text-surface"
+                    : done ? "bg-success-bg text-success-text" : "bg-primary-muted text-primary",
               )}
             >
               {locked ? <Lock size={16} aria-hidden /> : done && !active ? <Check size={16} aria-hidden /> : i + 1}

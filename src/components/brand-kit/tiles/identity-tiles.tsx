@@ -86,8 +86,8 @@ export function IdentityTiles({ kit, profile }: { kit: BrandKitState; profile: T
       }
       preview={<span className="italic">“{o.content.slogan}”</span>}
     >
-      <div className="mt-3 flex items-center gap-3">
-        <div className="w-14"><LogoPreview c={o.content} shop={shop} /></div>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <div className="w-16 shrink-0 ring-1 ring-border/60 rounded-xl"><LogoPreview c={o.content} shop={shop} compact /></div>
         <PaletteSwatches c={o.content} />
       </div>
     </Tile>

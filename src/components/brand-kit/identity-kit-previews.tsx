@@ -38,9 +38,9 @@ function LogoImage({ c, shop, className }: { c: IdentityOptionContent; shop: Sho
   return <img src={uploaded || svgDataUrl(logoSvgFor(c, shop.name))} alt={`Logo ${shop.name}`} className={className} />
 }
 
-export function LogoPreview({ c, shop }: { c: IdentityOptionContent; shop: ShopFacts }) {
+export function LogoPreview({ c, shop, compact = false }: { c: IdentityOptionContent; shop: ShopFacts; compact?: boolean }) {
   return (
-    <div className="flex aspect-square w-full items-center justify-center rounded-xl p-3" style={{ backgroundColor: c.palette.background }}>
+    <div className={`flex aspect-square w-full items-center justify-center rounded-xl ${compact ? "p-0.5" : "p-3"}`} style={{ backgroundColor: c.palette.background }}>
       <LogoImage c={c} shop={shop} className="h-full w-full object-contain" />
     </div>
   )
