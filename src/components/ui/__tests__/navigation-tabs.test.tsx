@@ -23,6 +23,22 @@ describe("Tabs & TabActionHeader Components", () => {
     expect(html).toContain("Thành viên")
   })
 
+  it("tab đang mở có dấu hiệu nhìn thấy: kiểu tô theo thuộc tính Base UI thật sự đặt (data-active)", () => {
+    const html = renderToStaticMarkup(
+      <Tabs defaultValue="tab1">
+        <TabsList aria-label="Loại nhật ký">
+          <TabsTrigger value="tab1">Một</TabsTrigger>
+          <TabsTrigger value="tab2">Hai</TabsTrigger>
+        </TabsList>
+      </Tabs>
+    )
+    const tabs = [...html.matchAll(/<button[^>]*role="tab"[^>]*>/g)].map((m) => m[0])
+    const active = tabs.find((t) => t.includes('aria-selected="true"')) ?? ""
+    expect(active).toMatch(/\bdata-active=/)
+    expect(active).toContain("data-[active]:bg-surface")
+    expect(html).not.toContain("data-[selected]:")
+  })
+
   it("renders TabActionHeader with tab items, badges, and action buttons", () => {
     const tabs: TabItem[] = [
       { id: "all", label: "Tất cả", badge: 12, badgeTone: "accent" },

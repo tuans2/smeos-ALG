@@ -60,7 +60,7 @@ Quy ước cột: **Input** = trường chính của body/query (từ zod ở ro
 | Huỷ / chạy lại job | `id` | Huỷ chỉ khi `PENDING`; chạy lại chỉ khi `FAILED` (COMPLETED/REJECTED → 409) | `G6` / `G7` | Implemented |
 | Quét job treo | — | `PROCESSING` quá 15 phút → `FAILED` (script `npm run quet-job-treo`; lịch cron trong `cron-job-entry.txt` trỏ đường dẫn máy cá nhân) | — | Implemented (lịch chạy production NOT VERIFIED) |
 | Mức dùng | khoảng thời gian | Liệt kê `usage`, tổng hợp | `G8` | Implemented |
-| Hoàn credit | — | `refundJob` (hoàn toàn phần, dòng `REFUNDED`), `refundPartial` (dòng `PARTIAL_REFUND` âm) gọi khi đọc kết quả media/video; `refundUsage` không có nơi gọi | — | Implemented / Dead (`refundUsage`) |
+| Hoàn credit | — | `refundJob` (hoàn toàn phần, dòng `REFUNDED`), `refundPartial` (dòng `PARTIAL_REFUND` âm) gọi khi đọc kết quả media/video; `refundUsage` (không có nơi gọi) đã xoá 07/11/2026 | — | Implemented |
 | Nhật ký kiểm toán | lọc | Đọc `audit_logs` | `G9` (trần cứng ĐH) | Implemented |
 
 ## 4.5 Ảnh, video, âm thanh (MOD-11 → MOD-13)

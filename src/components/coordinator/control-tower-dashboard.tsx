@@ -9,7 +9,7 @@ import { SalesOrderIntakeModal } from "./sales-order-intake-modal"
 import {
   coordinatorApi,
   errorMessage,
-  type CoordinationOrder,
+  isStageAdvanceLocked, type CoordinationOrder,
   type CreateOrderRequest,
 } from "./coordinator-api"
 import { useCustomFieldDefinitions, visibleCustomFieldsForAudience } from "./custom-fields-section"
@@ -248,7 +248,7 @@ export function ControlTowerDashboard({
               riskReason={ord.riskReason}
               hasMissingItems={false}
               onOpenDetail={() => openDetail(ord, "BRIEF")}
-              {...(ord.stage === "COMPLETED" || ord.stage === "CANCELLED"
+              {...(isStageAdvanceLocked(ord)
                 ? {}
                 : { onAdvanceStage: () => actions.handleAdvanceStage(ord) })}
               onOpenAssignModal={() => {

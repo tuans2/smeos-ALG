@@ -1,11 +1,17 @@
 /**
  * Xin giảm giá theo đơn (PO 06/10/2026): Sale xin, Điều hành duyệt (sửa được mức) hoặc từ chối,
  * kèm ghi chú. Mức tối đa do Điều hành đặt trong Cài đặt (`brochure_discount.max_percent`,
- * mặc định 25%). Pure TypeScript.
+ * mặc định và tối đa = trần nền tảng 50%, PO 07/11/2026). Pure TypeScript.
  */
 
+import { PLATFORM_MAX_DISCOUNT_PERCENT } from "@/modules/organization/domain/governance-decisions"
+
 export const DISCOUNT_SETTINGS_KEY = "brochure_discount"
-export const DEFAULT_MAX_DISCOUNT_PERCENT = 25
+/**
+ * Một trần duy nhất cho mọi khoản giảm (PO 07/11/2026, audit BL-08): mặc định = trần nền tảng 50%; Điều hành
+ * đặt thấp hơn được, cao hơn thì bị kẹp về trần nền tảng.
+ */
+export const DEFAULT_MAX_DISCOUNT_PERCENT = PLATFORM_MAX_DISCOUNT_PERCENT
 export type DiscountStatus = "PENDING" | "APPROVED" | "REJECTED"
 
 export interface DiscountAsk {
@@ -28,7 +34,7 @@ export interface DiscountPayload extends DiscountAsk {
 export function parseMaxDiscountPercent(settings: unknown): number {
   const root = settings && typeof settings === "object" ? (settings as Record<string, unknown>) : {}
   const raw = (root[DISCOUNT_SETTINGS_KEY] as Record<string, unknown> | undefined)?.max_percent
-  return typeof raw === "number" && Number.isInteger(raw) && raw >= 0 && raw <= 100 ? raw : DEFAULT_MAX_DISCOUNT_PERCENT
+  return typeof raw === "number" && Number.isInteger(raw) && raw >= 0 && raw <= 100 ? Math.min(raw, PLATFORM_MAX_DISCOUNT_PERCENT) : DEFAULT_MAX_DISCOUNT_PERCENT
 }
 
 /** Số tiền giảm của một yêu cầu (làm tròn xuống tới 1.000đ khi tính theo %). */
@@ -38,8 +44,33 @@ export function discountVndOf(ask: DiscountAsk, baseTotalVnd: number): number {
   return 0
 }
 
+/** Các khoản giảm đã áp lúc khách đặt (mã giảm giá + hạng khách + ưu đãi) và tiền hàng làm gốc trần chung. */
+export interface PriorDiscounts {
+  /** Tiền hàng lúc báo giá; `null` khi đơn chờ báo giá (khi đó lấy giá trước thuế của đơn làm gốc). */
+  goodsVnd: number | null
+  priorVnd: number
+}
+
+const num = (v: unknown): number => (typeof v === "number" && Number.isFinite(v) && v > 0 ? v : 0)
+
+/** Đọc bản chụp báo giá `orders.pricing_rule_ref` (Thẻ chào) — chỉ các khoản giảm, không tính giảm tay cũ (bị thay). */
+export function priorDiscountsOf(pricingRef: unknown): PriorDiscounts {
+  const r = pricingRef && typeof pricingRef === "object" ? (pricingRef as Record<string, unknown>) : {}
+  const goods = num(r.subtotalVnd)
+  return { goodsVnd: goods > 0 ? goods : null, priorVnd: num(r.discountVnd) + num(r.tierDiscountVnd) + num(r.promotionDiscountVnd) }
+}
+
+/**
+ * Trần chung (PO 07/11/2026): giảm tay của Điều hành cộng với mã giảm giá, hạng khách, ưu đãi đã áp không quá
+ * trần nền tảng 50% tiền hàng — cùng trần với báo giá Thẻ chào (`computeQuote`). Trả số còn giảm thêm được.
+ */
+export function manualDiscountRoomVnd(prior: PriorDiscounts, baseTotalVnd: number): number {
+  const goods = prior.goodsVnd ?? baseTotalVnd
+  return Math.max(0, Math.floor((goods * PLATFORM_MAX_DISCOUNT_PERCENT) / 100) - prior.priorVnd)
+}
+
 /** Lỗi nghiệp vụ (tiếng Việt) hoặc `null` nếu hợp lệ. Áp cho cả lúc xin lẫn lúc duyệt. */
-export function discountError(ask: DiscountAsk, baseTotalVnd: number, maxPercent: number): string | null {
+export function discountError(ask: DiscountAsk, baseTotalVnd: number, maxPercent: number, prior?: PriorDiscounts): string | null {
   const hasPercent = typeof ask.percent === "number"
   const hasAmount = typeof ask.amountVnd === "number"
   if (hasPercent === hasAmount) return "Nhập mức giảm theo % hoặc theo số tiền"
@@ -48,6 +79,13 @@ export function discountError(ask: DiscountAsk, baseTotalVnd: number, maxPercent
   if (vnd <= 0) return "Mức giảm phải lớn hơn 0"
   const cap = Math.floor((baseTotalVnd * maxPercent) / 100)
   if (vnd > cap) return `Vượt mức giảm tối đa ${maxPercent}% (${cap.toLocaleString("vi-VN")}đ) do Điều hành đặt`
+  if (prior) {
+    const room = manualDiscountRoomVnd(prior, baseTotalVnd)
+    if (vnd > room) {
+      const applied = prior.priorVnd > 0 ? `đơn đã được giảm ${prior.priorVnd.toLocaleString("vi-VN")}đ (mã, hạng khách, ưu đãi); ` : ""
+      return `Tổng giảm vượt trần ${PLATFORM_MAX_DISCOUNT_PERCENT}% tiền hàng — ${applied}chỉ giảm thêm được tối đa ${room.toLocaleString("vi-VN")}đ`
+    }
+  }
   return null
 }
 

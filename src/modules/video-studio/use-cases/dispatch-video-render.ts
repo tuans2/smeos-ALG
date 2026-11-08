@@ -9,6 +9,7 @@ import {
 } from "../infra/video-job-repository";
 import { video_scenes } from "../infra/entities";
 import { canStartRender } from "../domain/video-approval-rules";
+import type { VideoStage } from "../domain/video-types";
 import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
 import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
 import { providerOrderFor } from "@/modules/creative-production/use-cases/provider-preferences";
@@ -95,7 +96,9 @@ export class DispatchVideoRenderUseCase {
     const plannedProvider = providerOrder[0] ?? null;
     const costCredit = videoRenderCredit(plannedProvider, sceneCount);
 
-    // Đổi trạng thái sang RENDERING
+    // Đổi trạng thái sang RENDERING; đưa vào hàng đợi lỗi (hết credit…) thì trả về bước cũ — trước đây video
+    // kẹt RENDERING mà không có job nào (audit hành trình V1, gói UJ-03).
+    const previousStage = job.stage as VideoStage;
     await this.repo.updateStage(ctx, jobId, "RENDERING");
 
     // Đưa vào hàng đợi generation_jobs (LISTEN / NOTIFY worker)
@@ -132,6 +135,9 @@ export class DispatchVideoRenderUseCase {
           motionEffect: s.motion_effect ?? undefined,
         })),
       },
+    }).catch(async (error: unknown) => {
+      await this.repo.updateStage(ctx, jobId, previousStage);
+      throw error;
     });
 
     const updatedJob = await this.repo.findById(ctx, jobId);

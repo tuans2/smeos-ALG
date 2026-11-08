@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import {
@@ -7,13 +5,7 @@ import {
   toTenantContext,
 } from "@/modules/integration/use-cases/resolve-integration-context"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
-
-const postSchema = z.object({
-  feature: z.string().min(1),
-  payload: z.unknown(),
-  product_id: z.string().min(1).nullable().optional(),
-  idempotency_key: z.string().min(1),
-})
+import { createJobBody } from "@/modules/integration/contracts/http-requests"
 
 /**
  * `POST /integration/jobs` (đặc tả 06 mục 11): "Tạo job thay mặt tổ chức".
@@ -29,7 +21,7 @@ export const POST = handle(async (request) => {
   const ic = await requireIntegrationContext(request)
   const ctx = await toTenantContext(ic)
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = createJobBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await enqueueJob(ctx, {

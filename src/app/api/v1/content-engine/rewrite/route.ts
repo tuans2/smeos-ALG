@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
+import { enforceRateLimit } from "@/core/http/rate-limit"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { callCapability, type AdapterOutcome } from "@/core/ai/gateway"
@@ -8,6 +9,7 @@ import { createContentLLM } from "@/core/ai/adapters/multi-llm-provider"
 import type { AiModelCandidate } from "@/core/ai/domain/routing"
 import { getBrandProfile } from "@/modules/profiles/use-cases/get-brand-profile"
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
+import { holdRewriteCredit, requireRewriteCapability } from "@/modules/content-engine/use-cases/rewrite-credit"
 
 const requestSchema = z.object({
   text: z.string().trim().min(1, "Nội dung cần viết lại không được rỗng").max(500),
@@ -32,10 +34,17 @@ const FIELD_GUIDES: Record<string, string> = {
 
 export interface RewriteResultOutput {
   suggestions: string[]
+  /** Gợi ý dựng sẵn (AI trả về không đọc được) — không tính credit. */
+  fallback?: boolean
 }
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  // PO 07/11/2026 (audit API-02, nợ #170): một trong F2/L2/L3; 1 lượt AI trả gợi ý = giá `content.rewrite`.
+  // Trần tần suất vẫn giữ — kiểm trước khi đọc thân/gọi AI.
+  requireRewriteCapability(ctx)
+  await enforceRateLimit(request, { scope: "content-rewrite-user", limit: 30, windowMs: 10 * 60_000, subject: ctx.userId })
+  await enforceRateLimit(request, { scope: "content-rewrite-org", limit: 200, windowMs: 60 * 60_000, subject: ctx.organizationId })
 
   const body = await request.json().catch(() => null)
   const parsed = requestSchema.safeParse(body)
@@ -110,28 +119,41 @@ Chỉ trả về JSON thuần túy, không kèm giải thích ngoài lề.`
             `Tặng kèm ${text.toLowerCase()} thiết kế độc quyền`,
             `${text} — Cam kết chất lượng dịch vụ uy tín`,
           ],
+          fallback: true,
         },
         scores: { factual: 0.8, brand: 0.8 },
       }
     }
   }
 
-  const result = await callCapability<RewriteResultOutput>(
-    {
-      capability: "content_generation",
-      privacy: "SHOP",
-      source: "CORE",
-      jobId: null,
-    },
-    adapter,
-    deps
-  )
+  // Giữ credit trước khi gọi AI; không có gợi ý từ AI (lỗi, rơi về gợi ý dựng sẵn) → hoàn lại
+  const credit = await holdRewriteCredit(ctx)
+  let result: Awaited<ReturnType<typeof callCapability<RewriteResultOutput>>>
+  try {
+    result = await callCapability<RewriteResultOutput>(
+      {
+        capability: "content_generation",
+        privacy: "SHOP",
+        source: "CORE",
+        jobId: null,
+      },
+      adapter,
+      deps
+    )
+  } catch (error) {
+    await credit.release()
+    throw error
+  }
 
-  if (result.kind === "xong") {
+  if (result.kind === "xong" && !result.output.fallback) {
     return jsonResponse({
       success: true,
       suggestions: result.output.suggestions,
     })
+  }
+  await credit.release()
+  if (result.kind === "xong") {
+    return jsonResponse({ success: true, suggestions: result.output.suggestions, fallback: true })
   }
 
   // Nếu AI Gateway tạm thời không chạy được (ví dụ offline mock hoặc hết quota)

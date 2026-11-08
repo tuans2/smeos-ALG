@@ -7,6 +7,7 @@ import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcon
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
+import { syncSubcontractShares } from "../helpers/subcontract-shares"
 
 const CODE = "DH261022-0001"
 
@@ -36,6 +37,7 @@ async function seed(t: Tenant, invited: string[], branchCodes: string[]) {
       },
     },
   })
+  await syncSubcontractShares(t.organizationId, order.id)
   return { ids, orderId: order.id }
 }
 
@@ -79,10 +81,10 @@ describe("chi nhánh bấm nhận Thẻ Gia Công", () => {
     expect(state?.claimedBranchId).toBe(winner)
   })
 
-  it("chi nhánh không có trong lời mời vòng hiện tại: 422, đơn vẫn mở", async () => {
+  it("chi nhánh không có trong lời mời vòng hiện tại: 404 (không có quyền xem đơn, P-4), đơn vẫn mở", async () => {
     const { ids, orderId } = await seed(t, ["0"], ["CN-1", "CN-2"])
     const res = await claim(t, ids[1]!)
-    expect(res.status).toBe(422)
+    expect(res.status).toBe(404)
     expect((await dispatchState(orderId))?.dispatchStatus).toBe("OPEN")
   })
 

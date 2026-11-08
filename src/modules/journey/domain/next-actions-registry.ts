@@ -131,7 +131,7 @@ export const NEXT_ACTIONS_REGISTRY: Record<string, RegisteredNextAction[]> = {
       id: "view-marketing-campaign",
       label: "Theo dõi chiến dịch tiếp thị",
       description: "Xem bộ ấn phẩm và nội dung đã phát hành",
-      targetHref: "/marketing",
+      targetHref: "/quang-ba/chien-dich",
     },
     {
       id: "track-sales-overview",

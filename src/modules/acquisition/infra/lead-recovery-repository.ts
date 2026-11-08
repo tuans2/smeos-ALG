@@ -11,6 +11,8 @@ import {
   type CancelledOrderCandidate,
   type RecoveryLeadRow,
 } from "../domain/lead-recovery"
+import { phoneIn } from "@/core/security/pii-lookup"
+import { normalizePhoneForHash } from "@/core/security/pii-cipher"
 
 export class LeadRecoveryRepository {
   /** Đơn có sự kiện huỷ (`order_events` trục order → CANCELLED) với một trong các lý do cho trước, từ `since`. */
@@ -38,14 +40,16 @@ export class LeadRecoveryRepository {
     })
     const recoveredKeys = new Set(recovered.map((l) => `${l.organization_id}:${l.source_ref}`))
 
-    const phones = orders.map((o) => o.customer?.phone).filter((p): p is string => Boolean(p))
-    const open = phones.length
+    // P-5b: SĐT tra theo `phone_hash` của từng tổ chức; so khớp theo số đã chuẩn hoá
+    const phonesByOrg = new Map<string, string[]>()
+    for (const o of orders) if (o.customer?.phone) phonesByOrg.set(o.organization_id, [...(phonesByOrg.get(o.organization_id) ?? []), o.customer.phone])
+    const open = phonesByOrg.size
       ? await prisma.leads.findMany({
-          where: { phone: { in: phones }, status: { in: [...OPEN_LEAD_STATUSES] } },
+          where: { status: { in: [...OPEN_LEAD_STATUSES] }, OR: [...phonesByOrg].map(([org, phones]) => ({ organization_id: org, ...phoneIn(org, phones) })) },
           select: { organization_id: true, phone: true },
         })
       : []
-    const openKeys = new Set(open.map((l) => `${l.organization_id}:${l.phone}`))
+    const openKeys = new Set(open.map((l) => `${l.organization_id}:${normalizePhoneForHash(l.phone)}`))
 
     return orders.map((o) => ({
       organizationId: o.organization_id,
@@ -58,7 +62,7 @@ export class LeadRecoveryRepository {
       saleId: o.owner_sale_id ?? o.greeting_sessions[0]?.sale_id ?? null,
       orderCreatedAt: o.created_at,
       hasRecoveryLead: recoveredKeys.has(`${o.organization_id}:${o.id}`),
-      hasOpenLeadForPhone: o.customer?.phone ? openKeys.has(`${o.organization_id}:${o.customer.phone}`) : false,
+      hasOpenLeadForPhone: o.customer?.phone ? openKeys.has(`${o.organization_id}:${normalizePhoneForHash(o.customer.phone)}`) : false,
     }))
   }
 

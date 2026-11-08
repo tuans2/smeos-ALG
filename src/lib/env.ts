@@ -35,6 +35,10 @@ const schema = z.object({
   // cùng lý do đã ghi ở INTEGRATION_TOKEN_SECRET — ba khoá, ba vòng đời xoay
   // độc lập.
   SSO_SESSION_SECRET: z.string().min(16),
+  // ADR-014 P-5: khoá chủ mã hoá cột dữ liệu cá nhân (32 byte base64). Từ P-5c bắt buộc ở production — thiếu thì lệnh
+  // ghi/đọc dữ liệu cá nhân báo `PiiKeyRequiredError` (không chặn khởi động: build/E2E CI không chạm dữ liệu cá nhân);
+  // ngoài production dẫn xuất khoá thử từ SESSION_SECRET. Đọc ở `src/core/security/pii-cipher.ts`.
+  PII_ENCRYPTION_KEY: z.string().optional(),
   // Khoá ký URL kho tệp (`/api/v1/storage/...`, SDAGF D-07). Tách khỏi
   // SESSION_SECRET để xoay độc lập; thiếu thì lùi về SESSION_SECRET.
   STORAGE_SIGNING_SECRET: z.string().min(16).optional(),

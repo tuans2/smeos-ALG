@@ -178,6 +178,10 @@ model organizations {
   idempotency_keys                                 idempotency_keys[]
   usage                                            usage[]
   audit_logs                                       audit_logs[]
+  platform_access_logs                             platform_access_logs[]
+  order_recipients                                 order_recipients[]
+  shared_order_access                              shared_order_access[]
+  tenant_data_keys                                 tenant_data_keys[]
   business_profile                                 business_profiles?
   brand_profile                                    brand_profiles?
   products                                         products[]
@@ -451,14 +455,14 @@ model capability_overrides {
 }
 
 model memberships {
-  id                String            @id @default(uuid())
-  organization_id   String
-  user_id           String
-  role_id           String
-  branch_id         String? // null = phạm vi toàn tổ chức
-  status            membership_status @default(INVITED)
-  invited_at        DateTime          @default(now()) @db.Timestamptz(3)
-  joined_at         DateTime?         @db.Timestamptz(3)
+  id              String            @id @default(uuid())
+  organization_id String
+  user_id         String
+  role_id         String
+  branch_id       String? // null = phạm vi toàn tổ chức
+  status          membership_status @default(INVITED)
+  invited_at      DateTime          @default(now()) @db.Timestamptz(3)
+  joined_at       DateTime?         @db.Timestamptz(3)
 
   updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   user         users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -1947,10 +1951,9 @@ model orders {
   /// trong migration.
   paid_vnd         Decimal @default(0) @db.Decimal(14, 2)
   /// Còn phải thu = total_vnd − paid_vnd. Máy chủ ghi, không ai sửa tay.
-  /// KHÔNG có ràng buộc CHECK ở tầng Prisma (xem migration.sql của
-  /// `..._coordinator_p1_p2_payments` — CHECK viết tay ở SQL thô, `prisma db
-  /// push` không đẩy được ràng buộc CHECK, chỉ `migrate deploy` mới đẩy).
-  /// Đơn cũ: gán = total_vnd trong migration (chưa thu gì).
+  /// CHECK `orders_money_check` (paid_vnd ≥ 0 và balance_vnd = total_vnd − paid_vnd) viết tay trong migration
+  /// `20261108000000_orders_money_integrity` (audit BL-05, PO duyệt 07/11/2026). Prisma không mô tả CHECK:
+  /// `prisma db push` (CSDL `_test`) không tạo nó, chỉ `migrate deploy` mới tạo.
   balance_vnd      Decimal @db.Decimal(14, 2)
   pricing_rule_ref Json? // quy tắc giá đã dùng, để đối soát
   voucher_id       String?
@@ -1962,24 +1965,19 @@ model orders {
 
   /// Hoá đơn VAT (PO 15/10/2026). Bật VAT → total_vnd = giá trước thuế + vat_amount_vnd.
   /// Máy chủ tính, không ai sửa tay. vat_rate chỉ 8 hoặc 10 (%).
-  vat_enabled         Boolean @default(false)
-  vat_rate            Int     @default(10)
-  vat_amount_vnd      Decimal @default(0) @db.Decimal(14, 2)
-  /// @pii tax
-  vat_company_name    String?
-  /// @pii tax
-  vat_tax_code        String?
-  /// @pii tax
-  vat_company_address String?
-  /// @pii tax
-  vat_email           String?
+  vat_enabled    Boolean @default(false)
+  vat_rate       Int     @default(10)
+  vat_amount_vnd Decimal @default(0) @db.Decimal(14, 2)
+  // Bên mua hoá đơn (tên công ty, MST, địa chỉ, email) ở `order_recipients` (ADR-014 P-3c, 07/11/2026).
 
   created_by String
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization      organizations           @relation(fields: [organization_id], references: [id])
-  customer          customers?              @relation(fields: [customer_id], references: [id])
+  /// Khoá ghép tenant: khách phải cùng tổ chức với đơn (audit BL-13, PO duyệt 07/11/2026). NoAction thay cho
+  /// SetNull cũ vì SetNull trên khoá ghép sẽ xoá cả organization_id — xoá khách thì repository gỡ khách khỏi đơn trước.
+  customer          customers?              @relation(fields: [customer_id, organization_id], references: [id, organization_id], onDelete: NoAction)
   items             order_items[]
   assignments       order_assignments[]
   events            order_events[]
@@ -1989,9 +1987,13 @@ model orders {
   payments          order_payments[]
   info_requests     order_info_requests[]
   change_requests   order_change_requests[]
+  recipient         order_recipients?
+  shared_access     shared_order_access[]
   bookings          product_bookings[]
   source            String?                 @default("MANUAL") // mã ở src/modules/orders/domain/order-source.ts
   source_session_id String? // greeting_sessions.id
+  /// `Idempotency-Key` của `POST /api/v1/orders` (audit API-11, PO 07/11/2026): bấm đúp / gửi lại cùng khoá → trả đơn cũ.
+  idempotency_key   String?
   greeting_sessions greeting_sessions[]
 
   /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —
@@ -2023,6 +2025,7 @@ model orders {
   greeting_notifications_by_order_id      greeting_notifications[]      @relation("fk_greeting_notifications_order_id")
 
   @@unique([organization_id, code])
+  @@unique([organization_id, idempotency_key]) // NULL không đụng nhau — đơn không gửi khoá không bị chặn
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, status])
   @@index([organization_id, production_status])
@@ -2034,6 +2037,109 @@ model orders {
   @@index([lead_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([source_session_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([voucher_id]) // khoá ngoại cần index (ADR-015 O-1)
+}
+
+/// ADR-014 D-P2, bước P-3a (PO duyệt 07/11/2026): người nhận và bên mua hoá đơn VAT của một đơn — nơi lưu dữ liệu cá
+/// nhân của đơn (mã hoá ở P-5, xoá theo yêu cầu ở P-7). Giai đoạn ghi kép: `orders.delivery_address` (JSON) và các cột
+/// `orders.vat_*` vẫn ghi và vẫn được đọc; đọc chuyển sang bảng này ở P-3b, bỏ nơi cũ ở P-3c. Ghi qua
+/// `upsertOrderRecipient` (`src/modules/orders/infra/order-recipient-repository.ts`).
+model order_recipients {
+  organization_id         String
+  order_id                String   @id // một dòng mỗi đơn
+  /// @pii identity
+  recipient_name          String?
+  /// @pii contact
+  recipient_phone         String?
+  /// ADR-014 P-5a: bản sao bản mã của `recipient_phone` (từ P-5c chính `recipient_phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii contact
+  recipient_phone_enc     String?
+  /// Dòng địa chỉ giao đầy đủ (như `formatDeliveryAddress`, null = chưa có / "Theo thỏa thuận").
+  /// @pii address
+  address_line            String?
+  /// ADR-014 P-5a: bản sao bản mã của `address_line` (từ P-5c chính `address_line` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii address
+  address_line_enc        String?
+  /// 5 ô địa chỉ (`AddressParts`) hoặc phường/quận/tỉnh của đơn nhập phẳng.
+  /// @pii address
+  address_parts           Json?
+  /// ADR-014 P-5a: bản sao bản mã của `address_parts` (từ P-5c chính `address_parts` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii address
+  address_parts_enc       String?
+  /// @pii tax
+  vat_company_name        String?
+  /// ADR-014 P-5a: bản sao bản mã của `vat_company_name` (từ P-5c chính `vat_company_name` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii tax
+  vat_company_name_enc    String?
+  /// @pii tax
+  vat_tax_code            String?
+  /// ADR-014 P-5a: bản sao bản mã của `vat_tax_code` (từ P-5c chính `vat_tax_code` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii tax
+  vat_tax_code_enc        String?
+  /// @pii tax
+  vat_company_address     String?
+  /// ADR-014 P-5a: bản sao bản mã của `vat_company_address` (từ P-5c chính `vat_company_address` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii tax
+  vat_company_address_enc String?
+  /// @pii tax
+  vat_email               String?
+  /// ADR-014 P-5a: bản sao bản mã của `vat_email` (từ P-5c chính `vat_email` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii tax
+  vat_email_enc           String?
+  created_at              DateTime @default(now()) @db.Timestamptz(3)
+  updated_at              DateTime @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, organization_id])
+  @@index([organization_id])
+}
+
+/// ADR-014 D-P6, bước P-4 (PO duyệt 07/11/2026): quyền xem một đơn của bên nhận gia công — thay cho quyền ngầm của link
+/// ký (hạn cố định, không thu hồi được). Một dòng mỗi (đơn, chi nhánh); đồng bộ theo phiên điều phối gia công trong
+/// `SubcontractOrderRepository.updateSubcontractState`: được mời → `INVITED`, đang giữ/chốt đơn → `ASSIGNED`, còn lại
+/// → thu hồi (`revoked_at`). `INVITED` hết khi đơn đóng; `ASSIGNED` hết 7 ngày sau khi đơn hoàn tất/huỷ (giao xong).
+/// Thẻ Gia Công kiểm ở `loadSubcontractOrderForBranch`: không có quyền còn hiệu lực → 404.
+model shared_order_access {
+  id              String                    @id @default(uuid())
+  /// Tổ chức chủ đơn
+  organization_id String
+  order_id        String
+  /// Chi nhánh nhận gia công: `branches.id` hoặc mã điều phối, đúng như trong phiên điều phối và link ký
+  branch_key      String
+  level           shared_order_access_level
+  granted_at      DateTime                  @default(now()) @db.Timestamptz(3)
+  revoked_at      DateTime?                 @db.Timestamptz(3)
+  updated_at      DateTime                  @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, branch_key])
+  @@index([organization_id, branch_key])
+}
+
+/// ADR-014 D-P3, bước P-5a (PO duyệt 07/11/2026): khoá dữ liệu mã hoá cột cá nhân của một tổ chức, đã bọc bằng khoá chủ
+/// `PII_ENCRYPTION_KEY` (biến môi trường, không ở CSDL). Xoá khoá của tổ chức = dữ liệu cá nhân của tổ chức không giải
+/// được nữa. `version` ghi trong từng bản mã để xoay khoá theo lô.
+model tenant_data_keys {
+  id              String    @id @default(uuid())
+  organization_id String
+  version         Int
+  /// Khoá 32 byte bọc AES-256-GCM bằng khoá chủ (`v1.<iv>.<tag>.<ct>`)
+  wrapped_key     String
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  retired_at      DateTime? @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, version])
+  @@index([organization_id])
+}
+
+enum shared_order_access_level {
+  INVITED
+  ASSIGNED
 }
 
 model order_items {
@@ -2099,6 +2205,11 @@ model order_events {
 
 // ── M09 — CRM & Khách hàng ngành hoa (P21) ──────────────────────────────────
 
+enum customer_status {
+  ACTIVE
+  PROSPECT
+}
+
 enum customer_tier {
   NEW
   BRONZE
@@ -2120,26 +2231,49 @@ enum voucher_discount_type {
 }
 
 model customers {
-  id                String        @id @default(uuid())
+  id                String          @id @default(uuid())
   organization_id   String
   code              String // KH-0001, KH-0002
   /// @pii identity
   name              String
+  /// ADR-014 P-5c: bản mã AES-256-GCM (`pii1.…`, khoá dữ liệu của tổ chức) — client Prisma tự mã hoá/giải mã
+  /// (`src/core/security/infra/pii-*.ts`); tra số qua `phone_hash` (`pii-lookup.ts`)
   /// @pii contact
   phone             String
+  /// ADR-014 P-5a: bản sao bản mã của `phone` (từ P-5c chính `phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii contact
+  phone_enc         String?
+  /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
+  /// @pii contact
+  phone_hash        String?
+  /// P-5a: 4 số cuối dạng rõ — ô tìm kiếm (PO D-49)
+  /// @pii contact
+  phone_last4       String?
   /// @pii contact
   email             String?
+  /// ADR-014 P-5a: bản sao bản mã của `email` (từ P-5c chính `email` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii contact
+  email_enc         String?
   /// @pii address
   address           String?
-  tier              customer_tier @default(NEW)
+  /// ADR-014 P-5a: bản sao bản mã của `address` (từ P-5c chính `address` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii address
+  address_enc       String?
+  tier              customer_tier   @default(NEW)
+  /// ADR-014 D-P2, P-2 (PO 07/11/2026): PROSPECT = người nhận link Thẻ chào có SĐT mà chưa đặt đơn — không hiện ở
+  /// danh sách khách, xuất, phân khúc; đặt đơn, để lại lead hay được tạo tay thì thành ACTIVE.
+  status            customer_status @default(ACTIVE)
   /// Chi nhánh của khách (D-58, ADR-012 T-5): chi nhánh của người tạo hoặc của đơn đầu tiên có chi nhánh; null = khách
   /// dùng chung toàn tổ chức. Tổ chức bật `settings.branch_scope.wave1` thì nhân viên chi nhánh chỉ thấy khách của
   /// chi nhánh mình và khách dùng chung.
   branch_id         String?
   notes             String?
-  tags              String[]      @default([])
-  preferred_flowers String[]      @default([])
-  preferred_colors  String[]      @default([])
+  /// ADR-014 P-5a: bản sao bản mã của `notes` (từ P-5c chính `notes` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii free_text
+  notes_enc         String?
+  tags              String[]        @default([])
+  preferred_flowers String[]        @default([])
+  preferred_colors  String[]        @default([])
 
   total_spent   Decimal   @default(0) @db.Decimal(14, 2)
   order_count   Int       @default(0)
@@ -2148,27 +2282,30 @@ model customers {
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
-  organization  organizations           @relation(fields: [organization_id], references: [id])
-  fk_branch     branches?               @relation("fk_customers_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
-  orders        orders[]
-  occasions     customer_occasions[]
-  consents      customer_consents[]
-  vouchers      vouchers[]
-  conversations chat_conversations[]
-  leads         leads[]
-  quotations    quotations[]
-  interactions  customer_interactions[]
+  organization      organizations           @relation(fields: [organization_id], references: [id])
+  fk_branch         branches?               @relation("fk_customers_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
+  orders            orders[]
+  occasions         customer_occasions[]
+  consents          customer_consents[]
+  vouchers          vouchers[]
+  conversations     chat_conversations[]
+  leads             leads[]
+  quotations        quotations[]
+  interactions      customer_interactions[]
+  greeting_sessions greeting_sessions[]
 
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
   voucher_redemptions_by_customer_id voucher_redemptions[] @relation("fk_voucher_redemptions_customer_id")
 
-  @@unique([organization_id, phone])
+  @@unique([organization_id, phone_hash]) // P-5c: một khách mỗi số (mọi cách viết) trong tổ chức
   @@unique([organization_id, code])
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, tier])
   @@index([organization_id, name])
+  @@index([organization_id, status])
   @@index([organization_id, branch_id])
   @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([organization_id, phone_last4])
 }
 
 model customer_occasions {
@@ -2498,6 +2635,26 @@ model platform_secrets {
 /// credit, duyệt nâng cấp) vẫn ghi vào `audit_logs` hiện có với
 /// `organization_id` của tổ chức đó — bảng này không thay thế `audit_logs`.
 /// Tách riêng vì `audit_logs.organization_id` là `NOT NULL` (D-N3).
+/// Nhân viên nền tảng truy cập dữ liệu của một tổ chức (ADR-013 D-I5, D-60): mỗi yêu cầu Console vào
+/// `platform/organizations/:id/*` hoặc `platform/orgs-data/:orgId/*` ghi một dòng, TRƯỚC khi trả dữ liệu. Thuộc tổ chức:
+/// chủ tổ chức xem ở `/audit` (tab "Truy cập của nền tảng", quyền G9). Chỉ thêm dòng (trigger `smeos_append_only_guard`).
+model platform_access_logs {
+  id              String   @id @default(uuid())
+  organization_id String
+  /// `users.id` của người vận hành nền tảng
+  operator_id     String
+  /// Mã mục đích suy từ thao tác (`describePlatformAccess`), vd. `org.profile.read`, `org.records.orders.export`
+  purpose         String
+  method          String
+  /// Đường dẫn API (không kèm query)
+  route           String
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id, created_at])
+}
+
 model platform_audit_logs {
   id          String   @id @default(uuid())
   user_id     String
@@ -3249,6 +3406,9 @@ model order_coordinations {
   shipper_name          String?
   /// @pii contact
   shipper_phone         String?
+  /// ADR-014 P-5a: bản sao bản mã của `shipper_phone` (từ P-5c chính `shipper_phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii contact
+  shipper_phone_enc     String?
   carrier               String?
   /// PICKED_UP · ON_THE_WAY · DELIVERED_SUCCESS · DELIVERY_FAILED (F12).
   delivery_state        String?
@@ -3263,6 +3423,13 @@ model order_coordinations {
   closed_at             DateTime?               @db.Timestamptz(3)
   cancelled_reason      String?
   metadata              Json?
+  /// ADR-014 P-5c (PO 07/11/2026): SĐT khách lẻ của đơn điều phối, bản mã — trước ở `metadata.customerPhone`. Client
+  /// Prisma tách khoá này khi ghi `metadata` và gộp lại khi đọc (`PII_JSON_KEYS`, `src/core/security/pii-fields.ts`)
+  /// @pii contact
+  customer_phone        String?
+  /// P-5c: HMAC-SHA256 của `customer_phone` đã chuẩn hoá — tìm đơn của khách theo số
+  /// @pii contact
+  customer_phone_hash   String?
   /// ĐP-3 — giá trị trường tự tạo (Console Vận hành > Trường dữ liệu), theo
   /// định nghĩa đang ACTIVE trong `field_definitions` (entity = ORDER).
   custom_fields         Json?
@@ -3333,6 +3500,7 @@ model order_coordinations {
   @@unique([order_id, organization_id]) // khoá ghép 1-1 về orders (05/11/2026)
   @@index([organization_id, stage])
   @@index([organization_id, risk_level])
+  @@index([organization_id, customer_phone_hash])
   @@index([partner_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
@@ -3597,6 +3765,18 @@ model greeting_sessions {
   customer_name                  String?
   /// @pii contact
   customer_phone                 String?
+  /// ADR-014 P-5a: bản sao bản mã của `customer_phone` (từ P-5c chính `customer_phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii contact
+  customer_phone_enc             String?
+  /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
+  /// @pii contact
+  customer_phone_hash            String?
+  /// P-5a: 4 số cuối dạng rõ — ô tìm kiếm (PO D-49)
+  /// @pii contact
+  customer_phone_last4           String?
+  /// ADR-014 D-P2, P-2: hồ sơ khách cùng tổ chức (khách của đơn, hoặc khách PROSPECT theo SĐT trên link). Giai đoạn ghi
+  /// kép: `customer_name`/`customer_phone` vẫn ghi; link chỉ có tên (không SĐT) thì để trống.
+  customer_id                    String?
   status                         String    @default("CREATED") // CREATED | OPENED | BROWSING | SELECTED | ORDER_SUBMITTED | PAYMENT_REPORTED | COMPLETED
   selected_product_id            String?
   product_snapshot               Json? // Đóng băng ảnh, tên, giá mẫu hoa lúc khách chốt
@@ -3618,6 +3798,7 @@ model greeting_sessions {
   organization organizations             @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   catalog      greeting_catalogs         @relation(fields: [catalog_id], references: [id], onDelete: Cascade)
   order        orders?                   @relation(fields: [order_id], references: [id], onDelete: SetNull)
+  customer     customers?                @relation(fields: [customer_id], references: [id], onDelete: SetNull)
   events       greeting_journey_events[]
 
   // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
@@ -3634,6 +3815,8 @@ model greeting_sessions {
   @@index([catalog_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([selected_product_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([organization_id, customer_phone_hash])
 }
 
 /// Tích hợp ngoài của Thẻ chào theo tiệm: webhook đối soát ngân hàng + kênh
@@ -4313,7 +4496,19 @@ model leads {
   name               String
   /// @pii contact
   phone              String
+  /// ADR-014 P-5a: bản sao bản mã của `phone` (từ P-5c chính `phone` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii contact
+  phone_enc          String?
+  /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
+  /// @pii contact
+  phone_hash         String?
+  /// P-5a: 4 số cuối dạng rõ — ô tìm kiếm (PO D-49)
+  /// @pii contact
+  phone_last4        String?
   message            String?
+  /// ADR-014 P-5a: bản sao bản mã của `message` (từ P-5c chính `message` chứa bản mã) — cho quay lại bản trước; bỏ ở P-5d
+  /// @pii free_text
+  message_enc        String?
   source             String // CATALOG_LINK | SHORT_LINK | LANDING | CHAT | MANUAL
   source_ref         String? // slug catalog hoặc mã link
   short_link_id      String?
@@ -4345,7 +4540,7 @@ model leads {
 
   @@index([organization_id])
   @@index([organization_id, status, created_at])
-  @@index([organization_id, phone, created_at])
+  @@index([organization_id, phone_hash, created_at]) // P-5c: `phone` là bản mã — đếm/tra theo băm
   @@index([organization_id, next_follow_up_at])
   @@index([organization_id, converted_order_id])
   @@index([converted_order_id]) // khoá ngoại cần index (ADR-015 O-1)
@@ -4859,18 +5054,18 @@ enum custom_domain_certificate_status {
 }
 
 model custom_domains {
-  id                 String                          @id @default(uuid())
+  id                 String                           @id @default(uuid())
   organization_id    String
-  hostname           String                          @unique
+  hostname           String                           @unique
   verification_token String
-  status             custom_domain_status            @default(PENDING)
-  verified_at        DateTime?                       @db.Timestamptz(3)
-  last_checked_at    DateTime?                       @db.Timestamptz(3)
+  status             custom_domain_status             @default(PENDING)
+  verified_at        DateTime?                        @db.Timestamptz(3)
+  last_checked_at    DateTime?                        @db.Timestamptz(3)
   certificate_status custom_domain_certificate_status @default(NOT_REQUESTED)
   locked_reason      String?
   created_by         String?
-  created_at         DateTime                        @default(now()) @db.Timestamptz(3)
-  updated_at         DateTime                        @default(now()) @updatedAt @db.Timestamptz(3)
+  created_at         DateTime                         @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime                         @default(now()) @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 

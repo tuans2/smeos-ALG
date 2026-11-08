@@ -13,6 +13,15 @@
  */
 export type JobStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED" | "CANCELLED"
 
+/** Nhãn tiếng Việt của trạng thái job — cho thông điệp lỗi, không lộ mã trạng thái (audit hành trình O6, UJ-07). */
+export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
+  PENDING: "Đang chờ chạy",
+  PROCESSING: "Đang chạy",
+  COMPLETED: "Đã xong",
+  FAILED: "Bị lỗi",
+  CANCELLED: "Đã huỷ",
+}
+
 const TERMINAL: ReadonlySet<JobStatus> = new Set(["COMPLETED", "FAILED", "CANCELLED"])
 
 export function isTerminalStatus(status: JobStatus): boolean {

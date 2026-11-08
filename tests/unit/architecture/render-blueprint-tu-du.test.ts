@@ -106,6 +106,11 @@ describe("render.yaml — không còn biến bắt buộc phải điền tay", (
     expect(web.body).toMatch(/- key: NEXT_PUBLIC_APP_ENV\n\s+value: production/)
   })
 
+  it("`next build` của web có heap 4 GB (build cần hơn 2 GB; máy build Starter 8 GB RAM)", () => {
+    const build = /\n\s+buildCommand: (.+)/.exec(web.body)?.[1] ?? ""
+    expect(build).toMatch(/NODE_OPTIONS=--max-old-space-size=4096 npm run build$/)
+  })
+
   it("khai PORT khớp `next start -p` để health check gọi đúng cổng", () => {
     const start = /"start": "next start -p (\d+)"/.exec(
       readFileSync(path.join(ROOT, "package.json"), "utf8")

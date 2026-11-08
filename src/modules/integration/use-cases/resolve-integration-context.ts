@@ -1,7 +1,9 @@
 import { AppError, unauthenticated } from "@/core/http/errors"
+import { enforceRateLimit } from "@/core/http/rate-limit"
 import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
 import type { TenantContext } from "@/core/tenancy"
 import { withoutBoundaryCapabilities } from "@/modules/integration/domain/boundary-capabilities"
+import { INTEGRATION_RATE_LIMIT } from "@/modules/integration/domain/integration-rate-limit"
 import {
   readIntegrationCredential,
   SSO_HEADER,
@@ -56,7 +58,16 @@ export async function requireIntegrationContext(
   // Tra khoá tích hợp chưa biết tổ chức → quyền hệ thống; xong thì gắn tổ chức của khoá (RLS, checklist ALG 1.18)
   const resolved = await asSystemDb("integration-auth", () => resolveIntegration(request, tokenRepo))
   bindTenantDb(resolved.organizationId)
+  await enforceRateLimit(request, integrationRateLimit(resolved))
   return resolved
+}
+
+/** Trần chung của mọi route `/integration/*` — xem `domain/integration-rate-limit.ts`. */
+export { INTEGRATION_RATE_LIMIT }
+
+function integrationRateLimit(ic: IntegrationContext) {
+  const subject = ic.source === "token" ? `token:${ic.tokenId}` : `sso:${ic.organizationId}:${ic.userId}`
+  return { scope: "integration-api", ...INTEGRATION_RATE_LIMIT, subject }
 }
 
 async function resolveIntegration(request: Request, tokenRepo: IIntegrationTokenRepository): Promise<IntegrationContext> {

@@ -267,17 +267,28 @@ export async function coordinatorAcceptBrochureOrder(
     isOverdueSla: minutesWaiting >= workflow.slaEscalationMinutes,
   })
   let paidNow = paid
+  let current = order
+  let autoAccepted = false
   if (paid <= 0 && total > 0 && hasProofOrReported && mayConfirmDeposit) {
-    paidNow = (await coordinatorConfirmDepositPayment(ctx, orderId, { note: input.note })).paidVnd
+    const deposit = await coordinatorConfirmDepositPayment(ctx, orderId, { note: input.note })
+    paidNow = deposit.paidVnd
+    autoAccepted = deposit.autoAccepted === true
+    // Ghi cọc đã đổi đơn (tiền, trạng thái, có thể cả xưởng) → đọc lại, khoá lạc quan của applyProgress mới khớp (lỗi 08/11/2026)
+    current = (await repo.findBrochureOrder(ctx, orderId)) ?? order
   }
   // Cùng chốt tiền như khi gán thợ: tiệm bắt thu trước khi cắm mà chưa thu → chưa được tiếp nhận
   const moneyBlocker = paymentGateBlocker("assign-florist", parsePaymentPolicy(shop.settings), { totalVnd: total, paidVnd: paidNow })
   if (moneyBlocker) throw conflict(`${moneyBlocker}. Chờ Điều hành xác nhận tiền cọc rồi tiếp nhận đơn.`)
 
   // Chuỗi (PO 22/10/2026): chỉ xác nhận đã nhận tiền rồi chọn cửa hàng; "đã nhận đơn" báo khi chi nhánh chốt làm
-  if (workflow.requireCoordinatorAcceptance) return confirmChainPaymentAndDispatch(ctx, order, input, repo)
-  const result = await repo.applyProgress(ctx, order, {
-    eventType: "COORDINATOR_ACCEPTED", productionStatus: "ASSIGNED", orderStatus: order.status === "DRAFT" ? "CONFIRMED" : order.status,
+  if (workflow.requireCoordinatorAcceptance) return confirmChainPaymentAndDispatch(ctx, current, input, repo)
+  // 1 cửa hàng: bước ghi cọc đã tự nhận đơn (ASSIGNED) và báo khách — không ghi/báo khách lần hai
+  if (autoAccepted) {
+    queueStaffNotification(ctx.organizationId, "ORDER_ACCEPTED", { orderId: order.id, orderCode: order.code, amountVnd: total, assignedSaleId: session?.sale_id ?? null })
+    return { orderId: order.id, orderCode: order.code }
+  }
+  const result = await repo.applyProgress(ctx, current, {
+    eventType: "COORDINATOR_ACCEPTED", productionStatus: "ASSIGNED", orderStatus: current.status === "DRAFT" ? "CONFIRMED" : current.status,
     noteAppend: `[Điều phối tiếp nhận] ${input.note?.trim() || "Xác nhận xưởng nhận đơn"}`,
   })
   queueOrderNotification(ctx.organizationId, order.id, "ORDER_ACCEPTED")

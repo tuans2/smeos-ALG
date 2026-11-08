@@ -14,6 +14,7 @@ const facts = (over: Partial<StageTransitionFacts> = {}): StageTransitionFacts =
   podCaptured: false,
   openExceptionCount: 0,
   resumeStage: null,
+  balanceVnd: 0,
   ...over,
 })
 
@@ -48,6 +49,13 @@ describe("checkStageTransition — luật chuyển bước máy chủ", () => {
   it("DELIVERED → COMPLETED bị chặn khi còn sự cố mở", () => {
     expect(checkStageTransition("DELIVERED", "COMPLETED", facts({ openExceptionCount: 1 })).ok).toBe(false)
     expect(checkStageTransition("DELIVERED", "COMPLETED", facts()).ok).toBe(true)
+  })
+
+  // Audit BL-02 (06/11/2026): luật "chỉ hoàn tất khi đã thu đủ" từng chỉ có ở `/close`, `/stage` bỏ qua.
+  it("DELIVERED → COMPLETED bị chặn khi còn phải thu, cùng lý do với checkClosure", () => {
+    const r = checkStageTransition("DELIVERED", "COMPLETED", facts({ balanceVnd: 1 }))
+    expect(r).toEqual({ ok: false, reason: expect.stringContaining("chỉ hoàn tất khi đã thu đủ") })
+    expect(checkStageTransition("DELIVERED", "COMPLETED", facts({ balanceVnd: 0 })).ok).toBe(true)
   })
 
   it("thoát EXCEPTION chỉ về đúng resume_stage và khi hết sự cố", () => {

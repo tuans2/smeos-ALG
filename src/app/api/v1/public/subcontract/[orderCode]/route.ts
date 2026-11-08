@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
@@ -20,12 +19,7 @@ import { craftFeePayable } from "@/modules/greeting-card/domain/craft-fee-policy
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
 import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
 import { suggestCraftFee } from "@/modules/greeting-card/use-cases/suggest-craft-fee"
-
-const actionSchema = z.object({
-  action: z.enum(["CLAIM", "CANCEL", "COMMIT", "DELETE_QC"]),
-  branchId: z.string().min(1),
-  photoUrl: z.string().optional(),
-})
+import { subcontractActionBody } from "@/app/api/v1/public/_contracts/requests"
 
 /**
  * GET /api/v1/public/subcontract/[orderCode]?branch=[branchId]
@@ -172,7 +166,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const { orderCode } = await context.params
 
   const body = await request.json().catch(() => ({}))
-  const parsed = actionSchema.safeParse(body)
+  const parsed = subcontractActionBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const { action, branchId } = parsed.data

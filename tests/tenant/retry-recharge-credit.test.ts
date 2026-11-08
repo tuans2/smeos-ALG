@@ -5,6 +5,7 @@ import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { retryJob } from "@/modules/jobs/use-cases/retry-job"
 import { MEDIA_VARIANT_CLOUD_FEATURE } from "@/modules/media/domain/variant-rules"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
+import { creditPeriod } from "@/modules/usage/domain/monthly-limit"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
@@ -85,5 +86,27 @@ describe("chạy lại job đã hoàn credit", () => {
     await expect(retryJob(ctx, jobId)).rejects.toMatchObject({ code: "QUOTA_EXCEEDED", status: 422 })
     expect((await prisma.generation_jobs.findUniqueOrThrow({ where: { id: jobId } })).status).toBe("FAILED")
     expect(await balance()).toBe(0)
+  })
+
+  // Audit BL-17 (06/11/2026): hoàn credit từng luôn trừ vào hạn mức kỳ HIỆN TẠI — job trừ tháng trước, hoàn
+  // tháng này thì tháng này bị nới sai, tháng trước vẫn đầy.
+  it("hoàn job trừ từ tháng trước → trả lại hạn mức của tháng trước, tháng này không đổi", async () => {
+    const ctx = await production(10)
+    const jobId = await taoJobLoi(ctx)
+    const gia = 10 - (await balance())
+    const now = new Date()
+    const lastMonth = new Date(now.getTime() - 35 * 86_400_000)
+    const [thisPeriod, lastPeriod] = [creditPeriod(now), creditPeriod(lastMonth)]
+    // Dời lượt trừ về tháng trước: dòng sổ `usage` và phần đã tính vào hạn mức.
+    await prisma.usage.updateMany({ where: { job_id: jobId, status: "ENQUEUED" }, data: { created_at: lastMonth } })
+    await prisma.usage_limits.updateMany({ where: { organization_id: a.organizationId, service: "CREDIT", period: thisPeriod }, data: { period: lastPeriod } })
+    await prisma.usage_limits.create({ data: { organization_id: a.organizationId, service: "CREDIT", period: thisPeriod, used: 3 } })
+
+    expect((await refundJob(ctx, jobId)).refunded).toBe(true)
+    const used = async (period: string) =>
+      (await prisma.usage_limits.findFirstOrThrow({ where: { organization_id: a.organizationId, service: "CREDIT", period } })).used
+    expect(await used(lastPeriod)).toBe(0)
+    expect(await used(thisPeriod)).toBe(3)
+    expect(gia).toBeGreaterThan(0)
   })
 })

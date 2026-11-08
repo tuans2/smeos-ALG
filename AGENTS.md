@@ -18,7 +18,7 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
 | Test web | `npm test` |
 | Test đầu cuối | `npm run test:e2e` — cần worker media đang chạy; máy không có khoá OpenAI: `python tests/e2e/gia-lap-openai.py &` rồi chạy worker với `OPENAI_BASE_URL=http://127.0.0.1:4010/v1 OPENAI_API_KEY=e2e` (nợ #157) |
 | Test worker | `cd workers && .venv/bin/python -m pytest tests -q` |
-| Typecheck | `npx tsc --noEmit` |
+| Typecheck | `npm run typecheck` — TypeScript 7 (bản Go, ~10 giây, không bị trần heap của Node; PO duyệt 07/11/2026). `npx tsc` là TypeScript 5.9 (ESLint, `next build` vẫn dùng bản này) |
 | Dựng CSDL cho test | `npm run db:test:setup` — **chạy một lần** sau `docker compose up -d` |
 | Test cách ly tenant | `npm run test:tenant` — *bắt buộc xanh trước mọi merge* |
 | Kiểm chuẩn UX Lint | `npm run lint:ux` (hoặc `npm run lint:ux -- --check` theo ratchet) |

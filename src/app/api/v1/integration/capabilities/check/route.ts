@@ -1,20 +1,14 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireIntegrationContext } from "@/modules/integration/use-cases/resolve-integration-context"
 import { checkCapabilities } from "@/modules/integration/use-cases/check-capabilities"
-
-const postSchema = z.object({
-  user_id: z.string().min(1),
-  capability_codes: z.array(z.string().min(1)).min(1),
-})
+import { checkCapabilitiesBody } from "@/modules/integration/contracts/http-requests"
 
 /** `POST /integration/capabilities/check` (đặc tả 06 mục 11): "Hỏi một người có năng lực gì". */
 export const POST = handle(async (request) => {
   const ic = await requireIntegrationContext(request)
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = checkCapabilitiesBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const granted = await checkCapabilities(ic, {

@@ -2,7 +2,7 @@ import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
-import { canRejectAnalysis } from "@/modules/products/domain/product-analysis-rules"
+import { APPROVAL_STATE_LABELS, canRejectAnalysis, type ApprovalState } from "@/modules/products/domain/product-analysis-rules"
 import { ProductAnalysisRepository, getProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
 
 import { getAnalysis, type AnalysisDetail } from "./get-analysis"
@@ -25,7 +25,7 @@ export async function rejectAnalysis(
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
   if (!canRejectAnalysis(current.approval_state)) {
-    throw conflict(`Đã ở trạng thái ${current.approval_state}, không từ chối được`)
+    throw conflict(`Bản phân tích đang ở trạng thái "${APPROVAL_STATE_LABELS[current.approval_state as ApprovalState]}", không từ chối được`)
   }
 
   await runInTransaction(async (tx) => {

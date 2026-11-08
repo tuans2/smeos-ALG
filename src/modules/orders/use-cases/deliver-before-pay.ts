@@ -46,6 +46,7 @@ export async function requestDeliverBeforePay(
     isUrgent: isUrgentOrder(deliveryWindowOf(order.delivery_window), now),
     customerCompletedOrders: stats.completedOrders,
     customerHasOverdueDebt: stats.hasOverdueDebt,
+    customerOpenDebtVnd: stats.openDebtVnd,
   })
   if (verdict.outcome === "QUOTE_FIRST") throw unprocessable("Đơn chưa có giá — báo giá trước")
   if (verdict.outcome === "ALREADY_PAID") throw unprocessable("Đơn đã thu đủ, không cần giao trước")
@@ -86,6 +87,7 @@ export async function decideDeliverBeforePay(
   requestId: string,
   input: { approve?: unknown; note?: unknown; collectDueAt?: unknown },
   repo: Repo = new ApprovalRequestRepository(),
+  now = new Date(),
 ) {
   if (typeof input.approve !== "boolean") throw validationFailed({ approve: "Chọn duyệt hoặc từ chối" })
   const note = typeof input.note === "string" && input.note.trim() ? input.note.trim().slice(0, REASON_MAX) : null
@@ -94,6 +96,8 @@ export async function decideDeliverBeforePay(
   if (input.collectDueAt !== undefined && input.collectDueAt !== null) {
     collectDueAt = typeof input.collectDueAt === "string" ? new Date(input.collectDueAt) : new Date(NaN)
     if (Number.isNaN(collectDueAt.getTime())) throw validationFailed({ collectDueAt: "Hạn thu không hợp lệ" })
+    // Hạn thu ở quá khứ làm đơn quá hạn ngay khi duyệt (audit BL-15)
+    if (collectDueAt.getTime() < now.getTime()) throw validationFailed({ collectDueAt: "Hạn thu phải từ bây giờ trở đi" })
   }
   const req = await repo.findRequest(ctx, requestId)
   if (!req || req.kind !== DELIVER_BEFORE_PAY || req.order.source === "BROCHURE") throw notFound()

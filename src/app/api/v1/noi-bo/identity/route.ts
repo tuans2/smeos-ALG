@@ -1,4 +1,3 @@
-import { log } from "@/core/observability/log"
 /**
  * GET /api/v1/noi-bo/identity
  *
@@ -8,39 +7,26 @@ import { log } from "@/core/observability/log"
  * - Danh sách chuỗi mà tổ chức này là thành viên (organization_links, cạnh chuỗi ACTIVE)
  * - Mã đối tác trong chuỗi (nếu có)
  * Mục đích: Hiển thị trên profile kết nối, dùng để mời/liên kết chuỗi.
+ *
+ * Lỗi đi qua `handle()` (audit API-04): trước đây `try/catch` bọc cả `requireTenantContext`, nên
+ * chưa đăng nhập / phiên bị thay trả 500 `IDENTITY_ERROR` thay vì 401, và lỗi máy chủ không tới
+ * error tracker. `handle()` vẫn không trả chi tiết/stack ra client.
  */
 
+import { notFound } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getOrganizationIdentity } from "@/modules/organization/infra/identity-query"
 
 export const GET = handle(async (request) => {
-  try {
-    const { ctx } = await requireTenantContext(request)
-    const identityData = await getOrganizationIdentity(ctx.organizationId)
+  const { ctx } = await requireTenantContext(request)
+  const identityData = await getOrganizationIdentity(ctx.organizationId)
+  if (!identityData) throw notFound()
 
-    if (!identityData) {
-      return jsonResponse({ success: false, error: "Organization not found" }, { status: 404 })
-    }
-
-    return jsonResponse({
-      success: true,
-      data: identityData,
-    })
-  } catch (error: unknown) {
-    log.error("noi-bo.identity_failed", { error: error instanceof Error ? error.message : String(error) })
-    return jsonResponse(
-      {
-        success: false,
-        error: {
-          code: "IDENTITY_ERROR",
-          // Không trả chi tiết/stack lỗi nội bộ ra client
-          message: "Không lấy được danh tính nội bộ",
-        },
-      },
-      { status: 500 }
-    )
-  }
+  return jsonResponse({
+    success: true,
+    data: identityData,
+  })
 })
 
 export const dynamic = "force-dynamic" as const

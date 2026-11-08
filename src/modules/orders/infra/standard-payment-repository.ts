@@ -59,13 +59,22 @@ export class StandardPaymentRepository {
     })
   }
 
-  /** Giao dịch ngân hàng bộ khớp Thẻ chào để lại "chưa khớp", từ `since`. */
-  async listUnmatched(since: Date, take: number) {
+  /**
+   * Giao dịch ngân hàng bộ khớp Thẻ chào để lại "chưa khớp", từ `since`, theo thứ tự `(created_at, id)`.
+   * `after` = dòng cuối của trang trước — dòng không khớp được vẫn "chưa khớp", nên không có con trỏ thì mỗi
+   * lượt quét lại đúng 100 dòng cũ nhất và giao dịch mới không bao giờ được xét (audit BL-09).
+   */
+  async listUnmatched(since: Date, take: number, after?: { createdAt: Date; id: string }) {
     return prisma.greeting_payment_events.findMany({
-      where: { status: "UNMATCHED", order_id: null, created_at: { gte: since } },
-      orderBy: { created_at: "asc" },
+      where: {
+        status: "UNMATCHED",
+        order_id: null,
+        created_at: { gte: since },
+        ...(after ? { OR: [{ created_at: { gt: after.createdAt } }, { created_at: after.createdAt, id: { gt: after.id } }] } : {}),
+      },
+      orderBy: [{ created_at: "asc" }, { id: "asc" }],
       take,
-      select: { id: true, organization_id: true, provider: true, external_id: true, amount_vnd: true, content: true },
+      select: { id: true, organization_id: true, provider: true, external_id: true, amount_vnd: true, content: true, created_at: true },
     })
   }
 }

@@ -3,21 +3,11 @@
  * `POST` (R3) — tạo yêu cầu tay: trường thiếu, hỏi ai, hạn (checklist ALG 4.14).
  */
 
-import { z } from "zod"
-
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { createOrderInfoRequest, syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-
-const createSchema = z.object({
-  field: z.string().trim().min(1).max(64),
-  label: z.string().trim().min(1).max(120),
-  reason: z.string().trim().min(1).max(500),
-  requestedFrom: z.string().trim().min(1).max(200),
-  dueAt: z.string().datetime().nullish(),
-  channel: z.string().trim().max(40).nullish(),
-})
+import { createInfoRequestBody } from "@/app/api/v1/_contracts/requests-orders"
 
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request)
@@ -30,7 +20,7 @@ export const POST = handle(async (request, context: { params: Promise<{ id: stri
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "R3")
   const { id } = await context.params
-  const body = createSchema.parse(await request.json())
+  const body = createInfoRequestBody.parse(await request.json())
   const created = await createOrderInfoRequest(ctx, id, { ...body, dueAt: body.dueAt ? new Date(body.dueAt) : null, channel: body.channel ?? null })
   return jsonResponse({ data: created }, { status: 201 })
 })

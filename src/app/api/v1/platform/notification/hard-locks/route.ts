@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
@@ -8,36 +7,7 @@ import {
   removeHardLock,
 } from "@/modules/notification/use-cases/manage-hard-locks"
 import type { NotifyChannel } from "@/modules/notification/domain/events/_contract"
-
-const postHardLockSchema = z.object({
-  eventKey: z.string().min(1),
-  channel: z.enum([
-    "APP_INBOX",
-    "EMAIL",
-    "PUSH",
-    "TELEGRAM",
-    "ZALO",
-    "SMS",
-    "WHATSAPP",
-    "MESSENGER",
-  ]),
-  enabled: z.boolean(),
-  reason: z.string().optional(),
-})
-
-const deleteHardLockSchema = z.object({
-  eventKey: z.string().min(1),
-  channel: z.enum([
-    "APP_INBOX",
-    "EMAIL",
-    "PUSH",
-    "TELEGRAM",
-    "ZALO",
-    "SMS",
-    "WHATSAPP",
-    "MESSENGER",
-  ]),
-})
+import { removeHardLockBody, setHardLockBody } from "@/app/api/v1/platform/_contracts/requests"
 
 export const GET = handle(async (request) => {
   await requirePlatformContext(request)
@@ -56,7 +26,7 @@ export const GET = handle(async (request) => {
 export const POST = handle(async (request) => {
   const platform = await requirePlatformContext(request)
   requirePlatformCapability(platform, "N2")
-  const body = postHardLockSchema.parse(await request.json())
+  const body = setHardLockBody.parse(await request.json())
 
   await setHardLock({
     eventKey: body.eventKey,
@@ -74,7 +44,7 @@ export const POST = handle(async (request) => {
 export const DELETE = handle(async (request) => {
   const pctx = await requirePlatformContext(request)
   requirePlatformCapability(pctx, "N2")
-  const body = deleteHardLockSchema.parse(await request.json())
+  const body = removeHardLockBody.parse(await request.json())
 
   await removeHardLock({
     eventKey: body.eventKey,

@@ -52,6 +52,16 @@ describe("khách đặt hàng trên catalog công khai", () => {
     expect(d.catalogLinks.findBySlug).not.toHaveBeenCalled()
   })
 
+  // PO 07/11/2026 (Q11): không nhận ngày giao đã qua
+  it("ngày giao đã qua → từ chối trước khi chạm cơ sở dữ liệu", async () => {
+    const d = deps()
+    await expect(placePublicCatalogOrder("bst", { ...input, deliveryDate: "2020-01-01" }, undefined, d)).rejects.toMatchObject({
+      code: "VALIDATION_FAILED",
+      details: { deliveryDate: expect.stringContaining("đã qua") },
+    })
+    expect(d.catalogLinks.findBySlug).not.toHaveBeenCalled()
+  })
+
   it("gói dịch vụ của cửa hàng quá hạn → không tạo đơn, không tạo khách", async () => {
     const paused = Object.assign(new Error("Cửa hàng đang tạm ngưng nhận đơn trực tuyến."), { code: "SUBSCRIPTION_OVERDUE" })
     const d = deps({ acceptsOrders: vi.fn(async () => { throw paused }) })

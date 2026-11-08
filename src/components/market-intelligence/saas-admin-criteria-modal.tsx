@@ -372,7 +372,7 @@ export function SaaSAdminCriteriaModal({
                 className="h-4 w-4 rounded accent-accent"
               />
               <label htmlFor="autoBroadcast" className="text-caption text-text select-none cursor-pointer">
-                Tự động đồng bộ báo cáo cho tất cả Tenant sau khi quét
+                Tự động đồng bộ báo cáo cho tất cả doanh nghiệp sau khi quét
               </label>
             </div>
           </div>

@@ -7,11 +7,10 @@ import { Card } from "@/components/ui/card"
 import { StatTile } from "@/components/ui/stat-tile"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { BusinessPerformanceCard } from "@/components/dashboard/business-performance-card"
-import type { OrderReportingItem } from "@/modules/orders/domain/business-reporting"
+import { BUSINESS_RANGES } from "@/modules/reporting/domain/business-summary"
 import { metricLabel, type UsageSummary } from "./analytics-types"
 
 export interface AnalyticsMetricsPhaseProps {
-  orders: OrderReportingItem[]
   usage: UsageSummary | null
   usageLoading: boolean
   shopName: string
@@ -22,7 +21,6 @@ export interface AnalyticsMetricsPhaseProps {
 }
 
 export function AnalyticsMetricsPhase({
-  orders,
   usage,
   usageLoading,
   shopName,
@@ -40,7 +38,7 @@ export function AnalyticsMetricsPhase({
         </div>
 
         <div className="flex items-center gap-1.5 bg-surface p-1 rounded-xl border border-border">
-          {["Tuần này", "Tháng này", "Quý này"].map((r) => (
+          {BUSINESS_RANGES.map((r) => (
             <Button
               key={r}
               type="button"
@@ -57,7 +55,7 @@ export function AnalyticsMetricsPhase({
 
       {/* Báo cáo Hiệu năng Kinh doanh & Doanh số */}
       <BusinessPerformanceCard
-        orders={orders}
+        range={selectedRange}
         aiCreditUsed={usage?.credit_used ?? 0}
         shopName={shopName}
       />

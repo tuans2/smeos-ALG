@@ -60,7 +60,7 @@
     - Kiểm định thời lượng video theo khuyến nghị từng kênh.
     - Modal tải xuống 1-chạm (`PNG`, `JPEG`, `MP4`) và sao chép link gốc.
 - [x] **4. [Platform & Shop] Báo cáo hiệu năng kinh doanh & Doanh số (`BC-01` → `BC-06`)**
-  - **Mã nguồn:** `src/modules/orders/domain/business-reporting.ts`, `src/components/dashboard/business-performance-card.tsx`
+  - **Mã nguồn:** `src/modules/reporting/domain/business-summary.ts`, `src/components/dashboard/business-performance-card.tsx` (từ 07/11/2026 lấy số từ báo cáo theo kỳ phía máy chủ)
   - **Mô tả:**
     - 4 thẻ KPI thời gian thực: Tổng doanh thu (GMV), Tỷ lệ hoàn tất đơn (%), Đơn đang xử lý, Credit AI tiêu thụ.
     - Xếp hạng Top 5 mẫu hoa & sản phẩm doanh số cao nhất.

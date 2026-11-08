@@ -8,13 +8,21 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 export const COLLECT_DUE_REMINDER_REASON = "Nhắc thu tiền: đã quá hạn thu sau khi giao trước"
 
 export class CollectDueRepository {
+  /**
+   * Loại đơn đã nhắc NGAY TRONG câu truy vấn (audit BL-09): lọc sau `take` thì khi đã có ≥ `take` đơn được nhắc
+   * mà chưa trả, đơn quá hạn mới không bao giờ lọt vào trang đầu.
+   */
   async listOverdue(now: Date, take: number) {
-    const rows = await prisma.order_approval_requests.findMany({
+    return prisma.order_approval_requests.findMany({
       where: {
         kind: "DELIVER_BEFORE_PAY",
         status: { in: ["APPROVED", "AUTO_APPROVED"] },
         collect_due_at: { lt: now },
-        order: { balance_vnd: { gt: 0 }, status: { not: "CANCELLED" } },
+        order: {
+          balance_vnd: { gt: 0 },
+          status: { not: "CANCELLED" },
+          events: { none: { reason: COLLECT_DUE_REMINDER_REASON } },
+        },
       },
       orderBy: { collect_due_at: "asc" },
       take,
@@ -23,13 +31,6 @@ export class CollectDueRepository {
         order: { select: { id: true, code: true, status: true, balance_vnd: true, owner_sale_id: true } },
       },
     })
-    if (rows.length === 0) return []
-    const reminded = await prisma.order_events.findMany({
-      where: { order_id: { in: rows.map((r) => r.order.id) }, reason: COLLECT_DUE_REMINDER_REASON },
-      select: { order_id: true, organization_id: true },
-    })
-    const done = new Set(reminded.map((e) => `${e.organization_id}:${e.order_id}`))
-    return rows.filter((r) => !done.has(`${r.organization_id}:${r.order.id}`))
   }
 
   async markReminded(organizationId: string, orderId: string, status: string): Promise<void> {

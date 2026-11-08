@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto"
 import { getRedis } from "@/core/cache/redis-client"
 import { log } from "@/core/observability/log"
+import { recordRateLimit } from "@/core/observability/request-context"
 import { AppError } from "./errors"
 
 /**
@@ -94,9 +95,15 @@ async function countHit(key: string, windowMs: number, now: number): Promise<num
   return countInMemory(key, windowMs, now)
 }
 
-/** Ném `RATE_LIMITED` (429) khi vượt; ngược lại ghi nhận một lượt. */
+/**
+ * Ném `RATE_LIMITED` (429) khi vượt; ngược lại ghi nhận một lượt. Cả hai trường hợp ghi trạng thái vào
+ * ngữ cảnh request để `handle()` trả `RateLimit-*` và `Retry-After` (đặc tả 06 §2, audit API-08).
+ * Cửa sổ cố định theo `floor(now / windowMs)` ở cả Redis lẫn bộ nhớ, nên mốc mở lại là cuối cửa sổ.
+ */
 export async function enforceRateLimit(request: Request, rule: RateLimitRule, now = Date.now()): Promise<void> {
   const count = await countHit(bucketKey(rule, request, now), rule.windowMs, now)
+  const resetAt = (Math.floor(now / rule.windowMs) + 1) * rule.windowMs
+  recordRateLimit({ limit: rule.limit, remaining: Math.max(0, rule.limit - count), resetAt })
   if (count > rule.limit) {
     throw new AppError("RATE_LIMITED", "Bạn thao tác quá nhanh, vui lòng thử lại sau ít phút")
   }

@@ -2,6 +2,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { conflict, notFound } from "@/core/http/errors"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
+import { upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 import { applyVat, isVatRate, DEFAULT_VAT_RATE, subtotalOf, vatChangeBlocker, type VatChange, type VatInvoiceInfo } from "../domain/order-vat"
 
 export interface OrderVatView extends VatInvoiceInfo {
@@ -15,11 +16,13 @@ export interface OrderVatView extends VatInvoiceInfo {
   balanceVnd: number
 }
 
-type OrderRow = NonNullable<Awaited<ReturnType<typeof prisma.orders.findFirst>>>
+const VAT_INCLUDE = { recipient: { select: { vat_company_name: true, vat_tax_code: true, vat_company_address: true, vat_email: true } } } as const
+type OrderRow = NonNullable<Awaited<ReturnType<typeof prisma.orders.findFirst<{ where: { id: string }; include: typeof VAT_INCLUDE }>>>>
 
 function toView(o: OrderRow): OrderVatView {
   const totalVnd = Number(o.total_vnd)
   const vatAmountVnd = Number(o.vat_amount_vnd)
+  const buyer = o.recipient ?? { vat_company_name: null, vat_tax_code: null, vat_company_address: null, vat_email: null } // P-3c
   return {
     orderId: o.id,
     vatEnabled: o.vat_enabled,
@@ -29,10 +32,10 @@ function toView(o: OrderRow): OrderVatView {
     totalVnd,
     paidVnd: Number(o.paid_vnd),
     balanceVnd: Number(o.balance_vnd),
-    companyName: o.vat_company_name,
-    taxCode: o.vat_tax_code,
-    companyAddress: o.vat_company_address,
-    email: o.vat_email,
+    companyName: buyer.vat_company_name,
+    taxCode: buyer.vat_tax_code,
+    companyAddress: buyer.vat_company_address,
+    email: buyer.vat_email,
   }
 }
 
@@ -41,7 +44,7 @@ export class OrderVatRepository {
   constructor(private readonly db = prisma) {}
 
   private async load(ctx: TenantContext, orderId: string) {
-    const order = await this.db.orders.findFirst({ where: scopedWhere(ctx, { id: orderId, source: "BROCHURE" }) })
+    const order = await this.db.orders.findFirst({ where: scopedWhere(ctx, { id: orderId, source: "BROCHURE" }), include: VAT_INCLUDE })
     if (!order) throw notFound()
     return order
   }
@@ -71,13 +74,12 @@ export class OrderVatRepository {
           vat_amount_vnd: next.vatAmountVnd,
           total_vnd: next.totalVnd,
           balance_vnd: next.balanceVnd,
-          vat_company_name: info.companyName,
-          vat_tax_code: info.taxCode,
-          vat_company_address: info.companyAddress,
-          vat_email: info.email,
         },
       })
       if (moved.count === 0) throw conflict("Đơn hàng vừa thay đổi, vui lòng tải lại")
+      await upsertOrderRecipient(tx, ctx.organizationId, order.id, {
+        vat: { vat_company_name: info.companyName, vat_tax_code: info.taxCode, vat_company_address: info.companyAddress, vat_email: info.email },
+      }) // P-3c: bên mua hoá đơn chỉ ở order_recipients
       await recordAuditLog(
         ctx,
         {
@@ -89,7 +91,7 @@ export class OrderVatRepository {
         },
         tx
       )
-      const updated = await tx.orders.findFirstOrThrow({ where: { id: order.id, organization_id: ctx.organizationId } })
+      const updated = await tx.orders.findFirstOrThrow({ where: { id: order.id, organization_id: ctx.organizationId }, include: VAT_INCLUDE })
       return toView(updated)
     })
   }

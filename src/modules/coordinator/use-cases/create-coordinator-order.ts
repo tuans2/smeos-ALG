@@ -6,7 +6,10 @@
  * chủ: 900 mã một năm, trùng là chuyện chắc chắn.
  */
 
-import { AppError } from "@/core/http/errors"
+import { AppError, validationFailed } from "@/core/http/errors"
+import { vnTodayIso } from "@/lib/vn-date"
+import { newOrderDeliveryErrors } from "@/modules/orders/domain/order-input-rules"
+import type { CoordinatorEntrySource } from "@/modules/orders/domain/order-source"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { ICustomerRepository } from "@/modules/crm/domain/repositories/customer-repository.interface"
 import { getCustomerRepository } from "@/modules/crm/infra/customer-repository"
@@ -51,7 +54,7 @@ export interface CreateCoordinatorOrderInput {
   /** ĐP-3.16 (26/09/2026): giá trị trường tự tạo (entity = ORDER), qua `applyCustomFields`. */
   customFields?: Record<string, unknown> | undefined
   // ── ĐP-4a.1 (26/09/2026) — T01: đủ trường P0/P1 (Đặc tả trường §2.1/§3.1) ──
-  source?: string | undefined
+  source?: CoordinatorEntrySource | undefined
   sourceReference?: string | undefined
   /** Danh mục §2.15.3 (MỞ) — kiểm active thật ở `assertActiveCatalogCode`. */
   channel?: string | undefined
@@ -77,6 +80,17 @@ export async function createCoordinatorOrder(
   input: CreateCoordinatorOrderInput,
   now = new Date()
 ): Promise<CoordinatorOrderView> {
+  // PO 07/11/2026 (Q11, Q12): không tạo đơn với ngày giao đã qua; SĐT người nhận chỉ số Việt Nam
+  const deliveryErrors = newOrderDeliveryErrors(
+    { deliveryDate: input.deliveryTargetAt ? vnTodayIso(new Date(input.deliveryTargetAt)) : null, recipientPhone: input.recipientPhone },
+    now
+  )
+  if (Object.keys(deliveryErrors).length > 0) {
+    throw validationFailed({
+      ...(deliveryErrors.deliveryDate ? { deliveryTargetAt: deliveryErrors.deliveryDate } : {}),
+      ...(deliveryErrors.recipientPhone ? { recipientPhone: deliveryErrors.recipientPhone } : {}),
+    })
+  }
   // ĐP-2.9 (26/09/2026): có `customerId` → tên/hạng/SĐT LẤY từ Customer
   // Master Index, bỏ qua giá trị client gửi (Hợp đồng MI §5 điểm 5,7 — hạng
   // khách do client gửi chỉ có nghĩa cho khách lẻ, không có `customerId`).

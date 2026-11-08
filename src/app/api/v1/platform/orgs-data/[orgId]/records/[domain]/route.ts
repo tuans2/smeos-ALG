@@ -11,6 +11,7 @@
 
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { recordPlatformAccess } from "@/modules/audit/use-cases/record-platform-access"
 import {
   getPlatformOrgRecords,
   exportPlatformOrgRecordsCsv,
@@ -30,6 +31,7 @@ const VALID_DOMAINS: RecordDomain[] = [
 
 export const GET = handle(async (request, { params }) => {
   const pctx = await requirePlatformContext(request)
+  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { orgId, domain } = await params
 
   if (!VALID_DOMAINS.includes(domain as RecordDomain)) {

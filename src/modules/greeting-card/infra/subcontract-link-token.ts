@@ -11,7 +11,12 @@ import { env } from "@/lib/env"
  * 21/10/2026, C2). Mã đơn chỉ duy nhất trong một tổ chức, nên token mang luôn tổ chức để
  * máy chủ tra đúng `(organization_id, code)`.
  */
-export const SUBCONTRACT_TOKEN_TTL_MS = 14 * 24 * 60 * 60 * 1000
+/**
+ * Hạn của chữ ký — chỉ là trần an toàn. Từ P-4 (ADR-014 D-P6) quyền xem do `shared_order_access` quyết: thu hồi khi
+ * chi nhánh khác nhận / hết vòng, hết 7 ngày sau khi đơn đóng. Trước đây 14 ngày cố định làm link của đơn đặt trước
+ * xa hết hạn trước ngày giao.
+ */
+export const SUBCONTRACT_TOKEN_TTL_MS = 120 * 24 * 60 * 60 * 1000
 export const SUBCONTRACT_TOKEN_HEADER = "x-subcontract-token"
 
 function signature(organizationId: string, orderCode: string, branchId: string, expiresAtMs: number): string {

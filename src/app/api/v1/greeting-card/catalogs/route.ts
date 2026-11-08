@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -7,15 +6,7 @@ import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-c
 import { parseListQuery, toPage } from "@/modules/greeting-card/contracts/list-query"
 import { catalogPolicyKeysChanged } from "@/modules/greeting-card/domain/catalog-policy-keys"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-
-const createCatalogSchema = z.object({
-  code: z.string().trim().min(2).max(40).regex(/^[a-zA-Z0-9-]+$/, "Mã chỉ gồm chữ, số và dấu gạch ngang"),
-  name: z.string().trim().min(2).max(120),
-  type: z.enum(["STANDARD", "CLIENT"]).optional(),
-  description: z.string().max(1000).nullable().optional(),
-  filters: z.record(z.string(), z.unknown()).nullable().optional(),
-  productIds: z.array(z.string().min(1)).max(200).optional(),
-})
+import { createCatalogBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 export const GET = handle(async (request: Request) => {
   const { ctx } = await requireTenantContext(request)
@@ -37,7 +28,7 @@ export const POST = handle(async (request: Request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.manage)
   const body = await request.json().catch(() => ({}))
-  const parsed = createCatalogSchema.safeParse(body)
+  const parsed = createCatalogBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

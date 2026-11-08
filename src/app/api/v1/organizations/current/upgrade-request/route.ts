@@ -1,15 +1,9 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requestOrganizationUpgrade } from "@/modules/organization/use-cases/request-organization-upgrade"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-
-const postSchema = z.object({
-  requested_type: z.enum(["SINGLE", "STORE", "CHAIN"]), // FLOWER_NETWORK gộp vào CHAIN (ADR-012 T-8b)
-  note: z.string().trim().min(1).max(500).nullish(),
-})
+import { upgradeRequestBody } from "@/app/api/v1/_contracts/requests-org"
 
 /**
  * `POST /organizations/current/upgrade-request` (`F2`, cùng năng lực với
@@ -21,7 +15,7 @@ export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "F2")
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = upgradeRequestBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await requestOrganizationUpgrade(ctx, {

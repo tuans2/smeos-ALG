@@ -1,5 +1,6 @@
 import { notFound, validationFailed } from "@/core/http/errors"
-import { assertNotBelowFloor } from "@/modules/costing/use-cases/price-floor-guard"
+import { assertWithinPriceBounds } from "@/modules/costing/use-cases/price-floor-guard"
+import { productLinesCeilingBase } from "../domain/quotation-price-bounds"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import {
   calculateQuotationTotals,
@@ -58,8 +59,13 @@ export async function createQuotationUseCase(
     input.discountAmount ?? 0,
     input.shippingFee ?? 0,
   )
-  // Giá dưới sàn: Sale bị chặn, Điều hành (C10) lưu được (checklist ALG 3.4)
-  await assertNotBelowFloor(ctx, input.items.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })), totalAmount - shippingFee)
+  // Dưới sàn cần C10 (checklist ALG 3.4), vượt trần cần C9 (PO 07/11/2026, Q3)
+  await assertWithinPriceBounds(
+    ctx,
+    input.items.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })),
+    totalAmount - shippingFee,
+    productLinesCeilingBase(input.items, totalAmount - shippingFee),
+  )
 
   const code = await repo.generateNextCode(ctx)
 

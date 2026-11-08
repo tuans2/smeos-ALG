@@ -11,6 +11,7 @@
  */
 
 import { prisma } from "../../src/core/tenancy/infra/prisma"
+import { setPurgeReason } from "../../src/core/tenancy/infra/purge-reason"
 import { MOCLAN_CONSTANTS } from "./dev-moclan-data"
 
 export async function cleanSiinStoreOrders(): Promise<void> {
@@ -45,6 +46,9 @@ export async function cleanSiinStoreOrders(): Promise<void> {
   }
 
   await prisma.$transaction(async (tx) => {
+    // Nhật ký bất biến (ADR-013 D-I4): xoá order_events và xoá dây chuyền từ orders cần lý do purge trong giao dịch
+    await setPurgeReason(tx, "test_data_cleanup")
+
     // 1. Dọn dẹp các bảng phụ thuộc Thẻ Chào (Greeting Card)
     const delJourney = await tx.greeting_journey_events.deleteMany({ where: { organization_id: orgId } })
     const delMsgReads = await tx.greeting_message_reads.deleteMany({ where: { organization_id: orgId } })

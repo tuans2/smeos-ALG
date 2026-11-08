@@ -1,6 +1,6 @@
 import { conflict, notFound, quotaExceeded } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { canRetry } from "@/modules/jobs/domain/job-rules"
+import { canRetry, JOB_STATUS_LABELS, type JobStatus } from "@/modules/jobs/domain/job-rules"
 import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
@@ -21,7 +21,7 @@ export async function retryJob(ctx: TenantContext, id: string) {
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
   if (!canRetry(current.status)) {
-    throw conflict(`Job đang ở trạng thái ${current.status}, không chạy lại được`)
+    throw conflict(`Tác vụ đang ở trạng thái "${JOB_STATUS_LABELS[current.status as JobStatus]}" — chỉ chạy lại được tác vụ bị lỗi.`)
   }
 
   return runInTransaction(async (tx) => {
@@ -42,7 +42,7 @@ export async function retryJob(ctx: TenantContext, id: string) {
       })
     }
     const retried = await new GenerationJobRepository(tx).retryIfFailed(ctx, id)
-    if (!retried) throw conflict("Job không còn ở trạng thái FAILED")
+    if (!retried) throw conflict("Tác vụ vừa được chạy lại — tải lại để xem tiến độ.")
     return retried
   })
 }

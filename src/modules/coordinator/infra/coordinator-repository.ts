@@ -96,6 +96,7 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
       podCaptured: Boolean(c.pod_asset_id || c.pod_recipient_name),
       openExceptionCount: await this.countOpenExceptions(ctx, row.id),
       resumeStage: c.resume_stage ?? null,
+      balanceVnd: Number(row.balance_vnd),
     }
   }
 
@@ -176,55 +177,6 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
 
   async updateMetadata(ctx: TenantContext, orderId: string, metadata: Record<string, unknown>): Promise<void> {
     await this.updateCoordination(ctx, orderId, { metadata: metadata as Prisma.InputJsonValue })
-  }
-
-  /**
-   * ĐP-4a (26/09/2026, PO D2) — sổ thu. Một dòng `order_payments` MỘT tổ chức
-   * (`scopedData`), cộng cập nhật `orders.paid_vnd`/`balance_vnd` trong CÙNG
-   * giao dịch (gọi trong `runCoordinatorTx`, xem `record-payment.ts`). Số đã
-   * cộng/trừ được tính SẴN ở use-case (đọc `paid_vnd` hiện tại trước, cộng
-   * DEPOSIT/BALANCE hoặc trừ REFUND) — repository chỉ ghi, không tính.
-   */
-  async recordPayment(
-    ctx: TenantContext,
-    orderId: string,
-    payment: {
-      kind: "DEPOSIT" | "BALANCE" | "REFUND"
-      amountVnd: number
-      paymentMethod: string | null
-      reference: string | null
-      evidenceAssetId: string | null
-      note: string | null
-    },
-    newPaidVnd: number,
-    newBalanceVnd: number,
-    status: "PENDING" | "CONFIRMED" = "CONFIRMED"
-  ): Promise<{ id: string }> {
-    const row = await this.db.order_payments.create({
-      data: scopedData(ctx, {
-        order_id: orderId,
-        kind: payment.kind,
-        amount_vnd: payment.amountVnd,
-        payment_method: payment.paymentMethod,
-        reference: payment.reference,
-        evidence_asset_id: payment.evidenceAssetId,
-        collected_by: ctx.userId,
-        note: payment.note,
-        status,
-      }),
-    })
-    // Dòng chờ Điều hành xác nhận chưa cộng vào số đã thu (checklist ALG 1.16)
-    if (status === "CONFIRMED") {
-      await this.db.orders.updateMany({ where: scopedWhere(ctx, { id: orderId }), data: { paid_vnd: newPaidVnd, balance_vnd: newBalanceVnd } })
-    }
-    return { id: row.id }
-  }
-
-  listPayments(ctx: TenantContext, orderId: string) {
-    return this.db.order_payments.findMany({
-      where: scopedWhere(ctx, { order_id: orderId }),
-      orderBy: { collected_at: "asc" },
-    })
   }
 
   async updateOrderAxis(

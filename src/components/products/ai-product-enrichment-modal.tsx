@@ -161,7 +161,6 @@ export function AiProductEnrichmentModal({
       const summaryContext = `${ti("sampleProduct")} ${updated.name || updated.category}, cấu thành từ ${itemsList || "vật liệu tuyển chọn"}. Tông màu ${updated.primaryColor || "hài hòa"}. Quy cách ${updated.shape}.`
       const suggestions = await callContentEngineMarketing(summaryContext, "luxurious")
       setContentSuggestions(suggestions)
-
       if (suggestions[0] && !updated.description.trim()) {
         setValues((v) => ({ ...v, description: suggestions[0] ?? "" }))
       }
@@ -188,6 +187,8 @@ export function AiProductEnrichmentModal({
       if (suggestions[0] && !values.description.trim()) {
         handleFieldChange("description", suggestions[0])
       }
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Chưa tạo được gợi ý mô tả. Vui lòng thử lại.")
     } finally {
       setIsGeneratingContent(false)
     }

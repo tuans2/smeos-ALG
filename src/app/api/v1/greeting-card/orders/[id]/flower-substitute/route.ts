@@ -1,19 +1,10 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-import { FLOWER_NAME_MAX, FLOWER_REASON_MAX } from "@/modules/greeting-card/domain/flower-substitute"
 import { flowerSubstituteOptions, proposeFlowerSubstitute } from "@/modules/greeting-card/use-cases/flower-substitute"
-
-const schema = z.object({
-  reason: z.string().max(FLOWER_REASON_MAX),
-  lineIndex: z.number().int().min(0).max(100),
-  replacementName: z.string().max(FLOWER_NAME_MAX),
-  replacementColor: z.string().max(40).optional(),
-  photoAssetId: z.string().uuid(),
-})
+import { flowerSubstituteBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 
 /**
  * GET /api/v1/greeting-card/orders/[id]/flower-substitute — các dòng hoa phụ trong công thức của đơn
@@ -34,7 +25,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.orderUpdate)
   const { id } = await context.params
-  const parsed = schema.safeParse(await request.json().catch(() => null))
+  const parsed = flowerSubstituteBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   return jsonResponse({ data: await proposeFlowerSubstitute(ctx, id, parsed.data) }, { status: 201 })
 })

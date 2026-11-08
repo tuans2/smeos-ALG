@@ -10,6 +10,7 @@ import { SUBCONTRACT_TOKEN_HEADER, signSubcontractBranchToken } from "@/modules/
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, makeChainOrganization, seedChainBranch, withSession, type Tenant } from "../helpers/fixtures"
+import { syncSubcontractShares } from "../helpers/subcontract-shares"
 
 const CODE = "DH261022-0101"
 const BRANCH = "CN1"
@@ -39,6 +40,7 @@ async function seed(t: Tenant, dispatch: Record<string, unknown>, order: OrderSt
       },
     },
   })
+  await syncSubcontractShares(t.organizationId, row.id)
   return row.id
 }
 

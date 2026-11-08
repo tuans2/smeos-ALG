@@ -1,4 +1,5 @@
 import type { IndustryPriceScenarioPreset } from "@/modules/organization/domain/industry-costing-spec"
+import { ceilingPriceVnd, floorPriceVnd } from "./price-floor"
 
 export interface PriceScenario {
   key: IndustryPriceScenarioPreset["key"] | "CURRENT" | "COMPETITOR"
@@ -30,8 +31,9 @@ function scenario(key: PriceScenario["key"], label: string, priceVnd: number, in
   const marginPercent = priceVnd > 0 ? Math.round((profitVnd / priceVnd) * 1000) / 10 : 0
   const warnings: string[] = []
   if (profitVnd < 0) warnings.push("Giá này đang lỗ so với giá vốn")
-  if (input.floorRatio && priceVnd < input.costVnd * input.floorRatio) warnings.push("Thấp hơn giá sàn của cửa hàng")
-  if (input.ceilingRatio && priceVnd > input.costVnd * input.ceilingRatio) warnings.push("Cao hơn giá trần của cửa hàng")
+  // Cùng cách làm tròn với chặn thật (`floorPriceVnd`) — giá "không cảnh báo" thì không bao giờ bị chặn (audit BL-07)
+  if (input.floorRatio && priceVnd < floorPriceVnd(input.costVnd, input.floorRatio)) warnings.push("Thấp hơn giá sàn của cửa hàng")
+  if (input.ceilingRatio && priceVnd > ceilingPriceVnd(input.costVnd, input.ceilingRatio)) warnings.push("Cao hơn giá trần của cửa hàng")
   return { key, label, priceVnd, profitVnd, marginPercent, warnings }
 }
 

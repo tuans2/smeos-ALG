@@ -3,7 +3,7 @@ import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositorie
 import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { runInTransaction } from "@/modules/jobs/infra/transaction"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { soCreditHoanMotPhan, type LyDoHoanMotPhan } from "@/modules/usage/domain/refund-policy"
+import { luotHienTai, soCreditHoanMotPhan, type LyDoHoanMotPhan } from "@/modules/usage/domain/refund-policy"
 import { getUsageRepository } from "@/modules/usage/infra/usage-repository"
 import type { IUsageRepository } from "@/modules/usage/domain/repositories/usage-repository.interface"
 
@@ -46,7 +46,8 @@ export async function refundPartial(
       status: "PARTIAL_REFUND",
       metadata: { reason: lyDo },
     })
-    await getOrganizationRepository(tx).refundCredit(ctx, hoan, { service: "AI", reason: lyDo, reference: jobId })
+    const chargedAt = luotHienTai(dong).find((d) => d.status === "ENQUEUED")?.created_at ?? null
+    await getOrganizationRepository(tx).refundCredit(ctx, hoan, { service: "AI", reason: lyDo, reference: jobId, chargedAt })
     return { refunded: hoan }
   })
 }

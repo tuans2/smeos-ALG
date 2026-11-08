@@ -1,23 +1,9 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { assembleVideoFromPlan } from "@/modules/creative-production/use-cases/assemble-video"
-import { PUBLISH_RATIOS } from "@/modules/creative-production/domain/publishing-rules"
-
-const bodySchema = z.object({
-  scene_plan_id: z.string().trim().min(1).max(160),
-  /** Chỉ với kịch bản cơ bản (`rule:…`) — kịch bản AI đọc từ kho. */
-  plan: z.unknown().optional(),
-  master_asset_id: z.string().uuid(),
-  audio_job_id: z.string().uuid().optional(),
-  title: z.string().max(200).optional(),
-  dry_run: z.boolean().optional(),
-  /** Khung của video — mỗi khung trong phạm vi một video (PO 24/09/2026). */
-  ratio: z.enum(PUBLISH_RATIOS).optional(),
-})
+import { videoAssemblyBody } from "@/app/api/v1/_contracts/requests-creative"
 
 /**
  * `POST /api/v1/creative-production/video-assembly` (`I1`, Đợt 4 24/09/2026) —
@@ -30,7 +16,7 @@ const bodySchema = z.object({
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "I1")
-  const parsed = bodySchema.safeParse(await request.json().catch(() => null))
+  const parsed = videoAssemblyBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   const d = parsed.data
   const r = await assembleVideoFromPlan(ctx, {

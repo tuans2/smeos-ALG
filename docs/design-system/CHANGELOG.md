@@ -4,6 +4,35 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 
 ---
 
+## [1.3.3] - 2026-11-07
+
+### Density một nguồn; mở rộng R16
+
+#### Đã sửa
+- `DENSITY_CONFIG` (`src/lib/ui-system/tokens.ts`) lệch `density.css` ở khoảng cách trường (compact 0.75 → 0.5rem, comfortable 1 → 0.75rem) và mang chiều cao hàng bảng, chiều cao nút mà density không hề điều khiển. Nay chỉ giữ ba khoá CSS định nghĩa, theo đúng giá trị CSS; test đối chiếu trong `presets-css-parity.test.ts`. Không có mã nào đọc `DENSITY_CONFIG` nên giao diện không đổi.
+
+#### Đã đổi
+- Lint R16 soát cả giá trị chuỗi của khoá hiển thị (`label`, `title`, `description`…) trong mảng/object, thêm mã chức năng M01–M19, mức R1–R9, "Sale Pitch". Danh sách từ cấm (`GLOSSARY_BANNED`) được export để test domain dùng chung — áp cho nhãn bước và "việc kế tiếp" của điều phối.
+
+## [1.3.2] - 2026-11-07
+
+### Một nguồn sự thật cho token, tài liệu và cổng kiểm
+
+#### Đã sửa
+- `src/lib/ui-system/presets.ts` lệch CSS ở màu trạng thái (`warning`/`danger`/`success`/`info` của `modern-slate`, `pure-swiss`), bo góc `sm/md/lg`, bóng đổ và `fontDisplay` của `moc-lan`. Chép lại đúng giá trị trình duyệt dùng (CSS thắng, ADR-011 D-UI-03). Giao diện không đổi: các giá trị này chỉ để UI Studio hiển thị, và năm mẫu màu + nhãn bo góc nút UI Studio đang vẽ vốn đã khớp.
+- `.github/CODEOWNERS` gán `@po` — không phải tài khoản GitHub, nên yêu cầu PO duyệt không có hiệu lực. Nay là `@antranhub22`.
+- README trỏ tới `layouts.md`, `responsive.md`, `accessibility.md` khi chưa có, và tới `src/styles/tokens/breakpoints.css` không tồn tại; phiên bản ghi `1.0.0-draft`.
+- `check:screen-contracts` chỉ thoát mã 1 khi có `--check`, nên bước trong `ui-weekly.yml` không bao giờ đỏ; trang mất front-matter v2 lặng lẽ rơi về khớp v1 mà vẫn đạt.
+
+#### Đã thêm
+- `layouts.md`, `responsive.md`, `accessibility.md` — chỉ mục đối chiếu mã 07/11/2026, ghi rõ các chỗ lệch ADR và phần chưa kiểm.
+- Test `src/lib/ui-system/presets-css-parity.test.ts` (preset ↔ CSS) và `tests/unit/architecture/design-system-ssot.test.ts` (liên kết tài liệu, CODEOWNERS).
+- `npm run check:screen-contracts -- --check` trong job `web` của `ci.yml`; đỏ khi có trang thiếu contract hoặc chỉ có contract v1.
+
+#### Đã đổi
+- Bảng thuật ngữ duy nhất là `docs/dac-ta/ux-patterns/glossary.md`: gộp bảng khử thuật ngữ và động từ thao tác từ `SMEOS_UX_WRITING_GLOSSARY.md` (tài liệu đó chỉ còn giọng điệu và mẫu câu). Mâu thuẫn `Job` → "tác vụ" theo mã.
+- Lint R16 bắt thêm BOM, Master Index, PII, Control Tower, payload, tenant, M0–M5. 17 điểm có sẵn vào baseline ratchet (28 → 45).
+
 ## [1.3.1] - 2026-11-06
 
 ### Tương phản AA trên cả 3 preset

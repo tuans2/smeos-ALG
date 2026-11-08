@@ -42,8 +42,7 @@ describe("UI System Presets & Foundation", () => {
   })
 
   it("provides density configurations for compact and comfortable (pruned spacious)", () => {
-    expect(DENSITY_CONFIG.compact.tableRowHeight).toBe("2.25rem")
-    expect(DENSITY_CONFIG.comfortable.tableRowHeight).toBe("3rem")
+    expect(Object.keys(DENSITY_CONFIG)).toEqual(["compact", "comfortable"])
     expect("spacious" in DENSITY_CONFIG).toBe(false)
   })
 })

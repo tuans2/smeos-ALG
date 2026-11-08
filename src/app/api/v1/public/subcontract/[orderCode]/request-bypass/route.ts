@@ -7,7 +7,6 @@
  * Gửi thông báo đến Điều phối viên qua Telegram/Zalo và tạo pending request trên Thẻ Điều phối.
  */
 
-import { z } from "zod"
 import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
@@ -18,19 +17,14 @@ import { publicAppUrl } from "@/lib/public-url"
 import { MultiChannelDispatchNotifier } from "@/modules/greeting-card/infra/dispatch-notification-adapter"
 import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-step-store"
 import type { TenantContext } from "@/core/tenancy"
-
-const requestBypassSchema = z.object({
-  branchId: z.string().min(1),
-  step: z.enum(["QC", "SHIPPER", "POD"]),
-  reason: z.string().trim().min(5, "Lý do xin bỏ qua tối thiểu 5 ký tự").max(300),
-})
+import { subcontractBypassBody } from "@/app/api/v1/public/_contracts/requests"
 
 export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (request, context) => {
   await enforceRateLimit(request, { scope: "subcontract-bypass-request", limit: 20, windowMs: 60_000 })
   const { orderCode } = await context.params
 
   const body = await request.json().catch(() => ({}))
-  const parsed = requestBypassSchema.safeParse(body)
+  const parsed = subcontractBypassBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const { branchId, step, reason } = parsed.data

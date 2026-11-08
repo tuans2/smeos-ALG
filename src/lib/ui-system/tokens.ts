@@ -32,21 +32,20 @@ export const CSS_VARIABLE_MAP = {
   selectedText: "--color-selected-text",
 } as const
 
+/**
+ * Bản chép giá trị density của `src/styles/tokens/density.css` — CSS là giá trị có hiệu lực.
+ * Chỉ giữ khoá CSS thật sự định nghĩa (density không đổi chiều cao hàng bảng hay nút).
+ * `presets-css-parity.test.ts` đỏ nếu hai nơi lệch nhau.
+ */
 export const DENSITY_CONFIG = {
   compact: {
-    tableRowHeight: "2.25rem", // 36px
-    tableCellPadding: "0.375rem 0.75rem",
-    cardPadding: "0.875rem",
-    formGap: "0.75rem",
-    buttonHeightSm: "2rem", // 32px
-    buttonHeightDef: "2.5rem", // 40px
+    tableCellPadding: "0.375rem 0.75rem", // --table-py --table-px
+    cardPadding: "0.875rem", // --card-padding
+    formGap: "0.5rem", // --form-field-gap
   },
   comfortable: {
-    tableRowHeight: "3rem", // 48px
     tableCellPadding: "0.75rem 1rem",
     cardPadding: "1.25rem",
-    formGap: "1rem",
-    buttonHeightSm: "2.75rem", // 44px
-    buttonHeightDef: "3rem", // 48px
+    formGap: "0.75rem",
   },
 } as const

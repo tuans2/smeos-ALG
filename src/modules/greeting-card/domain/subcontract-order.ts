@@ -105,7 +105,8 @@ export type CancelClaimResult =
  */
 export function isSubcontractClaimable(state: SubcontractOrderState, branchId: string): boolean {
   if (state.dispatchStatus !== "OPEN") return false
-  if (state.declinedBranchIds.includes(branchId)) return false
+  // `metadata` JSON cũ/nhập tay có thể thiếu khoá — coi như chưa ai từ chối (CLAIM từng trả 500)
+  if ((state.declinedBranchIds ?? []).includes(branchId)) return false
   const invited = state.invitedBranchIds ?? []
   if (invited.length > 0 && !invited.includes(branchId)) return false
   return true
@@ -126,7 +127,7 @@ export function claimSubcontractOrder(
     return { success: false, reason: state.dispatchStatus === "CLAIMED_GRACE" || state.dispatchStatus === "COMMITTED" ? "ALREADY_CLAIMED" : "NOT_OPEN" }
   }
 
-  if (state.declinedBranchIds.includes(branchId)) {
+  if ((state.declinedBranchIds ?? []).includes(branchId)) {
     return { success: false, reason: "DECLINED_PREVIOUSLY" }
   }
 
@@ -149,6 +150,7 @@ export function claimSubcontractOrder(
       claimedBranchName: branchName,
       claimedAt: claimedAtIso,
       graceExpiresAt: graceExpiresAtIso,
+      declinedBranchIds: state.declinedBranchIds ?? [],
     },
   }
 }
@@ -184,7 +186,7 @@ export function cancelClaimSubcontractOrder(
       claimedBranchName: null,
       claimedAt: null,
       graceExpiresAt: null,
-      declinedBranchIds: [...new Set([...state.declinedBranchIds, branchId])],
+      declinedBranchIds: [...new Set([...(state.declinedBranchIds ?? []), branchId])],
     },
   }
 }

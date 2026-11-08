@@ -4,11 +4,12 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { branchScopedWhere } from "@/core/tenancy"
 import { scopedWhere, type TenantContext } from "@/core/tenancy/tenant-context"
 import { customerBranchWhere } from "@/modules/crm/infra/customer-branch-scope"
+import { phoneEquals } from "@/core/security/pii-lookup"
 
 export const CUSTOMER_ORDERS_MAX = 50
 
 export async function findCustomerForOrders(ctx: TenantContext, customerId: string) {
-  return prisma.customers.findFirst({ where: scopedWhere(ctx, { id: customerId, ...(await customerBranchWhere(ctx)) }), select: { id: true, phone: true } })
+  return prisma.customers.findFirst({ where: scopedWhere(ctx, { id: customerId, status: "ACTIVE" as const, ...(await customerBranchWhere(ctx)) }), select: { id: true, phone: true } })
 }
 
 export async function listOrdersOfCustomer(ctx: TenantContext, customer: { id: string; phone: string | null }) {
@@ -20,8 +21,9 @@ export async function listOrdersOfCustomer(ctx: TenantContext, customer: { id: s
         { customer_id: customer.id },
         ...(phone
           ? [
-              { customer_id: null, greeting_sessions: { some: { customer_phone: phone } } },
-              { customer_id: null, coordination: { is: { metadata: { path: ["customerPhone"], equals: phone } } } },
+              { customer_id: null, greeting_sessions: { some: phoneEquals(ctx.organizationId, phone, "customer_phone") } }, // P-5b
+              // P-5c: SĐT khách lẻ của đơn điều phối ở `customer_phone` (bản mã) + băm; đơn cũ chưa qua job còn ở metadata
+              { customer_id: null, coordination: { is: { OR: [phoneEquals(ctx.organizationId, phone, "customer_phone"), { customer_phone_hash: null, metadata: { path: ["customerPhone"], equals: phone } }] } } },
             ]
           : []),
       ],

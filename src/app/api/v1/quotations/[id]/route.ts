@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
@@ -6,33 +5,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import type { QuotationStatus } from "@/modules/sales/domain/quotation"
 import { getQuotationUseCase } from "@/modules/sales/use-cases/get-quotation.use-case"
 import { updateQuotationUseCase } from "@/modules/sales/use-cases/update-quotation.use-case"
-
-const quotationItemSchema = z.object({
-  product_id: z.string().nullable().optional(),
-  productId: z.string().nullable().optional(),
-  name: z.string().min(1, "Tên sản phẩm không được để trống").max(200),
-  variant_label: z.string().max(80).nullable().optional(),
-  variantLabel: z.string().max(80).nullable().optional(),
-  qty: z.number().int().min(1, "Số lượng phải từ 1 trở lên"),
-  unit_price: z.number().min(0, "Đơn giá không thể âm").optional(),
-  unitPrice: z.number().min(0, "Đơn giá không thể âm").optional(),
-  note: z.string().nullable().optional(),
-})
-
-const updateQuotationSchema = z.object({
-  status: z
-    .enum(["DRAFT", "SENT", "ACCEPTED", "REJECTED", "EXPIRED", "CONVERTED"])
-    .optional(),
-  valid_until: z.string().nullable().optional(),
-  validUntil: z.string().nullable().optional(),
-  discount_amount: z.number().min(0).optional(),
-  discountAmount: z.number().min(0).optional(),
-  shipping_fee: z.number().min(0).max(100_000_000).optional(),
-  shippingFee: z.number().min(0).max(100_000_000).optional(),
-  terms: z.string().nullable().optional(),
-  notes: z.string().nullable().optional(),
-  items: z.array(quotationItemSchema).optional(),
-})
+import { updateQuotationBody } from "@/app/api/v1/_contracts/requests-orders"
 
 export const GET = handle(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
@@ -57,7 +30,7 @@ export const PATCH = handle(async (request, context) => {
     throw validationFailed({ body: "Dữ liệu yêu cầu không hợp lệ" })
   }
 
-  const parsed = updateQuotationSchema.safeParse(raw)
+  const parsed = updateQuotationBody.safeParse(raw)
   if (!parsed.success) {
     const details: Record<string, string> = {}
     for (const issue of parsed.error.issues) {

@@ -1,15 +1,9 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
-import { STAFF_NOTIFY_CHANNELS } from "@/modules/greeting-card/domain/staff-notification-types"
 import { updateSaasAllowedNotificationChannels } from "@/modules/greeting-card/use-cases/staff-notification-settings"
-
-const saasPolicySchema = z.object({
-  targetOrganizationId: z.string().uuid(),
-  allowedChannels: z.array(z.enum(STAFF_NOTIFY_CHANNELS)),
-})
+import { staffNotifySaasPolicyBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 /**
  * PUT /api/v1/greeting-card/integrations/staff-notifications/saas-policy
@@ -23,7 +17,7 @@ export const PUT = handle(async (request: Request) => {
   requirePlatformCapability(pctx, "N2")
 
   const body = await request.json().catch(() => null)
-  const parsed = saasPolicySchema.safeParse(body)
+  const parsed = staffNotifySaasPolicyBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

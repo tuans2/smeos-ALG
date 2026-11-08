@@ -5,7 +5,6 @@
  * DELETE /api/v1/greeting-card/orders/[id]/confirm-order (body: { reason })
  * Điều hành từ chối đơn → kích hoạt hoàn tiền tự động.
  */
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -15,16 +14,9 @@ import {
   adminConfirmBrochureOrder,
   adminRejectBrochureOrder,
 } from "@/modules/greeting-card/use-cases/admin-confirm-brochure-order"
+import { confirmOrderBody, rejectNewOrderBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 
 type RouteCtx = { params: Promise<{ id: string }> }
-
-const confirmSchema = z.object({
-  note: z.string().trim().max(500).optional(),
-})
-
-const rejectSchema = z.object({
-  reason: z.string().trim().min(1, "Nhập lý do từ chối đơn").max(500),
-})
 
 /** Điều hành xác nhận đơn có thể thực thi (Gate 1b) */
 export const POST = handle<[RouteCtx]>(async (request, context) => {
@@ -34,7 +26,7 @@ export const POST = handle<[RouteCtx]>(async (request, context) => {
   const { id } = await context.params
 
   const body = await request.json().catch(() => ({}))
-  const parsed = confirmSchema.safeParse(body)
+  const parsed = confirmOrderBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await adminConfirmBrochureOrder(ctx, id, { note: parsed.data.note })
@@ -48,7 +40,7 @@ export const DELETE = handle<[RouteCtx]>(async (request, context) => {
   const { id } = await context.params
 
   const body = await request.json().catch(() => ({}))
-  const parsed = rejectSchema.safeParse(body)
+  const parsed = rejectNewOrderBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await adminRejectBrochureOrder(ctx, id, { reason: parsed.data.reason })

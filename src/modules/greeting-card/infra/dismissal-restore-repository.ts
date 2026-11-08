@@ -5,6 +5,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { obj } from "./dismissal-store"
+import { retakeStock } from "@/modules/orders/infra/order-stock"
 
 const json = (v: unknown) => v as Prisma.InputJsonValue
 const RESTORE_DAYS_MS = 7 * 86_400_000
@@ -69,6 +70,7 @@ export class DismissalRestoreRepository {
         data: { status: prev, pricing_rule_ref: json({ ...ref, dismissal: null, dismissalHistory: [...history, { ...d, ...stamp }] }) },
       })
       if (moved.count === 0) throw conflict("Đơn hàng vừa thay đổi, vui lòng tải lại")
+      await retakeStock(tx, ctx.organizationId, order.id) // trừ lại tồn đã hoàn lúc bỏ hiển thị; không đủ → 409
       await tx.greeting_sessions.updateMany({
         where: scopedWhere(ctx, { order_id: order.id }),
         data: { revoked_at: null, revoked_by: null, expires_at: new Date(now.getTime() + RESTORE_DAYS_MS) },

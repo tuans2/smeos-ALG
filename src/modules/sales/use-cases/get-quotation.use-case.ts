@@ -14,9 +14,10 @@ export async function getQuotationUseCase(
     throw notFound()
   }
 
-  // Tự động đánh dấu hết hạn nếu đã qua ngày hiệu lực
+  // Quá ngày hiệu lực → hiện là hết hạn. Việc GHI trạng thái do lượt quét định kỳ làm (`expire-quotations.ts`,
+  // gói UJ-11) — trước đây GET ghi dữ liệu, và chỉ báo giá có người mở mới được đánh hết hạn.
   if (isQuotationExpired(quotation) && quotation.status !== "EXPIRED") {
-    return repo.update(ctx, quotation.id, { status: "EXPIRED" })
+    return { ...quotation, status: "EXPIRED" }
   }
 
   return quotation

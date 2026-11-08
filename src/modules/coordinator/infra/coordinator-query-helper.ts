@@ -8,6 +8,7 @@ import type { Prisma } from "@/generated/prisma/client"
 import type { CoordinatorStage, CoordinationRiskLevel } from "../domain/coordinator-types"
 import type { MappedOrderAxes } from "../domain/state-mapper"
 import type { DbClient } from "./transaction"
+import { storedDeliveryAddress, upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 
 export const ORDER_INCLUDE = {
   coordination: { include: { partner: true } },
@@ -61,6 +62,8 @@ export async function executeCreateOrder(
   const order = await db.orders.create({
     data: scopedData(ctx, {
       code: data.code,
+      // Cùng mã nguồn ở `orders` và `order_coordinations` (PO 07/11/2026, Q2) — sổ đơn, báo cáo đọc `orders.source`
+      source: data.source,
       customer_id: data.customerId,
       status: data.axes.status,
       production_status: data.axes.productionStatus,
@@ -70,12 +73,14 @@ export async function executeCreateOrder(
       card_message: data.cardMessage,
       internal_note: data.internalNote,
       delivery_window: data.deliveryWindow as Prisma.InputJsonValue,
-      delivery_address: data.deliveryAddress as Prisma.InputJsonValue,
+      delivery_address: storedDeliveryAddress(data.deliveryAddress), // P-3c: người nhận chỉ ở order_recipients
       // Nhân viên chi nhánh tạo đơn → đơn thuộc chi nhánh đó (checklist ALG 9.13)
       branch_id: branchScopeOf(ctx),
       created_by: ctx.userId,
     }),
   })
+
+  await upsertOrderRecipient(db, ctx.organizationId, order.id, { deliveryAddress: data.deliveryAddress })
 
   if (data.items.length > 0) {
     await db.order_items.createMany({

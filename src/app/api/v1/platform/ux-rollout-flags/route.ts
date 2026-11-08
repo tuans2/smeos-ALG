@@ -1,4 +1,5 @@
 import { handle, jsonResponse } from "@/core/http/response"
+import { log } from "@/core/observability/log"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { UX_ROLLOUT_FLAG_KEYS } from "@/modules/platform/domain/ux-rollout-flags"
@@ -27,8 +28,13 @@ export const PUT = handle(async (request) => {
       before,
       after,
     })
-  } catch {
-    // Không làm gián đoạn việc lưu nếu audit log ghi lỗi
+  } catch (error) {
+    // Không làm gián đoạn việc lưu nếu audit log ghi lỗi — nhưng phải để lại dấu vết: thay đổi cấu hình
+    // toàn sàn không có dòng audit là lỗ hổng truy vết (audit API-17, 07/11/2026).
+    log.error("platform.audit_write_failed", {
+      action: "platform.ux_rollout_flags.update",
+      error: error instanceof Error ? error.message : String(error),
+    })
   }
 
   return jsonResponse({ data: { ok: true, flags: after } })

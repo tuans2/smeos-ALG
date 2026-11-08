@@ -57,7 +57,7 @@ tải ảnh (xác định chặng nào chạy).
 | Cách ly tổ chức / nền tảng | `npm run test:tenant`, `npm run test:platform` — **bắt buộc** | Chạm truy cập dữ liệu, route, lược đồ, xác thực, phân quyền |
 | Template | `npm run check:template-ssot` | `src/components/templates/**` |
 | Hợp đồng zod / tài liệu | `npm run check:schemas:creative` (`:coordinator`, `:content-engine`), `npm run check:docs` | Sửa hợp đồng, đặc tả |
-| Hợp đồng màn hình | `npm run check:screen-contracts` | Thêm/đổi màn |
+| Hợp đồng màn hình | `npm run check:screen-contracts -- --check` | Thêm/đổi màn |
 | Migration | `npm run check:migrations` | Thêm migration |
 | Thuật ngữ ngành | `npm run audit:industry:check` | Chữ trên giao diện/domain |
 | Worker | `cd workers && python -m pytest tests -q` | Sửa `workers/**` |

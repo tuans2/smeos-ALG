@@ -35,6 +35,21 @@ jobs:
               - src/generated
               - node_modules
               - .next
+      # Code scanning của repo đang tắt nên không tải kết quả lên được (lỗi "Code scanning is not enabled" làm mọi
+      # PR đỏ, 07/11/2026). Giữ phân tích, ghi SARIF ra đĩa, lưu làm artifact và tự chặn khi có phát hiện mức cao/
+      # nghiêm trọng MỚI; 19 phát hiện có sẵn nằm trong mốc nợ `scripts/codeql-baseline.json`. PO duyệt 07/11/2026.
+      # Bật lại code scanning thì có thể trả `upload` về mặc định.
       - uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
+          upload: never
+          output: codeql-results
+      - name: Lưu kết quả CodeQL
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-${{ matrix.language }}
+          path: codeql-results
+          retention-days: 14
+      - name: Chặn khi có phát hiện mức cao hoặc nghiêm trọng mới (so với scripts/codeql-baseline.json)
+        run: python3 scripts/codeql-gate.py codeql-results ${{ matrix.language }}
