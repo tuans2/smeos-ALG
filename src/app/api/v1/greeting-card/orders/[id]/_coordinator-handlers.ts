@@ -13,23 +13,7 @@ import {
   coordinatorRejectBrochureOrder,
 } from "@/modules/greeting-card/use-cases/update-brochure-order-status"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-import { DELIVERY_FAILURE_REASONS, FAILURE_NOTE_MAX } from "@/modules/greeting-card/domain/delivery-failure"
-
-const floristSchema = z.object({ floristNote: z.string().trim().min(1, "Nhập ghi chú phân công florist").max(500) })
-const photoSchema = z
-  .object({
-    assetId: z.string().min(1).max(64).optional(),
-    assetIds: z.array(z.string().min(1).max(64)).min(1).max(7).optional(),
-    skipPhoto: z.boolean().optional(),
-    skipReason: z.string().trim().max(300).optional(),
-  })
-  .refine((v) => v.skipPhoto || v.assetId || v.assetIds, { message: "Thiếu ảnh hoặc chưa chọn bỏ qua" })
-const shipSchema = z.object({ trackingNote: z.string().trim().min(1, "Nhập thông tin vận chuyển").max(500) })
-const failedSchema = z.object({
-  reason: z.enum(DELIVERY_FAILURE_REASONS),
-  note: z.string().trim().max(FAILURE_NOTE_MAX).optional(),
-  chargeFee: z.boolean().optional(),
-})
+import { acceptOrderBody, deliveryFailedBody, floristBody, photoBody, rejectOrderBody, shipBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 
 type RouteCtx = { params: Promise<{ id: string }> }
 
@@ -53,26 +37,22 @@ function coordinatorHandler<T>(
 }
 
 /** POST /api/v1/greeting-card/orders/[id]/assign-florist */
-export const assignFloristPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.assignFlorist, floristSchema, assignBrochureFlorist)
+export const assignFloristPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.assignFlorist, floristBody, assignBrochureFlorist)
 
 /** POST /api/v1/greeting-card/orders/[id]/product-photo */
-export const productPhotoPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.productionUpdate, photoSchema, uploadBrochureProductPhoto)
+export const productPhotoPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.productionUpdate, photoBody, uploadBrochureProductPhoto)
 
 /** POST /api/v1/greeting-card/orders/[id]/dispatch-shipping */
-export const dispatchShippingPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.deliveryManage, shipSchema, dispatchBrochureShipping)
+export const dispatchShippingPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.deliveryManage, shipBody, dispatchBrochureShipping)
 
 /** POST /api/v1/greeting-card/orders/[id]/recipient-photo */
-export const recipientPhotoPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.deliveryManage, photoSchema, uploadBrochureRecipientPhoto)
+export const recipientPhotoPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.deliveryManage, photoBody, uploadBrochureRecipientPhoto)
 
 /** POST /api/v1/greeting-card/orders/[id]/delivery-failed — shipper không giao được, hẹn giao lại */
-export const deliveryFailedPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.deliveryManage, failedSchema, markBrochureDeliveryFailed)
-
-// manualDispatch: chế độ tự động nhưng Điều phối muốn tự chọn cửa hàng cho riêng đơn này
-const acceptSchema = z.object({ note: z.string().trim().max(500).optional(), manualDispatch: z.boolean().optional() })
-const rejectSchema = z.object({ reason: z.string().trim().min(1, "Nhập lý do từ chối nhận đơn").max(500) })
+export const deliveryFailedPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.deliveryManage, deliveryFailedBody, markBrochureDeliveryFailed)
 
 /** POST /api/v1/greeting-card/orders/[id]/accept — Điều phối xác nhận đã nhận tiền (Chuỗi) rồi chọn cửa hàng gia công */
-export const acceptOrderPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.assignFlorist, acceptSchema, coordinatorAcceptBrochureOrder)
+export const acceptOrderPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.assignFlorist, acceptOrderBody, coordinatorAcceptBrochureOrder)
 
 /** POST /api/v1/greeting-card/orders/[id]/reject — Điều phối từ chối nhận đơn (gửi đề xuất hủy/hoàn tiền lên Điều hành) */
-export const rejectOrderPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.assignFlorist, rejectSchema, coordinatorRejectBrochureOrder)
+export const rejectOrderPOST = coordinatorHandler(GREETING_CARD_CAPABILITY.assignFlorist, rejectOrderBody, coordinatorRejectBrochureOrder)
