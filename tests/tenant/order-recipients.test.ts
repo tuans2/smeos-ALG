@@ -134,7 +134,7 @@ describe("order_recipients — ghi kép và backfill", () => {
     }))
     expect(res.status).toBe(201)
     const coordinated = await prisma.orders.findFirstOrThrow({ where: { organization_id: b.organizationId } })
-    // Cột rõ của dòng (cột bản mã `*_enc` của P-5a kiểm ở pii-encryption.test.ts)
+    // Giá trị đọc qua client (bản mã lưu trong cột kiểm ở pii-encryption.test.ts)
     expect(await recipientOf(coordinated.id)).toMatchObject({
       ...recipientFromDeliveryAddress(coordinated.delivery_address),
       organization_id: b.organizationId, order_id: coordinated.id,

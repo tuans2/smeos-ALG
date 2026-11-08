@@ -4216,8 +4216,13 @@ model tenant_data_keys {
   - Chặn lọc/sắp xếp/`distinct`/`groupBy` theo cột cá nhân (`src/core/security/infra/pii-guard.ts`, cả `AND`/`OR`/`NOT` và
     bộ lọc quan hệ; so với `null` được) → `PiiFilterError`.
 
-Ca thử: `tests/tenant/pii-encryption.test.ts`, `tests/tenant/pii-read.test.ts`, `tests/tenant/pii-contract.test.ts`,
-`src/core/security/__tests__/pii-cipher.test.ts`.
+- **Dọn (P-5d)** — P-5d-1 ngừng ghi `*_enc` và đánh `@ignore`; P-5d-2 (migration `20261109090000_pii_encryption_cleanup`)
+  xoá 15 cột `*_enc` và bỏ nhánh tra `metadata.customerPhone` ở "đơn của khách". Chốt (khối `P5D-VERIFY`): không còn đơn điều
+  phối giữ SĐT khách lẻ trong `metadata` — còn → `RAISE`, cả giao dịch cuộn lại (chạy `npm run pii:backfill` rồi deploy lại).
+
+Ca thử: `tests/tenant/pii-encryption.test.ts`, `tests/tenant/pii-read.test.ts`, `tests/tenant/pii-cleanup.test.ts`,
+`tests/unit/architecture/pii-legacy-columns.test.ts`, `src/core/security/__tests__/pii-cipher.test.ts`. Khối chép đè của
+P-5c (`P5C-VERIFY`/`P5C-INPLACE`) đọc cột `*_enc` đã xoá nên không còn chạy lại trong test.
 
 ## 50. Quyền xem đơn của chi nhánh gia công — `shared_order_access` (07/11/2026)
 

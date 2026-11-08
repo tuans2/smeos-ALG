@@ -2044,49 +2044,28 @@ model orders {
 /// `orders.vat_*` vẫn ghi và vẫn được đọc; đọc chuyển sang bảng này ở P-3b, bỏ nơi cũ ở P-3c. Ghi qua
 /// `upsertOrderRecipient` (`src/modules/orders/infra/order-recipient-repository.ts`).
 model order_recipients {
-  organization_id         String
-  order_id                String   @id // một dòng mỗi đơn
+  organization_id     String
+  order_id            String   @id // một dòng mỗi đơn
   /// @pii identity
-  recipient_name          String?
+  recipient_name      String?
   /// @pii contact
-  recipient_phone         String?
-  /// ADR-014 P-5a: bản sao bản mã của `recipient_phone` (từ P-5c chính `recipient_phone` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii contact
-  recipient_phone_enc     String?  @ignore
+  recipient_phone     String?
   /// Dòng địa chỉ giao đầy đủ (như `formatDeliveryAddress`, null = chưa có / "Theo thỏa thuận").
   /// @pii address
-  address_line            String?
-  /// ADR-014 P-5a: bản sao bản mã của `address_line` (từ P-5c chính `address_line` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii address
-  address_line_enc        String?  @ignore
+  address_line        String?
   /// 5 ô địa chỉ (`AddressParts`) hoặc phường/quận/tỉnh của đơn nhập phẳng.
   /// @pii address
-  address_parts           Json?
-  /// ADR-014 P-5a: bản sao bản mã của `address_parts` (từ P-5c chính `address_parts` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii address
-  address_parts_enc       String?  @ignore
+  address_parts       Json?
   /// @pii tax
-  vat_company_name        String?
-  /// ADR-014 P-5a: bản sao bản mã của `vat_company_name` (từ P-5c chính `vat_company_name` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
+  vat_company_name    String?
   /// @pii tax
-  vat_company_name_enc    String?  @ignore
+  vat_tax_code        String?
   /// @pii tax
-  vat_tax_code            String?
-  /// ADR-014 P-5a: bản sao bản mã của `vat_tax_code` (từ P-5c chính `vat_tax_code` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
+  vat_company_address String?
   /// @pii tax
-  vat_tax_code_enc        String?  @ignore
-  /// @pii tax
-  vat_company_address     String?
-  /// ADR-014 P-5a: bản sao bản mã của `vat_company_address` (từ P-5c chính `vat_company_address` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii tax
-  vat_company_address_enc String?  @ignore
-  /// @pii tax
-  vat_email               String?
-  /// ADR-014 P-5a: bản sao bản mã của `vat_email` (từ P-5c chính `vat_email` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii tax
-  vat_email_enc           String?  @ignore
-  created_at              DateTime @default(now()) @db.Timestamptz(3)
-  updated_at              DateTime @updatedAt @db.Timestamptz(3)
+  vat_email           String?
+  created_at          DateTime @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
   order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
@@ -2240,9 +2219,6 @@ model customers {
   /// (`src/core/security/infra/pii-*.ts`); tra số qua `phone_hash` (`pii-lookup.ts`)
   /// @pii contact
   phone             String
-  /// ADR-014 P-5a: bản sao bản mã của `phone` (từ P-5c chính `phone` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii contact
-  phone_enc         String?         @ignore
   /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
   /// @pii contact
   phone_hash        String?
@@ -2251,14 +2227,8 @@ model customers {
   phone_last4       String?
   /// @pii contact
   email             String?
-  /// ADR-014 P-5a: bản sao bản mã của `email` (từ P-5c chính `email` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii contact
-  email_enc         String?         @ignore
   /// @pii address
   address           String?
-  /// ADR-014 P-5a: bản sao bản mã của `address` (từ P-5c chính `address` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii address
-  address_enc       String?         @ignore
   tier              customer_tier   @default(NEW)
   /// ADR-014 D-P2, P-2 (PO 07/11/2026): PROSPECT = người nhận link Thẻ chào có SĐT mà chưa đặt đơn — không hiện ở
   /// danh sách khách, xuất, phân khúc; đặt đơn, để lại lead hay được tạo tay thì thành ACTIVE.
@@ -2268,9 +2238,6 @@ model customers {
   /// chi nhánh mình và khách dùng chung.
   branch_id         String?
   notes             String?
-  /// ADR-014 P-5a: bản sao bản mã của `notes` (từ P-5c chính `notes` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii free_text
-  notes_enc         String?         @ignore
   tags              String[]        @default([])
   preferred_flowers String[]        @default([])
   preferred_colors  String[]        @default([])
@@ -3406,9 +3373,6 @@ model order_coordinations {
   shipper_name          String?
   /// @pii contact
   shipper_phone         String?
-  /// ADR-014 P-5a: bản sao bản mã của `shipper_phone` (từ P-5c chính `shipper_phone` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii contact
-  shipper_phone_enc     String?                 @ignore
   carrier               String?
   /// PICKED_UP · ON_THE_WAY · DELIVERED_SUCCESS · DELIVERY_FAILED (F12).
   delivery_state        String?
@@ -3765,9 +3729,6 @@ model greeting_sessions {
   customer_name                  String?
   /// @pii contact
   customer_phone                 String?
-  /// ADR-014 P-5a: bản sao bản mã của `customer_phone` (từ P-5c chính `customer_phone` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii contact
-  customer_phone_enc             String?   @ignore
   /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
   /// @pii contact
   customer_phone_hash            String?
@@ -4496,9 +4457,6 @@ model leads {
   name               String
   /// @pii contact
   phone              String
-  /// ADR-014 P-5a: bản sao bản mã của `phone` (từ P-5c chính `phone` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii contact
-  phone_enc          String?   @ignore
   /// P-5a: HMAC-SHA256 của số đã chuẩn hoá (khoá riêng của tổ chức) — khớp đúng số, thay tìm theo chuỗi rõ
   /// @pii contact
   phone_hash         String?
@@ -4506,9 +4464,6 @@ model leads {
   /// @pii contact
   phone_last4        String?
   message            String?
-  /// ADR-014 P-5a: bản sao bản mã của `message` (từ P-5c chính `message` chứa bản mã) — P-5d-1: client không đọc/ghi (`@ignore`), xoá cột ở P-5d-2
-  /// @pii free_text
-  message_enc        String?   @ignore
   source             String // CATALOG_LINK | SHORT_LINK | LANDING | CHAT | MANUAL
   source_ref         String? // slug catalog hoặc mã link
   short_link_id      String?

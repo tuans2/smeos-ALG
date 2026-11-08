@@ -236,3 +236,10 @@ hoá dòng bản cũ ghi trong lúc deploy. Từ đây thiếu `PII_ENCRYPTION_K
 quay lại bản P-5b được nữa (bản P-5b đọc `*_enc`, dòng ghi mới để trống); quay lại bản P-5c vẫn được. P-5d-2 (xoá cột) chỉ
 merge sau khi P-5d-1 đã deploy.
 
+**Trước khi merge P-5d-2** (migration `20261109090000_pii_encryption_cleanup`, xoá 15 cột `*_enc`): bản P-5d-1 đang chạy
+trên production, và không còn đơn điều phối nào giữ SĐT khách lẻ trong `metadata`:
+`SELECT count(*) FROM order_coordinations WHERE metadata ? 'customerPhone';` phải là 0 (khác 0 → `npm run pii:backfill`).
+Migration tự kiểm lại; còn thì dừng, không đổi gì, bản cũ vẫn chạy — sửa xong:
+`npx prisma migrate resolve --rolled-back 20261109090000_pii_encryption_cleanup` rồi deploy lại. Sau P-5d-2 chỉ quay lại
+được bản P-5d-1 (bản P-5c còn đọc `*_enc`).
+

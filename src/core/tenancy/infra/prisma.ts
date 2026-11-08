@@ -24,7 +24,7 @@ const globalForPrisma = globalThis as unknown as {
   schemaVersion?: string
 }
 
-const CURRENT_SCHEMA_VERSION = "2026-11-08-pii-contract"
+const CURRENT_SCHEMA_VERSION = "2026-11-09-pii-cleanup"
 if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
   globalForPrisma.smeosPrisma?.$disconnect?.().catch(() => {})
   delete globalForPrisma.smeosPrisma

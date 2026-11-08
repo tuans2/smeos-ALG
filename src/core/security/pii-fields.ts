@@ -2,7 +2,7 @@
  * ADR-014 D-P3 — phạm vi A (PO duyệt 07/11/2026): cột dữ liệu cá nhân của khách cuối được mã hoá. Từ P-5c chính cột này
  * chứa bản mã (`pii1.…`, cột Json chứa chuỗi bản mã); số điện thoại có thêm `*_hash` (khớp đúng số) và `*_last4` (ô tìm
  * kiếm). Tên khách không mã hoá. Thêm cột cá nhân mới ở các bảng này → thêm vào đây (test `pii-encryption.test.ts` kiểm
- * cột có trong lược đồ). P-5d-1: bỏ bản sao `*_enc` của P-5a/P-5b (cột còn trong CSDL với `@ignore`, xoá ở P-5d-2).
+ * cột có trong lược đồ). P-5d: bỏ bản sao `*_enc` của P-5a/P-5b (P-5d-1 ngừng ghi, P-5d-2 xoá cột).
  */
 export interface PiiFieldSpec {
   hash?: string

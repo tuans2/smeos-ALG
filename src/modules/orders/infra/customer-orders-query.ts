@@ -22,8 +22,8 @@ export async function listOrdersOfCustomer(ctx: TenantContext, customer: { id: s
         ...(phone
           ? [
               { customer_id: null, greeting_sessions: { some: phoneEquals(ctx.organizationId, phone, "customer_phone") } }, // P-5b
-              // P-5c: SĐT khách lẻ của đơn điều phối ở `customer_phone` (bản mã) + băm; đơn cũ chưa qua job còn ở metadata
-              { customer_id: null, coordination: { is: { OR: [phoneEquals(ctx.organizationId, phone, "customer_phone"), { customer_phone_hash: null, metadata: { path: ["customerPhone"], equals: phone } }] } } },
+              // P-5c: SĐT khách lẻ của đơn điều phối ở `customer_phone` (bản mã) + băm; P-5d-2: không còn đơn giữ số trong metadata
+              { customer_id: null, coordination: { is: phoneEquals(ctx.organizationId, phone, "customer_phone") } },
             ]
           : []),
       ],
