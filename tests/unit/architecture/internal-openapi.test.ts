@@ -48,6 +48,7 @@ describe("OpenAPI nội bộ — API tiệm", () => {
       const cap = op.extensions?.["x-capability"]
       if (cap === PUBLIC) expect(op.security, op.operationId).toEqual([])
       else if (cap === SESSION_ONLY) expect(op.errors, op.operationId).toContain(401)
+      else if (op.security.includes("platformSession")) expect(op.errors, op.operationId).toEqual(expect.arrayContaining([401, 403]))
       else expect(op.errors, op.operationId).toEqual(expect.arrayContaining(op.method === "get" ? [401, 403, 409] : [401, 402, 403, 409]))
     }
   })

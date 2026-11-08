@@ -138,3 +138,23 @@ export const gcVatBody = z.object({
   email: z.union([z.literal(""), z.string().trim().email("Email nhận hoá đơn không hợp lệ").max(200)]).nullable().optional(),
 })
 
+
+// ── Query (route tự đọc `searchParams`) ──────────────────────────────────────────────────────────────────
+const ymd = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
+export const gcOrdersQuery = z.object({
+  /** Trạng thái đơn (`ORDER_STATUSES`). */
+  status: z.string().optional(),
+  payment: z.enum(["OUTSTANDING", "PAID"]).optional(),
+  /** Mã đơn / tên / SĐT, tối đa 40 ký tự. */
+  q: z.string().optional(),
+  reported: z.enum(["1"]).optional(),
+  delivered: z.enum(["1"]).optional(),
+  orderId: z.string().optional(),
+  delivery_from: ymd.optional(),
+  delivery_to: ymd.optional(),
+  branch_id: z.string().optional(),
+  /** Bị bỏ qua khi phiên chỉ được xem khách của mình. */
+  sale_id: z.string().optional(),
+  limit: z.string().regex(/^\d+$/).optional(),
+  cursor: z.string().optional(),
+})
