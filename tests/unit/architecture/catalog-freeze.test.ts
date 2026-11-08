@@ -36,6 +36,9 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  *   so tên miền Google Drive bằng `urlHostIs` thay cho `includes`.
  * - PO 07/11/2026 (audit API-09, API đợt 4): `GET /public/catalog/[slug]` giới hạn 60 lần/phút/IP;
  *   `GET /integration/catalog-links?include_revoked=` đọc bằng `z.stringbool()` (trước đó "false" thành true).
+ * - PO 08/11/2026 (mục Thương hiệu bước 3): Landing page chính thức của cửa hàng dùng trang khách /c/[slug] —
+ *   link có `filters.store_official` thêm khối "Thông tin cửa hàng" (`landing-template-store-info.tsx`,
+ *   `official-store-info.ts`) và đọc sống ảnh, video, sản phẩm chủ đạo từ Hồ sơ cửa hàng. Link khác không đổi.
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")

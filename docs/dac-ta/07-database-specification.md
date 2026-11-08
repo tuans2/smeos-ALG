@@ -263,6 +263,7 @@ model brand_profiles {
   hashtags         Json?     // theo nền tảng
   cta_templates    Json?
   forbidden_styles Json?
+  slogan           String?   // câu khẩu hiệu chính thức — mục 43 (08/11/2026)
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
 
@@ -4464,3 +4465,42 @@ model governance_decisions {
 Ca thử: `tests/tenant/governance-decisions.test.ts` (sau mỗi chuỗi thao tác qua route thật, quyết định hiện hành của
 bảng khớp nơi lưu cũ), `tests/tenant/governance-decisions-read.test.ts` (mỗi trục: chỉ bảng mới có tác dụng),
 `src/core/governance/decision-record.test.ts`, `tests/tenant/tier-consistency.test.ts`.
+
+## 43. Mục Thương hiệu 3 bước — `brand_style_options`, `brand_profiles.slogan` (08/11/2026)
+
+PO 08/11/2026: Hồ sơ cửa hàng → Bộ nhận diện thương hiệu → Landing page chính thức; bước 2 và 3 luôn có 3 phương án
+theo phong cách (`LUXURY · YOUTHFUL · RUSTIC`), thêm phương án thì trừ credit. Migration
+`20261108120000_brand_style_options` (thêm cột nullable + bảng mới, có chính sách RLS `tenant_isolation`, CHECK `kind`).
+
+- `brand_profiles.slogan` — câu khẩu hiệu chính thức. Bộ nhận diện ghi khi chọn phương án; Cài đặt sửa được.
+  `PUT /brand-profile` không gửi trường này (undefined) thì giữ giá trị đang lưu.
+- `brand_profiles.brand_assets.featured_product_ids` — sản phẩm chủ đạo (≤ 6) của Hồ sơ, đọc qua
+  `readBrandMaterials` (`src/modules/brand-kit/domain/brand-assets.ts`). Không thêm cột.
+- `brand_style_options` — phương án đã sinh. `batch` 1 = lượt đầu miễn phí; lượt tạo lại khi hồ sơ đổi tăng `batch`;
+  phương án "Tạo thêm" mang `job_id` của job tại chỗ đã trừ credit. Mỗi `kind` có tối đa một dòng `selected_at`
+  (use-case bỏ chọn rồi chọn trong một giao dịch). Bản chính thức vẫn nằm ở `brand_profiles` / `catalog_links`;
+  `content.published_slug` của phương án Landing giữ link `/c/:slug` để đổi phương án không đổi link.
+
+```prisma
+model brand_style_options {
+  id                  String    @id @default(uuid())
+  organization_id     String
+  kind                String // IDENTITY | LANDING — CHECK trong migration
+  style_key           String // LUXURY | YOUTHFUL | RUSTIC (brand-kit/domain/brand-styles.ts)
+  batch               Int       @default(1)
+  content             Json
+  profile_fingerprint String
+  job_id              String?
+  selected_at         DateTime? @db.Timestamptz(3)
+  created_by          String
+  created_at          DateTime  @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, kind, created_at])
+}
+```
+
+Ca thử: `tests/tenant/brand-kit.test.ts` (khoá bước ở máy chủ, chọn phương án, xuất bản giữ link, trừ/hoàn credit,
+phương án tổ chức khác → 404), `src/modules/brand-kit/domain/*.test.ts`.

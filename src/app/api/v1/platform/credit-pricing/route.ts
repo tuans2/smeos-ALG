@@ -1,6 +1,6 @@
 /**
  * GET/PUT /api/v1/platform/credit-pricing — quy đổi credit cấp nền tảng (PO Q10, checklist ALG 10.3, 10.4).
- * GET (`N4`). PUT (`N3`): `{ smsCredit?, znsCredit?, usdToVnd?, creditValueVnd?, defaultMonthlyLimit?, messageOverdraftCredit? }`.
+ * GET (`N4`). PUT (`N3`): `{ smsCredit?, znsCredit?, usdToVnd?, creditValueVnd?, defaultMonthlyLimit?, messageOverdraftCredit?, brandExtraOptionCredit? }`.
  */
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"

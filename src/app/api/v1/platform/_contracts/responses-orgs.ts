@@ -130,6 +130,7 @@ export const creditPricingResponse = data(
     znsCostVnd: z.number(),
     defaultMonthlyLimit: z.number().nullable(),
     messageOverdraftCredit: z.number(),
+    brandExtraOptionCredit: z.number(),
   })
 )
 

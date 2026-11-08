@@ -1,4 +1,5 @@
 import type { DbClient } from "./db-client"
+import { readBrandMaterials } from "@/modules/brand-kit/domain/brand-assets"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { InputJsonValue } from "./entities"
@@ -101,7 +102,9 @@ export class CatalogLinkRepository implements ICatalogLinkRepository {
     ])
 
     const filters = (link.filters as Record<string, unknown>) || {}
-    const productIds = Array.isArray(filters.product_ids) ? (filters.product_ids as string[]) : []
+    // Landing page chính thức (mục Thương hiệu): sản phẩm chủ đạo đọc sống từ Hồ sơ, không chốt lúc xuất bản
+    const featured = filters.store_official === true ? readBrandMaterials(brandProfile?.brand_assets).featuredProductIds : []
+    const productIds = featured.length > 0 ? [...featured] : Array.isArray(filters.product_ids) ? (filters.product_ids as string[]) : []
 
     const productRows = await this.db.products.findMany({
       where: {

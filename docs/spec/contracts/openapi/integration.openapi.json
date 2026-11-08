@@ -679,6 +679,12 @@
                               "type": "null"
                             }
                           ]
+                        },
+                        "slogan": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       },
                       "required": [
@@ -696,7 +702,8 @@
                         "cta_templates",
                         "default_offers",
                         "forbidden_styles",
-                        "brand_assets"
+                        "brand_assets",
+                        "slogan"
                       ],
                       "additionalProperties": false
                     },

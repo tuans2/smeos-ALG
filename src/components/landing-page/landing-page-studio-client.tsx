@@ -17,6 +17,7 @@ import type { LandingPageType } from "@/modules/landing-page/domain/preset-catal
 import { Disclosure } from "@/components/ui/disclosure"
 import { ShopReviewsManager } from "@/components/catalog/reviews/shop-reviews-manager"
 import { PageHeader } from "@/components/ui/page-header"
+import { OfficialLandingBanner } from "./official-landing-banner"
 
 export function LandingPageStudioClient() {
   const router = useRouter()
@@ -137,6 +138,9 @@ export function LandingPageStudioClient() {
           title="Trang giới thiệu có link chia sẻ và mã QR"
           description="Khách mở trên điện thoại để gọi, nhắn Zalo hoặc đặt hàng. Thông tin tiệm lấy sẵn từ hồ sơ cửa hàng."
         />
+
+        {/* Trang chính thức tạo ở mục Thương hiệu (bước 3) — hai nơi nối với nhau */}
+        <OfficialLandingBanner />
 
         {/* Mục đích trang — gửi cho AI soạn nội dung (03c UX-027) */}
         <LandingTypeSelector selectedType={pageType} onSelectType={setPageType} />

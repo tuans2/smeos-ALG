@@ -22,6 +22,7 @@ export type BrandProfileDetail = {
   default_offers: Record<string, unknown> | null
   forbidden_styles: Record<string, unknown> | null
   brand_assets: Record<string, unknown> | null
+  slogan: string | null
 }
 
 /**
@@ -76,5 +77,6 @@ export async function getBrandProfile(
     default_offers: (profile.default_offers as Record<string, unknown> | null) ?? null,
     forbidden_styles: (profile.forbidden_styles as Record<string, unknown> | null) ?? null,
     brand_assets: (profile.brand_assets as Record<string, unknown> | null) ?? null,
+    slogan: profile.slogan ?? null,
   }
 }

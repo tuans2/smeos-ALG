@@ -38,6 +38,7 @@ export class BrandProfileRepository implements IBrandProfileRepository {
       default_offers: (input.default_offers ?? null) as InputJsonValue,
       forbidden_styles: (input.forbidden_styles ?? null) as InputJsonValue,
       brand_assets: (input.brand_assets ?? null) as InputJsonValue,
+      ...(input.slogan !== undefined ? { slogan: input.slogan?.trim() || null } : {}),
     }
 
     return this.db.brand_profiles.upsert({

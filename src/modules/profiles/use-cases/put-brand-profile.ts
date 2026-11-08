@@ -21,6 +21,7 @@ export type PutBrandProfileInput = {
   default_offers?: unknown
   forbidden_styles?: unknown
   brand_assets?: unknown
+  slogan?: string | null | undefined
 }
 
 /**

@@ -17,6 +17,7 @@ const WRITERS: Record<string, (typeof STORAGE_REFERENCE_SOURCES)[number]> = {
   "src/modules/audio-studio/use-cases/music-tracks.ts": "music_tracks.storage_key",
   "src/modules/audio-studio/use-cases/voice-clones.ts": "voice_clones.sample_storage_key",
   "src/modules/avi-gift-import/use-cases/import-analyses.ts": "assets.storage_key",
+  "src/modules/brand-kit/use-cases/store-generated-logo.ts": "assets.storage_key",
   "src/modules/greeting-card/use-cases/upload-payment-proof.ts": "assets.storage_key",
   "src/app/api/v1/coordinator/orders/[id]/confirm-delivery/route.ts": "order_coordinations.metadata.pod_photos",
   "src/app/api/v1/coordinator/orders/[id]/upload-qc-subcontract/route.ts": "order_coordinations.metadata.qc_photos",

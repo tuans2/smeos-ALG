@@ -51,10 +51,15 @@ export type PublicCatalogRawData =
         email: string | null
         address: string | null
         website: string | null
+        description: string | null
+        social_links: unknown
+        operating_hours: unknown
       } | null
       brandProfile: {
         primary_color: string | null
         logo_asset_id: string | null
+        slogan: string | null
+        brand_assets: unknown
       } | null
       productRows: Array<{
         id: string

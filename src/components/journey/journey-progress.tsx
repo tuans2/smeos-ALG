@@ -70,7 +70,7 @@ export function JourneyProgress({
                     ? "bg-surface text-text border-border hover:bg-surface-alt font-medium"
                     : isFailed
                     ? "bg-danger-bg text-danger border-danger font-medium"
-                    : "bg-surface-alt text-text-muted border-border cursor-not-allowed opacity-60"
+                    : "bg-surface-alt text-text-muted border-border cursor-not-allowed"
                 }`}
               >
                 {/* Step badge icon */}

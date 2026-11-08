@@ -34,6 +34,8 @@ const putSchema = z.object({
   default_offers: jsonField,
   forbidden_styles: jsonField,
   brand_assets: jsonField,
+  /** Câu khẩu hiệu — bỏ trống (không gửi) thì giữ giá trị đang lưu */
+  slogan: z.string().trim().max(120).nullable().optional(),
 })
 
 export const PUT = handle(async (request) => {

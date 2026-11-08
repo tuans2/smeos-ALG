@@ -7,6 +7,7 @@
  * Thuần — không import Prisma, không gọi mạng.
  */
 
+import { BRAND_IDENTITY_PROMPT_V1 } from "./brand-identity/v1"
 import { CATALOG_WRITER_PROMPT_V2 } from "./catalog/v2"
 import { CRITIC_PROMPT_V1 } from "./critic/v1"
 import { LANDING_WRITER_PROMPT_V2 } from "./landing/v2"
@@ -22,4 +23,6 @@ export const ACTIVE_PROMPTS = {
   /** Landing (08) / Catalog (09) — v1 vẫn giữ, quay về bằng cách trỏ lại `LANDING_WRITER_PROMPT_V1` / `CATALOG_WRITER_PROMPT_V1`. */
   landingWriter: LANDING_WRITER_PROMPT_V2,
   catalogWriter: CATALOG_WRITER_PROMPT_V2,
+  /** Khẩu hiệu Bộ nhận diện (mục Thương hiệu bước 2, PO 08/11/2026). */
+  brandIdentity: BRAND_IDENTITY_PROMPT_V1,
 } as const

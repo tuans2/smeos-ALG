@@ -22,6 +22,8 @@ export interface UpsertBrandProfileInput {
   default_offers?: unknown
   forbidden_styles?: unknown
   brand_assets?: unknown
+  /** Bỏ trống (undefined) thì giữ giá trị đang lưu — form cũ không gửi trường này */
+  slogan?: string | null | undefined
 }
 
 export interface IBrandProfileRepository {

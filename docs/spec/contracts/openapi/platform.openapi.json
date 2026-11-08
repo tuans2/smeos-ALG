@@ -781,6 +781,9 @@
                         },
                         "messageOverdraftCredit": {
                           "type": "number"
+                        },
+                        "brandExtraOptionCredit": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -791,7 +794,8 @@
                         "smsCostVnd",
                         "znsCostVnd",
                         "defaultMonthlyLimit",
-                        "messageOverdraftCredit"
+                        "messageOverdraftCredit",
+                        "brandExtraOptionCredit"
                       ],
                       "additionalProperties": false
                     }
@@ -865,6 +869,11 @@
                     "type": "integer",
                     "minimum": -9007199254740991,
                     "maximum": 9007199254740991
+                  },
+                  "brandExtraOptionCredit": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
                   }
                 }
               }
@@ -919,6 +928,9 @@
                         },
                         "messageOverdraftCredit": {
                           "type": "number"
+                        },
+                        "brandExtraOptionCredit": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -929,7 +941,8 @@
                         "smsCostVnd",
                         "znsCostVnd",
                         "defaultMonthlyLimit",
-                        "messageOverdraftCredit"
+                        "messageOverdraftCredit",
+                        "brandExtraOptionCredit"
                       ],
                       "additionalProperties": false
                     }

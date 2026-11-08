@@ -51,6 +51,11 @@ describe("thấu chi tin nhắn gửi khách (PO 05/11/2026)", () => {
     expect(parseCreditPricing({ messageOverdraftCredit: -5 }).messageOverdraftCredit).toBe(50)
     expect(creditPricingProblem({ messageOverdraftCredit: 1.5 })).toBeTruthy()
     expect(creditPricingProblem({ messageOverdraftCredit: 200 })).toBeNull()
+    // Credit mỗi phương án "Tạo thêm" ở mục Thương hiệu (PO 08/11/2026): mặc định 1, số nguyên 0–1.000
+    expect(parseCreditPricing({}).brandExtraOptionCredit).toBe(1)
+    expect(parseCreditPricing({ brandExtraOptionCredit: 3 }).brandExtraOptionCredit).toBe(3)
+    expect(creditPricingProblem({ brandExtraOptionCredit: 0.5 })).toBeTruthy()
+    expect(creditPricingProblem({ brandExtraOptionCredit: 2 })).toBeNull()
   })
   it("báo khi số dư chuyển sang âm và khi không còn chỗ cho tin kế tiếp", () => {
     expect(overdraftFloor(3)).toBe(-3)
