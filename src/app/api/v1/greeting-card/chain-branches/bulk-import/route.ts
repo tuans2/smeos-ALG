@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { conflict, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -10,44 +9,7 @@ import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { fillMissingBranchLocations } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { CHAIN_ONLY_MESSAGE, isChainOrganizationType } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
-
-const phone = z.string().trim().regex(/^\+?\d[\d .-]{7,18}$/, "Số điện thoại không hợp lệ")
-const telegramChatId = z.string().trim().regex(/^-?\d{5,20}$/, "Telegram Chat ID chỉ gồm số (nhóm bắt đầu bằng dấu trừ)")
-
-// Giới hạn đầu vào: trước 22/10/2026 route nhận mảng và chuỗi không giới hạn, điểm KPI tuỳ ý
-const branchSchema = z.object({
-  branchId: z.string().trim().min(1).max(50),
-  branchName: z.string().trim().min(1).max(200),
-  address: z.string().trim().max(500).optional(),
-  ward: z.string().trim().max(120).optional(),
-  district: z.string().trim().max(120).optional(),
-  /** Tỉnh / thành phố — nhận cả tên cũ `city` của file mẫu */
-  province: z.string().trim().max(120).optional(),
-  city: z.string().trim().max(120).optional(),
-  serviceWards: z.array(z.string().trim().max(120)).max(50).optional(),
-  latitude: z.number().min(-90).max(90).optional(),
-  longitude: z.number().min(-180).max(180).optional(),
-  maxDeliveryRadiusKm: z.number().min(0).max(500).optional(),
-  qualityScore: z.number().min(0).max(100).default(90),
-  activeJobsCount: z.number().int().min(0).max(1000).default(0),
-  maxConcurrentJobs: z.number().int().min(1).max(1000).default(5),
-  isActive: z.boolean().default(true),
-  channels: z
-    .object({
-      phone: phone.optional(),
-      telegramChatId: telegramChatId.optional(),
-      zaloPhone: phone.optional(),
-    })
-    .optional(),
-})
-
-const bulkImportSchema = z.object({
-  branches: z
-    .array(branchSchema)
-    .min(1)
-    .max(500)
-    .refine((list) => new Set(list.map((b) => b.branchId)).size === list.length, "Mã chi nhánh bị trùng trong tệp"),
-})
+import { chainBranchImportBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 /**
  * POST /api/v1/greeting-card/chain-branches/bulk-import
@@ -59,7 +21,7 @@ export const POST = handle(async (request) => {
   if (!isChainOrganizationType((await new OrganizationRepository().current(ctx))?.type)) throw conflict(CHAIN_ONLY_MESSAGE)
 
   const body = await request.json().catch(() => ({}))
-  const parsed = bulkImportSchema.safeParse(body)
+  const parsed = chainBranchImportBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

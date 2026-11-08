@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -8,22 +7,7 @@ import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-c
 import { resolveSaleScope } from "@/modules/greeting-card/use-cases/order-scope"
 import { parseListQuery, toPage } from "@/modules/greeting-card/contracts/list-query"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
-
-const createSendLinkSchema = z.object({
-  catalogId: z.string().max(64).optional(),
-  catalogCode: z.string().max(40).optional(),
-  customerName: z.string().max(100).nullable().optional(),
-  customerPhone: z.string().max(20).nullable().optional(),
-  prefix: z.string().max(10).optional(),
-  customCatalog: z
-    .object({
-      name: z.string().max(120),
-      description: z.string().max(1000).nullable().optional(),
-      filters: z.record(z.string(), z.unknown()).nullable().optional(),
-      productIds: z.array(z.string().min(1)).min(1).max(200),
-    })
-    .optional(),
-})
+import { createSendLinkBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 const SESSION_STATUSES = [
   "CREATED", "OPENED", "BROWSING", "SELECTED", "ORDER_SUBMITTED", "PAYMENT_REPORTED", "COMPLETED",
@@ -33,7 +17,7 @@ export const POST = handle(async (request: Request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.manage)
   const body = await request.json().catch(() => ({}))
-  const parsed = createSendLinkSchema.safeParse(body)
+  const parsed = createSendLinkBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

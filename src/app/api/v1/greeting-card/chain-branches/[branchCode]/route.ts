@@ -1,12 +1,10 @@
-import { z } from "zod"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
-
-const patchSchema = z.object({ isActive: z.boolean() })
+import { chainBranchPatchBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 /**
  * PATCH /api/v1/greeting-card/chain-branches/[branchCode]  `{ isActive }`
@@ -16,7 +14,7 @@ export const PATCH = handle(async (request, { params }: { params: Promise<{ bran
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.assignFlorist)
 
-  const parsed = patchSchema.safeParse(await request.json().catch(() => ({})))
+  const parsed = chainBranchPatchBody.safeParse(await request.json().catch(() => ({})))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const { branchCode } = await params

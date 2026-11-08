@@ -1,18 +1,9 @@
-import { z } from "zod";
 import { validationFailed } from "@/core/http/errors";
 import { requireCapability } from "@/core/rbac/capabilities";
 import { handle, jsonResponse } from "@/core/http/response";
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
 import { DispatchVideoRenderUseCase } from "@/modules/video-studio/use-cases/dispatch-video-render";
-
-const bodySchema = z.object({
-  scene_images: z
-    .array(z.object({ scene_index: z.number().int().min(1).max(30), asset_id: z.string().uuid() }))
-    .max(30)
-    .optional(),
-  // PO 25/09/2026: nhà cung cấp cho lượt này; vắng = theo thứ tự ưu tiên của tiệm.
-  video_provider: z.enum(["veo", "kling", "runway", "luma", "local_cinematic"]).optional(),
-});
+import { videoRenderBody } from "@/app/api/v1/_contracts/requests-ai-studio";
 
 export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request);
@@ -22,7 +13,7 @@ export const POST = handle(async (request, context: { params: Promise<{ id: stri
   // Thân tuỳ chọn (24/09/2026): ảnh hiện có trên storyboard để lấp cảnh còn
   // trống ảnh của job — không có thì máy chủ tự tìm ảnh Khu vực D / Master.
   const raw = await request.text().catch(() => "");
-  const parsed = bodySchema.safeParse(raw ? JSON.parse(raw) : {});
+  const parsed = videoRenderBody.safeParse(raw ? JSON.parse(raw) : {});
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues });
   const useCase = new DispatchVideoRenderUseCase();
   const result = await useCase.execute(ctx, id, {
