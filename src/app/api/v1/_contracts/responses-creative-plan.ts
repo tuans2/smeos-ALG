@@ -58,7 +58,11 @@ const planItem = z.strictObject({
   status: z.enum(["PLANNED", "IN_PROGRESS", "COMPLETED", "FAILED"]),
   jobId: z.string().optional(),
   description: z.string(),
-  targetPlatform: z.enum(["facebook", "tiktok", "instagram", "zalo", "all"]).optional(),
+  /**
+   * facebook · tiktok · instagram · zalo · all — riêng mục cắt khung (AUTHENTIC) mang tên khung, vd. `tiktok_story`
+   * (kiểu TS khai hẹp hơn giá trị thật).
+   */
+  targetPlatform: z.string().optional(),
 })
 const mediaPlan = z.strictObject({ briefId: z.string(), mode: MODE, items: z.array(planItem), estimatedCredits: z.number(), estimatedTimeMinutes: z.number() })
 
@@ -175,7 +179,8 @@ const creativeTopic = z.strictObject({
       sceneIndex: z.number(),
     })
   ),
-  videoJobBuilder: z.strictObject({ build: z.strictObject({}), videoFormat: VIDEO_FORMAT, sceneCount: z.number(), totalDurationSeconds: z.number() }),
+  /** `build` là hàm ở máy chủ — không có trong JSON. */
+  videoJobBuilder: z.strictObject({ videoFormat: VIDEO_FORMAT, sceneCount: z.number(), totalDurationSeconds: z.number() }),
 })
 /** AUTHENTIC: cắt khung ảnh thật + video từ ảnh gốc. */
 const authenticTopic = z.strictObject({

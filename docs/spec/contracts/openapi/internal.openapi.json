@@ -25581,7 +25581,7 @@
       "post": {
         "operationId": "packageCampaignDraft",
         "summary": "Gộp kết quả sản xuất thành bản nháp chiến dịch",
-        "description": "Hàm thuần — không lưu (gói lưu được ở `POST /creative-production/packages`).",
+        "description": "Hàm thuần — không lưu (gói lưu được ở `POST /creative-production/packages`). Cần ít nhất một trong `creativeResult`/`authenticResult` (kết quả của `/produce`); thiếu cả hai hiện trả 500 (lỗi đã ghi nhận).",
         "tags": [
           "Creative Studio — kế hoạch & nội dung"
         ],
@@ -25887,14 +25887,7 @@
                                     "type": "string"
                                   },
                                   "targetPlatform": {
-                                    "type": "string",
-                                    "enum": [
-                                      "facebook",
-                                      "tiktok",
-                                      "instagram",
-                                      "zalo",
-                                      "all"
-                                    ]
+                                    "type": "string"
                                   }
                                 },
                                 "required": [
@@ -26063,6 +26056,9 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "I1"
@@ -30928,14 +30924,7 @@
                                 "type": "string"
                               },
                               "targetPlatform": {
-                                "type": "string",
-                                "enum": [
-                                  "facebook",
-                                  "tiktok",
-                                  "instagram",
-                                  "zalo",
-                                  "all"
-                                ]
+                                "type": "string"
                               }
                             },
                             "required": [
@@ -32132,11 +32121,6 @@
                               "videoJobBuilder": {
                                 "type": "object",
                                 "properties": {
-                                  "build": {
-                                    "type": "object",
-                                    "properties": {},
-                                    "additionalProperties": false
-                                  },
                                   "videoFormat": {
                                     "type": "string",
                                     "enum": [
@@ -32153,7 +32137,6 @@
                                   }
                                 },
                                 "required": [
-                                  "build",
                                   "videoFormat",
                                   "sceneCount",
                                   "totalDurationSeconds"
@@ -32219,14 +32202,7 @@
                                 "type": "string"
                               },
                               "targetPlatform": {
-                                "type": "string",
-                                "enum": [
-                                  "facebook",
-                                  "tiktok",
-                                  "instagram",
-                                  "zalo",
-                                  "all"
-                                ]
+                                "type": "string"
                               }
                             },
                             "required": [
@@ -33287,14 +33263,7 @@
                                 "type": "string"
                               },
                               "targetPlatform": {
-                                "type": "string",
-                                "enum": [
-                                  "facebook",
-                                  "tiktok",
-                                  "instagram",
-                                  "zalo",
-                                  "all"
-                                ]
+                                "type": "string"
                               }
                             },
                             "required": [
@@ -74758,6 +74727,17 @@
             "$ref": "#/components/headers/RetryAfter"
           }
         },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error500": {
+        "description": "Lỗi hệ thống (`INTERNAL`) — không lộ chi tiết",
+        "headers": {},
         "content": {
           "application/json": {
             "schema": {
