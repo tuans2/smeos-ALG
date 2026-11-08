@@ -78,6 +78,15 @@ const schema = z.object({
   RENDER_SERVICE_ID: z.string().optional(),
   // Máy chủ cửa hàng trỏ CNAME về (vd smeos-web.onrender.com). Trống → lấy từ RENDER_EXTERNAL_URL.
   CUSTOM_DOMAIN_TARGET: z.string().optional(),
+  // Đăng bài tự động (Bước 4, PO 08/11/2026 — ứng dụng đăng ký mới, cấp nền tảng): khoá ứng dụng Meta (Facebook Page +
+  // Instagram), Zalo (Official Account), TikTok (Content Posting). Trống → kênh đó hiện "chưa mở", không kết nối được.
+  // Hướng dẫn: docs/kien-truc/HUONG_DAN_DANG_KY_UNG_DUNG_MXH.md
+  META_APP_ID: z.string().optional(),
+  META_APP_SECRET: z.string().optional(),
+  ZALO_SOCIAL_APP_ID: z.string().optional(),
+  ZALO_SOCIAL_APP_SECRET: z.string().optional(),
+  TIKTOK_CLIENT_KEY: z.string().optional(),
+  TIKTOK_CLIENT_SECRET: z.string().optional(),
   // === FEATURE FLAGS ===
   // Thẻ chào / Swipe Brochure (§34.16). Mặc định bật (“true”) — đặt "false"
   // để tắt module mà không cần xóa code hay deploy lại.

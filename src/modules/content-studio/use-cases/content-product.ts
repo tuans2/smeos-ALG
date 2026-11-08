@@ -109,6 +109,8 @@ export interface ContentLibraryItem {
   readonly image_url: string | null
   readonly has_copy: boolean
   readonly has_pitch: boolean
+  /** Có lượt bài đăng đa kênh đã duyệt — dùng được ở Bước 4 */
+  readonly has_posts: boolean
 }
 
 /** Kho sản phẩm cho hành trình (L1): dùng lại `listProducts` (phạm vi chi nhánh, che giá) + cờ đã có gì. */
@@ -118,7 +120,8 @@ export async function listContentLibrary(
   repo: ContentStudioRepository = getContentStudioRepository(),
 ): Promise<{ data: ContentLibraryItem[]; next_cursor: string | null }> {
   const page = await listProducts(ctx, {}, { limit: options.limit, cursor: options.cursor ?? null })
-  const withCopy = await repo.productsWithApprovedCopy(ctx, page.data.map((p) => p.id))
+  const ids = page.data.map((p) => p.id)
+  const [withCopy, withPosts] = await Promise.all([repo.productsWithApprovedCopy(ctx, ids), repo.productsWithApprovedPosts(ctx, ids)])
   return {
     data: page.data.map((p) => ({
       id: p.id,
@@ -128,6 +131,7 @@ export async function listContentLibrary(
       image_url: p.masterImageUrl ?? null,
       has_copy: withCopy.has(p.id),
       has_pitch: readSalesPitch(p.attributes) !== null,
+      has_posts: withPosts.has(p.id),
     })),
     next_cursor: page.next_cursor,
   }

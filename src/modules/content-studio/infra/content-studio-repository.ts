@@ -61,6 +61,17 @@ export class ContentStudioRepository {
     })
   }
 
+  /** Mã sản phẩm có lượt bài đăng đa kênh đã duyệt (hoặc đã lên lịch) — trong một danh sách cho trước. */
+  async productsWithApprovedPosts(ctx: TenantContext, productIds: readonly string[]): Promise<Set<string>> {
+    if (productIds.length === 0) return new Set()
+    const rows = await this.db.content_generations.findMany({
+      where: scopedWhere(ctx, { product_id: { in: [...productIds] }, status: { in: ["APPROVED", "SCHEDULED"] }, trashed_at: null }),
+      select: { product_id: true },
+      distinct: ["product_id"],
+    })
+    return new Set(rows.map((r) => r.product_id).filter((id): id is string => Boolean(id)))
+  }
+
   /** Mã sản phẩm có Bài giới thiệu đã duyệt — trong một danh sách cho trước. */
   async productsWithApprovedCopy(ctx: TenantContext, productIds: readonly string[]): Promise<Set<string>> {
     if (productIds.length === 0) return new Set()

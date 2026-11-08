@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto"
+
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { SocialChannel } from "@/core/ports/publisher-provider"
@@ -24,6 +26,7 @@ export interface CredentialBundle {
 
 export interface ActiveConnection {
   readonly id: string
+  readonly organizationId: string
   readonly channel: SocialChannel
   readonly accountId: string
   readonly displayName: string
@@ -52,7 +55,7 @@ export async function findActiveConnection(organizationId: string, channel: Soci
   })
   const bundle = row ? parseBundle(key, row.credential_encrypted) : null
   if (!row || !bundle) return null
-  return { id: row.id, channel, accountId: row.external_account_id, displayName: row.display_name, bundle, updatedAt: row.updated_at }
+  return { id: row.id, organizationId: row.organization_id, channel, accountId: row.external_account_id, displayName: row.display_name, bundle, updatedAt: row.updated_at }
 }
 
 /** Kết nối hết hạn / bị thu hồi phía nền tảng → EXPIRED, giao diện nhắc kết nối lại. */
@@ -97,4 +100,70 @@ export async function channelStatuses(ctx: TenantContext): Promise<ChannelStatus
       expiresAt: row?.expires_at?.toISOString() ?? null,
     }
   })
+}
+
+export interface SaveConnectionInput {
+  readonly channel: SocialChannel
+  readonly scopeTier: string
+  readonly accountId: string
+  readonly displayName: string
+  readonly bundle: CredentialBundle
+  readonly status: "ACTIVE" | "CONNECTING"
+  readonly config?: Record<string, unknown>
+}
+
+/**
+ * Lưu kết nối sau OAuth: mỗi kênh MỘT tài khoản dùng để đăng — tài khoản cũ khác của cùng kênh bị ngắt (xoá khoá).
+ * `CONNECTING` = chờ user chọn Trang (Facebook có nhiều Trang), khoá các Trang giữ mã hoá trong cùng dòng.
+ */
+export async function saveConnection(ctx: TenantContext, input: SaveConnectionInput): Promise<string> {
+  const key = SOCIAL_CONNECTOR_KEYS[input.channel]
+  const sealed = sealCredential(key, JSON.stringify(input.bundle))
+  const expires = input.bundle.access_expires_at ? new Date(input.bundle.access_expires_at) : null
+  return prisma.$transaction(async (tx) => {
+    await tx.integration_connections.updateMany({
+      where: scopedWhere(ctx, { connector_key: key, external_account_id: { not: input.accountId } }),
+      data: { status: "DISCONNECTED", credential_encrypted: null, credential_hint: null },
+    })
+    const row = await tx.integration_connections.upsert({
+      where: { organization_id_connector_key_external_account_id: { organization_id: ctx.organizationId, connector_key: key, external_account_id: input.accountId } },
+      update: {
+        display_name: input.displayName, status: input.status, credential_encrypted: sealed.encrypted, credential_hint: sealed.hint,
+        expires_at: expires, last_error_code: null, config: (input.config ?? {}) as object,
+      },
+      create: {
+        organization_id: ctx.organizationId, connector_key: key, scope_tier: input.scopeTier, external_account_id: input.accountId,
+        display_name: input.displayName, status: input.status, config: (input.config ?? {}) as object, credential_encrypted: sealed.encrypted,
+        credential_hint: sealed.hint, connection_ref: randomUUID(), expires_at: expires, created_by: ctx.userId,
+      },
+      select: { id: true },
+    })
+    return row.id
+  })
+}
+
+/**
+ * Dòng chờ chọn Trang Facebook của tổ chức (nếu có). Lúc chờ, khoá mã hoá của dòng mang danh sách Trang kèm Page token
+ * (JSON trong `access_token`) — trả về dạng đã mở, chỉ dùng trong use-case, không trả client.
+ */
+export async function readPendingFacebook(ctx: TenantContext): Promise<{ id: string; pagesJson: string } | null> {
+  const row = await prisma.integration_connections.findFirst({
+    where: scopedWhere(ctx, { connector_key: SOCIAL_CONNECTOR_KEYS.facebook, status: "CONNECTING" as const }),
+    orderBy: { updated_at: "desc" },
+  })
+  if (!row?.credential_encrypted) return null
+  try {
+    return { id: row.id, pagesJson: JSON.parse(openCredential(SOCIAL_CONNECTOR_KEYS.facebook, row.credential_encrypted)).access_token as string }
+  } catch {
+    return null
+  }
+}
+
+/** Ngắt kết nối một kênh: xoá khoá, giữ dòng để đối soát. */
+export async function disconnectChannel(ctx: TenantContext, channel: SocialChannel): Promise<number> {
+  const r = await prisma.integration_connections.updateMany({
+    where: scopedWhere(ctx, { connector_key: SOCIAL_CONNECTOR_KEYS[channel], status: { not: "DISCONNECTED" as const } }),
+    data: { status: "DISCONNECTED", credential_encrypted: null, credential_hint: null },
+  })
+  return r.count
 }

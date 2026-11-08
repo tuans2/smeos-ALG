@@ -9,7 +9,7 @@ import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { evaluateStoreProfile } from "@/modules/profiles/domain/store-profile-completeness"
 import { contentStepTiles, lockHint } from "./content-copy"
 import { ChannelPostsStep } from "./channel-posts-step"
-import { AutoPublishStep } from "./later-steps"
+import { AutoPublishStep } from "./auto-publish-step"
 import { ProductCardStep } from "./product-card-step"
 import { SalesPitchStep } from "./sales-pitch-step"
 import { useContentJourney } from "./use-content-journey"
@@ -53,7 +53,7 @@ export function ContentStudioTiles() {
           {j.step === "PRODUCT_CARD" && <ProductCardStep journey={j} />}
           {j.step === "SALES_PITCH" && <SalesPitchStep journey={j} />}
           {j.step === "CHANNEL_POSTS" && <ChannelPostsStep journey={j} />}
-          {j.step === "AUTO_PUBLISH" && <AutoPublishStep />}
+          {j.step === "AUTO_PUBLISH" && <AutoPublishStep journey={j} />}
         </>
       )}
     </div>

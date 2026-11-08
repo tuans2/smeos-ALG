@@ -6,6 +6,7 @@ import { isSocialChannel, outcomeAfterFailure } from "../domain/post-lifecycle"
 import { findActiveConnection, markConnectionExpired, type ActiveConnection, type CredentialBundle } from "../infra/channel-connections"
 import { signedMediaUrls } from "../infra/post-media"
 import { getSocialPostRepository, type SocialPostRepository, type SocialPostRow } from "../infra/social-post-repository"
+import { refreshConnection } from "./refresh-connection"
 
 /** Mỗi lượt cron (5 phút, chung lượt Trung tâm Tích hợp) đăng tối đa 20 bài — lượt có trần thời gian 60 giây. */
 export const MAX_POSTS_PER_SWEEP = 20
@@ -19,7 +20,7 @@ export interface PublishDeps {
   readonly markExpired: (connectionId: string, code: string) => Promise<void>
   readonly media: (organizationId: string, assetIds: readonly string[]) => Promise<string[]>
   readonly publisher: (channel: SocialChannel) => PublisherProvider
-  /** Làm mới access token (Zalo / TikTok); `null` = không làm mới được → coi như hết hạn. Gắn ở đợt kết nối OAuth. */
+  /** Làm mới access token (Zalo / TikTok); `null` = không làm mới được → coi như hết hạn. */
   readonly refresh: (conn: ActiveConnection) => Promise<CredentialBundle | null>
 }
 
@@ -30,7 +31,7 @@ export const defaultPublishDeps = (): PublishDeps => ({
   markExpired: markConnectionExpired,
   media: signedMediaUrls,
   publisher: (channel) => publisherFor(channel),
-  refresh: async () => null,
+  refresh: (conn) => refreshConnection(conn),
 })
 
 const strings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [])

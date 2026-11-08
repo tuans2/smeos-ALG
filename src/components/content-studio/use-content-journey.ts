@@ -12,6 +12,11 @@ import { fetchContentProduct, type ContentProductView } from "./content-api"
 /** Khoá URL: nhóm đang mở trên /cong-cu và sản phẩm đang làm — tải lại trang vẫn đúng chỗ. */
 export const MODULE_PARAM = "muc"
 export const PRODUCT_PARAM = "sp"
+/** `?buoc=` mở thẳng một bước (vd. quay về từ trang đồng ý của nền tảng sau khi kết nối kênh). */
+export const STEP_PARAM = "buoc"
+const STEP_SLUGS: Readonly<Record<string, ContentStep>> = {
+  "the-san-pham": "PRODUCT_CARD", "the-chao": "SALES_PITCH", "bai-dang": "CHANNEL_POSTS", "dang-tu-dong": "AUTO_PUBLISH",
+}
 
 /**
  * Điều khiển hành trình Tạo nội dung: "sản phẩm đang làm" (giữ trên URL), dữ liệu đã duyệt của nó, bước đang mở và
@@ -24,7 +29,7 @@ export function useContentJourney() {
   const productId = params.get(PRODUCT_PARAM)
   const [view, setView] = useState<ContentProductView | null>(null)
   const [failed, setFailed] = useState<{ id: string; message: string } | null>(null)
-  const [picked, setPicked] = useState<ContentStep | null>(null)
+  const [picked, setPicked] = useState<ContentStep | null>(() => STEP_SLUGS[params.get(STEP_PARAM) ?? ""] ?? null)
 
   const apply = useCallback((id: string, p: Promise<ContentProductView>) =>
     p.then((v) => { setView(v); setFailed(null); return v })

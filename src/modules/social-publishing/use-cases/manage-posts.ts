@@ -2,6 +2,7 @@ import { conflict, notFound } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
+import { appCredentials } from "../adapters/oauth/app-config"
 import { canCancel, canRetry } from "../domain/post-lifecycle"
 import { channelStatuses, type ChannelStatusRow } from "../infra/channel-connections"
 import { getSocialPostRepository, type SocialPostRepository } from "../infra/social-post-repository"
@@ -46,10 +47,15 @@ export interface ChannelStatusView {
   readonly status: string | null
   readonly display_name: string | null
   readonly expires_at: string | null
+  /** Ứng dụng của nền tảng đã được quản trị hệ thống cấu hình — chưa thì kênh "chưa mở", không kết nối được */
+  readonly app_configured: boolean
 }
 
 /** Trạng thái kết nối 4 kênh (J5 — người đăng bài cần biết kênh nào sẵn sàng; không trả khoá). */
 export async function listChannelStatuses(ctx: TenantContext, read: (c: TenantContext) => Promise<ChannelStatusRow[]> = channelStatuses): Promise<ChannelStatusView[]> {
   requireCapability(ctx, "J5")
-  return (await read(ctx)).map((r) => ({ channel: r.channel, connected: r.connected, status: r.status, display_name: r.displayName, expires_at: r.expiresAt }))
+  return (await read(ctx)).map((r) => ({
+    channel: r.channel, connected: r.connected, status: r.status, display_name: r.displayName, expires_at: r.expiresAt,
+    app_configured: appCredentials(r.channel === "instagram" ? "facebook" : r.channel) !== null,
+  }))
 }

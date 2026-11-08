@@ -107,9 +107,15 @@ acceptance:
   `content-engine/domain/approved-product-context.ts`); xem trước + sửa từng bài bằng thẻ chuẩn `MultichannelPostCard`;
   "Duyệt N bài" (J5) một lần; bài đã duyệt nằm trong Kho → nút "Sang Bước 4". Chưa có sản phẩm → chọn từ Kho (chỉ sản
   phẩm đã chốt Thẻ chào) hoặc về Bước 1.
-- Bước 4 (đợt đầu): ô "Đang hoàn thiện" + ô dẫn tới lịch đăng hiện có (`/lich-dang`) — nói rõ là công cụ hiện có.
+- Bước 4 (Đợt 3, module `social-publishing` — thay phần đăng bài của SocialFlow): bài nguồn = lượt bài đã duyệt ở Bước 3
+  của sản phẩm đang làm, hoặc chọn từ Kho (chỉ sản phẩm có bài đã duyệt). 4 ô kênh (Facebook, Instagram, Zalo, TikTok)
+  với trạng thái: Sẵn sàng / Chưa kết nối / Hết hạn kết nối / Chưa có bài / Chưa mở (ứng dụng nền tảng chưa cấu hình);
+  nút **Kết nối** ngay trong ô (W2, OAuth — quay về `?buoc=dang-tu-dong&ket_noi=…`; Facebook nhiều Trang → `Dialog` chọn
+  Trang). 3 ô "Khi nào đăng?": Tự lên lịch (giờ vàng 11:30 / 20:00) · Đăng ngay · Chọn giờ (`datetime-local`). Một nút
+  chính "Lên lịch N bài" / "Đăng N bài" (J5). Danh sách "Bài đã gửi đăng": Chờ đăng / Đang đăng / Đã đăng (Xem bài) /
+  Chưa đăng được (lý do + Thử lại) / Đã huỷ; tự tải lại mỗi 15 giây khi còn bài chờ, tối đa 10 phút.
 - Hồ sơ cửa hàng chưa đủ mục thiết yếu: một dòng nhắc nhẹ dẫn `/ho-so`, không khoá bước.
-- Quyền theo mã năng lực: H1 quét, H2 sửa, H3 duyệt Thẻ, H5 viết Bài giới thiệu, H6 duyệt Bài giới thiệu, L1 đọc Kho, L3 chốt Thẻ chào, I1 viết bài đăng, J5 duyệt bài đăng (mẫu chính
+- Quyền theo mã năng lực: H1 quét, H2 sửa, H3 duyệt Thẻ, H5 viết Bài giới thiệu, H6 duyệt Bài giới thiệu, L1 đọc Kho, L3 chốt Thẻ chào, I1 viết bài đăng, J5 duyệt + đăng bài, W2 kết nối / ngắt kênh (mẫu chính
   thức: chỉ Điều hành — luật `decideEdit` sẵn có). Thiếu quyền → câu tiếng Việt nói rõ, không ẩn im lặng.
 - **PHÁT_TRIỂN_SAU:** 10 công cụ cũ dời vào `deferredTools`, chỉ môi trường phát triển thấy; số liệu đầu trang không đếm.
   Thẻ nhóm trên lưới ghi "4 bước: Thẻ sản phẩm · Thẻ chào · Bài đăng · Đăng tự động".

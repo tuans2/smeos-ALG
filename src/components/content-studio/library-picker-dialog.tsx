@@ -15,6 +15,7 @@ import { fetchLibrary, type ContentLibraryItem } from "./content-api"
 
 /** Sản phẩm dùng được cho bước nào — để user thấy ngay cái nào đã đủ dữ liệu. */
 function readiness(p: ContentLibraryItem): { tone: "ok" | "need" | "muted"; text: string } {
+  if (p.has_posts) return { tone: "ok", text: "Có bài đăng đã duyệt" }
   if (p.has_pitch) return { tone: "ok", text: "Có Thẻ chào" }
   if (p.has_copy) return { tone: "need", text: "Có Bài giới thiệu" }
   return { tone: "muted", text: "Chưa có Bài giới thiệu" }
@@ -23,6 +24,7 @@ function readiness(p: ContentLibraryItem): { tone: "ok" | "need" | "muted"; text
 const REQUIRE_TEXT = {
   copy: "Chỉ chọn được sản phẩm đã có Bài giới thiệu đã duyệt.",
   pitch: "Chỉ chọn được sản phẩm đã chốt Thẻ chào sản phẩm.",
+  posts: "Chỉ chọn được sản phẩm đã có bài đăng được duyệt ở Bước 3.",
 } as const
 
 /**
@@ -35,7 +37,7 @@ export function LibraryPickerDialog({
   open: boolean
   onClose: () => void
   onPick: (productId: string) => void
-  require?: "copy" | "pitch"
+  require?: "copy" | "pitch" | "posts"
   title?: string
 }) {
   const [items, setItems] = useState<ContentLibraryItem[] | null>(null)
@@ -77,7 +79,7 @@ export function LibraryPickerDialog({
       {items && items.length > 0 && (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {items.map((p) => {
-            const blocked = (require === "copy" && !p.has_copy) || (require === "pitch" && !p.has_pitch)
+            const blocked = (require === "copy" && !p.has_copy) || (require === "pitch" && !p.has_pitch) || (require === "posts" && !p.has_posts)
             const src = safeImageSrc(p.image_url)
             const r = readiness(p)
             return (

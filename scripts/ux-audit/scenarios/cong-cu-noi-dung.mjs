@@ -1,6 +1,6 @@
 // /cong-cu → nhóm "Tạo nội dung" dạng ô 4 bước (PO 08/11/2026): Thẻ sản phẩm → Thẻ chào sản phẩm → Bài đăng đa kênh
 // → Đăng tự động. Trạng thái: chưa chọn sản phẩm (Bước 1: 2 kiểu tải + Kho), kiểu "Nhiều sản phẩm", hộp chọn từ Kho,
-// sản phẩm đã duyệt Bước 1 (Bước 2 mở, Bước 3 khoá), Thẻ chào đã lưu (Bước 3 mở), Bước 3 chưa viết / bài chờ duyệt, Bước 4.
+// sản phẩm đã duyệt Bước 1 (Bước 2 mở, Bước 3 khoá), Thẻ chào đã lưu (Bước 3 mở), Bước 3 chưa viết / bài chờ duyệt, Bước 4 chưa có bài / chọn kênh / hàng đợi / kết nối lỗi.
 import { q } from "../lib.mjs"
 
 /** Sản phẩm mẫu đầu tiên của tiệm có bản quét đã duyệt → thêm Bài giới thiệu đã duyệt (Bước 1 xong). */
@@ -81,8 +81,40 @@ export async function run({ open, shot, org, uid }) {
     await nav(p).getByRole("button", { name: /Bài đăng đa kênh/ }).click()
     await p.getByRole("button", { name: "Duyệt 2 bài" }).waitFor({ timeout: 30000 })
   })
-  await shot("cc-nd-buoc4", async (p) => {
+  await shot("cc-nd-buoc4-chua-co-bai", async (p) => {
     await openModule(p, withProduct)
     await nav(p).getByRole("button", { name: /Đăng tự động/ }).click()
+    await p.getByText("Chọn bài có sẵn trong Kho").waitFor()
+  })
+
+  // Duyệt lượt bài → Bước 4 có nguồn; kênh: Facebook đã kết nối, Zalo hết hạn, còn lại chưa mở (dev chưa có khoá ứng dụng)
+  await q("UPDATE content_generations SET status='APPROVED', approved_posts=posts WHERE organization_id=$1 AND product_id=$2", [org, productId])
+  for (const [key, status] of [["social_facebook", "ACTIVE"], ["social_zalo", "EXPIRED"]]) {
+    await q(
+      `INSERT INTO integration_connections (id, organization_id, connector_key, scope_tier, external_account_id, display_name, status, credential_encrypted, connection_ref, created_by, created_at, updated_at)
+       VALUES (gen_random_uuid(), $1, $2, 'STORE', 'acc-audit', 'Trang Hoa Mẫu', $3, 'audit-placeholder', gen_random_uuid()::text, $4, now(), now())
+       ON CONFLICT DO NOTHING`,
+      [org, key, status, uid],
+    )
+  }
+  await shot("cc-nd-buoc4-chon-kenh", async (p) => {
+    await openModule(p, `${withProduct}&buoc=dang-tu-dong`)
+    await p.getByText("Đăng lên đâu?").waitFor({ timeout: 30000 })
+  })
+  const [gen] = await q("SELECT id FROM content_generations WHERE organization_id=$1 AND product_id=$2 ORDER BY created_at DESC LIMIT 1", [org, productId])
+  await q(
+    `INSERT INTO social_posts (id, organization_id, content_generation_id, product_id, channel, text, status, scheduled_at, attempt_count, external_url, last_error_code, last_error_message, idempotency_key, created_by, created_at, updated_at)
+     VALUES (gen_random_uuid(), $1, $2, $3, 'facebook', 'Bó hồng Pastel tông nhẹ nhàng', 'PUBLISHED', now(), 1, 'https://www.facebook.com/123', NULL, NULL, 'audit-fb', $4, now(), now()),
+            (gen_random_uuid(), $1, $2, $3, 'zalo', 'Chào anh/chị, tiệm có mẫu Bó hồng Pastel', 'FAILED', now(), 1, NULL, 'TOKEN_EXPIRED', 'Kết nối Zalo OA đã hết hạn — kết nối lại để tiếp tục đăng', 'audit-zalo', $4, now(), now())
+     ON CONFLICT DO NOTHING`,
+    [org, gen.id, productId, uid],
+  )
+  await shot("cc-nd-buoc4-hang-doi", async (p) => {
+    await openModule(p, `${withProduct}&buoc=dang-tu-dong`)
+    await p.getByText("Bài đã gửi đăng").waitFor({ timeout: 30000 })
+  })
+  await shot("cc-nd-buoc4-ket-noi-loi", async (p) => {
+    await openModule(p, `${withProduct}&buoc=dang-tu-dong&ket_noi=loi&ly_do=${encodeURIComponent("Bạn chưa đồng ý cấp quyền trên trang của nền tảng")}`)
+    await p.getByText("Bạn chưa đồng ý cấp quyền").waitFor({ timeout: 30000 })
   })
 }
