@@ -30,7 +30,7 @@ export const GREETING_ORDER_OPERATIONS: OpenApiOperation[] = [
     description: ID.trim(), ok: [201, { description: "Đề xuất", schema: res.substituteProposalResponse }], errors: ACT }),
   op(ORDERS, { method: "get", path: `${p}/flower-substitute`, operationId: "getFlowerSubstituteOptions", summary: "Dòng hoa có thể thay", cap: "R3", description: ID.trim(),
     ok: [200, { description: "Công thức và đề xuất gần nhất", schema: res.flowerSubstituteOptionsResponse }], errors: [404] }),
-  op(ORDERS, { method: "post", path: `${p}/flower-substitute`, operationId: "proposeFlowerSubstitute", summary: "Đề xuất thay một loại hoa (kèm ảnh)", cap: "R3", body: req.flowerSubstituteBody,
+  op(ORDERS, { method: "post", path: `${p}/flower-substitute`, operationId: "proposeFlowerSubstitute", summary: "Đề xuất thay một thành phần phụ trong công thức (kèm ảnh)", cap: "R3", body: req.flowerSubstituteBody,
     description: ID.trim(), ok: [201, { description: "Đề xuất", schema: res.flowerSubstituteProposalResponse }], errors: ACT }),
 
   op(PAY, { method: "post", path: `${p}/quote`, operationId: "quoteGreetingOrder", summary: "Báo giá đơn đặt mẫu chưa niêm yết giá", cap: "R11", body: req.gcQuoteBody,
@@ -57,7 +57,7 @@ export const GREETING_ORDER_OPERATIONS: OpenApiOperation[] = [
     description: ID.trim(), ok: [200, { description: "Đơn", schema: res.orderRefResponse }], errors: ACT }),
   op(OPS, { method: "post", path: `${p}/reject`, operationId: "coordinatorRejectOrder", summary: "Điều phối từ chối nhận đơn (bắt buộc lý do)", cap: "R4", body: req.rejectOrderBody,
     description: ID.trim(), ok: [200, { description: "Đề xuất huỷ", schema: res.rejectProposalResponse }], errors: ACT }),
-  op(OPS, { method: "post", path: `${p}/assign-florist`, operationId: "assignGreetingFlorist", summary: "Phân công thợ cắm hoa", cap: "R4", body: req.floristBody,
+  op(OPS, { method: "post", path: `${p}/assign-florist`, operationId: "assignGreetingFlorist", summary: "Phân công người thực hiện", cap: "R4", body: req.floristBody,
     description: ID.trim(), ok: [200, { description: "Đơn", schema: res.orderRefResponse }], errors: ACT }),
   op(OPS, { method: "post", path: `${p}/product-photo`, operationId: "uploadProductPhoto", summary: "Ảnh thành phẩm (hoặc bỏ qua có lý do)", cap: "R3", body: req.photoBody,
     description: ID.trim(), ok: [200, { description: "Đơn", schema: res.orderRefResponse }], errors: ACT }),

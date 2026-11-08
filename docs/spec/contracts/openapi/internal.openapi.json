@@ -10806,7 +10806,7 @@
     "/greeting-card/orders/{id}/assign-florist": {
       "post": {
         "operationId": "assignGreetingFlorist",
-        "summary": "Phân công thợ cắm hoa",
+        "summary": "Phân công người thực hiện",
         "description": "Đơn của tổ chức khác hoặc ngoài phạm vi Sale/chi nhánh → 404.",
         "tags": [
           "Thẻ chào — Điều phối"
@@ -13054,7 +13054,7 @@
       },
       "post": {
         "operationId": "proposeFlowerSubstitute",
-        "summary": "Đề xuất thay một loại hoa (kèm ảnh)",
+        "summary": "Đề xuất thay một thành phần phụ trong công thức (kèm ảnh)",
         "description": "Đơn của tổ chức khác hoặc ngoài phạm vi Sale/chi nhánh → 404.",
         "tags": [
           "Thẻ chào — đơn hàng"
