@@ -1,40 +1,13 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { enumParam } from "@/core/http/query-params"
 import { handle, jsonResponse } from "@/core/http/response"
+import { createUsageSchema, USAGE_DESTINATION_VALUES, USAGE_STATUS_VALUES } from "@/app/api/v1/_contracts/requests-storage"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import type { UsageDestination } from "@/modules/marketing-center/domain/asset-type"
-import type { AssetUsageStatus } from "@/modules/marketing-center/domain/asset-usage"
 import type { CtaCode } from "@/modules/marketing-center/domain/cta-registry"
 import { createAssetUsageUseCase } from "@/modules/marketing-center/use-cases/create-asset-usage.use-case"
 import { listAssetUsagesUseCase } from "@/modules/marketing-center/use-cases/list-asset-usages.use-case"
-
-// Giá trị theo enum `usage_destination` / `usage_status` của lược đồ — cùng danh sách với lược đồ zod của POST.
-const USAGE_DESTINATION_VALUES = ["PROMOTION", "SALES", "CARE", "PRINT", "OTHER"] as const
-const USAGE_STATUS_VALUES = ["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"] as const satisfies readonly AssetUsageStatus[]
-
-const createUsageSchema = z.object({
-  source_type: z.string().min(1, "source_type không được để trống"),
-  source_id: z.string().min(1, "source_id không được để trống"),
-  asset_type_code: z.string().min(1, "asset_type_code không được để trống"),
-  destination: z.enum(USAGE_DESTINATION_VALUES),
-  cta_code: z.enum([
-    "LEARN_MORE",
-    "CONTACT",
-    "REQUEST_INFO",
-    "REQUEST_QUOTE",
-    "ORDER",
-    "PAY",
-    "REVIEW",
-    "REFER",
-  ]),
-  title: z.string().min(1, "Tên nơi dùng không được để trống").max(200),
-  channel_id: z.string().optional(),
-  target_path: z.string().optional(),
-  campaign_id: z.string().nullable().optional(),
-  config: z.record(z.string(), z.unknown()).optional(),
-})
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)

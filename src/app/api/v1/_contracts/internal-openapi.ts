@@ -15,6 +15,7 @@ import { NOTIFICATION_OPERATIONS } from "./ops-notification"
 import { ORDER_OPERATIONS } from "./ops-orders"
 import { ORG_OPERATIONS } from "./ops-org"
 import { PRODUCT_OPERATIONS } from "./ops-products"
+import { STORAGE_OPERATIONS } from "./ops-storage"
 
 /**
  * OpenAPI 3.1 nội bộ của API tiệm `/api/v1/*` — chỉ giao diện SMEOS gọi (PO 07/11/2026). Tệp sinh ra:
@@ -24,9 +25,9 @@ import { PRODUCT_OPERATIONS } from "./ops-products"
  */
 export const INTERNAL_OPENAPI_PATH = "docs/spec/contracts/openapi/internal.openapi.json"
 
-export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video", "notification", "chat", "internal-chat", "branches", "branch-portal", "chain", "costing", "pricing-rules", "price-lists", "integrations", "integration-tokens", "sso"] as const
+export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video", "notification", "chat", "internal-chat", "branches", "branch-portal", "chain", "costing", "pricing-rules", "price-lists", "integrations", "integration-tokens", "sso", "assets", "asset-usages", "storage"] as const
 
-export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS, ...CHAIN_OPERATIONS, ...COSTING_OPERATIONS, ...INTEGRATION_HUB_OPERATIONS]
+export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS, ...CHAIN_OPERATIONS, ...COSTING_OPERATIONS, ...INTEGRATION_HUB_OPERATIONS, ...STORAGE_OPERATIONS]
 
 export function buildInternalOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({

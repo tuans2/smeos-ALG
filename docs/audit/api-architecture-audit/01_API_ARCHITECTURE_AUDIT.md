@@ -383,3 +383,17 @@ Phát hiện khi viết hợp đồng (chưa sửa):
 - `POST /integration-tokens/:id/rotate` cấp token mới với thời hạn MẶC ĐỊNH (`resolveExpiry(now, undefined)`), không giữ `ttl_days` đã chọn lúc cấp — token cấp 30 ngày xoay ra token 90 ngày (đã thử). Người cấp token ngắn hạn có chủ đích sẽ vô tình kéo dài hạn khi xoay.
 - Chú thích đầu `sso/refresh/route.ts` vẫn nói cookie `floraos_session`/`floraos_sso` (tên cũ) — chỉ là chú thích, không đổi ở đợt này.
 - Không có đường nào trả 500 trong 12 phép thử lỗi (đầu nối lạ, khoá sai, mã không phải UUID, `ttl_days` sai, đầu nối quản trị lạ).
+
+## 20. Nhật ký sửa — OpenAPI nội bộ, đợt tư liệu & kho tệp (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/assets/*` (5 route, 7 operation), `/asset-usages/*` (2 route, 3 operation), `/storage/*` (6 route, 8 operation) — tổng 386 operation. Chỉ ghi tài liệu, không đổi hành vi, cách ghi/xoá tệp hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 5 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-storage.ts` (kèm hai danh sách giá trị nơi dùng/trạng thái mà `GET /asset-usages` dùng chung), route import lại; thân `POST /assets` là hợp đồng Chặng 01 (xuất lại). Phản hồi khai `strictObject` (`responses-storage.ts`), đối chiếu mẫu ghi từ phản hồi thật. `/storage/{key}` (route bắt mọi đường dẫn `[...key]`) khai xác thực bằng chữ ký URL, không cần phiên; test kiến trúc đổi `[...key]` → `{key}` khi so route ↔ operation | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật và kho đĩa cục bộ: xin URL tải lên → tải thẳng bằng URL ký → ghi nhận asset → danh sách, đọc, URL xem, đọc tệp (cả `Range` 206, thiếu chữ ký 400), duyệt, xoá (204); thùng rác (chuyển, liệt kê, khôi phục, xoá vĩnh viễn, thiếu `type` 400); Kho dữ liệu (tóm tắt, danh sách); nơi dùng tư liệu (tạo, danh sách, sửa, `limit` sai 400) | `tests/tenant/internal-contract-storage.test.ts` |
+
+Ghi nhận:
+- Thùng rác trả envelope cũ `{ success: true }`, `PUT /storage/{key}` trả `{ ok, key }` (đã có trong `api-envelope-legacy.txt`).
+- `x-capability` của `GET · POST /storage/trash` chỉ ghi `G3`: cột năng lực của đặc tả 06 viết `` `G3` \| `L4` \| `A3` \| `B6` `` — bộ tách cột của `internal-openapi.test.ts` (và `check:docs`) cắt ở dấu `|` dù đã thoát, nên chỉ đọc được `G3`. Ba mã còn lại ghi trong mô tả operation. Nên viết lại cột đó bằng `·` khi sửa đặc tả lần tới.
+- 14 phép thử lỗi (mã lạ, khoá kho của tổ chức khác, chi nhánh lạ, `type` thư viện sai, `limit` không phải số…) không có đường nào trả 500.

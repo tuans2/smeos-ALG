@@ -11,6 +11,2629 @@
     }
   ],
   "paths": {
+    "/asset-usages": {
+      "get": {
+        "operationId": "listAssetUsages",
+        "summary": "Nơi dùng tư liệu",
+        "description": "`limit` 1–100 (mặc định 50), sai → 400; `destination`/`status` lạ → 400.",
+        "tags": [
+          "Tư liệu — nơi dùng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "source_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destination",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PROMOTION",
+                "SALES",
+                "CARE",
+                "PRINT",
+                "OTHER"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "ACTIVE",
+                "PAUSED",
+                "ARCHIVED"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nơi dùng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "sourceType": {
+                            "type": "string"
+                          },
+                          "sourceId": {
+                            "type": "string"
+                          },
+                          "assetTypeCode": {
+                            "type": "string"
+                          },
+                          "destination": {
+                            "type": "string",
+                            "enum": [
+                              "PROMOTION",
+                              "SALES",
+                              "CARE",
+                              "PRINT",
+                              "OTHER"
+                            ]
+                          },
+                          "ctaCode": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "shortLinkId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "campaignId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "config": {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "additionalProperties": {}
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "DRAFT",
+                              "ACTIVE",
+                              "PAUSED",
+                              "ARCHIVED"
+                            ]
+                          },
+                          "createdBy": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "sourceType",
+                          "sourceId",
+                          "assetTypeCode",
+                          "destination",
+                          "ctaCode",
+                          "title",
+                          "shortLinkId",
+                          "campaignId",
+                          "config",
+                          "status",
+                          "createdBy",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "M1"
+      },
+      "post": {
+        "operationId": "createAssetUsage",
+        "summary": "Gắn tư liệu vào một nơi dùng",
+        "description": "Kiểm CTA theo nơi dùng và nơi dùng theo loại tư liệu → sai 400; kênh link/QR tạo kèm short link; `campaign_id` của tổ chức khác → 404.",
+        "tags": [
+          "Tư liệu — nơi dùng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "source_type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "source_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "asset_type_code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "destination": {
+                    "type": "string",
+                    "enum": [
+                      "PROMOTION",
+                      "SALES",
+                      "CARE",
+                      "PRINT",
+                      "OTHER"
+                    ]
+                  },
+                  "cta_code": {
+                    "type": "string",
+                    "enum": [
+                      "LEARN_MORE",
+                      "CONTACT",
+                      "REQUEST_INFO",
+                      "REQUEST_QUOTE",
+                      "ORDER",
+                      "PAY",
+                      "REVIEW",
+                      "REFER"
+                    ]
+                  },
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "channel_id": {
+                    "type": "string"
+                  },
+                  "target_path": {
+                    "type": "string"
+                  },
+                  "campaign_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "config": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {}
+                  }
+                },
+                "required": [
+                  "source_type",
+                  "source_id",
+                  "asset_type_code",
+                  "destination",
+                  "cta_code",
+                  "title"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Nơi dùng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "usage": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "organizationId": {
+                              "type": "string"
+                            },
+                            "sourceType": {
+                              "type": "string"
+                            },
+                            "sourceId": {
+                              "type": "string"
+                            },
+                            "assetTypeCode": {
+                              "type": "string"
+                            },
+                            "destination": {
+                              "type": "string",
+                              "enum": [
+                                "PROMOTION",
+                                "SALES",
+                                "CARE",
+                                "PRINT",
+                                "OTHER"
+                              ]
+                            },
+                            "ctaCode": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "shortLinkId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "campaignId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "config": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "DRAFT",
+                                "ACTIVE",
+                                "PAUSED",
+                                "ARCHIVED"
+                              ]
+                            },
+                            "createdBy": {
+                              "type": "string"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "organizationId",
+                            "sourceType",
+                            "sourceId",
+                            "assetTypeCode",
+                            "destination",
+                            "ctaCode",
+                            "title",
+                            "shortLinkId",
+                            "campaignId",
+                            "config",
+                            "status",
+                            "createdBy",
+                            "createdAt",
+                            "updatedAt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "shortLink": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "code": {
+                              "type": "string"
+                            },
+                            "targetPath": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "code",
+                            "targetPath"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "usage"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "M2"
+      }
+    },
+    "/asset-usages/{id}": {
+      "patch": {
+        "operationId": "updateAssetUsage",
+        "summary": "Sửa nơi dùng",
+        "description": "Của tổ chức khác → 404.",
+        "tags": [
+          "Tư liệu — nơi dùng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "cta_code": {
+                    "type": "string",
+                    "enum": [
+                      "LEARN_MORE",
+                      "CONTACT",
+                      "REQUEST_INFO",
+                      "REQUEST_QUOTE",
+                      "ORDER",
+                      "PAY",
+                      "REVIEW",
+                      "REFER"
+                    ]
+                  },
+                  "destination": {
+                    "type": "string",
+                    "enum": [
+                      "PROMOTION",
+                      "SALES",
+                      "CARE",
+                      "PRINT",
+                      "OTHER"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "DRAFT",
+                      "ACTIVE",
+                      "PAUSED",
+                      "ARCHIVED"
+                    ]
+                  },
+                  "config": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Nơi dùng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "sourceType": {
+                          "type": "string"
+                        },
+                        "sourceId": {
+                          "type": "string"
+                        },
+                        "assetTypeCode": {
+                          "type": "string"
+                        },
+                        "destination": {
+                          "type": "string",
+                          "enum": [
+                            "PROMOTION",
+                            "SALES",
+                            "CARE",
+                            "PRINT",
+                            "OTHER"
+                          ]
+                        },
+                        "ctaCode": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "shortLinkId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "campaignId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "config": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "DRAFT",
+                            "ACTIVE",
+                            "PAUSED",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "sourceType",
+                        "sourceId",
+                        "assetTypeCode",
+                        "destination",
+                        "ctaCode",
+                        "title",
+                        "shortLinkId",
+                        "campaignId",
+                        "config",
+                        "status",
+                        "createdBy",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "M2"
+      }
+    },
+    "/assets": {
+      "post": {
+        "operationId": "registerAsset",
+        "summary": "Ghi nhận asset sau khi tải xong (hợp đồng Chặng 01)",
+        "description": "Khoá kho phải thuộc tổ chức của phiên; `parent_asset_id` của tổ chức khác → 404.",
+        "tags": [
+          "Tư liệu — ảnh & video"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "asset_id do POST /assets/upload-url cấp"
+                  },
+                  "product_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parent_asset_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "ORIGINAL",
+                      "ANALYZED",
+                      "ENHANCED",
+                      "MASTER",
+                      "MARKETING",
+                      "CATALOG",
+                      "LANDING",
+                      "SOCIAL"
+                    ]
+                  },
+                  "storage_key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "org/<organization_id>/<product_id|unfiled>/<asset_id>.<ext>"
+                  },
+                  "mime_type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "width": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "height": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "aspect_ratio": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "file_size": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "provider": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "model": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "model_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pipeline_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parameters": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "prompt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "output_sha256": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "quality_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "identity_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "generated_flags": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "cost_usd": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "asset_id",
+                  "kind",
+                  "storage_key",
+                  "mime_type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Asset",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "parent_asset_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "ORIGINAL",
+                            "ANALYZED",
+                            "ENHANCED",
+                            "MASTER",
+                            "MARKETING",
+                            "CATALOG",
+                            "LANDING",
+                            "SOCIAL",
+                            "VIDEO",
+                            "RATIO"
+                          ]
+                        },
+                        "state": {
+                          "type": "string",
+                          "enum": [
+                            "PROCESSING",
+                            "READY",
+                            "FAILED",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "version": {
+                          "type": "number"
+                        },
+                        "storage_key": {
+                          "type": "string"
+                        },
+                        "thumb_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mime_type": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "height": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "aspect_ratio": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "file_size": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pipeline_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "parameters": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "prompt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "input_sha256": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "output_sha256": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "quality_score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "identity_score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "generated_flags": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "created_by": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "trashed_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "purge_after": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "legal_hold_until": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "image_url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "product_id",
+                        "parent_asset_id",
+                        "kind",
+                        "state",
+                        "version",
+                        "storage_key",
+                        "thumb_key",
+                        "mime_type",
+                        "width",
+                        "height",
+                        "aspect_ratio",
+                        "file_size",
+                        "provider",
+                        "model",
+                        "model_version",
+                        "pipeline_version",
+                        "parameters",
+                        "prompt",
+                        "input_sha256",
+                        "output_sha256",
+                        "quality_score",
+                        "identity_score",
+                        "generated_flags",
+                        "cost_usd",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "metadata",
+                        "created_by",
+                        "created_at",
+                        "trashed_at",
+                        "purge_after",
+                        "legal_hold_until",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "asset"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "G2"
+      },
+      "get": {
+        "operationId": "listAssets",
+        "summary": "Asset của tổ chức",
+        "description": "Lọc theo sản phẩm, loại, trạng thái duyệt, asset gốc; phân trang con trỏ. `limit` không phải số nguyên → 400.",
+        "tags": [
+          "Tư liệu — ảnh & video"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "approval_state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "parent_asset_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trang asset",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organization_id": {
+                            "type": "string"
+                          },
+                          "product_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "parent_asset_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "ORIGINAL",
+                              "ANALYZED",
+                              "ENHANCED",
+                              "MASTER",
+                              "MARKETING",
+                              "CATALOG",
+                              "LANDING",
+                              "SOCIAL",
+                              "VIDEO",
+                              "RATIO"
+                            ]
+                          },
+                          "state": {
+                            "type": "string",
+                            "enum": [
+                              "PROCESSING",
+                              "READY",
+                              "FAILED",
+                              "ARCHIVED"
+                            ]
+                          },
+                          "version": {
+                            "type": "number"
+                          },
+                          "storage_key": {
+                            "type": "string"
+                          },
+                          "thumb_key": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "mime_type": {
+                            "type": "string"
+                          },
+                          "width": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "height": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "aspect_ratio": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "file_size": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "provider": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "model": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "model_version": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "pipeline_version": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "parameters": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "prompt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "input_sha256": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "output_sha256": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "quality_score": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "identity_score": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "generated_flags": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "cost_usd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "approval_state": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "APPROVED",
+                              "REJECTED"
+                            ]
+                          },
+                          "approved_by": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "approved_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "metadata": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "created_by": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "trashed_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "purge_after": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "legal_hold_until": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "url": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "image_url": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "product_name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organization_id",
+                          "product_id",
+                          "parent_asset_id",
+                          "kind",
+                          "state",
+                          "version",
+                          "storage_key",
+                          "thumb_key",
+                          "mime_type",
+                          "width",
+                          "height",
+                          "aspect_ratio",
+                          "file_size",
+                          "provider",
+                          "model",
+                          "model_version",
+                          "pipeline_version",
+                          "parameters",
+                          "prompt",
+                          "input_sha256",
+                          "output_sha256",
+                          "quality_score",
+                          "identity_score",
+                          "generated_flags",
+                          "cost_usd",
+                          "approval_state",
+                          "approved_by",
+                          "approved_at",
+                          "metadata",
+                          "created_by",
+                          "created_at",
+                          "trashed_at",
+                          "purge_after",
+                          "legal_hold_until",
+                          "updated_at",
+                          "url",
+                          "image_url",
+                          "name",
+                          "product_name"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G1"
+      }
+    },
+    "/assets/{id}": {
+      "get": {
+        "operationId": "getAsset",
+        "summary": "Một asset",
+        "description": "Của tổ chức khác → 404.",
+        "tags": [
+          "Tư liệu — ảnh & video"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "parent_asset_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "ORIGINAL",
+                            "ANALYZED",
+                            "ENHANCED",
+                            "MASTER",
+                            "MARKETING",
+                            "CATALOG",
+                            "LANDING",
+                            "SOCIAL",
+                            "VIDEO",
+                            "RATIO"
+                          ]
+                        },
+                        "state": {
+                          "type": "string",
+                          "enum": [
+                            "PROCESSING",
+                            "READY",
+                            "FAILED",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "version": {
+                          "type": "number"
+                        },
+                        "storage_key": {
+                          "type": "string"
+                        },
+                        "thumb_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mime_type": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "height": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "aspect_ratio": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "file_size": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pipeline_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "parameters": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "prompt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "input_sha256": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "output_sha256": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "quality_score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "identity_score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "generated_flags": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "created_by": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "trashed_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "purge_after": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "legal_hold_until": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "image_url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "product_id",
+                        "parent_asset_id",
+                        "kind",
+                        "state",
+                        "version",
+                        "storage_key",
+                        "thumb_key",
+                        "mime_type",
+                        "width",
+                        "height",
+                        "aspect_ratio",
+                        "file_size",
+                        "provider",
+                        "model",
+                        "model_version",
+                        "pipeline_version",
+                        "parameters",
+                        "prompt",
+                        "input_sha256",
+                        "output_sha256",
+                        "quality_score",
+                        "identity_score",
+                        "generated_flags",
+                        "cost_usd",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "metadata",
+                        "created_by",
+                        "created_at",
+                        "trashed_at",
+                        "purge_after",
+                        "legal_hold_until",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "asset"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G1"
+      },
+      "delete": {
+        "operationId": "deleteAsset",
+        "summary": "Xoá asset",
+        "description": "Đang bị giữ pháp lý hoặc đang được dùng ở nơi khác (đơn, sản phẩm, gói chiến dịch…) → 409. Của tổ chức khác → 404.",
+        "tags": [
+          "Tư liệu — ảnh & video"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Đã xoá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G3"
+      }
+    },
+    "/assets/{id}/approve": {
+      "post": {
+        "operationId": "approveAsset",
+        "summary": "Duyệt asset dẫn xuất (ảnh chính, biến thể)",
+        "description": "Vừa đổi trạng thái giữa chừng → 409. Của tổ chức khác → 404.",
+        "tags": [
+          "Tư liệu — ảnh & video"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset đã duyệt kèm URL ký",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "parent_asset_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "ORIGINAL",
+                            "ANALYZED",
+                            "ENHANCED",
+                            "MASTER",
+                            "MARKETING",
+                            "CATALOG",
+                            "LANDING",
+                            "SOCIAL",
+                            "VIDEO",
+                            "RATIO"
+                          ]
+                        },
+                        "state": {
+                          "type": "string",
+                          "enum": [
+                            "PROCESSING",
+                            "READY",
+                            "FAILED",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "version": {
+                          "type": "number"
+                        },
+                        "storage_key": {
+                          "type": "string"
+                        },
+                        "thumb_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mime_type": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "height": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "aspect_ratio": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "file_size": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pipeline_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "parameters": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "prompt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "input_sha256": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "output_sha256": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "quality_score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "identity_score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "generated_flags": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "metadata": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "created_by": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "trashed_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "purge_after": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "legal_hold_until": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "image_url": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "product_id",
+                        "parent_asset_id",
+                        "kind",
+                        "state",
+                        "version",
+                        "storage_key",
+                        "thumb_key",
+                        "mime_type",
+                        "width",
+                        "height",
+                        "aspect_ratio",
+                        "file_size",
+                        "provider",
+                        "model",
+                        "model_version",
+                        "pipeline_version",
+                        "parameters",
+                        "prompt",
+                        "input_sha256",
+                        "output_sha256",
+                        "quality_score",
+                        "identity_score",
+                        "generated_flags",
+                        "cost_usd",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "metadata",
+                        "created_by",
+                        "created_at",
+                        "trashed_at",
+                        "purge_after",
+                        "legal_hold_until",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "asset"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I2"
+      }
+    },
+    "/assets/{id}/view-url": {
+      "get": {
+        "operationId": "getAssetViewUrl",
+        "summary": "URL ký để xem asset",
+        "description": "Thay cho truyền Data URL/blob giữa các màn. Của tổ chức khác → 404.",
+        "tags": [
+          "Tư liệu — ảnh & video"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "URL xem",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset_id": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "asset_id",
+                    "url",
+                    "expires_in"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G1"
+      }
+    },
+    "/assets/upload-url": {
+      "post": {
+        "operationId": "createAssetUploadUrl",
+        "summary": "Xin URL ký để tải tệp thẳng lên kho",
+        "description": "Trả khoá kho và URL `PUT` có hạn; tải xong gọi `POST /assets` với cùng `asset_id`/`storage_key`.",
+        "tags": [
+          "Tư liệu — ảnh & video"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "product_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mime_type": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "mime_type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "URL tải lên",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "asset_id": {
+                      "type": "string"
+                    },
+                    "storage_key": {
+                      "type": "string"
+                    },
+                    "upload_url": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "asset_id",
+                    "storage_key",
+                    "upload_url",
+                    "expires_in"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "G2"
+      }
+    },
     "/audio/jobs": {
       "post": {
         "operationId": "createAudioJob",
@@ -94203,6 +96826,977 @@
         "x-capability": "phiên đăng nhập"
       }
     },
+    "/storage/{key}": {
+      "put": {
+        "operationId": "uploadToStorage",
+        "summary": "Tải tệp lên kho bằng URL ký",
+        "description": "Không cần phiên: chữ ký HMAC theo khoá + hạn + phương thức là cách xác thực duy nhất (dùng `upload_url` của `POST /assets/upload-url`). Kiểu tệp lấy từ phần mở rộng của khoá, nội dung phải khớp; chữ ký sai/hết hạn, kiểu không hỗ trợ, quá dung lượng → 400. Thân là byte của tệp.",
+        "tags": [
+          "Kho tệp & thùng rác"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "exp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "sig",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đã lưu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "key": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "key"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          }
+        },
+        "x-capability": "công khai",
+        "x-legacy-error-envelope": true
+      },
+      "get": {
+        "operationId": "readFromStorage",
+        "summary": "Đọc tệp bằng URL ký",
+        "description": "Không cần phiên — chữ ký `GET`. Hỗ trợ `Range` (206 + `Content-Range`; khoảng sai → 416) để phát âm thanh/video. SVG kèm CSP `sandbox`; bảng tính tải xuống (`attachment`). Chữ ký sai/hết hạn → 400; không có tệp → 404 không thân.",
+        "tags": [
+          "Kho tệp & thùng rác"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "exp",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "sig",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nội dung tệp (kiểu theo phần mở rộng)",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "416": {
+            "$ref": "#/components/responses/Error416"
+          }
+        },
+        "x-capability": "công khai",
+        "x-legacy-error-envelope": true
+      }
+    },
+    "/storage/library": {
+      "get": {
+        "operationId": "listLibrary",
+        "summary": "Kho dữ liệu v2 — mục theo loại",
+        "description": "Mã năng lực kiểm ở use-case theo `type`; `scope` = `all` · `hq` · mã chi nhánh (chi nhánh lạ → 404); `from` ISO; phân trang con trỏ. Ảnh bìa là URL ký 1 giờ.",
+        "tags": [
+          "Kho tệp & thùng rác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trang mục",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "original",
+                                  "ai_image",
+                                  "video",
+                                  "audio",
+                                  "content",
+                                  "catalog",
+                                  "greeting_catalog",
+                                  "landing"
+                                ]
+                              },
+                              "subtype": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              "branch": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "id",
+                                      "name"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "thumbnail_url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "drive_link": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "open_href": {
+                                "type": "string"
+                              },
+                              "asset_type": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "code": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "module": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "code",
+                                      "name",
+                                      "module"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "type",
+                              "subtype",
+                              "title",
+                              "status",
+                              "created_at",
+                              "branch",
+                              "thumbnail_url",
+                              "drive_link",
+                              "open_href"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "next_cursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "items",
+                        "next_cursor"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "theo `type`: `G1` (ảnh gốc, ảnh AI) · `I1` (video, âm thanh, nội dung) · `J1` (catalog, landing page) · `L1` (catalog thẻ chào)"
+      }
+    },
+    "/storage/library/summary": {
+      "get": {
+        "operationId": "getLibrarySummary",
+        "summary": "Loại dữ liệu xem được và số mục theo phạm vi",
+        "description": "Không trả dữ liệu nghiệp vụ; quyền từng loại kiểm ở `GET /storage/library`. Chi nhánh lạ → 404.",
+        "tags": [
+          "Kho tệp & thùng rác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tóm tắt",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "types": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "original",
+                              "ai_image",
+                              "video",
+                              "audio",
+                              "content",
+                              "catalog",
+                              "greeting_catalog",
+                              "landing"
+                            ]
+                          }
+                        },
+                        "counts": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string",
+                            "enum": [
+                              "original",
+                              "ai_image",
+                              "video",
+                              "audio",
+                              "content",
+                              "catalog",
+                              "greeting_catalog",
+                              "landing"
+                            ]
+                          },
+                          "additionalProperties": {
+                            "type": "number"
+                          }
+                        },
+                        "is_chain": {
+                          "type": "boolean"
+                        },
+                        "viewer_branch_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "branches": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "types",
+                        "counts",
+                        "is_chain",
+                        "viewer_branch_id",
+                        "branches"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/storage/trash": {
+      "get": {
+        "operationId": "listTrash",
+        "summary": "Thùng rác",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Giữ 30 ngày rồi xoá vĩnh viễn tự động (`daysRemaining`).",
+        "tags": [
+          "Kho tệp & thùng rác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mục trong thùng rác",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "RAW_ASSET",
+                              "APPROVED_ANALYSIS",
+                              "PRODUCT",
+                              "VIDEO",
+                              "CONTENT",
+                              "CATALOG",
+                              "GREETING_CATALOG",
+                              "LANDING"
+                            ]
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "imageUrl": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "trashedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "trashedBy": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "expiresAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "daysRemaining": {
+                            "type": "number"
+                          },
+                          "priceVnd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "category": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type",
+                          "name",
+                          "trashedAt",
+                          "expiresAt",
+                          "daysRemaining"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G3"
+      },
+      "post": {
+        "operationId": "moveToTrash",
+        "summary": "Chuyển một mục vào thùng rác",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Catalog thu hồi link, thẻ chào ẩn. Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "tags": [
+          "Kho tệp & thùng rác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "RAW_ASSET",
+                      "APPROVED_ANALYSIS",
+                      "PRODUCT",
+                      "VIDEO",
+                      "CONTENT",
+                      "CATALOG",
+                      "GREETING_CATALOG",
+                      "LANDING"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã chuyển",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "G3"
+      }
+    },
+    "/storage/trash/{id}": {
+      "delete": {
+        "operationId": "purgeFromTrash",
+        "summary": "Xoá vĩnh viễn",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). `type` bắt buộc, thiếu/sai → 400. Đang giữ pháp lý, ảnh đang được dùng hoặc sản phẩm đã có đơn → 409. Xoá tệp trên kho qua hàng đợi (outbox), ghi nhật ký kiểm toán. Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "tags": [
+          "Kho tệp & thùng rác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "RAW_ASSET",
+                "APPROVED_ANALYSIS",
+                "PRODUCT",
+                "VIDEO",
+                "CONTENT",
+                "CATALOG",
+                "GREETING_CATALOG",
+                "LANDING"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đã xoá vĩnh viễn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phân quyền như `GET /storage/trash` (kiểm ở use-case)"
+      }
+    },
+    "/storage/trash/{id}/restore": {
+      "post": {
+        "operationId": "restoreFromTrash",
+        "summary": "Khôi phục từ thùng rác",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "tags": [
+          "Kho tệp & thùng rác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "RAW_ASSET",
+                      "APPROVED_ANALYSIS",
+                      "PRODUCT",
+                      "VIDEO",
+                      "CONTENT",
+                      "CATALOG",
+                      "GREETING_CATALOG",
+                      "LANDING"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã khôi phục",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "phân quyền như `GET /storage/trash` (kiểm ở use-case)"
+      }
+    },
     "/video/jobs": {
       "get": {
         "operationId": "listVideoJobs",
@@ -98313,6 +101907,17 @@
       },
       "Error413": {
         "description": "Thân yêu cầu vượt 2 MB (`PAYLOAD_TOO_LARGE`, `details.max_bytes`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error416": {
+        "description": "Lỗi",
         "headers": {},
         "content": {
           "application/json": {
