@@ -59,10 +59,9 @@ describe("mã hoá cột dữ liệu cá nhân — lưu bản mã", () => {
   it("khách: cột chỉ còn bản mã, giải ra đúng; băm/4 số cuối khớp; tổ chức khác dùng khoá khác; sửa → bản mã mới", async () => {
     const ca = await createCustomer(a.ctx, { name: "Chị Lan", phone: "0912345678", email: "lan@vi-du.test", address: "1 Lê Lợi", notes: "Thích hồng" })
     const cb = await createCustomer(b.ctx, { name: "Chị Lan", phone: "0912345678" })
-    const ra = await stored("customers", ca.id, ["phone", "phone_enc", "email", "address", "notes", "phone_hash", "phone_last4"])
+    const ra = await stored("customers", ca.id, ["phone", "email", "address", "notes", "phone_hash", "phone_last4"])
     const rb = await stored("customers", cb.id, ["phone_hash"])
     expect(JSON.stringify(ra)).not.toMatch(/0912345678|lan@vi-du|Lê Lợi|Thích hồng/)
-    expect(ra.phone_enc).toBeNull() // P-5d-1: không còn ghi bản sao `*_enc` (cột `@ignore`, xoá ở P-5d-2)
     expect(await open(a.organizationId, ra.phone)).toBe("0912345678")
     expect(await open(a.organizationId, ra.email)).toBe("lan@vi-du.test")
     expect(await open(a.organizationId, ra.address)).toBe("1 Lê Lợi")
@@ -73,9 +72,9 @@ describe("mã hoá cột dữ liệu cá nhân — lưu bản mã", () => {
     expect(await prisma.customers.findUniqueOrThrow({ where: { id: ca.id } })).toMatchObject({ phone: "0912345678", email: "lan@vi-du.test" })
 
     await prisma.customers.update({ where: { id: ca.id }, data: { phone: "0987654321", email: null } })
-    const after = await stored("customers", ca.id, ["phone", "email", "email_enc", "phone_hash", "phone_last4"])
+    const after = await stored("customers", ca.id, ["phone", "email", "phone_hash", "phone_last4"])
     expect(await open(a.organizationId, after.phone)).toBe("0987654321")
-    expect(after).toMatchObject({ email: null, email_enc: null, phone_last4: "4321", phone_hash: phoneHash(master, a.organizationId, "0987654321") })
+    expect(after).toMatchObject({ email: null, phone_last4: "4321", phone_hash: phoneHash(master, a.organizationId, "0987654321") })
   })
 
   it("lead, link Thẻ chào, người nhận + VAT, đơn điều phối: lưu bản mã; SĐT khách lẻ tách khỏi metadata, đọc vẫn có", async () => {
