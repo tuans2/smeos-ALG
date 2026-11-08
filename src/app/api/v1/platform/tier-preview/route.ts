@@ -5,7 +5,6 @@
  * Chỉ người vận hành nền tảng có N1. Chỉ đổi khuôn trải nghiệm, không đổi
  * tổ chức hay quyền (xem `tier-preview.ts`).
  */
-import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -17,8 +16,7 @@ import {
   entryHrefFor,
 } from "@/modules/platform/domain/tier-preview"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
-
-const BodySchema = z.object({ roleKey: z.string().min(1).max(64) })
+import { tierPreviewBody } from "@/app/api/v1/platform/_contracts/requests"
 
 function serializeCookie(value: string, maxAgeSeconds?: number): string {
   const parts = [`${TIER_PREVIEW_COOKIE}=${encodeURIComponent(value)}`, "Path=/", "HttpOnly", "SameSite=Lax"]
@@ -31,7 +29,7 @@ export const POST = handle(async (request) => {
   const pctx = await requirePlatformContext(request)
   requirePlatformCapability(pctx, TIER_PREVIEW_CAPABILITY)
 
-  const parsed = BodySchema.safeParse(await request.json().catch(() => null))
+  const parsed = tierPreviewBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   const preview = buildTierPreview(parsed.data.roleKey)
   if (!preview) throw validationFailed({ roleKey: "Vai không tồn tại hoặc đang phát triển" })

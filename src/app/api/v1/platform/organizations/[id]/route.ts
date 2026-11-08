@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
@@ -8,6 +7,7 @@ import { approveOrganizationModelChange } from "@/modules/platform/use-cases/app
 import { decidePublicChatLimits } from "@/modules/platform/use-cases/decide-public-chat-limits"
 import { setBranchScopeWave1 } from "@/modules/platform/use-cases/set-branch-scope-wave"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { organizationPatchBody } from "@/app/api/v1/platform/_contracts/requests"
 
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const pctx = await requirePlatformContext(request)
@@ -16,26 +16,12 @@ export const GET = handle(async (request, context: { params: Promise<{ id: strin
   return jsonResponse({ data: await getOrganization(pctx, id) })
 })
 
-const patchSchema = z.object({
-  target_type: z.enum(["SINGLE", "STORE", "CHAIN"]).optional(), // FLOWER_NETWORK gộp vào CHAIN (ADR-012 T-8b)
-  note: z.string().trim().max(500).nullish(),
-  unlocked_locales: z.array(z.string().trim()).optional(),
-  /** Từ chối yêu cầu mở khóa ngôn ngữ — xóa pending field khỏi settings */
-  clear_pending_language_unlock: z.boolean().optional(),
-  /** Từ chối yêu cầu chuyển đổi mô hình — xóa pending field khỏi settings */
-  clear_pending_model_change: z.boolean().optional(),
-  /** Duyệt hoặc từ chối yêu cầu nâng hạn mức chat công khai */
-  public_chat_limits_decision: z.enum(["approve", "reject"]).optional(),
-  /** Bật/tắt phạm vi chi nhánh đợt 1 (khách hàng) — D-59, ADR-012 T-5 */
-  branch_scope_wave1: z.boolean().optional(),
-})
-
 export const PATCH = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const pctx = await requirePlatformContext(request)
   await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { id } = await context.params
 
-  const parsed = patchSchema.safeParse(await request.json().catch(() => null))
+  const parsed = organizationPatchBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   let result: unknown = { success: true }
@@ -93,7 +79,6 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
 
   return jsonResponse({ data: result })
 })
-
 
 export const dynamic = "force-dynamic" as const
 export const revalidate = 0 as const

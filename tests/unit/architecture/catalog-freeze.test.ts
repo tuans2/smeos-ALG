@@ -34,6 +34,8 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  *   (`place-public-catalog-order.ts` gọi `isPastVnDate`).
  * - PO 07/11/2026 (sửa phát hiện CodeQL `js/incomplete-url-substring-sanitization`): `flower-image-fallback.ts`
  *   so tên miền Google Drive bằng `urlHostIs` thay cho `includes`.
+ * - PO 07/11/2026 (audit API-09, API đợt 4): `GET /public/catalog/[slug]` giới hạn 60 lần/phút/IP;
+ *   `GET /integration/catalog-links?include_revoked=` đọc bằng `z.stringbool()` (trước đó "false" thành true).
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")

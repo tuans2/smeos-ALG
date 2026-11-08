@@ -124,10 +124,10 @@ ff88b214805f5a2153759d35f35ff8dece86cb6d6ff75d2e0dc5aa9fc952eaff  src/app/api/v1
 8d475d4c586bc50175b86d4835a34d87568c12cec1f4fd748728c63dc2403854  src/app/api/v1/catalog-links/route.ts
 153785fa122f9995b569cc1e7ab57f799da189e5c3e57d97c01abcaa110185b1  src/app/api/v1/public/catalog/[slug]/lead/route.ts
 16bc22c6377878934efbbc90e519a23a87bb0af20316603fb4d156f99fe57c1e  src/app/api/v1/public/catalog/[slug]/order/route.ts
-3a5568a7bdf88cd77c131b320375d7a4759e761534502345cf160336b54b735a  src/app/api/v1/public/catalog/[slug]/route.ts
+c1d12984c2fd4423552c0194fa6d587dd05f6d729e00d5c257befe2cfa815661  src/app/api/v1/public/catalog/[slug]/route.ts
 c6416ed7084f96e01f2f9d20d03011c318e98d559e3f3a3cc5ef0d6d70bbc481  src/app/api/v1/integration/catalog-links/[slug]/revoke/route.ts
 dde971b7e5873d544efc3b3d6dc689da24e9bc7d52b5858e6c8bd956363f7fbd  src/app/api/v1/integration/catalog-links/[slug]/route.ts
-8893ed05cc07db375a7231cb95c4429e29eed0697edcda7723775da8d31fda55  src/app/api/v1/integration/catalog-links/route.ts
+9a859962037a311dc13b2bd46f17c08aff0df89ea37cfdeb166b394bb8ce2f4f  src/app/api/v1/integration/catalog-links/route.ts
 57477eaa35b8c61080cd71b740af9219617cf2493f4a44bf56b942d5347e7d0e  src/app/api/v1/content-engine/catalog-generate/route.ts
 c7b82473bc15206884eaa7467da127f2f7687d6891f1f687c3df5c510ca610b9  src/modules/content-engine/domain/prompts/catalog/v1.ts
 fa5111dc814e59eb65883a60611f2141859eef9966ca181df2797ef63683485d  src/modules/content-engine/domain/prompts/catalog/v2.ts

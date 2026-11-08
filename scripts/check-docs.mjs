@@ -59,16 +59,7 @@ for (const k of codeN) if (!specN.has(k)) bao(`route "${k}" không có trong đ�
 // Cột năng lực: mã mà handler gọi `requireCapability` phải có trong cột năng lực của đặc tả 06 (khi
 // cột có ghi mã). Trước 07/11/2026 chỉ đối chiếu path + method nên 8 dòng lệch không ai thấy (audit
 // API-12). Các dòng đó chờ PO chốt mã hay đặc tả đúng — danh sách này chỉ được co lại.
-const NANG_LUC_LECH_CHO_PO = new Set([
-  "POST /crm/customers/{}/consent",
-  "POST /crm/customers/{}/occasions",
-  "POST /greeting-card/catalogs",
-  "PATCH /greeting-card/catalogs/{}",
-  "GET /media/optimizations",
-  "PATCH /products/{}",
-  "POST /products",
-  "GET /vision/analyses",
-])
+const NANG_LUC_LECH_CHO_PO = new Set([]) // PO chốt 8 dòng ngày 07/11/2026 (audit API-12) — đặc tả theo mã
 console.log("── Cột năng lực")
 const lech = new Set()
 for (const [k, ma] of codeCaps) {

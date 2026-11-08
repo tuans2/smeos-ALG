@@ -6744,7 +6744,7 @@
       "get": {
         "operationId": "publicGetCatalog",
         "summary": "Trang catalog công khai của tiệm",
-        "description": "Catalog đã thu hồi vẫn 200 với `status: REVOKED`. **Chưa có giới hạn tần suất** (audit API-09; route đóng băng, cần PO duyệt mới thêm).",
+        "description": "Catalog đã thu hồi vẫn 200 với `status: REVOKED`. Giới hạn 60 lần/phút/IP (PO 07/11/2026, audit API-09).",
         "tags": [
           "Catalog công khai"
         ],
@@ -7085,9 +7085,11 @@
           },
           "404": {
             "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
           }
-        },
-        "x-rate-limit": "chưa có"
+        }
       }
     },
     "/public/catalog/{slug}/lead": {

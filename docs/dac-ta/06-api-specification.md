@@ -127,8 +127,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/products` | `L1` | Lọc theo `branch_id`, `status`, `category`; `proposal=pending/rejected/expired` lọc mẫu đề xuất theo `attributes.proposal.status` (hàng chờ duyệt, PO 23/10/2026). Lọc toàn kho `occasion`, `price_range` (+`price_min`/`price_max` khi `custom`), `sort` → quét tối đa 3.000, `cursor` dạng `o:<n>`, trả thêm `total`, `truncated`; mỗi dòng có khối `commerce` (giá vốn cắt khi thiếu `L5`) (30/10/2026) |
-| POST | `/products` | `L2` | Người thiếu `H3` tạo → mẫu mang nhãn đề xuất (`attributes.proposal`, chỉ máy chủ ghi), dùng được ngay, báo Điều hành sự kiện `PRODUCT_PROPOSED` (PO 23/10/2026). Nhận thêm `barcode`, `cost_price_vnd` (cần `L5`), `vat_percent`, `weight_grams`, `tags` (30/10/2026) |
-| GET · PATCH | `/products/:id` | `L1` · `L3` | PATCH `image_asset_id` thay ảnh chính; asset của tổ chức khác → 404. Thiếu `L5`: `attributes` bỏ `bom`, `priceGuard` và `craft_fee_vnd` (phí làm thay của mẫu, PO 22/10/2026) (kê trong `redacted_fields`), giá bán niêm yết vẫn trả; PATCH của người thiếu `L5` không ghi đè các khoá này (PO 14/10/2026). `craft_complexity` (`EASY`/`MEDIUM`/`HARD`) không bị ẩn. Thiếu `H3`: chỉ sửa nội dung mẫu đề xuất của chính mình; trên mẫu chính thức chỉ đổi `status` ACTIVE↔DRAFT và `availability_config`, còn lại `CAPABILITY_DENIED` (PO 23/10/2026). PATCH nhận cùng các trường bán hàng như POST; `cost_price_vnd` cần `L5`; phản hồi bỏ giá vốn khi thiếu `L5` (30/10/2026). Chuyển `status: ACTIVE` khi chưa đủ điều kiện (ảnh chính, danh mục, giá/công thức, bài viết bán hàng đã duyệt) vẫn lưu, phản hồi kèm `readiness_warnings` (checklist ALG 7.3, chỉ cảnh báo); `POST /products/bulk-status` trả `warnings: [{ id, code, missing }]` |
+| POST | `/products` | `L2` (+`L5` khi gửi `cost_price_vnd`) | Người thiếu `H3` tạo → mẫu mang nhãn đề xuất (`attributes.proposal`, chỉ máy chủ ghi), dùng được ngay, báo Điều hành sự kiện `PRODUCT_PROPOSED` (PO 23/10/2026). Nhận thêm `barcode`, `cost_price_vnd` (cần `L5`), `vat_percent`, `weight_grams`, `tags` (30/10/2026) |
+| GET · PATCH | `/products/:id` | `L1` · `L3` (+`L4` khi `status=ARCHIVED`, +`L5` khi sửa `cost_price_vnd`) | PATCH `image_asset_id` thay ảnh chính; asset của tổ chức khác → 404. Thiếu `L5`: `attributes` bỏ `bom`, `priceGuard` và `craft_fee_vnd` (phí làm thay của mẫu, PO 22/10/2026) (kê trong `redacted_fields`), giá bán niêm yết vẫn trả; PATCH của người thiếu `L5` không ghi đè các khoá này (PO 14/10/2026). `craft_complexity` (`EASY`/`MEDIUM`/`HARD`) không bị ẩn. Thiếu `H3`: chỉ sửa nội dung mẫu đề xuất của chính mình; trên mẫu chính thức chỉ đổi `status` ACTIVE↔DRAFT và `availability_config`, còn lại `CAPABILITY_DENIED` (PO 23/10/2026). PATCH nhận cùng các trường bán hàng như POST; `cost_price_vnd` cần `L5`; phản hồi bỏ giá vốn khi thiếu `L5` (30/10/2026). Chuyển `status: ACTIVE` khi chưa đủ điều kiện (ảnh chính, danh mục, giá/công thức, bài viết bán hàng đã duyệt) vẫn lưu, phản hồi kèm `readiness_warnings` (checklist ALG 7.3, chỉ cảnh báo); `POST /products/bulk-status` trả `warnings: [{ id, code, missing }]` |
 | POST | `/products/:id/approve` | `H3` | Duyệt mẫu đề xuất vào danh mục chính thức, ghi `audit_logs` `product.approve`; không có đề xuất chờ duyệt → 422; tổ chức khác → 404 (PO 23/10/2026) |
 | POST | `/products/:id/reject` | `H3` | Body `{ reason }` (bắt buộc). Từ chối mẫu đề xuất: tạm ẩn (`DRAFT`), báo người đề xuất, 30 ngày sau tác vụ quét chuyển vào thùng rác; tổ chức khác → 404 (PO 23/10/2026) |
 | GET · POST | `/products/:id/change-requests` | `H3` · `L3` | POST: người không có `H3` đề xuất sửa mẫu chính thức (body như PATCH, không có `status`); bản gốc giữ nguyên, báo Điều hành `PRODUCT_CHANGE_REQUESTED`. Không có thay đổi → 422. GET: đề xuất đang chờ của mẫu |
@@ -197,7 +197,7 @@ data: {"status":"COMPLETED","result":"WARNING"}
 | Method | Path | Năng lực |
 |---|---|---|
 | POST | `/vision/analyses` | `H1` |
-| GET | `/vision/analyses` | `H3` |
+| GET | `/vision/analyses` | `H3` (hàng chờ duyệt) · một trong `H5`/`H3`/`L1` khi `approval_state=APPROVED` |
 | GET | `/vision/analyses/:id` | `H1` |
 | PATCH | `/vision/analyses/:id` | `H2` |
 | POST | `/vision/analyses/:id/approve` | `H3` |
@@ -518,10 +518,10 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | GET | `/catalog-links/:slug` | **chưa gác** — có chủ đích, xem **RS-8** | Công khai, khách quét QR không đăng nhập |
 | PATCH | `/catalog-links/:slug` | `J1` | Trước 18/09 nằm nhầm ở đường dẫn `/revoke` (xem trên) |
 | POST | `/catalog-links/:slug/revoke` | `J2` | Thu hồi; không xoá bản ghi |
-| GET · POST | `/integration/catalog-links` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) — `LocalBudd` gọi thay mặt người dùng đang đăng nhập |
+| GET · POST | `/integration/catalog-links` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) — `LocalBudd` gọi thay mặt người dùng đang đăng nhập · GET `?include_revoked=` nhận `true/false/1/0/yes/no/on/off`, giá trị khác → 400; trước 07/11/2026 mọi chuỗi khác rỗng (kể cả `false`) đều thành `true` |
 | PATCH | `/integration/catalog-links/:slug` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) |
 | POST | `/integration/catalog-links/:slug/revoke` | `J2` (nhánh SSO) | Mới 18/09 (RS-3) |
-| GET | `/public/catalog/:slug` | — *(công khai)* | Storefront khách xem; ảnh ký HMAC; `customer` chỉ có tên/lời chào, không bao giờ có số điện thoại |
+| GET | `/public/catalog/:slug` | — *(công khai)* | Storefront khách xem; ảnh ký HMAC; `customer` chỉ có tên/lời chào, không bao giờ có số điện thoại · Giới hạn 60 lần/phút/IP → 429 (PO 07/11/2026, audit API-09) |
 | POST | `/public/catalog/:slug/lead` | — *(công khai)* | Bước 4 (30/10/2026): `{ name, phone, consent: true, message?, ref?, utm?, verificationToken?, website }` → bảng `leads` + khách CRM (tìm/tạo theo SĐT) + `customer_consents` PHONE_CALL. Tổ chức suy từ catalog; catalog thu hồi → 404. Chặn máy: 10 lần/10 phút/IP, ô bẫy `website`, Cloudflare Turnstile khi khai `TURNSTILE_SECRET_KEY`; mỗi SĐT 3 lead/giờ/tiệm → 429. `ref` = mã link động cùng tổ chức → nguồn `SHORT_LINK` |
 | POST | `/public/catalog/:slug/order` | — (công khai) | Đơn hàng đa nguồn P3 — khách đặt hàng trên catalog/landing `{ productId, quantity, name, phone, address, deliveryDate?, timeSlot?, note?, verificationToken? }`; tổ chức suy từ catalog; nút Đặt hàng tắt cho nguồn → 404; giá tính lại ở máy chủ (mẫu chưa có giá → đơn chờ báo giá); qua `ingestOrder` nguồn `CATALOG`/`LANDING`, gắn lead mở cùng SĐT; ≤ 10 lần/10 phút/IP, 5 đơn/giờ/SĐT; trả `{ orderCode, totalVnd, needsQuote, payment }` |
 | GET · POST | `/store-share-link` | `F1` · `F2` | Công cụ 11 (30/10/2026): xem / tạo link hồ sơ cửa hàng công khai. POST từ chối khi hồ sơ thiếu mục thiết yếu; đã có link đang hoạt động thì trả link đó |
@@ -558,9 +558,9 @@ Liên kết thu hồi được nhưng không xoá được: một mã QR đã d�
 | PATCH | `/crm/customers/:id` | `Q3` · `Q4` | |
 | DELETE | `/crm/customers/:id` | `Q4` | Thay cho `POST /customers/:id/archive` của bản cũ |
 | GET | `/crm/customers/:id/master-index` | `Q1` | Customer Master Index — SSOT một khách |
-| POST | `/crm/customers/:id/occasions` | `Q5` | |
+| POST | `/crm/customers/:id/occasions` | `Q6` | |
 | GET | `/crm/customers/:id/orders` | `Q1` + `R1` | Đơn đã đặt của khách, mọi nguồn: đơn gắn khách hoặc đơn chưa gắn khách có SĐT người đặt trùng (Thẻ Chào, Điều phối); trong phạm vi chi nhánh; tối đa 50, mới nhất trước · khách tổ chức khác → 404 |
-| POST | `/crm/customers/:id/consent` | `Q6` | Cơ sở đồng ý, có mốc thời gian |
+| POST | `/crm/customers/:id/consent` | `Q9` | Cơ sở đồng ý, có mốc thời gian |
 | GET | `/crm/reminders/upcoming` | `Q7` | Quét dịp trước 14 ngày |
 
 **Lệch nghĩa mã cần soát:** bản cũ gán `Q5` cho xuất danh sách và `Q6` cho dịp; mã thật gán `Q5` cho dịp và `Q6` cho đồng ý. Một trong hai sai — xem **RS-10**.
@@ -764,13 +764,15 @@ Khuôn video là enum `video_format`: `REEL_15S` · `TIKTOK_30S` · `STORY_15S` 
 | GET | `/products/:id/master-index` | `L1` | Một sản phẩm |
 | GET | `/assets` | `G1` | Liệt kê asset, lọc theo sản phẩm và `kind` |
 | POST | `/assets/:id/approve` | `I2` | Duyệt asset dẫn xuất |
-| GET | `/media/optimizations` | `I1` | Liệt kê lượt tối ưu M04a |
+| GET | `/media/optimizations` | `I2` | Hàng chờ duyệt ảnh đã tối ưu M04a — chỉ người duyệt (PO 07/11/2026, audit API-12) |
 | POST | `/jobs/batch` | mã "run" theo `module` (`MODULE_RUN_CAPABILITY`, mặc định từ chối — RS-8) | Tạo job cho một module với danh sách mã `AIC` chọn sẵn. Sửa dòng này 05/10/2026: route đã gác từ RS-8 18/09, đặc tả ghi "chưa gác" là cũ · Thân kiểm bằng zod (`capabilities` 1–50 mã); `Idempotency-Key` **bắt buộc** — thiếu → 400, máy chủ không tự sinh khoá (audit API-05, 06/11/2026) |
 | POST | `/media/variants/batch` | `I4` | |
 | POST | `/media/background-removal` | — | **ĐÃ ĐÓNG ở P24**, luôn trả 409 kèm đường thay thế |
 | GET | `/ai-capabilities` | `U1` | |
 
 ## 21. Console Vận hành Nền tảng (P25a)
+
+**OpenAPI (07/11/2026, PO chọn).** Bản máy đọc được của mọi route `/platform/*` (70 operation): `docs/spec/contracts/openapi/platform.openapi.json` (OpenAPI 3.1, tệp sinh ra — `npm run gen:openapi`; nội bộ, không công bố). Nguồn ở `src/app/api/v1/platform/_contracts/`: route dùng chung lược đồ thân ở `requests.ts`; phản hồi khai `strictObject` và được kiểm trên CSDL thật (`tests/platform/platform-contract-*.test.ts`); `x-capability` của từng operation phải khớp cột năng lực bảng dưới (`tests/unit/platform/platform-openapi.test.ts`).
 
 Năm route dưới đây thuộc console vận hành nền tảng (`docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md`), dùng cho người vận hành FloraOS chứ không phải thành viên một tổ chức. Đây là **ngoại lệ có chủ đích, có gác quyền** với Luật 2 ở mục 1 ("không endpoint nào trả dữ liệu xuyên tổ chức") — năm route này CỐ Ý trả dữ liệu của nhiều/mọi tổ chức cùng lúc.
 
@@ -902,8 +904,8 @@ Trang công khai ngoài `/api/v1` (06/10/2026): **`/s/<mã>`** — link bộ sư
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET · POST | `/greeting-card/catalogs` | `L1` · `R2` | Bộ sưu tập đang dùng (mặc định trang 100); `?status=active\|archived\|all`, `?created_by=<userId>`, `?days=<n>` (tạo trong n ngày). POST: `productIds` phải thuộc tổ chức (khác → 404); mã trùng → 409; ghi `audit_logs` `greeting_catalog.create` |
-| GET · PATCH · DELETE | `/greeting-card/catalogs/:id` | `L1` · `R2` · `R2` | DELETE = ẩn (`is_active=false`); tổ chức khác → 404 · Ẩn (DELETE hoặc PATCH `isActive:false`) và khôi phục (PATCH `isActive:true`) chỉ cho người tạo, hoặc người có `L4` (Điều hành) với catalog của người khác — thiếu → 403; thay đổi và `audit_logs` (`greeting_catalog.delete` / `.restore`) ghi trong cùng transaction (07/10/2026); PATCH tên/mô tả/giao diện chỉ người tạo hoặc `L4`, khác → 403 (PO 16/10/2026; Điều phối như Sale) |
+| GET · POST | `/greeting-card/catalogs` | `L1` · `R2` (+`F2` khi đặt chính sách tiệm theo bộ sưu tập) | Bộ sưu tập đang dùng (mặc định trang 100); `?status=active\|archived\|all`, `?created_by=<userId>`, `?days=<n>` (tạo trong n ngày). POST: `productIds` phải thuộc tổ chức (khác → 404); mã trùng → 409; ghi `audit_logs` `greeting_catalog.create` |
+| GET · PATCH · DELETE | `/greeting-card/catalogs/:id` | `L1` · `R2` (+`F2` khi đổi chính sách tiệm) · `R2` | DELETE = ẩn (`is_active=false`); tổ chức khác → 404 · Ẩn (DELETE hoặc PATCH `isActive:false`) và khôi phục (PATCH `isActive:true`) chỉ cho người tạo, hoặc người có `L4` (Điều hành) với catalog của người khác — thiếu → 403; thay đổi và `audit_logs` (`greeting_catalog.delete` / `.restore`) ghi trong cùng transaction (07/10/2026); PATCH tên/mô tả/giao diện chỉ người tạo hoặc `L4`, khác → 403 (PO 16/10/2026; Điều phối như Sale) |
 | POST · DELETE | `/greeting-card/catalogs/:id/products` | `R2` + người tạo hoặc `L4` | Thân `{ productId }`; sản phẩm tổ chức khác → 404; bộ sưu tập người khác tạo (Sale, Điều phối) → 403 (PO 16/10/2026) |
 | GET · POST | `/greeting-card/send-links` | `R1` · `R2` | POST sinh mã gửi ngẫu nhiên duy nhất toàn hệ thống (`T01-XXXXXXXX`), hạn dùng KHÔNG còn do client gửi — lấy theo cài đặt của tiệm `organizations.settings.brochure_link_lifetime_hours` (1–720 giờ, mặc định 24; Điều hành sửa ở Cài đặt Thẻ chào qua `PATCH /organizations/current`), tính từ lúc tạo; trả `expiresAt`. GET kèm `link_state` ACTIVE/EXPIRED/REVOKED |
 | POST | `/greeting-card/send-links/:id/revoke` | `R2` | Thu hồi link chưa có đơn (idempotent); đã có đơn → 409; link ngoài phạm vi xem (sale "chỉ khách của mình", link của sale khác) → 404 |
@@ -1009,7 +1011,7 @@ Endpoint mang khoá nhà cung cấp riêng của tổ chức. Quyết định D2
 | POST | `/shop-reviews` | `J1` | Thêm đánh giá: `authorName` (1–60), `occasion?` (≤ 60), `rating` (1–5), `comment` (5–500), `isVisible?` |
 | PATCH | `/shop-reviews/:id` | `J1` | Sửa nội dung (gửi đủ tên, sao, nhận xét) hoặc chỉ `isVisible`; tổ chức khác → 404 |
 | DELETE | `/shop-reviews/:id` | `J1` | Xoá vĩnh viễn (giao diện hỏi xác nhận); tổ chức khác → 404 |
-| POST | `/content-engine/rewrite` | **chưa gác** (nợ #170) | Viết lại MỘT câu ≤ 500 ký tự theo `field_type`/`style`, trả 3 gợi ý; parse lỗi thì trả gợi ý dựng sẵn · Giới hạn 30 lần/10 phút mỗi người dùng và 200 lần/giờ mỗi tổ chức → 429 (audit API-02, 06/11/2026); chưa trừ credit — chờ PO cùng nợ #170 |
+| POST | `/content-engine/rewrite` | một trong `F2`, `L2`, `L3` (PO 07/11/2026, nợ #170) | Viết lại MỘT câu ≤ 500 ký tự theo `field_type`/`style`, trả 3 gợi ý; parse lỗi thì trả gợi ý dựng sẵn (`fallback: true`) · Giới hạn 30 lần/10 phút mỗi người dùng và 200 lần/giờ mỗi tổ chức → 429 (audit API-02, 06/11/2026) · Trừ giá `content.rewrite` (1 credit) cho mỗi lượt AI trả gợi ý: giữ trước khi gọi AI, thiếu credit → 422 `QUOTA_EXCEEDED`; rơi về gợi ý dựng sẵn hoặc AI lỗi → hoàn lại; không gian trải nghiệm không trừ |
 
 ### 25.2–25.3 Thẻ chào (đã gộp)
 
