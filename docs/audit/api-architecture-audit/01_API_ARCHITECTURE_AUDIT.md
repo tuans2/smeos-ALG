@@ -341,3 +341,17 @@ Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
 | **Credit kênh ngoài** — `checkAndDeductUsageCredit` trừ credit rồi ghi `usage.workspace_id = "system"`; khoá ngoại `usage_workspace_id_fkey` (05/11/2026) chặn, nên từ 05/11 mọi lượt AI trả lời qua khung chat công khai, Facebook Messenger, Zalo OA của tiệm còn credit đều hỏng sau khi đã trừ credit | Tra workspace mặc định của tổ chức (cũ nhất, cùng luật `findDefaultForSessionOrganization`) TRƯỚC khi trừ; không có workspace → không trừ, trợ lý trả câu mời chờ nhân viên như khi hết credit | `tests/tenant/chat-p1-fixes.test.ts` (đỏ trên mã cũ: 500; nay 200, số dư −1, một dòng `usage` đúng workspace) |
 
 Chưa làm: hoàn credit cho các lượt đã trừ mà không trả lời được trong khoảng 05/11–08/11/2026 — cần đối soát sổ cái credit (`credit_transactions` có dòng `kind = USAGE`, `service = CHAT`, lý do "Trả lời AI qua …" mà không có dòng `usage` `chat.message.ai_reply` tương ứng) trên CSDL thật; không làm được từ môi trường soạn mã.
+
+## 17. Nhật ký sửa — OpenAPI nội bộ, đợt chi nhánh & chuỗi (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/branches/*` (2 route, 3 operation), `/branch-portal/*` (1 route, 1 operation), `/chain/*` (9 route, 10 operation) — tổng 331 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 4 route (tạo/sửa chi nhánh, đăng ký cửa hàng đối tác, rời chuỗi) chuyển nguyên văn về `src/app/api/v1/_contracts/requests-chain.ts`, route import lại. Thân hồ sơ thu thập (`rules`) có lược đồ mô tả theo kiểu `CollectionRule` — route vẫn đọc thô. Phản hồi khai `strictObject` (`responses-chain.ts`), gồm dòng `branches` nguyên bản và định nghĩa trường của Field Registry v2 | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật hai tổ chức: chi nhánh (tạo, trùng mã 409, sửa, của tổ chức khác 404), cổng chi nhánh, hồ sơ thu thập (đọc, xem trước, phát hành), cửa hàng đối tác, tóm tắt và thư mục dữ liệu (chuỗi khác 404), liên kết phía cửa hàng (đồng ý, rời, từ chối; phía chuỗi gọi 404) | `tests/tenant/internal-contract-chain-org.test.ts` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `PUT /chain/collection-profile` và `POST /chain/collection-profile/preview`: thiếu `rules` hoặc không phải mảng → route ném `Error` trần → 500 (đã thử). `PUT` với quy tắc sai luật → `publish-chain-collection-profile.ts` cũng ném `Error` trần → 500 (đọc mã); `/preview` trả lỗi đó trong `validation.issues`.
+- `POST /chain/partner-stores` trùng mã cửa hàng trong tổ chức → 500 (vỡ ràng buộc duy nhất), không phải 409 như `POST /branches` (đã thử).
+- `get-store-folder-data.ts` lùi về giá cố định 250.000đ khi sản phẩm tồn kho chưa có `price_vnd` — số bịa hiện trên thư mục dữ liệu cửa hàng (trái quyết định nợ #87 "không bịa giá").

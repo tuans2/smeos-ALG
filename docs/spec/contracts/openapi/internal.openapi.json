@@ -2110,6 +2110,2963 @@
         "x-capability": "công khai"
       }
     },
+    "/branch-portal/orders": {
+      "get": {
+        "operationId": "listBranchPortalOrders",
+        "summary": "Đơn gia công đang mời và đang làm của chi nhánh tôi",
+        "description": "Chi nhánh lấy từ tư cách thành viên của phiên — không nhận tham số chi nhánh. `cardUrl`: link Thẻ Gia Công đã ký cho đúng chi nhánh.",
+        "tags": [
+          "Chi nhánh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đơn của chi nhánh",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "branch": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "code",
+                                "name"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "orders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "orderCode": {
+                                "type": "string"
+                              },
+                              "stage": {
+                                "type": "string",
+                                "enum": [
+                                  "INVITED",
+                                  "GRACE",
+                                  "IN_PROGRESS"
+                                ]
+                              },
+                              "deliveryAddress": {
+                                "type": "string"
+                              },
+                              "deliveryTime": {
+                                "type": "string"
+                              },
+                              "subcontractPriceVnd": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "deadlineAt": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "productionStatus": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "cardUrl": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "orderCode",
+                              "stage",
+                              "deliveryAddress",
+                              "deliveryTime",
+                              "subcontractPriceVnd",
+                              "deadlineAt",
+                              "productionStatus",
+                              "cardUrl"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "branch",
+                        "orders"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "R14"
+      }
+    },
+    "/branches": {
+      "get": {
+        "operationId": "listBranches",
+        "summary": "Chi nhánh của tổ chức",
+        "description": "Sắp theo mã; chưa phân trang (`next_cursor` luôn `null`).",
+        "tags": [
+          "Chi nhánh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chi nhánh",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organization_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "is_active": {
+                            "type": "boolean"
+                          },
+                          "accepts_dispatch": {
+                            "type": "boolean"
+                          },
+                          "ward": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "district": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "province": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "service_wards": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "latitude": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "longitude": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "quality_score": {
+                            "type": "number"
+                          },
+                          "active_jobs_count": {
+                            "type": "number"
+                          },
+                          "max_concurrent_jobs": {
+                            "type": "number"
+                          },
+                          "channels": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "zalo_link_code": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "cancellation_count": {
+                            "type": "number"
+                          },
+                          "bypass_count": {
+                            "type": "number"
+                          },
+                          "cancellation_history": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "bypass_history": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organization_id",
+                          "name",
+                          "code",
+                          "address",
+                          "is_active",
+                          "accepts_dispatch",
+                          "ward",
+                          "district",
+                          "province",
+                          "service_wards",
+                          "latitude",
+                          "longitude",
+                          "quality_score",
+                          "active_jobs_count",
+                          "max_concurrent_jobs",
+                          "channels",
+                          "zalo_link_code",
+                          "cancellation_count",
+                          "bypass_count",
+                          "cancellation_history",
+                          "bypass_history",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": "null"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F6"
+      },
+      "post": {
+        "operationId": "createBranch",
+        "summary": "Tạo chi nhánh",
+        "description": "Mã viết hoa và cắt khoảng trắng; tên/mã chỉ có khoảng trắng → 400; mã đã có trong tổ chức → 409.",
+        "tags": [
+          "Chi nhánh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "address": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "code"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Chi nhánh mới",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "branch": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "is_active": {
+                          "type": "boolean"
+                        },
+                        "accepts_dispatch": {
+                          "type": "boolean"
+                        },
+                        "ward": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "district": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "province": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "service_wards": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "latitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "longitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "quality_score": {
+                          "type": "number"
+                        },
+                        "active_jobs_count": {
+                          "type": "number"
+                        },
+                        "max_concurrent_jobs": {
+                          "type": "number"
+                        },
+                        "channels": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "zalo_link_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cancellation_count": {
+                          "type": "number"
+                        },
+                        "bypass_count": {
+                          "type": "number"
+                        },
+                        "cancellation_history": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "bypass_history": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "name",
+                        "code",
+                        "address",
+                        "is_active",
+                        "accepts_dispatch",
+                        "ward",
+                        "district",
+                        "province",
+                        "service_wards",
+                        "latitude",
+                        "longitude",
+                        "quality_score",
+                        "active_jobs_count",
+                        "max_concurrent_jobs",
+                        "channels",
+                        "zalo_link_code",
+                        "cancellation_count",
+                        "bypass_count",
+                        "cancellation_history",
+                        "bypass_history",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "branch"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F7"
+      }
+    },
+    "/branches/{id}": {
+      "patch": {
+        "operationId": "updateBranch",
+        "summary": "Sửa chi nhánh",
+        "description": "Thân rỗng → 400. Chi nhánh của tổ chức khác → 404.",
+        "tags": [
+          "Chi nhánh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "address": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "is_active": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Chi nhánh",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "branch": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "is_active": {
+                          "type": "boolean"
+                        },
+                        "accepts_dispatch": {
+                          "type": "boolean"
+                        },
+                        "ward": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "district": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "province": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "service_wards": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "latitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "longitude": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "quality_score": {
+                          "type": "number"
+                        },
+                        "active_jobs_count": {
+                          "type": "number"
+                        },
+                        "max_concurrent_jobs": {
+                          "type": "number"
+                        },
+                        "channels": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "zalo_link_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cancellation_count": {
+                          "type": "number"
+                        },
+                        "bypass_count": {
+                          "type": "number"
+                        },
+                        "cancellation_history": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "bypass_history": {
+                          "anyOf": [
+                            {},
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "name",
+                        "code",
+                        "address",
+                        "is_active",
+                        "accepts_dispatch",
+                        "ward",
+                        "district",
+                        "province",
+                        "service_wards",
+                        "latitude",
+                        "longitude",
+                        "quality_score",
+                        "active_jobs_count",
+                        "max_concurrent_jobs",
+                        "channels",
+                        "zalo_link_code",
+                        "cancellation_count",
+                        "bypass_count",
+                        "cancellation_history",
+                        "bypass_history",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "branch"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F7"
+      }
+    },
+    "/chain/collection-profile": {
+      "get": {
+        "operationId": "getChainCollectionProfile",
+        "summary": "Hồ sơ thu thập dữ liệu của chuỗi",
+        "description": "Chưa có hồ sơ → hồ sơ mặc định dựng từ trường lõi chọn được (không gồm trường bí mật S3).",
+        "tags": [
+          "Chuỗi — dữ liệu cửa hàng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hồ sơ và trường thu thập được",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "profile": {
+                          "type": "object",
+                          "properties": {
+                            "organizationId": {
+                              "type": "string"
+                            },
+                            "profileVersion": {
+                              "type": "number"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "DRAFT",
+                                "ACTIVE",
+                                "ARCHIVED"
+                              ]
+                            },
+                            "rules": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "ruleId": {
+                                    "type": "string"
+                                  },
+                                  "fieldKey": {
+                                    "type": "string"
+                                  },
+                                  "domainKey": {
+                                    "type": "string",
+                                    "enum": [
+                                      "org_legal",
+                                      "brand",
+                                      "structure_access",
+                                      "catalog",
+                                      "supply_inventory",
+                                      "resource_schedule",
+                                      "pricing_cost",
+                                      "finance_tax_payment",
+                                      "sales_policy",
+                                      "process_sla",
+                                      "people_capacity",
+                                      "customer_crm",
+                                      "channels_integration",
+                                      "marketing_promo",
+                                      "knowledge_base",
+                                      "ai_automation"
+                                    ]
+                                  },
+                                  "minForm": {
+                                    "type": "string",
+                                    "enum": [
+                                      "NONE",
+                                      "MASKED",
+                                      "AGGREGATED",
+                                      "RAW"
+                                    ]
+                                  },
+                                  "maxForm": {
+                                    "type": "string",
+                                    "enum": [
+                                      "NONE",
+                                      "MASKED",
+                                      "AGGREGATED",
+                                      "RAW"
+                                    ]
+                                  },
+                                  "purpose": {
+                                    "type": "string"
+                                  },
+                                  "scope": {
+                                    "type": "object",
+                                    "properties": {
+                                      "type": {
+                                        "type": "string",
+                                        "enum": [
+                                          "ALL_STORES",
+                                          "BRAND",
+                                          "REGION",
+                                          "SPECIFIC_STORES"
+                                        ]
+                                      },
+                                      "targetIds": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "type"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "effectiveFrom": {
+                                    "type": "string"
+                                  },
+                                  "backfill": {
+                                    "type": "string",
+                                    "enum": [
+                                      "NONE",
+                                      "FROM_EFFECTIVE",
+                                      "FULL"
+                                    ]
+                                  },
+                                  "mandatoryForNewStore": {
+                                    "type": "boolean"
+                                  },
+                                  "status": {
+                                    "type": "string",
+                                    "enum": [
+                                      "DRAFT",
+                                      "ACTIVE",
+                                      "PAUSED",
+                                      "ENDED"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "ruleId",
+                                  "minForm",
+                                  "scope",
+                                  "mandatoryForNewStore",
+                                  "status"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            },
+                            "publishedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "organizationId",
+                            "profileVersion",
+                            "status",
+                            "rules",
+                            "updatedAt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "collectableFields": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "fieldKey": {
+                                "type": "string"
+                              },
+                              "fieldName": {
+                                "type": "object",
+                                "properties": {
+                                  "vi": {
+                                    "type": "string"
+                                  },
+                                  "en": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "vi",
+                                  "en"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "domain": {
+                                "type": "string",
+                                "enum": [
+                                  "org_legal",
+                                  "brand",
+                                  "structure_access",
+                                  "catalog",
+                                  "supply_inventory",
+                                  "resource_schedule",
+                                  "pricing_cost",
+                                  "finance_tax_payment",
+                                  "sales_policy",
+                                  "process_sla",
+                                  "people_capacity",
+                                  "customer_crm",
+                                  "channels_integration",
+                                  "marketing_promo",
+                                  "knowledge_base",
+                                  "ai_automation"
+                                ]
+                              },
+                              "verticalPack": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "DRAFT",
+                                  "ACTIVE",
+                                  "DEPRECATED",
+                                  "REMOVED"
+                                ]
+                              },
+                              "sinceVersion": {
+                                "type": "string"
+                              },
+                              "removeIn": {
+                                "type": "string"
+                              },
+                              "replacementField": {
+                                "type": "string"
+                              },
+                              "dataLayer": {
+                                "type": "string",
+                                "enum": [
+                                  "L1",
+                                  "L2",
+                                  "L3",
+                                  "L4",
+                                  "L5",
+                                  "L6"
+                                ]
+                              },
+                              "ownerScope": {
+                                "type": "string"
+                              },
+                              "dataType": {
+                                "type": "string"
+                              },
+                              "unit": {
+                                "type": "string"
+                              },
+                              "currency": {
+                                "type": "string"
+                              },
+                              "sensitivity": {
+                                "type": "string",
+                                "enum": [
+                                  "S0_PUBLIC",
+                                  "S1_INTERNAL",
+                                  "S2_CONFIDENTIAL",
+                                  "S3_SECRET"
+                                ]
+                              },
+                              "pii": {
+                                "type": "object",
+                                "properties": {
+                                  "isPii": {
+                                    "type": "boolean"
+                                  },
+                                  "piiCategory": {
+                                    "type": "string",
+                                    "enum": [
+                                      "GENERAL",
+                                      "SENSITIVE"
+                                    ]
+                                  },
+                                  "purpose": {
+                                    "type": "string"
+                                  },
+                                  "legalBasis": {
+                                    "type": "string",
+                                    "enum": [
+                                      "CONSENT",
+                                      "CONTRACT",
+                                      "LEGAL_OBLIGATION",
+                                      "LEGITIMATE_INTEREST"
+                                    ]
+                                  },
+                                  "retentionDays": {
+                                    "type": "number"
+                                  },
+                                  "erasureMode": {
+                                    "type": "string",
+                                    "enum": [
+                                      "DELETE",
+                                      "ANONYMIZE"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "isPii"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "requiredStage": {
+                                "type": "string",
+                                "enum": [
+                                  "G1",
+                                  "G2",
+                                  "G3",
+                                  "OPTIONAL"
+                                ]
+                              },
+                              "defaultValue": {},
+                              "validation": {
+                                "type": "object",
+                                "properties": {
+                                  "min": {
+                                    "type": "number"
+                                  },
+                                  "max": {
+                                    "type": "number"
+                                  },
+                                  "pattern": {
+                                    "type": "string"
+                                  },
+                                  "allowedValues": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": [
+                                        "string",
+                                        "number"
+                                      ]
+                                    }
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              "sourceType": {
+                                "type": "string",
+                                "enum": [
+                                  "MANUAL",
+                                  "IMPORT",
+                                  "SYNC",
+                                  "COMPUTED",
+                                  "AI_PROPOSED"
+                                ]
+                              },
+                              "staleAfterDays": {
+                                "type": "number"
+                              },
+                              "aiAccess": {
+                                "type": "object",
+                                "properties": {
+                                  "customerFacing": {
+                                    "type": "string"
+                                  },
+                                  "staffFacing": {
+                                    "type": "string"
+                                  },
+                                  "analytics": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "customerFacing",
+                                  "staffFacing",
+                                  "analytics"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "maskRule": {
+                                "type": "string",
+                                "enum": [
+                                  "MASK_MIDDLE",
+                                  "HASH",
+                                  "ROUND_NUMBER",
+                                  "REDACT"
+                                ]
+                              },
+                              "aiMayPropose": {
+                                "type": "boolean"
+                              },
+                              "propagation": {
+                                "type": "object",
+                                "properties": {
+                                  "toChain": {
+                                    "type": "string",
+                                    "enum": [
+                                      "NONE",
+                                      "MASKED",
+                                      "AGGREGATED",
+                                      "RAW"
+                                    ]
+                                  },
+                                  "toPlatform": {
+                                    "type": "string",
+                                    "enum": [
+                                      "NONE",
+                                      "MASKED",
+                                      "AGGREGATED",
+                                      "RAW"
+                                    ]
+                                  },
+                                  "ceiling": {
+                                    "type": "object",
+                                    "properties": {
+                                      "toChain": {
+                                        "type": "string",
+                                        "enum": [
+                                          "NONE",
+                                          "MASKED",
+                                          "AGGREGATED",
+                                          "RAW"
+                                        ]
+                                      },
+                                      "toPlatform": {
+                                        "type": "string",
+                                        "enum": [
+                                          "NONE",
+                                          "MASKED",
+                                          "AGGREGATED",
+                                          "RAW"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "toChain",
+                                      "toPlatform"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  "chainSelectable": {
+                                    "type": "boolean"
+                                  },
+                                  "chainDefault": {
+                                    "type": "boolean"
+                                  },
+                                  "allowedPrograms": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "toChain",
+                                  "toPlatform",
+                                  "ceiling",
+                                  "chainSelectable",
+                                  "chainDefault"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "exportable": {
+                                "type": "boolean"
+                              },
+                              "usedBy": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "dependsOn": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "fieldKey",
+                              "fieldName",
+                              "domain",
+                              "verticalPack",
+                              "status",
+                              "sinceVersion",
+                              "dataLayer",
+                              "ownerScope",
+                              "dataType",
+                              "sensitivity",
+                              "pii",
+                              "requiredStage",
+                              "sourceType",
+                              "aiAccess",
+                              "aiMayPropose",
+                              "propagation",
+                              "exportable"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "profile",
+                        "collectableFields"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "put": {
+        "operationId": "publishChainCollectionProfile",
+        "summary": "Phát hành phiên bản hồ sơ thu thập mới",
+        "description": "Mỗi lần phát hành là một phiên bản mới, không sửa bản cũ. Quy tắc sai luật (trường S3, mức sàn vượt trần, thiếu mục đích cho trường S2, vượt trần thoả thuận chia sẻ dữ liệu) hiện cũng trả 500 (use-case ném `Error` trần) — gọi `/preview` trước để thấy lỗi trong `validation.issues`. Thiếu `rules` hoặc không phải mảng hiện trả 500 thay vì 400 (lỗi đã ghi nhận, audit API §17).",
+        "tags": [
+          "Chuỗi — dữ liệu cửa hàng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rules": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ruleId": {
+                          "type": "string"
+                        },
+                        "fieldKey": {
+                          "type": "string"
+                        },
+                        "domainKey": {
+                          "type": "string",
+                          "enum": [
+                            "org_legal",
+                            "brand",
+                            "structure_access",
+                            "catalog",
+                            "supply_inventory",
+                            "resource_schedule",
+                            "pricing_cost",
+                            "finance_tax_payment",
+                            "sales_policy",
+                            "process_sla",
+                            "people_capacity",
+                            "customer_crm",
+                            "channels_integration",
+                            "marketing_promo",
+                            "knowledge_base",
+                            "ai_automation"
+                          ]
+                        },
+                        "minForm": {
+                          "type": "string",
+                          "enum": [
+                            "NONE",
+                            "MASKED",
+                            "AGGREGATED",
+                            "RAW"
+                          ]
+                        },
+                        "maxForm": {
+                          "type": "string",
+                          "enum": [
+                            "NONE",
+                            "MASKED",
+                            "AGGREGATED",
+                            "RAW"
+                          ]
+                        },
+                        "purpose": {
+                          "type": "string"
+                        },
+                        "scope": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "ALL_STORES",
+                                "BRAND",
+                                "REGION",
+                                "SPECIFIC_STORES"
+                              ]
+                            },
+                            "targetIds": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "required": [
+                            "type"
+                          ]
+                        },
+                        "effectiveFrom": {
+                          "type": "string"
+                        },
+                        "backfill": {
+                          "type": "string",
+                          "enum": [
+                            "NONE",
+                            "FROM_EFFECTIVE",
+                            "FULL"
+                          ]
+                        },
+                        "mandatoryForNewStore": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "DRAFT",
+                            "ACTIVE",
+                            "PAUSED",
+                            "ENDED"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "ruleId",
+                        "minForm",
+                        "scope",
+                        "mandatoryForNewStore",
+                        "status"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "rules"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hồ sơ đã phát hành",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "profileVersion": {
+                          "type": "number"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "DRAFT",
+                            "ACTIVE",
+                            "ARCHIVED"
+                          ]
+                        },
+                        "rules": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "ruleId": {
+                                "type": "string"
+                              },
+                              "fieldKey": {
+                                "type": "string"
+                              },
+                              "domainKey": {
+                                "type": "string",
+                                "enum": [
+                                  "org_legal",
+                                  "brand",
+                                  "structure_access",
+                                  "catalog",
+                                  "supply_inventory",
+                                  "resource_schedule",
+                                  "pricing_cost",
+                                  "finance_tax_payment",
+                                  "sales_policy",
+                                  "process_sla",
+                                  "people_capacity",
+                                  "customer_crm",
+                                  "channels_integration",
+                                  "marketing_promo",
+                                  "knowledge_base",
+                                  "ai_automation"
+                                ]
+                              },
+                              "minForm": {
+                                "type": "string",
+                                "enum": [
+                                  "NONE",
+                                  "MASKED",
+                                  "AGGREGATED",
+                                  "RAW"
+                                ]
+                              },
+                              "maxForm": {
+                                "type": "string",
+                                "enum": [
+                                  "NONE",
+                                  "MASKED",
+                                  "AGGREGATED",
+                                  "RAW"
+                                ]
+                              },
+                              "purpose": {
+                                "type": "string"
+                              },
+                              "scope": {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "ALL_STORES",
+                                      "BRAND",
+                                      "REGION",
+                                      "SPECIFIC_STORES"
+                                    ]
+                                  },
+                                  "targetIds": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "type"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "effectiveFrom": {
+                                "type": "string"
+                              },
+                              "backfill": {
+                                "type": "string",
+                                "enum": [
+                                  "NONE",
+                                  "FROM_EFFECTIVE",
+                                  "FULL"
+                                ]
+                              },
+                              "mandatoryForNewStore": {
+                                "type": "boolean"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "DRAFT",
+                                  "ACTIVE",
+                                  "PAUSED",
+                                  "ENDED"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "ruleId",
+                              "minForm",
+                              "scope",
+                              "mandatoryForNewStore",
+                              "status"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organizationId",
+                        "profileVersion",
+                        "status",
+                        "rules",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/chain/collection-profile/preview": {
+      "post": {
+        "operationId": "previewChainCollectionProfile",
+        "summary": "Xem trước tác động của hồ sơ thu thập",
+        "description": "Không lưu. Quy tắc sai luật trả trong `validation.issues` (vẫn 200). Thiếu `rules` hoặc không phải mảng hiện trả 500 thay vì 400 (lỗi đã ghi nhận, audit API §17).",
+        "tags": [
+          "Chuỗi — dữ liệu cửa hàng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rules": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ruleId": {
+                          "type": "string"
+                        },
+                        "fieldKey": {
+                          "type": "string"
+                        },
+                        "domainKey": {
+                          "type": "string",
+                          "enum": [
+                            "org_legal",
+                            "brand",
+                            "structure_access",
+                            "catalog",
+                            "supply_inventory",
+                            "resource_schedule",
+                            "pricing_cost",
+                            "finance_tax_payment",
+                            "sales_policy",
+                            "process_sla",
+                            "people_capacity",
+                            "customer_crm",
+                            "channels_integration",
+                            "marketing_promo",
+                            "knowledge_base",
+                            "ai_automation"
+                          ]
+                        },
+                        "minForm": {
+                          "type": "string",
+                          "enum": [
+                            "NONE",
+                            "MASKED",
+                            "AGGREGATED",
+                            "RAW"
+                          ]
+                        },
+                        "maxForm": {
+                          "type": "string",
+                          "enum": [
+                            "NONE",
+                            "MASKED",
+                            "AGGREGATED",
+                            "RAW"
+                          ]
+                        },
+                        "purpose": {
+                          "type": "string"
+                        },
+                        "scope": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "ALL_STORES",
+                                "BRAND",
+                                "REGION",
+                                "SPECIFIC_STORES"
+                              ]
+                            },
+                            "targetIds": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "required": [
+                            "type"
+                          ]
+                        },
+                        "effectiveFrom": {
+                          "type": "string"
+                        },
+                        "backfill": {
+                          "type": "string",
+                          "enum": [
+                            "NONE",
+                            "FROM_EFFECTIVE",
+                            "FULL"
+                          ]
+                        },
+                        "mandatoryForNewStore": {
+                          "type": "boolean"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "DRAFT",
+                            "ACTIVE",
+                            "PAUSED",
+                            "ENDED"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "ruleId",
+                        "minForm",
+                        "scope",
+                        "mandatoryForNewStore",
+                        "status"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "rules"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả xem trước",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "validation": {
+                          "type": "object",
+                          "properties": {
+                            "isValid": {
+                              "type": "boolean"
+                            },
+                            "issues": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "fieldKey": {
+                                    "type": "string"
+                                  },
+                                  "ruleId": {
+                                    "type": "string"
+                                  },
+                                  "code": {
+                                    "type": "string",
+                                    "enum": [
+                                      "S3_NOT_SELECTABLE",
+                                      "FLOOR_EXCEEDS_CEILING",
+                                      "PURPOSE_REQUIRED_FOR_S2",
+                                      "DSA_CEILING_VIOLATED"
+                                    ]
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "code",
+                                  "message"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "isValid",
+                            "issues"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "affectedStoreCount": {
+                          "type": "number"
+                        },
+                        "riskLevel": {
+                          "type": "string",
+                          "enum": [
+                            "R1_HIGH_RISK",
+                            "R2_STANDARD_RISK"
+                          ]
+                        },
+                        "summary": {
+                          "type": "object",
+                          "properties": {
+                            "activeRuleCount": {
+                              "type": "number"
+                            },
+                            "s2FieldsCollected": {
+                              "type": "number"
+                            },
+                            "floorRawCount": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "activeRuleCount",
+                            "s2FieldsCollected",
+                            "floorRawCount"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "validation",
+                        "affectedStoreCount",
+                        "riskLevel",
+                        "summary"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "F1"
+      }
+    },
+    "/chain/links": {
+      "get": {
+        "operationId": "listChainLinks",
+        "summary": "Lời mời liên kết đang chờ và chuỗi đang tham gia",
+        "description": "Lời mời quá 7 ngày không hiện.",
+        "tags": [
+          "Chuỗi — liên kết (phía cửa hàng)"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liên kết",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "invitations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "chain_name": {
+                                "type": "string"
+                              },
+                              "partner_code": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "PENDING",
+                                  "ACTIVE",
+                                  "SUSPENDED",
+                                  "TERMINATED"
+                                ]
+                              },
+                              "valid_from": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "chain_name",
+                              "partner_code",
+                              "status",
+                              "valid_from"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "memberships": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "chain_name": {
+                                "type": "string"
+                              },
+                              "partner_code": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "PENDING",
+                                  "ACTIVE",
+                                  "SUSPENDED",
+                                  "TERMINATED"
+                                ]
+                              },
+                              "valid_from": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "chain_name",
+                              "partner_code",
+                              "status",
+                              "valid_from"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "invitations",
+                        "memberships"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/chain/links/{id}/accept": {
+      "post": {
+        "operationId": "acceptChainLink",
+        "summary": "Đồng ý lời mời liên kết của chuỗi",
+        "description": "Lời mời quá hạn → 409. Liên kết của tổ chức khác → 404; liên kết vừa đổi trạng thái → 409.",
+        "tags": [
+          "Chuỗi — liên kết (phía cửa hàng)"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liên kết",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "ACTIVE",
+                            "SUSPENDED",
+                            "TERMINATED"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "status"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/chain/links/{id}/decline": {
+      "post": {
+        "operationId": "declineChainLink",
+        "summary": "Từ chối lời mời liên kết",
+        "description": "Đang là thành viên thì phải dùng `/leave` kèm lý do → 400. Liên kết của tổ chức khác → 404; liên kết vừa đổi trạng thái → 409.",
+        "tags": [
+          "Chuỗi — liên kết (phía cửa hàng)"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liên kết",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "ACTIVE",
+                            "SUSPENDED",
+                            "TERMINATED"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "status"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/chain/links/{id}/leave": {
+      "post": {
+        "operationId": "leaveChain",
+        "summary": "Rời chuỗi (kèm lý do)",
+        "description": "Ghi nhật ký kiểm toán và báo chuỗi. Liên kết của tổ chức khác → 404; liên kết vừa đổi trạng thái → 409.",
+        "tags": [
+          "Chuỗi — liên kết (phía cửa hàng)"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "reason": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Liên kết",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "ACTIVE",
+                            "SUSPENDED",
+                            "TERMINATED"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "status"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/chain/partner-stores": {
+      "post": {
+        "operationId": "registerPartnerStore",
+        "summary": "Đăng ký cửa hàng đối tác (pháp nhân riêng) kèm thoả thuận chia sẻ dữ liệu",
+        "description": "Mã cửa hàng đã có trong tổ chức hiện trả 500 thay vì 409 (lỗi đã ghi nhận, audit API §17).",
+        "tags": [
+          "Chuỗi — dữ liệu cửa hàng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "code": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "address": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "legalEntityId": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "fieldCeilings": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "string",
+                      "enum": [
+                        "NONE",
+                        "AGGREGATED",
+                        "MASKED",
+                        "RAW"
+                      ]
+                    }
+                  },
+                  "validUntil": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "code",
+                  "legalEntityId",
+                  "fieldCeilings"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cửa hàng và thoả thuận",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "storeId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "isPartner": {
+                          "type": "boolean"
+                        },
+                        "dsa": {
+                          "type": "object",
+                          "properties": {
+                            "storeId": {
+                              "type": "string"
+                            },
+                            "legalEntityId": {
+                              "type": "string"
+                            },
+                            "fieldCeilings": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "string",
+                                "enum": [
+                                  "NONE",
+                                  "MASKED",
+                                  "AGGREGATED",
+                                  "RAW"
+                                ]
+                              }
+                            },
+                            "validUntil": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "ACTIVE",
+                                "EXPIRED",
+                                "TERMINATED"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "storeId",
+                            "legalEntityId",
+                            "fieldCeilings",
+                            "validUntil",
+                            "status"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "storeId",
+                        "name",
+                        "code",
+                        "isPartner",
+                        "dsa"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
+    "/chain/stores-data": {
+      "get": {
+        "operationId": "listChainStoresData",
+        "summary": "Tóm tắt dữ liệu các cửa hàng của chuỗi",
+        "tags": [
+          "Chuỗi — dữ liệu cửa hàng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thẻ cửa hàng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "stores": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "address": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "isActive": {
+                                "type": "boolean"
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "collectedFieldCount": {
+                                "type": "number"
+                              },
+                              "totalFieldCount": {
+                                "type": "number"
+                              },
+                              "readinessPercentage": {
+                                "type": "number"
+                              },
+                              "inventoryItemCount": {
+                                "type": "number"
+                              },
+                              "isPartner": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "code",
+                              "address",
+                              "isActive",
+                              "createdAt",
+                              "collectedFieldCount",
+                              "totalFieldCount",
+                              "readinessPercentage",
+                              "inventoryItemCount",
+                              "isPartner"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "totalStores": {
+                          "type": "number"
+                        },
+                        "activeStores": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "organizationId",
+                        "stores",
+                        "totalStores",
+                        "activeStores"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      }
+    },
+    "/chain/stores-data/{storeId}": {
+      "get": {
+        "operationId": "getChainStoreFolder",
+        "summary": "Thư mục dữ liệu một cửa hàng theo miền",
+        "description": "Giá trị đã qua phép lan truyền (thô / che / gộp) theo hồ sơ thu thập và thoả thuận chia sẻ. Cửa hàng của tổ chức khác → 404.",
+        "tags": [
+          "Chuỗi — dữ liệu cửa hàng"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thư mục dữ liệu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "storeId": {
+                          "type": "string"
+                        },
+                        "storeName": {
+                          "type": "string"
+                        },
+                        "storeCode": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "folders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "domainKey": {
+                                "type": "string",
+                                "enum": [
+                                  "org_legal",
+                                  "brand",
+                                  "structure_access",
+                                  "catalog",
+                                  "supply_inventory",
+                                  "resource_schedule",
+                                  "pricing_cost",
+                                  "finance_tax_payment",
+                                  "sales_policy",
+                                  "process_sla",
+                                  "people_capacity",
+                                  "customer_crm",
+                                  "channels_integration",
+                                  "marketing_promo",
+                                  "knowledge_base",
+                                  "ai_automation"
+                                ]
+                              },
+                              "domainNameVi": {
+                                "type": "string"
+                              },
+                              "descriptionVi": {
+                                "type": "string"
+                              },
+                              "fieldCount": {
+                                "type": "number"
+                              },
+                              "fields": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "fieldKey": {
+                                      "type": "string"
+                                    },
+                                    "fieldNameVi": {
+                                      "type": "string"
+                                    },
+                                    "rawValue": {},
+                                    "displayValue": {
+                                      "type": "string"
+                                    },
+                                    "sensitivity": {
+                                      "type": "string"
+                                    },
+                                    "isPii": {
+                                      "type": "boolean"
+                                    },
+                                    "effectiveTarget": {
+                                      "type": "string",
+                                      "enum": [
+                                        "NONE",
+                                        "MASKED",
+                                        "AGGREGATED",
+                                        "RAW"
+                                      ]
+                                    },
+                                    "purpose": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "fieldKey",
+                                    "fieldNameVi",
+                                    "rawValue",
+                                    "displayValue",
+                                    "sensitivity",
+                                    "isPii",
+                                    "effectiveTarget"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "domainKey",
+                              "domainNameVi",
+                              "descriptionVi",
+                              "fieldCount",
+                              "fields"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "totalFieldCount": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "storeId",
+                        "storeName",
+                        "storeCode",
+                        "address",
+                        "folders",
+                        "totalFieldCount"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      }
+    },
     "/chat/channels": {
       "get": {
         "operationId": "listChatChannels",
