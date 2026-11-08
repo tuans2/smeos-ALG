@@ -1,6 +1,7 @@
 import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi"
 
 import { COORDINATOR_OPERATIONS } from "./ops-coordinator"
+import { CREATIVE_OPERATIONS } from "./ops-creative"
 import { CRM_OPERATIONS } from "./ops-crm"
 import { GREETING_OPERATIONS } from "./ops-greeting"
 import { GREETING_ORDER_OPERATIONS } from "./ops-greeting-orders"
@@ -16,9 +17,9 @@ import { PRODUCT_OPERATIONS } from "./ops-products"
  */
 export const INTERNAL_OPENAPI_PATH = "docs/spec/contracts/openapi/internal.openapi.json"
 
-export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator"] as const
+export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production"] as const
 
-export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS]
+export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS]
 
 export function buildInternalOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({
