@@ -158,7 +158,7 @@ describe("hợp đồng — Điều phối", () => {
       O.dispatchToChatResponse,
       "co-dispatch-chat"
     )
-    await expectContract(await partnershipStatus(send(`/partners/${partnership.id}/status`, "PATCH", { status: "SUSPENDED" }), ps({ id: partnership.id })), 200, O.partnershipResponse, "co-status")
+    await expectContract(await partnershipStatus(send(`/partners/${partnership.id}/status`, "PATCH", { status: "SUSPENDED", reason: "Tạm ngưng để kiểm hồ sơ" }), ps({ id: partnership.id })), 200, O.partnershipResponse, "co-status")
     await createTenant("tiem-co-san")
     await expectContract(
       await linkExisting(send("/partners/link-existing", "POST", { identifier: "tiem-co-san@vi-du.test", partnerCode: "CS1" })),

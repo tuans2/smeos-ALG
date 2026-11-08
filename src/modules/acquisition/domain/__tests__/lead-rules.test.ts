@@ -79,6 +79,8 @@ describe("Pipeline 10 trạng thái (PO 01/11/2026, PR-3)", () => {
   it("luật chuyển trạng thái hợp lệ và từ chối bước nhảy phi lý", () => {
     // NEW không thể nhảy thẳng sang WON
     expect(canTransitionLeadStatus("NEW", "WON")).toBe(false)
+    // Khách bỏ sau khi chốt (đơn huỷ) → không thành được (UJ-13)
+    expect(canTransitionLeadStatus("WON", "LOST")).toBe(true)
     // NEW có thể sang QUALIFIED hoặc CONTACTED
     expect(canTransitionLeadStatus("NEW", "QUALIFIED")).toBe(true)
     expect(canTransitionLeadStatus("NEW", "CONTACTED")).toBe(true)

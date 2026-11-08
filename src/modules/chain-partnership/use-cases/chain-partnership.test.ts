@@ -56,8 +56,13 @@ class InMemoryPartnershipRepository implements IChainPartnershipRepository {
 
   public orgTypes: Record<string, string> = { "chain-hq-1": "CHAIN", "store-1": "STORE" }
 
-  async findOrganizationType(orgId: string): Promise<string | null> {
-    return this.orgTypes[orgId] ?? null
+  async findOrganization(orgId: string): Promise<{ type: string; name: string } | null> {
+    const type = this.orgTypes[orgId]
+    return type ? { type, name: orgId } : null
+  }
+
+  async findLinkStatus(): ReturnType<IChainPartnershipRepository["findLinkStatus"]> {
+    return null
   }
 
   async findStoreByIdentifier(identifier: string): ReturnType<IChainPartnershipRepository["findStoreByIdentifier"]> {
@@ -74,7 +79,7 @@ class InMemoryPartnershipRepository implements IChainPartnershipRepository {
       partnerOrgId: params.partnerOrgId,
       partnerCode: params.partnerCode,
       partnershipType: (params.partnershipType ?? "SUBCONTRACTOR") as ChainPartnershipEntity["partnershipType"],
-      status: "ACTIVE",
+      status: params.status ?? "ACTIVE",
       capacityDaily: params.capacityDaily ?? 10,
       contactName: params.contactName,
       partnerOrgName: "Tiệm Hoa Có Sẵn",
@@ -155,7 +160,7 @@ describe("Chain Partnership Use Cases", () => {
 
   it("Chuỗi liên kết cửa hàng đã có tài khoản; không tự mở phòng chat thay cửa hàng (UJ-01)", async () => {
     const { LinkExistingStoreUseCase } = await import("./link-existing-store")
-    const useCase = new LinkExistingStoreUseCase(partnershipRepo)
+    const useCase = new LinkExistingStoreUseCase(partnershipRepo, async () => 0)
 
     const partnership = await useCase.execute({
       chainOrgId: "chain-hq-1",
@@ -165,13 +170,15 @@ describe("Chain Partnership Use Cases", () => {
 
     expect(partnership.partnerCode).toBe("DT-EXISTING-01")
     expect(partnership.contactEmail).toBeUndefined()
+    // Lời mời chờ cửa hàng đồng ý (UJ-10)
+    expect(partnership.status).toBe("PENDING")
     expect(partnershipRepo.partnerships).toHaveLength(1)
     expect(chatRepo.createdConversations).toHaveLength(0)
   })
 
   it("tổ chức không phải Chuỗi không liên kết được cửa hàng khác (UJ-01)", async () => {
     const { LinkExistingStoreUseCase } = await import("./link-existing-store")
-    const useCase = new LinkExistingStoreUseCase(partnershipRepo)
+    const useCase = new LinkExistingStoreUseCase(partnershipRepo, async () => 0)
 
     await expect(
       useCase.execute({ chainOrgId: "store-1", identifier: "existing-shop", partnerCode: "DT-02" })
@@ -181,7 +188,7 @@ describe("Chain Partnership Use Cases", () => {
 
   it("không tìm thấy và tự liên kết chính mình đều là 404 (UJ-01)", async () => {
     const { LinkExistingStoreUseCase } = await import("./link-existing-store")
-    const useCase = new LinkExistingStoreUseCase(partnershipRepo)
+    const useCase = new LinkExistingStoreUseCase(partnershipRepo, async () => 0)
 
     await expect(
       useCase.execute({ chainOrgId: "chain-hq-1", identifier: "khong-co", partnerCode: "DT-03" })

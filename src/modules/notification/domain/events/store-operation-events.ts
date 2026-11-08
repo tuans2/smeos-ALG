@@ -303,4 +303,33 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
       { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
     ],
   },
+  // ── Liên kết chuỗi (UJ-10): cửa hàng phải đồng ý mới thành thành viên chuỗi ──
+  {
+    key: "CHAIN_LINK_INVITED",
+    label: "Chuỗi mời liên kết",
+    description: "Một chuỗi mời cửa hàng liên kết làm đối tác — cần đồng ý trong 7 ngày",
+    group: "NETWORK",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "Network",
+    deepLinkTemplate: "/cai-dat",
+    roleDefaults: [
+      { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
+    ],
+  },
+  {
+    key: "CHAIN_LINK_STATUS_CHANGED",
+    label: "Chuỗi đổi trạng thái liên kết",
+    description: "Chuỗi tạm ngưng, mở lại hoặc chấm dứt liên kết với cửa hàng",
+    group: "NETWORK",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "Network",
+    deepLinkTemplate: "/cai-dat",
+    roleDefaults: [
+      { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
+    ],
+  },
 ]

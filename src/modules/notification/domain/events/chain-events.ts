@@ -221,5 +221,21 @@ export const CHAIN_EVENT_CONTRACT: TierEventContract = {
         },
       ],
     },
+    // ── NETWORK (UJ-10) ─────────────────────────────────────────────────
+    {
+      key: "CHAIN_PARTNER_RESPONDED",
+      label: "Cửa hàng trả lời lời mời liên kết",
+      description: "Cửa hàng đồng ý / từ chối lời mời liên kết, hoặc tự rời chuỗi",
+      group: "NETWORK",
+      tier: "CHAIN",
+      version: 1,
+      defaultVisibleToTiers: [],
+      iconName: "Network",
+      deepLinkTemplate: "/dieu-phoi/doi-tac",
+      roleDefaults: [
+        { roleKey: "manager", channels: ["APP_INBOX"], priority: "NORMAL", dispatchMode: "BROADCAST" },
+        { roleKey: "coordinator", channels: ["APP_INBOX"], priority: "NORMAL", dispatchMode: "BROADCAST" },
+      ],
+    },
   ],
 }

@@ -38,7 +38,6 @@ coordinator/orders/[id]/craft-fee-complaint
 coordinator/orders/[id]/dispatch-to-chat
 coordinator/orders/[id]/set-shipper
 coordinator/partners
-coordinator/partners/[id]/status
 coordinator/partners/[id]/tools
 coordinator/partners/link-existing
 coordinator/reminders/acknowledge

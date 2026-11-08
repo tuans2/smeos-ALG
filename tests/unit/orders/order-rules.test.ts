@@ -6,6 +6,7 @@ import {
   calculateOrderTotal,
   calculateOrderSla,
   generateOrderCode,
+  calculateOrderTotalWithAdjustments,
 } from "@/modules/orders/domain/order-rules"
 import type { OrderEventRecord } from "@/modules/orders/domain/order-types"
 
@@ -120,5 +121,22 @@ describe("M10 Order Domain Rules", () => {
       const code = generateOrderCode(15, fixedDate)
       expect(code).toBe("DH260916-0015")
     })
+  })
+})
+
+describe("calculateOrderTotalWithAdjustments — ưu đãi/phí giao cấp đơn (UJ-08)", () => {
+  const items = [{ quantity: 2, unitPriceVnd: 500_000 }]
+
+  it("tiền hàng − ưu đãi + phí giao", () => {
+    expect(calculateOrderTotalWithAdjustments(items, { discountVnd: 100_000, shippingFeeVnd: 30_000 })).toBe(930_000)
+  })
+
+  it("không có điều chỉnh → bằng tổng dòng hàng", () => {
+    expect(calculateOrderTotalWithAdjustments(items, undefined)).toBe(calculateOrderTotal(items))
+  })
+
+  it("ưu đãi không vượt tiền hàng, giá trị âm bị bỏ", () => {
+    expect(calculateOrderTotalWithAdjustments(items, { discountVnd: 5_000_000, shippingFeeVnd: 20_000 })).toBe(20_000)
+    expect(calculateOrderTotalWithAdjustments(items, { discountVnd: -1, shippingFeeVnd: -1 })).toBe(1_000_000)
   })
 })

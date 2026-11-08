@@ -44,7 +44,7 @@ export async function createStaffAccount(
   if (!role) throw notFound()
   if (input.branchId && !(await getBranchRepository().findById(ctx, input.branchId))) throw notFound()
   if (await getUserRepository().findByEmail(email)) {
-    throw conflict("Email này đã có tài khoản FloraOS — dùng email khác cho nhân viên, hoặc dùng “Mời” nếu đúng là người đó")
+    throw conflict("Email này đã có tài khoản — dùng email khác cho nhân viên, hoặc bấm “Mời người đã có tài khoản” nếu đúng là người đó")
   }
 
   const temporaryPassword = newTemporaryPassword()

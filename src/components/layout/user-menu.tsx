@@ -6,6 +6,7 @@
 import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import { Building2 } from "@/components/ui/icon-set/building2"
 import { KeyRound } from "@/components/ui/icon-set/key-round"
 import { LogOut } from "@/components/ui/icon-set/log-out"
 import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
@@ -14,6 +15,7 @@ import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { ChangePasswordDialog } from "./change-password-dialog"
+import { MyOrganizationsDialog } from "./my-organizations-dialog"
 import { useUiStudioAvailable } from "./ui-studio-availability"
 
 export interface UserMenuProps {
@@ -27,6 +29,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
   const [mo, setMo] = useState(false)
   const [dangXuat, setDangXuat] = useState(false)
   const [doiMatKhau, setDoiMatKhau] = useState(false)
+  const [toChuc, setToChuc] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { roleUx, userName, userEmail, orgName, can, platformCapabilities } = useSession()
   const uiStudioAvailable = useUiStudioAvailable()
@@ -165,6 +168,19 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
               </Button>
             )}
 
+            {/* Chuyển cửa hàng + nhận lời mời vào cửa hàng khác (audit hành trình UJ-14) */}
+            <Button variant="ghost"
+              type="button"
+              onClick={() => {
+                setMo(false)
+                setToChuc(true)
+              }}
+              className="h-auto justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+            >
+              <Building2 size={16} strokeWidth={1.8} aria-hidden="true" />
+              <span>Tổ chức của tôi</span>
+            </Button>
+
             {can("A2") && (
               <Button variant="ghost"
                 type="button"
@@ -193,6 +209,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
         </>
       )}
       <ChangePasswordDialog open={doiMatKhau} onOpenChange={setDoiMatKhau} />
+      <MyOrganizationsDialog open={toChuc} onOpenChange={setToChuc} />
     </div>
   )
 }

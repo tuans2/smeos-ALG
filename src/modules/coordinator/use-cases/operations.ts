@@ -40,6 +40,7 @@ import {
   runCoordinatorTx,
 } from "./shared"
 import { returnStock } from "@/modules/orders/infra/order-stock"
+import { releaseLeadOfCancelledOrder } from "@/modules/orders/infra/order-lead-link"
 
 function currentAxes(row: CoordinatorOrderRow) {
   return { status: row.status, productionStatus: row.production_status, deliveryStatus: row.delivery_status }
@@ -305,5 +306,6 @@ export async function cancelCoordinatorOrder(
   })
   // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) — đánh dấu theo dòng nên gọi lại không hoàn hai lần
   await returnStock(ctx.organizationId, orderId)
+  await releaseLeadOfCancelledOrder(ctx.organizationId, orderId)
   return getOrderView(ctx, orderId)
 }

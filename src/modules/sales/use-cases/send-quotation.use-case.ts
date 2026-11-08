@@ -3,6 +3,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { updateLead } from "@/modules/acquisition/use-cases/manage-leads"
 import {
   canTransitionQuotationStatus,
+  QUOTATION_STATUS_LABELS,
   type Quotation,
 } from "../domain/quotation"
 import type { IQuotationRepository } from "../domain/repositories/quotation-repository.interface"
@@ -26,7 +27,7 @@ export async function sendQuotationUseCase(
 
   if (!canTransitionQuotationStatus(quotation.status, "SENT")) {
     throw validationFailed({
-      status: `Không thể chuyển báo giá từ "${quotation.status}" sang "SENT".`,
+      status: `Báo giá đang ở trạng thái "${QUOTATION_STATUS_LABELS[quotation.status]}" nên không gửi được.`,
     })
   }
 
