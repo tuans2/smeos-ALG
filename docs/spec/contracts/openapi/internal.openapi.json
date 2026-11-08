@@ -4239,7 +4239,7 @@
       "post": {
         "operationId": "sendPublicChatWidgetMessage",
         "summary": "Khung chat AI trên trang công khai",
-        "description": "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. **Lỗi đã ghi nhận (audit API §15):** tiệm còn credit thì lượt trả lời hiện luôn 500 sau khi đã trừ credit (ghi sổ `usage` vỡ khoá ngoại `workspace_id`). Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
+        "description": "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
         "tags": [
           "Trợ lý AI — kênh & hạn mức"
         ],
@@ -62836,7 +62836,7 @@
       "post": {
         "operationId": "handleInternalCardAction",
         "summary": "Bấm nút trên thẻ hành động (nhận/từ chối đơn)",
-        "description": "Không cần mã năng lực. **Lỗi đã ghi nhận (audit API §15):** use-case chưa kiểm người tham gia lẫn tổ chức của tin — ghi đè `action_payload` của tin theo `id` rồi đăng tin hệ thống vào hội thoại đó; mã tin không tồn tại → 500. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ thẻ đơn (`ACTION_CARD_ORDER`) — tin khác → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -62992,14 +62992,14 @@
           "403": {
             "$ref": "#/components/responses/Error403"
           },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
           "409": {
             "$ref": "#/components/responses/Error409"
           },
           "413": {
             "$ref": "#/components/responses/Error413"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "phiên đăng nhập"

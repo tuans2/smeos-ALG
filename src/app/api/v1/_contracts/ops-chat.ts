@@ -44,7 +44,7 @@ export const CHAT_OPERATIONS: OpenApiOperation[] = [
 
   legacyErrors(op(CH, { method: "post", path: "/chat/public/widget", operationId: "sendPublicChatWidgetMessage", summary: "Khung chat AI trên trang công khai", cap: null, auth: "public",
     body: req.publicChatWidgetBody,
-    description: "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. **Lỗi đã ghi nhận (audit API §15):** tiệm còn credit thì lượt trả lời hiện luôn 500 sau khi đã trừ credit (ghi sổ `usage` vỡ khoá ngoại `workspace_id`). Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
+    description: "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
     ok: [200, { description: "Trả lời của trợ lý", schema: res.publicChatWidgetResponse }], errors: [400, 404, 429, 500] })),
   legacyErrors(op(HOOK, { method: "get", path: "/chat/webhooks/facebook", operationId: "verifyFacebookWebhook", summary: "Xác minh webhook Facebook", cap: null, auth: "public",
     query: req.facebookVerifyQuery,
@@ -70,7 +70,6 @@ export const CHAT_OPERATIONS: OpenApiOperation[] = [
     body: req.sendInternalMessageBody, description: `${MEMBER} Tin rỗng không kèm tệp → 400. ${LEGACY}`,
     ok: [200, { description: "Tin đã gửi", schema: res.internalMessageResponse }], errors: [...BODY_ERRORS, 404] }),
   op(IN, { method: "post", path: "/internal-chat/messages/{id}/action", operationId: "handleInternalCardAction", summary: "Bấm nút trên thẻ hành động (nhận/từ chối đơn)", cap: null,
-    body: req.internalCardActionBody,
-    description: `Không cần mã năng lực. **Lỗi đã ghi nhận (audit API §15):** use-case chưa kiểm người tham gia lẫn tổ chức của tin — ghi đè \`action_payload\` của tin theo \`id\` rồi đăng tin hệ thống vào hội thoại đó; mã tin không tồn tại → 500. ${LEGACY}`,
-    ok: [200, { description: "Tin sau khi cập nhật", schema: res.internalMessageResponse }], errors: [...BODY_ERRORS, 500] }),
+    body: req.internalCardActionBody, description: `${MEMBER} Chỉ thẻ đơn (\`ACTION_CARD_ORDER\`) — tin khác → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. ${LEGACY}`,
+    ok: [200, { description: "Tin sau khi cập nhật", schema: res.internalMessageResponse }], errors: [...BODY_ERRORS, 404, 409] }),
 ]

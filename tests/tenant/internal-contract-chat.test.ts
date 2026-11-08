@@ -79,8 +79,7 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
   })
 
   it("khung chat công khai: trả lời theo slug; tiệm lạ 404 và thân sai 400 với lỗi dạng chuỗi", async () => {
-    // Tiệm hết credit → trợ lý trả câu mời chờ nhân viên (vẫn 200, cùng hình dạng). Nhánh còn credit hiện trả 500:
-    // ghi sổ `usage` với `workspace_id: "system"` vỡ khoá ngoại (phát hiện, audit API §15) — không khoá hành vi đó ở đây.
+    // Tiệm hết credit → trợ lý trả câu mời chờ nhân viên (vẫn 200, cùng hình dạng). Nhánh còn credit: `chat-p1-fixes.test.ts`.
     await prisma.organizations.update({ where: { id: other.organizationId }, data: { credit_balance: 0 } })
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: other.organizationId }, select: { slug: true } })
     const visit = (body: unknown) => widget(raw("/chat/public/widget", JSON.stringify(body), { "x-forwarded-for": "203.0.113.7" }) as never)
