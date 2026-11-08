@@ -5,6 +5,7 @@ import {
   type MarketTimeframeKey,
   TIMEFRAME_CONFIGS,
 } from "../domain/trend-timeframe";
+import { urlHostIs } from "@/lib/url-host";
 
 export interface ListOpportunitiesParams {
   organizationId: string;
@@ -65,7 +66,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
   if (rawRefs.length > 0) {
     // Đảm bảo các video references luôn có thumbnail thật từ SSOT catalog, loại bỏ ảnh Unsplash và placeholder mock
     return rawRefs.map((ref) => {
-      const isUnsplash = typeof ref.thumbnailUrl === "string" && ref.thumbnailUrl.includes("unsplash.com");
+      const isUnsplash = urlHostIs(ref.thumbnailUrl, "unsplash.com");
       const isGenericMockAuthor =
         ref.author === "@florist.trend" ||
         ref.author === "Kênh Nghệ Thuật Chế Tác" ||
@@ -75,7 +76,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
         ref.metrics.includes("324 likes") ||
         ref.metrics.includes("3.8k lượt xem");
 
-      if (ref.type === "TIKTOK_REELS" || ref.platform?.toLowerCase().includes("tiktok") || ref.url?.includes("tiktok.com")) {
+      if (ref.type === "TIKTOK_REELS" || ref.platform?.toLowerCase().includes("tiktok") || urlHostIs(ref.url, "tiktok.com")) {
         const isSearchUrl = !ref.url || ref.url.includes("/search?") || ref.url.includes("search_query");
         return {
           ...ref,
@@ -86,7 +87,7 @@ function resolveEvidenceReferences(angles: unknown, topicName: string, _summary:
           metrics: isGenericMockMetrics ? catalogEvidence.tiktok.metrics : ref.metrics,
         };
       }
-      if (ref.type === "YOUTUBE" || ref.platform?.toLowerCase().includes("youtube") || ref.url?.includes("youtube.com")) {
+      if (ref.type === "YOUTUBE" || ref.platform?.toLowerCase().includes("youtube") || urlHostIs(ref.url, "youtube.com")) {
         const isSearchUrl = !ref.url || ref.url.includes("results?search_query") || ref.url.includes("/results") || ref.url.includes("/search?");
         return {
           ...ref,

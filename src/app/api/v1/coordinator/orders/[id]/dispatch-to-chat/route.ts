@@ -1,5 +1,4 @@
 import { requireCapability } from "@/core/rbac/capabilities"
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed, notFound } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -7,18 +6,14 @@ import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { DispatchOrderToChatUseCase } from "@/modules/internal-chat/use-cases/dispatch-order-to-chat"
 import { isActivePartnerTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
-
-const dispatchSchema = z.object({
-  targetPartnerOrgId: z.string().uuid(),
-  targetPartnerUserId: z.string().uuid().optional(),
-})
+import { dispatchToChatBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { resolved, ctx } = await requireTenantContext(request)
   requireCapability(ctx, "R3")
   const { id: orderId } = await context.params
   const body = await request.json().catch(() => null)
-  const parsed = dispatchSchema.safeParse(body)
+  const parsed = dispatchToChatBody.safeParse(body)
 
   if (!parsed.success) {
     const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")

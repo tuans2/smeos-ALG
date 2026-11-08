@@ -18,6 +18,7 @@ import { useAnnounce } from "@/components/ui/live-region"
 import { tenTinhNang } from "@/lib/feature-labels"
 import { StoreManagerActionItemsCard, type DraftOrder } from "./store-manager-action-items-card"
 import { PageHeader } from "@/components/ui/page-header"
+import { fetchPendingApprovalCount } from "./pending-approval-count"
 
 type Job = {
   id: string
@@ -79,23 +80,19 @@ export function StoreManagerDashboard() {
   const napLai = useCallback(async () => {
     setLoi(null)
     try {
-      const [jobsRes, productsRes, usageRes, analysesRes, optimizationsRes, draftOrdersRes] =
+      const [jobsRes, productsRes, usageRes, choDuyet, draftOrdersRes] =
         await Promise.all([
           layJson<{ data: Job[] }>("/api/v1/jobs?limit=10"),
           layJson<{ data: Product[] }>("/api/v1/products?limit=5"),
           layJson<UsageSummary>("/api/v1/usage/summary"),
-          layJson<{ data: unknown[] }>("/api/v1/vision/analyses?limit=1"),
-          layJson<{ data: unknown[] }>("/api/v1/media/optimizations?limit=1"),
+          // Trước đây `limit=1` mỗi nguồn → tối đa 2 (audit hành trình K2, UJ-07)
+          fetchPendingApprovalCount(),
           layJson<{ orders: DraftOrder[]; total: number }>("/api/v1/orders?status=DRAFT&limit=10"),
         ])
       setJobs(jobsRes?.data ?? null)
       setProducts(productsRes?.data ?? null)
       setUsage(usageRes)
-      setSoChoDuyet(
-        analysesRes !== null || optimizationsRes !== null
-          ? (analysesRes?.data.length ?? 0) + (optimizationsRes?.data.length ?? 0)
-          : null
-      )
+      setSoChoDuyet(choDuyet)
       setSoDonNhap(draftOrdersRes ? draftOrdersRes.total : null)
       setDraftOrders(draftOrdersRes?.orders ?? [])
     } catch (e) {

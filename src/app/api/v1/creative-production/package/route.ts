@@ -1,16 +1,9 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { packageCampaign } from "@/modules/creative-production/use-cases/package-campaign"
-
-const postSchema = z.object({
-  campaignName: z.string().optional(),
-  authenticResult: z.any().optional(),
-  creativeResult: z.any().optional(),
-})
+import { packageCampaignBody } from "@/app/api/v1/_contracts/requests-creative"
 
 /**
  * `POST /api/v1/creative-production/package` — Đóng gói chiến dịch Creative Production.
@@ -24,7 +17,7 @@ export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "I1")
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = packageCampaignBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = packageCampaign({

@@ -23,7 +23,8 @@ import { createCatalogLink } from "@/modules/catalog-links/use-cases/create-cata
  * `requireCapability` tự chặn — CHƯA hỗ trợ quản lý catalog từ tác vụ nền.
  */
 const querySchema = z.object({
-  include_revoked: z.coerce.boolean().optional(),
+  // `z.coerce.boolean()` đọc chuỗi "false" thành true (PO 07/11/2026 cho sửa) — stringbool nhận true/false/1/0/yes/no
+  include_revoked: z.stringbool().optional(),
 })
 
 const createSchema = z.object({

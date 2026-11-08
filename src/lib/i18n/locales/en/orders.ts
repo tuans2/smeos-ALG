@@ -64,6 +64,7 @@ export const ordersEn = {
   actions: {
     viewDetails: "View Details",
     printA6: "Print A6 Slip",
+    followInCoordinator: "Track in Coordination",
     cancelOrder: "Cancel Order",
     confirmCancel: "Confirm Cancellation",
     cancelReasonPlaceholder: "Enter cancellation reason (required)...",

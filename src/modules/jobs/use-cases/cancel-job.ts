@@ -1,6 +1,6 @@
 import { conflict, notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
-import { canCancel } from "@/modules/jobs/domain/job-rules"
+import { canCancel, JOB_STATUS_LABELS, type JobStatus } from "@/modules/jobs/domain/job-rules"
 import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 
 /** `POST /jobs/:id/cancel` (`G6`) — chỉ job còn `PENDING` (`YC-J4`). */
@@ -9,11 +9,11 @@ export async function cancelJob(ctx: TenantContext, id: string) {
   const current = await repo.findById(ctx, id)
   if (!current) throw notFound()
   if (!canCancel(current.status)) {
-    throw conflict(`Job đang ở trạng thái ${current.status}, không huỷ được`)
+    throw conflict(`Tác vụ đang ở trạng thái "${JOB_STATUS_LABELS[current.status as JobStatus]}" — chỉ huỷ được tác vụ còn đang chờ chạy.`)
   }
 
   const cancelled = await repo.cancelIfPending(ctx, id)
   // Trượt điều kiện đua: job vừa đổi trạng thái giữa lúc kiểm và lúc ghi.
-  if (!cancelled) throw conflict("Job không còn ở trạng thái PENDING")
+  if (!cancelled) throw conflict("Tác vụ vừa bắt đầu chạy nên không huỷ được nữa.")
   return cancelled
 }

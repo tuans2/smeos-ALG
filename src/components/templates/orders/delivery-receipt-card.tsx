@@ -18,7 +18,8 @@ export interface DeliveryReceiptCardProps {
   deliveryAddress: string
   deliveryTime: string
   cardMessage: string
-  shippingFee: string
+  /** Vắng = đơn chưa ghi phí ship → không in dòng phí (không in "0 đ" bịa). */
+  shippingFee?: string | undefined
   totalAmount: string
   onPrint?: () => void
   onDelivered?: () => void
@@ -71,13 +72,13 @@ export function DeliveryReceiptCard({
           Nội dung thiệp chúc mừng:
         </div>
         <p className="text-caption italic text-text leading-relaxed font-serif">
-          &quot;{cardMessage}&quot;
+          {cardMessage.trim() ? <>&quot;{cardMessage}&quot;</> : "Không kèm thiệp"}
         </p>
       </div>
 
       <div className="flex items-center justify-between border-t border-border pt-4">
         <div>
-          <div className="text-caption text-text-muted">Phí ship: {shippingFee}</div>
+          {shippingFee && <div className="text-caption text-text-muted">Phí ship: {shippingFee}</div>}
           <div className="text-body-sm font-extrabold text-text">Thu hộ: {totalAmount}</div>
         </div>
 

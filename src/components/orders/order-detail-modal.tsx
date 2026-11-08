@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog } from "@/components/ui/dialog"
 import { FloristTicketCard } from "@/components/templates/orders/florist-ticket-card"
 import { DeliveryReceiptCard } from "@/components/templates/orders/delivery-receipt-card"
+import { formatDeliveryWindow } from "./order-ticket-format"
 import { OrderCancelDialog } from "./order-cancel-dialog"
 import { OrderActionButtons } from "./order-action-buttons"
 import { OrderInfoRequests } from "./order-info-requests"
@@ -19,21 +20,10 @@ import { OrderVatSection } from "./order-vat-section"
 import { useI18n } from "@/lib/i18n"
 import { useToast } from "@/components/ui/toast"
 import type { OrderItemRecord, OrderRecord, OrderSlaCalculation } from "@/modules/orders/domain/order-types"
-
-/**
- * Đơn hàng như modal này đọc. Ba trục trạng thái để `string` CÓ CHỦ ĐÍCH: các nút
- * hành động bên dưới so với những giá trị KHÔNG có trong domain/API
- * (`IN_PRODUCTION`, `COMPLETED` cho sản xuất, `NOT_STARTED`, `SHIPPING`) — nợ #150,
- * chờ chủ sản phẩm chốt luồng trạng thái đúng (trùng phạm vi Chức năng 12).
- */
-type OrderDetailView = Omit<OrderRecord, "status" | "productionStatus" | "deliveryStatus"> & {
-  status: string
-  productionStatus: string
-  deliveryStatus: string
-}
+import { DELIVERY_STATUS_LABELS, PRODUCTION_STATUS_LABELS } from "@/modules/orders/domain/order-status-labels"
 
 interface OrderDetailBody {
-  order: OrderDetailView
+  order: OrderRecord
   sla: OrderSlaCalculation
 }
 
@@ -81,24 +71,6 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
 
   const order = data?.order
   const sla = data?.sla
-
-  async function handleUpdateStatus(patch: {
-    status?: string
-    productionStatus?: string
-    deliveryStatus?: string
-  }) {
-    setActionLoading(true)
-    try {
-      const res = await fetch(`/api/v1/orders/${orderId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patch),
-      })
-      await settle(res, "Chưa cập nhật được đơn, vui lòng thử lại.")
-    } finally {
-      setActionLoading(false)
-    }
-  }
 
   async function handleCancelOrder(reason: string) {
     setActionLoading(true)
@@ -176,14 +148,10 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
 
   const dialogFooter = order ? (
     <OrderActionButtons
-      orderCode={order.code}
       orderStatus={order.status}
-      productionStatus={order.productionStatus}
       deliveryStatus={order.deliveryStatus}
-      actionLoading={actionLoading}
       onPrint={handlePrint}
       onCancelRequest={() => setCancelOpen(true)}
-      onUpdateStatus={handleUpdateStatus}
     />
   ) : null
 
@@ -228,8 +196,8 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   <div className="rounded-lg border border-border p-4 space-y-2">
                     <div className="font-bold text-text">Thời gian &amp; Trạng thái</div>
                     <div className="text-text-muted text-caption">Hẹn giao: <span className="font-semibold text-text">{order.deliveryWindow?.date} ({order.deliveryWindow?.timeSlot})</span></div>
-                    <div className="text-text-muted text-caption">Sản xuất: <span className="font-semibold text-info">{order.productionStatus}</span></div>
-                    <div className="text-text-muted text-caption">Vận chuyển: <span className="font-semibold text-warning">{order.deliveryStatus}</span></div>
+                    <div className="text-text-muted text-caption">Sản xuất: <span className="font-semibold text-info">{PRODUCTION_STATUS_LABELS[order.productionStatus]}</span></div>
+                    <div className="text-text-muted text-caption">Vận chuyển: <span className="font-semibold text-warning">{DELIVERY_STATUS_LABELS[order.deliveryStatus]}</span></div>
                   </div>
                 </div>
 
@@ -286,13 +254,12 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   orderCode={order.code}
                   productName={productNameText}
                   sampleImageUrl={sampleImg}
-                  deadlineTime={`${order.deliveryWindow?.date} (${order.deliveryWindow?.timeSlot})`}
+                  deadlineTime={formatDeliveryWindow(order.deliveryWindow)}
                   floristName="Thợ chế tác hoa xưởng"
                   items={floristItems}
                   wrapStyle={wrapStyleText}
                   notes={order.internalNote ?? undefined}
                   onPrint={handlePrint}
-                  onComplete={() => handleUpdateStatus({ productionStatus: "COMPLETED" })}
                 />
               </div>
             )}
@@ -307,12 +274,10 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   recipientName={order.deliveryAddress?.recipientName ?? "Khách nhận"}
                   recipientPhone={order.deliveryAddress?.phone ?? "—"}
                   deliveryAddress={order.deliveryAddress?.street ?? "—"}
-                  deliveryTime={`${order.deliveryWindow?.date} (${order.deliveryWindow?.timeSlot})`}
-                  cardMessage={order.cardMessage || "Chúc mừng ngày đặc biệt!"}
-                  shippingFee="0 đ"
+                  deliveryTime={formatDeliveryWindow(order.deliveryWindow)}
+                  cardMessage={order.cardMessage ?? ""}
                   totalAmount={`${order.totalVnd.toLocaleString("vi-VN")} đ`}
                   onPrint={handlePrint}
-                  onDelivered={() => handleUpdateStatus({ deliveryStatus: "DELIVERED" })}
                 />
               </div>
             )}

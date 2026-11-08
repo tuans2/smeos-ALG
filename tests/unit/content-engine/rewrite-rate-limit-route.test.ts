@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-const ctx = { organizationId: "org-a", workspaceId: "ws", userId: "u-1", branchId: null, capabilities: new Set<string>() }
+const ctx = { organizationId: "org-a", workspaceId: "ws", userId: "u-1", branchId: null, capabilities: new Set<string>(["L3"]) }
 let current = ctx
 vi.mock("@/modules/organization/use-cases/resolve-session", () => ({ requireTenantContext: async () => ({ ctx: current }) }))
 const callCapability = vi.fn(async () => ({ kind: "xong", output: { suggestions: ["a", "b", "c"] } }))
@@ -9,6 +9,11 @@ vi.mock("@/core/ai/wiring", () => ({ aiGatewayDeps: () => ({}) }))
 vi.mock("@/core/ai/adapters/multi-llm-provider", () => ({ createContentLLM: () => ({}) }))
 vi.mock("@/modules/profiles/use-cases/get-brand-profile", () => ({ getBrandProfile: async () => null }))
 vi.mock("@/modules/profiles/use-cases/get-business-profile", () => ({ getBusinessProfile: async () => null }))
+// Credit kiểm riêng ở `rewrite-credit-route.test.ts` — ở đây chỉ đo trần tần suất
+vi.mock("@/modules/content-engine/use-cases/rewrite-credit", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/modules/content-engine/use-cases/rewrite-credit")>()),
+  holdRewriteCredit: async () => ({ cost: 1, release: async () => undefined }),
+}))
 
 import { resetRateLimits } from "@/core/http/rate-limit"
 import { POST } from "@/app/api/v1/content-engine/rewrite/route"

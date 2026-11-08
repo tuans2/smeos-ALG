@@ -3,7 +3,6 @@
  * 3.13) — ghi đè theo tổ chức, cho MỘT trường (`target: "field"`) hoặc MỘT
  * giá trị danh mục (`target: "catalogValue"`), chọn qua khoá body.
  */
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { recordPlatformAccess } from "@/modules/audit/use-cases/record-platform-access"
@@ -11,18 +10,14 @@ import {
   setFieldOverrideForOrganization,
   setCatalogValueOverrideForOrganization,
 } from "@/modules/field-platform/use-cases/set-org-override"
-import { setFieldOverrideSchema, setCatalogValueOverrideSchema, parseBody } from "@/modules/field-platform/adapters/http-schemas"
-
-const bodySchema = z.union([
-  z.object({ target: z.literal("field") }).merge(setFieldOverrideSchema),
-  z.object({ target: z.literal("catalogValue") }).merge(setCatalogValueOverrideSchema),
-])
+import { parseBody } from "@/modules/field-platform/adapters/http-schemas"
+import { fieldOverridesBody } from "@/app/api/v1/platform/_contracts/requests"
 
 export const PUT = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const pctx = await requirePlatformContext(request)
   await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { id } = await context.params
-  const body = await parseBody(request, bodySchema)
+  const body = await parseBody(request, fieldOverridesBody)
 
   if (body.target === "field") {
     return jsonResponse({

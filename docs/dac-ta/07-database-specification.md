@@ -2279,7 +2279,7 @@ model order_payments {
 ```prisma
 model order_coordinations {
   // … các cột đã có (xem trên) …
-  source                  String?  // ORDER_M10 · CHAT_M08 · CATALOG_M06 · MANUAL
+  source                  String?  // mã nguồn chung order-source.ts (từ 07/11/2026); đơn cũ còn ORDER_M10 · CHAT_M08 · CATALOG_M06
   source_reference        String?
   channel                 String?  // danh mục §2.15.3 (MỞ)
   order_type              String?  // danh mục §2.15.4 (CÓ HÀNH VI) — bật nhóm trường §12

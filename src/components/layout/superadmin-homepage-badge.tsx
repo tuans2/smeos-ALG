@@ -37,7 +37,7 @@ const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
     color: "bg-accent/10 text-accent border-accent/20",
   },
   CONTROL_TOWER: {
-    label: "Control Tower",
+    label: "Tháp điều phối đơn",
     color: "bg-accent/10 text-accent border-accent/20",
   },
   FLOWER_NETWORK_COMMAND_CENTER: {

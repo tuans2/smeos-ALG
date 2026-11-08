@@ -15,7 +15,6 @@ import { completeIfSettled } from "@/modules/greeting-card/infra/order-settlemen
 import { canBypassDeliveryPhoto, parseBrochureWorkflowPolicy } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
 import { randomUUID } from "crypto"
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
@@ -30,13 +29,9 @@ import {
   getMilestoneSteps,
 } from "@/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps"
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
+import { confirmDeliveryBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 const MAX_POD_BYTES = 10 * 1024 * 1024
-
-const confirmJsonSchema = z.object({
-  confirmWithoutPhoto: z.literal(true),
-  reason: z.string().trim().min(5, "Lý do tối thiểu 5 ký tự").max(300),
-})
 
 function sniffImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; mimeType: string } | null {
   if (bytes.length < 12) return null
@@ -151,7 +146,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     const workflow = parseBrochureWorkflowPolicy((await new GreetingCardRepository().getShopProfile(order.organization_id)).settings)
     if (!canBypassDeliveryPhoto(workflow)) throw conflict("Tiệm bắt buộc ảnh giao hàng — tải ảnh để xác nhận")
     const body = await request.json().catch(() => ({}))
-    const parsed = confirmJsonSchema.safeParse(body)
+    const parsed = confirmDeliveryBody.safeParse(body)
     if (!parsed.success) {
       throw validationFailed(
         Object.fromEntries(parsed.error.issues.map((i) => [i.path[0] ?? "body", i.message]))

@@ -5,7 +5,7 @@ import { checkDeliveryUpdate, deliveryStatusFor, type DeliveryEvent } from "../d
 import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import { openExceptionInTx, transition } from "./operations"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
-import { audit, ensureAssetsOwned, ensureRule, ensureTransition, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
+import { audit, ensureAssetsOwned, ensureRule, ensureTransition, getOrderView, loadEditableOrderOrThrow, runCoordinatorTx } from "./shared"
 
 /**
  * F11/F12 · Giao hàng (`R5`). Tách khỏi `operations.ts` (giữ tệp dưới ngưỡng 350 dòng). Ảnh giao
@@ -29,7 +29,7 @@ export async function recordDeliveryUpdate(
   const requirePodPhoto = parseBrochureWorkflowPolicy((await getCurrentOrganization(ctx))?.settings).requireDeliveryProofPhoto
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const c = row.coordination!
     ensureRule(
       checkDeliveryUpdate({

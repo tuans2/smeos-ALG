@@ -17,14 +17,13 @@
  * { job_id: string, status: JobStatus, usage: { cost_credit: number, balance_after: number } }
  */
 
-import { z } from "zod";
-
 import { handle, jsonResponse } from "@/core/http/response";
 import { AppError, validationFailed } from "@/core/http/errors";
 import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
 import { getJobFeatureForModule, type ModuleKey } from "@/lib/feature-catalog";
+import { jobBatchBody } from "@/app/api/v1/_contracts/requests-ai-studio";
 
 const MODULE_RUN_CAPABILITY: Record<string, string> = {
   M01: "H1",
@@ -39,18 +38,11 @@ const MODULE_RUN_CAPABILITY: Record<string, string> = {
 };
 
 // Audit API-05: trước đây thân chỉ ép kiểu, mảng `capabilities` không giới hạn.
-const bodySchema = z.object({
-  productId: z.string().trim().min(1, "Thiếu productId").max(64),
-  masterImageId: z.string().trim().min(1).max(64).optional(),
-  feature: z.string().trim().min(1, "Thiếu feature").max(64),
-  capabilities: z.array(z.string().trim().min(1).max(32)).min(1, "Danh sách capabilities rỗng").max(50),
-  module: z.string().trim().min(1, "Thiếu module").max(16),
-});
 
 async function batchJobHandler(request: Request) {
   const { ctx } = await requireTenantContext(request);
 
-  const parsed = bodySchema.safeParse(await request.json().catch(() => null));
+  const parsed = jobBatchBody.safeParse(await request.json().catch(() => null));
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues });
   const { productId, masterImageId, feature, capabilities, module } = parsed.data;
 

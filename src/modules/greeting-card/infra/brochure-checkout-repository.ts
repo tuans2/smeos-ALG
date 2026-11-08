@@ -15,6 +15,7 @@ import { activateProspect } from "./session-customer"
 import { storedDeliveryAddress, upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "@/modules/orders/infra/order-recipient-view"
 import { phoneEquals } from "@/core/security/pii-lookup"
+import { takeStock } from "@/modules/orders/infra/order-stock"
 
 export interface CreateBrochureOrderData {
   organizationId: string
@@ -228,11 +229,14 @@ export class BrochureCheckoutRepository {
         ...(quote.shippingZone ? { zone: quote.shippingZone.name } : {}),
         ...data.delivery,
       }
+      // Đơn thuộc chi nhánh của Sale phụ trách link (checklist ALG 9.13)
+      const branchId = await saleBranchOfSession(tx, data.organizationId, data.sessionId)
+      // Sản phẩm theo dõi tồn theo số lượng: trừ cùng giao dịch, không đủ → 409 (PO 07/11/2026, như đơn cổng chung Q9)
+      const [stock] = await takeStock(tx, data.organizationId, branchId, [{ productId: data.snapshot.id, quantity: quote.quantity, description: data.snapshot.name }])
       const order = await tx.orders.create({
         data: {
           organization_id: data.organizationId,
-          // Đơn thuộc chi nhánh của Sale phụ trách link (checklist ALG 9.13)
-          branch_id: await saleBranchOfSession(tx, data.organizationId, data.sessionId),
+          branch_id: branchId,
           customer_id: customerId,
           code: data.code,
           source: "BROCHURE",
@@ -262,7 +266,7 @@ export class BrochureCheckoutRepository {
               quantity: quote.quantity,
               unit_price_vnd: quote.unitPriceVnd,
               description: data.variant ? `${data.snapshot.name} — ${data.variant.name}` : data.snapshot.name,
-              metadata: { ...data.snapshot, variant: data.variant } as unknown as Prisma.InputJsonValue,
+              metadata: { ...data.snapshot, variant: data.variant, ...(stock ? { stock } : {}) } as unknown as Prisma.InputJsonValue,
             },
           },
         },

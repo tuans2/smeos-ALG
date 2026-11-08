@@ -7,6 +7,7 @@
  * trực tiếp. Số ảnh còn lại được ghi vào nhật ký; đối soát kho liệt kê chúng là tệp mồ côi.
  */
 import { conflict, notFound, unprocessable } from "@/core/http/errors"
+import { MAX_BULK_DELETE_IDS } from "../domain/partner-marketplace-limits"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { recordPlatformAuditLog } from "../infra/platform-audit-repository"
@@ -46,8 +47,7 @@ export async function deleteMarketplaceStore(
   return { id: storeId, shopName: removed.shopName }
 }
 
-/** Trần số hồ sơ mỗi lần xoá theo danh sách chọn. */
-export const MAX_BULK_DELETE_IDS = 500
+export { MAX_BULK_DELETE_IDS }
 
 export type BulkDeleteTarget = MarketplaceDeleteTarget
 
