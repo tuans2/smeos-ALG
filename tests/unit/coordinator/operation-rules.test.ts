@@ -124,4 +124,8 @@ describe("mã đơn và mã sự cố", () => {
     expect(coordinatorOrderCode(7, new Date(2026, 8, 25))).toBe("FLR-260925-0007")
     expect(exceptionCode("FLR-260925-0007", 3)).toBe("EXC-FLR-260925-0007-03")
   })
+
+  it("ngày trong mã theo giờ Việt Nam: 23:30 UTC đã sang ngày hôm sau", () => {
+    expect(coordinatorOrderCode(1, new Date("2026-11-06T23:30:00Z"))).toBe("FLR-261107-0001")
+  })
 })

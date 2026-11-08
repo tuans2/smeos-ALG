@@ -29,3 +29,13 @@ describe("cảnh báo sàn dùng đúng cách làm tròn của chặn thật", (
     expect(current?.warnings).toContain("Thấp hơn giá sàn của cửa hàng")
   })
 })
+
+describe("giá trần (PO 07/11/2026, Q3)", () => {
+  it("làm tròn XUỐNG nghìn — trần không cao hơn thật", async () => {
+    const { ceilingPriceVnd, aboveCeilingMessage } = await import("./price-floor")
+    expect(ceilingPriceVnd(100_100, 3)).toBe(300_000)
+    expect(aboveCeilingMessage(300_000, 300_000)).toBeNull()
+    expect(aboveCeilingMessage(301_000, 300_000)).toContain("giá trần")
+    expect(aboveCeilingMessage(999_000, 0)).toBeNull()
+  })
+})

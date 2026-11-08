@@ -9,6 +9,7 @@
 import { AppError, validationFailed } from "@/core/http/errors"
 import { vnTodayIso } from "@/lib/vn-date"
 import { newOrderDeliveryErrors } from "@/modules/orders/domain/order-input-rules"
+import type { CoordinatorEntrySource } from "@/modules/orders/domain/order-source"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { ICustomerRepository } from "@/modules/crm/domain/repositories/customer-repository.interface"
 import { getCustomerRepository } from "@/modules/crm/infra/customer-repository"
@@ -53,7 +54,7 @@ export interface CreateCoordinatorOrderInput {
   /** ĐP-3.16 (26/09/2026): giá trị trường tự tạo (entity = ORDER), qua `applyCustomFields`. */
   customFields?: Record<string, unknown> | undefined
   // ── ĐP-4a.1 (26/09/2026) — T01: đủ trường P0/P1 (Đặc tả trường §2.1/§3.1) ──
-  source?: string | undefined
+  source?: CoordinatorEntrySource | undefined
   sourceReference?: string | undefined
   /** Danh mục §2.15.3 (MỞ) — kiểm active thật ở `assertActiveCatalogCode`. */
   channel?: string | undefined

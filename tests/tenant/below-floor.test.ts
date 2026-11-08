@@ -22,6 +22,7 @@ describe("chặn giá dưới sàn", () => {
   let sale: { userId: string; token: string }
   let productId: string
   let floorVnd: number
+  let ceilingVnd: number
 
   beforeEach(async () => {
     await resetDatabase()
@@ -49,6 +50,7 @@ describe("chặn giá dưới sàn", () => {
     const costVnd = ((cost.data as { cost: { totalVnd: number } }).cost).totalVnd
     expect(costVnd).toBeGreaterThan(0)
     floorVnd = Math.ceil(costVnd / 1000) * 1000
+    ceilingVnd = Math.floor((costVnd * 3) / 1000) * 1000
   })
 
   afterAll(async () => {
@@ -82,6 +84,20 @@ describe("chặn giá dưới sàn", () => {
     expect((await post(sale.token, floorVnd)).status).toBe(201)
     expect((await post(sale.token, 0)).status).toBe(201)
     expect((await post(a.token, floorVnd - 1000)).status).toBe(201)
+  })
+
+  // PO 07/11/2026 (Q3): mã C9 "vượt trần" chặn thật — Sale bị chặn, người có C9 (Điều hành, Điều phối) đặt được.
+  it("vượt trần: Sale báo giá / tạo đơn → 422 ABOVE_CEILING; bằng trần được; Điều hành vượt được", async () => {
+    const orderId = await draftOrder()
+    const high = await quote(sale.token, orderId, ceilingVnd + 1000)
+    expect(high.status).toBe(422)
+    expect(((await readJson(high)).error as { details: { reason: string; ceilingVnd: number } }).details).toMatchObject({ reason: "ABOVE_CEILING", ceilingVnd })
+    expect((await quote(sale.token, orderId, ceilingVnd)).status).toBe(200)
+
+    const post = (token: string, unitPriceVnd: number) =>
+      createOrderRoute(withSession(`${BASE}/orders`, token, { method: "POST", body: JSON.stringify({ items: [{ productId, description: "Bó hồng", quantity: 1, unitPriceVnd }] }) }))
+    expect((await post(sale.token, ceilingVnd + 1000)).status).toBe(422)
+    expect((await post(a.token, ceilingVnd + 1000)).status).toBe(201)
   })
 
   it("Điều hành (C10) báo giá dưới sàn được — chính thao tác đó là phê duyệt", async () => {

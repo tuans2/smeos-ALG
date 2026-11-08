@@ -51,27 +51,67 @@ export async function takeStock(
   return marks
 }
 
-/** Hoàn tồn đã trừ khi đơn bị huỷ; dòng đã hoàn được đánh dấu nên gọi lại không hoàn hai lần. */
-export async function returnStock(organizationId: string, orderId: string): Promise<number> {
-  return prisma.$transaction(async (tx) => {
-    const items = await tx.order_items.findMany({ where: { organization_id: organizationId, order_id: orderId }, select: { id: true, metadata: true } })
-    let returned = 0
-    for (const item of items) {
-      const meta = item.metadata && typeof item.metadata === "object" ? (item.metadata as Record<string, unknown>) : null
-      const mark = meta?.stock as StockMark | undefined
-      if (!mark || mark.returned || !mark.inventoryId || !(mark.quantity > 0)) continue
-      // Đánh dấu trước (có điều kiện theo phiên bản đọc được) rồi mới cộng tồn — hai lượt huỷ đồng thời chỉ một lượt cộng
-      const claimed = await tx.order_items.updateMany({
-        where: { id: item.id, organization_id: organizationId, metadata: { equals: item.metadata as Prisma.InputJsonValue } },
-        data: { metadata: { ...meta, stock: { ...mark, returned: true } } as Prisma.InputJsonValue },
-      })
-      if (claimed.count === 0) continue
-      await tx.product_inventory.updateMany({
-        where: { id: mark.inventoryId, organization_id: organizationId, quantity_available: { not: null } },
-        data: { quantity_available: { increment: mark.quantity } },
-      })
-      returned += 1
-    }
-    return returned
-  })
+type MarkedItem = { id: string; meta: Record<string, unknown>; mark: StockMark; raw: Prisma.JsonValue }
+
+async function markedItems(tx: Tx, organizationId: string, orderId: string): Promise<MarkedItem[]> {
+  const items = await tx.order_items.findMany({ where: { organization_id: organizationId, order_id: orderId }, select: { id: true, metadata: true } })
+  const out: MarkedItem[] = []
+  for (const item of items) {
+    const meta = item.metadata && typeof item.metadata === "object" ? (item.metadata as Record<string, unknown>) : null
+    const mark = meta?.stock as StockMark | undefined
+    if (meta && mark?.inventoryId && mark.quantity > 0) out.push({ id: item.id, meta, mark, raw: item.metadata })
+  }
+  return out
+}
+
+/**
+ * Trừ lại tồn đã hoàn khi đơn được khôi phục (đơn Thẻ chào bỏ hiển thị rồi khôi phục — PO 07/11/2026). Không đủ
+ * tồn → 409, không khôi phục. Chạy trong giao dịch của lần khôi phục.
+ */
+export async function retakeStock(tx: Tx, organizationId: string, orderId: string): Promise<number> {
+  let taken = 0
+  for (const { id, meta, mark, raw } of await markedItems(tx, organizationId, orderId)) {
+    if (!mark.returned) continue
+    const moved = await tx.product_inventory.updateMany({
+      where: { id: mark.inventoryId, organization_id: organizationId, quantity_available: { gte: mark.quantity } },
+      data: { quantity_available: { decrement: mark.quantity } },
+    })
+    if (moved.count === 0) throw conflict("Sản phẩm của đơn không còn đủ tồn để khôi phục — nhập thêm tồn rồi thử lại.")
+    const { returned: _returned, ...rest } = mark
+    const claimed = await tx.order_items.updateMany({
+      where: { id, organization_id: organizationId, metadata: { equals: raw as Prisma.InputJsonValue } },
+      data: { metadata: { ...meta, stock: rest } as Prisma.InputJsonValue },
+    })
+    if (claimed.count === 0) throw conflict("Đơn vừa thay đổi, vui lòng tải lại")
+    taken += 1
+  }
+  return taken
+}
+
+/**
+ * Hoàn tồn đã trừ khi đơn bị huỷ; dòng đã hoàn được đánh dấu nên gọi lại không hoàn hai lần. Có `tx` thì chạy trong
+ * giao dịch của lần huỷ (huỷ lỗi thì không hoàn), không có thì tự mở giao dịch.
+ */
+export async function returnStock(organizationId: string, orderId: string, db?: Tx): Promise<number> {
+  if (db) return returnStockIn(db, organizationId, orderId)
+  return prisma.$transaction((tx) => returnStockIn(tx, organizationId, orderId))
+}
+
+async function returnStockIn(tx: Tx, organizationId: string, orderId: string): Promise<number> {
+  let returned = 0
+  for (const { id, meta, mark, raw } of await markedItems(tx, organizationId, orderId)) {
+    if (mark.returned) continue
+    // Đánh dấu trước (có điều kiện theo phiên bản đọc được) rồi mới cộng tồn — hai lượt huỷ đồng thời chỉ một lượt cộng
+    const claimed = await tx.order_items.updateMany({
+      where: { id, organization_id: organizationId, metadata: { equals: raw as Prisma.InputJsonValue } },
+      data: { metadata: { ...meta, stock: { ...mark, returned: true } } as Prisma.InputJsonValue },
+    })
+    if (claimed.count === 0) continue
+    await tx.product_inventory.updateMany({
+      where: { id: mark.inventoryId, organization_id: organizationId, quantity_available: { not: null } },
+      data: { quantity_available: { increment: mark.quantity } },
+    })
+    returned += 1
+  }
+  return returned
 }

@@ -1,12 +1,14 @@
 /**
  * Order Ingestion Connector.
- * Cổng nhận đơn từ các nguồn: M10 Orders, M08 AI Chat, M06 Catalog, hoặc nhập tay.
+ * Cổng nhận đơn từ các nguồn (danh mục chung `orders/domain/order-source.ts`).
  */
+
+import type { CoordinatorEntrySource } from "@/modules/orders/domain/order-source"
 
 export interface IngestOrderPayload {
   organizationId: string
   orderId: string
-  source: "ORDER_M10" | "CHAT_M08" | "CATALOG_M06" | "MANUAL"
+  source: CoordinatorEntrySource
   coordinatorNote?: string
 }
 
