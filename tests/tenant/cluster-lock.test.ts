@@ -45,8 +45,10 @@ describe("runExclusive — một tiến trình mỗi lượt", () => {
   it("khoá khác tên không chặn nhau", async () => {
     let release!: () => void
     const gate = new Promise<void>((r) => (release = r))
-    const first = runExclusive("test_lock_a", async () => { await gate; return "a" })
-    await new Promise((r) => setTimeout(r, 200))
+    let locked!: () => void
+    const holding = new Promise<void>((r) => (locked = r))
+    const first = runExclusive("test_lock_a", async () => { locked(); await gate; return "a" })
+    await holding
     expect(await runExclusive("test_lock_b", async () => "b")).toBe("b")
     release()
     expect(await first).toBe("a")
