@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { AppError, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -8,14 +7,7 @@ import { isInTransit } from "@/modules/greeting-card/domain/cancellation-request
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { roleOf } from "@/modules/greeting-card/domain/internal-message"
 import { assertOrderInScope } from "@/modules/greeting-card/use-cases/order-scope"
-
-const createSchema = z.object({
-  orderId: z.string().min(1, "Mã đơn hàng không được để trống"),
-  type: z.enum(["CANCEL_ONLY", "FULL_REFUND", "PARTIAL_REFUND"]),
-  reason: z.string().trim().min(3, "Lý do hủy/hoàn phải có ít nhất 3 ký tự").max(1000),
-  refundAmountVnd: z.number().int().nonnegative().max(10_000_000_000).optional().default(0),
-  note: z.string().max(1000).optional(),
-})
+import { cancellationRequestBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 /**
  * `POST /api/v1/greeting-card/cancellation-requests`
@@ -27,7 +19,7 @@ export const POST = handle(async (req: Request) => {
   const senderRole = roleOf(ctx.capabilities)
   if (!senderRole) requireCapability(ctx, GREETING_CARD_CAPABILITY.manage)
 
-  const parsed = createSchema.safeParse(await req.json().catch(() => null))
+  const parsed = cancellationRequestBody.safeParse(await req.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   // Sale "chỉ khách của mình" không đề xuất huỷ/hoàn đơn của sale khác (404 như mọi thao tác tiền)

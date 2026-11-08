@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -8,14 +7,7 @@ import {
   getTemplateReminderOverrides,
   updateTemplateReminderOverrides,
 } from "@/modules/coordinator/use-cases/manage-template-reminder-settings"
-
-const updateTemplateOverridesSchema = z.object({
-  m0MinutesAfterPaid: z.number().int().min(0).max(1440).nullable().optional(),
-  m1MinutesBeforeDelivery: z.number().int().min(0).max(1440).nullable().optional(),
-  m2MinutesBeforeDelivery: z.number().int().min(0).max(1440).nullable().optional(),
-  m3MinutesAfterShipperAssigned: z.number().int().min(0).max(1440).nullable().optional(),
-  m5MinutesAfterDelivery: z.number().int().min(0).max(1440).nullable().optional(),
-})
+import { templateRemindersBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -50,7 +42,7 @@ export const PUT = handle(async (request, context: unknown) => {
 
   const { id: productId } = await (context as RouteContext).params
   const raw = await request.json().catch(() => null)
-  const parsed = updateTemplateOverridesSchema.safeParse(raw)
+  const parsed = templateRemindersBody.safeParse(raw)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

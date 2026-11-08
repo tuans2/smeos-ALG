@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
@@ -7,11 +6,7 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { getTelegramBotInfo, sendTelegramText } from "@/modules/integration-hub/adapters/connectors/telegram/telegram-bot-api"
 import { resolveTelegramDispatchAccess } from "@/modules/greeting-card/use-cases/telegram-dispatch-link"
 import { listLinkedTelegramChatIds, unlinkTelegramChat } from "@/modules/greeting-card/infra/telegram-linked-chats"
-
-const testSchema = z.object({
-  chatId: z.string().min(1),
-  message: z.string().max(1000).optional(),
-})
+import { telegramTestBody } from "@/app/api/v1/_contracts/requests-greeting"
 
 /** Lý do Telegram từ chối gửi, nói bằng lời của người dùng */
 function telegramSendErrorText(error: string | undefined): string {
@@ -68,7 +63,7 @@ export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.integrationManage)
 
-  const parsed = testSchema.safeParse(await request.json().catch(() => ({})))
+  const parsed = telegramTestBody.safeParse(await request.json().catch(() => ({})))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const botToken = dispatchBotToken()

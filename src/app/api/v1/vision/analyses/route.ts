@@ -1,5 +1,3 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
@@ -8,11 +6,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { listApprovedAnalyses } from "@/modules/products/use-cases/list-approved-analyses"
 import { listPendingAnalyses } from "@/modules/products/use-cases/list-pending-analyses"
 import { requestAnalysis } from "@/modules/products/use-cases/request-analysis"
-
-const postSchema = z.object({
-  asset_ids: z.array(z.string().min(1)).min(1),
-  product_id: z.string().min(1).nullable().optional(),
-})
+import { visionAnalysisBody } from "@/app/api/v1/_contracts/requests-ai-studio"
 
 /**
  * `POST /vision/analyses` (`H1`, đặc tả 06 mục 8). `Idempotency-Key` bắt
@@ -29,7 +23,7 @@ export const POST = handle(async (request) => {
     throw validationFailed({ "idempotency-key": "Bắt buộc trên mọi endpoint tạo job (YC-U7)" })
   }
 
-  const parsed = postSchema.safeParse(await request.json().catch(() => null))
+  const parsed = visionAnalysisBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await requestAnalysis(ctx, {
