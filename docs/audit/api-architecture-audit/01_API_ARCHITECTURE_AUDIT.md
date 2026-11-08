@@ -298,3 +298,19 @@ PO chốt 07/11/2026: 8 dòng lệch năng lực sửa đặc tả theo mã (`GE
 
 Hoãn (PO 07/11/2026): chặn 422 `IDEMPOTENCY_KEY_REUSED` khi khoá trùng mà thân khác. Lý do: tạo kịch bản Creative Studio (`creative.scene_plan`) cố ý gửi lại cùng khoá `scenePlanKey(assetId, topicId, mode)` (`src/components/creative-studio/scene-plan-client.ts`) để mở lại kịch bản đã có, trong khi thân có thể khác (nhà viết, dữ liệu thương hiệu) — chặn cho mọi job sẽ làm vỡ luồng đó. Khi làm lại: chặn mặc định và miễn trừ có lý do cho feature dùng khoá cố định, hoặc đổi luồng mở lại kịch bản sang đọc thẳng. Job vẫn chỉ ghi cảnh báo `jobs.idempotency_payload_mismatch`; `POST /orders` không lưu thân nên chưa phát hiện được.
 
+
+## 14. Nhật ký sửa — lỗi 500 phát hiện khi viết OpenAPI nội bộ (08/11/2026)
+
+Sửa các đường trả 500 đã ghi "chưa sửa" ở §13 (đợt Creative Studio, đợt tác vụ AI), theo chuẩn tài liệu 02 §2/§5: không thấy hoặc của tổ chức khác → 404, sai trạng thái → 409, vi phạm luật nghiệp vụ → 422, thân hỏng → 400. Không đổi hình dạng phản hồi thành công.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-01 / API-16 | Use-case video `get-video-job`, `update-storyboard`, `approve-storyboard`, `approve-video-output` ném `AppError` thay cho `Error` trần (`src/modules/video-studio/use-cases/video-errors.ts`): không thấy job → 404 (câu lỗi không nhắc mã job); luật duyệt trong `domain/video-approval-rules.ts` ghi thêm `kind` (`state` → 409, `content` → 422); đang render mà sửa phân cảnh → 409; phân cảnh sai luật của khuôn → 422 | `tests/tenant/api-error-mapping.test.ts` (4 ca video đỏ trên mã cũ: 500 `INTERNAL`), `src/modules/video-studio/use-cases/__tests__/video-errors.test.ts` |
+| API-01 | `POST /video/jobs/:id/render`: thân không phải JSON → 400 `details.body` (trước đó `JSON.parse` trần → 500) | `tests/tenant/api-error-mapping.test.ts` (đỏ trên mã cũ) |
+| API-01 | `POST /creative-production/package`: lược đồ thân (`requests-creative.ts`) đòi ít nhất một trong `creativeResult`/`authenticResult` → 400 (trước đó hàm `packageCampaign()` ném `Error` → 500) | `tests/tenant/api-error-mapping.test.ts` (đỏ trên mã cũ) |
+| API-15 | OpenAPI nội bộ: bỏ ghi chú "hiện trả 500" của 5 operation video và `packageCampaignDraft`, khai 404/409/422 thật; `internal.openapi.json` sinh lại | `tests/unit/architecture/internal-openapi.test.ts` |
+
+Còn lại, chưa sửa (ngoài phạm vi đợt này):
+- `POST /video/jobs/:id/render` vẫn trả 422 khi sai trạng thái (kịch bản chưa duyệt, đang/đã render) — theo chuẩn là 409; đổi là thay mã trạng thái client đang thấy nên để đợt riêng.
+- `POST /creative-production/package`: `creativeResult`/`authenticResult` vẫn là `z.any()` — gửi đối tượng sai hình dạng (vd. thiếu `mediaPlanItems`) vẫn có thể thành 500. `mediaPlanItems[].targetPlatform` của chế độ AUTHENTIC vẫn mang tên khung cắt ngoài kiểu TS.
+- Điều phối "Nhận đơn" luôn 409 khi đơn đã tự ghi cọc (§13, đợt Thẻ chào) — lỗi nghiệp vụ, không phải 500.

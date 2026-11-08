@@ -27068,7 +27068,7 @@
       "post": {
         "operationId": "packageCampaignDraft",
         "summary": "Gộp kết quả sản xuất thành bản nháp chiến dịch",
-        "description": "Hàm thuần — không lưu (gói lưu được ở `POST /creative-production/packages`). Cần ít nhất một trong `creativeResult`/`authenticResult` (kết quả của `/produce`); thiếu cả hai hiện trả 500 (lỗi đã ghi nhận).",
+        "description": "Hàm thuần — không lưu (gói lưu được ở `POST /creative-production/packages`). Cần ít nhất một trong `creativeResult`/`authenticResult` (kết quả của `/produce`); thiếu cả hai → 400.",
         "tags": [
           "Creative Studio — kế hoạch & nội dung"
         ],
@@ -27543,9 +27543,6 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "I1"
@@ -80768,7 +80765,7 @@
       "get": {
         "operationId": "getVideoJob",
         "summary": "Một job video (kèm URL ký để phát)",
-        "description": "Không thấy job (kể cả của tổ chức khác) hoặc sai trạng thái hiện trả 500 thay vì 404/409 — lỗi đã ghi nhận.",
+        "description": "Không thấy job (kể cả của tổ chức khác) → 404.",
         "tags": [
           "Video"
         ],
@@ -81068,11 +81065,11 @@
           "403": {
             "$ref": "#/components/responses/Error403"
           },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
           "409": {
             "$ref": "#/components/responses/Error409"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "I1"
@@ -81082,7 +81079,7 @@
       "post": {
         "operationId": "approveVideoScript",
         "summary": "Duyệt kịch bản video (cổng 1)",
-        "description": "Mã năng lực kiểm ở use-case. Không thấy job (kể cả của tổ chức khác) hoặc sai trạng thái hiện trả 500 thay vì 404/409 — lỗi đã ghi nhận.",
+        "description": "Mã năng lực kiểm ở use-case. Đã duyệt hoặc không ở bản nháp → 409; phân cảnh sai luật → 422. Không thấy job (kể cả của tổ chức khác) → 404.",
         "tags": [
           "Video"
         ],
@@ -81378,11 +81375,14 @@
           "403": {
             "$ref": "#/components/responses/Error403"
           },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
           "409": {
             "$ref": "#/components/responses/Error409"
           },
-          "500": {
-            "$ref": "#/components/responses/Error500"
+          "422": {
+            "$ref": "#/components/responses/Error422"
           }
         },
         "x-capability": "P3"
@@ -81392,7 +81392,7 @@
       "post": {
         "operationId": "approveVideoOutput",
         "summary": "Duyệt video thành phẩm (cổng 2)",
-        "description": "Mã năng lực kiểm ở use-case (trần cứng). Không thấy job (kể cả của tổ chức khác) hoặc sai trạng thái hiện trả 500 thay vì 404/409 — lỗi đã ghi nhận.",
+        "description": "Mã năng lực kiểm ở use-case (trần cứng). Đã duyệt hoặc chưa dựng xong → 409; dựng xong mà không có tệp video → 422. Không thấy job (kể cả của tổ chức khác) → 404.",
         "tags": [
           "Video"
         ],
@@ -81688,11 +81688,14 @@
           "403": {
             "$ref": "#/components/responses/Error403"
           },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
           "409": {
             "$ref": "#/components/responses/Error409"
           },
-          "500": {
-            "$ref": "#/components/responses/Error500"
+          "422": {
+            "$ref": "#/components/responses/Error422"
           }
         },
         "x-capability": "P4"
@@ -81702,7 +81705,7 @@
       "post": {
         "operationId": "renderVideo",
         "summary": "Dựng video từ phân cảnh",
-        "description": "Thân không bắt buộc; cảnh còn trống ảnh tự lấp, vẫn trống → 422. Job của tổ chức khác → 404. Trừ credit theo nhà cung cấp đứng đầu.",
+        "description": "Thân không bắt buộc (không phải JSON → 400); cảnh còn trống ảnh tự lấp, vẫn trống → 422. Job của tổ chức khác → 404. Trừ credit theo nhà cung cấp đứng đầu.",
         "tags": [
           "Video"
         ],
@@ -82079,7 +82082,7 @@
       "patch": {
         "operationId": "updateStoryboard",
         "summary": "Biên soạn phân cảnh",
-        "description": "Đang render hoặc phân cảnh sai luật (2–15 cảnh) cũng trả 500. Không thấy job (kể cả của tổ chức khác) hoặc sai trạng thái hiện trả 500 thay vì 404/409 — lỗi đã ghi nhận.",
+        "description": "Đang render → 409; phân cảnh sai luật của khuôn (số cảnh, thời lượng) → 422. Không thấy job (kể cả của tổ chức khác) → 404.",
         "tags": [
           "Video"
         ],
@@ -82458,14 +82461,17 @@
           "403": {
             "$ref": "#/components/responses/Error403"
           },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
           "409": {
             "$ref": "#/components/responses/Error409"
           },
           "413": {
             "$ref": "#/components/responses/Error413"
           },
-          "500": {
-            "$ref": "#/components/responses/Error500"
+          "422": {
+            "$ref": "#/components/responses/Error422"
           }
         },
         "x-capability": "I1"
@@ -84123,17 +84129,6 @@
             "$ref": "#/components/headers/RetryAfter"
           }
         },
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "Error500": {
-        "description": "Lỗi hệ thống (`INTERNAL`) — không lộ chi tiết",
-        "headers": {},
         "content": {
           "application/json": {
             "schema": {

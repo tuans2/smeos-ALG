@@ -13,7 +13,7 @@ export const POST = handle(async (request, context: { params: Promise<{ id: stri
   // Thân tuỳ chọn (24/09/2026): ảnh hiện có trên storyboard để lấp cảnh còn
   // trống ảnh của job — không có thì máy chủ tự tìm ảnh Khu vực D / Master.
   const raw = await request.text().catch(() => "");
-  const parsed = videoRenderBody.safeParse(raw ? JSON.parse(raw) : {});
+  const parsed = videoRenderBody.safeParse(raw ? parseJsonBody(raw) : {});
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues });
   const useCase = new DispatchVideoRenderUseCase();
   const result = await useCase.execute(ctx, id, {
@@ -23,3 +23,12 @@ export const POST = handle(async (request, context: { params: Promise<{ id: stri
 
   return jsonResponse(result);
 });
+
+/** Thân không phải JSON → 400 như mọi route qua `handle()` (trước đây `JSON.parse` trần ném ra 500). */
+function parseJsonBody(raw: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw validationFailed({ body: "Thân yêu cầu không phải JSON hợp lệ" });
+  }
+}

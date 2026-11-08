@@ -4,6 +4,8 @@ import { validateStoryboard } from "./video-storyboard";
 export interface ApprovalCheckResult {
   allowed: boolean;
   reason?: string;
+  /** Vì sao bị chặn: `state` = sai trạng thái tiến trình (HTTP 409), `content` = nội dung chưa đạt luật (HTTP 422). */
+  kind?: "state" | "content";
 }
 
 /**
@@ -14,13 +16,14 @@ export function canApproveScript(
   job: Pick<VideoJobEntity, "stage" | "scriptApproval" | "scenes" | "format">
 ): ApprovalCheckResult {
   if (job.scriptApproval === "APPROVED") {
-    return { allowed: false, reason: "Kịch bản đã được phê duyệt trước đó" };
+    return { allowed: false, reason: "Kịch bản đã được phê duyệt trước đó", kind: "state" };
   }
 
   if (job.stage !== "SCRIPT_READY" && job.stage !== "DRAFT") {
     return {
       allowed: false,
       reason: `Không thể duyệt kịch bản khi tiến trình đang ở trạng thái ${job.stage}`,
+      kind: "state",
     };
   }
 
@@ -29,6 +32,7 @@ export function canApproveScript(
     return {
       allowed: false,
       reason: `Kịch bản chưa hợp lệ: ${validation.errors.join("; ")}`,
+      kind: "content",
     };
   }
 
@@ -74,13 +78,14 @@ export function canApproveVideo(
   job: Pick<VideoJobEntity, "stage" | "videoApproval" | "finalVideoUrl" | "finalAssetId">
 ): ApprovalCheckResult {
   if (job.videoApproval === "APPROVED") {
-    return { allowed: false, reason: "Video đã được phê duyệt chính thức" };
+    return { allowed: false, reason: "Video đã được phê duyệt chính thức", kind: "state" };
   }
 
   if (job.stage !== "RENDER_COMPLETED") {
     return {
       allowed: false,
       reason: "Chỉ có thể duyệt khi tác vụ render video đã hoàn tất",
+      kind: "state",
     };
   }
 
@@ -88,6 +93,7 @@ export function canApproveVideo(
     return {
       allowed: false,
       reason: "Không tìm thấy tệp video thành phẩm hoặc mã tài sản video để duyệt",
+      kind: "content",
     };
   }
 
