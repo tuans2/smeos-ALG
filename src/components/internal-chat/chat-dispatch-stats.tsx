@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState } from "react"
 
 interface Stats {
@@ -14,6 +15,7 @@ interface Stats {
  * đối tác đã nhận. Ẩn khi tổ chức chưa có cửa hàng đối tác (vd. người xem là cửa hàng) hoặc không tải được.
  */
 export function ChatDispatchStats() {
+  const { t } = useI18n()
   const [stats, setStats] = useState<Stats | null>(null)
   useEffect(() => {
     let alive = true
@@ -30,7 +32,7 @@ export function ChatDispatchStats() {
   if (!stats || stats.partner_stores === 0) return null
   return (
     <p className="text-caption text-text-muted" role="status">
-      {stats.days} ngày qua: {stats.invites_in_chat} lời mời đơn qua Trao đổi nội bộ · {stats.partner_claims} đơn cửa hàng đối tác đã nhận · {stats.partner_stores} cửa hàng đối tác trong vòng bắn đơn
+      {t("chat.page.stats", { days: stats.days, invites: stats.invites_in_chat, claims: stats.partner_claims, stores: stats.partner_stores })}
     </p>
   )
 }

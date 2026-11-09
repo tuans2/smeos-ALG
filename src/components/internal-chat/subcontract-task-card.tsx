@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React from "react"
 import type { InternalChatMessage } from "@/modules/internal-chat/domain/chat-entities"
 import {
@@ -16,26 +17,28 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { formatDateTime } from "@/lib/i18n/formatters"
 
-const STEP_LABEL: Record<FulfilmentStep, string> = {
-  FINISHED_PHOTO: "Ảnh thành phẩm",
-  SHIPPER: "Thông tin giao hàng",
-  DELIVERY_PROOF: "Ảnh bàn giao",
+type ChatKey = Parameters<ReturnType<typeof useI18n>["t"]>[0]
+
+const STEP_LABEL: Record<FulfilmentStep, ChatKey> = {
+  FINISHED_PHOTO: "chat.card.stepFinishedPhoto",
+  SHIPPER: "chat.card.stepShipper",
+  DELIVERY_PROOF: "chat.card.stepDeliveryProof",
 }
 
-const NEXT_ACTION_LABEL: Record<FulfilmentStep, string> = {
-  FINISHED_PHOTO: "Gửi ảnh thành phẩm",
-  SHIPPER: "Nhập thông tin giao hàng",
-  DELIVERY_PROOF: "Gửi ảnh bàn giao",
+const NEXT_ACTION_LABEL: Record<FulfilmentStep, ChatKey> = {
+  FINISHED_PHOTO: "chat.card.actionFinishedPhoto",
+  SHIPPER: "chat.card.actionShipper",
+  DELIVERY_PROOF: "chat.card.actionDeliveryProof",
 }
 
-function statusText(view: SubcontractCardView): { text: string; tone: "warning" | "primary" | "muted" | "success" } {
-  if (view.stage === "INVITED") return { text: "Đang mời nhận đơn", tone: "warning" }
-  if (view.stage === "GRACE") return { text: "Đã nhận — còn thời gian huỷ nhận", tone: "primary" }
-  if (view.stage === "IN_PROGRESS") return { text: "Đang thực hiện", tone: "primary" }
-  if (view.closedReason === "DONE") return { text: "Đã giao xong", tone: "success" }
-  if (view.closedReason === "TAKEN") return { text: "Đã có nơi khác nhận", tone: "muted" }
-  if (view.closedReason === "CANCELLED") return { text: "Đơn đã huỷ", tone: "muted" }
-  return { text: "Lời mời đã hết hạn", tone: "muted" }
+function statusText(view: SubcontractCardView): { key: ChatKey; tone: "warning" | "primary" | "muted" | "success" } {
+  if (view.stage === "INVITED") return { key: "chat.card.invited", tone: "warning" }
+  if (view.stage === "GRACE") return { key: "chat.card.grace", tone: "primary" }
+  if (view.stage === "IN_PROGRESS") return { key: "chat.card.inProgress", tone: "primary" }
+  if (view.closedReason === "DONE") return { key: "chat.card.done", tone: "success" }
+  if (view.closedReason === "TAKEN") return { key: "chat.card.taken", tone: "muted" }
+  if (view.closedReason === "CANCELLED") return { key: "chat.card.cancelled", tone: "muted" }
+  return { key: "chat.card.expired", tone: "muted" }
 }
 
 const TONE_CLASS = {
@@ -54,6 +57,7 @@ function deadlineText(iso: string | null): string | null {
  * chốt làm, gửi ảnh thành phẩm, nhập thông tin giao hàng, gửi ảnh bàn giao — cùng quy trình với link Telegram.
  */
 export function SubcontractTaskCard({ message }: { message: InternalChatMessage }) {
+  const { t } = useI18n()
   const payload = message.actionPayload as unknown as SubcontractCardPayload
   const view = message.subcontractView
   if (!view) return null
@@ -61,16 +65,17 @@ export function SubcontractTaskCard({ message }: { message: InternalChatMessage 
   const progress = fulfilmentProgress(view)
   const showSteps = view.stage === "IN_PROGRESS" || view.closedReason === "DONE"
   const deadline = deadlineText(view.deadlineAt)
-  const actionLabel =
-    view.stage === "INVITED" ? "Xem và nhận đơn" : view.stage === "GRACE" ? "Chốt làm hoặc huỷ nhận" : progress.next ? NEXT_ACTION_LABEL[progress.next] : "Mở đơn"
+  const actionLabel = t(
+    view.stage === "INVITED" ? "chat.card.actionClaim" : view.stage === "GRACE" ? "chat.card.actionGrace" : progress.next ? NEXT_ACTION_LABEL[progress.next] : "chat.card.actionOpen"
+  )
 
   return (
     <Card className="p-4 max-w-sm text-text space-y-3" variant="default">
       <div className="flex items-start gap-2">
         <Package className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden="true" />
         <div className="min-w-0">
-          <p className="text-meta font-semibold">{payload.title || `Đơn gia công #${payload.orderCode}`}</p>
-          <span className={`inline-block mt-1 text-caption font-semibold px-2 py-0.5 rounded-full ${TONE_CLASS[status.tone]}`}>{status.text}</span>
+          <p className="text-meta font-semibold">{payload.title || t("chat.card.defaultTitle", { code: payload.orderCode })}</p>
+          <span className={`inline-block mt-1 text-caption font-semibold px-2 py-0.5 rounded-full ${TONE_CLASS[status.tone]}`}>{t(status.key)}</span>
         </div>
       </div>
 
@@ -78,19 +83,19 @@ export function SubcontractTaskCard({ message }: { message: InternalChatMessage 
 
       {deadline && (view.stage === "INVITED" || view.stage === "GRACE") && (
         <p className="text-caption text-text-muted inline-flex items-center gap-1">
-          <Clock className="w-3.5 h-3.5" aria-hidden="true" /> Hạn: {deadline}
+          <Clock className="w-3.5 h-3.5" aria-hidden="true" /> {t("chat.card.deadline", { time: deadline })}
         </p>
       )}
 
       {showSteps && (
-        <ol className="space-y-1" aria-label="Tiến độ thực hiện đơn">
+        <ol className="space-y-1" aria-label={t("chat.card.progressLabel")}>
           {(Object.keys(STEP_LABEL) as FulfilmentStep[]).map((step) => {
             const done = progress.done.includes(step)
             return (
               <li key={step} className={`text-caption inline-flex items-center gap-1.5 w-full ${done ? "text-success" : "text-text-muted"}`}>
                 <CheckCircle2 className={`w-3.5 h-3.5 ${done ? "" : "opacity-30"}`} aria-hidden="true" />
-                {STEP_LABEL[step]}
-                <span className="sr-only">{done ? " — đã xong" : " — chưa xong"}</span>
+                {t(STEP_LABEL[step])}
+                <span className="sr-only">{` — ${t(done ? "chat.card.stepDone" : "chat.card.stepPending")}`}</span>
               </li>
             )
           })}

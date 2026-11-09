@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState } from "react"
 
 const POLL_MS = 60_000
@@ -9,6 +10,7 @@ const POLL_MS = 60_000
  * quyền → ẩn, không làm phiền menu.
  */
 export function InternalChatUnreadBadge() {
+  const { t } = useI18n()
   const [count, setCount] = useState(0)
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export function InternalChatUnreadBadge() {
 
   if (count <= 0) return null
   return (
-    <span className="ml-auto min-w-5 h-5 px-1.5 rounded-full bg-primary text-primary-fg text-caption font-semibold inline-flex items-center justify-center" aria-label={`${count} tin chưa đọc`}>
+    <span className="ml-auto min-w-5 h-5 px-1.5 rounded-full bg-primary text-primary-fg text-caption font-semibold inline-flex items-center justify-center" aria-label={t("chat.badge.unread", { count })}>
       {count > 99 ? "99+" : count}
     </span>
   )

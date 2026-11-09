@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { useI18n } from "@/lib/i18n"
 import { MessageSquare } from "@/components/ui/icon-set/message-square"
 import { Card } from "@/components/ui/card"
 import { PageHeader } from "@/components/ui/page-header"
@@ -15,14 +16,15 @@ import { ChatDispatchStats } from "@/components/internal-chat/chat-dispatch-stat
  * nhận / thực hiện đơn gia công ngay trong phòng. Máy tính: hai cột; điện thoại: một cột (danh sách ↔ phòng).
  */
 export default function InternalChatPage() {
+  const { t } = useI18n()
   const chat = useInternalChat()
   const active = chat.activeConv
 
   return (
     <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden bg-bg p-3 md:p-4 gap-3">
       <PageHeader
-        title={<><MessageSquare className="w-5 h-5 text-primary" aria-hidden="true" /> Trao đổi nội bộ</>}
-        description="Nhắn tin với chuỗi, chi nhánh và cửa hàng đối tác; nhận và cập nhật đơn gia công ngay trong phòng."
+        title={<><MessageSquare className="w-5 h-5 text-primary" aria-hidden="true" /> {t("chat.page.title")}</>}
+        description={t("chat.page.description")}
       />
       <ChatDispatchStats />
       <div className="flex flex-1 min-h-0 gap-4">
@@ -51,7 +53,7 @@ export default function InternalChatPage() {
             />
           ) : (
             <div className="flex-1 flex items-center justify-center p-8">
-              <EmptyState icon={MessageSquare} title="Chọn một phòng để bắt đầu" reason="Mỗi cửa hàng đối tác và chi nhánh có một phòng trao đổi với chuỗi." />
+              <EmptyState icon={MessageSquare} title={t("chat.page.pickTitle")} reason={t("chat.page.pickReason")} />
             </div>
           )}
         </Card>

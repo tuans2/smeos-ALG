@@ -1,5 +1,6 @@
 "use client"
 
+import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react"
 import type { InternalChatConversation } from "@/modules/internal-chat/domain/chat-entities"
 import { Building } from "@/components/ui/icon-set/building"
@@ -11,8 +12,8 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import type { LoadState } from "./use-internal-chat"
 
-export function conversationName(c: InternalChatConversation): string {
-  return c.counterpartName || c.title || (c.conversationType === "CHAIN_BRANCH" ? "Phòng chi nhánh" : "Trao đổi nội bộ")
+export function conversationName(c: InternalChatConversation, labels: { branchRoom: string; defaultRoom: string }): string {
+  return c.counterpartName || c.title || (c.conversationType === "CHAIN_BRANCH" ? labels.branchRoom : labels.defaultRoom)
 }
 
 interface ConversationListProps {
@@ -25,9 +26,11 @@ interface ConversationListProps {
 
 /** Danh sách phòng trao đổi: tìm theo tên bên kia, số chưa đọc, xem trước tin cuối. */
 export function ConversationList({ conversations, state, activeId, onSelect, onRetry }: ConversationListProps) {
+  const { t } = useI18n()
+  const labels = { branchRoom: t("chat.list.branchRoom"), defaultRoom: t("chat.list.defaultRoom") }
   const [query, setQuery] = useState("")
   const q = query.trim().toLowerCase()
-  const shown = q ? conversations.filter((c) => conversationName(c).toLowerCase().includes(q)) : conversations
+  const shown = q ? conversations.filter((c) => conversationName(c, labels).toLowerCase().includes(q)) : conversations
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -36,8 +39,8 @@ export function ConversationList({ conversations, state, activeId, onSelect, onR
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
           <Input
             type="search"
-            aria-label="Tìm phòng trao đổi"
-            placeholder="Tìm cửa hàng, chuỗi, chi nhánh..."
+            aria-label={t("chat.list.searchLabel")}
+            placeholder={t("chat.list.searchPlaceholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="pl-9"
@@ -48,16 +51,16 @@ export function ConversationList({ conversations, state, activeId, onSelect, onR
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {state === "loading" && conversations.length === 0 ? (
-          <div className="p-2"><SkeletonBlock lines={5} label="Đang tải danh sách trao đổi" /></div>
+          <div className="p-2"><SkeletonBlock lines={5} label={t("chat.list.loading")} /></div>
         ) : state === "forbidden" ? (
-          <EmptyState kind="forbidden" reason="Tài khoản của bạn chưa được dùng Trao đổi nội bộ. Nhờ Điều hành cấp quyền." />
+          <EmptyState kind="forbidden" reason={t("chat.list.forbidden")} />
         ) : state === "error" && conversations.length === 0 ? (
-          <EmptyState kind="error" action={{ label: "Thử lại", onClick: onRetry }} />
+          <EmptyState kind="error" action={{ label: t("chat.list.retry"), onClick: onRetry }} />
         ) : shown.length === 0 ? (
           q ? (
             <EmptyState kind="filtered" />
           ) : (
-            <EmptyState title="Chưa có phòng trao đổi" reason="Phòng tự có khi chuỗi và cửa hàng đối tác liên kết. Bấm “Nhắn tin” ở danh sách đối tác để mở." />
+            <EmptyState title={t("chat.list.emptyTitle")} reason={t("chat.list.emptyReason")} />
           )
         ) : (
           shown.map((conv) => {
@@ -79,17 +82,17 @@ export function ConversationList({ conversations, state, activeId, onSelect, onR
                 </span>
                 <span className="flex-1 min-w-0">
                   <span className="flex items-center justify-between gap-2">
-                    <span className="text-meta font-semibold text-text truncate">{conversationName(conv)}</span>
+                    <span className="text-meta font-semibold text-text truncate">{conversationName(conv, labels)}</span>
                     {Boolean(conv.unreadCount) && (
-                      <span className="min-w-5 h-5 px-1.5 rounded-full bg-primary text-primary-fg text-caption font-semibold inline-flex items-center justify-center" aria-label={`${conv.unreadCount} tin chưa đọc`}>
+                      <span className="min-w-5 h-5 px-1.5 rounded-full bg-primary text-primary-fg text-caption font-semibold inline-flex items-center justify-center" aria-label={t("chat.list.unread", { count: conv.unreadCount ?? 0 })}>
                         {(conv.unreadCount ?? 0) > 99 ? "99+" : conv.unreadCount}
                       </span>
                     )}
                   </span>
-                  <span className="block text-caption text-text-muted truncate mt-0.5">{conv.lastMessageSnippet || "Chưa có tin nhắn"}</span>
+                  <span className="block text-caption text-text-muted truncate mt-0.5">{conv.lastMessageSnippet || t("chat.list.noMessages")}</span>
                   {Boolean(conv.activeOrderCount) && (
                     <span className="inline-block mt-1 text-caption font-semibold px-2 py-0.5 rounded-full bg-warning-subtle text-warning-text">
-                      {conv.activeOrderCount} đơn đang làm
+                      {t("chat.list.activeOrders", { count: conv.activeOrderCount ?? 0 })}
                     </span>
                   )}
                 </span>

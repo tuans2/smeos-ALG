@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useI18n } from "@/lib/i18n"
 import type { InternalChatConversation, InternalChatMessage } from "@/modules/internal-chat/domain/chat-entities"
 
 export type LoadState = "loading" | "ready" | "error" | "forbidden"
@@ -25,6 +26,7 @@ function requestedRoomTarget(): Record<string, string> | null {
  * hiển thị (đọc tin = đánh dấu đã đọc, không đánh dấu khi người dùng không nhìn). Theo dõi mất mạng để báo đúng.
  */
 export function useInternalChat() {
+  const { t } = useI18n()
   const [conversations, setConversations] = useState<InternalChatConversation[]>([])
   const [listState, setListState] = useState<LoadState>("loading")
   const [activeConv, setActiveConv] = useState<InternalChatConversation | null>(null)
@@ -147,12 +149,12 @@ export function useInternalChat() {
         setMessages((prev) => [...prev, json.data])
         return true
       }
-      setSendError(res.status === 404 ? "Bạn chỉ xem được phòng này, chưa gửi được tin." : "Chưa gửi được tin. Thử lại sau.")
+      setSendError(t(res.status === 404 ? "chat.errors.readOnly" : "chat.errors.sendFailed"))
     } catch {
-      setSendError("Mất kết nối — tin chưa được gửi.")
+      setSendError(t("chat.errors.offlineSend"))
     }
     return false
-  }, [activeConv])
+  }, [activeConv, t])
 
   /** Gửi ảnh (≤ 5, kèm chú thích) — xong thì đọc lại phòng để có URL ký. */
   const sendImages = useCallback(async (files: File[], caption: string): Promise<boolean> => {
@@ -168,12 +170,12 @@ export function useInternalChat() {
         return true
       }
       const json = await res.json().catch(() => null)
-      setSendError(res.status === 413 ? "Mỗi ảnh tối đa 10 MB." : json?.error?.message ?? "Chưa gửi được ảnh. Thử lại sau.")
+      setSendError(res.status === 413 ? t("chat.errors.imageTooLarge") : json?.error?.message ?? t("chat.errors.imageFailed"))
     } catch {
-      setSendError("Mất kết nối — ảnh chưa được gửi.")
+      setSendError(t("chat.errors.offlineImage"))
     }
     return false
-  }, [activeConv, fetchMessages])
+  }, [activeConv, fetchMessages, t])
 
   /** Tắt / bật thông báo tin nhắn của phòng đang mở cho chính mình. */
   const toggleMute = useCallback(async () => {
@@ -181,13 +183,13 @@ export function useInternalChat() {
     const muted = !activeConv.isMuted
     try {
       const res = await fetch(`${API}/${activeConv.id}/mute`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ muted }) })
-      if (!res.ok) return setSendError("Chưa đổi được thông báo của phòng. Thử lại sau.")
+      if (!res.ok) return setSendError(t("chat.errors.muteFailed"))
       setActiveConv((c) => (c && c.id === activeConv.id ? { ...c, isMuted: muted } : c))
       setConversations((list) => list.map((c) => (c.id === activeConv.id ? { ...c, isMuted: muted } : c)))
     } catch {
-      setSendError("Mất kết nối — chưa đổi được thông báo.")
+      setSendError(t("chat.errors.offlineMute"))
     }
-  }, [activeConv])
+  }, [activeConv, t])
 
   return {
     conversations, listState, activeConv, setActiveConv, messages, threadState, online, sendError, sendMessage, sendImages, toggleMute,
