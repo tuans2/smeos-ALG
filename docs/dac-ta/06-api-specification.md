@@ -1168,9 +1168,9 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | POST | `/chain/links/:id/accept` | `F2` | Cửa hàng đồng ý lời mời → `ACTIVE` (đặt lại cạnh chính); quá hạn → 409; liên kết của tổ chức khác → 404; báo chuỗi (`CHAIN_PARTNER_RESPONDED`) |
 | POST | `/chain/links/:id/decline` | `F2` | Cửa hàng từ chối lời mời → `TERMINATED`; báo chuỗi |
 | POST | `/chain/links/:id/leave` | `F2` | `{ reason }` — cửa hàng tự rời chuỗi → `TERMINATED`; ghi `audit_logs`, báo chuỗi |
-| GET · POST | `/internal-chat/conversations` | *(thành viên)* | GET: hội thoại mình tham gia. POST: tạo/lấy hội thoại; `orderId` của tổ chức khác hoặc `targetUserId` ngoài tổ chức/đối tác liên kết → 404 |
-| GET · POST | `/internal-chat/conversations/:id/messages` | *(người tham gia)* | Không phải người tham gia → 404 |
-| POST | `/internal-chat/messages/:id/action` | *(người tham gia)* | Bấm nút trên thẻ hành động |
+| GET · POST | `/internal-chat/conversations` | *(thành viên)* | GET: hội thoại mình tham gia trong ngữ cảnh tổ chức hiện tại (phòng của tổ chức khác chỉ hiện khi liên kết chuỗi–đối tác còn ACTIVE), kèm `unreadCount` thật; `?type=` sai → 400. POST: tạo/lấy hội thoại (`CHAIN_PARTNER` · `ORDER_THREAD`; `PLATFORM_TENANT` → 400); phòng 1-1 có sẵn thì dùng lại; `orderId` không thuộc tổ chức mình hoặc `targetUserId` ngoài tổ chức/đối tác liên kết → 404 |
+| GET · POST | `/internal-chat/conversations/:id/messages` | *(người tham gia)* | GET: trang tin **mới nhất** (`?limit=` 1–100, mặc định 50; `?before=<nextCursor>` lấy trang cũ hơn; trả `nextCursor`, hết = `null`); chỉ trang mới nhất mới đánh dấu đã đọc. POST: chỉ `{ content }` tin chữ ≤ 4 000 ký tự — trường khác (`actionPayload`, `attachments`, loại ≠ `TEXT`) → 400. Không phải người tham gia, hoặc liên kết chuỗi–đối tác không còn ACTIVE → 404 |
+| POST | `/internal-chat/messages/:id/action` | *(tổ chức được giao)* | Nhận / từ chối thẻ đơn (`rejectedReason` ≤ 500). Chỉ tổ chức `assignedPartnerOrgId`, không phải người gửi, thẻ còn `PENDING_ACCEPT`; sai quyền → 404, đã xử lý → 409. Gộp trạng thái vào thẻ, giữ mã đơn / giá / ảnh |
 | GET | `/noi-bo/identity` | *(phiên)* | Danh tính nội bộ của phiên; lỗi không trả chi tiết/stack · Lỗi theo envelope chung: chưa đăng nhập/phiên bị thay → 401, không có tổ chức → 404 (trước 06/11/2026 mọi lỗi ra 500 `IDENTITY_ERROR` — audit API-04) |
 | POST | `/organizations/current/language-unlock-request` | `F2` | Xin mở thêm ngôn ngữ |
 | GET | `/platform/orgs-data` | `N1` | Trung tâm dữ liệu xuyên tổ chức |

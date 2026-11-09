@@ -4,12 +4,16 @@ import { notFound, validationFailed } from "@/core/http/errors"
 import { isAllowedChatTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
+import { getChatLinkPolicy } from "@/modules/internal-chat/infra/prisma-chat-link-policy"
+import { CLIENT_CREATABLE_CONVERSATION_TYPES } from "@/modules/internal-chat/domain/chat-limits"
+import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { ListUserConversationsUseCase } from "@/modules/internal-chat/use-cases/list-user-conversations"
 import { CreateOrGetConversationUseCase } from "@/modules/internal-chat/use-cases/create-or-get-conversation"
 
 const createConversationSchema = z.object({
-  conversationType: z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "ORDER_THREAD"]),
-  title: z.string().optional(),
+  // `PLATFORM_TENANT` (Nền tảng ↔ khách) không cho client tự tạo
+  conversationType: z.enum(CLIENT_CREATABLE_CONVERSATION_TYPES),
+  title: z.string().trim().max(200).optional(),
   targetOrganizationId: z.string().uuid().optional(),
   targetUserId: z.string().uuid().optional(),
   orderId: z.string().uuid().optional(),
@@ -18,7 +22,9 @@ const createConversationSchema = z.object({
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   const url = new URL(request.url)
-  const conversationType = url.searchParams.get("type") as never
+  const typeParsed = z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "ORDER_THREAD"]).optional().safeParse(url.searchParams.get("type") || undefined)
+  if (!typeParsed.success) throw validationFailed({ type: "Loại cuộc hội thoại không hợp lệ" })
+  const conversationType = typeParsed.data
   const orderId = url.searchParams.get("orderId") ?? undefined
 
   const chatRepo = getInternalChatRepository()
@@ -27,7 +33,7 @@ export const GET = handle(async (request) => {
   const result = await useCase.execute({
     userId: ctx.userId,
     organizationId: ctx.organizationId,
-    conversationType: conversationType || undefined,
+    conversationType,
     orderId,
   })
 
@@ -54,8 +60,14 @@ export const POST = handle(async (request) => {
     throw notFound()
   }
 
+  // Luồng theo đơn chỉ gắn với đơn của CHÍNH tổ chức — trước đây tổ chức khác gắn được mã đơn của chuỗi vào phòng
+  // của mình, rồi lệnh gửi đơn của chuỗi (tra phòng theo mã đơn) đăng thẻ đơn sang phòng đó.
+  if (parsed.data.orderId && !(await getOrderRepository().findById(ctx.organizationId, parsed.data.orderId))) {
+    throw notFound()
+  }
+
   const chatRepo = getInternalChatRepository()
-  const useCase = new CreateOrGetConversationUseCase(chatRepo)
+  const useCase = new CreateOrGetConversationUseCase(chatRepo, getChatLinkPolicy())
 
   const conversation = await useCase.execute({
     organizationId: ctx.organizationId,

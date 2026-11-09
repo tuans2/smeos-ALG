@@ -6,6 +6,7 @@ import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { DispatchOrderToChatUseCase } from "@/modules/internal-chat/use-cases/dispatch-order-to-chat"
 import { isActivePartnerTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
+import { formatCardAddress } from "@/modules/internal-chat/domain/card-address"
 import { dispatchToChatBody } from "@/app/api/v1/_contracts/requests-coordinator"
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
@@ -39,12 +40,6 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const chatRepo = getInternalChatRepository()
   const useCase = new DispatchOrderToChatUseCase(chatRepo)
 
-  const deliveryAddrStr = order.deliveryAddress
-    ? typeof order.deliveryAddress === "string"
-      ? order.deliveryAddress
-      : JSON.stringify(order.deliveryAddress)
-    : undefined
-
   const result = await useCase.execute({
     orderId: order.id,
     orderCode: order.code,
@@ -53,10 +48,10 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     coordinatorOrgId: ctx.organizationId,
     targetPartnerOrgId: parsed.data.targetPartnerOrgId,
     targetPartnerUserId: parsed.data.targetPartnerUserId,
-    customerName: order.deliveryAddress?.recipientName ?? undefined,
+    // Không đưa tên người mua sang đối tác (trước đây gán nhầm tên người nhận vào "tên khách")
     recipientName: order.deliveryAddress?.recipientName ?? undefined,
     deliveryTime: order.deliveryWindow?.timeSlot ?? undefined,
-    deliveryAddress: deliveryAddrStr,
+    deliveryAddress: formatCardAddress(order.deliveryAddress),
     priceVnd: order.totalVnd,
     thumbnailUrl,
   })

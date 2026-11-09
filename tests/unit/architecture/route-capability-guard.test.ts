@@ -54,9 +54,11 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "notification/events": "chỉ đọc danh mục sự kiện tĩnh",
   "notification/channels": "chỉ đọc trạng thái bật kênh toàn sàn",
   "ux-rollout-flags": "chỉ đọc cờ giao diện đang bật cho chính tổ chức của phiên (03c E9)",
-  "internal-chat/conversations/[id]/messages": "chỉ thành viên cuộc hội thoại (isParticipant trong use-case)",
-  "internal-chat/conversations": "chat nội bộ cho mọi nhân viên; danh sách lọc theo người tham gia",
-  "internal-chat/messages/[id]/action": "chỉ thành viên cuộc hội thoại (use-case kiểm người tham gia)",
+  // Mã năng lực riêng cho chat nội bộ thêm ở GĐ2 (docs/plan/hoan-thien-chat-noi-bo.md, D2); tới lúc đó kiểm trong use-case,
+  // có ca chứng minh ở tests/tenant/internal-chat-card-guard.test.ts và internal-chat-isolation.test.ts
+  "internal-chat/conversations/[id]/messages": "thành viên phòng + liên kết chuỗi–đối tác còn ACTIVE (assertConversationAccess); client chỉ gửi tin chữ",
+  "internal-chat/conversations": "chat nội bộ cho mọi nhân viên; danh sách lọc theo người tham gia trong ngữ cảnh tổ chức hiện tại; luồng theo đơn chỉ với đơn của chính tổ chức",
+  "internal-chat/messages/[id]/action": "thành viên phòng + đúng tổ chức được giao trên thẻ + thẻ còn chờ nhận (HandleCardActionUseCase)",
   "noi-bo/identity": "truy vấn thông tin nội bộ hệ thống",
 }
 

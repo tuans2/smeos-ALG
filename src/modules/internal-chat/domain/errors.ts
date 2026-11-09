@@ -28,3 +28,10 @@ export class InvalidMessageContentError extends ChatDomainError {
     super(reason, "VALIDATION_FAILED", "INVALID_MESSAGE_CONTENT")
   }
 }
+
+/** Thẻ đã được xử lý (nhận / từ chối) hoặc vừa bị người khác xử lý trước — 409. */
+export class CardActionConflictError extends ChatDomainError {
+  constructor(reason = "Thẻ này đã được xử lý") {
+    super(reason, "CONFLICT", "CARD_ALREADY_HANDLED")
+  }
+}

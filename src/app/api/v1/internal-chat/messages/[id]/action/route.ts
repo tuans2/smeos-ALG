@@ -3,15 +3,17 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
+import { getChatLinkPolicy } from "@/modules/internal-chat/infra/prisma-chat-link-policy"
+import { CARD_REJECT_REASON_MAX_LENGTH } from "@/modules/internal-chat/domain/chat-limits"
 import { HandleCardActionUseCase } from "@/modules/internal-chat/use-cases/handle-card-action"
 
 const actionSchema = z.object({
   action: z.enum(["ACCEPT_ORDER", "REJECT_ORDER"]),
-  rejectedReason: z.string().optional(),
+  rejectedReason: z.string().max(CARD_REJECT_REASON_MAX_LENGTH, `Lý do tối đa ${CARD_REJECT_REASON_MAX_LENGTH} ký tự`).optional(),
 })
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
+  const { resolved, ctx } = await requireTenantContext(request)
   const { id: messageId } = await context.params
   const body = await request.json().catch(() => null)
   const parsed = actionSchema.safeParse(body)
@@ -21,13 +23,13 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     throw validationFailed({ reason: errorDetails })
   }
 
-  const chatRepo = getInternalChatRepository()
-  const useCase = new HandleCardActionUseCase(chatRepo)
+  const useCase = new HandleCardActionUseCase(getInternalChatRepository(), getChatLinkPolicy())
 
   const updatedMessage = await useCase.execute({
     messageId,
     userId: ctx.userId,
     userOrgId: ctx.organizationId,
+    userRole: resolved.membership?.role_id ?? "member",
     action: parsed.data.action,
     rejectedReason: parsed.data.rejectedReason ?? undefined,
   })

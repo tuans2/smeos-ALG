@@ -1,6 +1,6 @@
 # Kế hoạch hoàn thiện Trao đổi nội bộ — kênh giao & theo dõi đơn gia công Chuỗi ↔ Cửa hàng đối tác
 
-**Trạng thái:** DRAFT v3 — PO đã chốt mục đích (09/11/2026), chờ duyệt các quyết định còn mở ở §3 · **Nhánh:** `Hoanthien_chatnoibo` (tách từ `main` @ `2dfd6a02`)
+**Trạng thái:** APPROVED v3 — PO duyệt kế hoạch và các khuyến nghị D1–D11 ngày 09/11/2026 · **Tiến độ:** GĐ1 xong (xem §10) · **Nhánh:** `Hoanthien_chatnoibo` (tách từ `main` @ `2dfd6a02`)
 **Module:** `src/modules/internal-chat/` + `src/modules/greeting-card/` (luồng gia công) · **Màn:** `/tin-nhan` · **Đặc tả gốc:** `docs/dac-ta/20-internal-chat-and-dispatch-spec.md` · **Screen Contract:** `docs/dac-ta/screen-contracts/tin-nhan.md`
 
 > v3 đổi trọng tâm theo PO: Trao đổi nội bộ **trước hết là kênh giao và thực hiện đơn**, nhắn tin tự do là phụ. Lịch sử thay đổi: §9.
@@ -41,6 +41,7 @@ Chuỗi giao đơn cho các cửa hàng đối tác **ngay trong smeOS**, theo �
 | H13 | Chữ cứng (TD #189), nhãn "Đa ngành SaaS"; `isSender={false}` cứng; menu không gắn năng lực; nhãn sai "Hộp thư khách hàng" | `tin-nhan/page.tsx:118,176,250`, `toolkit/domain/app-page-tools.ts:34` |
 | H14 | Unit test đang **khẳng định hành vi lỗi** của H1 | `use-cases/internal-chat.test.ts:175-205` |
 | H15 | Ghi chú route "use-case kiểm người tham gia" sai với code | `tests/unit/architecture/route-capability-guard.test.ts:57-59` |
+| H16 | Tra phòng theo mã đơn không lọc tổ chức + tạo phòng gắn `orderId` của tổ chức khác → lệnh gửi đơn của chuỗi đăng thẻ đơn (người nhận, địa chỉ, giá) vào phòng của tổ chức lạ (phát hiện khi làm GĐ1) | `prisma-chat-repository.ts` `findConversationByOrderId`, `conversations/route.ts` |
 
 ### 2.2 Luồng gia công Thẻ Chào (nền để dùng lại)
 
@@ -66,7 +67,7 @@ Chuỗi giao đơn cho các cửa hàng đối tác **ngay trong smeOS**, theo �
 | P3 | Ảnh thành phẩm / ảnh bàn giao gửi từ chat **kiểm và duyệt y như Thẻ Chào** (không thêm chặng nào trong 14 chặng hành trình sản phẩm) |
 | P4 | Phòng vẫn cho **nhắn tin tự do** kèm ảnh |
 
-### 3.2 Còn mở — cần PO duyệt trước giai đoạn tương ứng
+### 3.2 Đã duyệt theo khuyến nghị (PO 09/11/2026: "duyệt. Proceed thực hiện theo kế hoạch")
 
 | # | Câu hỏi | Khuyến nghị | Chặn |
 |---|---|---|---|
@@ -257,3 +258,10 @@ PR chỉ mở khi PO yêu cầu; nên tách: GĐ1 · GĐ2+3 · GĐ4 · GĐ5 · p
 **v2 (09/11/2026)** — đối chiếu code: thêm H4, H5, H9, H10, H14 và số dòng thật; phát hiện thiếu ánh xạ chi nhánh ↔ đối tác (D9); sửa "Nhận" = claim, "Chốt" = commit; thêm D10; GĐ1 thêm chặn `PLATFORM_TENANT`, khoá `/tin-nhan`, log tạo phòng, viết lại test khẳng định lỗi.
 
 **v1 (09/11/2026)** — bản nháp đầu.
+
+## 10. Tiến độ thực hiện
+
+| GĐ | Trạng thái | Ghi chú |
+|---|---|---|
+| 1 | Xong | IC-1.1 → IC-1.11 + vá H16. Chưa làm trong GĐ1 (đã xếp sau): `isSender` trên giao diện (IC-4.4). Ca chứng minh: `tests/tenant/internal-chat-card-guard.test.ts` |
+
