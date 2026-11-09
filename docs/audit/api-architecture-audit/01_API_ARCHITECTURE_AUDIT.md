@@ -520,3 +520,23 @@ Phát hiện, chưa sửa (không có P1):
 | P3 | `GET /product-photo/{id}` khi job chưa có điểm trả `qcEvaluation.passed: true`, mọi tiêu chí 1; `GET /product-image-set/{id}` khi chưa xong trả `url` từng biến thể là ảnh gốc kèm `passed: true`. Giao diện dựa `canApprove`/`status` thì không sai, nhưng dễ đọc nhầm là đã đạt |
 | P3 | `GET /availability/board?month=` sai dạng → lặng lẽ trả tháng hiện tại thay vì 400 |
 | P3 | `POST /product-change-requests/{id}/approve` trả dòng `products` nguyên bản (snake_case), khác các phản hồi camelCase còn lại của nhóm |
+
+## 29. Nhật ký sửa — OpenAPI nội bộ, đợt quản trị & AI (09/11/2026)
+
+Phủ 10 nhóm, 14 route, 18 operation (tổng 514): `/roles/*`, `/workspaces`, `/ux-rollout-flags`, `/audit-logs/*`, `/subscription`, `/billing/sepay`, `/ai-policy`, `/ai-capabilities`, `/ai-requests/*`, `/content-guard/validate`.
+
+| Việc | Tệp |
+|---|---|
+| Lược đồ yêu cầu từng khai trong 7 route chuyển NGUYÊN VĂN, route import lại; query chỉ mô tả | `_contracts/requests-admin.ts` |
+| Phản hồi chặt sinh từ dòng Prisma và kiểu TS, đối chiếu mẫu thật (webhook SePay ghi bằng khoá thử qua `vi.mock`, cùng cách `subscription-guard.test.ts`) | `_contracts/responses-admin.ts` |
+| Operation + mã năng lực theo spec 06 | `_contracts/ops-admin.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật, kể cả đường lỗi 400/401/404 đã mô tả | `tests/tenant/internal-contract-admin.test.ts` |
+
+Phát hiện, chưa sửa (không có P1):
+
+| Mức | Lỗi | Tái hiện |
+|---|---|---|
+| **P2** | **Điều hành tự khoá quyền quản lý vai trò.** `PATCH /roles/{id}/capabilities` cho bỏ `F5` khỏi chính vai `dieu_hanh` (200); từ phiên đó gọi lại để bật `F5` → 403 vì phiên đã mất `F5`. Tổ chức chỉ có tài khoản Điều hành mất hẳn quyền chỉnh vai cho đến khi nền tảng can thiệp. Chưa có sàn "không bỏ được `F1`/`F5` khỏi vai Điều hành" | Bỏ `F5` khỏi `dieu_hanh` → 200, `F5` biến mất khỏi danh sách; bật lại → 403 (chạy thử trên CSDL test) |
+| P3 | `GET /ai-requests/review?limit=abc` → 500 (`take: NaN` xuống Prisma); `/ai-requests` cùng tham số thì bỏ qua | — |
+| P3 | `POST /roles` trùng tên tạo vai mới với `key` thêm hậu tố, không báo trùng | — |
+| P3 | `GET /ai-requests`: `from`/`to`/`limit` sai dạng bị bỏ qua thay vì 400 | — |

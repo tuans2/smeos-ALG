@@ -11,6 +11,1172 @@
     }
   ],
   "paths": {
+    "/ai-capabilities": {
+      "get": {
+        "operationId": "listAiCapabilities",
+        "summary": "Danh mục năng lực kèm trạng thái đo lường của từng mô hình",
+        "tags": [
+          "Quản trị AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh mục",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "module": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "generative",
+                              "measuring",
+                              "deterministic"
+                            ]
+                          },
+                          "needs_approval": {
+                            "type": "boolean"
+                          },
+                          "privacy_floor": {
+                            "type": "string"
+                          },
+                          "accept_threshold": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "measure_channels": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "models": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "display_name": {
+                                  "type": "string"
+                                },
+                                "measure_state": {
+                                  "type": "string"
+                                },
+                                "leaves_infra": {
+                                  "type": "boolean"
+                                },
+                                "cost_class": {
+                                  "type": "string"
+                                },
+                                "quality_class": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "display_name",
+                                "measure_state",
+                                "leaves_infra",
+                                "cost_class",
+                                "quality_class"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "name",
+                          "module",
+                          "kind",
+                          "needs_approval",
+                          "privacy_floor",
+                          "accept_threshold",
+                          "measure_channels",
+                          "models"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "capabilities"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "U1"
+      }
+    },
+    "/ai-policy": {
+      "get": {
+        "operationId": "getAiPolicy",
+        "summary": "Năng lực AI, trần mô hình, mức quyền riêng tư",
+        "tags": [
+          "Quản trị AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chính sách",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "capability_code": {
+                            "type": "string"
+                          },
+                          "capability_name": {
+                            "type": "string"
+                          },
+                          "module": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "generative",
+                              "measuring",
+                              "deterministic"
+                            ]
+                          },
+                          "needs_approval": {
+                            "type": "boolean"
+                          },
+                          "allowed_models": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "display_name": {
+                                  "type": "string"
+                                },
+                                "measure_state": {
+                                  "type": "string"
+                                },
+                                "leaves_infra": {
+                                  "type": "boolean"
+                                },
+                                "cost_class": {
+                                  "type": "string"
+                                },
+                                "quality_class": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "display_name",
+                                "measure_state",
+                                "leaves_infra",
+                                "cost_class",
+                                "quality_class"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "privacy_floor": {
+                            "type": "string"
+                          },
+                          "quality_target": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "cost_ceiling": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "accept_threshold": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "measure_channels": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "requires_vision_engine_capability": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "capability_code",
+                          "capability_name",
+                          "module",
+                          "kind",
+                          "needs_approval",
+                          "allowed_models",
+                          "privacy_floor",
+                          "quality_target",
+                          "cost_ceiling",
+                          "accept_threshold",
+                          "measure_channels",
+                          "requires_vision_engine_capability"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "capabilities"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "U1"
+      },
+      "put": {
+        "operationId": "putAiPolicy",
+        "summary": "Đặt trần cho một năng lực AI",
+        "description": "Năng lực lạ, mô hình không đủ điều kiện hoặc hạ sàn quyền riêng tư dưới mức của năng lực → 400. Đổi `AIC-01` cần thêm `H4` (kiểm ở use-case). Ghi nhật ký kiểm toán; trả toàn bộ chính sách.",
+        "tags": [
+          "Quản trị AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "capability_code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "allowed_models": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "quality_target": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "thap",
+                          "trung_binh",
+                          "cao"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "cost_ceiling": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "privacy_floor": {
+                    "type": "string",
+                    "enum": [
+                      "PUBLIC",
+                      "SHOP",
+                      "SENSITIVE"
+                    ]
+                  }
+                },
+                "required": [
+                  "capability_code",
+                  "allowed_models",
+                  "privacy_floor"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Chính sách",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "capability_code": {
+                            "type": "string"
+                          },
+                          "capability_name": {
+                            "type": "string"
+                          },
+                          "module": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "generative",
+                              "measuring",
+                              "deterministic"
+                            ]
+                          },
+                          "needs_approval": {
+                            "type": "boolean"
+                          },
+                          "allowed_models": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "display_name": {
+                                  "type": "string"
+                                },
+                                "measure_state": {
+                                  "type": "string"
+                                },
+                                "leaves_infra": {
+                                  "type": "boolean"
+                                },
+                                "cost_class": {
+                                  "type": "string"
+                                },
+                                "quality_class": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "display_name",
+                                "measure_state",
+                                "leaves_infra",
+                                "cost_class",
+                                "quality_class"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "privacy_floor": {
+                            "type": "string"
+                          },
+                          "quality_target": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "cost_ceiling": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "accept_threshold": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "measure_channels": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "requires_vision_engine_capability": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "capability_code",
+                          "capability_name",
+                          "module",
+                          "kind",
+                          "needs_approval",
+                          "allowed_models",
+                          "privacy_floor",
+                          "quality_target",
+                          "cost_ceiling",
+                          "accept_threshold",
+                          "measure_channels",
+                          "requires_vision_engine_capability"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "capabilities"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "U2"
+      }
+    },
+    "/ai-requests": {
+      "get": {
+        "operationId": "listAiRequests",
+        "summary": "Sổ chi phí và chất lượng từng lời gọi AI",
+        "description": "Lọc theo năng lực và khoảng thời gian; `from`/`to`/`limit` sai bị bỏ qua (không 400). Tối đa 5.000 dòng. Không có prompt hay đầu ra.",
+        "tags": [
+          "Quản trị AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "capability_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lời gọi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "job_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "capability_code": {
+                            "type": "string"
+                          },
+                          "model_key": {
+                            "type": "string"
+                          },
+                          "attempt": {
+                            "type": "number"
+                          },
+                          "escalated_from": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "fallback_from": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "cost_usd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "latency_ms": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "quality_score": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "outcome": {
+                            "type": "string",
+                            "enum": [
+                              "ACCEPTED",
+                              "ESCALATED",
+                              "FAILED",
+                              "NEEDS_REVIEW"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "job_id",
+                          "capability_code",
+                          "model_key",
+                          "attempt",
+                          "escalated_from",
+                          "fallback_from",
+                          "source",
+                          "cost_usd",
+                          "latency_ms",
+                          "quality_score",
+                          "outcome",
+                          "created_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "U3"
+      }
+    },
+    "/ai-requests/review": {
+      "get": {
+        "operationId": "listAiReviewQueue",
+        "summary": "Hàng chờ soát đầu ra AI",
+        "description": "Lời gọi `NEEDS_REVIEW`/`ESCALATED`, mặc định 100, tối đa 5.000. `limit` không phải số → 500 (audit API §29).",
+        "tags": [
+          "Quản trị AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hàng chờ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "job_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "capability_code": {
+                            "type": "string"
+                          },
+                          "model_key": {
+                            "type": "string"
+                          },
+                          "attempt": {
+                            "type": "number"
+                          },
+                          "escalated_from": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "fallback_from": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "cost_usd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "latency_ms": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "quality_score": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "outcome": {
+                            "type": "string",
+                            "enum": [
+                              "ACCEPTED",
+                              "ESCALATED",
+                              "FAILED",
+                              "NEEDS_REVIEW"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "organization_id": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "job_id",
+                          "capability_code",
+                          "model_key",
+                          "attempt",
+                          "escalated_from",
+                          "fallback_from",
+                          "source",
+                          "cost_usd",
+                          "latency_ms",
+                          "quality_score",
+                          "outcome",
+                          "created_at",
+                          "organization_id"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "U3"
+      },
+      "post": {
+        "operationId": "reviewAiRequest",
+        "summary": "Duyệt / từ chối / sửa một đầu ra AI",
+        "description": "Ghi nhật ký kiểm toán. Của tổ chức khác → 404.",
+        "tags": [
+          "Quản trị AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "approve",
+                      "reject",
+                      "modify"
+                    ]
+                  },
+                  "note": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 1000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "action"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Quyết định",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "capability_code": {
+                      "type": "string"
+                    },
+                    "model_key": {
+                      "type": "string"
+                    },
+                    "outcome": {
+                      "type": "string",
+                      "enum": [
+                        "ACCEPTED",
+                        "FAILED",
+                        "NEEDS_REVIEW"
+                      ]
+                    },
+                    "previous_outcome": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "enum": [
+                        "approve",
+                        "reject",
+                        "modify"
+                      ]
+                    },
+                    "note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "capability_code",
+                    "model_key",
+                    "outcome",
+                    "previous_outcome",
+                    "action",
+                    "note"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "U3"
+      }
+    },
+    "/ai-requests/summary": {
+      "get": {
+        "operationId": "summarizeAiRequests",
+        "summary": "Tổng hợp theo năng lực và mô hình",
+        "description": "Chi phí, độ trễ, điểm, tỷ lệ phải leo thác. Cùng bộ lọc với `/ai-requests`.",
+        "tags": [
+          "Quản trị AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "capability_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tổng hợp",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "capability_code": {
+                            "type": "string"
+                          },
+                          "model_key": {
+                            "type": "string"
+                          },
+                          "calls": {
+                            "type": "number"
+                          },
+                          "accepted": {
+                            "type": "number"
+                          },
+                          "escalated": {
+                            "type": "number"
+                          },
+                          "failed": {
+                            "type": "number"
+                          },
+                          "needs_review": {
+                            "type": "number"
+                          },
+                          "cost_usd": {
+                            "type": "number"
+                          },
+                          "latency_ms_avg": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "quality_score_avg": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "escalation_rate": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "capability_code",
+                          "model_key",
+                          "calls",
+                          "accepted",
+                          "escalated",
+                          "failed",
+                          "needs_review",
+                          "cost_usd",
+                          "latency_ms_avg",
+                          "quality_score_avg",
+                          "escalation_rate"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "U3"
+      }
+    },
     "/asset-usages": {
       "get": {
         "operationId": "listAssetUsages",
@@ -4117,6 +5283,339 @@
         "x-capability": "I1"
       }
     },
+    "/audit-logs": {
+      "get": {
+        "operationId": "listAuditLogs",
+        "summary": "Nhật ký kiểm toán của tổ chức",
+        "description": "`limit` 1–100, sai → 400; `action` khớp đầu mã; `from`/`to` `YYYY-MM-DD` giờ Việt Nam, tính cả hai đầu, sai dạng → 400. Phân trang con trỏ. Thân không bọc thêm.",
+        "tags": [
+          "Nhật ký kiểm toán"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nhật ký",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organization_id": {
+                            "type": "string"
+                          },
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "entity_type": {
+                            "type": "string"
+                          },
+                          "entity_id": {
+                            "type": "string"
+                          },
+                          "before": {},
+                          "after": {},
+                          "ip": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "user_agent": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "decision_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "ownership": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "decided_by": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organization_id",
+                          "user_id",
+                          "action",
+                          "entity_type",
+                          "entity_id",
+                          "before",
+                          "after",
+                          "ip",
+                          "user_agent",
+                          "decision_id",
+                          "ownership",
+                          "decided_by",
+                          "created_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G9"
+      }
+    },
+    "/audit-logs/platform-access": {
+      "get": {
+        "operationId": "listPlatformAccessLogs",
+        "summary": "Nhân viên nền tảng đã truy cập dữ liệu của tổ chức",
+        "description": "Thời điểm, người, mục đích. Phân trang con trỏ; `limit` sai → 400.",
+        "tags": [
+          "Nhật ký kiểm toán"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lượt truy cập",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "operator_name": {
+                            "type": "string"
+                          },
+                          "purpose": {
+                            "type": "string"
+                          },
+                          "purpose_label": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "created_at",
+                          "operator_name",
+                          "purpose",
+                          "purpose_label"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G9"
+      }
+    },
     "/auth/instant-trial": {
       "post": {
         "operationId": "startInstantTrial",
@@ -5153,6 +6652,122 @@
           }
         },
         "x-capability": "L1"
+      }
+    },
+    "/billing/sepay": {
+      "post": {
+        "operationId": "receivePlatformSepayWebhook",
+        "summary": "SePay báo tiền vào tài khoản thuê bao của nền tảng",
+        "description": "Không dùng phiên: xác thực bằng `Authorization: Apikey <khoá>`. Nền tảng chưa cấu hình khoá → 404; sai khoá → 401. Thân sai → 400 `details.body`. 600 lần/phút → 429. Khớp nội dung chuyển khoản với mã hoá đơn.",
+        "tags": [
+          "Gói thuê bao"
+        ],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                      }
+                    ]
+                  },
+                  "transferType": {
+                    "type": "string",
+                    "maxLength": 10
+                  },
+                  "transferAmount": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100000000000
+                  },
+                  "content": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "id",
+                  "transferType",
+                  "transferAmount"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã nhận",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "matched": {
+                      "type": "boolean"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "enum": [
+                        "not_incoming",
+                        "no_invoice_code",
+                        "invoice_not_pending",
+                        "amount_short",
+                        "already_paid"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "matched"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "công khai"
       }
     },
     "/branch-portal/orders": {
@@ -16666,6 +18281,187 @@
           }
         },
         "x-capability": "một trong `F2`, `L2`, `L3`"
+      }
+    },
+    "/content-guard/validate": {
+      "post": {
+        "operationId": "validateFlowerContent",
+        "summary": "Kiểm văn bản với từ điển từ cấm ngành hoa và phong cách cấm của thương hiệu",
+        "description": "Chỉ cần phiên của tổ chức. `autoSanitize: true` → kèm `sanitizedText` (thay bằng gợi ý). Văn bản rỗng → 400.",
+        "tags": [
+          "Quản trị AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "autoSanitize": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "text"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả kiểm",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "valid": {
+                      "type": "boolean"
+                    },
+                    "hasWarnings": {
+                      "type": "boolean"
+                    },
+                    "hardBlocks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ruleId": {
+                            "type": "string"
+                          },
+                          "phrase": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string",
+                            "enum": [
+                              "HARD_BLOCK",
+                              "WARNING"
+                            ]
+                          },
+                          "category": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          },
+                          "suggestedReplacement": {
+                            "type": "string"
+                          },
+                          "index": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "ruleId",
+                          "phrase",
+                          "level",
+                          "category",
+                          "reason",
+                          "suggestedReplacement",
+                          "index"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ruleId": {
+                            "type": "string"
+                          },
+                          "phrase": {
+                            "type": "string"
+                          },
+                          "level": {
+                            "type": "string",
+                            "enum": [
+                              "HARD_BLOCK",
+                              "WARNING"
+                            ]
+                          },
+                          "category": {
+                            "type": "string"
+                          },
+                          "reason": {
+                            "type": "string"
+                          },
+                          "suggestedReplacement": {
+                            "type": "string"
+                          },
+                          "index": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "ruleId",
+                          "phrase",
+                          "level",
+                          "category",
+                          "reason",
+                          "suggestedReplacement",
+                          "index"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "sanitizedText": {
+                      "type": "string"
+                    },
+                    "forbiddenStylesApplied": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "valid",
+                    "hasWarnings",
+                    "hardBlocks",
+                    "warnings",
+                    "forbiddenStylesApplied"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
       }
     },
     "/coordinator/exceptions/{id}/resolve": {
@@ -114933,6 +116729,329 @@
         "x-capability": "R20"
       }
     },
+    "/roles": {
+      "get": {
+        "operationId": "listRoles",
+        "summary": "Vai trò và mã năng lực đang hiệu lực",
+        "description": "Gồm vai hệ thống dùng chung và vai riêng của tổ chức; `next_cursor` luôn `null`.",
+        "tags": [
+          "Vai trò & không gian làm việc"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vai trò",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "key": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "is_system": {
+                            "type": "boolean"
+                          },
+                          "capabilities": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "key",
+                          "name",
+                          "is_system",
+                          "capabilities"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": "null"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "post": {
+        "operationId": "createRole",
+        "summary": "Tạo vai riêng",
+        "description": "`key` sinh từ tên; trùng tên → thêm hậu tố (`kho-2`), không báo lỗi.",
+        "tags": [
+          "Vai trò & không gian làm việc"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vai trò",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "is_system": {
+                          "type": "boolean"
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "key",
+                        "name",
+                        "is_system",
+                        "created_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "role"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F5"
+      }
+    },
+    "/roles/{id}/capabilities": {
+      "patch": {
+        "operationId": "updateRoleCapabilities",
+        "summary": "Bật/tắt mã năng lực cho một vai",
+        "description": "Ghi `capability_overrides`, kể cả vai hệ thống (chỉ trong tổ chức này). Mã lạ → 400. Bật mã bị trần cứng chặn → 403 `CAPABILITY_DENIED` và không ghi gì. Không chặn việc tự bỏ `F5` khỏi vai của chính mình (audit API §29). Trả mã hiệu lực sau khi áp. Của tổ chức khác → 404.",
+        "tags": [
+          "Vai trò & không gian làm việc"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "changes": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "allowed": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "allowed"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "changes"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Mã năng lực",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "capabilities"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F5"
+      }
+    },
     "/session/invitations": {
       "get": {
         "operationId": "listMyInvitations",
@@ -118186,6 +120305,209 @@
         "x-capability": "F1"
       }
     },
+    "/subscription": {
+      "get": {
+        "operationId": "getMySubscription",
+        "summary": "Gói thuê bao và hoá đơn của cửa hàng",
+        "description": "Mã năng lực kiểm ở use-case. Chưa gán gói → `subscription: null`. Hoá đơn chờ trả kèm mã VietQR (nội dung chuyển khoản = mã hoá đơn `TB…`).",
+        "tags": [
+          "Gói thuê bao"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gói",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "subscription": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "plan": {
+                                  "type": "string"
+                                },
+                                "planLabel": {
+                                  "type": "string"
+                                },
+                                "cycle": {
+                                  "type": "string"
+                                },
+                                "priceVnd": {
+                                  "type": "number"
+                                },
+                                "status": {
+                                  "type": "string"
+                                },
+                                "currentPeriodEnd": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                },
+                                "includedCreditsMonthly": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "plan",
+                                "planLabel",
+                                "cycle",
+                                "priceVnd",
+                                "status",
+                                "currentPeriodEnd",
+                                "includedCreditsMonthly"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "invoices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "periodStart": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              "periodEnd": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              "amountVnd": {
+                                "type": "number"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "dueAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              "paidAt": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "payment": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "bankName": {
+                                        "type": "string"
+                                      },
+                                      "accountNumber": {
+                                        "type": "string"
+                                      },
+                                      "accountHolder": {
+                                        "type": "string"
+                                      },
+                                      "transferContent": {
+                                        "type": "string"
+                                      },
+                                      "qrImageUrl": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "bankName",
+                                      "accountNumber",
+                                      "accountHolder",
+                                      "transferContent",
+                                      "qrImageUrl"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "code",
+                              "periodStart",
+                              "periodEnd",
+                              "amountVnd",
+                              "status",
+                              "dueAt",
+                              "paidAt",
+                              "payment"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "subscription",
+                        "invoices"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "D1"
+      }
+    },
     "/usage": {
       "get": {
         "operationId": "listUsage",
@@ -118725,6 +121047,69 @@
           }
         },
         "x-capability": "G8"
+      }
+    },
+    "/ux-rollout-flags": {
+      "get": {
+        "operationId": "getUxRolloutFlags",
+        "summary": "Cờ thử giao diện đang bật cho tổ chức",
+        "description": "Chỉ cần phiên của tổ chức. Không trả danh sách tổ chức khác.",
+        "tags": [
+          "Vai trò & không gian làm việc"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cờ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "enabled"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
       }
     },
     "/video/jobs": {
@@ -123656,6 +126041,284 @@
           }
         },
         "x-capability": "Q8"
+      }
+    },
+    "/workspaces": {
+      "get": {
+        "operationId": "listWorkspaces",
+        "summary": "Không gian làm việc của tổ chức",
+        "description": "`next_cursor` luôn `null`.",
+        "tags": [
+          "Vai trò & không gian làm việc"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Không gian",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organization_id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "EXPERIENCE",
+                              "PRODUCTION"
+                            ]
+                          },
+                          "trial_count": {
+                            "type": "number"
+                          },
+                          "trial_limit": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "trial_reset_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "trial_status": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organization_id",
+                          "name",
+                          "kind",
+                          "trial_count",
+                          "trial_limit",
+                          "trial_reset_at",
+                          "trial_status",
+                          "created_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": "null"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "post": {
+        "operationId": "createWorkspace",
+        "summary": "Tạo không gian trải nghiệm hoặc sản xuất",
+        "tags": [
+          "Vai trò & không gian làm việc"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "EXPERIENCE",
+                      "PRODUCTION"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "kind"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Không gian",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "workspace": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "EXPERIENCE",
+                            "PRODUCTION"
+                          ]
+                        },
+                        "trial_count": {
+                          "type": "number"
+                        },
+                        "trial_limit": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "trial_reset_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "trial_status": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "name",
+                        "kind",
+                        "trial_count",
+                        "trial_limit",
+                        "trial_reset_at",
+                        "trial_status",
+                        "created_at"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "workspace"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "F8"
       }
     }
   },
