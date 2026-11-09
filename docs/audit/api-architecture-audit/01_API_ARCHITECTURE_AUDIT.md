@@ -611,3 +611,15 @@ PO duyệt phương án "áp sàn cả lúc tính quyền" cho tổ chức đã 
 |---|---|---|
 | Dòng `capability_overrides` cũ tắt `F1`/`F5` của vai `dieu_hanh` vẫn khoá tổ chức | `applyRoleFloor` (`core/rbac/permission-resolver.ts`) bật lại các mã của `OWNER_ROLE_FLOOR` sau `mergeOverrides`, trước `applyHardCap`; phạm vi giữ theo lớp một. Gọi ở MỘT chỗ — `CapabilityRepository.resolveGrants` — nên phiên (`resolveSession`), `GET /roles` và kết quả `PATCH /roles/{id}/capabilities` cùng thấy. Không xoá/sửa dữ liệu: dòng cũ vẫn nằm đó nhưng không còn hiệu lực với hai mã sàn; ngoại lệ trên mã khác vẫn áp. Vai khác không đổi | `tests/tenant/role-owner-floor.test.ts` (ca mới đỏ trên mã cũ: phiên mất `F1` → `GET /roles` 403), `permission-resolver.test.ts` |
 
+## 35. Nhật ký sửa — OpenAPI nội bộ, hai nhóm mới từ `main` (09/11/2026)
+
+Sau khi gộp `main` vào nhánh, PO duyệt phủ nốt hai nhóm route mới của hành trình Tạo nội dung 4 bước: `/content-studio/*` (4 route), `/social-publishing/*` (8 route) — 14 operation (tổng 555). Mọi thư mục route dưới `src/app/api/v1/` nay đều có OpenAPI.
+
+| Việc | Tệp |
+|---|---|
+| 12 route đã viết bằng `defineRoute`; lược đồ thân/query khai tại chỗ trong 4 route chuyển NGUYÊN VĂN về `_contracts`, route import lại (không đổi hành vi) | `_contracts/requests-studio.ts` |
+| Phản hồi chặt theo chuẩn v1.1 (`{ data }`, `{ data, next_cursor }`, snake_case) sinh từ kiểu TS, đối chiếu mẫu thật; Thẻ chào dùng lại `salesPitchRecord` | `_contracts/responses-studio.ts` |
+| Operation + mã năng lực theo spec 06 (`L1`/`L3`/`H1`/`J5`/`W2`); `callback` khai 303 | `_contracts/ops-studio.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật (nền tảng mạng xã hội giả lập qua tham số `fetch` của use-case), kể cả 400/404/409 đã mô tả | `tests/tenant/internal-contract-studio.test.ts` |
+
+Ghi nhận khi dò đường lỗi (đúng luật, chỉ ghi để mô tả chính xác): lên lịch kênh chưa có bài đã duyệt → 400 trước khi xét kết nối (409 chỉ khi có bài mà kênh chưa kết nối); chọn Trang Facebook không trong danh sách chờ → 400 `details.page_id` (không phải 404). Không phát hiện lỗi P1/P2.

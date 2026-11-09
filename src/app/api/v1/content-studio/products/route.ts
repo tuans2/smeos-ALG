@@ -1,14 +1,14 @@
-import { z } from "zod"
 
 import { page } from "@/core/http/contract-responses"
 import { defineRoute } from "@/core/http/define-route"
-import { decodeCursor, encodeCursor, pageQuery } from "@/core/http/pagination"
+import { decodeCursor, encodeCursor } from "@/core/http/pagination"
 import { listContentLibrary } from "@/modules/content-studio/use-cases/content-product"
+import { contentLibraryQuery } from "@/app/api/v1/_contracts/requests-studio"
 
 /** GET /api/v1/content-studio/products (L1) — Kho sản phẩm cho hành trình Tạo nội dung, kèm cờ đã có gì. */
 export const GET = defineRoute({
   auth: { kind: "tenant", capability: "L1" },
-  query: z.object({ ...pageQuery }),
+  query: contentLibraryQuery,
   handler: async ({ ctx, query }) => {
     const cursorId = query.cursor ? String(decodeCursor(query.cursor).id ?? "") : undefined
     const result = await listContentLibrary(ctx, { limit: query.limit, cursor: cursorId || undefined })
