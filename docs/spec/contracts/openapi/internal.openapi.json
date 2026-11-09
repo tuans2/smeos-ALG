@@ -116939,7 +116939,7 @@
       "patch": {
         "operationId": "updateRoleCapabilities",
         "summary": "Bật/tắt mã năng lực cho một vai",
-        "description": "Ghi `capability_overrides`, kể cả vai hệ thống (chỉ trong tổ chức này). Mã lạ → 400. Bật mã bị trần cứng chặn → 403 `CAPABILITY_DENIED` và không ghi gì. Không chặn việc tự bỏ `F5` khỏi vai của chính mình (audit API §29). Trả mã hiệu lực sau khi áp. Của tổ chức khác → 404.",
+        "description": "Ghi `capability_overrides`, kể cả vai hệ thống (chỉ trong tổ chức này). Mã lạ → 400. Bật mã bị trần cứng chặn → 403 `CAPABILITY_DENIED`; tắt `F1`/`F5` trên vai Điều hành → 422 (sàn quyền, audit API §30) — cả hai không ghi gì, kể cả các thay đổi hợp lệ khác trong cùng yêu cầu. Trả mã hiệu lực sau khi áp. Của tổ chức khác → 404.",
         "tags": [
           "Vai trò & không gian làm việc"
         ],
@@ -117047,6 +117047,9 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
           }
         },
         "x-capability": "F5"

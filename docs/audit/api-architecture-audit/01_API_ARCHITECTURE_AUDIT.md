@@ -536,7 +536,18 @@ Phát hiện, chưa sửa (không có P1):
 
 | Mức | Lỗi | Tái hiện |
 |---|---|---|
-| **P2** | **Điều hành tự khoá quyền quản lý vai trò.** `PATCH /roles/{id}/capabilities` cho bỏ `F5` khỏi chính vai `dieu_hanh` (200); từ phiên đó gọi lại để bật `F5` → 403 vì phiên đã mất `F5`. Tổ chức chỉ có tài khoản Điều hành mất hẳn quyền chỉnh vai cho đến khi nền tảng can thiệp. Chưa có sàn "không bỏ được `F1`/`F5` khỏi vai Điều hành" | Bỏ `F5` khỏi `dieu_hanh` → 200, `F5` biến mất khỏi danh sách; bật lại → 403 (chạy thử trên CSDL test) |
+| **P2** | **Điều hành tự khoá quyền quản lý vai trò.** `PATCH /roles/{id}/capabilities` cho bỏ `F5` khỏi chính vai `dieu_hanh` (200); từ phiên đó gọi lại để bật `F5` → 403 vì phiên đã mất `F5`. Tổ chức chỉ có tài khoản Điều hành mất hẳn quyền chỉnh vai cho đến khi nền tảng can thiệp. Chưa có sàn "không bỏ được `F1`/`F5` khỏi vai Điều hành" | Đã sửa ở §30 |
 | P3 | `GET /ai-requests/review?limit=abc` → 500 (`take: NaN` xuống Prisma); `/ai-requests` cùng tham số thì bỏ qua | — |
 | P3 | `POST /roles` trùng tên tạo vai mới với `key` thêm hậu tố, không báo trùng | — |
 | P3 | `GET /ai-requests`: `from`/`to`/`limit` sai dạng bị bỏ qua thay vì 400 | — |
+
+## 30. Nhật ký sửa — lỗi P2 phát hiện ở §29 (09/11/2026)
+
+Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **Điều hành tự khoá quyền quản lý vai trò** — `PATCH /roles/{id}/capabilities` cho tắt `F5` (và `F1`) trên chính vai `dieu_hanh`; phiên mất `F5` nên không bật lại được (403) | Thêm sàn quyền trong lõi RBAC, đặt cạnh trần cứng: `OWNER_ROLE_FLOOR` / `breaksRoleFloor` (`core/rbac/permission-resolver.ts`) — vai `dieu_hanh` luôn giữ `F1` (xem tổ chức, danh sách vai) và `F5` (sửa vai); còn `F5` thì mọi mã khác bật lại được. `updateRoleCapabilities` kiểm sàn cùng vòng với trần cứng, TRƯỚC khi ghi: xuyên sàn → 422 `UNPROCESSABLE_ENTITY` kèm `details.capability`, không ghi gì kể cả thay đổi hợp lệ khác trong cùng yêu cầu. Spec 06 và mô tả OpenAPI cập nhật | `tests/tenant/role-owner-floor.test.ts` (3 ca đỏ trên mã cũ: 200/403), `permission-resolver.test.ts` |
+
+Chưa xử lý: tổ chức đã tự khoá TRƯỚC bản sửa vẫn còn dòng `capability_overrides` tắt `F5` của vai `dieu_hanh` — sàn chỉ chặn lệnh ghi mới, không áp khi tính quyền. Mở lại cần nền tảng xoá dòng đó (hoặc áp sàn cả lúc tính quyền — chờ PO quyết).
+

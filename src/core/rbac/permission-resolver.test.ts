@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { applyHardCap, mergeOverrides, passesHardCap } from "./permission-resolver"
+import { applyHardCap, breaksRoleFloor, mergeOverrides, passesHardCap } from "./permission-resolver"
 
 describe("cổng năng lực — lớp ba, trần cứng cắt sau cùng", () => {
   it("mã không có trần cứng luôn qua được", () => {
@@ -67,5 +67,15 @@ describe("cổng năng lực — lớp ba, trần cứng cắt sau cùng", () =>
     expect(merged.has("E4")).toBe(true) // lớp hai đã bật...
     const afterHardCap = applyHardCap("sale", merged)
     expect(afterHardCap).toEqual([]) // ...nhưng lớp ba cắt sau cùng.
+  })
+})
+
+describe("sàn của vai Điều hành", () => {
+  it("không tắt được F1, F5 trên vai dieu_hanh; mã khác và vai khác thì được", () => {
+    expect(breaksRoleFloor("F5", "dieu_hanh")).toBe(true)
+    expect(breaksRoleFloor("F1", "dieu_hanh")).toBe(true)
+    expect(breaksRoleFloor("A4", "dieu_hanh")).toBe(false)
+    expect(breaksRoleFloor("F1", "dieu_phoi")).toBe(false)
+    expect(breaksRoleFloor("F5", "vai-tu-tao")).toBe(false)
   })
 })
