@@ -113,19 +113,32 @@ describe("6 Business Modules & Store Operations (PO 01/11/2026)", () => {
     expect(prod.deferredAssets).toEqual([])
 
     // Các nhóm khác không đổi
-    for (const m of getAllBusinessModules().filter((x) => x.key !== "brand")) {
+    for (const m of getAllBusinessModules().filter((x) => x.key !== "brand" && x.key !== "content")) {
       expect(m.journey).toBeNull()
       expect(m.deferredTools).toEqual([])
     }
   })
 
+  it("Tạo nội dung: hành trình 4 bước thay lưới cũ; 10 công cụ cũ PHÁT_TRIỂN_SAU chỉ dev thấy (PO 08/11/2026)", () => {
+    const dev = getAllBusinessModules().find((m) => m.key === "content")!
+    expect(dev.journey).toBe("CONTENT_STUDIO")
+    expect(dev.tools).toEqual([])
+    expect(dev.assets).toEqual([])
+    expect(dev.deferredTools.filter((t) => !t.isRoadmap).map((t) => t.id).sort((a, b) => a - b)).toEqual([0, 1, 2, 3, 4, 5, 6, 22, 49, 53])
+
+    const prod = getVisibleBusinessModules(false).find((m) => m.key === "content")!
+    expect(prod.journey).toBe("CONTENT_STUDIO")
+    expect(prod.deferredTools).toEqual([])
+    expect(prod.deferredAssets).toEqual([])
+  })
+
   it("số liệu đầu trang không đếm công cụ PHÁT_TRIỂN_SAU", () => {
     const hidden = deferredToolIds()
-    expect([...hidden].sort((a, b) => a - b)).toEqual([11, 45, 51, 52, 64])
+    expect([...hidden].sort((a, b) => a - b)).toEqual([0, 1, 2, 3, 4, 5, 6, 11, 22, 45, 49, 51, 52, 53, 64])
     const all = countByStatus()
     const shown = countByStatus(hidden)
     const total = (c: Record<string, number>) => Object.values(c).reduce((a, b) => a + b, 0)
     expect(total(all)).toBe(67)
-    expect(total(shown)).toBe(67 - 5)
+    expect(total(shown)).toBe(67 - 15)
   })
 })

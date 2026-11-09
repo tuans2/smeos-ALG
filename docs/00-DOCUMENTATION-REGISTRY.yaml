@@ -308,6 +308,20 @@ documents:
     dependencies: ["docs/dac-ta/06-api-specification.md", "docs/dac-ta/07-database-specification.md", "docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md"]
     supersedes: []
 
+  - id: "DOC-02-SOCIAL-APP-REGISTRATION"
+    path: "docs/kien-truc/HUONG_DAN_DANG_KY_UNG_DUNG_MXH.md"
+    title: "Hướng dẫn đăng ký ứng dụng mạng xã hội cho Đăng tự động"
+    domain: "Integration"
+    layer: "Level 2"
+    purpose: "Đăng ký ứng dụng Meta, Zalo, TikTok cấp nền tảng, địa chỉ gọi về, quyền, biến môi trường cho module social-publishing (Bước 4 nhóm Tạo nội dung)"
+    status: "CANONICAL"
+    authority: "Level 2"
+    canonical: true
+    ssot: true
+    owner: "Integration Lead"
+    dependencies: ["docs/dac-ta/06-api-specification.md", "docs/dac-ta/07-database-specification.md"]
+    supersedes: []
+
   # =========================================================================
   # LEVEL 3: MODULE SPECIFICATIONS, CONTRACTS & TEMPLATES
   # =========================================================================

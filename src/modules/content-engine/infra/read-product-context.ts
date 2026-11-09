@@ -2,8 +2,9 @@
  * Đọc `product`/`passport`/`topic` của Brief v1 từ `product_analysis_runs`
  * (báo cáo Market Intelligence, `ProductIntelligenceReport`) — nguồn giàu
  * nhất đã có (thành phần hoa, bao bì, commercial passport, chủ đề cụ thể).
- * Không có lượt phân tích → lùi về `products` (tên/dáng/phong cách), phần
- * còn lại để trống — KHÔNG suy đoán (nguyên tắc Brief mục 3).
+ * Không có lượt phân tích → lùi về dữ liệu ĐÃ DUYỆT của sản phẩm (Thẻ sản
+ * phẩm, Bài giới thiệu, Thẻ chào — hành trình Tạo nội dung, PO 08/11/2026);
+ * chưa duyệt gì → chỉ tên sản phẩm. KHÔNG suy đoán (nguyên tắc Brief mục 3).
  *
  * Hạ tầng — được phép import Prisma/repository (khác `domain/`).
  */
@@ -16,6 +17,9 @@ import type {
   ProductIntelligenceReport,
 } from "@/modules/market-intelligence/domain/product-intelligence-types"
 
+import { readSalesPitch } from "@/modules/products/domain/sales-pitch-record"
+
+import { projectApprovedProduct, type ApprovedProductSources } from "../domain/approved-product-context"
 import type { RawPassportInput, RawProductInput, RawTopicInput } from "../domain/brief-builder"
 
 export interface ProductBriefContext {
@@ -89,6 +93,26 @@ export function projectTopicFromReport(report: ProductIntelligenceReport | null,
   }
 }
 
+type Json = Record<string, unknown>
+
+/** Bản quét / Bài giới thiệu ĐÃ DUYỆT mới nhất + Thẻ chào đã chốt; chưa có gì đã duyệt → `null` (giữ hành vi cũ). */
+async function readApprovedSources(ctx: TenantContext, productId: string, productName: string, attributes: unknown): Promise<ApprovedProductSources | null> {
+  const where = { organization_id: ctx.organizationId, product_id: productId, approval_state: "APPROVED" as const }
+  const [analysis, copy] = await Promise.all([
+    prisma.product_analyses.findFirst({ where, orderBy: [{ approved_at: "desc" }, { created_at: "desc" }] }),
+    prisma.product_copies.findFirst({ where, orderBy: [{ approved_at: "desc" }, { created_at: "desc" }] }),
+  ])
+  const pitch = readSalesPitch(attributes)
+  if (!analysis && !copy && !pitch) return null
+  return {
+    productId,
+    productName,
+    analysis: analysis ? ((analysis.edited as Json | null) ?? (analysis.raw as Json | null)) : null,
+    copy: copy ? { ...((copy.raw as Json | null) ?? {}), ...((copy.edited as Json | null) ?? {}) } : null,
+    pitch: pitch?.data ?? null,
+  }
+}
+
 export async function readProductContext(
   ctx: TenantContext,
   input: { readonly productId?: string | null; readonly analysisRunId?: string | null }
@@ -103,7 +127,12 @@ export async function readProductContext(
     const product = await prisma.products.findFirst({
       where: { organization_id: ctx.organizationId, id: input.productId },
     })
-    if (product) fallbackName = product.name
+    if (product) {
+      fallbackName = product.name
+      // Không có báo cáo thị trường → dùng dữ liệu ĐÃ DUYỆT của sản phẩm (Thẻ sản phẩm, Bài giới thiệu, Thẻ chào)
+      const approved = await readApprovedSources(ctx, product.id, product.name, product.attributes)
+      if (approved) return { ...projectApprovedProduct(approved), report: null }
+    }
   }
 
   return {

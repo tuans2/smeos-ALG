@@ -4510,3 +4510,87 @@ model brand_style_options {
 
 Ca thử: `tests/tenant/brand-kit.test.ts` (khoá bước ở máy chủ, chọn phương án, xuất bản giữ link, trừ/hoàn credit,
 phương án tổ chức khác → 404), `src/modules/brand-kit/domain/*.test.ts`.
+
+
+## 44. Bước 4 "Đăng tự động" — `social_posts`, `social_post_attempts` (08/11/2026)
+
+PO 08/11/2026 (duyệt lược đồ cùng ngày): module `social-publishing` thay phần đăng bài của SocialFlow (bản tích hợp
+`tuans2/SocialFlow` nhánh `feat/dot-3-ranh-gioi-to-chuc`, SQLite + Playwright). Đăng qua API chính thức (Meta Graph cho
+Facebook Page / Instagram Business, Zalo OA, TikTok Content Posting) bằng kết nối của CHÍNH tổ chức. Migration
+`20261108185914_social_publishing` (2 bảng mới, CHECK `channel` / `status` / `outcome`, chính sách RLS `tenant_isolation`).
+
+- `social_posts` — một bài trên một kênh. `QUEUED` chờ tới `scheduled_at` (hoặc `next_attempt_at` khi thử lại) →
+  `PUBLISHING` (lượt cron nhận việc, khoá theo `attempt_count`) → `PUBLISHED` (`external_post_id`, `external_url`) hoặc
+  `FAILED` (hết 5 lượt / lỗi cần người xử lý: hết hạn kết nối, thiếu quyền, nội dung bị từ chối) · `CANCELED`.
+  `idempotency_key` duy nhất trong tổ chức (`<Idempotency-Key>:<kênh>`). Ảnh là mã `assets` — link ký sinh lúc đăng.
+- `social_post_attempts` — nhật ký từng lần đăng (chỉ thêm): `outcome` `PUBLISHED | RETRY | FAILED`, mã lỗi, thời lượng.
+- Khoá kết nối KHÔNG ở bảng mới: dùng `integration_connections` (đầu nối `social_facebook|instagram|zalo|tiktok`,
+  khoá mã hoá bằng `credential-vault`). Lượt đăng chạy trong cron Trung tâm Tích hợp (`/internal/integrations-sweep`,
+  5 phút, tối đa 20 bài/lượt).
+
+```prisma
+model social_posts {
+  id                    String    @id @default(uuid())
+  organization_id       String
+  /// Lượt bài đã duyệt ở Bước 3 (`content_generations`) — null khi không đi từ hành trình
+  content_generation_id String?
+  product_id            String?
+  /// facebook | instagram | zalo | tiktok — CHECK trong migration
+  channel               String
+  text                  String
+  hashtags              Json      @default("[]")
+  /// Mã ảnh trong kho (`assets.id`) theo thứ tự đăng; link ký sinh lúc đăng, không lưu link
+  media_asset_ids       Json      @default("[]")
+  /// QUEUED | PUBLISHING | PUBLISHED | FAILED | CANCELED — CHECK trong migration
+  status                String    @default("QUEUED")
+  scheduled_at          DateTime  @db.Timestamptz(3)
+  /// Lần thử kế tiếp (thử lại có giới hạn, `social-publishing/domain/post-lifecycle.ts`)
+  next_attempt_at       DateTime? @db.Timestamptz(3)
+  attempt_count         Int       @default(0)
+  published_at          DateTime? @db.Timestamptz(3)
+  external_post_id      String?
+  external_url          String?
+  last_error_code       String?
+  last_error_message    String?
+  /// Chống đăng trùng: cùng khoá trong một tổ chức chỉ có một bài
+  idempotency_key       String
+  created_by            String
+  created_at            DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime  @updatedAt @db.Timestamptz(3)
+
+  organization          organizations          @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  fk_content_generation content_generations?   @relation("fk_social_posts_content_generation_id", fields: [content_generation_id], references: [id], onDelete: SetNull)
+  fk_product            products?              @relation("fk_social_posts_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+  attempts              social_post_attempts[]
+
+  @@unique([organization_id, idempotency_key])
+  @@index([organization_id, created_at])
+  @@index([status, next_attempt_at])
+  @@index([content_generation_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
+}
+
+model social_post_attempts {
+  id               String   @id @default(uuid())
+  organization_id  String
+  social_post_id   String
+  attempt_no       Int
+  /// PUBLISHED | RETRY | FAILED — CHECK trong migration
+  outcome          String
+  error_code       String?
+  error_message    String?
+  external_post_id String?
+  duration_ms      Int?
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  post         social_posts  @relation(fields: [social_post_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([social_post_id, created_at])
+}
+```
+
+Ca thử: `tests/tenant/social-publishing.test.ts` (kênh chưa kết nối → 409, chống trùng, giờ vàng, tổ chức khác → 404,
+cron đăng bằng khoá của tổ chức sở hữu bài, thử lại có giới hạn, hết hạn kết nối → dừng + EXPIRED),
+`src/modules/social-publishing/**/*.test.ts`.

@@ -5,7 +5,7 @@ Sinh từ `prisma/schema.prisma` bởi `scripts/gen-erd.mjs` (kế hoạch DB, b
 (PK, FK, `organization_id`) và khoá ngoại tới bảng cha; bảng của miền khác chỉ hiện tên. Cột đầy đủ, ý nghĩa và quy tắc
 ở đặc tả `docs/dac-ta/07-database-specification.md`. `tests/unit/architecture/erd.test.ts` đỏ khi tệp này lệch schema.
 
-Tổng: 152 bảng, 10 miền.
+Tổng: 154 bảng, 10 miền.
 
 ## Tổ chức, người dùng, phân quyền
 
@@ -173,6 +173,8 @@ erDiagram
   shared_order_access
   shop_reviews
   short_links
+  social_post_attempts
+  social_posts
   staff_notifications
   storage_outbox
   store_share_links
@@ -303,6 +305,8 @@ erDiagram
   organizations ||--o{ shared_order_access : "organization_id"
   organizations ||--o{ shop_reviews : "organization_id"
   organizations ||--o{ short_links : "organization_id"
+  organizations ||--o{ social_post_attempts : "organization_id"
+  organizations ||--o{ social_posts : "organization_id"
   organizations ||--o{ staff_notifications : "organization_id"
   organizations ||--o{ storage_outbox : "organization_id"
   organizations ||--o{ store_share_links : "organization_id"
@@ -951,6 +955,7 @@ erDiagram
   product_bookings
   quotation_items
   sales_channel_listings
+  social_posts
   video_jobs
   asset_usages |o--o{ print_renditions : "asset_usage_id"
   branches |o--o{ products : "branch_id"
@@ -991,6 +996,7 @@ erDiagram
   products |o--o{ product_analyses : "product_id"
   products |o--o{ product_copies : "product_id"
   products |o--o{ quotation_items : "product_id"
+  products |o--o{ social_posts : "product_id"
   products |o--o{ video_jobs : "product_id"
   products ||--o{ greeting_catalog_products : "product_id, organization_id"
   products ||--o{ product_bookings : "product_id"
@@ -1005,7 +1011,7 @@ erDiagram
 
 ## AI, nội dung, marketing
 
-Bảng: `ai_capabilities`, `ai_models`, `ai_policies`, `ai_requests`, `ai_evaluations`, `provider_cost_entries`, `provider_health`, `generation_jobs`, `job_events`, `journey_runs`, `content_drafts`, `content_generations`, `content_metrics`, `content_opportunities`, `campaigns`, `campaign_packages`, `brand_profiles`, `brand_style_options`, `brand_library_items`, `brand_library_versions`, `video_jobs`, `video_scenes`, `voice_clones`, `music_tracks`, `topics`, `topic_scores`, `topic_signals`, `trend_signals`, `trend_timeseries`, `research_runs`, `market_sources`.
+Bảng: `ai_capabilities`, `ai_models`, `ai_policies`, `ai_requests`, `ai_evaluations`, `provider_cost_entries`, `provider_health`, `generation_jobs`, `job_events`, `journey_runs`, `content_drafts`, `content_generations`, `content_metrics`, `social_posts`, `social_post_attempts`, `content_opportunities`, `campaigns`, `campaign_packages`, `brand_profiles`, `brand_style_options`, `brand_library_items`, `brand_library_versions`, `video_jobs`, `video_scenes`, `voice_clones`, `music_tracks`, `topics`, `topic_scores`, `topic_signals`, `trend_signals`, `trend_timeseries`, `research_runs`, `market_sources`.
 
 ```mermaid
 erDiagram
@@ -1064,6 +1070,17 @@ erDiagram
   content_metrics {
     String id PK
     String organization_id FK
+  }
+  social_posts {
+    String id PK
+    String organization_id FK
+    String content_generation_id FK
+    String product_id FK
+  }
+  social_post_attempts {
+    String id PK
+    String organization_id FK
+    String social_post_id FK
   }
   content_opportunities {
     String id PK
@@ -1149,6 +1166,7 @@ erDiagram
   branches |o--o{ generation_jobs : "branch_id"
   brand_library_items ||--o{ brand_library_versions : "item_id, organization_id"
   campaigns |o--o{ asset_usages : "campaign_id"
+  content_generations |o--o{ social_posts : "content_generation_id"
   generation_jobs ||--o{ job_events : "job_id, organization_id"
   market_sources ||--o{ topic_signals : "source_id"
   market_sources ||--o{ trend_signals : "source_id"
@@ -1169,6 +1187,8 @@ erDiagram
   organizations ||--o{ journey_runs : "organization_id"
   organizations ||--o{ music_tracks : "organization_id"
   organizations ||--o{ provider_cost_entries : "organization_id"
+  organizations ||--o{ social_post_attempts : "organization_id"
+  organizations ||--o{ social_posts : "organization_id"
   organizations ||--o{ video_jobs : "organization_id"
   organizations ||--o{ video_scenes : "organization_id"
   organizations ||--o{ voice_clones : "organization_id"
@@ -1176,7 +1196,9 @@ erDiagram
   products |o--o{ campaign_packages : "product_id"
   products |o--o{ content_generations : "product_id"
   products |o--o{ generation_jobs : "product_id"
+  products |o--o{ social_posts : "product_id"
   products |o--o{ video_jobs : "product_id"
+  social_posts ||--o{ social_post_attempts : "social_post_id"
   topics ||--o{ content_opportunities : "topic_id"
   topics ||--o{ topic_scores : "topic_id"
   topics ||--o{ topic_signals : "topic_id"

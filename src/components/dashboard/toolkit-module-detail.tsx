@@ -11,6 +11,7 @@ import type { BusinessModule } from "@/modules/toolkit/domain/business-modules"
 import { getAllTools, type ToolDefinition } from "@/modules/toolkit/domain/toolkit-catalog"
 import { Disclosure } from "@/components/ui/disclosure"
 import { BrandKitTiles } from "@/components/brand-kit/tiles/brand-kit-tiles"
+import { ContentStudioTiles } from "@/components/content-studio/content-studio-tiles"
 import { ModuleCatalogSections } from "./module-catalog-sections"
 import { MODULE_TONES } from "./toolkit-module-grid"
 import { ModuleKpiStripComponent } from "./module-kpi-strip"
@@ -185,6 +186,8 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
 
       {module.journey === "BRAND_KIT" ? (
         <BrandKitTiles />
+      ) : module.journey === "CONTENT_STUDIO" ? (
+        <ContentStudioTiles />
       ) : (
         <ModuleCatalogSections assets={module.assets} tools={module.tools} toolMap={toolMap} isDev={isDev} tone={tone} />
       )}
