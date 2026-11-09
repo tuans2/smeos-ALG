@@ -470,3 +470,22 @@ Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
 | **Cách ly tenant** — `GET /store/collection-transparency?storeId=` đọc `branches` và thoả thuận chia sẻ dữ liệu theo `id` không lọc tổ chức: mã chi nhánh của tổ chức khác → 200 kèm tên chi nhánh và mức trần DSA của tổ chức đó; mã lạ → 200 | `getStoreCollectionTransparency` (`field-platform/use-cases/get-store-collection-transparency.ts`) trả `null` khi không thấy chi nhánh hoặc `branches.organization_id` khác tổ chức của phiên, TRƯỚC khi đọc DSA (cùng khuôn `getStoreFolderData`); route đổi `null` thành 404. Test đơn vị cũ giả lập "không thấy chi nhánh" vẫn ra kết quả (khoá đúng hành vi lỗi) — nay giả lập chi nhánh của chính tổ chức, thêm ca khác tổ chức/mã lạ → `null` và không đọc DSA | `tests/tenant/store-transparency-isolation.test.ts` (2 ca đỏ trên mã cũ: 200), `chain-collection-profile.use-case.test.ts`, `internal-contract-profile.test.ts` |
 
 Chưa sửa (P3, ghi ở §24): `PUT /brand-profile` nhận `logo_asset_id` lạ/của tổ chức khác.
+
+## 26. Nhật ký sửa — OpenAPI nội bộ, đợt khách hàng & marketing (09/11/2026)
+
+Phủ 8 nhóm, 14 route, 22 operation (tổng 483): `/leads/*`, `/campaigns/*`, `/marketing-center/kpis`, `/customer-segments/*`, `/customers/{id}/interactions`, `/customer-interactions`, `/occasions/*`, `/delivery/my-runs/*`.
+
+| Việc | Tệp |
+|---|---|
+| Lược đồ yêu cầu từng khai trong 6 route (`campaigns`, `campaigns/[id]`, `delivery/my-runs/[id]`, `leads/[id]`, `occasions`, `occasions/[id]`) chuyển NGUYÊN VĂN, route import lại; phân khúc và tương tác dùng lược đồ use-case `crm` (xuất lại); thân `POST /leads` và các query chỉ mô tả | `_contracts/requests-marketing.ts` |
+| Phản hồi chặt sinh từ kiểu TS, đối chiếu mẫu thật; `assetUsage` của đợt kho tệp được xuất để dùng chung | `_contracts/responses-marketing.ts`, `responses-storage.ts` |
+| Operation + mã năng lực theo spec 06 | `_contracts/ops-marketing.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật, kể cả đường lỗi 400/404/409 đã mô tả | `tests/tenant/internal-contract-marketing.test.ts` |
+
+Phát hiện, chưa sửa (ghi để PO quyết):
+
+| Mức | Lỗi | Tái hiện |
+|---|---|---|
+| **P1** | **Một khách tiềm năng làm hỏng danh sách khách của cả tổ chức.** `createStaffLead` và `captureLead` (form công khai, quét QR) gọi `findOrCreateCustomer` với `deliveryAddress: ""`. Lớp mã hoá dữ liệu cá nhân (`pii-write.ts`) mã hoá cả chuỗi rỗng thành bản mã có phần thân rỗng (`pii1.<v>.<iv>.<tag>.`), còn `decryptPii` (`pii-cipher.ts`) coi phần thân rỗng là bản mã hỏng và ném lỗi. Mọi lượt đọc khách đó → 500: `GET /crm/customers`, `GET /customer-segments/{id}/customers`, xuất khách… Người lạ gửi form để lại thông tin công khai là đủ làm sập màn Khách hàng của tiệm | Tạo một khách tiềm năng (`POST /leads`, lý do `WALK_IN`) → `GET /crm/customers` từ 200 thành 500 (đã chạy thử trên CSDL test). Test hợp đồng đợt này tách khách tiềm năng sang tổ chức riêng để không vướng lỗi |
+| P3 | `POST /delivery/my-runs/{id}` dùng `.parse` thẳng (lỗi zod vẫn ra 400 qua `handle`) | — |
+| P3 | `PATCH /campaigns/{id}` khai `objective`/`status` bằng mảng chữ cứng, không dùng `CAMPAIGN_OBJECTIVES`/`CAMPAIGN_STATUSES` như `POST` — sẽ lệch khi thêm giá trị | giữ nguyên văn khi chuyển |

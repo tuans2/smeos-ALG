@@ -66,7 +66,7 @@ export const viewUrlResponse = z.strictObject({ asset_id: z.string(), url: signe
 /** `PUT /storage/{key}` — envelope cũ `{ ok, key }`. */
 export const uploadedResponse = z.strictObject({ ok: z.literal(true), key: z.string() })
 
-const usage = z.strictObject({
+export const assetUsage = z.strictObject({
   id: z.string(),
   organizationId: z.string(),
   sourceType: z.string(),
@@ -85,10 +85,10 @@ const usage = z.strictObject({
 })
 /** Kênh link/QR tạo kèm short link (`shortLink`). */
 export const usageCreatedResponse = z.strictObject({
-  data: z.strictObject({ usage, shortLink: z.strictObject({ id: z.string(), code: z.string(), targetPath: z.string() }).optional() }),
+  data: z.strictObject({ usage: assetUsage, shortLink: z.strictObject({ id: z.string(), code: z.string(), targetPath: z.string() }).optional() }),
 })
-export const usagesResponse = z.strictObject({ data: z.array(usage) })
-export const usageResponse = z.strictObject({ data: usage })
+export const usagesResponse = z.strictObject({ data: z.array(assetUsage) })
+export const usageResponse = z.strictObject({ data: assetUsage })
 
 export const trashResponse = z.strictObject({
   data: z.array(
