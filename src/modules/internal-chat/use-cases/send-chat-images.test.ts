@@ -14,7 +14,7 @@ const PARTNER = { userId: "partner-user", organizationId: "partner-org", branchI
 describe("ảnh trong tin nhắn trao đổi nội bộ (GĐ8)", () => {
   let repo: InMemoryChatRepository
   let links: FakeLinkPolicy
-  let put: ReturnType<typeof vi.fn>
+  let put: ReturnType<typeof vi.fn<(key: string, body: Uint8Array, contentType: string) => Promise<void>>>
   let roomId: string
   let ids: number
   const deps = () => ({ chatRepo: repo, linkPolicy: links, storage: { put }, newId: () => `id-${++ids}` })
@@ -23,7 +23,7 @@ describe("ảnh trong tin nhắn trao đổi nội bộ (GĐ8)", () => {
   beforeEach(async () => {
     repo = new InMemoryChatRepository()
     links = new FakeLinkPolicy()
-    put = vi.fn().mockResolvedValue(undefined)
+    put = vi.fn<(key: string, body: Uint8Array, contentType: string) => Promise<void>>().mockResolvedValue(undefined)
     ids = 0
     roomId = (await ensurePartnerConversation(repo, { chainOrgId: "chain-org", partnerOrgId: "partner-org", title: "x", createdBy: "u" })).id
   })

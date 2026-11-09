@@ -40,7 +40,7 @@ describe("cách ly tenant — ảnh trong phòng trao đổi", () => {
 
   function upload(token: string, files: Uint8Array[], caption = "") {
     const form = new FormData()
-    files.forEach((bytes, i) => form.append("files", new Blob([bytes], { type: "image/jpeg" }), `anh-${i}.jpg`))
+    files.forEach((bytes, i) => form.append("files", new Blob([new Uint8Array(bytes)], { type: "image/jpeg" }), `anh-${i}.jpg`))
     form.append("caption", caption)
     const req = withSession(`${BASE}/internal-chat/conversations/${roomId}/images`, token)
     return sendImages(new Request(req.url, { method: "POST", headers: { cookie: req.headers.get("cookie")! }, body: form }), params({ id: roomId }))
