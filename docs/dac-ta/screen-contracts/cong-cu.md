@@ -86,3 +86,38 @@ acceptance:
 - Kịch bản audit: `scripts/ux-audit/scenarios/cong-cu-thuong-hieu.mjs`.
 - Bước 1 đủ 8/8 → thanh "Xác nhận hồ sơ — tạo Bộ nhận diện" (tự tạo 3 phương án, mở Bước 2); Bước 2 đã chọn bộ chính thức →
   "Tạo Landing page" (tự dựng 3 giao diện, mở Bước 3). Điều khiển chung với /ho-so: `src/components/brand-kit/journey/*`.
+- Hàng ô bước dùng chung với nhóm "Tạo nội dung": `src/components/journey/journey-step-tiles.tsx`.
+
+## 11. Nhóm "Tạo nội dung" dạng ô 4 bước (PO 08/11/2026)
+- **Thay thế** lưới 10 công cụ của nhóm (ảnh, bộ ảnh, thẻ chào, nội dung, poster, video, chiến dịch, xu hướng…) bằng hành
+  trình 4 bước dạng ô (`src/components/content-studio/*`), cùng ngôn ngữ ô với §10:
+  Thẻ sản phẩm → Thẻ chào sản phẩm → Bài đăng đa kênh → Đăng tự động.
+- **Sản phẩm đang làm** giữ trên URL (`?muc=content&sp=<mã sản phẩm>`): tải lại trang vẫn đúng nhóm, đúng sản phẩm.
+  Chưa chọn sản phẩm: Bước 2–4 vẫn mở để **chọn từ Kho sản phẩm**; đã chọn thì bước sau mở khi bước trước đã duyệt
+  (`contentLockedReason`, máy chủ kiểm lại). Bước 4 không khoá.
+- Bước 1: 2 ô kiểu tải — *Một sản phẩm* (1 hoặc nhiều góc chụp → 1 Thẻ; ảnh đầu là ảnh chính để quét, các góc khác gắn vào
+  sản phẩm khi duyệt Thẻ) và *Nhiều sản phẩm* (mỗi ảnh 1 Thẻ, một lượt quét chung) — cùng ô "Chọn từ Kho sản phẩm". Tối đa
+  10 ảnh/lần, `CostPreview` trước khi quét, chờ có trần 4 phút. Mỗi kết quả một ô; bấm ô mở `Dialog` duyệt Thẻ sản phẩm
+  (`AnalysisResultCard`) → hệ thống viết ngay Bài giới thiệu → duyệt (`CommercialContentCard`). Duyệt xong 1 sản phẩm thì
+  mở Bước 2.
+- Bước 2: Thẻ chào sản phẩm (tư vấn bán hàng, `SalesPitchCard` — không phải thiệp) dựng từ dữ liệu đã duyệt + hồ sơ cửa
+  hàng; chốt thẻ → lưu `products.attributes.sales_pitch` (Kho sản phẩm, có số lần chốt). Thay cho bản lưu cũ ở localStorage.
+- Bước 3 (Đợt 2): 4 ô nền tảng (Facebook, Instagram, TikTok, Zalo — chọn nhiều) + `CostPreview` → Content Engine viết từ
+  dữ liệu ĐÃ DUYỆT (Brief lấy Thẻ chào → Bài giới thiệu → Thẻ sản phẩm khi sản phẩm chưa có báo cáo thị trường,
+  `content-engine/domain/approved-product-context.ts`); xem trước + sửa từng bài bằng thẻ chuẩn `MultichannelPostCard`;
+  "Duyệt N bài" (J5) một lần; bài đã duyệt nằm trong Kho → nút "Sang Bước 4". Chưa có sản phẩm → chọn từ Kho (chỉ sản
+  phẩm đã chốt Thẻ chào) hoặc về Bước 1.
+- Bước 4 (Đợt 3, module `social-publishing` — thay phần đăng bài của SocialFlow): bài nguồn = lượt bài đã duyệt ở Bước 3
+  của sản phẩm đang làm, hoặc chọn từ Kho (chỉ sản phẩm có bài đã duyệt). 4 ô kênh (Facebook, Instagram, Zalo, TikTok)
+  với trạng thái: Sẵn sàng / Chưa kết nối / Hết hạn kết nối / Chưa có bài / Chưa mở (ứng dụng nền tảng chưa cấu hình);
+  nút **Kết nối** ngay trong ô (W2, OAuth — quay về `?buoc=dang-tu-dong&ket_noi=…`; Facebook nhiều Trang → `Dialog` chọn
+  Trang). 3 ô "Khi nào đăng?": Tự lên lịch (giờ vàng 11:30 / 20:00) · Đăng ngay · Chọn giờ (`datetime-local`). Một nút
+  chính "Lên lịch N bài" / "Đăng N bài" (J5). Danh sách "Bài đã gửi đăng": Chờ đăng / Đang đăng / Đã đăng (Xem bài) /
+  Chưa đăng được (lý do + Thử lại) / Đã huỷ; tự tải lại mỗi 15 giây khi còn bài chờ, tối đa 10 phút.
+- Hồ sơ cửa hàng chưa đủ mục thiết yếu: một dòng nhắc nhẹ dẫn `/ho-so`, không khoá bước.
+- Quyền theo mã năng lực: H1 quét, H2 sửa, H3 duyệt Thẻ, H5 viết Bài giới thiệu, H6 duyệt Bài giới thiệu, L1 đọc Kho, L3 chốt Thẻ chào, I1 viết bài đăng, J5 duyệt + đăng bài, W2 kết nối / ngắt kênh (mẫu chính
+  thức: chỉ Điều hành — luật `decideEdit` sẵn có). Thiếu quyền → câu tiếng Việt nói rõ, không ẩn im lặng.
+- **PHÁT_TRIỂN_SAU:** 10 công cụ cũ dời vào `deferredTools`, chỉ môi trường phát triển thấy; số liệu đầu trang không đếm.
+  Thẻ nhóm trên lưới ghi "4 bước: Thẻ sản phẩm · Thẻ chào · Bài đăng · Đăng tự động".
+- API: `GET /api/v1/content-studio/products` (L1, Kho kèm cờ), `GET /api/v1/content-studio/products/[id]` (L1),
+  `PUT /api/v1/content-studio/products/[id]/sales-pitch` (L3), `GET /api/v1/content-studio/scans/[jobId]` (H1).

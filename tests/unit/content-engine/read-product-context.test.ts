@@ -2,9 +2,11 @@ import { describe, expect, it, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import type { ProductIntelligenceReport } from "@/modules/market-intelligence/domain/product-intelligence-types"
 
-const { getProductAnalysisRun, findFirst } = vi.hoisted(() => ({
+const { getProductAnalysisRun, findFirst, analysisFindFirst, copyFindFirst } = vi.hoisted(() => ({
   getProductAnalysisRun: vi.fn(),
   findFirst: vi.fn(),
+  analysisFindFirst: vi.fn(),
+  copyFindFirst: vi.fn(),
 }))
 vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", () => {
   const mocked = {
@@ -12,7 +14,9 @@ vi.mock("@/modules/market-intelligence/infra/market-intelligence-repository", ()
   }
   return { ...mocked, getMarketIntelligenceRepository: vi.fn(() => new mocked.MarketIntelligenceRepository()) }
 })
-vi.mock("@/core/tenancy/infra/prisma", () => ({ prisma: { products: { findFirst } } }))
+vi.mock("@/core/tenancy/infra/prisma", () => ({
+  prisma: { products: { findFirst }, product_analyses: { findFirst: analysisFindFirst }, product_copies: { findFirst: copyFindFirst } },
+}))
 
 import { readProductContext, projectTopicFromReport } from "@/modules/content-engine/infra/read-product-context"
 
@@ -75,11 +79,26 @@ describe("readProductContext", () => {
 
   it("không có analysisRunId, có productId: lùi về tên trong bảng products, không suy đoán phần còn lại", async () => {
     getProductAnalysisRun.mockResolvedValue(null)
-    findFirst.mockResolvedValue({ name: "Bó hoa ly trắng" })
+    findFirst.mockResolvedValue({ id: "prod-2", name: "Bó hoa ly trắng", attributes: null })
+    analysisFindFirst.mockResolvedValue(null)
+    copyFindFirst.mockResolvedValue(null)
     const result = await readProductContext(ctx, { productId: "prod-2" })
     expect(result.product.name).toBe("Bó hoa ly trắng")
     expect(result.product.components).toEqual([])
     expect(result.passport).toBeNull()
+  })
+
+  it("không có báo cáo thị trường nhưng có dữ liệu ĐÃ DUYỆT (Bài giới thiệu) → Brief dùng dữ liệu đó, chỉ đọc bản đã duyệt", async () => {
+    getProductAnalysisRun.mockResolvedValue(null)
+    findFirst.mockResolvedValue({ id: "prod-3", name: "SP-3", attributes: null })
+    analysisFindFirst.mockResolvedValue(null)
+    copyFindFirst.mockResolvedValue({ raw: { suggested_name: "Bó ly Thuần Khiết", key_selling_points: ["Ly trắng nhập"] }, edited: null })
+    const result = await readProductContext(ctx, { productId: "prod-3" })
+    expect(result.product.name).toBe("Bó ly Thuần Khiết")
+    expect(result.passport?.sellingPoints).toEqual(["Ly trắng nhập"])
+    expect(copyFindFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: { organization_id: "org-1", product_id: "prod-3", approval_state: "APPROVED" },
+    }))
   })
 
   it("không có gì cả: tên mặc định trung tính, mọi thứ khác rỗng", async () => {

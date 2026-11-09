@@ -1,6 +1,7 @@
 /**
  * PHÁT_TRIỂN_SAU — nội dung cũ của một nhóm trên /cong-cu được thay bằng hành trình mới (PO 08/11/2026).
  *
+ * Nhóm "Tạo nội dung" (PO 08/11/2026) cũng vậy: ô 4 bước Thẻ sản phẩm → Thẻ chào sản phẩm → Bài đăng đa kênh → Đăng tự động.
  * Nhóm "Hồ sơ & Thương hiệu" giờ hiện giao diện ô 3 bước (Hồ sơ cửa hàng → Bộ nhận diện → Landing page,
  * dùng chung code với /ho-so). 16 loại ấn phẩm + công cụ cũ của nhóm KHÔNG xoá: dời vào khu "Phát triển sau"
  * chỉ hiện ở môi trường phát triển, không tính vào số liệu đầu trang. PO dự kiến có thể xoá hẳn sau này —
@@ -9,7 +10,7 @@
 import type { BusinessModuleKey } from "@/modules/marketing-center/domain/asset-type"
 
 /** Hành trình thay thế nội dung của nhóm (component hiển thị chọn theo khoá này). */
-export type ModuleJourney = "BRAND_KIT"
+export type ModuleJourney = "BRAND_KIT" | "CONTENT_STUDIO"
 
 export interface DeferredModuleContent {
   readonly journey: ModuleJourney
@@ -25,6 +26,12 @@ export const DEFERRED_MODULE_CONTENT: Readonly<Partial<Record<BusinessModuleKey,
     tag: "PHÁT_TRIỂN_SAU",
     decidedAt: "08/11/2026",
     reason: "Thay bằng hành trình 3 bước Hồ sơ cửa hàng → Bộ nhận diện → Landing page; nội dung cũ có thể xoá sau",
+  },
+  content: {
+    journey: "CONTENT_STUDIO",
+    tag: "PHÁT_TRIỂN_SAU",
+    decidedAt: "08/11/2026",
+    reason: "Thay bằng hành trình 4 bước Thẻ sản phẩm → Thẻ chào sản phẩm → Bài đăng đa kênh → Đăng tự động; nội dung cũ có thể xoá sau",
   },
 }
 
