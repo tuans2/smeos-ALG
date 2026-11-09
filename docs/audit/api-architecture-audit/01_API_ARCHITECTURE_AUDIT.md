@@ -428,3 +428,19 @@ Phát hiện khi viết hợp đồng (chưa sửa):
 - `POST /market-intelligence/research-runs`: lượt nghiên cứu và lịch sử (`research_runs`, `provider_health`) là dữ liệu chung toàn nền tảng, không có `organization_id` — người dùng của bất kỳ tổ chức nào có `V1` cũng kích hoạt được lượt chạy cho cả nền tảng và xem được lịch sử của mọi lượt; chưa giới hạn tần suất; thân sai lược đồ không bị từ chối mà lùi về `MANUAL`. Không lộ dữ liệu tổ chức, nhưng là bề mặt tốn tài nguyên chung — nên giới hạn tần suất hoặc chuyển sang Console Vận hành Nền tảng.
 - `POST /market-intelligence/vision-extract` khi không có tệp trong kho trả 500 kèm thông báo chứa khoá kho nội bộ (`org/<id>/unfiled/<id>.jpg`) — lộ chi tiết nội bộ trong lỗi 500.
 - Bài học test: `expectContract(res, status, schema)` bỏ qua bước kiểm khi `schema` là `undefined` — một lần xuất lại sai tên lược đồ đã làm ca phân tích sản phẩm xanh rỗng cho tới khi `typecheck` bắt được. Các đợt trước đều qua `typecheck` nên không bị ảnh hưởng.
+
+## 23. Nhật ký sửa — OpenAPI nội bộ, đợt phiên, báo cáo, bản in, mã giảm giá, credit (09/11/2026)
+
+Phủ thêm 5 nhóm vào `internal.openapi.json`: `/session/*` (5 route, 5 operation), `/reports/*` (5 route, 5 operation), `/print/*` (4 route, 5 operation), `/vouchers/*` (3 route, 5 operation), `/usage/*` (3 route, 4 operation) — tổng 440 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 7 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-misc.ts`, route import lại; thân tạo bản in là lược đồ của module `print` (xuất lại). Phản hồi khai `strictObject` (`responses-misc.ts`) từ kiểu TS của `reporting`, `print`, `promotions`, `usage`, đối chiếu mẫu ghi từ phản hồi thật. Báo cáo và hạn mức credit gác mã năng lực ở use-case (`R20`, `G8`/`U2`) — OpenAPI ghi rõ | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật: lời mời (xem, nhận, từ chối), đổi tổ chức (cookie `smeos_sso`, tổ chức không phải thành viên 404), đổi mật khẩu; 5 báo cáo (kỳ ngược 400); lịch sử, tổng hợp, hạn mức credit; đợt mã giảm giá (tạo, danh sách, xem, tạm dừng, xuất CSV); bản in (kiểm trước khi in, tạo, danh sách, xem, xuất PDF) | `tests/tenant/internal-contract-misc.test.ts` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `GET /reports/*?from=abc`: ngày sai định dạng bị bỏ qua, dùng kỳ mặc định (200) — đặc tả 06 ghi "sai → 400"; chỉ kỳ quá 366 ngày hoặc `from` > `to` mới trả 400 (đã thử).
+- Đặc tả 06 mục 14 (dòng "Chưa có: … `/vouchers`") còn ghi endpoint mã giảm giá chưa xây, trong khi `/vouchers/batches/*` đã có và có dòng riêng trong đặc tả — dòng "chưa có" là cũ (nằm trong danh sách RS-7 chờ PO, không tự sửa).
+- Lỗi sai thân của `/print/*` trả `details` dạng bản đồ trường → câu (không phải `details.issues` như chuẩn v1.1).
+- Lịch sử credit (`GET /usage`) rỗng trong test — lược đồ dòng `usage` viết theo lược đồ CSDL, chưa đối chiếu trên dòng thật.
+- 19 phép thử lỗi (mật khẩu sai/yếu, mã trùng, vượt trần %, ngày ngược, `limit`/`period` sai, mã lạ) không có đường nào trả 500.

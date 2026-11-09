@@ -95464,6 +95464,1326 @@
         "x-capability": "L6"
       }
     },
+    "/print/preflight": {
+      "post": {
+        "operationId": "preflightPrint",
+        "summary": "Kiểm trước khi in (kích thước, DPI, vùng an toàn, QR)",
+        "description": "Không lưu. Sai thân → 400 với `details` là bản đồ `đường_dẫn_trường → câu lỗi` (không phải `details.issues`).",
+        "tags": [
+          "Bản in"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "presetCode": {
+                    "type": "string",
+                    "enum": [
+                      "A4",
+                      "A5",
+                      "A6",
+                      "CARD_90X54",
+                      "STANDEE_60X160",
+                      "TABLE_TENT_100X150",
+                      "HANG_TAG_50X90",
+                      "STICKER_50X50"
+                    ]
+                  },
+                  "imageWidthPx": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "imageHeightPx": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "colorMode": {
+                    "type": "string",
+                    "enum": [
+                      "RGB",
+                      "CMYK"
+                    ]
+                  },
+                  "hasQrCode": {
+                    "type": "boolean"
+                  },
+                  "qrSizeMm": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "hasContentOutsideSafeZone": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "presetCode"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả kiểm",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "passed": {
+                          "type": "boolean"
+                        },
+                        "errors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "warnings": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "details": {
+                          "type": "object",
+                          "properties": {
+                            "presetCode": {
+                              "type": "string",
+                              "enum": [
+                                "A4",
+                                "A5",
+                                "A6",
+                                "CARD_90X54",
+                                "STANDEE_60X160",
+                                "TABLE_TENT_100X150",
+                                "HANG_TAG_50X90",
+                                "STICKER_50X50"
+                              ]
+                            },
+                            "widthMm": {
+                              "type": "number"
+                            },
+                            "heightMm": {
+                              "type": "number"
+                            },
+                            "bleedMm": {
+                              "type": "number"
+                            },
+                            "safeMarginMm": {
+                              "type": "number"
+                            },
+                            "cutWidthMm": {
+                              "type": "number"
+                            },
+                            "cutHeightMm": {
+                              "type": "number"
+                            },
+                            "effectiveDpi": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "minRecommendedDpi": {
+                              "type": "number"
+                            },
+                            "targetWidthPx": {
+                              "type": "number"
+                            },
+                            "targetHeightPx": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "presetCode",
+                            "widthMm",
+                            "heightMm",
+                            "bleedMm",
+                            "safeMarginMm",
+                            "cutWidthMm",
+                            "cutHeightMm",
+                            "effectiveDpi",
+                            "minRecommendedDpi",
+                            "targetWidthPx",
+                            "targetHeightPx"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "passed",
+                        "errors",
+                        "warnings",
+                        "details"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "`M5` hoặc `Q1`"
+      }
+    },
+    "/print/renditions": {
+      "get": {
+        "operationId": "listPrintRenditions",
+        "summary": "Bản in đã tạo",
+        "description": "Phân trang `limit` (1–100, mặc định 50) + `offset`; sai → 400.",
+        "tags": [
+          "Bản in"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "preset_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "A4",
+                "A5",
+                "A6",
+                "CARD_90X54",
+                "STANDEE_60X160",
+                "TABLE_TENT_100X150",
+                "HANG_TAG_50X90",
+                "STICKER_50X50"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "READY",
+                "FAILED"
+              ]
+            }
+          },
+          {
+            "name": "source_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bản in",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "assetId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "assetUsageId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "sourceType": {
+                            "type": "string"
+                          },
+                          "sourceId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "presetCode": {
+                            "type": "string",
+                            "enum": [
+                              "A4",
+                              "A5",
+                              "A6",
+                              "CARD_90X54",
+                              "STANDEE_60X160",
+                              "TABLE_TENT_100X150",
+                              "HANG_TAG_50X90",
+                              "STICKER_50X50"
+                            ]
+                          },
+                          "widthMm": {
+                            "type": "number"
+                          },
+                          "heightMm": {
+                            "type": "number"
+                          },
+                          "bleedMm": {
+                            "type": "number"
+                          },
+                          "dpi": {
+                            "type": "number"
+                          },
+                          "storageKey": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "fileUrl": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "preflight": {
+                            "type": "object",
+                            "properties": {
+                              "passed": {
+                                "type": "boolean"
+                              },
+                              "errors": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "warnings": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "details": {
+                                "type": "object",
+                                "properties": {
+                                  "presetCode": {
+                                    "type": "string",
+                                    "enum": [
+                                      "A4",
+                                      "A5",
+                                      "A6",
+                                      "CARD_90X54",
+                                      "STANDEE_60X160",
+                                      "TABLE_TENT_100X150",
+                                      "HANG_TAG_50X90",
+                                      "STICKER_50X50"
+                                    ]
+                                  },
+                                  "widthMm": {
+                                    "type": "number"
+                                  },
+                                  "heightMm": {
+                                    "type": "number"
+                                  },
+                                  "bleedMm": {
+                                    "type": "number"
+                                  },
+                                  "safeMarginMm": {
+                                    "type": "number"
+                                  },
+                                  "cutWidthMm": {
+                                    "type": "number"
+                                  },
+                                  "cutHeightMm": {
+                                    "type": "number"
+                                  },
+                                  "effectiveDpi": {
+                                    "type": [
+                                      "number",
+                                      "null"
+                                    ]
+                                  },
+                                  "minRecommendedDpi": {
+                                    "type": "number"
+                                  },
+                                  "targetWidthPx": {
+                                    "type": "number"
+                                  },
+                                  "targetHeightPx": {
+                                    "type": "number"
+                                  }
+                                },
+                                "required": [
+                                  "presetCode",
+                                  "widthMm",
+                                  "heightMm",
+                                  "bleedMm",
+                                  "safeMarginMm",
+                                  "cutWidthMm",
+                                  "cutHeightMm",
+                                  "effectiveDpi",
+                                  "minRecommendedDpi",
+                                  "targetWidthPx",
+                                  "targetHeightPx"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "passed",
+                              "errors",
+                              "warnings",
+                              "details"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "READY",
+                              "FAILED"
+                            ]
+                          },
+                          "createdBy": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "assetId",
+                          "assetUsageId",
+                          "sourceType",
+                          "sourceId",
+                          "presetCode",
+                          "widthMm",
+                          "heightMm",
+                          "bleedMm",
+                          "dpi",
+                          "storageKey",
+                          "fileUrl",
+                          "preflight",
+                          "status",
+                          "createdBy",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "total": {
+                      "type": "number"
+                    },
+                    "limit": {
+                      "type": "number"
+                    },
+                    "offset": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "total",
+                    "limit",
+                    "offset"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "`M5` hoặc `Q1`"
+      },
+      "post": {
+        "operationId": "createPrintRendition",
+        "summary": "Tạo bản in theo khổ chuẩn",
+        "description": "Lưu kèm kết quả kiểm trước khi in. Sai thân → 400 với `details` là bản đồ `đường_dẫn_trường → câu lỗi` (không phải `details.issues`).",
+        "tags": [
+          "Bản in"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "assetId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "assetUsageId": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "sourceType": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "sourceId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "presetCode": {
+                    "type": "string",
+                    "enum": [
+                      "A4",
+                      "A5",
+                      "A6",
+                      "CARD_90X54",
+                      "STANDEE_60X160",
+                      "TABLE_TENT_100X150",
+                      "HANG_TAG_50X90",
+                      "STICKER_50X50"
+                    ]
+                  },
+                  "customWidthMm": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "customHeightMm": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "customBleedMm": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "dpi": {
+                    "default": 300,
+                    "type": "integer",
+                    "minimum": 72,
+                    "maximum": 1200
+                  },
+                  "imageWidthPx": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "imageHeightPx": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "colorMode": {
+                    "type": "string",
+                    "enum": [
+                      "RGB",
+                      "CMYK"
+                    ]
+                  },
+                  "hasQrCode": {
+                    "type": "boolean"
+                  },
+                  "qrSizeMm": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "hasContentOutsideSafeZone": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "sourceType",
+                  "presetCode"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bản in",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "assetId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "assetUsageId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "sourceType": {
+                          "type": "string"
+                        },
+                        "sourceId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "presetCode": {
+                          "type": "string",
+                          "enum": [
+                            "A4",
+                            "A5",
+                            "A6",
+                            "CARD_90X54",
+                            "STANDEE_60X160",
+                            "TABLE_TENT_100X150",
+                            "HANG_TAG_50X90",
+                            "STICKER_50X50"
+                          ]
+                        },
+                        "widthMm": {
+                          "type": "number"
+                        },
+                        "heightMm": {
+                          "type": "number"
+                        },
+                        "bleedMm": {
+                          "type": "number"
+                        },
+                        "dpi": {
+                          "type": "number"
+                        },
+                        "storageKey": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "fileUrl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "preflight": {
+                          "type": "object",
+                          "properties": {
+                            "passed": {
+                              "type": "boolean"
+                            },
+                            "errors": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "warnings": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "details": {
+                              "type": "object",
+                              "properties": {
+                                "presetCode": {
+                                  "type": "string",
+                                  "enum": [
+                                    "A4",
+                                    "A5",
+                                    "A6",
+                                    "CARD_90X54",
+                                    "STANDEE_60X160",
+                                    "TABLE_TENT_100X150",
+                                    "HANG_TAG_50X90",
+                                    "STICKER_50X50"
+                                  ]
+                                },
+                                "widthMm": {
+                                  "type": "number"
+                                },
+                                "heightMm": {
+                                  "type": "number"
+                                },
+                                "bleedMm": {
+                                  "type": "number"
+                                },
+                                "safeMarginMm": {
+                                  "type": "number"
+                                },
+                                "cutWidthMm": {
+                                  "type": "number"
+                                },
+                                "cutHeightMm": {
+                                  "type": "number"
+                                },
+                                "effectiveDpi": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "minRecommendedDpi": {
+                                  "type": "number"
+                                },
+                                "targetWidthPx": {
+                                  "type": "number"
+                                },
+                                "targetHeightPx": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "presetCode",
+                                "widthMm",
+                                "heightMm",
+                                "bleedMm",
+                                "safeMarginMm",
+                                "cutWidthMm",
+                                "cutHeightMm",
+                                "effectiveDpi",
+                                "minRecommendedDpi",
+                                "targetWidthPx",
+                                "targetHeightPx"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "passed",
+                            "errors",
+                            "warnings",
+                            "details"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "READY",
+                            "FAILED"
+                          ]
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "assetId",
+                        "assetUsageId",
+                        "sourceType",
+                        "sourceId",
+                        "presetCode",
+                        "widthMm",
+                        "heightMm",
+                        "bleedMm",
+                        "dpi",
+                        "storageKey",
+                        "fileUrl",
+                        "preflight",
+                        "status",
+                        "createdBy",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "M5"
+      }
+    },
+    "/print/renditions/{id}": {
+      "get": {
+        "operationId": "getPrintRendition",
+        "summary": "Một bản in",
+        "description": "Của tổ chức khác → 404.",
+        "tags": [
+          "Bản in"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bản in",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "assetId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "assetUsageId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "sourceType": {
+                          "type": "string"
+                        },
+                        "sourceId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "presetCode": {
+                          "type": "string",
+                          "enum": [
+                            "A4",
+                            "A5",
+                            "A6",
+                            "CARD_90X54",
+                            "STANDEE_60X160",
+                            "TABLE_TENT_100X150",
+                            "HANG_TAG_50X90",
+                            "STICKER_50X50"
+                          ]
+                        },
+                        "widthMm": {
+                          "type": "number"
+                        },
+                        "heightMm": {
+                          "type": "number"
+                        },
+                        "bleedMm": {
+                          "type": "number"
+                        },
+                        "dpi": {
+                          "type": "number"
+                        },
+                        "storageKey": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "fileUrl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "preflight": {
+                          "type": "object",
+                          "properties": {
+                            "passed": {
+                              "type": "boolean"
+                            },
+                            "errors": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "warnings": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "details": {
+                              "type": "object",
+                              "properties": {
+                                "presetCode": {
+                                  "type": "string",
+                                  "enum": [
+                                    "A4",
+                                    "A5",
+                                    "A6",
+                                    "CARD_90X54",
+                                    "STANDEE_60X160",
+                                    "TABLE_TENT_100X150",
+                                    "HANG_TAG_50X90",
+                                    "STICKER_50X50"
+                                  ]
+                                },
+                                "widthMm": {
+                                  "type": "number"
+                                },
+                                "heightMm": {
+                                  "type": "number"
+                                },
+                                "bleedMm": {
+                                  "type": "number"
+                                },
+                                "safeMarginMm": {
+                                  "type": "number"
+                                },
+                                "cutWidthMm": {
+                                  "type": "number"
+                                },
+                                "cutHeightMm": {
+                                  "type": "number"
+                                },
+                                "effectiveDpi": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "minRecommendedDpi": {
+                                  "type": "number"
+                                },
+                                "targetWidthPx": {
+                                  "type": "number"
+                                },
+                                "targetHeightPx": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "presetCode",
+                                "widthMm",
+                                "heightMm",
+                                "bleedMm",
+                                "safeMarginMm",
+                                "cutWidthMm",
+                                "cutHeightMm",
+                                "effectiveDpi",
+                                "minRecommendedDpi",
+                                "targetWidthPx",
+                                "targetHeightPx"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "passed",
+                            "errors",
+                            "warnings",
+                            "details"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "READY",
+                            "FAILED"
+                          ]
+                        },
+                        "createdBy": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "assetId",
+                        "assetUsageId",
+                        "sourceType",
+                        "sourceId",
+                        "presetCode",
+                        "widthMm",
+                        "heightMm",
+                        "bleedMm",
+                        "dpi",
+                        "storageKey",
+                        "fileUrl",
+                        "preflight",
+                        "status",
+                        "createdBy",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "`M5` hoặc `Q1`"
+      }
+    },
+    "/print/renditions/{id}/export": {
+      "post": {
+        "operationId": "exportPrintPdf",
+        "summary": "Xuất PDF in (kèm dấu cắt)",
+        "description": "Ảnh gửi kèm (data URL, ≤ 20 MB) kiểm nội dung ở use-case. PDF trả trong thân, ghi nhật ký xuất dữ liệu. Sai thân → 400 với `details` là bản đồ `đường_dẫn_trường → câu lỗi` (không phải `details.issues`). Của tổ chức khác → 404.",
+        "tags": [
+          "Bản in"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "subtitle": {
+                    "type": "string"
+                  },
+                  "storeName": {
+                    "type": "string"
+                  },
+                  "includeBleedMarks": {
+                    "default": true,
+                    "type": "boolean"
+                  },
+                  "imageDataUrl": {
+                    "type": "string",
+                    "maxLength": 28000000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "PDF",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "fileName": {
+                          "type": "string"
+                        },
+                        "mimeType": {
+                          "type": "string",
+                          "const": "application/pdf"
+                        },
+                        "base64": {
+                          "type": "string"
+                        },
+                        "widthMm": {
+                          "type": "number"
+                        },
+                        "heightMm": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "fileName",
+                        "mimeType",
+                        "base64",
+                        "widthMm",
+                        "heightMm"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "M5"
+      }
+    },
     "/product-copies": {
       "get": {
         "operationId": "listProductCopies",
@@ -103967,6 +105287,1601 @@
         "x-capability": "R15"
       }
     },
+    "/reports/cashflow": {
+      "get": {
+        "operationId": "getCashflowReport",
+        "summary": "Dòng tiền theo hình thức thu, đối chiếu ngân hàng",
+        "description": "`from`/`to` `YYYY-MM-DD` (giờ Việt Nam, mặc định 30 ngày gần nhất), `granularity` `day` · `week` · `month`. Kỳ quá 366 ngày hoặc `from` > `to` → 400; ngày không đúng định dạng hiện bị bỏ qua, dùng kỳ mặc định (audit API §23). Theo đơn tạo trong kỳ và phạm vi chi nhánh của người xem. Mã năng lực kiểm ở use-case.",
+        "tags": [
+          "Báo cáo"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ]
+            }
+          },
+          {
+            "name": "detail",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dòng tiền theo hình thức thu, đối chiếu ngân hàng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "byMethod": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "method": {
+                                "type": "string"
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "collectedVnd": {
+                                "type": "number"
+                              },
+                              "refundedVnd": {
+                                "type": "number"
+                              },
+                              "netVnd": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "method",
+                              "label",
+                              "collectedVnd",
+                              "refundedVnd",
+                              "netVnd"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "daily": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "date": {
+                                "type": "string"
+                              },
+                              "ledgerTransferVnd": {
+                                "type": "number"
+                              },
+                              "bankMatchedVnd": {
+                                "type": "number"
+                              },
+                              "bankUnmatchedVnd": {
+                                "type": "number"
+                              },
+                              "bankIgnoredVnd": {
+                                "type": "number"
+                              },
+                              "unmatchedCount": {
+                                "type": "number"
+                              },
+                              "differenceVnd": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "date",
+                              "ledgerTransferVnd",
+                              "bankMatchedVnd",
+                              "bankUnmatchedVnd",
+                              "bankIgnoredVnd",
+                              "unmatchedCount",
+                              "differenceVnd"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "unmatched": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              "amountVnd": {
+                                "type": "number"
+                              },
+                              "content": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "at",
+                              "amountVnd",
+                              "content"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "byMethod",
+                        "daily",
+                        "unmatched"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "R20"
+      }
+    },
+    "/reports/orders": {
+      "get": {
+        "operationId": "getOrderReport",
+        "summary": "Đơn theo kỳ: hoàn tất, huỷ, trễ hẹn",
+        "description": "`from`/`to` `YYYY-MM-DD` (giờ Việt Nam, mặc định 30 ngày gần nhất), `granularity` `day` · `week` · `month`. Kỳ quá 366 ngày hoặc `from` > `to` → 400; ngày không đúng định dạng hiện bị bỏ qua, dùng kỳ mặc định (audit API §23). Theo đơn tạo trong kỳ và phạm vi chi nhánh của người xem. Mã năng lực kiểm ở use-case.",
+        "tags": [
+          "Báo cáo"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ]
+            }
+          },
+          {
+            "name": "detail",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đơn theo kỳ: hoàn tất, huỷ, trễ hẹn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            },
+                            "granularity": {
+                              "type": "string",
+                              "enum": [
+                                "day",
+                                "week",
+                                "month"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to",
+                            "granularity"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "totals": {
+                          "type": "object",
+                          "properties": {
+                            "total": {
+                              "type": "number"
+                            },
+                            "completed": {
+                              "type": "number"
+                            },
+                            "cancelled": {
+                              "type": "number"
+                            },
+                            "delivered": {
+                              "type": "number"
+                            },
+                            "late": {
+                              "type": "number"
+                            },
+                            "overdueOpen": {
+                              "type": "number"
+                            },
+                            "completionRate": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "cancelRate": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "lateRate": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "total",
+                            "completed",
+                            "cancelled",
+                            "delivered",
+                            "late",
+                            "overdueOpen",
+                            "completionRate",
+                            "cancelRate",
+                            "lateRate"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "series": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "bucket": {
+                                "type": "string"
+                              },
+                              "total": {
+                                "type": "number"
+                              },
+                              "completed": {
+                                "type": "number"
+                              },
+                              "cancelled": {
+                                "type": "number"
+                              },
+                              "late": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "bucket",
+                              "total",
+                              "completed",
+                              "cancelled",
+                              "late"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "totals",
+                        "series"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "R20"
+      }
+    },
+    "/reports/performance": {
+      "get": {
+        "operationId": "getPerformanceReport",
+        "summary": "Doanh số Sale, sản lượng thợ, giao đúng giờ",
+        "description": "`from`/`to` `YYYY-MM-DD` (giờ Việt Nam, mặc định 30 ngày gần nhất), `granularity` `day` · `week` · `month`. Kỳ quá 366 ngày hoặc `from` > `to` → 400; ngày không đúng định dạng hiện bị bỏ qua, dùng kỳ mặc định (audit API §23). Theo đơn tạo trong kỳ và phạm vi chi nhánh của người xem. Mã năng lực kiểm ở use-case.",
+        "tags": [
+          "Báo cáo"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ]
+            }
+          },
+          {
+            "name": "detail",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Doanh số Sale, sản lượng thợ, giao đúng giờ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "sales": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "userId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "orders": {
+                                "type": "number"
+                              },
+                              "revenueVnd": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "userId",
+                              "name",
+                              "orders",
+                              "revenueVnd"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "florists": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "userId": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "assigned": {
+                                "type": "number"
+                              },
+                              "done": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "userId",
+                              "name",
+                              "assigned",
+                              "done"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "shippers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "key": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "delivered": {
+                                "type": "number"
+                              },
+                              "onTime": {
+                                "type": "number"
+                              },
+                              "onTimeRate": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "key",
+                              "name",
+                              "delivered",
+                              "onTime",
+                              "onTimeRate"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "sales",
+                        "florists",
+                        "shippers"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "R20"
+      }
+    },
+    "/reports/products": {
+      "get": {
+        "operationId": "getProductReport",
+        "summary": "Xếp hạng mẫu, tỷ trọng màu và phong cách",
+        "description": "`from`/`to` `YYYY-MM-DD` (giờ Việt Nam, mặc định 30 ngày gần nhất), `granularity` `day` · `week` · `month`. Kỳ quá 366 ngày hoặc `from` > `to` → 400; ngày không đúng định dạng hiện bị bỏ qua, dùng kỳ mặc định (audit API §23). Theo đơn tạo trong kỳ và phạm vi chi nhánh của người xem. Mã năng lực kiểm ở use-case.",
+        "tags": [
+          "Báo cáo"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ]
+            }
+          },
+          {
+            "name": "detail",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Xếp hạng mẫu, tỷ trọng màu và phong cách",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "byQuantity": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "productId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "valueVnd": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "productId",
+                              "name",
+                              "quantity",
+                              "valueVnd"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "byValue": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "productId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "valueVnd": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "productId",
+                              "name",
+                              "quantity",
+                              "valueVnd"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "colors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "label": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "sharePercent": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "label",
+                              "quantity",
+                              "sharePercent"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "styles": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "label": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "sharePercent": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "label",
+                              "quantity",
+                              "sharePercent"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "byQuantity",
+                        "byValue",
+                        "colors",
+                        "styles"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "R20"
+      }
+    },
+    "/reports/revenue": {
+      "get": {
+        "operationId": "getRevenueReport",
+        "summary": "Doanh thu dự kiến và thực thu",
+        "description": "`from`/`to` `YYYY-MM-DD` (giờ Việt Nam, mặc định 30 ngày gần nhất), `granularity` `day` · `week` · `month`. Kỳ quá 366 ngày hoặc `from` > `to` → 400; ngày không đúng định dạng hiện bị bỏ qua, dùng kỳ mặc định (audit API §23). Theo đơn tạo trong kỳ và phạm vi chi nhánh của người xem. Mã năng lực kiểm ở use-case. `?detail=orders` thêm danh sách đơn của kỳ (tối đa 200).",
+        "tags": [
+          "Báo cáo"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          },
+          {
+            "name": "granularity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ]
+            }
+          },
+          {
+            "name": "detail",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Doanh thu dự kiến và thực thu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "object",
+                          "properties": {
+                            "from": {
+                              "type": "string"
+                            },
+                            "to": {
+                              "type": "string"
+                            },
+                            "granularity": {
+                              "type": "string",
+                              "enum": [
+                                "day",
+                                "week",
+                                "month"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "from",
+                            "to",
+                            "granularity"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "totals": {
+                          "type": "object",
+                          "properties": {
+                            "expectedVnd": {
+                              "type": "number"
+                            },
+                            "collectedVnd": {
+                              "type": "number"
+                            },
+                            "refundedVnd": {
+                              "type": "number"
+                            },
+                            "netCollectedVnd": {
+                              "type": "number"
+                            },
+                            "collectionRate": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "expectedVnd",
+                            "collectedVnd",
+                            "refundedVnd",
+                            "netCollectedVnd",
+                            "collectionRate"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "series": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "bucket": {
+                                "type": "string"
+                              },
+                              "expectedVnd": {
+                                "type": "number"
+                              },
+                              "collectedVnd": {
+                                "type": "number"
+                              },
+                              "refundedVnd": {
+                                "type": "number"
+                              },
+                              "netCollectedVnd": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "bucket",
+                              "expectedVnd",
+                              "collectedVnd",
+                              "refundedVnd",
+                              "netCollectedVnd"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "orders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "totalVnd": {
+                                "type": "number"
+                              },
+                              "paidVnd": {
+                                "type": "number"
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "code",
+                              "status",
+                              "totalVnd",
+                              "paidVnd",
+                              "createdAt"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "totals",
+                        "series"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "R20"
+      }
+    },
+    "/session/invitations": {
+      "get": {
+        "operationId": "listMyInvitations",
+        "summary": "Lời mời vào tổ chức khác của tôi",
+        "description": "Không cần mã năng lực — lời mời của chính người đăng nhập (lọc theo người dùng của phiên); của người khác → 404.",
+        "tags": [
+          "Phiên — tổ chức & mật khẩu"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lời mời",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "membership_id": {
+                            "type": "string"
+                          },
+                          "organization_id": {
+                            "type": "string"
+                          },
+                          "organization_name": {
+                            "type": "string"
+                          },
+                          "role_name": {
+                            "type": "string"
+                          },
+                          "invited_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "membership_id",
+                          "organization_id",
+                          "organization_name",
+                          "role_name",
+                          "invited_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/session/invitations/{id}/accept": {
+      "post": {
+        "operationId": "acceptInvitation",
+        "summary": "Nhận lời mời",
+        "description": "Không cần mã năng lực — lời mời của chính người đăng nhập (lọc theo người dùng của phiên); của người khác → 404. Không đổi tổ chức đang hoạt động — chuyển bằng `POST /session/organization`. Dồn dập → 429.",
+        "tags": [
+          "Phiên — tổ chức & mật khẩu"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tổ chức vừa vào",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "organization_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "organization_id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/session/invitations/{id}/decline": {
+      "post": {
+        "operationId": "declineInvitation",
+        "summary": "Từ chối lời mời",
+        "description": "Không cần mã năng lực — lời mời của chính người đăng nhập (lọc theo người dùng của phiên); của người khác → 404. Dồn dập → 429.",
+        "tags": [
+          "Phiên — tổ chức & mật khẩu"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đã từ chối",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "declined": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "declined"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/session/organization": {
+      "post": {
+        "operationId": "switchOrganization",
+        "summary": "Đổi tổ chức đang hoạt động của phiên",
+        "description": "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Phát lại cookie `smeos_sso`.",
+        "tags": [
+          "Phiên — tổ chức & mật khẩu"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "organization_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "organization_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tổ chức mới",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "organization": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "slug": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "slug",
+                        "type"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "organization"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/session/password": {
+      "post": {
+        "operationId": "changeOwnPassword",
+        "summary": "Tự đổi mật khẩu",
+        "description": "Mật khẩu hiện tại sai hoặc mật khẩu mới chưa đủ mạnh → 400. Phiên đang dùng giữ nguyên, các máy khác bị đăng xuất. 10 lần/15 phút/IP → 429.",
+        "tags": [
+          "Phiên — tổ chức & mật khẩu"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "current_password": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "new_password": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "current_password",
+                  "new_password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã đổi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "changed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "changed"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "A2"
+      }
+    },
     "/sso/refresh": {
       "post": {
         "operationId": "refreshSsoToken",
@@ -104991,6 +107906,547 @@
           }
         },
         "x-capability": "phân quyền như `GET /storage/trash` (kiểm ở use-case)"
+      }
+    },
+    "/usage": {
+      "get": {
+        "operationId": "listUsage",
+        "summary": "Lịch sử dùng credit",
+        "description": "Phân trang con trỏ; `limit` không phải số nguyên hoặc ngoài khoảng cho phép → 400.",
+        "tags": [
+          "Credit & hạn mức"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trang lịch sử",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organization_id": {
+                            "type": "string"
+                          },
+                          "workspace_id": {
+                            "type": "string"
+                          },
+                          "user_id": {
+                            "type": "string"
+                          },
+                          "job_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "feature": {
+                            "type": "string"
+                          },
+                          "quantity": {
+                            "type": "number"
+                          },
+                          "cost_credit": {
+                            "type": "number"
+                          },
+                          "cost_usd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "metadata": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organization_id",
+                          "workspace_id",
+                          "user_id",
+                          "job_id",
+                          "feature",
+                          "quantity",
+                          "cost_credit",
+                          "cost_usd",
+                          "status",
+                          "metadata",
+                          "created_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G8"
+      }
+    },
+    "/usage/limits": {
+      "get": {
+        "operationId": "getUsageLimits",
+        "summary": "Hạn mức credit tháng",
+        "description": "Mã năng lực kiểm ở use-case.",
+        "tags": [
+          "Credit & hạn mức"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hạn mức",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "string"
+                        },
+                        "credit": {
+                          "type": "object",
+                          "properties": {
+                            "used": {
+                              "type": "number"
+                            },
+                            "limit": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "used",
+                            "limit"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "ai": {
+                          "type": "object",
+                          "properties": {
+                            "used": {
+                              "type": "number"
+                            },
+                            "limit": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "used",
+                            "limit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "credit",
+                        "ai"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G8"
+      },
+      "put": {
+        "operationId": "setAiMonthlyLimit",
+        "summary": "Đặt hạn mức credit AI mỗi tháng",
+        "description": "Mã năng lực kiểm ở use-case. `null` = bỏ hạn mức. Chặn ngay khi trừ credit: vượt → 422 `QUOTA_EXCEEDED`.",
+        "tags": [
+          "Credit & hạn mức"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "aiMonthlyLimit": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "aiMonthlyLimit"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Hạn mức",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "period": {
+                          "type": "string"
+                        },
+                        "credit": {
+                          "type": "object",
+                          "properties": {
+                            "used": {
+                              "type": "number"
+                            },
+                            "limit": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "used",
+                            "limit"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "ai": {
+                          "type": "object",
+                          "properties": {
+                            "used": {
+                              "type": "number"
+                            },
+                            "limit": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "used",
+                            "limit"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "period",
+                        "credit",
+                        "ai"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "U2"
+      }
+    },
+    "/usage/summary": {
+      "get": {
+        "operationId": "getUsageSummary",
+        "summary": "Tổng hợp credit theo tính năng",
+        "description": "`?period=YYYY-MM` lọc theo tháng, kèm hạn mức và gói. Thân không bọc `{ data }`.",
+        "tags": [
+          "Credit & hạn mức"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tổng hợp",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "by_feature": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "feature": {
+                            "type": "string"
+                          },
+                          "quantity": {
+                            "type": "number"
+                          },
+                          "cost_credit": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "feature",
+                          "quantity",
+                          "cost_credit"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "credit_used": {
+                      "type": "number"
+                    },
+                    "credit_balance": {
+                      "type": "number"
+                    },
+                    "period": {
+                      "type": "string"
+                    },
+                    "monthly_limit": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "ai_limit": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "plan": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "included_credits_monthly": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "included_credits_monthly"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "by_feature",
+                    "credit_used",
+                    "credit_balance"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "G8"
       }
     },
     "/video/jobs": {
@@ -108943,6 +112399,985 @@
           }
         },
         "x-capability": "H4"
+      }
+    },
+    "/vouchers/batches": {
+      "get": {
+        "operationId": "listVoucherBatches",
+        "summary": "Đợt phát hành mã giảm giá",
+        "description": "Kèm ưu đãi đang bật và trần % (cùng nguồn ma trận ưu đãi). Thân không bọc `{ data }`.",
+        "tags": [
+          "Mã giảm giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đợt",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "batches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "promotionId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "codePrefix": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "discountType": {
+                            "type": "string",
+                            "enum": [
+                              "PERCENTAGE",
+                              "FIXED_AMOUNT"
+                            ]
+                          },
+                          "discountValue": {
+                            "type": "number"
+                          },
+                          "minOrderVnd": {
+                            "type": "number"
+                          },
+                          "maxDiscountVnd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "startsAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "expiresAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "usageLimit": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "perCustomerLimit": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "isActive": {
+                            "type": "boolean"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "codeCount": {
+                            "type": "number"
+                          },
+                          "exhaustedCount": {
+                            "type": "number"
+                          },
+                          "usedTotal": {
+                            "type": "number"
+                          },
+                          "sampleCode": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "ACTIVE",
+                              "SCHEDULED",
+                              "EXPIRED",
+                              "PAUSED",
+                              "EXHAUSTED"
+                            ]
+                          },
+                          "promotionTitle": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "promotionId",
+                          "codePrefix",
+                          "discountType",
+                          "discountValue",
+                          "minOrderVnd",
+                          "maxDiscountVnd",
+                          "startsAt",
+                          "expiresAt",
+                          "usageLimit",
+                          "perCustomerLimit",
+                          "isActive",
+                          "createdAt",
+                          "codeCount",
+                          "exhaustedCount",
+                          "usedTotal",
+                          "sampleCode",
+                          "status",
+                          "promotionTitle"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "promotions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "customerText": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "percent": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "customerText",
+                          "kind",
+                          "percent"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "maxDiscountPercent": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "batches",
+                    "promotions",
+                    "maxDiscountPercent"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "Q8"
+      },
+      "post": {
+        "operationId": "issueVoucherBatch",
+        "summary": "Phát hành đợt mã mới",
+        "description": "`SHARED`: một mã dùng chung; `UNIQUE`: `quantity` mã riêng theo `code_prefix`. Tên 2–120 ký tự; mức giảm vượt trần % của ma trận ưu đãi, mã dùng chung đã có, hoặc hết hạn trước ngày bắt đầu → 400 (`details` theo trường). Thân không bọc `{ data }`.",
+        "tags": [
+          "Mã giảm giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "SHARED",
+                      "UNIQUE"
+                    ]
+                  },
+                  "shared_code": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 64
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "code_prefix": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 32
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  },
+                  "promotion_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "discount_type": {
+                    "type": "string",
+                    "enum": [
+                      "PERCENTAGE",
+                      "FIXED_AMOUNT"
+                    ]
+                  },
+                  "discount_value": {
+                    "type": "number"
+                  },
+                  "min_order_vnd": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  },
+                  "max_discount_vnd": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "starts_at": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "expires_at": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "usage_limit": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "per_customer_limit": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "mode",
+                  "discount_type",
+                  "discount_value"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đợt mới",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "promotionId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "codePrefix": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "discountType": {
+                      "type": "string",
+                      "enum": [
+                        "PERCENTAGE",
+                        "FIXED_AMOUNT"
+                      ]
+                    },
+                    "discountValue": {
+                      "type": "number"
+                    },
+                    "minOrderVnd": {
+                      "type": "number"
+                    },
+                    "maxDiscountVnd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "startsAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "expiresAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "usageLimit": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "perCustomerLimit": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "isActive": {
+                      "type": "boolean"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "codeCount": {
+                      "type": "number"
+                    },
+                    "exhaustedCount": {
+                      "type": "number"
+                    },
+                    "usedTotal": {
+                      "type": "number"
+                    },
+                    "sampleCode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ACTIVE",
+                        "SCHEDULED",
+                        "EXPIRED",
+                        "PAUSED",
+                        "EXHAUSTED"
+                      ]
+                    },
+                    "promotionTitle": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name",
+                    "promotionId",
+                    "codePrefix",
+                    "discountType",
+                    "discountValue",
+                    "minOrderVnd",
+                    "maxDiscountVnd",
+                    "startsAt",
+                    "expiresAt",
+                    "usageLimit",
+                    "perCustomerLimit",
+                    "isActive",
+                    "createdAt",
+                    "codeCount",
+                    "exhaustedCount",
+                    "usedTotal",
+                    "sampleCode",
+                    "status",
+                    "promotionTitle"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "Q8"
+      }
+    },
+    "/vouchers/batches/{id}": {
+      "get": {
+        "operationId": "getVoucherBatch",
+        "summary": "Một đợt kèm danh sách mã",
+        "description": "Của tổ chức khác → 404.",
+        "tags": [
+          "Mã giảm giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đợt và mã",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "batch": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "promotionId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "codePrefix": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "discountType": {
+                          "type": "string",
+                          "enum": [
+                            "PERCENTAGE",
+                            "FIXED_AMOUNT"
+                          ]
+                        },
+                        "discountValue": {
+                          "type": "number"
+                        },
+                        "minOrderVnd": {
+                          "type": "number"
+                        },
+                        "maxDiscountVnd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "startsAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "expiresAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "usageLimit": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "perCustomerLimit": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "isActive": {
+                          "type": "boolean"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "codeCount": {
+                          "type": "number"
+                        },
+                        "exhaustedCount": {
+                          "type": "number"
+                        },
+                        "usedTotal": {
+                          "type": "number"
+                        },
+                        "sampleCode": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ACTIVE",
+                            "SCHEDULED",
+                            "EXPIRED",
+                            "PAUSED",
+                            "EXHAUSTED"
+                          ]
+                        },
+                        "promotionTitle": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "promotionId",
+                        "codePrefix",
+                        "discountType",
+                        "discountValue",
+                        "minOrderVnd",
+                        "maxDiscountVnd",
+                        "startsAt",
+                        "expiresAt",
+                        "usageLimit",
+                        "perCustomerLimit",
+                        "isActive",
+                        "createdAt",
+                        "codeCount",
+                        "exhaustedCount",
+                        "usedTotal",
+                        "sampleCode",
+                        "status",
+                        "promotionTitle"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "usedCount": {
+                            "type": "number"
+                          },
+                          "usageLimit": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "isActive": {
+                            "type": "boolean"
+                          },
+                          "lastUsedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "code",
+                          "usedCount",
+                          "usageLimit",
+                          "isActive",
+                          "lastUsedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "batch",
+                    "codes"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "Q8"
+      },
+      "patch": {
+        "operationId": "toggleVoucherBatch",
+        "summary": "Tạm dừng / mở lại cả đợt",
+        "description": "Trả `{ ok: true }` cũ. Của tổ chức khác → 404.",
+        "tags": [
+          "Mã giảm giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "is_active": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "is_active"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã đổi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "Q8"
+      }
+    },
+    "/vouchers/batches/{id}/export": {
+      "get": {
+        "operationId": "exportVoucherCodes",
+        "summary": "Tải danh sách mã (CSV)",
+        "description": "Ghi nhật ký xuất dữ liệu. Của tổ chức khác → 404.",
+        "tags": [
+          "Mã giảm giá"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tệp CSV",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "Q8"
       }
     }
   },

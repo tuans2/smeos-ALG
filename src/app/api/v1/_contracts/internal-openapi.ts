@@ -13,6 +13,7 @@ import { GREETING_OPERATIONS } from "./ops-greeting"
 import { GREETING_ORDER_OPERATIONS } from "./ops-greeting-orders"
 import { INTEGRATION_HUB_OPERATIONS } from "./ops-integrations"
 import { MEDIA_OPERATIONS } from "./ops-media"
+import { MISC_OPERATIONS } from "./ops-misc"
 import { NOTIFICATION_OPERATIONS } from "./ops-notification"
 import { ORDER_OPERATIONS } from "./ops-orders"
 import { ORG_OPERATIONS } from "./ops-org"
@@ -27,9 +28,9 @@ import { STORAGE_OPERATIONS } from "./ops-storage"
  */
 export const INTERNAL_OPENAPI_PATH = "docs/spec/contracts/openapi/internal.openapi.json"
 
-export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video", "notification", "chat", "internal-chat", "branches", "branch-portal", "chain", "costing", "pricing-rules", "price-lists", "integrations", "integration-tokens", "sso", "assets", "asset-usages", "storage", "brand-kit", "brand-library", "product-copies", "content-engine", "market-intelligence"] as const
+export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video", "notification", "chat", "internal-chat", "branches", "branch-portal", "chain", "costing", "pricing-rules", "price-lists", "integrations", "integration-tokens", "sso", "assets", "asset-usages", "storage", "brand-kit", "brand-library", "product-copies", "content-engine", "market-intelligence", "session", "reports", "print", "vouchers", "usage"] as const
 
-export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS, ...CHAIN_OPERATIONS, ...COSTING_OPERATIONS, ...INTEGRATION_HUB_OPERATIONS, ...STORAGE_OPERATIONS, ...BRAND_OPERATIONS, ...CONTENT_OPERATIONS]
+export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS, ...CHAIN_OPERATIONS, ...COSTING_OPERATIONS, ...INTEGRATION_HUB_OPERATIONS, ...STORAGE_OPERATIONS, ...BRAND_OPERATIONS, ...CONTENT_OPERATIONS, ...MISC_OPERATIONS]
 
 export function buildInternalOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({
