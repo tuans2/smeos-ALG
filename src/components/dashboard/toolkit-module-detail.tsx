@@ -12,6 +12,7 @@ import { getAllTools, type ToolDefinition } from "@/modules/toolkit/domain/toolk
 import { Disclosure } from "@/components/ui/disclosure"
 import { BrandKitTiles } from "@/components/brand-kit/tiles/brand-kit-tiles"
 import { ContentStudioTiles } from "@/components/content-studio/content-studio-tiles"
+import { PromotionHubTiles } from "@/components/promotion-hub/promotion-hub-tiles"
 import { ModuleCatalogSections } from "./module-catalog-sections"
 import { MODULE_TONES } from "./toolkit-module-grid"
 import { ModuleKpiStripComponent } from "./module-kpi-strip"
@@ -188,6 +189,8 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
         <BrandKitTiles />
       ) : module.journey === "CONTENT_STUDIO" ? (
         <ContentStudioTiles />
+      ) : module.journey === "PROMOTION_HUB" ? (
+        <PromotionHubTiles />
       ) : (
         <ModuleCatalogSections assets={module.assets} tools={module.tools} toolMap={toolMap} isDev={isDev} tone={tone} />
       )}

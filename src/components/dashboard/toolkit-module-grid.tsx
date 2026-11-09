@@ -6,6 +6,7 @@ import { InfoTip } from "@/components/ui/info-tip"
 import { IconTile, type IconTone } from "@/components/ui/app-icon"
 import type { BusinessModule } from "@/modules/toolkit/domain/business-modules"
 import type { StoreOperationsSection } from "@/modules/toolkit/domain/store-operations"
+import { PROMOTION_GRID_SUMMARY } from "@/components/promotion-hub/promotion-copy"
 
 /** Màu nhóm cho ô icon của từng module tăng trưởng và khu vận hành */
 export const MODULE_TONES: Readonly<Record<string, IconTone>> = {
@@ -50,7 +51,7 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
         </Button>
       </h3>
       <span className="mt-1 sm:mt-2 text-caption text-text-muted">
-        {module.journey === "BRAND_KIT" ? "3 bước: Hồ sơ · Nhận diện · Landing" : module.journey === "CONTENT_STUDIO" ? "4 bước: Thẻ sản phẩm · Thẻ chào · Bài đăng · Đăng tự động" : (
+        {module.journey === "BRAND_KIT" ? "3 bước: Hồ sơ · Nhận diện · Landing" : module.journey === "CONTENT_STUDIO" ? "4 bước: Thẻ sản phẩm · Thẻ chào · Bài đăng · Đăng tự động" : module.journey === "PROMOTION_HUB" ? PROMOTION_GRID_SUMMARY : (
           <>{readyAssets > 0 ? `${readyAssets} ấn phẩm · ` : ""}{toolsCount} công cụ</>
         )}
       </span>

@@ -3,19 +3,22 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   LANDING_TYPE_OPTIONS,
   type LandingPageType,
+  type LandingTypeOption,
 } from "@/modules/landing-page/domain/preset-catalog"
 
 interface LandingTypeSelectorProps {
   selectedType: LandingPageType
   onSelectType: (type: LandingPageType) => void
+  /** Giới hạn lựa chọn (nhóm Quảng bá chỉ giữ loại trang chiến dịch); mặc định đủ 4 loại */
+  options?: readonly LandingTypeOption[] | undefined
 }
 
 /**
  * Mục đích trang — nhóm radio gọn (archetype E, UX-028). Giá trị được gửi cho AI soạn nội dung;
  * mô tả chỉ hiện cho lựa chọn đang chọn để không lặp 4 đoạn giới thiệu.
  */
-export function LandingTypeSelector({ selectedType, onSelectType }: LandingTypeSelectorProps) {
-  const selected = LANDING_TYPE_OPTIONS.find((o) => o.type === selectedType)
+export function LandingTypeSelector({ selectedType, onSelectType, options = LANDING_TYPE_OPTIONS }: LandingTypeSelectorProps) {
+  const selected = options.find((o) => o.type === selectedType)
 
   return (
     <fieldset className="space-y-2">
@@ -26,7 +29,7 @@ export function LandingTypeSelector({ selectedType, onSelectType }: LandingTypeS
         onValueChange={(v) => onSelectType(v as LandingPageType)}
         className="flex flex-wrap gap-2"
       >
-        {LANDING_TYPE_OPTIONS.map((opt) => {
+        {options.map((opt) => {
           const isSelected = selectedType === opt.type
           return (
             <label

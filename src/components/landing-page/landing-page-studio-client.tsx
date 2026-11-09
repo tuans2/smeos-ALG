@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { QrCode } from "@/components/ui/icon-set/qr-code"
@@ -11,8 +11,7 @@ import { InlineError } from "@/components/ui/inline-error"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { LandingTypeSelector } from "./landing-type-selector"
 import { LandingCampaignTab } from "@/components/catalog/landing-campaign-tab"
-import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
-import type { CatalogProduct } from "@/components/catalog/catalog-management-tab"
+import { useCatalogProducts } from "@/components/catalog/use-catalog-products"
 import type { LandingPageType } from "@/modules/landing-page/domain/preset-catalog"
 import { Disclosure } from "@/components/ui/disclosure"
 import { ShopReviewsManager } from "@/components/catalog/reviews/shop-reviews-manager"
@@ -23,72 +22,8 @@ import { isDevEnvironment } from "@/lib/dev-environment"
 export function LandingPageStudioClient() {
   const router = useRouter()
   const [pageType, setPageType] = useState<LandingPageType>("STORE_BRAND")
-  const [products, setProducts] = useState<CatalogProduct[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { products, loading, error, reload: fetchProducts } = useCatalogProducts("landing")
   const { business, loading: profileLoading } = useTenantProfile()
-
-  const fetchProducts = useCallback(async () => {
-    try {
-      const res = await fetch("/api/v1/products?limit=100")
-      if (res.status === 401) {
-        router.push("/dang-nhap")
-        return
-      }
-      if (!res.ok) throw new Error("Không thể tải danh sách sản phẩm")
-      const json = await res.json()
-      const rawProducts = (json.data || []) as Array<{
-        id: string
-        code: string
-        name: string
-        category?: string | null
-        status: string
-        occasion_code?: string | null
-        color?: string | null
-        collection?: string | null
-        price_vnd?: number | null
-        masterImageUrl?: string | null
-        driveLink?: string | null
-        attributes?: Record<string, unknown> | null
-      }>
-      // Map API fields → CatalogProduct shape (masterImageUrl → imageUrl, price_vnd → price)
-      setProducts(
-        rawProducts.map((p) => {
-          const resolvedDriveLink =
-            p.driveLink ??
-            (typeof p.attributes?.drive_link === "string" ? p.attributes.drive_link : null)
-          const resolvedMasterImg =
-            p.masterImageUrl ??
-            (typeof p.attributes?.imageUrl === "string" ? p.attributes.imageUrl : null)
-          const finalImageUrl =
-            resolvedMasterImg || (resolvedDriveLink ? driveThumbProxySrc(resolvedDriveLink) : null)
-
-          return {
-            id: p.id,
-            code: p.code,
-            name: p.name,
-            category: p.category ?? null,
-            status: p.status as "DRAFT" | "ACTIVE" | "ARCHIVED",
-            occasion_code: p.occasion_code ?? null,
-            color: p.color ?? null,
-            collection: p.collection ?? null,
-            price: p.price_vnd ?? null,
-            imageUrl: finalImageUrl,
-            driveLink: resolvedDriveLink,
-            attributes: p.attributes ?? null,
-          }
-        })
-      )
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Lỗi khi tải dữ liệu")
-    } finally {
-      setLoading(false)
-    }
-  }, [router])
-
-  useEffect(() => {
-    void Promise.resolve().then(() => fetchProducts())
-  }, [fetchProducts])
 
   if (loading || profileLoading) {
     return (
@@ -127,10 +62,7 @@ export function LandingPageStudioClient() {
         {error && (
           <InlineError
             message={`${error}. Bạn vẫn tạo được trang; danh sách sản phẩm sẽ trống.`}
-            onRetry={() => {
-              setError(null)
-              void fetchProducts()
-            }}
+            onRetry={() => void fetchProducts()}
           />
         )}
 
