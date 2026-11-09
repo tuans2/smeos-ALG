@@ -61,8 +61,9 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
     await expectContract(await mockData(send("/business-profile/mock-data", "POST", { industry_key: "FLORAL" }, other)), 200, R.mockDataResponse, "mock-data")
     expect((await mockData(send("/business-profile/mock-data", "POST", { industry_key: "khong-co" }, other))).status).toBe(400)
     await expectContract(await transparency(get("/store/collection-transparency")), 200, R.transparencyResponse, "transparency-empty")
-    await prisma.branches.create({ data: { organization_id: t.organizationId, code: "Q1", name: "Chi nhánh Quận 1" } })
+    const own = await prisma.branches.create({ data: { organization_id: t.organizationId, code: "Q1", name: "Chi nhánh Quận 1" } })
     await expectContract(await transparency(get("/store/collection-transparency")), 200, R.transparencyResponse, "transparency")
+    await expectContract(await transparency(get(`/store/collection-transparency?storeId=${own.id}`)), 200, R.transparencyResponse, "transparency-own")
   })
 
   it("link hồ sơ công khai, đánh giá khách", async () => {

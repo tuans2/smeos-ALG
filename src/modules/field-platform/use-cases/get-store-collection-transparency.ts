@@ -36,11 +36,15 @@ export async function getStoreCollectionTransparency(
   storeId: string,
   organizationId: string,
   repo: IChainCollectionProfileRepository = getChainCollectionProfileRepository()
-): Promise<StoreCollectionTransparencyResult> {
+): Promise<StoreCollectionTransparencyResult | null> {
   // 1. Fetch store/branch details
   const branch = await repo.findBranchBasic(storeId)
+  // Cách ly tenant (09/11/2026, audit API §25): trước đây chi nhánh đọc theo id không lọc tổ chức — gửi mã chi nhánh
+  // của tổ chức khác nhận về tên chi nhánh và mức trần DSA của tổ chức đó. Không thấy hoặc khác tổ chức → null (404),
+  // và chỉ đọc DSA sau khi đã kiểm (cùng khuôn `getStoreFolderData`).
+  if (!branch || branch.organization_id !== organizationId) return null
 
-  const storeName = branch?.name ?? "Cửa hàng"
+  const storeName = branch.name
 
   // 2. Fetch chain profile
   const profile = await repo.getProfile(organizationId)

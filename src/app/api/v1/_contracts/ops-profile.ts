@@ -25,8 +25,8 @@ export const PROFILE_OPERATIONS: OpenApiOperation[] = [
     description: "`slogan` không gửi thì giữ giá trị đang lưu. `logo_asset_id` không được kiểm: mã lạ hoặc ảnh của tổ chức khác vẫn lưu (khi đó `logo_url` = `null`, không lộ ảnh) và hồ sơ bị tính là đã có logo (audit API §24).", ok: [200, { description: "Hồ sơ thương hiệu", schema: res.brandProfileResponse }], errors: BODY_ERRORS }),
   op(PROFILE, { method: "get", path: "/store/collection-transparency", operationId: "getStoreCollectionTransparency", summary: "Chuỗi đang thu thập dữ liệu gì của cửa hàng", cap: "F1",
     query: req.collectionTransparencyQuery,
-    description: "Không gửi `storeId` → chi nhánh đang hoạt động đầu tiên; không có → danh sách rỗng. **Lỗi đã ghi nhận (audit API §24):** `storeId` không được lọc theo tổ chức — chi nhánh của tổ chức khác trả 200 kèm tên chi nhánh và mức trần DSA của tổ chức đó; mã lạ cũng trả 200 (`storeName` \"Cửa hàng\").",
-    ok: [200, { description: "Mục dữ liệu và dạng hiệu lực", schema: res.transparencyResponse }] }),
+    description: "Không gửi `storeId` → chi nhánh đang hoạt động đầu tiên; không có → danh sách rỗng. Chi nhánh của tổ chức khác hoặc mã lạ → 404.",
+    ok: [200, { description: "Mục dữ liệu và dạng hiệu lực", schema: res.transparencyResponse }], errors: [404] }),
 
   op(CHANNEL, { method: "get", path: "/store-share-link", operationId: "getStoreShareLink", summary: "Link hồ sơ cửa hàng công khai đang hoạt động", cap: "F1",
     description: "Chưa có → `data: null`.", ok: [200, { description: "Link", schema: res.shareLinkResponse }] }),

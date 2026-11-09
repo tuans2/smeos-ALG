@@ -454,9 +454,19 @@ Phủ thêm 7 nhóm vào `internal.openapi.json`: `/business-profile/*` (2 route
 | API-15 | Lược đồ zod khai trong 8 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-profile.ts`, route import lại; thân link động giữ ở `short-links/schema.ts` (dùng chung POST/PATCH, xuất lại). Phản hồi khai `strictObject` (`responses-profile.ts`), đối chiếu mẫu ghi từ phản hồi thật | `tests/unit/architecture/internal-openapi.test.ts` |
 | API-15 | Phản hồi kiểm trên CSDL thật: hồ sơ doanh nghiệp/thương hiệu, dữ liệu mẫu theo ngành (tổ chức thường 403, không gian trải nghiệm 200, ngành lạ 400), minh bạch thu thập, link hồ sơ công khai (cần đủ hồ sơ kể cả logo), đánh giá khách (tổ chức khác 404), tên miền riêng (xác minh không thấy TXT → `verified: false`), link/QR động và thống kê | `tests/tenant/internal-contract-profile.test.ts` |
 
-Phát hiện khi viết hợp đồng (chưa sửa — chờ người dùng/PO):
-- **Cách ly tenant (P1)** — `GET /store/collection-transparency?storeId=`: `getStoreCollectionTransparency` gọi `findBranchBasic(storeId)` và `getStoreDsa(storeId)` (`field-platform/infra/chain-collection-repository.ts`) đọc `branches` theo `id` KHÔNG lọc tổ chức. Người của tổ chức A gửi mã chi nhánh của tổ chức B → 200 kèm tên chi nhánh của B (đã thử: "Chi nhánh bí mật của Q") và mức trần lan truyền tính theo thoả thuận chia sẻ dữ liệu (DSA) của B. Mã lạ cũng trả 200 thay vì 404. Vi phạm luật 2 CLAUDE.md (khác tổ chức → 404). Route anh em `GET /chain/stores-data/:storeId` đã kiểm đúng (§17).
+Phát hiện khi viết hợp đồng — lỗi P1 đã sửa ở §25; còn lại chưa sửa:
+- ~~**Cách ly tenant (P1)**~~ (đã sửa §25) — `GET /store/collection-transparency?storeId=`: `getStoreCollectionTransparency` gọi `findBranchBasic(storeId)` và `getStoreDsa(storeId)` (`field-platform/infra/chain-collection-repository.ts`) đọc `branches` theo `id` KHÔNG lọc tổ chức. Người của tổ chức A gửi mã chi nhánh của tổ chức B → 200 kèm tên chi nhánh của B (đã thử: "Chi nhánh bí mật của Q") và mức trần lan truyền tính theo thoả thuận chia sẻ dữ liệu (DSA) của B. Mã lạ cũng trả 200 thay vì 404. Vi phạm luật 2 CLAUDE.md (khác tổ chức → 404). Route anh em `GET /chain/stores-data/:storeId` đã kiểm đúng (§17).
 - `PUT /brand-profile`: `logo_asset_id` không được kiểm — mã lạ hoặc ảnh của tổ chức khác vẫn lưu (đã thử). Không lộ ảnh (`logo_url` ký theo tổ chức phiên → `null`), nhưng hồ sơ bị tính là đã có logo nên link hồ sơ công khai xuất bản được với logo không tồn tại.
 - Link/QR động trả cả trường đếm nội bộ của Prisma `_count: { leads }` ra API.
 - Phản hồi không bọc `{ data }` ở `business-profile`, `brand-profile`, `short-links`; sai thân `short-links` trả `details.body` một câu chung.
 - 10 phép thử lỗi khác (số sao, đích link ra ngoài, `days` sai, tên miền sai/trùng, mã lạ) đều trả đúng mã, không có 500.
+
+## 25. Nhật ký sửa — lỗi P1 phát hiện ở §24 (09/11/2026)
+
+Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **Cách ly tenant** — `GET /store/collection-transparency?storeId=` đọc `branches` và thoả thuận chia sẻ dữ liệu theo `id` không lọc tổ chức: mã chi nhánh của tổ chức khác → 200 kèm tên chi nhánh và mức trần DSA của tổ chức đó; mã lạ → 200 | `getStoreCollectionTransparency` (`field-platform/use-cases/get-store-collection-transparency.ts`) trả `null` khi không thấy chi nhánh hoặc `branches.organization_id` khác tổ chức của phiên, TRƯỚC khi đọc DSA (cùng khuôn `getStoreFolderData`); route đổi `null` thành 404. Test đơn vị cũ giả lập "không thấy chi nhánh" vẫn ra kết quả (khoá đúng hành vi lỗi) — nay giả lập chi nhánh của chính tổ chức, thêm ca khác tổ chức/mã lạ → `null` và không đọc DSA | `tests/tenant/store-transparency-isolation.test.ts` (2 ca đỏ trên mã cũ: 200), `chain-collection-profile.use-case.test.ts`, `internal-contract-profile.test.ts` |
+
+Chưa sửa (P3, ghi ở §24): `PUT /brand-profile` nhận `logo_asset_id` lạ/của tổ chức khác.

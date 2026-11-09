@@ -111243,7 +111243,7 @@
       "get": {
         "operationId": "getStoreCollectionTransparency",
         "summary": "Chuỗi đang thu thập dữ liệu gì của cửa hàng",
-        "description": "Không gửi `storeId` → chi nhánh đang hoạt động đầu tiên; không có → danh sách rỗng. **Lỗi đã ghi nhận (audit API §24):** `storeId` không được lọc theo tổ chức — chi nhánh của tổ chức khác trả 200 kèm tên chi nhánh và mức trần DSA của tổ chức đó; mã lạ cũng trả 200 (`storeName` \"Cửa hàng\").",
+        "description": "Không gửi `storeId` → chi nhánh đang hoạt động đầu tiên; không có → danh sách rỗng. Chi nhánh của tổ chức khác hoặc mã lạ → 404.",
         "tags": [
           "Hồ sơ cửa hàng"
         ],
@@ -111380,6 +111380,9 @@
           },
           "403": {
             "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
           },
           "409": {
             "$ref": "#/components/responses/Error409"

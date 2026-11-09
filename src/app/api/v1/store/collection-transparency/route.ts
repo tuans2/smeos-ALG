@@ -5,6 +5,7 @@
  * Stores can view all data points the chain collects from them and the effective format.
  */
 
+import { notFound } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -38,7 +39,9 @@ export const GET = handle(async (request) => {
     })
   }
 
+  // Chi nhánh của tổ chức khác hoặc mã lạ → 404 (không lộ là có tồn tại).
   const result = await getStoreCollectionTransparency(storeId, ctx.organizationId, repo)
+  if (!result) throw notFound()
   return jsonResponse({ data: result })
 })
 
