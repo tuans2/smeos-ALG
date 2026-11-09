@@ -41,7 +41,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
   if (branchId) {
     const branch = await repo.findBranchInOrganization(branchId, order.organization_id)
     if (branch) branchName = branch.name
-    if (branch?.partner_org_id) inAppChatUrl = `/tin-nhan?chuoi=${order.organization_id}`
+    if (branch && (await repo.isPartnerStoreCandidate(branchId, order.organization_id))) inAppChatUrl = `/tin-nhan?chuoi=${order.organization_id}`
   }
 
   const coordMeta = (order.coordination?.metadata as Record<string, unknown> | null) ?? {}
