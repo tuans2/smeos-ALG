@@ -8,7 +8,8 @@ import { createTenant, readJson, withSession, type Tenant } from "../helpers/fix
 
 /**
  * Hồi quy P2 (audit API §30): Điều hành từng bỏ được `F5` khỏi chính vai `dieu_hanh` (200) rồi không bật lại được (403
- * vì phiên đã mất `F5`). Nay tắt `F1`/`F5` trên vai Điều hành → 422 và không ghi gì.
+ * vì phiên đã mất `F5`). Nay tắt `F1`/`F5` trên vai Điều hành → 422 và không ghi gì (§30), và dòng ngoại lệ cũ đã tắt
+ * chúng không còn hiệu lực khi tính quyền (§34).
  */
 const BASE = "http://localhost/api/v1"
 
@@ -53,4 +54,15 @@ describe("sàn quyền của vai Điều hành", () => {
     expect(on.status).toBe(200)
     expect((await readJson(on)).capabilities).toContain("A4")
   })
+
+  it("tổ chức đã tự khoá TRƯỚC bản sửa (dòng ngoại lệ cũ tắt F5/F1) → sàn mở lại khi tính quyền (§34)", async () => {
+    await prisma.capability_overrides.createMany({
+      data: ["F5", "F1"].map((code) => ({ organization_id: t.organizationId, role_id: ownerRoleId, capability_code: code, allowed: false, updated_by: t.userId })),
+    })
+    expect(await ownerCaps()).toEqual(expect.arrayContaining(["F1", "F5"])) // GET /roles cần F1, thấy cả F5
+    const res = await patch([{ code: "A4", allowed: true }]) // phiên nạp lại quyền: còn F5 nên chỉnh vai được
+    expect(res.status).toBe(200)
+    expect((await readJson(res)).capabilities).toEqual(expect.arrayContaining(["F1", "F5", "A4"]))
+  })
 })
+

@@ -549,7 +549,7 @@ Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
 |---|---|---|
 | **Điều hành tự khoá quyền quản lý vai trò** — `PATCH /roles/{id}/capabilities` cho tắt `F5` (và `F1`) trên chính vai `dieu_hanh`; phiên mất `F5` nên không bật lại được (403) | Thêm sàn quyền trong lõi RBAC, đặt cạnh trần cứng: `OWNER_ROLE_FLOOR` / `breaksRoleFloor` (`core/rbac/permission-resolver.ts`) — vai `dieu_hanh` luôn giữ `F1` (xem tổ chức, danh sách vai) và `F5` (sửa vai); còn `F5` thì mọi mã khác bật lại được. `updateRoleCapabilities` kiểm sàn cùng vòng với trần cứng, TRƯỚC khi ghi: xuyên sàn → 422 `UNPROCESSABLE_ENTITY` kèm `details.capability`, không ghi gì kể cả thay đổi hợp lệ khác trong cùng yêu cầu. Spec 06 và mô tả OpenAPI cập nhật | `tests/tenant/role-owner-floor.test.ts` (3 ca đỏ trên mã cũ: 200/403), `permission-resolver.test.ts` |
 
-Chưa xử lý: tổ chức đã tự khoá TRƯỚC bản sửa vẫn còn dòng `capability_overrides` tắt `F5` của vai `dieu_hanh` — sàn chỉ chặn lệnh ghi mới, không áp khi tính quyền. Mở lại cần nền tảng xoá dòng đó (hoặc áp sàn cả lúc tính quyền — chờ PO quyết).
+Tổ chức đã tự khoá TRƯỚC bản sửa (dòng `capability_overrides` cũ tắt `F5`): đã xử lý ở §34 — sàn áp cả lúc tính quyền.
 
 ## 31. Nhật ký sửa — OpenAPI nội bộ, đợt công cụ (09/11/2026)
 
@@ -602,4 +602,12 @@ Người dùng yêu cầu sửa trước khi làm tiếp.
 | **`/proxy/{path}` chuyển tiếp khi chưa đăng nhập** — chỉ lệnh ghi `api/accounts` đòi phiên; mọi đường dẫn khác trong danh sách trắng (gồm `api/v1/worker/cron` của LocalBudd) được chuyển tiếp với danh tính `none` | Route luôn gọi `requireTenantContext` trước khi chuyển tiếp (sau kiểm `client` và danh sách trắng); `api/accounts` ghi vẫn đòi `J5`. Mọi nơi gọi proxy trong mã đều là màn hình của người đã đăng nhập; không cron/máy nào gọi qua proxy (đã `grep` mã, `render.yaml`, `workers/`) | `tests/tenant/proxy-auth.test.ts` (đỏ trên mã cũ: 500 vì đã gọi mạng thay vì 401) |
 | **`/proxy` lộ địa chỉ nội bộ khi lỗi** — `sendToSibling` ghép nguyên văn lỗi mạng (có URL hệ thống đích) vào thông báo 500 | Lỗi mạng → `log.error("proxy.upstream_failed", …)` giữ chi tiết; phản hồi chỉ còn "Không gọi được <hệ thống>, vui lòng thử lại sau". Thông báo hết giờ không đổi (không có địa chỉ) | `proxy-auth.test.ts` (đỏ trên mã cũ: thân chứa địa chỉ) |
 | **Chữ banner gọi LLM ngoài cổng AI** — `generateBannerCopyUseCase` gọi `createContentLLM().complete()` thẳng với `organizationId: "system"`: bỏ qua trần mô hình, sàn quyền riêng tư, sổ `ai_requests` | Dời lời gọi LLM vào adapter `ad-banner-poster/adapters/banner-copy-ai-adapter.ts` (kiểm JSON + luật ưu đãi tiệm trước khi chấm điểm); use-case gọi `callCapability` năng lực `content_generation` (AIC-23, sàn `SHOP`, cùng năng lực với landing/catalog) bằng `aiGatewayDeps(ctx)` và tổ chức thật của phiên. Không có phiên, cổng trả `khong_chay_duoc` hoặc lỗi → mẫu dựng sẵn như cũ. Route truyền `{ ctx }` | `ad-banner-poster/use-cases/banner-copy-gateway.test.ts` (4 ca), `banner-use-cases.test.ts` giữ nguyên |
+
+## 34. Nhật ký sửa — sàn vai Điều hành lúc tính quyền (09/11/2026)
+
+PO duyệt phương án "áp sàn cả lúc tính quyền" cho tổ chức đã tự khoá `F5` trước bản sửa §30 (không xoá tay dữ liệu).
+
+| Việc | Đã làm | Test |
+|---|---|---|
+| Dòng `capability_overrides` cũ tắt `F1`/`F5` của vai `dieu_hanh` vẫn khoá tổ chức | `applyRoleFloor` (`core/rbac/permission-resolver.ts`) bật lại các mã của `OWNER_ROLE_FLOOR` sau `mergeOverrides`, trước `applyHardCap`; phạm vi giữ theo lớp một. Gọi ở MỘT chỗ — `CapabilityRepository.resolveGrants` — nên phiên (`resolveSession`), `GET /roles` và kết quả `PATCH /roles/{id}/capabilities` cùng thấy. Không xoá/sửa dữ liệu: dòng cũ vẫn nằm đó nhưng không còn hiệu lực với hai mã sàn; ngoại lệ trên mã khác vẫn áp. Vai khác không đổi | `tests/tenant/role-owner-floor.test.ts` (ca mới đỏ trên mã cũ: phiên mất `F1` → `GET /roles` 403), `permission-resolver.test.ts` |
 

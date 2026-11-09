@@ -4,7 +4,7 @@ import type { capability_overrides, capability_scope, role_capabilities, roles }
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { defaultCodesForSystemRole, isCapabilityCode } from "@/core/rbac/capability-catalog"
-import { applyHardCap, mergeOverrides, type CapabilityGrant } from "@/core/rbac/permission-resolver"
+import { applyHardCap, applyRoleFloor, mergeOverrides, type CapabilityGrant } from "@/core/rbac/permission-resolver"
 import { scopedData, type TenantContext } from "@/core/tenancy"
 import { isSystemRoleKey } from "@/modules/organization/domain/system-roles"
 
@@ -26,7 +26,7 @@ import type { DbClient } from "./db-client"
  * tổ chức không sở hữu dòng `role_capabilities` dùng chung.
  *
  * Trần cứng (lớp ba) không nằm ở đây — `resolveGrants` gọi `applyHardCap`
- * sau khi gộp xong hai lớp trước.
+ * sau khi gộp xong hai lớp trước, và sàn vai Điều hành (`applyRoleFloor`) ngay trước đó.
  */
 export class CapabilityRepository {
   constructor(private readonly db: DbClient = prisma) {}
@@ -59,7 +59,8 @@ export class CapabilityRepository {
       base.map((row) => [row.capability_code, row.scope])
     )
     const merged = mergeOverrides(baseMap, overrides)
-    return applyHardCap(roleKey, merged)
+    // Sàn của vai Điều hành (F1/F5) thắng ngoại lệ cũ đã tắt chúng — audit API §34.
+    return applyHardCap(roleKey, applyRoleFloor(roleKey, merged, baseMap))
   }
 
   /** Như `resolveGrants`, cho use-case đã có `TenantContext` sẵn. */
