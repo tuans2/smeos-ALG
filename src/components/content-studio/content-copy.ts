@@ -20,7 +20,7 @@ function summaryOf(step: ContentStep, f: ContentProductFlags | null): { text: st
     const done = Number(f.cardApproved) + Number(f.copyApproved)
     return { text: done === 2 ? "Đã duyệt đủ" : f.cardApproved ? "Còn Bài giới thiệu" : "Còn duyệt Thẻ", percent: done * 50 }
   }
-  if (step === "SALES_PITCH") return f.pitchSaved ? { text: "Đã lưu vào Kho", percent: 100 } : { text: "Kiểm tra rồi chốt", percent: 50 }
+  if (step === "SALES_PITCH") return f.pitchSaved ? { text: "Đã lưu vào Kho", percent: 100 } : { text: "Kiểm tra rồi duyệt", percent: 50 }
   if (step === "CHANNEL_POSTS") return f.approvedPosts > 0 ? { text: `${f.approvedPosts} lượt bài đã duyệt`, percent: 100 } : { text: "Viết bài từng nền tảng", percent: 0 }
   return { text: "Kết nối kênh, lên lịch", percent: 0 }
 }

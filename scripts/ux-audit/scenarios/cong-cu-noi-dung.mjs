@@ -42,6 +42,8 @@ export async function run({ open, shot, org, uid }) {
   await shot("cc-nd-buoc2-the-chao", async (p) => {
     await openModule(p, withProduct)
     await p.getByText("Sản phẩm đang làm").waitFor({ timeout: 30000 })
+    // Chưa duyệt: thẻ mở thẳng tab "Chỉnh sửa thông tin" — nút duyệt phải thấy ngay, không phải tìm tab
+    await p.getByRole("button", { name: "Duyệt nội dung" }).waitFor()
   })
 
   await q(

@@ -60,15 +60,13 @@ interface SalesPitchCardProps {
   pitchData: SalesPitchData
   onOverridesChange?: (overrides: SalesPitchOverrides) => void
   onFinalize?: (finalizedPitch: SalesPitchData) => void
+  /** Tab mở đầu (mặc định "card"); "edit" khi cần user duyệt ngay — nút "Duyệt nội dung" nằm ở tab này */
+  initialTab?: "edit" | "card" | "script"
 }
 
-export function SalesPitchCard({
-  pitchData,
-  onOverridesChange,
-  onFinalize,
-}: SalesPitchCardProps) {
+export function SalesPitchCard({ pitchData, onOverridesChange, onFinalize, initialTab = "card" }: SalesPitchCardProps) {
   const [copied, setCopied] = useState(false)
-  const [activeTab, setActiveTab] = useState<"edit" | "card" | "script">("card")
+  const [activeTab, setActiveTab] = useState<"edit" | "card" | "script">(initialTab)
   const [editTab, setEditTab] = useState<"general" | "bom" | "gifts">("general")
   const [justFinalized, setJustFinalized] = useState(false)
 
