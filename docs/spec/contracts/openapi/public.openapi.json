@@ -782,6 +782,22 @@
                         "PAYMENT_ONLY",
                         "PAYMENT_OR_COORDINATOR"
                       ]
+                    },
+                    "entryActions": {
+                      "type": "object",
+                      "properties": {
+                        "order": {
+                          "type": "boolean"
+                        },
+                        "contact": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "order",
+                        "contact"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
@@ -792,7 +808,8 @@
                     "products",
                     "order",
                     "shipping",
-                    "payment"
+                    "payment",
+                    "entryActions"
                   ],
                   "additionalProperties": false
                 }
@@ -1343,6 +1360,9 @@
                   "variantName": {
                     "type": "string",
                     "maxLength": 120
+                  },
+                  "consent": {
+                    "type": "boolean"
                   },
                   "website": {
                     "type": "string",
@@ -7921,6 +7941,9 @@
                   "variantName": {
                     "type": "string",
                     "maxLength": 120
+                  },
+                  "consent": {
+                    "type": "boolean"
                   },
                   "website": {
                     "type": "string",

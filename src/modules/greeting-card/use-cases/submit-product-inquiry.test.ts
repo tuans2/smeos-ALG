@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest"
 vi.mock("../infra/greeting-card-repository", () => ({ GreetingCardRepository: class {} }))
 vi.mock("../infra/brochure-checkout-repository", () => ({ BrochureCheckoutRepository: class {} }))
 vi.mock("@/modules/crm/infra/product-inquiry-repository", () => ({ ProductInquiryRepository: class {} }))
+vi.mock("@/modules/acquisition/infra/lead-repository", () => ({ LeadRepository: class {} }))
 
 import { submitBrochureInquiry, submitProductInquiry, INQUIRY_PHONE_LIMIT } from "./submit-product-inquiry"
 
@@ -18,11 +19,12 @@ function deps(recent = 0) {
   }
   const checkout = { findOrCreateCustomer: vi.fn(async () => "cus-1") }
   const inquiries = { countRecentByPhone: vi.fn(async () => recent), create: vi.fn(async () => ({ conversationId: "conv-1" })) }
-  return { repo, checkout, inquiries }
+  const captureLead = vi.fn(async () => ({ leadId: "lead-1" }))
+  return { repo, checkout, inquiries, captureLead }
 }
 
 const run = (d: ReturnType<typeof deps>, catalogId = "cat", body = input) =>
-  submitProductInquiry(catalogId, body, d.repo as never, d.checkout as never, d.inquiries as never)
+  submitProductInquiry(catalogId, body, d.repo as never, d.checkout as never, d.inquiries as never, d.captureLead)
 
 describe("submitProductInquiry", () => {
   it("tạo khách + hội thoại trong đúng tổ chức của bộ sưu tập", async () => {
@@ -37,6 +39,19 @@ describe("submitProductInquiry", () => {
     await expect(run(d, "khac")).rejects.toMatchObject({ code: "NOT_FOUND" })
     await expect(run(d, "cat", { ...input, productId: "p-tiem-khac" })).rejects.toMatchObject({ code: "NOT_FOUND" })
     expect(d.inquiries.create).not.toHaveBeenCalled()
+  })
+
+  it("chưa đồng ý được liên hệ → chỉ ghi hội thoại, không tạo lead", async () => {
+    const d = deps()
+    await run(d)
+    await run(d, "cat", { ...input, consent: false } as typeof input)
+    expect(d.captureLead).not.toHaveBeenCalled()
+  })
+
+  it("đồng ý được liên hệ → lead mang id bộ sưu tập làm nguồn", async () => {
+    const d = deps()
+    await run(d, "cat", { ...input, consent: true } as typeof input)
+    expect(d.captureLead).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-A", sourceRef: "cat" }))
   })
 
   it("gửi dồn quá giới hạn mỗi SĐT → chặn", async () => {
@@ -58,6 +73,15 @@ describe("submitBrochureInquiry — link chào riêng", () => {
     await submitBrochureInquiry("AB-12345678", input, d.repo as never, d.checkout as never, d.inquiries as never)
     expect(d.inquiries.create).toHaveBeenCalledWith(
       expect.objectContaining({ organizationId: "org-B", metadata: expect.objectContaining({ sendCode: "AB-12345678", catalogId: "cat-b" }) })
+    )
+  })
+
+  it("khách đồng ý được liên hệ → ghi thêm lead đúng tổ chức, kèm mã link", async () => {
+    const d = deps()
+    await submitBrochureInquiry("AB-12345678", { ...input, consent: true }, d.repo as never, d.checkout as never, d.inquiries as never, d.captureLead)
+    expect(d.inquiries.create).toHaveBeenCalled()
+    expect(d.captureLead).toHaveBeenCalledWith(
+      expect.objectContaining({ organizationId: "org-B", customerId: "cus-1", phone: "0912345678", sourceRef: "AB-12345678" })
     )
   })
 

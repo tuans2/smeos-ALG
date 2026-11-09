@@ -5,6 +5,7 @@
 
 import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"
 import type { NavEntry, NavGroup, NavView } from "./nav-types"
+import { PRIVATE_COLLECTION, PUBLIC_COLLECTION } from "@/modules/toolkit/domain/collection-names"
 
 export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   // 01 · ĐIỀU HÀNH
@@ -64,21 +65,23 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/catalog",
-    label: "Catalog bán hàng",
+    label: PUBLIC_COLLECTION.name,
+    hint: PUBLIC_COLLECTION.hint,
     group: "cong-cu-chuoi",
     iconKey: "Globe",
     navKey: "chain-catalog",
     capability: "J1",
-    mobileLabel: "Catalog",
+    mobileLabel: PUBLIC_COLLECTION.mobileLabel,
   },
   {
     href: "/the-chao",
-    label: "Thẻ chào sản phẩm",
+    label: PRIVATE_COLLECTION.name,
+    hint: PRIVATE_COLLECTION.hint,
     group: "cong-cu-chuoi",
     iconKey: "CreditCard",
     navKey: "chain-greeting-card",
     capability: "R1",
-    mobileLabel: "Thẻ chào",
+    mobileLabel: PRIVATE_COLLECTION.mobileLabel,
   },
   {
     href: "/market-intelligence",

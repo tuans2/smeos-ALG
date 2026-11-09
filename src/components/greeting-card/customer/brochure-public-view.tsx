@@ -34,12 +34,14 @@ interface Props {
   /** Liên hệ cửa hàng — nút Gọi / Zalo cho mẫu "Liên hệ" */
   shop?: ShopContact | null | undefined
   shipping: ShippingConfig
+  /** Công tắc chủ cửa hàng: tắt Đặt hàng → chỉ còn liên hệ; bật Liên hệ → mọi mẫu có khung nhắn tin */
+  entryActions?: { order: boolean; contact: boolean } | undefined
 }
 
 
 const SELECTED_KEY = "public-selected"
 
-export function BrochurePublicView({ catalog, products, shipping, shop }: Props) {
+export function BrochurePublicView({ catalog, products, shipping, shop, entryActions = { order: true, contact: false } }: Props) {
   const [step, setStep] = useState<PublicStep>("SWIPING")
   // Mẫu đang chọn + bước đang đứng nhớ trên máy: rời trang lúc xem mẫu đã chọn / điền form thì quay lại đúng chỗ
   const [selectedId, setSelectedId] = useSavedState<string | null>(SELECTED_KEY, null)
@@ -180,6 +182,9 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
 
   // 3. PREVIEW SELECTED CARD WITH "ĐẶT NGAY" BUTTON
   if (step === "PREVIEW" && selected) {
+    const inquiryUrl = `/api/v1/public/greeting-catalog/${catalog.id}/inquiry`
+    // Mẫu "Liên hệ" hoặc cửa hàng tắt Đặt hàng → không có nút Đặt ngay, chỉ khung liên hệ
+    const contactOnly = selected.priceMode === "CONTACT" || !entryActions.order
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg p-4">
         <div className="w-full max-w-md bg-surface rounded-3xl shadow-xl overflow-hidden border border-border">
@@ -196,24 +201,26 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
               {selected.priceMode === "RANGE" && (
                 <p className="text-body-sm text-text-muted mt-1">Giá tùy phiên bản — bạn chọn phiên bản ở bước đặt hàng để biết giá chính xác.</p>
               )}
-              {selected.priceMode === "CONTACT" && (
+              {contactOnly && (
                 <p className="text-body-sm text-text-muted mt-1">
-                  Mẫu này cửa hàng tư vấn giá trực tiếp. Bạn gọi điện, nhắn Zalo hoặc để lại tin nhắn nhé.
+                  {selected.priceMode === "CONTACT"
+                    ? "Mẫu này cửa hàng tư vấn giá trực tiếp. Bạn gọi điện, nhắn Zalo hoặc để lại tin nhắn nhé."
+                    : "Cửa hàng sẽ tư vấn mẫu này cho bạn. Bạn gọi điện, nhắn Zalo hoặc để lại tin nhắn nhé."}
                 </p>
               )}
-              {selected.priceMode === "CONTACT" && (
+              {contactOnly && (
                 <div className="mt-3">
-                  <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
+                  <ProductContactActions shop={shop} inquiryUrl={inquiryUrl} product={selected} />
                 </div>
               )}
-              {selected.price === null && selected.priceMode !== "CONTACT" && (
+              {selected.price === null && !contactOnly && (
                 <p className="text-body-sm text-text-muted mt-1">
                   Mẫu này chưa niêm yết giá — bạn cứ đặt, cửa hàng sẽ liên hệ báo giá trước khi thu tiền.
                 </p>
               )}
             </div>
 
-            {selected.priceMode !== "CONTACT" && (
+            {!contactOnly && (
             <Button variant="primary"
               type="button"
               onClick={() => {
@@ -227,10 +234,10 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
             </Button>
             )}
 
-            {selected.priceMode === "RANGE" && (
-              <Disclosure label="Muốn phiên bản theo ý bạn? Nhắn cửa hàng">
+            {!contactOnly && (selected.priceMode === "RANGE" || entryActions.contact) && (
+              <Disclosure label={selected.priceMode === "RANGE" ? "Muốn phiên bản theo ý bạn? Nhắn cửa hàng" : "Cần tư vấn thêm? Nhắn cửa hàng"}>
                 <div className="mt-2">
-                  <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
+                  <ProductContactActions shop={shop} inquiryUrl={inquiryUrl} product={selected} />
                 </div>
               </Disclosure>
             )}

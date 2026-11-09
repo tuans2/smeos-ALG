@@ -80,6 +80,8 @@ export interface NavEntry {
   capability?: string
   status?: "READY" | "COMING_SOON"
   mobileLabel?: string
+  /** Mô tả mục đích — hiện khi rê chuột lên mục */
+  hint?: string
 }
 
 export interface NavGroup {

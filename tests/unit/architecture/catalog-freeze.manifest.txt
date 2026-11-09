@@ -117,7 +117,7 @@ f5e1bfcf363b290f0f19cc5206875ff5fc3578b6e58af0690e1d098d02b5a78a  src/components
 52d5d1b3d22823dda29629294331c72392e01b1a6b7830a9a5c5fb32c0b837c9  src/components/templates/catalog/product-detail-card.tsx
 1fc62f6e15136d2daca65b60fa3ce8efc5eb4659bc109894fd3af8eae449c955  src/components/templates/catalog/quote-summary-card.tsx
 1d551453de49bc9080c8d333e3c5633c1a43014400857c46df334646104672cf  src/app/(app)/catalog/layout.tsx
-2263f3640eaf0bb918f518c6768f1a01392eb7b91a69bc0bf74bd354f9edb6fa  src/app/(app)/catalog/page.tsx
+de67714ea0ba40c9290d441897183d3fcc3311e364f8f5cca7c86d3f4d078e34  src/app/(app)/catalog/page.tsx
 5ee384b146f8c78a0c1b37fbd6477c87aa4cf9395c36df019f051e0362c31efa  src/app/c/[slug]/opengraph-image.tsx
 9f385905bfd40b5a23428a0c38c0a1bbfe5236fe1731bd8d6696221b7444dd6a  src/app/c/[slug]/page.tsx
 b10580f1d75af7b70871659014b1841725f8639cee42797eea4f478f639a5a17  src/app/c/not-found.tsx

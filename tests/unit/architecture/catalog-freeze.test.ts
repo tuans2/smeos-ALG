@@ -39,6 +39,8 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  * - PO 08/11/2026 (mục Thương hiệu bước 3): Landing page chính thức của cửa hàng dùng trang khách /c/[slug] —
  *   link có `filters.store_official` thêm khối "Thông tin cửa hàng" (`landing-template-store-info.tsx`,
  *   `official-store-info.ts`) và đọc sống ảnh, video, sản phẩm chủ đạo từ Hồ sơ cửa hàng. Link khác không đổi.
+ * - PO 09/11/2026: đổi tên Catalog thành "Bộ sưu tập chung" kèm "?" mô tả mục đích ở đầu trang /catalog
+ *   (`collection-names.ts`) — chỉ đổi chữ tiêu đề, không đổi luồng.
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")

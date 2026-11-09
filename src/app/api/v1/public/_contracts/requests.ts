@@ -107,6 +107,8 @@ export const brochureInquiryBody = z.object({
   customerPhone: z.string().max(20),
   message: z.string().max(INQUIRY_MESSAGE_MAX * 2),
   variantName: z.string().max(120).optional(),
+  /** Khách đồng ý để cửa hàng liên hệ lại → ghi thêm lead */
+  consent: z.boolean().optional(),
   /** Ô bẫy máy tự điền */
   website: z.string().max(200).optional(),
 })
@@ -178,6 +180,8 @@ export const greetingCatalogInquiryBody = z.object({
   customerPhone: z.string().max(20),
   message: z.string().max(INQUIRY_MESSAGE_MAX * 2),
   variantName: z.string().max(120).optional(),
+  /** Khách đồng ý để cửa hàng liên hệ lại → ghi thêm lead */
+  consent: z.boolean().optional(),
   /** Ô bẫy máy tự điền */
   website: z.string().max(200).optional(),
 })

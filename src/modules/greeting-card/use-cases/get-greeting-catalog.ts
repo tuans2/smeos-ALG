@@ -18,6 +18,8 @@ import type { ShopContact } from "../domain/shop-contact"
 import { getShopContact } from "./get-shop-contact"
 import { parsePaymentPolicy, resolveTrackingTriggerPolicy, type TrackingTriggerPolicy } from "../domain/brochure-payment-policy"
 import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
+import type { EntryActions } from "@/modules/orders/domain/entry-actions"
+import { brochureEntryActions } from "../domain/brochure-entry-actions"
 
 export type CustomerBrochureView = {
   status: "ACTIVE"
@@ -33,6 +35,8 @@ export type CustomerBrochureView = {
   payment: BrochurePaymentInstructions | null
   /** Cơ chế kích hoạt bước tiếp theo (PAYMENT_ONLY hoặc PAYMENT_OR_COORDINATOR). */
   trackingTriggerPolicy?: TrackingTriggerPolicy
+  /** Nút "Đặt hàng" / "Liên hệ" chủ cửa hàng bật cho Bộ sưu tập riêng */
+  entryActions: EntryActions
 }
 
 /**
@@ -109,6 +113,7 @@ export async function getGreetingCatalogForCustomer(
     order,
     payment,
     trackingTriggerPolicy,
+    entryActions: brochureEntryActions(session.organization?.settings),
   }
 }
 

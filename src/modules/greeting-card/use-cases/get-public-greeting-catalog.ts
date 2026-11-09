@@ -7,6 +7,8 @@ import type { ShopContact } from "../domain/shop-contact"
 import { getShopContact } from "./get-shop-contact"
 import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
 import { applyPriceVisibility, readPriceVisibility } from "../domain/price-visibility"
+import type { EntryActions } from "@/modules/orders/domain/entry-actions"
+import { brochureEntryActions } from "../domain/brochure-entry-actions"
 
 export type PublicGreetingCatalogResult =
   | {
@@ -22,6 +24,8 @@ export type PublicGreetingCatalogResult =
       products: GreetingCatalogProduct[]
       shipping: ShippingConfig
       shop: ShopContact | null
+      /** Nút "Đặt hàng" / "Liên hệ" chủ cửa hàng bật cho Bộ sưu tập riêng */
+      entryActions: EntryActions
     }
   | { status: "NOT_FOUND" }
 
@@ -58,6 +62,7 @@ export async function mapCatalogToPublicResult(
       filters: toPublicCatalogFilters(catalog.filters, catalog.organization.settings, undefined, await loadPolicyGovernance(catalog.organization_id)),
     },
     products,
+    entryActions: brochureEntryActions(catalog.organization.settings),
   }
 }
 

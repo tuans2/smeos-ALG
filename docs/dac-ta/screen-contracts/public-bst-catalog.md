@@ -49,3 +49,6 @@ acceptance:
 ## 5. Quy chuẩn Trợ năng & Responsive (A11y & Responsive)
 - Hỗ trợ cuộn mượt và lazy load ảnh có thuộc tính alt đầy đủ.
 - Responsive từ di động 1 cột đến máy tính để bàn 3-4 cột.
+
+## 6. Nút Đặt hàng / Liên hệ (09/11/2026, PO)
+Theo cài đặt nguồn `BROCHURE` như `/b/[sendCode]` — xem `public-b-sendcode.md` §6.

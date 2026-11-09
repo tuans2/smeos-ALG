@@ -13,6 +13,7 @@
 
 import type { GovernanceTier } from "@/core/governance/layered-resolver"
 import type { NavEntry } from "@/components/layout/nav/nav-types"
+import { PRIVATE_COLLECTION, PUBLIC_COLLECTION } from "./collection-names"
 
 /** Kiểu tầng duy nhất — `core/governance/layered-resolver.ts`. */
 export type PlatformTier = GovernanceTier
@@ -61,8 +62,8 @@ export const PLATFORM_TOOL_REGISTRY: readonly PlatformToolItem[] = [
   {
     id: 1,
     key: "tool-catalog",
-    name: "Catalog & Kênh bán",
-    description: "Tạo catalog số hóa, link showroom sản phẩm và mã QR",
+    name: PUBLIC_COLLECTION.name,
+    description: PUBLIC_COLLECTION.hint,
     href: "/catalog",
     iconKey: "Globe",
     category: "SALES_CHANNELS",
@@ -70,13 +71,13 @@ export const PLATFORM_TOOL_REGISTRY: readonly PlatformToolItem[] = [
     supportedTiers: ["INDUSTRY", "CHAIN", "STORE"],
     status: "ACTIVE",
     isPinnedToSidebar: true,
-    mobileLabel: "Catalog",
+    mobileLabel: PUBLIC_COLLECTION.mobileLabel,
   },
   {
     id: 2,
     key: "tool-greeting-card",
-    name: "Thẻ chào sản phẩm",
-    description: "Tạo thẻ chào A6, 1:1, Story gửi khách kèm kịch bản tư vấn Zalo",
+    name: PRIVATE_COLLECTION.name,
+    description: PRIVATE_COLLECTION.hint,
     href: "/the-chao",
     iconKey: "Sparkles",
     category: "SALES_CHANNELS",
@@ -84,7 +85,7 @@ export const PLATFORM_TOOL_REGISTRY: readonly PlatformToolItem[] = [
     supportedTiers: ["INDUSTRY", "CHAIN", "STORE"],
     status: "ACTIVE",
     isPinnedToSidebar: true,
-    mobileLabel: "Thẻ chào",
+    mobileLabel: PRIVATE_COLLECTION.mobileLabel,
   },
   {
     id: 3,

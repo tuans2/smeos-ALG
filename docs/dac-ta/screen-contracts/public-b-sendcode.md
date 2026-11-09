@@ -50,3 +50,11 @@ acceptance:
 - Tối ưu hóa chuyển đổi trên thiết bị di động (mobile-first).
 - Vùng chạm tối thiểu 44×44px cho mọi nút chọn sản phẩm và nút gửi.
 - Không vi phạm tiêu chuẩn tương phản màu sắc và hỗ trợ đọc màn hình.
+
+## 6. Nút Đặt hàng / Liên hệ theo cài đặt chủ cửa hàng (09/11/2026, PO)
+Cùng công tắc với Bộ sưu tập chung (`KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §3.2), nguồn `BROCHURE`; áp cho `/b/[sendCode]`, `/g/[id]`, `/bst/[orgSlug]/[catalogCode]`.
+- **Mặc định:** Đặt hàng bật, Liên hệ tắt → trang khách như trước.
+- **Tắt Đặt hàng** (chỉ được khi Liên hệ bật): chạm mẫu nào cũng mở khung Gọi / Zalo / Nhắn tin, không có nút Đặt ngay. Máy chủ: chọn mẫu, báo giá, gửi đơn trả 404 (đơn đã có vẫn xem được).
+- **Bật Liên hệ:** `/b` thêm nút "Nhắn tin" trên thanh cửa hàng (form tư vấn cho mẫu đang xem); `/g`, `/bst` thêm mục "Cần tư vấn thêm? Nhắn cửa hàng" ở chi tiết mẫu.
+- Mẫu giá "Liên hệ" luôn có khung liên hệ, bất kể công tắc.
+- **Form nhắn tin** có ô bắt buộc "đồng ý để cửa hàng liên hệ lại". Gửi đi tạo yêu cầu tư vấn trong Hội thoại **và** một khách tiềm năng (lead nguồn `BROCHURE`, lý do `CONTACT`, `source_ref` = mã link hoặc id bộ sưu tập). Bản trang cũ không gửi ô đồng ý → chỉ ghi Hội thoại.

@@ -41,8 +41,8 @@ export const homeVi = {
   "spotlight": {
     "badge": "Nổi bật",
     "readyStatus": "Sẵn sàng sử dụng",
-    "title": "Thẻ chào sản phẩm",
-    "description": "Gửi bộ sưu tập hoa cho khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.",
+    "title": "Bộ sưu tập riêng",
+    "description": "Gửi bộ sưu tập riêng cho từng khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.",
     "features": {
       "zalo": "Gửi link qua Zalo",
       "customerPick": "Khách tự chọn mẫu và gửi lời chúc",
