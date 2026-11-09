@@ -82,6 +82,7 @@ Hỗ trợ 2 kịch bản vận hành thực tế:
    - Tạo mới `users` (nếu email chưa tồn tại) & liên kết `memberships` (role = `store_admin`).
    - Tạo bản ghi `organization_links` liên kết Chuỗi mẹ ⟷ Cửa hàng mới.
    - Tự động kích hoạt phòng chat nội bộ `CHAIN_PARTNER` giữa Chuỗi mẹ và Cửa hàng.
+   - *(09/11/2026)* Phòng được bảo đảm mỗi khi liên kết hiệu lực — cấp tài khoản, cửa hàng đồng ý lời mời, chuỗi mở lại liên kết (`chain-partnership/use-cases/partner-link-effects.ts`); một liên kết đúng một phòng; mọi nhân viên có mã `S1` ở hai bên vào được. Cùng lúc, cửa hàng có thêm một dòng ứng viên bắn đơn trong chuỗi (`branches.partner_org_id`, mã `DT-<mã đối tác>`) để vào chung vòng phân bổ theo khu vực; tạm dừng / chấm dứt → ra khỏi vòng (chấm dứt khi còn giữ đơn → báo Điều phối). Liên kết có sẵn từ trước: `scripts/backfill-chat-rooms.ts` (chạy thử mặc định, `--apply` để ghi).
 4. Đối tác nhận tài khoản, đăng nhập webapp là thấy ngay giao diện Cửa hàng và kênh chat với Chuỗi.
 
 ### Kịch bản 2: Chuỗi gửi link mời Đối tác tự đăng ký (Self-Serve Invitation)

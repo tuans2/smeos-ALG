@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { isAllowedChatTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -9,6 +10,16 @@ import { CLIENT_CREATABLE_CONVERSATION_TYPES } from "@/modules/internal-chat/dom
 import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { ListUserConversationsUseCase } from "@/modules/internal-chat/use-cases/list-user-conversations"
 import { CreateOrGetConversationUseCase } from "@/modules/internal-chat/use-cases/create-or-get-conversation"
+import { openRoom } from "@/modules/internal-chat/use-cases/open-room"
+import { PrismaChatRoomDirectory } from "@/modules/internal-chat/infra/prisma-chat-room-directory"
+import { INTERNAL_CHAT_CAPABILITY } from "@/modules/internal-chat/domain/chat-capabilities"
+
+/** Nút "Nhắn tin": mở phòng của đúng một cặp (chuỗi ↔ cửa hàng đối tác, hoặc chi nhánh nội bộ) — IC-2.6. */
+const openRoomSchema = z.union([
+  z.object({ partnerOrgId: z.string().uuid() }).strict(),
+  z.object({ chainOrgId: z.string().uuid() }).strict(),
+  z.object({ branchId: z.string().uuid() }).strict(),
+])
 
 const createConversationSchema = z.object({
   // `PLATFORM_TENANT` (Nền tảng ↔ khách) không cho client tự tạo
@@ -22,7 +33,8 @@ const createConversationSchema = z.object({
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   const url = new URL(request.url)
-  const typeParsed = z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "ORDER_THREAD"]).optional().safeParse(url.searchParams.get("type") || undefined)
+  requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
+  const typeParsed = z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "CHAIN_BRANCH", "ORDER_THREAD"]).optional().safeParse(url.searchParams.get("type") || undefined)
   if (!typeParsed.success) throw validationFailed({ type: "Loại cuộc hội thoại không hợp lệ" })
   const conversationType = typeParsed.data
   const orderId = url.searchParams.get("orderId") ?? undefined
@@ -33,6 +45,7 @@ export const GET = handle(async (request) => {
   const result = await useCase.execute({
     userId: ctx.userId,
     organizationId: ctx.organizationId,
+    branchId: ctx.branchId,
     conversationType,
     orderId,
   })
@@ -46,7 +59,20 @@ export const GET = handle(async (request) => {
 
 export const POST = handle(async (request) => {
   const { resolved, ctx } = await requireTenantContext(request)
+  requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
   const body = await request.json().catch(() => null)
+
+  const room = openRoomSchema.safeParse(body)
+  if (room.success) {
+    const chatRepo = getInternalChatRepository()
+    const conversation = await openRoom(
+      { chatRepo, linkPolicy: getChatLinkPolicy(), directory: new PrismaChatRoomDirectory() },
+      { userId: ctx.userId, organizationId: ctx.organizationId, branchId: ctx.branchId },
+      room.data
+    )
+    return jsonResponse({ success: true, data: conversation })
+  }
+
   const parsed = createConversationSchema.safeParse(body)
 
   if (!parsed.success) {

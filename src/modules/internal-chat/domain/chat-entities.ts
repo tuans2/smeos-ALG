@@ -1,4 +1,4 @@
-export type ConversationType = "PLATFORM_TENANT" | "CHAIN_PARTNER" | "ORDER_THREAD"
+export type ConversationType = "PLATFORM_TENANT" | "CHAIN_PARTNER" | "CHAIN_BRANCH" | "ORDER_THREAD"
 
 export type ParticipantRoleInChat = "OWNER" | "ADMIN" | "MEMBER" | "GUEST_PARTNER"
 
@@ -41,12 +41,18 @@ export interface InternalChatConversation {
   title: string | null
   orderId: string | null
   metadata: Record<string, unknown>
+  /** Bên kia của phòng liên tổ chức (cửa hàng đối tác); null = phòng trong một tổ chức */
+  counterpartOrgId?: string | null | undefined
+  /** Phòng chi nhánh nội bộ (`CHAIN_BRANCH`) */
+  branchId?: string | null | undefined
   createdBy: string
   createdAt: Date
   updatedAt: Date
   lastMessageAt: Date
   unreadCount?: number | undefined
   lastMessageSnippet?: string | undefined
+  /** Tên bên kia theo phía người xem (chuỗi thấy tên cửa hàng, cửa hàng thấy tên chuỗi) */
+  counterpartName?: string | undefined
 }
 
 export interface InternalChatParticipant {

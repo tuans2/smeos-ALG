@@ -29,6 +29,8 @@ export const GET = handle(async (request) => {
       telegramChatId: b.channels?.telegramChatId ?? null,
       telegramLinked: Boolean(b.channels?.telegramChatId && linkedIds.has(b.channels.telegramChatId)),
       zalo: Boolean(b.channels?.zaloUserId || b.channels?.zaloPhone),
+      // Cửa hàng đối tác có tài khoản smeOS — tự vào danh sách khi liên kết, nhận thẻ mời trong Trao đổi nội bộ
+      partnerStore: Boolean(b.partnerOrgId),
     })),
   })
 })

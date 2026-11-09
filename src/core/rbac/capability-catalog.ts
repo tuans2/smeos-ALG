@@ -39,6 +39,7 @@ export type CapabilityGroup =
   | "integration"
   | "marketing_usage"
   | "print"
+  | "internal_chat"
 
 export interface CapabilityDefinition {
   /** Mã chữ cái — định danh chính, ví dụ `B5`. */
@@ -293,6 +294,9 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   M3: { name: "marketing.campaign.manage", group: "marketing_usage", label: "Tạo và quản lý chiến dịch quảng bá, kích hoạt và đo lường", defaultRoles: ["dieu_hanh", "marketing"] },
   M4: { name: "crm.segment.manage", group: "crm", label: "Quản lý nhóm khách và chăm sóc khách hàng", defaultRoles: ["dieu_hanh", "marketing"] },
   M5: { name: "print.rendition.export", group: "print", label: "Kiểm quy cách và xuất ấn phẩm in ấn (PDF, 300 DPI)", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing"] },
+  // S — Trao đổi nội bộ chuỗi ↔ chi nhánh / cửa hàng đối tác (PO duyệt D2, 09/11/2026 — docs/plan/hoan-thien-chat-noi-bo.md)
+  S1: { name: "internal_chat.use", group: "internal_chat", label: "Dùng trao đổi nội bộ với chuỗi, chi nhánh và cửa hàng đối tác", defaultRoles: STAFF_ROLES },
+  S2: { name: "internal_chat.order.fulfil", group: "internal_chat", label: "Nhận và cập nhật đơn gia công được giao trong trao đổi nội bộ", defaultRoles: ["dieu_hanh", "dieu_phoi", "cua_hang", "tho_cam"] },
 }
 
 const ALL: Record<string, Omit<CapabilityDefinition, "code">> = { ...HARVESTED, ...CORE_NEW }

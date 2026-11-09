@@ -20,13 +20,15 @@ export class PrismaChatMessageStore {
     // organization_id sao từ hội thoại cha — khoá ghép giữ tin nhắn cùng tổ chức với hội thoại.
     const conversation = await this.prisma.internal_chat_conversations.findUniqueOrThrow({
       where: { id: params.conversationId },
-      select: { organization_id: true },
+      select: { organization_id: true, counterpart_org_id: true },
     })
     const [msgRow] = await this.prisma.$transaction([
       this.prisma.internal_chat_messages.create({
         data: {
           conversation_id: params.conversationId,
           organization_id: conversation.organization_id,
+          // Sao bên kia của phòng để RLS cho cửa hàng đối tác đọc/ghi tin (trigger cũng điền, nhưng CSDL dựng bằng db push không có trigger)
+          counterpart_org_id: conversation.counterpart_org_id,
           sender_user_id: params.senderUserId,
           sender_role: params.senderRole,
           message_type: params.messageType ?? "TEXT",
@@ -75,10 +77,13 @@ export class PrismaChatMessageStore {
     }
   }
 
-  async markRead(conversationId: string, userId: string): Promise<void> {
-    await this.prisma.internal_chat_participants.updateMany({
-      where: { conversation_id: conversationId, user_id: userId },
-      data: { last_read_at: new Date() },
+  /** Vào phòng theo tổ chức (D1): dòng thành viên chỉ để lưu đã đọc / tắt tiếng, tạo khi mở lần đầu. */
+  async markRead(conversationId: string, userId: string, organizationId: string): Promise<void> {
+    const now = new Date()
+    await this.prisma.internal_chat_participants.upsert({
+      where: { conversation_id_user_id: { conversation_id: conversationId, user_id: userId } },
+      update: { last_read_at: now },
+      create: { conversation_id: conversationId, user_id: userId, organization_id: organizationId, role_in_chat: "MEMBER", last_read_at: now },
     })
   }
 

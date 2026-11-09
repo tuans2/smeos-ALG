@@ -39,6 +39,7 @@ type ChainBranchRow = {
   max_concurrent_jobs: number
   is_active: boolean
   channels: Prisma.JsonValue
+  partner_org_id?: string | null | undefined
 }
 
 function channelsOf(value: Prisma.JsonValue): BranchChannelConfig {
@@ -65,6 +66,7 @@ export function toBranchCandidate(row: ChainBranchRow): BranchCandidate {
     maxConcurrentJobs: row.max_concurrent_jobs,
     isActive: row.is_active,
     channels: channelsOf(row.channels),
+    ...(row.partner_org_id ? { partnerOrgId: row.partner_org_id } : {}),
   }
 }
 

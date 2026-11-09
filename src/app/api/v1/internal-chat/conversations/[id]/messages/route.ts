@@ -1,5 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { requireCapability } from "@/core/rbac/capabilities"
+import { INTERNAL_CHAT_CAPABILITY } from "@/modules/internal-chat/domain/chat-capabilities"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
@@ -31,6 +33,7 @@ function issuesOf(error: z.ZodError): string {
 
 export const GET = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
   const { id: conversationId } = await context.params
   const url = new URL(request.url)
   const query = listQuerySchema.safeParse({ before: url.searchParams.get("before") ?? undefined, limit: url.searchParams.get("limit") ?? undefined })
@@ -43,6 +46,7 @@ export const GET = handle<[{ params: Promise<{ id: string }> }]>(async (request,
     conversationId,
     userId: ctx.userId,
     organizationId: ctx.organizationId,
+    branchId: ctx.branchId,
     limit: query.data.limit,
     before,
   })
@@ -56,6 +60,7 @@ export const GET = handle<[{ params: Promise<{ id: string }> }]>(async (request,
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { resolved, ctx } = await requireTenantContext(request)
+  requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
   const { id: conversationId } = await context.params
   const body = await request.json().catch(() => null)
   const parsed = sendMessageSchema.safeParse(body)
@@ -66,6 +71,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     conversationId,
     userId: ctx.userId,
     organizationId: ctx.organizationId,
+    branchId: ctx.branchId,
     userRole: resolved.membership?.role_id ?? "member",
     content: parsed.data.content,
   })

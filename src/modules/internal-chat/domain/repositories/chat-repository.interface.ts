@@ -11,6 +11,7 @@ import type {
   ConversationType,
 } from "../chat-entities"
 import type { MessageCursor } from "../message-cursor"
+import type { LinkState } from "../conversation-access-policy"
 
 export interface CreateConversationParams {
   organizationId: string
@@ -20,11 +21,19 @@ export interface CreateConversationParams {
   createdBy: string
   participantUserIds: { userId: string; organizationId: string; roleInChat?: string | undefined }[]
   metadata?: Record<string, unknown> | undefined
+  /** Bên kia của phòng liên tổ chức (cửa hàng đối tác) — RLS cho tổ chức này thấy phòng */
+  counterpartOrgId?: string | undefined
+  /** Phòng chi nhánh nội bộ */
+  branchId?: string | undefined
+  /** Khoá chống trùng trong tổ chức (`partner:<id>` / `branch:<id>`) */
+  roomKey?: string | undefined
 }
 
 export interface ListConversationsFilter {
   userId: string
   organizationId: string
+  /** `memberships.branch_id` của người xem — null = toàn tổ chức */
+  branchId?: string | null | undefined
   conversationType?: ConversationType | undefined
   orderId?: string | undefined
   limit?: number | undefined
@@ -53,11 +62,14 @@ export interface IInternalChatRepository {
   findConversationById(conversationId: string): Promise<InternalChatConversation | null>
   /** Luồng theo đơn của ĐÚNG tổ chức chủ đơn — không tra chéo tổ chức (tổ chức khác có thể gắn trùng mã đơn). */
   findConversationByOrderId(organizationId: string, orderId: string): Promise<InternalChatConversation | null>
+  /** Phòng theo khoá chống trùng của tổ chức chủ phòng. */
+  findConversationByRoomKey(organizationId: string, roomKey: string): Promise<InternalChatConversation | null>
   /** Phòng cùng tổ chức, cùng loại, không gắn đơn, có đủ cả hai người — để không tạo phòng trùng. */
   findDirectConversation(organizationId: string, conversationType: ConversationType, userIds: [string, string]): Promise<InternalChatConversation | null>
   /**
-   * Phòng người dùng đang tham gia trong ngữ cảnh tổ chức hiện tại: phòng của chính tổ chức, hoặc phòng của tổ chức
-   * có liên kết chuỗi–đối tác ACTIVE với tổ chức hiện tại. `unreadCount` = số tin của người khác sau `last_read_at`.
+   * Phòng trong phạm vi người xem (D1): phòng của chính tổ chức (phòng chi nhánh chỉ khi đúng chi nhánh hoặc toàn tổ
+   * chức), phòng chuỗi có tổ chức này là bên kia với liên kết ACTIVE / SUSPENDED, và phòng cũ người xem là thành viên
+   * với liên kết ACTIVE. `unreadCount` = số tin của người khác sau `last_read_at` (chưa mở lần nào = mọi tin).
    */
   listConversations(filter: ListConversationsFilter): Promise<{ items: InternalChatConversation[]; total: number }>
   getParticipants(conversationId: string): Promise<InternalChatParticipant[]>
@@ -67,7 +79,8 @@ export interface IInternalChatRepository {
   findMessageById(messageId: string): Promise<InternalChatMessage | null>
   /** Trang tin mới nhất (hoặc cũ hơn `before`), tối đa `limit` (trần 100). */
   listMessages(conversationId: string, limit?: number | undefined, before?: MessageCursor | undefined): Promise<MessagePage>
-  markRead(conversationId: string, userId: string): Promise<void>
+  /** Đánh dấu đã đọc; chưa có dòng thành viên (vào theo tổ chức, D1) thì tạo với tổ chức của người đọc. */
+  markRead(conversationId: string, userId: string, organizationId: string): Promise<void>
   /**
    * Gộp `patch` vào `action_payload` chỉ khi thẻ còn ở trạng thái `expectedStatus` (một câu lệnh có điều kiện) —
    * hai người bấm cùng lúc thì chỉ một người thắng. Không khớp → null.
@@ -75,7 +88,10 @@ export interface IInternalChatRepository {
   updateCardIfStatus(messageId: string, expectedStatus: string, patch: Record<string, unknown>): Promise<InternalChatMessage | null>
 }
 
-/** Liên kết chuỗi–đối tác (chiều nào cũng được) còn ACTIVE giữa hai tổ chức. */
+/** Liên kết chuỗi–đối tác giữa hai tổ chức. */
 export interface IChatLinkPolicy {
+  /** Chiều nào cũng được, còn ACTIVE. */
   hasActiveLink(organizationIdA: string, organizationIdB: string): Promise<boolean>
+  /** Trạng thái liên kết chuỗi `chainOrgId` → cửa hàng `partnerOrgId`. */
+  linkState(chainOrgId: string, partnerOrgId: string): Promise<LinkState>
 }

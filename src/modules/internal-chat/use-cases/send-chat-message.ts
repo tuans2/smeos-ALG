@@ -8,6 +8,7 @@ export interface SendChatMessageInput {
   conversationId: string
   userId: string
   organizationId: string
+  branchId?: string | null | undefined
   userRole: string
   content: string
 }

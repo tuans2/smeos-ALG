@@ -8,13 +8,15 @@ import type {
 } from "../../domain/chat-repository.interface"
 import type { ConversationType, InternalChatConversation, InternalChatMessage, InternalChatParticipant } from "../../domain/chat-entities"
 import type { MessageCursor } from "../../domain/message-cursor"
+import type { LinkState } from "../../domain/conversation-access-policy"
 
 /** Repository chat trong bộ nhớ cho unit test use-case — mô phỏng đúng các hợp đồng của port. */
 export class InMemoryChatRepository implements IInternalChatRepository {
   conversations: InternalChatConversation[] = []
   participants: InternalChatParticipant[] = []
   messages: InternalChatMessage[] = []
-  readMarks: { conversationId: string; userId: string }[] = []
+  readMarks: { conversationId: string; userId: string; organizationId: string }[] = []
+  roomKeys = new Map<string, string>()
   private seq = 0
 
   private nextId(prefix: string): string {
@@ -30,12 +32,18 @@ export class InMemoryChatRepository implements IInternalChatRepository {
       title: params.title ?? null,
       orderId: params.orderId ?? null,
       metadata: params.metadata ?? {},
+      counterpartOrgId: params.counterpartOrgId ?? null,
+      branchId: params.branchId ?? null,
       createdBy: params.createdBy,
       createdAt: new Date(),
       updatedAt: new Date(),
       lastMessageAt: new Date(),
     }
+    if (params.roomKey && this.conversations.some((c) => c.organizationId === params.organizationId && this.roomKeys.get(c.id) === params.roomKey)) {
+      throw new Error("Unique constraint failed on room_key")
+    }
     this.conversations.push(conv)
+    if (params.roomKey) this.roomKeys.set(conv.id, params.roomKey)
     for (const p of params.participantUserIds) await this.addParticipant(conv.id, p)
     return conv
   }
@@ -46,6 +54,10 @@ export class InMemoryChatRepository implements IInternalChatRepository {
 
   async findConversationByOrderId(organizationId: string, orderId: string): Promise<InternalChatConversation | null> {
     return this.conversations.find((c) => c.organizationId === organizationId && c.orderId === orderId) ?? null
+  }
+
+  async findConversationByRoomKey(organizationId: string, roomKey: string): Promise<InternalChatConversation | null> {
+    return this.conversations.find((c) => c.organizationId === organizationId && this.roomKeys.get(c.id) === roomKey) ?? null
   }
 
   async findDirectConversation(organizationId: string, type: ConversationType, userIds: [string, string]): Promise<InternalChatConversation | null> {
@@ -117,8 +129,8 @@ export class InMemoryChatRepository implements IInternalChatRepository {
     return { items, nextCursor: start > 0 && oldest ? { createdAt: oldest.createdAt, id: oldest.id } : null }
   }
 
-  async markRead(conversationId: string, userId: string): Promise<void> {
-    this.readMarks.push({ conversationId, userId })
+  async markRead(conversationId: string, userId: string, organizationId: string): Promise<void> {
+    this.readMarks.push({ conversationId, userId, organizationId })
   }
 
   async updateCardIfStatus(messageId: string, expectedStatus: string, patch: Record<string, unknown>): Promise<InternalChatMessage | null> {
@@ -133,7 +145,12 @@ export class InMemoryChatRepository implements IInternalChatRepository {
 /** Chính sách liên kết giả: mặc định mọi cặp tổ chức đều liên kết ACTIVE; `active = false` mô phỏng chấm dứt. */
 export class FakeLinkPolicy implements IChatLinkPolicy {
   active = true
+  /** Trạng thái liên kết chuỗi → cửa hàng; mặc định theo `active` */
+  state: LinkState | null = null
   async hasActiveLink(a: string, b: string): Promise<boolean> {
-    return a === b || this.active
+    return a === b || (this.state ?? (this.active ? "ACTIVE" : "OTHER")) === "ACTIVE"
+  }
+  async linkState(): Promise<LinkState> {
+    return this.state ?? (this.active ? "ACTIVE" : "OTHER")
   }
 }

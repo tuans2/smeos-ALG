@@ -4,6 +4,7 @@ import type { InternalChatConversation, ConversationType } from "../domain/chat-
 export interface ListUserConversationsInput {
   userId: string
   organizationId: string
+  branchId?: string | null | undefined
   conversationType?: ConversationType | undefined
   orderId?: string | undefined
   limit?: number | undefined
@@ -18,6 +19,7 @@ export class ListUserConversationsUseCase {
     return this.chatRepo.listConversations({
       userId: input.userId,
       organizationId: input.organizationId,
+      branchId: input.branchId,
       conversationType: input.conversationType,
       orderId: input.orderId,
       limit: input.limit ?? 20,

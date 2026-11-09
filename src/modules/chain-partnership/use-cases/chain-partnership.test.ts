@@ -95,6 +95,10 @@ class InMemoryPartnershipRepository implements IChainPartnershipRepository {
 class InMemoryChatRepoMock implements Partial<IInternalChatRepository> {
   public createdConversations: CreateConversationParams[] = []
 
+  async findConversationByRoomKey(): ReturnType<IInternalChatRepository["findConversationByRoomKey"]> {
+    return this.createdConversations.length > 0 ? ({ id: "conv-mock-1" } as Awaited<ReturnType<IInternalChatRepository["createConversation"]>>) : null
+  }
+
   async createConversation(params: CreateConversationParams): ReturnType<IInternalChatRepository["createConversation"]> {
     this.createdConversations.push(params)
     return { id: "conv-mock-1" } as Awaited<ReturnType<IInternalChatRepository["createConversation"]>>
@@ -136,7 +140,10 @@ describe("Chain Partnership Use Cases", () => {
     expect(chatRepo.createdConversations).toHaveLength(1)
     const conv = chatRepo.createdConversations[0]!
     expect(conv.conversationType).toBe("CHAIN_PARTNER")
-    expect(conv.participantUserIds).toHaveLength(2)
+    // Vào phòng theo tổ chức + năng lực (D1): không mời từng người; phòng mang bên kia + khoá chống trùng
+    expect(conv.participantUserIds).toHaveLength(0)
+    expect(conv.counterpartOrgId).toBeTruthy()
+    expect(conv.roomKey).toBe(`partner:${conv.counterpartOrgId}`)
   })
 
   it("liệt kê danh sách đối tác của chuỗi", async () => {

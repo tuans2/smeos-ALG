@@ -19,6 +19,7 @@ interface BranchPartner {
   isActive: boolean
   telegramChatId: string | null
   telegramLinked: boolean
+  partnerStore?: boolean
   zalo: boolean
 }
 
@@ -78,6 +79,9 @@ export function BranchPartnerList() {
               <div className="min-w-0">
                 <div className="text-body-sm font-bold text-text">
                   {b.name} <span className="font-mono text-caption text-text-muted">[{b.branchCode}]</span>
+                  {b.partnerStore && (
+                    <span className="ml-2 text-caption font-semibold px-2 py-0.5 rounded-full bg-primary-subtle text-primary">Cửa hàng đối tác</span>
+                  )}
                 </div>
                 {b.address && <div className="text-caption text-text-muted truncate">{b.address}</div>}
                 <div className="flex flex-wrap items-center gap-3 mt-1 text-caption">

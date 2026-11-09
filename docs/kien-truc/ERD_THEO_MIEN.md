@@ -32,6 +32,7 @@ erDiagram
   branches {
     String id PK
     String organization_id FK
+    String partner_org_id FK
   }
   users {
     String id PK
@@ -192,14 +193,17 @@ erDiagram
   vouchers
   branches |o--o{ customers : "branch_id"
   branches |o--o{ generation_jobs : "branch_id"
+  branches |o--o{ internal_chat_conversations : "branch_id"
   branches |o--o{ memberships : "branch_id"
   branches |o--o{ orders : "branch_id"
   branches |o--o{ pricing_rules : "branch_id"
   branches |o--o{ products : "branch_id"
   branches ||--o{ product_inventory : "branch_id"
   industries |o--o{ organizations : "industry_key"
+  organizations |o--o{ branches : "partner_org_id"
   organizations |o--o{ field_definitions : "owner_organization_id"
   organizations |o--o{ integration_connections : "inherited_from_org_id"
+  organizations |o--o{ internal_chat_conversations : "counterpart_org_id"
   organizations |o--o{ roles : "organization_id"
   organizations |o--o{ sessions : "organization_id"
   organizations ||--o{ ai_evaluations : "organization_id"
@@ -1251,6 +1255,8 @@ erDiagram
     String id PK
     String organization_id FK
     String order_id FK
+    String counterpart_org_id FK
+    String branch_id FK
   }
   internal_chat_messages {
     String id PK
@@ -1264,15 +1270,18 @@ erDiagram
     String user_id FK
     String organization_id FK
   }
+  branches
   customers
   orders
   organizations
   users
+  branches |o--o{ internal_chat_conversations : "branch_id"
   chat_conversations ||--o{ chat_messages : "conversation_id"
   customers |o--o{ chat_conversations : "customer_id"
   internal_chat_conversations ||--o{ internal_chat_messages : "conversation_id, organization_id"
   internal_chat_conversations ||--o{ internal_chat_participants : "conversation_id"
   orders |o--o{ internal_chat_conversations : "order_id"
+  organizations |o--o{ internal_chat_conversations : "counterpart_org_id"
   organizations ||--o{ chat_channel_integrations : "organization_id"
   organizations ||--o{ chat_conversations : "organization_id"
   organizations ||--o{ chat_messages : "organization_id"

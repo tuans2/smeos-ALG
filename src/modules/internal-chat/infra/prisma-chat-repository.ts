@@ -33,6 +33,9 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
         title: params.title ?? null,
         order_id: params.orderId ?? null,
         metadata: (params.metadata ?? {}) as never,
+        counterpart_org_id: params.counterpartOrgId ?? null,
+        branch_id: params.branchId ?? null,
+        room_key: params.roomKey ?? null,
         created_by: params.createdBy,
         participants: {
           create: params.participantUserIds.map((p) => ({
@@ -62,6 +65,11 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     return row ? this.mapConversation(row) : null
   }
 
+  async findConversationByRoomKey(organizationId: string, roomKey: string): Promise<InternalChatConversation | null> {
+    const row = await this.prisma.internal_chat_conversations.findFirst({ where: { organization_id: organizationId, room_key: roomKey } })
+    return row ? this.mapConversation(row) : null
+  }
+
   async findDirectConversation(
     organizationId: string,
     conversationType: ConversationType,
@@ -80,13 +88,27 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
   }
 
   async listConversations(filter: ListConversationsFilter): Promise<{ items: InternalChatConversation[]; total: number }> {
-    // Chỉ phòng của ngữ cảnh tổ chức hiện tại: của chính tổ chức, hoặc của tổ chức đang liên kết ACTIVE với nó
+    const org = filter.organizationId
+    const ownRooms: Prisma.internal_chat_conversationsWhereInput = filter.branchId
+      ? { organization_id: org, OR: [{ branch_id: null }, { branch_id: filter.branchId }] }
+      : { organization_id: org }
     const where: Prisma.internal_chat_conversationsWhereInput = {
-      participants: { some: { user_id: filter.userId, organization_id: filter.organizationId } },
       OR: [
-        { organization_id: filter.organizationId },
-        { organization: { organization_links_as_parent: { some: { child_org_id: filter.organizationId, ...ACTIVE_CHAIN_LINK } } } },
-        { organization: { organization_links_as_child: { some: { parent_org_id: filter.organizationId, ...ACTIVE_CHAIN_LINK } } } },
+        ownRooms,
+        // Phòng chuỗi mà tổ chức này là bên kia: liên kết còn ACTIVE hoặc tạm dừng (chỉ đọc — D7)
+        {
+          counterpart_org_id: org,
+          organization: { organization_links_as_parent: { some: { child_org_id: org, status: { in: ["ACTIVE", "SUSPENDED"] }, link_type: ACTIVE_CHAIN_LINK.link_type } } },
+        },
+        // Phòng cũ (chưa có bên kia): người xem là thành viên và liên kết ACTIVE (chiều nào cũng được)
+        {
+          counterpart_org_id: null,
+          participants: { some: { user_id: filter.userId, organization_id: org } },
+          OR: [
+            { organization: { organization_links_as_parent: { some: { child_org_id: org, ...ACTIVE_CHAIN_LINK } } } },
+            { organization: { organization_links_as_child: { some: { parent_org_id: org, ...ACTIVE_CHAIN_LINK } } } },
+          ],
+        },
       ],
     }
 
@@ -112,13 +134,16 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
           participants: {
             where: { user_id: filter.userId },
           },
+          organization: { select: { name: true } },
+          counterpart_org: { select: { name: true } },
         },
       }),
       this.prisma.internal_chat_conversations.count({ where }),
     ])
 
+    // Chưa mở phòng lần nào (vào theo tổ chức, chưa có dòng thành viên) → mọi tin của người khác đều chưa đọc
     const lastRead = new Map<string, Date>()
-    for (const r of rows) if (r.participants[0]) lastRead.set(r.id, r.participants[0].last_read_at)
+    for (const r of rows) lastRead.set(r.id, r.participants[0]?.last_read_at ?? new Date(0))
     const unread = await this.messageStore.countUnread(filter.userId, lastRead)
 
     const items = rows.map((r) => {
@@ -128,6 +153,9 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
         conv.lastMessageSnippet = lastMsg.message_type === "TEXT" ? lastMsg.content : `[${lastMsg.message_type}]`
       }
       conv.unreadCount = unread.get(r.id) ?? 0
+      // Tên bên kia theo phía người xem
+      const otherName = r.organization_id === org ? r.counterpart_org?.name : r.organization?.name
+      if (otherName) conv.counterpartName = otherName
       return conv
     })
 
@@ -203,8 +231,8 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     return this.messageStore.listPage(conversationId, limit, before)
   }
 
-  markRead(conversationId: string, userId: string): Promise<void> {
-    return this.messageStore.markRead(conversationId, userId)
+  markRead(conversationId: string, userId: string, organizationId: string): Promise<void> {
+    return this.messageStore.markRead(conversationId, userId, organizationId)
   }
 
   updateCardIfStatus(messageId: string, expectedStatus: string, patch: Record<string, unknown>): Promise<InternalChatMessage | null> {
@@ -219,6 +247,8 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
       title: row.title,
       orderId: row.order_id,
       metadata: (row.metadata as Record<string, unknown>) ?? {},
+      counterpartOrgId: row.counterpart_org_id,
+      branchId: row.branch_id,
       createdBy: row.created_by,
       createdAt: row.created_at,
       updatedAt: row.updated_at,

@@ -1,6 +1,6 @@
 # Kế hoạch hoàn thiện Trao đổi nội bộ — kênh giao & theo dõi đơn gia công Chuỗi ↔ Cửa hàng đối tác
 
-**Trạng thái:** APPROVED v3 — PO duyệt kế hoạch và các khuyến nghị D1–D11 ngày 09/11/2026 · **Tiến độ:** GĐ1 xong (xem §10) · **Nhánh:** `Hoanthien_chatnoibo` (tách từ `main` @ `2dfd6a02`)
+**Trạng thái:** APPROVED v3 — PO duyệt kế hoạch và các khuyến nghị D1–D11 ngày 09/11/2026 · **Tiến độ:** GĐ1, GĐ2, GĐ3 xong (xem §10) · **Nhánh:** `Hoanthien_chatnoibo` (tách từ `main` @ `2dfd6a02`)
 **Module:** `src/modules/internal-chat/` + `src/modules/greeting-card/` (luồng gia công) · **Màn:** `/tin-nhan` · **Đặc tả gốc:** `docs/dac-ta/20-internal-chat-and-dispatch-spec.md` · **Screen Contract:** `docs/dac-ta/screen-contracts/tin-nhan.md`
 
 > v3 đổi trọng tâm theo PO: Trao đổi nội bộ **trước hết là kênh giao và thực hiện đơn**, nhắn tin tự do là phụ. Lịch sử thay đổi: §9.
@@ -264,4 +264,6 @@ PR chỉ mở khi PO yêu cầu; nên tách: GĐ1 · GĐ2+3 · GĐ4 · GĐ5 · p
 | GĐ | Trạng thái | Ghi chú |
 |---|---|---|
 | 1 | Xong | IC-1.1 → IC-1.11 + vá H16. Chưa làm trong GĐ1 (đã xếp sau): `isSender` trên giao diện (IC-4.4). Ca chứng minh: `tests/tenant/internal-chat-card-guard.test.ts` |
+| 2 | Xong | Migration `20261109150000_internal_chat_partner_rooms` (D3 + D4 + D9 gộp một lần): `counterpart_org_id`, `branch_id`, `room_key` (khoá chống trùng thay cho unique theo loại — Prisma không biểu diễn được unique một phần), `branches.partner_org_id`, trigger sao bên kia, policy RLS mới. Mã `S1`/`S2` (thêm vào cả 3 vai PO Q7 theo D2). Quyền theo tổ chức (`canAccessConversation`), phòng tự tạo khi liên kết hiệu lực (`partner-link-effects.ts`), `POST /internal-chat/conversations` nhận `{ partnerOrgId \| chainOrgId \| branchId }`, nút "Nhắn tin" mở thẳng phòng. Không thêm cột `internal_chat_messages.order_id` như D3 viết — lọc thẻ theo đơn đọc từ `action_payload` |
+| 3 | Xong | RLS (IC-3.1–3.3) gộp vào migration GĐ2; ca `enforce`: `tests/tenant/internal-chat-rls.test.ts`; ghi ADR-013 I-5b. Ứng viên bắn đơn của cửa hàng đối tác (mã `DT-<mã đối tác>`) đồng bộ theo trạng thái liên kết, nhãn "Cửa hàng đối tác" ở danh sách chi nhánh nhận đơn. Chấm dứt khi còn giữ đơn: **báo Điều phối** (sự kiện "đơn kẹt") thay vì tự chuyển `ESCALATED` — tự chuyển dễ mất việc cửa hàng đang làm dở; Điều phối quyết giao lại. Liên kết có sẵn: `npx tsx --env-file-if-exists=.env scripts/backfill-chat-rooms.ts` (chạy thử) rồi thêm `--apply` |
 

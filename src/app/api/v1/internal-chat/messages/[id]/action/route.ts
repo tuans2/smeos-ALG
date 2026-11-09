@@ -1,5 +1,7 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { requireCapability } from "@/core/rbac/capabilities"
+import { INTERNAL_CHAT_CAPABILITY } from "@/modules/internal-chat/domain/chat-capabilities"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
@@ -14,6 +16,8 @@ const actionSchema = z.object({
 
 export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { resolved, ctx } = await requireTenantContext(request)
+  requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
+  requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.fulfilOrder)
   const { id: messageId } = await context.params
   const body = await request.json().catch(() => null)
   const parsed = actionSchema.safeParse(body)
@@ -29,6 +33,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     messageId,
     userId: ctx.userId,
     userOrgId: ctx.organizationId,
+    userBranchId: ctx.branchId,
     userRole: resolved.membership?.role_id ?? "member",
     action: parsed.data.action,
     rejectedReason: parsed.data.rejectedReason ?? undefined,

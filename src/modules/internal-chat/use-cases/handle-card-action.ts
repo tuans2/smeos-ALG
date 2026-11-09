@@ -7,6 +7,7 @@ export interface HandleCardActionInput {
   messageId: string
   userId: string
   userOrgId: string
+  userBranchId?: string | null | undefined
   userRole: string
   action: "ACCEPT_ORDER" | "REJECT_ORDER"
   rejectedReason?: string | undefined
@@ -31,6 +32,7 @@ export class HandleCardActionUseCase {
     await assertConversationAccess(this.chatRepo, this.linkPolicy, message.conversationId, {
       userId: input.userId,
       organizationId: input.userOrgId,
+      branchId: input.userBranchId,
     })
 
     const card = message.actionPayload as Partial<ActionCardOrderPayload>

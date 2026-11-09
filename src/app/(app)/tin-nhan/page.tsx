@@ -36,9 +36,7 @@ export default function InternalChatPage() {
       const json = await res.json()
       if (json.success && Array.isArray(json.data)) {
         setConversations(json.data)
-        if (!activeConv && json.data.length > 0) {
-          setActiveConv(json.data[0])
-        }
+        if (json.data.length > 0) setActiveConv((prev) => prev ?? json.data[0])
       }
     } catch {
       // Ignored
@@ -60,8 +58,22 @@ export default function InternalChatPage() {
     }
   }
 
+  // Nút "Nhắn tin" ở màn đối tác / kết nối mở thẳng đúng phòng: ?doi-tac= | ?chuoi= | ?chi-nhanh= (tạo lần đầu nếu chưa có)
+  const openRequestedRoom = async () => {
+    const q = new URLSearchParams(window.location.search)
+    const target = q.get("doi-tac") ? { partnerOrgId: q.get("doi-tac") } : q.get("chuoi") ? { chainOrgId: q.get("chuoi") } : q.get("chi-nhanh") ? { branchId: q.get("chi-nhanh") } : null
+    if (!target) return
+    try {
+      const res = await fetch("/api/v1/internal-chat/conversations", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(target) })
+      const json = await res.json()
+      if (json.success && json.data) setActiveConv(json.data)
+    } catch {
+      // Không mở được phòng: vẫn hiện danh sách
+    }
+  }
+
   useEffect(() => {
-    void Promise.resolve().then(() => fetchConversations())
+    void Promise.resolve().then(openRequestedRoom).then(() => fetchConversations())
     const timer = setInterval(fetchConversations, 15000)
     return () => clearInterval(timer)
   }, [])
@@ -171,7 +183,7 @@ export default function InternalChatPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h3 className="text-meta font-semibold text-text truncate">
-                        {conv.title ||
+                        {conv.counterpartName || conv.title ||
                           (conv.conversationType === "PLATFORM_TENANT"
                             ? "Hỗ trợ SaaS Platform"
                             : "Trao đổi đối tác")}

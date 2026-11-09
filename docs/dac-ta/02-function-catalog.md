@@ -373,6 +373,15 @@ Sổ đăng ký mô hình và sổ đăng ký giấy phép **không** thuộc d�
 
 `W2`–`W4` có trần cứng Điều hành: kết nối cấp cho bên ngoài quyền thay mặt tổ chức (nhắn khách, nhận tiền, đăng sản phẩm). Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`.
 
+### Trao đổi nội bộ — nhóm S (PO duyệt D2, 09/11/2026)
+
+| Mã | Tên đọc được | Năng lực | Mặc định | Trần cứng |
+|---|---|---|---|---|
+| `S1` | `internal_chat.use` | Dùng trao đổi nội bộ với chuỗi, chi nhánh và cửa hàng đối tác | Mọi vai nhân sự | — |
+| `S2` | `internal_chat.order.fulfil` | Nhận và cập nhật đơn gia công được giao trong trao đổi nội bộ | Điều hành · Điều phối · Cửa hàng · Thợ cắm | — |
+
+Phạm vi phòng do tổ chức (và chi nhánh) của người dùng quyết, không do danh sách mời: người của chuỗi thấy mọi phòng của chuỗi (nhân viên gắn chi nhánh chỉ thấy phòng chi nhánh mình), người của cửa hàng đối tác thấy phòng chung với chuỗi khi liên kết còn ACTIVE (tạm dừng: chỉ đọc). Kế hoạch: `docs/plan/hoan-thien-chat-noi-bo.md`.
+
 ### Vận hành nền tảng — dải N (P25)
 
 Từ vựng này **TÁCH HẲN** khỏi bảng ở mục 4 (D-N6, chốt 19/09): không nằm
