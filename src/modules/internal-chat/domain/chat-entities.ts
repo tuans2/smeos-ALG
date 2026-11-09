@@ -59,6 +59,8 @@ export interface InternalChatConversation {
   counterpartName?: string | undefined
   /** Người xem đã tắt tiếng phòng */
   isMuted?: boolean | undefined
+  /** Phía chuỗi: số đơn gia công cửa hàng đối tác của phòng đang giữ (đã nhận / đang làm) */
+  activeOrderCount?: number | undefined
 }
 
 export interface InternalChatParticipant {

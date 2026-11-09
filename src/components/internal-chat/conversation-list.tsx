@@ -87,6 +87,11 @@ export function ConversationList({ conversations, state, activeId, onSelect, onR
                     )}
                   </span>
                   <span className="block text-caption text-text-muted truncate mt-0.5">{conv.lastMessageSnippet || "Chưa có tin nhắn"}</span>
+                  {Boolean(conv.activeOrderCount) && (
+                    <span className="inline-block mt-1 text-caption font-semibold px-2 py-0.5 rounded-full bg-warning-subtle text-warning-text">
+                      {conv.activeOrderCount} đơn đang làm
+                    </span>
+                  )}
                 </span>
               </Button>
             )

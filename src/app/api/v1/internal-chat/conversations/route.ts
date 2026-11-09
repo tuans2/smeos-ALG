@@ -11,6 +11,7 @@ import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { ListUserConversationsUseCase } from "@/modules/internal-chat/use-cases/list-user-conversations"
 import { CreateOrGetConversationUseCase } from "@/modules/internal-chat/use-cases/create-or-get-conversation"
 import { openRoom } from "@/modules/internal-chat/use-cases/open-room"
+import { PrismaPartnerOrderStats } from "@/modules/internal-chat/infra/prisma-partner-order-stats"
 import { PrismaChatRoomDirectory } from "@/modules/internal-chat/infra/prisma-chat-room-directory"
 import { INTERNAL_CHAT_CAPABILITY } from "@/modules/internal-chat/domain/chat-capabilities"
 
@@ -49,6 +50,13 @@ export const GET = handle(async (request) => {
     conversationType,
     orderId,
   })
+
+  // Phía chuỗi: mỗi phòng cửa hàng đối tác kèm số đơn cửa hàng đang giữ (IC-5.5)
+  const partnerIds = result.items.filter((c) => c.organizationId === ctx.organizationId && c.counterpartOrgId).map((c) => c.counterpartOrgId!)
+  if (partnerIds.length > 0) {
+    const active = await new PrismaPartnerOrderStats().activeOrdersByPartner(ctx.organizationId, partnerIds)
+    for (const c of result.items) if (c.counterpartOrgId && c.organizationId === ctx.organizationId) c.activeOrderCount = active.get(c.counterpartOrgId) ?? 0
+  }
 
   return jsonResponse({
     success: true,

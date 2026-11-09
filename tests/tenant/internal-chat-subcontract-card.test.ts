@@ -3,6 +3,8 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { POST as acceptLink } from "@/app/api/v1/chain/links/[id]/accept/route"
 import { POST as chainDispatch } from "@/app/api/v1/greeting-card/orders/[id]/chain-dispatch/route"
 import { GET as listMessages } from "@/app/api/v1/internal-chat/conversations/[id]/messages/route"
+import { GET as listRooms } from "@/app/api/v1/internal-chat/conversations/route"
+import { GET as chatStats } from "@/app/api/v1/internal-chat/stats/route"
 import { GET as subcontractCard } from "@/app/api/v1/public/subcontract/[orderCode]/route"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
@@ -82,6 +84,8 @@ describe("cách ly tenant — thẻ đơn gia công trong phòng trao đổi", (
     const url = new URL(card.subcontractView!.actionUrl!, "http://localhost")
     const opened = await subcontractCard(new Request(`${BASE}/public/subcontract/${orderCode}${url.search}`), params({ orderCode }))
     expect(opened.status).toBe(200)
+    // Trang Thẻ Gia Công gợi ý cửa hàng đối tác quay lại làm trong Trao đổi nội bộ (IC-6.2)
+    expect(((await readJson(opened)) as { data: { inAppChatUrl: string | null } }).data.inAppChatUrl).toBe(`/tin-nhan?chuoi=${chain.organizationId}`)
 
     const chainView = await cardsFor(chain.token)
     expect(chainView.cards[0]?.subcontractView).toMatchObject({ stage: "INVITED", actionUrl: null })
@@ -105,5 +109,26 @@ describe("cách ly tenant — thẻ đơn gia công trong phòng trao đổi", (
     const view = await cardsFor(accountant.token)
     expect(view.cards[0]?.subcontractView).toMatchObject({ stage: "INVITED", actionUrl: null })
     expect((await cardsFor(otherChain.token)).status).toBe(404)
+  })
+
+  it("phía chuỗi: phòng cửa hàng hiện số đơn đang làm; số liệu 30 ngày đếm lời mời qua chat và đơn cửa hàng nhận", async () => {
+    const { orderId } = await dispatchToPartner()
+    const row = await prisma.order_coordinations.findFirstOrThrow({ where: { order_id: orderId } })
+    const meta = row.metadata as { subcontract_dispatch: Record<string, unknown> }
+    await prisma.order_coordinations.update({
+      where: { id: row.id },
+      data: { metadata: { ...meta, subcontract_dispatch: { ...meta.subcontract_dispatch, dispatchStatus: "COMMITTED", claimedBranchId: "DT-HN-01" } } },
+    })
+
+    type Room = { id: string; activeOrderCount?: number }
+    const chainRooms = ((await readJson(await listRooms(withSession(`${BASE}/internal-chat/conversations`, chain.token)))) as { data: Room[] }).data
+    expect(chainRooms.find((r) => r.id === roomId)?.activeOrderCount).toBe(1)
+    const storeRooms = ((await readJson(await listRooms(withSession(`${BASE}/internal-chat/conversations`, partner.token)))) as { data: Room[] }).data
+    expect(storeRooms.find((r) => r.id === roomId)?.activeOrderCount).toBeUndefined()
+
+    const stats = (await readJson(await chatStats(withSession(`${BASE}/internal-chat/stats`, chain.token)))) as { data: Record<string, number> }
+    expect(stats.data).toMatchObject({ days: 30, invites_in_chat: 1, partner_claims: 1, partner_stores: 1 })
+    const storeStats = (await readJson(await chatStats(withSession(`${BASE}/internal-chat/stats`, partner.token)))) as { data: Record<string, number> }
+    expect(storeStats.data).toMatchObject({ invites_in_chat: 0, partner_claims: 0, partner_stores: 0 })
   })
 })

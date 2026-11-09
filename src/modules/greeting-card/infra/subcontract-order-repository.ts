@@ -198,15 +198,15 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
   async findBranchInOrganization(branchId: string, orgId: string) {
     const dbBranch = await this.db.branches.findFirst({
       where: { id: branchId, organization_id: orgId },
-      select: { id: true, name: true, is_active: true },
+      select: { id: true, name: true, is_active: true, partner_org_id: true },
     })
     if (dbBranch) return dbBranch
 
     const dispatchBranch = await this.db.branches.findFirst({
       where: { organization_id: orgId, code: branchId, accepts_dispatch: true },
-      select: { code: true, name: true, is_active: true },
+      select: { code: true, name: true, is_active: true, partner_org_id: true },
     })
-    if (dispatchBranch) return { id: dispatchBranch.code, name: dispatchBranch.name, is_active: dispatchBranch.is_active }
+    if (dispatchBranch) return { id: dispatchBranch.code, name: dispatchBranch.name, is_active: dispatchBranch.is_active, partner_org_id: dispatchBranch.partner_org_id }
 
     return null
   }

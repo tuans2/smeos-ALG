@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { ConversationList } from "@/components/internal-chat/conversation-list"
 import { MessageThread } from "@/components/internal-chat/message-thread"
 import { useInternalChat } from "@/components/internal-chat/use-internal-chat"
+import { ChatDispatchStats } from "@/components/internal-chat/chat-dispatch-stats"
 
 /**
  * Trao đổi nội bộ (kế hoạch `docs/plan/hoan-thien-chat-noi-bo.md`): chuỗi ↔ cửa hàng đối tác / chi nhánh nhắn tin và
@@ -23,6 +24,7 @@ export default function InternalChatPage() {
         title={<><MessageSquare className="w-5 h-5 text-primary" aria-hidden="true" /> Trao đổi nội bộ</>}
         description="Nhắn tin với chuỗi, chi nhánh và cửa hàng đối tác; nhận và cập nhật đơn gia công ngay trong phòng."
       />
+      <ChatDispatchStats />
       <div className="flex flex-1 min-h-0 gap-4">
         <Card className={`${active ? "hidden md:flex" : "flex"} w-full md:w-80 lg:w-96 flex-col overflow-hidden p-0`} variant="default">
           <ConversationList
