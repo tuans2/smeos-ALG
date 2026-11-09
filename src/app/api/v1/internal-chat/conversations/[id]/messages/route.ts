@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { INTERNAL_CHAT_CAPABILITY } from "@/modules/internal-chat/domain/chat-capabilities"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -10,6 +10,7 @@ import { CHAT_MESSAGE_MAX_LENGTH, CHAT_PAGE_MAX_LIMIT } from "@/modules/internal
 import { decodeMessageCursor, encodeMessageCursor } from "@/modules/internal-chat/domain/message-cursor"
 import { GetConversationMessagesUseCase } from "@/modules/internal-chat/use-cases/get-conversation-messages"
 import { SendChatMessageUseCase } from "@/modules/internal-chat/use-cases/send-chat-message"
+import { subcontractCardDecorator } from "@/modules/internal-chat/infra/subcontract-card-decorator"
 
 /**
  * Client chỉ gửi tin chữ. `.strict()`: thân có `actionPayload` / `attachments` / loại khác `TEXT` → 400 — thẻ đơn
@@ -41,7 +42,8 @@ export const GET = handle<[{ params: Promise<{ id: string }> }]>(async (request,
   const before = query.data.before ? decodeMessageCursor(query.data.before) : undefined
   if (before === null) throw validationFailed({ before: "Con trỏ trang không hợp lệ" })
 
-  const useCase = new GetConversationMessagesUseCase(getInternalChatRepository(), getChatLinkPolicy())
+  const decorate = subcontractCardDecorator({ canFulfil: hasCapability(ctx, INTERNAL_CHAT_CAPABILITY.fulfilOrder) })
+  const useCase = new GetConversationMessagesUseCase(getInternalChatRepository(), getChatLinkPolicy(), decorate)
   const page = await useCase.execute({
     conversationId,
     userId: ctx.userId,

@@ -150,7 +150,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
       const conv = this.mapConversation(r)
       const lastMsg = r.messages[0]
       if (lastMsg) {
-        conv.lastMessageSnippet = lastMsg.message_type === "TEXT" ? lastMsg.content : `[${lastMsg.message_type}]`
+        conv.lastMessageSnippet = snippetOf(lastMsg.message_type, lastMsg.content)
       }
       conv.unreadCount = unread.get(r.id) ?? 0
       // Tên bên kia theo phía người xem
@@ -255,6 +255,13 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
       lastMessageAt: row.last_message_at,
     }
   }
+}
+
+/** Dòng xem trước trong danh sách phòng — chữ tiếng Việt, không lộ mã loại tin. */
+function snippetOf(messageType: string, content: string): string {
+  if (messageType === "TEXT" || messageType === "SYSTEM_NOTICE") return content.split("\n")[0] ?? ""
+  if (messageType === "IMAGE") return "Ảnh"
+  return "Thẻ đơn gia công"
 }
 
 let defaultRepo: IInternalChatRepository | null = null

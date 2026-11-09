@@ -15,6 +15,7 @@ import type {
   ActionCardOrderPayload,
 } from "@/modules/internal-chat/domain/chat-entities"
 import { ActionCardOrder } from "@/components/internal-chat/action-card-order"
+import { SubcontractTaskCard } from "@/components/internal-chat/subcontract-task-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -236,7 +237,7 @@ export default function InternalChatPage() {
                   if (isNotice) {
                     return (
                       <div key={msg.id} className="text-center my-2">
-                        <span className="inline-block bg-surface-elevated text-text-muted text-caption px-3 py-1 rounded-full font-medium border border-border">
+                        <span className="inline-block bg-surface-elevated text-text-muted text-caption px-3 py-1 rounded-2xl font-medium border border-border whitespace-pre-line text-left max-w-lg">
                           {msg.content}
                         </span>
                       </div>
@@ -246,7 +247,7 @@ export default function InternalChatPage() {
                   return (
                     <div key={msg.id} className="space-y-1.5">
                       <div className="text-caption text-text-muted px-1 font-medium">
-                        {msg.senderName || msg.senderRole} ·{" "}
+                        {msg.senderRole === "system" ? "Điều phối tự động" : msg.senderName || "Thành viên"} ·{" "}
                         <span className="text-caption">
                           {new Date(msg.createdAt).toLocaleTimeString("vi-VN", {
                             hour: "2-digit",
@@ -255,7 +256,9 @@ export default function InternalChatPage() {
                         </span>
                       </div>
 
-                      {isCard ? (
+                      {msg.messageType === "ACTION_CARD_SUBCONTRACT" ? (
+                        <SubcontractTaskCard message={msg} />
+                      ) : isCard ? (
                         <ActionCardOrder
                           messageId={msg.id}
                           payload={msg.actionPayload as ActionCardOrderPayload}

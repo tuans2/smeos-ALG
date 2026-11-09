@@ -1,3 +1,5 @@
+import type { SubcontractCardView } from "./subcontract-card"
+
 export type ConversationType = "PLATFORM_TENANT" | "CHAIN_PARTNER" | "CHAIN_BRANCH" | "ORDER_THREAD"
 
 export type ParticipantRoleInChat = "OWNER" | "ADMIN" | "MEMBER" | "GUEST_PARTNER"
@@ -7,6 +9,8 @@ export type InternalChatMessageKind =
   | "IMAGE"
   | "ACTION_CARD_ORDER"
   | "ACTION_CARD_QC"
+  /** Thẻ đơn gia công phản chiếu trạng thái thật (GĐ4) — `actionPayload` là `SubcontractCardPayload` */
+  | "ACTION_CARD_SUBCONTRACT"
   | "SYSTEM_NOTICE"
 
 export interface ActionCardOrderPayload {
@@ -80,4 +84,6 @@ export interface InternalChatMessage {
   actionPayload: ActionPayload
   isDeleted: boolean
   createdAt: Date
+  /** Chỉ thẻ `ACTION_CARD_SUBCONTRACT`: trạng thái tính lúc đọc theo góc nhìn người xem */
+  subcontractView?: SubcontractCardView | undefined
 }
