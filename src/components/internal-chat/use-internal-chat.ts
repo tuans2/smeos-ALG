@@ -5,8 +5,9 @@ import type { InternalChatConversation, InternalChatMessage } from "@/modules/in
 
 export type LoadState = "loading" | "ready" | "error" | "forbidden"
 
-const LIST_POLL_MS = 15_000
-const THREAD_POLL_MS = 5_000
+// Không có luồng đẩy (SSE): hỏi lại dày; có luồng đẩy: hỏi lại thưa — chỉ để cập nhật trạng thái thẻ đơn gia công
+const LIST_POLL_MS = { push: 60_000, poll: 15_000 }
+const THREAD_POLL_MS = { push: 30_000, poll: 5_000 }
 const API = "/api/v1/internal-chat/conversations"
 
 /** Đường dẫn mở thẳng phòng: ?doi-tac= (chuỗi) · ?chuoi= (cửa hàng) · ?chi-nhanh= — tạo lần đầu nếu chưa có. */
@@ -31,6 +32,7 @@ export function useInternalChat() {
   const [threadState, setThreadState] = useState<LoadState>("loading")
   const [online, setOnline] = useState(true)
   const [sendError, setSendError] = useState<string | null>(null)
+  const [live, setLive] = useState(false)
   const activeId = useRef<string | null>(null)
 
   const fetchConversations = useCallback(async () => {
@@ -83,17 +85,35 @@ export function useInternalChat() {
       }
     }
     void Promise.resolve().then(openRequested).then(fetchConversations)
-    const timer = setInterval(fetchConversations, LIST_POLL_MS)
     const onOnline = () => setOnline(true)
     const onOffline = () => setOnline(false)
     window.addEventListener("online", onOnline)
     window.addEventListener("offline", onOffline)
+    // Luồng đẩy: chỉ báo mã phòng vừa có tin → đọc lại qua API đã kiểm quyền. EventSource tự nối lại khi rớt.
+    const source = typeof EventSource === "undefined" ? null : new EventSource("/api/v1/internal-chat/stream")
+    source?.addEventListener("connected", () => setLive(true))
+    source?.addEventListener("error", () => setLive(false))
+    source?.addEventListener("room", (e) => {
+      let id: string | undefined
+      try {
+        id = (JSON.parse((e as MessageEvent<string>).data) as { conversationId?: string }).conversationId
+      } catch {
+        id = undefined
+      }
+      void fetchConversations()
+      if (id && id === activeId.current) void fetchMessages(id)
+    })
     return () => {
-      clearInterval(timer)
+      source?.close()
       window.removeEventListener("online", onOnline)
       window.removeEventListener("offline", onOffline)
     }
-  }, [fetchConversations])
+  }, [fetchConversations, fetchMessages])
+
+  useEffect(() => {
+    const timer = setInterval(fetchConversations, live ? LIST_POLL_MS.push : LIST_POLL_MS.poll)
+    return () => clearInterval(timer)
+  }, [fetchConversations, live])
 
   useEffect(() => {
     activeId.current = activeConv?.id ?? null
@@ -104,9 +124,14 @@ export function useInternalChat() {
       setThreadState("loading")
       return fetchMessages(id)
     })
-    const timer = setInterval(() => fetchMessages(id), THREAD_POLL_MS)
-    return () => clearInterval(timer)
   }, [activeConv, fetchMessages])
+
+  useEffect(() => {
+    if (!activeConv) return
+    const id = activeConv.id
+    const timer = setInterval(() => fetchMessages(id), live ? THREAD_POLL_MS.push : THREAD_POLL_MS.poll)
+    return () => clearInterval(timer)
+  }, [activeConv, fetchMessages, live])
 
   const sendMessage = useCallback(async (text: string): Promise<boolean> => {
     if (!activeConv) return false

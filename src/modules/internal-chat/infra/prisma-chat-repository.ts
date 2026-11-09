@@ -17,12 +17,14 @@ import type {
 } from "../domain/chat-entities"
 import type { MessageCursor } from "../domain/message-cursor"
 import { PrismaChatMessageStore } from "./prisma-chat-message-repository"
+import { getChatEventHub } from "./chat-event-hub"
 
 export class PrismaInternalChatRepository implements IInternalChatRepository {
   private readonly messageStore: PrismaChatMessageStore
 
   constructor(private readonly prisma: PrismaClient = defaultPrisma) {
-    this.messageStore = new PrismaChatMessageStore(prisma)
+    // Mỗi tin mới báo cho trình duyệt đang mở phòng (SSE); lỗi phát không làm hỏng việc gửi tin
+    this.messageStore = new PrismaChatMessageStore(prisma, (event) => void getChatEventHub().publish(event).catch(() => undefined))
   }
 
   async createConversation(params: CreateConversationParams): Promise<InternalChatConversation> {

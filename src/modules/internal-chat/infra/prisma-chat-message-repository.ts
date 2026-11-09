@@ -3,6 +3,10 @@ import type { MessagePage, SendMessageParams } from "../domain/repositories/chat
 import type { InternalChatMessage, InternalChatMessageKind } from "../domain/chat-entities"
 import { CHAT_PAGE_DEFAULT_LIMIT, CHAT_PAGE_MAX_LIMIT } from "../domain/chat-limits"
 import type { MessageCursor } from "../domain/message-cursor"
+import type { ChatRoomEvent } from "../domain/chat-room-event"
+
+/** Báo "phòng vừa có tin" cho SSE — mặc định bộ phát của tiến trình; test thay được. */
+export type ChatRoomEventSink = (event: ChatRoomEvent) => void
 
 type MessageRow = Prisma.internal_chat_messagesGetPayload<object> & { sender?: { name: string | null } | null }
 
@@ -13,14 +17,17 @@ const WITH_SENDER = { sender: { select: { name: true } } } as const
  * gửi, đọc theo trang, đánh dấu đã đọc, đếm chưa đọc, cập nhật thẻ có điều kiện.
  */
 export class PrismaChatMessageStore {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(
+    private readonly prisma: PrismaClient,
+    private readonly onRoomEvent?: ChatRoomEventSink | undefined
+  ) {}
 
   async send(params: SendMessageParams): Promise<InternalChatMessage> {
     const now = new Date()
     // organization_id sao từ hội thoại cha — khoá ghép giữ tin nhắn cùng tổ chức với hội thoại.
     const conversation = await this.prisma.internal_chat_conversations.findUniqueOrThrow({
       where: { id: params.conversationId },
-      select: { organization_id: true, counterpart_org_id: true },
+      select: { organization_id: true, counterpart_org_id: true, branch_id: true },
     })
     const [msgRow] = await this.prisma.$transaction([
       this.prisma.internal_chat_messages.create({
@@ -48,6 +55,7 @@ export class PrismaChatMessageStore {
         data: { last_read_at: now },
       }),
     ])
+    this.onRoomEvent?.({ conversationId: params.conversationId, organizationId: conversation.organization_id, counterpartOrgId: conversation.counterpart_org_id, branchId: conversation.branch_id })
     return mapMessage(msgRow)
   }
 
