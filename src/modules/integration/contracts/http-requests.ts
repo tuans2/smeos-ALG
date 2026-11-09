@@ -5,8 +5,8 @@ import { z } from "zod"
  * cho cả route lẫn OpenAPI (`integration-openapi.ts`, audit API đợt 4, PO 07/11/2026). Chuyển nguyên
  * văn từ route, không đổi luật kiểm.
  *
- * Ngoại lệ: ba route `integration/catalog-links*` nằm trong vùng Catalog đóng băng
- * (`tests/unit/architecture/catalog-freeze.test.ts`) nên vẫn tự khai lược đồ; bản ở cuối tệp là bản
+ * Ngoại lệ: ba route `integration/catalog-links*` (vùng Catalog từng đóng băng, PO gỡ 09/11/2026 — D-66)
+ * vẫn tự khai lược đồ; bản ở cuối tệp là bản
  * sao để tài liệu hoá, `tests/unit/integration/integration-catalog-contract.test.ts` gửi mẫu tới chính
  * route đóng băng để giữ hai bản khớp.
  */

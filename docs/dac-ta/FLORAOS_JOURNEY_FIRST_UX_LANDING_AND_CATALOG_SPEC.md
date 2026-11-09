@@ -61,7 +61,7 @@ Ràng buộc chéo duy nhất: `landing-campaign-tab.tsx` import **kiểu** `Cat
 |---|---|
 | Tệp vượt 350 dòng | `catalog-wizard-flow.tsx` 398, `landing-campaign-tab.tsx` 396 — không được dài thêm; tách khi viết lại |
 | Định nghĩa hoàn thành (đặc tả yêu cầu §35, 19 mục) | Chưa đối chiếu từng mục với mã |
-| Vùng khoá | Catalog đang khoá (`tests/unit/architecture/catalog-freeze.test.ts`) — sửa mã Catalog cần PO |
+| Vùng khoá | Không còn: PO gỡ đóng băng Catalog 09/11/2026 (D-66); sửa vẫn theo B5 (test khoá hành vi trước khi sửa) |
 
 ## 6. Tài liệu liên quan
 
