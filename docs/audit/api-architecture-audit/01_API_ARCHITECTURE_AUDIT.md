@@ -551,3 +551,24 @@ Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
 
 Chưa xử lý: tổ chức đã tự khoá TRƯỚC bản sửa vẫn còn dòng `capability_overrides` tắt `F5` của vai `dieu_hanh` — sàn chỉ chặn lệnh ghi mới, không áp khi tính quyền. Mở lại cần nền tảng xoá dòng đó (hoặc áp sàn cả lúc tính quyền — chờ PO quyết).
 
+## 31. Nhật ký sửa — OpenAPI nội bộ, đợt công cụ (09/11/2026)
+
+Phủ 5 nhóm, 10 route, 18 operation (tổng 532): `/ad-banner-poster/*`, `/field-config/*`, `/template-overrides/*`, `/noi-bo/identity`, `/proxy/{path}` (5 phương thức).
+
+| Việc | Tệp |
+|---|---|
+| Lược đồ yêu cầu từng khai trong 4 route chuyển NGUYÊN VĂN, route import lại; trường dữ liệu dùng lược đồ `field-platform/adapters/http-schemas` (xuất lại); query và thân proxy chỉ mô tả | `_contracts/requests-tools.ts` |
+| Phản hồi chặt sinh từ kiểu TS và dòng `template_overrides`, đối chiếu mẫu thật (danh mục nền tảng gieo trong test rồi dọn — `resetDatabase` không xoá bảng nền tảng); proxy trả nguyên văn phản hồi hệ thống đích, không có lược đồ | `_contracts/responses-tools.ts` |
+| Operation + mã năng lực theo spec 06 | `_contracts/ops-tools.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật, kể cả đường lỗi 400/404 đã mô tả | `tests/tenant/internal-contract-tools.test.ts` |
+
+Phát hiện, chưa sửa (không có P1 trong phạm vi core):
+
+| Mức | Lỗi | Tái hiện |
+|---|---|---|
+| **P2** | **`/proxy/{path}` chuyển tiếp cả khi chưa đăng nhập.** Core chỉ đòi phiên cho lệnh ghi `api/accounts` của SocialFlow (`J5`); mọi đường dẫn khác trong danh sách trắng — gồm `api/v1/worker/cron` của LocalBudd — được chuyển tiếp với danh tính `none`, an toàn hoàn toàn dựa vào hệ thống đích tự kiểm. Core thành điểm chuyển tiếp công khai vào mạng nội bộ của SocialFlow/LocalBudd | `GET /proxy/api/posts?client=SOCIALFLOW` không cookie → core gọi `http://…:8000/api/posts` (test chặn mạng thật) |
+| P2 | `/proxy`: hệ thống đích không gọi được → 500 với thông báo chứa địa chỉ nội bộ của hệ thống đích | Cùng ca trên: `message` = "Không gọi được SOCIALFLOW: … http://localhost:8000/api/posts …" |
+| P2 | `generateBannerCopyUseCase` gọi LLM trực tiếp qua `createContentLLM` (`core/ai/adapters/multi-llm-provider.ts`), không qua `callCapability` — trái quy tắc AI bắt buộc (CLAUDE.md mục 5): bỏ qua trần mô hình, sàn quyền riêng tư, sổ `ai_requests` | Đọc mã |
+| P3 | `GET /noi-bo/identity` không đòi mã năng lực: mọi vai (kể cả Shipper) thấy tên và email của mọi thành viên | Phiên Shipper → 200 kèm `members` |
+| P3 | `GET /field-config/catalogs` chỉ kiểm phiên, không kiểm `R1` như đặc tả 06 và chú thích use-case ghi | Đọc mã |
+| P3 | `GET /field-config?entity=` lạ → 200 rỗng thay vì 400; tạo trường trùng nhãn → khoá thêm hậu tố, không báo trùng | — |
