@@ -10,6 +10,7 @@
 import { AppError } from "@/core/http/errors"
 import { readSsoCookie, serializeSsoCookie } from "@/core/http/cookies"
 import { env } from "@/lib/env"
+import { log } from "@/core/observability/log"
 import { resolveSession } from "@/modules/organization/use-cases/resolve-session"
 import { ssoClaimsFor, SSO_TOKEN_TTL_SECONDS } from "@/modules/sso/domain/sso-claims"
 import { signSsoToken, verifySsoToken } from "@/modules/sso/infra/sso-jwt"
@@ -215,16 +216,12 @@ async function sendToSibling(input: {
       signal,
     })
   } catch (err) {
-    if (err instanceof ProxyError) {
-      throw new ProxyRouteError(err.message, "INTERNAL")
-    }
     if (err instanceof Error && err.name === "AbortError") {
       throw new ProxyRouteError(`Proxy sang ${input.client} timeout sau ${Math.round(PROXY_TIMEOUT_MS / 1000)}s`, "INTERNAL")
     }
-    throw new ProxyRouteError(
-      `Không gọi được ${input.client}: ${err instanceof Error ? err.message : String(err)}`,
-      "INTERNAL"
-    )
+    // Chi tiết lỗi mạng (có địa chỉ nội bộ của hệ thống đích) chỉ vào log máy chủ, không trả ra trình duyệt (audit API §33).
+    log.error("proxy.upstream_failed", { client: input.client, method: input.method, path: input.path, error: err instanceof Error ? err.message : String(err), proxyError: err instanceof ProxyError })
+    throw new ProxyRouteError(`Không gọi được ${input.client}, vui lòng thử lại sau`, "INTERNAL")
   } finally {
     cancel()
   }

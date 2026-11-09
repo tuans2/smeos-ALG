@@ -12,9 +12,9 @@ const ORG = "Định danh tổ chức"
 const PROXY = "Chuyển tiếp sang hệ thống ngoài"
 const NF = "Của tổ chức khác → 404."
 const PROXY_DESC =
-  "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính của chính người gọi (JWT SSO hoặc token máy), không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Core chỉ đòi phiên và mã năng lực cho lệnh ghi `api/accounts` của SocialFlow (`J5`); còn lại hệ thống đích tự kiểm (audit API §31). Phản hồi là phản hồi của hệ thống đích; không gọi được → 500."
+  "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính SSO của người gọi, không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Luôn đòi phiên của tổ chức (chưa đăng nhập → 401, không chuyển tiếp — audit API §33); lệnh ghi `api/accounts` của SocialFlow còn đòi `J5`. Phản hồi là phản hồi của hệ thống đích; không gọi được → 500 thông báo chung (chi tiết chỉ vào log máy chủ)."
 const proxyOp = (method: "get" | "post" | "put" | "patch" | "delete", id: string) =>
-  op(PROXY, { method, path: "/proxy/{path}", operationId: id, summary: `Chuyển tiếp ${method.toUpperCase()} sang hệ thống ngoài`, cap: null, auth: "public", query: req.proxyQuery,
+  op(PROXY, { method, path: "/proxy/{path}", operationId: id, summary: `Chuyển tiếp ${method.toUpperCase()} sang hệ thống ngoài`, cap: null, auth: "session", query: req.proxyQuery,
     ...(method === "get" || method === "delete" ? {} : { body: req.proxyBody }), description: PROXY_DESC,
     ok: [200, { description: "Phản hồi của hệ thống đích (nguyên văn)" }], errors: [400, 401, 403, 404, 500] })
 
@@ -22,7 +22,7 @@ export const TOOLS_OPERATIONS: OpenApiOperation[] = [
   op(BANNER, { method: "get", path: "/ad-banner-poster/copy", operationId: "listBannerPromotions", summary: "Ưu đãi tiệm đang bật — nguồn duy nhất cho ô ưu đãi trên poster", cap: "I1",
     ok: [200, { description: "Ưu đãi", schema: res.bannerPromotionsResponse }] }),
   op(BANNER, { method: "post", path: "/ad-banner-poster/copy", operationId: "generateBannerCopy", summary: "Sinh chữ cho banner", cap: "I1", body: req.bannerCopyBody,
-    description: "Nhãn ưu đãi chỉ lấy từ ưu đãi tiệm đang bật. Mô hình không chạy được → mẫu dựng sẵn (`source: INSTANT_TEMPLATE`), vẫn 200.", ok: [200, { description: "Chữ banner", schema: res.bannerCopyResponse }], errors: BODY_ERRORS }),
+    description: "Gọi AI qua cổng `callCapability` (năng lực `content_generation`, sàn quyền riêng tư `SHOP`, ghi sổ `ai_requests` của tổ chức). Nhãn ưu đãi chỉ lấy từ ưu đãi tiệm đang bật. Mô hình không chạy được → mẫu dựng sẵn (`source: INSTANT_TEMPLATE`), vẫn 200.", ok: [200, { description: "Chữ banner", schema: res.bannerCopyResponse }], errors: BODY_ERRORS }),
   op(BANNER, { method: "post", path: "/ad-banner-poster/render", operationId: "renderBanner", summary: "Dựng banner theo khổ và kiểm chất lượng", cap: "I1", body: req.bannerRenderBody,
     description: "Mỗi khổ trong `target_formats` một kết quả. Thiếu ảnh sản phẩm thật → QC không đạt (`product_fidelity`), vẫn 200.", ok: [200, { description: "Kết quả dựng", schema: res.bannerRenderResponse }], errors: BODY_ERRORS }),
   op(BANNER, { method: "post", path: "/ad-banner-poster/save", operationId: "saveBannerToLibrary", summary: "Lưu banner PNG đã dựng vào thư viện", cap: "G2", body: req.bannerSaveBody,

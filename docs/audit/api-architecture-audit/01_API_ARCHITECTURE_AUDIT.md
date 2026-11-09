@@ -566,9 +566,9 @@ Phát hiện, chưa sửa (không có P1 trong phạm vi core):
 
 | Mức | Lỗi | Tái hiện |
 |---|---|---|
-| **P2** | **`/proxy/{path}` chuyển tiếp cả khi chưa đăng nhập.** Core chỉ đòi phiên cho lệnh ghi `api/accounts` của SocialFlow (`J5`); mọi đường dẫn khác trong danh sách trắng — gồm `api/v1/worker/cron` của LocalBudd — được chuyển tiếp với danh tính `none`, an toàn hoàn toàn dựa vào hệ thống đích tự kiểm. Core thành điểm chuyển tiếp công khai vào mạng nội bộ của SocialFlow/LocalBudd | `GET /proxy/api/posts?client=SOCIALFLOW` không cookie → core gọi `http://…:8000/api/posts` (test chặn mạng thật) |
-| P2 | `/proxy`: hệ thống đích không gọi được → 500 với thông báo chứa địa chỉ nội bộ của hệ thống đích | Cùng ca trên: `message` = "Không gọi được SOCIALFLOW: … http://localhost:8000/api/posts …" |
-| P2 | `generateBannerCopyUseCase` gọi LLM trực tiếp qua `createContentLLM` (`core/ai/adapters/multi-llm-provider.ts`), không qua `callCapability` — trái quy tắc AI bắt buộc (CLAUDE.md mục 5): bỏ qua trần mô hình, sàn quyền riêng tư, sổ `ai_requests` | Đọc mã |
+| **P2** | **`/proxy/{path}` chuyển tiếp cả khi chưa đăng nhập.** Core chỉ đòi phiên cho lệnh ghi `api/accounts` của SocialFlow (`J5`); mọi đường dẫn khác trong danh sách trắng — gồm `api/v1/worker/cron` của LocalBudd — được chuyển tiếp với danh tính `none`, an toàn hoàn toàn dựa vào hệ thống đích tự kiểm. Core thành điểm chuyển tiếp công khai vào mạng nội bộ của SocialFlow/LocalBudd | Đã sửa ở §33 |
+| P2 | `/proxy`: hệ thống đích không gọi được → 500 với thông báo chứa địa chỉ nội bộ của hệ thống đích | Đã sửa ở §33 |
+| P2 | `generateBannerCopyUseCase` gọi LLM trực tiếp qua `createContentLLM` (`core/ai/adapters/multi-llm-provider.ts`), không qua `callCapability` — trái quy tắc AI bắt buộc (CLAUDE.md mục 5): bỏ qua trần mô hình, sàn quyền riêng tư, sổ `ai_requests` | Đã sửa ở §33 |
 | P3 | `GET /noi-bo/identity` không đòi mã năng lực: mọi vai (kể cả Shipper) thấy tên và email của mọi thành viên | Phiên Shipper → 200 kèm `members` |
 | P3 | `GET /field-config/catalogs` chỉ kiểm phiên, không kiểm `R1` như đặc tả 06 và chú thích use-case ghi | Đọc mã |
 | P3 | `GET /field-config?entity=` lạ → 200 rỗng thay vì 400; tạo trường trùng nhãn → khoá thêm hậu tố, không báo trùng | — |
@@ -592,3 +592,14 @@ Phát hiện, chưa sửa (không có P1):
 | P3 | `GET /product-intelligence/{id}` nhánh dự phòng (bản phân tích ảnh) đặt `productName` = mã ảnh (UUID) thay vì tên sản phẩm |
 | P3 | `/internal/health` và `/internal/chain-dispatch-sweep` trả 401 bằng thân cũ `{ error: "Unauthorized" }` (không theo envelope lỗi chung); `/internal/integrations-sweep` thì theo envelope |
 | P3 | `POST /catalog-links/{slug}/revoke` lần hai → 400 (nên là 409 hoặc 200 không đổi) |
+
+## 33. Nhật ký sửa — ba lỗi P2 phát hiện ở §31 (09/11/2026)
+
+Người dùng yêu cầu sửa trước khi làm tiếp.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **`/proxy/{path}` chuyển tiếp khi chưa đăng nhập** — chỉ lệnh ghi `api/accounts` đòi phiên; mọi đường dẫn khác trong danh sách trắng (gồm `api/v1/worker/cron` của LocalBudd) được chuyển tiếp với danh tính `none` | Route luôn gọi `requireTenantContext` trước khi chuyển tiếp (sau kiểm `client` và danh sách trắng); `api/accounts` ghi vẫn đòi `J5`. Mọi nơi gọi proxy trong mã đều là màn hình của người đã đăng nhập; không cron/máy nào gọi qua proxy (đã `grep` mã, `render.yaml`, `workers/`) | `tests/tenant/proxy-auth.test.ts` (đỏ trên mã cũ: 500 vì đã gọi mạng thay vì 401) |
+| **`/proxy` lộ địa chỉ nội bộ khi lỗi** — `sendToSibling` ghép nguyên văn lỗi mạng (có URL hệ thống đích) vào thông báo 500 | Lỗi mạng → `log.error("proxy.upstream_failed", …)` giữ chi tiết; phản hồi chỉ còn "Không gọi được <hệ thống>, vui lòng thử lại sau". Thông báo hết giờ không đổi (không có địa chỉ) | `proxy-auth.test.ts` (đỏ trên mã cũ: thân chứa địa chỉ) |
+| **Chữ banner gọi LLM ngoài cổng AI** — `generateBannerCopyUseCase` gọi `createContentLLM().complete()` thẳng với `organizationId: "system"`: bỏ qua trần mô hình, sàn quyền riêng tư, sổ `ai_requests` | Dời lời gọi LLM vào adapter `ad-banner-poster/adapters/banner-copy-ai-adapter.ts` (kiểm JSON + luật ưu đãi tiệm trước khi chấm điểm); use-case gọi `callCapability` năng lực `content_generation` (AIC-23, sàn `SHOP`, cùng năng lực với landing/catalog) bằng `aiGatewayDeps(ctx)` và tổ chức thật của phiên. Không có phiên, cổng trả `khong_chay_duoc` hoặc lỗi → mẫu dựng sẵn như cũ. Route truyền `{ ctx }` | `ad-banner-poster/use-cases/banner-copy-gateway.test.ts` (4 ca), `banner-use-cases.test.ts` giữ nguyên |
+

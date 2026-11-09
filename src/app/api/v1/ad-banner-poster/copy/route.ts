@@ -34,7 +34,7 @@ export const POST = handle(async (request) => {
     productTitle: parsed.data.product_title,
     desiredPromotion: parsed.data.desired_promotion,
     shopPromotions: await shopPromotionTitles(ctx.organizationId),
-  })
+  }, { ctx })
 
   return jsonResponse({
     success: true,

@@ -72,7 +72,7 @@
       "post": {
         "operationId": "generateBannerCopy",
         "summary": "Sinh chữ cho banner",
-        "description": "Nhãn ưu đãi chỉ lấy từ ưu đãi tiệm đang bật. Mô hình không chạy được → mẫu dựng sẵn (`source: INSTANT_TEMPLATE`), vẫn 200.",
+        "description": "Gọi AI qua cổng `callCapability` (năng lực `content_generation`, sàn quyền riêng tư `SHOP`, ghi sổ `ai_requests` của tổ chức). Nhãn ưu đãi chỉ lấy từ ưu đãi tiệm đang bật. Mô hình không chạy được → mẫu dựng sẵn (`source: INSTANT_TEMPLATE`), vẫn 200.",
         "tags": [
           "Ấn phẩm quảng cáo"
         ],
@@ -116479,11 +116479,15 @@
       "get": {
         "operationId": "proxyGet",
         "summary": "Chuyển tiếp GET sang hệ thống ngoài",
-        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính của chính người gọi (JWT SSO hoặc token máy), không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Core chỉ đòi phiên và mã năng lực cho lệnh ghi `api/accounts` của SocialFlow (`J5`); còn lại hệ thống đích tự kiểm (audit API §31). Phản hồi là phản hồi của hệ thống đích; không gọi được → 500.",
+        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính SSO của người gọi, không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Luôn đòi phiên của tổ chức (chưa đăng nhập → 401, không chuyển tiếp — audit API §33); lệnh ghi `api/accounts` của SocialFlow còn đòi `J5`. Phản hồi là phản hồi của hệ thống đích; không gọi được → 500 thông báo chung (chi tiết chỉ vào log máy chủ).",
         "tags": [
           "Chuyển tiếp sang hệ thống ngoài"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "parameters": [
           {
             "name": "path",
@@ -116537,16 +116541,20 @@
             "$ref": "#/components/responses/Error500"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       },
       "post": {
         "operationId": "proxyPost",
         "summary": "Chuyển tiếp POST sang hệ thống ngoài",
-        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính của chính người gọi (JWT SSO hoặc token máy), không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Core chỉ đòi phiên và mã năng lực cho lệnh ghi `api/accounts` của SocialFlow (`J5`); còn lại hệ thống đích tự kiểm (audit API §31). Phản hồi là phản hồi của hệ thống đích; không gọi được → 500.",
+        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính SSO của người gọi, không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Luôn đòi phiên của tổ chức (chưa đăng nhập → 401, không chuyển tiếp — audit API §33); lệnh ghi `api/accounts` của SocialFlow còn đòi `J5`. Phản hồi là phản hồi của hệ thống đích; không gọi được → 500 thông báo chung (chi tiết chỉ vào log máy chủ).",
         "tags": [
           "Chuyển tiếp sang hệ thống ngoài"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "parameters": [
           {
             "name": "path",
@@ -116608,16 +116616,20 @@
             "$ref": "#/components/responses/Error500"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       },
       "put": {
         "operationId": "proxyPut",
         "summary": "Chuyển tiếp PUT sang hệ thống ngoài",
-        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính của chính người gọi (JWT SSO hoặc token máy), không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Core chỉ đòi phiên và mã năng lực cho lệnh ghi `api/accounts` của SocialFlow (`J5`); còn lại hệ thống đích tự kiểm (audit API §31). Phản hồi là phản hồi của hệ thống đích; không gọi được → 500.",
+        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính SSO của người gọi, không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Luôn đòi phiên của tổ chức (chưa đăng nhập → 401, không chuyển tiếp — audit API §33); lệnh ghi `api/accounts` của SocialFlow còn đòi `J5`. Phản hồi là phản hồi của hệ thống đích; không gọi được → 500 thông báo chung (chi tiết chỉ vào log máy chủ).",
         "tags": [
           "Chuyển tiếp sang hệ thống ngoài"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "parameters": [
           {
             "name": "path",
@@ -116679,16 +116691,20 @@
             "$ref": "#/components/responses/Error500"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       },
       "patch": {
         "operationId": "proxyPatch",
         "summary": "Chuyển tiếp PATCH sang hệ thống ngoài",
-        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính của chính người gọi (JWT SSO hoặc token máy), không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Core chỉ đòi phiên và mã năng lực cho lệnh ghi `api/accounts` của SocialFlow (`J5`); còn lại hệ thống đích tự kiểm (audit API §31). Phản hồi là phản hồi của hệ thống đích; không gọi được → 500.",
+        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính SSO của người gọi, không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Luôn đòi phiên của tổ chức (chưa đăng nhập → 401, không chuyển tiếp — audit API §33); lệnh ghi `api/accounts` của SocialFlow còn đòi `J5`. Phản hồi là phản hồi của hệ thống đích; không gọi được → 500 thông báo chung (chi tiết chỉ vào log máy chủ).",
         "tags": [
           "Chuyển tiếp sang hệ thống ngoài"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "parameters": [
           {
             "name": "path",
@@ -116750,16 +116766,20 @@
             "$ref": "#/components/responses/Error500"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       },
       "delete": {
         "operationId": "proxyDelete",
         "summary": "Chuyển tiếp DELETE sang hệ thống ngoài",
-        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính của chính người gọi (JWT SSO hoặc token máy), không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Core chỉ đòi phiên và mã năng lực cho lệnh ghi `api/accounts` của SocialFlow (`J5`); còn lại hệ thống đích tự kiểm (audit API §31). Phản hồi là phản hồi của hệ thống đích; không gọi được → 500.",
+        "description": "Chuyển tiếp nguyên văn sang SocialFlow/LocalBudd (`client` bắt buộc; sai → 400) với danh tính SSO của người gọi, không gửi cookie của core. Chỉ đường dẫn trong danh sách trắng — khác → 404. Luôn đòi phiên của tổ chức (chưa đăng nhập → 401, không chuyển tiếp — audit API §33); lệnh ghi `api/accounts` của SocialFlow còn đòi `J5`. Phản hồi là phản hồi của hệ thống đích; không gọi được → 500 thông báo chung (chi tiết chỉ vào log máy chủ).",
         "tags": [
           "Chuyển tiếp sang hệ thống ngoài"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "parameters": [
           {
             "name": "path",
@@ -116813,7 +116833,7 @@
             "$ref": "#/components/responses/Error500"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       }
     },
     "/quotations": {
