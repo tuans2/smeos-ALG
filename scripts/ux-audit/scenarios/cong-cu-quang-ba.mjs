@@ -18,14 +18,14 @@ export async function run({ open, shot, org, uid }) {
   // Kho trống: tạm chuyển sản phẩm đang bán sang nháp, chụp xong trả lại
   const active = await q("SELECT id FROM products WHERE organization_id=$1 AND status='ACTIVE'", [org])
   const ids = active.map((r) => r.id)
-  if (ids.length) await q("UPDATE products SET status='DRAFT' WHERE id = ANY($1::uuid[])", [ids])
+  if (ids.length) await q("UPDATE products SET status='DRAFT' WHERE id = ANY($1::text[])", [ids])
   try {
     await shot("cc-qb-kho-trong", async (p) => {
       await openHub(p)
       await p.getByRole("link", { name: "Tạo Thẻ sản phẩm" }).waitFor({ timeout: 30000 })
     })
   } finally {
-    if (ids.length) await q("UPDATE products SET status='ACTIVE' WHERE id = ANY($1::uuid[])", [ids])
+    if (ids.length) await q("UPDATE products SET status='ACTIVE' WHERE id = ANY($1::text[])", [ids])
   }
 
   const stamp = Date.now()
@@ -50,7 +50,7 @@ export async function run({ open, shot, org, uid }) {
   })
   await shot("cc-qb-tao-landing", async (p) => {
     await openHub(p, "landing")
-    await p.getByRole("button", { name: "Tạo landing mới" }).click()
+    await p.getByRole("region", { name: "Landing page" }).getByRole("button", { name: "Tạo landing mới" }).click()
     await p.getByRole("radiogroup", { name: "Mục đích trang" }).waitFor({ timeout: 30000 })
   })
   await shot("cc-qb-ngung-chia-se", async (p) => {
@@ -64,7 +64,7 @@ export async function run({ open, shot, org, uid }) {
   })
   await shot("cc-qb-tao-bo-suu-tap", async (p) => {
     await openHub(p, "chung")
-    await p.getByRole("button", { name: "Tạo bộ sưu tập" }).click()
+    await p.getByRole("region", { name: "Bộ sưu tập chung" }).getByRole("button", { name: "Tạo bộ sưu tập", exact: true }).click()
   })
   await shot("cc-qb-o-rieng", async (p) => {
     await openHub(p, "rieng")
