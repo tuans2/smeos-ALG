@@ -500,3 +500,23 @@ Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
 
 Chưa sửa (ngoài phạm vi, cùng khuôn): `openSecret` (`core/security/secret-box.ts`) và `unwrapDataKey` cũng kiểm `!body` — bí mật rỗng không mở được. Khoá dữ liệu luôn 32 byte nên `unwrapDataKey` không gặp; `openSecret` chỉ gặp nếu có nơi ghi bí mật rỗng.
 
+## 28. Nhật ký sửa — OpenAPI nội bộ, đợt sản phẩm phụ (09/11/2026)
+
+Phủ 4 nhóm, 10 route, 13 operation (tổng 496): `/product-photo/*`, `/product-image-set/*`, `/product-change-requests/*`, `/availability/*`. Chỉ thêm tài liệu và chuyển lược đồ — không đổi hành vi tính năng tải ảnh.
+
+| Việc | Tệp |
+|---|---|
+| Lược đồ yêu cầu từng khai trong 6 route chuyển NGUYÊN VĂN, route import lại; query chỉ mô tả | `_contracts/requests-product-extra.ts` |
+| Phản hồi chặt sinh từ kiểu TS, đối chiếu mẫu thật; dùng lại `jobCreatedResponse` (đợt tác vụ AI) và `productRow` (đợt nhóm lõi) | `_contracts/responses-product-extra.ts` |
+| Operation + mã năng lực theo spec 06; `operationId` hàng chờ là `listChangeRequestQueue` (tên `listProductChangeRequests` đã dùng cho `GET /products/{id}/change-requests`) | `_contracts/ops-product-extra.ts`, `internal-openapi.ts` |
+| Spec 06: `GET /product-photo`, `GET /product-image-set` ghi *(phiên)* nhưng route không kiểm phiên — sửa cột theo mã thành *(công khai)* | `docs/dac-ta/06-api-specification.md` |
+| Test hợp đồng trên CSDL thật, kể cả đường lỗi 400/404/422 đã mô tả | `tests/tenant/internal-contract-product-extra.test.ts` |
+
+Phát hiện, chưa sửa (không có P1):
+
+| Mức | Lỗi |
+|---|---|
+| P3 | `GET /product-photo` và `GET /product-image-set` không cần phiên và trả cả `promptDirective` (câu lệnh gửi mô hình ảnh) — có nên đòi phiên và ẩn câu lệnh không là quyết định của PO |
+| P3 | `GET /product-photo/{id}` khi job chưa có điểm trả `qcEvaluation.passed: true`, mọi tiêu chí 1; `GET /product-image-set/{id}` khi chưa xong trả `url` từng biến thể là ảnh gốc kèm `passed: true`. Giao diện dựa `canApprove`/`status` thì không sai, nhưng dễ đọc nhầm là đã đạt |
+| P3 | `GET /availability/board?month=` sai dạng → lặng lẽ trả tháng hiện tại thay vì 400 |
+| P3 | `POST /product-change-requests/{id}/approve` trả dòng `products` nguyên bản (snake_case), khác các phản hồi camelCase còn lại của nhóm |

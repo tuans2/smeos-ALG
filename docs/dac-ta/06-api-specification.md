@@ -1166,9 +1166,9 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | PUT | `/platform/orgs-data/:id/legal-hold` | `N14` | Đặt/gỡ legal hold cho cả tổ chức; thân `{ until: ISO \| null, reason }`; chặn mọi xoá vĩnh viễn của tổ chức (API, thùng rác, cron, hàng đợi xoá tệp, dọn bàn giao) |
 | PUT | `/platform/orgs-data/:id/assets/:id/legal-hold` | `N14` | Đặt/gỡ legal hold cho một asset; thân `{ until: ISO \| null, reason }`; ghi nhật ký nền tảng (SDAGF D-04) |
 | GET | `/platform/pending-approvals` | `N1` | Tài khoản chờ duyệt |
-| GET · POST | `/product-image-set` | *(phiên)* · `I1` | GET: danh sách gói ảnh (tĩnh); POST: tạo bộ ảnh |
+| GET · POST | `/product-image-set` | — *(công khai)* · `I1` | GET: danh sách gói ảnh (tĩnh, route không kiểm phiên — sửa 09/11/2026 theo mã, audit API §28); POST: tạo bộ ảnh |
 | GET | `/product-image-set/:id` | `G1` | |
-| GET · POST | `/product-photo` | *(phiên)* · `I1` | GET: nền/tỉ lệ có sẵn (tĩnh); POST: tạo ảnh studio |
+| GET · POST | `/product-photo` | — *(công khai)* · `I1` | GET: nền/tỉ lệ có sẵn (tĩnh, route không kiểm phiên — sửa 09/11/2026 theo mã, audit API §28); POST: tạo ảnh studio |
 | GET | `/product-photo/:id` | `G1` | |
 | POST | `/product-photo/:id/retry` | `I1` | |
 | GET | `/store/collection-transparency` | `F1` | Dữ liệu chuỗi đang thu của cửa hàng |

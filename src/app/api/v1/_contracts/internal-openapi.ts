@@ -20,6 +20,7 @@ import { ORG_OPERATIONS } from "./ops-org"
 import { PRODUCT_OPERATIONS } from "./ops-products"
 import { PROFILE_OPERATIONS } from "./ops-profile"
 import { MARKETING_OPERATIONS } from "./ops-marketing"
+import { PRODUCT_EXTRA_OPERATIONS } from "./ops-product-extra"
 import { STORAGE_OPERATIONS } from "./ops-storage"
 
 /**
@@ -30,9 +31,9 @@ import { STORAGE_OPERATIONS } from "./ops-storage"
  */
 export const INTERNAL_OPENAPI_PATH = "docs/spec/contracts/openapi/internal.openapi.json"
 
-export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video", "notification", "chat", "internal-chat", "branches", "branch-portal", "chain", "costing", "pricing-rules", "price-lists", "integrations", "integration-tokens", "sso", "assets", "asset-usages", "storage", "brand-kit", "brand-library", "product-copies", "content-engine", "market-intelligence", "session", "reports", "print", "vouchers", "usage", "business-profile", "brand-profile", "store", "store-share-link", "shop-reviews", "custom-domains", "short-links", "leads", "campaigns", "marketing-center", "customer-segments", "customers", "customer-interactions", "occasions", "delivery"] as const
+export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video", "notification", "chat", "internal-chat", "branches", "branch-portal", "chain", "costing", "pricing-rules", "price-lists", "integrations", "integration-tokens", "sso", "assets", "asset-usages", "storage", "brand-kit", "brand-library", "product-copies", "content-engine", "market-intelligence", "session", "reports", "print", "vouchers", "usage", "business-profile", "brand-profile", "store", "store-share-link", "shop-reviews", "custom-domains", "short-links", "leads", "campaigns", "marketing-center", "customer-segments", "customers", "customer-interactions", "occasions", "delivery", "product-photo", "product-image-set", "product-change-requests", "availability"] as const
 
-export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS, ...CHAIN_OPERATIONS, ...COSTING_OPERATIONS, ...INTEGRATION_HUB_OPERATIONS, ...STORAGE_OPERATIONS, ...BRAND_OPERATIONS, ...CONTENT_OPERATIONS, ...MISC_OPERATIONS, ...PROFILE_OPERATIONS, ...MARKETING_OPERATIONS]
+export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS, ...CHAIN_OPERATIONS, ...COSTING_OPERATIONS, ...INTEGRATION_HUB_OPERATIONS, ...STORAGE_OPERATIONS, ...BRAND_OPERATIONS, ...CONTENT_OPERATIONS, ...MISC_OPERATIONS, ...PROFILE_OPERATIONS, ...MARKETING_OPERATIONS, ...PRODUCT_EXTRA_OPERATIONS]
 
 export function buildInternalOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({
