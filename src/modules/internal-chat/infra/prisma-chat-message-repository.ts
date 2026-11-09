@@ -95,6 +95,19 @@ export class PrismaChatMessageStore {
     })
   }
 
+  async setMuted(conversationId: string, userId: string, organizationId: string, muted: boolean): Promise<void> {
+    await this.prisma.internal_chat_participants.upsert({
+      where: { conversation_id_user_id: { conversation_id: conversationId, user_id: userId } },
+      update: { is_muted: muted },
+      create: { conversation_id: conversationId, user_id: userId, organization_id: organizationId, role_in_chat: "MEMBER", is_muted: muted },
+    })
+  }
+
+  async mutedUserIds(conversationId: string): Promise<string[]> {
+    const rows = await this.prisma.internal_chat_participants.findMany({ where: { conversation_id: conversationId, is_muted: true }, select: { user_id: true }, take: 500 })
+    return rows.map((r) => r.user_id)
+  }
+
   /** Số tin của người khác sau mốc đã đọc của từng phòng — một truy vấn cho cả trang danh sách. */
   async countUnread(userId: string, lastReadByConversation: Map<string, Date>): Promise<Map<string, number>> {
     const result = new Map<string, number>()

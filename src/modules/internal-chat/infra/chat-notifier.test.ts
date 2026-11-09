@@ -41,4 +41,11 @@ describe("thông báo trao đổi nội bộ", () => {
     expect(notify).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "partner-org", eventKey: "INTERNAL_CHAT_ORDER_INVITE", deepLink: "/tin-nhan?chuoi=chain-org" }))
     expect(notify.mock.calls[0]![0].title).toContain("DH-1")
   })
+
+  it("người đã tắt tiếng phòng không nhận thông báo tin nhắn", async () => {
+    const notify = vi.fn().mockResolvedValue(1)
+    const n = new OrganizationChatNotifier(notify, async (id) => (id === "r9" ? ["muted-user"] : []))
+    await n.messageReceived({ conversation: room("r9"), senderOrgId: "chain-org", preview: "x" })
+    expect(notify.mock.calls[0]![0].excludeUserIds).toEqual(["muted-user"])
+  })
 })

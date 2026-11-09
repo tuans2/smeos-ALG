@@ -13,7 +13,7 @@ import { chatImageDecorator } from "@/modules/internal-chat/infra/chat-image-dec
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SendChatMessageUseCase } from "@/modules/internal-chat/use-cases/send-chat-message"
 import { subcontractCardDecorator } from "@/modules/internal-chat/infra/subcontract-card-decorator"
-import { OrganizationChatNotifier } from "@/modules/internal-chat/infra/chat-notifier"
+import { createChatNotifier } from "@/modules/internal-chat/infra/chat-notifier"
 
 /**
  * Client chỉ gửi tin chữ. `.strict()`: thân có `actionPayload` / `attachments` / loại khác `TEXT` → 400 — thẻ đơn
@@ -74,7 +74,8 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const parsed = sendMessageSchema.safeParse(body)
   if (!parsed.success) throw validationFailed({ reason: issuesOf(parsed.error) })
 
-  const useCase = new SendChatMessageUseCase(getInternalChatRepository(), getChatLinkPolicy(), new OrganizationChatNotifier())
+  const chatRepo = getInternalChatRepository()
+  const useCase = new SendChatMessageUseCase(chatRepo, getChatLinkPolicy(), createChatNotifier(chatRepo))
   const message = await useCase.execute({
     conversationId,
     userId: ctx.userId,

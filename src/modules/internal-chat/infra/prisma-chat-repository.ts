@@ -155,6 +155,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
         conv.lastMessageSnippet = snippetOf(lastMsg.message_type, lastMsg.content)
       }
       conv.unreadCount = unread.get(r.id) ?? 0
+      conv.isMuted = r.participants[0]?.is_muted ?? false
       // Tên bên kia theo phía người xem
       const otherName = r.organization_id === org ? r.counterpart_org?.name : r.organization?.name
       if (otherName) conv.counterpartName = otherName
@@ -231,6 +232,14 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
 
   listMessages(conversationId: string, limit?: number | undefined, before?: MessageCursor | undefined): Promise<MessagePage> {
     return this.messageStore.listPage(conversationId, limit, before)
+  }
+
+  setMuted(conversationId: string, userId: string, organizationId: string, muted: boolean): Promise<void> {
+    return this.messageStore.setMuted(conversationId, userId, organizationId, muted)
+  }
+
+  mutedUserIds(conversationId: string): Promise<string[]> {
+    return this.messageStore.mutedUserIds(conversationId)
   }
 
   markRead(conversationId: string, userId: string, organizationId: string): Promise<void> {

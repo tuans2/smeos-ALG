@@ -175,8 +175,22 @@ export function useInternalChat() {
     return false
   }, [activeConv, fetchMessages])
 
+  /** Tắt / bật thông báo tin nhắn của phòng đang mở cho chính mình. */
+  const toggleMute = useCallback(async () => {
+    if (!activeConv) return
+    const muted = !activeConv.isMuted
+    try {
+      const res = await fetch(`${API}/${activeConv.id}/mute`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ muted }) })
+      if (!res.ok) return setSendError("Chưa đổi được thông báo của phòng. Thử lại sau.")
+      setActiveConv((c) => (c && c.id === activeConv.id ? { ...c, isMuted: muted } : c))
+      setConversations((list) => list.map((c) => (c.id === activeConv.id ? { ...c, isMuted: muted } : c)))
+    } catch {
+      setSendError("Mất kết nối — chưa đổi được thông báo.")
+    }
+  }, [activeConv])
+
   return {
-    conversations, listState, activeConv, setActiveConv, messages, threadState, online, sendError, sendMessage, sendImages,
+    conversations, listState, activeConv, setActiveConv, messages, threadState, online, sendError, sendMessage, sendImages, toggleMute,
     reload: () => (activeConv ? fetchMessages(activeConv.id) : fetchConversations()),
   }
 }

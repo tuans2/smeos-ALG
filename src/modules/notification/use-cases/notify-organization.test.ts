@@ -41,6 +41,13 @@ describe("notifyOrganization", () => {
     expect((solo.dispatch as ReturnType<typeof vi.fn>).mock.calls[0]?.[0].lockParentOrgId).toBeUndefined()
   })
 
+  it("bỏ qua người trong excludeUserIds (vd. đã tắt tiếng phòng trao đổi nội bộ)", async () => {
+    const d = deps()
+    const sent = await notifyOrganization({ organizationId: "org-1", eventKey: "ORDER_RECEIVED", ownerUserId: "sale", excludeUserIds: ["admin"] }, d)
+    expect(sent).toBe(1)
+    expect((d.dispatch as ReturnType<typeof vi.fn>).mock.calls.map((c) => c[0].recipient.userId)).toEqual(["sale"])
+  })
+
   it("không bao giờ ném lỗi về luồng nghiệp vụ", async () => {
     const d = deps({ listMembers: vi.fn().mockRejectedValue(new Error("db down")) })
     await expect(notifyOrganization({ organizationId: "org-1", eventKey: "ORDER_RECEIVED" }, d)).resolves.toBe(0)

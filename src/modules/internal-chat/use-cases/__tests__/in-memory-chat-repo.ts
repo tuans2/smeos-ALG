@@ -129,6 +129,16 @@ export class InMemoryChatRepository implements IInternalChatRepository {
     return { items, nextCursor: start > 0 && oldest ? { createdAt: oldest.createdAt, id: oldest.id } : null }
   }
 
+  async setMuted(conversationId: string, userId: string, organizationId: string, muted: boolean): Promise<void> {
+    await this.addParticipant(conversationId, { userId, organizationId })
+    const p = this.participants.find((x) => x.conversationId === conversationId && x.userId === userId)!
+    p.isMuted = muted
+  }
+
+  async mutedUserIds(conversationId: string): Promise<string[]> {
+    return this.participants.filter((p) => p.conversationId === conversationId && p.isMuted).map((p) => p.userId)
+  }
+
   async markRead(conversationId: string, userId: string, organizationId: string): Promise<void> {
     this.readMarks.push({ conversationId, userId, organizationId })
   }

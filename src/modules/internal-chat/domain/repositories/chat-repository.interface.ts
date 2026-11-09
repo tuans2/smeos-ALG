@@ -79,6 +79,10 @@ export interface IInternalChatRepository {
   findMessageById(messageId: string): Promise<InternalChatMessage | null>
   /** Trang tin mới nhất (hoặc cũ hơn `before`), tối đa `limit` (trần 100). */
   listMessages(conversationId: string, limit?: number | undefined, before?: MessageCursor | undefined): Promise<MessagePage>
+  /** Bật / tắt tiếng phòng cho một người (tạo dòng thành viên nếu chưa có). */
+  setMuted(conversationId: string, userId: string, organizationId: string, muted: boolean): Promise<void>
+  /** Người đã tắt tiếng phòng — không nhận thông báo tin nhắn của phòng. */
+  mutedUserIds(conversationId: string): Promise<string[]>
   /** Đánh dấu đã đọc; chưa có dòng thành viên (vào theo tổ chức, D1) thì tạo với tổ chức của người đọc. */
   markRead(conversationId: string, userId: string, organizationId: string): Promise<void>
   /**

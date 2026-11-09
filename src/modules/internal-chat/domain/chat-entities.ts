@@ -57,6 +57,8 @@ export interface InternalChatConversation {
   lastMessageSnippet?: string | undefined
   /** Tên bên kia theo phía người xem (chuỗi thấy tên cửa hàng, cửa hàng thấy tên chuỗi) */
   counterpartName?: string | undefined
+  /** Người xem đã tắt tiếng phòng */
+  isMuted?: boolean | undefined
 }
 
 export interface InternalChatParticipant {

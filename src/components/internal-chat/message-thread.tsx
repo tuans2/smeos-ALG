@@ -6,6 +6,7 @@ import { CHAT_MESSAGE_MAX_LENGTH } from "@/modules/internal-chat/domain/chat-lim
 import { MAX_CHAT_IMAGE_BYTES, MAX_CHAT_IMAGES_PER_MESSAGE } from "@/modules/internal-chat/domain/chat-image"
 import { ImagePlus } from "@/components/ui/icon-set/image-plus"
 import { X } from "@/components/ui/icon-set/x"
+import { Bell } from "@/components/ui/icon-set/bell"
 import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Send } from "@/components/ui/icon-set/send"
 import { Button } from "@/components/ui/button"
@@ -25,11 +26,12 @@ interface MessageThreadProps {
   onBack: () => void
   onSend: (text: string) => Promise<boolean>
   onSendImages: (files: File[], caption: string) => Promise<boolean>
+  onToggleMute: () => void
   onReload: () => void
 }
 
 /** Phòng đang mở: tin (cũ → mới), ô soạn tin (Enter gửi, Shift+Enter xuống dòng), các trạng thái tải / lỗi / mất mạng. */
-export function MessageThread({ conversation, messages, state, online, sendError, onBack, onSend, onSendImages, onReload }: MessageThreadProps) {
+export function MessageThread({ conversation, messages, state, online, sendError, onBack, onSend, onSendImages, onToggleMute, onReload }: MessageThreadProps) {
   const [text, setText] = useState("")
   const [sending, setSending] = useState(false)
   const [files, setFiles] = useState<Array<{ file: File; url: string }>>([])
@@ -86,7 +88,19 @@ export function MessageThread({ conversation, messages, state, online, sendError
         <Button type="button" variant="ghost" size="sm" className="md:hidden h-9 w-9 p-0" onClick={onBack} aria-label="Quay lại danh sách">
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </Button>
-        <h2 className="text-body-sm font-bold text-text truncate">{conversationName(conversation)}</h2>
+        <h2 className="text-body-sm font-bold text-text truncate flex-1">{conversationName(conversation)}</h2>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="h-9 px-2 shrink-0 text-caption"
+          aria-pressed={Boolean(conversation.isMuted)}
+          onClick={onToggleMute}
+          title={conversation.isMuted ? "Đang tắt thông báo tin nhắn — thẻ mời nhận đơn vẫn báo" : "Tắt thông báo tin nhắn của phòng này"}
+        >
+          <Bell className={`w-4 h-4 mr-1 ${conversation.isMuted ? "opacity-40" : ""}`} aria-hidden="true" />
+          {conversation.isMuted ? "Đã tắt tiếng" : "Tắt tiếng"}
+        </Button>
       </div>
 
       {!online && (

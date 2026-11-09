@@ -4,7 +4,7 @@ import { payloadTooLarge, validationFailed } from "@/core/http/errors"
 import { created } from "@/core/http/contract-responses"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { getChatLinkPolicy } from "@/modules/internal-chat/infra/prisma-chat-link-policy"
-import { OrganizationChatNotifier } from "@/modules/internal-chat/infra/chat-notifier"
+import { createChatNotifier } from "@/modules/internal-chat/infra/chat-notifier"
 import { MAX_CHAT_IMAGE_BYTES, MAX_CHAT_IMAGES_PER_MESSAGE } from "@/modules/internal-chat/domain/chat-image"
 import { sendChatImages } from "@/modules/internal-chat/use-cases/send-chat-images"
 
@@ -29,8 +29,9 @@ export const POST = defineRoute({
     if (entries.some((f) => f.size > MAX_CHAT_IMAGE_BYTES)) throw payloadTooLarge(MAX_CHAT_IMAGE_BYTES)
     const caption = form.get("caption")
 
+    const chatRepo = getInternalChatRepository()
     const message = await sendChatImages(
-      { chatRepo: getInternalChatRepository(), linkPolicy: getChatLinkPolicy(), storage: getStorageProvider(), notifier: new OrganizationChatNotifier() },
+      { chatRepo, linkPolicy: getChatLinkPolicy(), storage: getStorageProvider(), notifier: createChatNotifier(chatRepo) },
       {
         conversationId: params.id ?? "",
         caller: { userId: ctx.userId, organizationId: ctx.organizationId, branchId: ctx.branchId },

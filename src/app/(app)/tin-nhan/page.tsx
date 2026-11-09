@@ -44,6 +44,7 @@ export default function InternalChatPage() {
               onBack={() => chat.setActiveConv(null)}
               onSend={chat.sendMessage}
               onSendImages={chat.sendImages}
+              onToggleMute={chat.toggleMute}
               onReload={chat.reload}
             />
           ) : (
