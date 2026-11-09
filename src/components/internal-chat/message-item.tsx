@@ -8,9 +8,18 @@ import { safeImageSrc } from "@/lib/safe-image-src"
 import { useSession } from "@/lib/session"
 import { ActionCardOrder } from "./action-card-order"
 import { SubcontractTaskCard } from "./subcontract-task-card"
+import { MessageActions } from "./message-actions"
 
 /** Một tin trong phòng: tin hệ thống (giữa), thẻ đơn gia công, thẻ đơn kiểu cũ, hoặc tin chữ. */
-export function MessageItem({ message, onChanged }: { message: InternalChatMessage; onChanged: () => void }) {
+export function MessageItem({
+  message,
+  onChanged,
+  onChangeMessage,
+}: {
+  message: InternalChatMessage
+  onChanged: () => void
+  onChangeMessage: (messageId: string, content: string | null) => Promise<boolean>
+}) {
   const { t } = useI18n()
   const session = useSession()
   if (message.messageType === "SYSTEM_NOTICE") {
@@ -23,14 +32,24 @@ export function MessageItem({ message, onChanged }: { message: InternalChatMessa
     )
   }
   const sender = message.senderRole === "system" ? t("chat.message.autoSender") : message.senderName || t("chat.message.member")
+  if (message.isDeleted) {
+    return (
+      <div className="space-y-1.5">
+        <div className="text-caption text-text-muted px-1 font-medium">{sender}</div>
+        <div className="p-3 border border-dashed border-border rounded-2xl text-meta text-text-muted italic max-w-lg">{t("chat.message.deleted")}</div>
+      </div>
+    )
+  }
   return (
     <div className="space-y-1.5">
       <div className="text-caption text-text-muted px-1 font-medium">
         {sender} · <time dateTime={new Date(message.createdAt).toISOString()}>{formatTime(message.createdAt)}</time>
+        {message.editedAt && <span> {t("chat.message.edited")}</span>}
       </div>
       {message.messageType === "ACTION_CARD_SUBCONTRACT" ? (
         <SubcontractTaskCard message={message} />
       ) : message.messageType === "IMAGE" ? (
+        <MessageActions message={message} onChange={onChangeMessage}>
         <div className="space-y-1.5 max-w-lg">
           <div className="grid grid-cols-2 gap-1.5">
             {message.attachments.map((url, i) => (
@@ -42,6 +61,7 @@ export function MessageItem({ message, onChanged }: { message: InternalChatMessa
           </div>
           {message.content && <div className="p-3 bg-surface border border-border rounded-2xl text-meta text-text whitespace-pre-line break-words">{message.content}</div>}
         </div>
+        </MessageActions>
       ) : message.messageType === "ACTION_CARD_ORDER" ? (
         // Thẻ đơn kiểu cũ (gửi tay qua dispatch-to-chat): chỉ tổ chức được giao thấy nút — máy chủ cũng chặn y vậy
         <ActionCardOrder
@@ -51,9 +71,11 @@ export function MessageItem({ message, onChanged }: { message: InternalChatMessa
           onActionComplete={onChanged}
         />
       ) : (
-        <div className="p-3 bg-surface border border-border rounded-2xl shadow-xs text-meta text-text max-w-lg leading-relaxed whitespace-pre-line break-words">
-          {message.content}
-        </div>
+        <MessageActions message={message} onChange={onChangeMessage}>
+          <div className="p-3 bg-surface border border-border rounded-2xl shadow-xs text-meta text-text max-w-lg leading-relaxed whitespace-pre-line break-words">
+            {message.content}
+          </div>
+        </MessageActions>
       )}
     </div>
   )

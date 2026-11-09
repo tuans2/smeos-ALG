@@ -88,6 +88,10 @@ export interface InternalChatMessage {
   actionPayload: ActionPayload
   isDeleted: boolean
   createdAt: Date
+  /** Người đang xem là người gửi và còn trong 24 giờ — được sửa / thu hồi (tính lúc đọc) */
+  canChange?: boolean | undefined
+  /** Tin chữ / ảnh đã được người gửi sửa — thời điểm sửa gần nhất (ISO) */
+  editedAt?: string | undefined
   /** Chỉ thẻ `ACTION_CARD_SUBCONTRACT`: trạng thái tính lúc đọc theo góc nhìn người xem */
   subcontractView?: SubcontractCardView | undefined
 }

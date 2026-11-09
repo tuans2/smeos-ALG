@@ -37,7 +37,7 @@ acceptance:
 
 ## 3. Hành động cấp trang (Actions)
 - **Hành động chính (Primary CTA):** "Gửi" (Enter gửi, Shift+Enter xuống dòng).
-- **Hành động phụ (Secondary):** Tìm phòng; nút trên thẻ đơn gia công (chỉ người của đúng cửa hàng được mời, có `S2`).
+- **Hành động phụ (Secondary):** Tìm phòng; nút trên thẻ đơn gia công (chỉ người của đúng cửa hàng được mời, có `S2`); đính kèm ảnh; tắt tiếng phòng; "Sửa" / "Thu hồi" trên tin chữ / ảnh của chính mình trong 24 giờ (thu hồi qua hộp xác nhận, `tone="danger"`).
 - **Lối vào:** nút "Nhắn tin" ở `/dieu-phoi/doi-tac` và `/noi-bo/ket-noi` mở thẳng phòng (`?doi-tac=` / `?chuoi=` / `?chi-nhanh=`); thông báo mở `?phong=` hoặc `?chuoi=`; số chưa đọc cạnh mục menu.
 
 ## 4. Đặc tả 6 Trạng thái Giao diện (States)

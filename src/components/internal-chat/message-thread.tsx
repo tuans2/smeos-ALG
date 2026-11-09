@@ -28,11 +28,12 @@ interface MessageThreadProps {
   onSend: (text: string) => Promise<boolean>
   onSendImages: (files: File[], caption: string) => Promise<boolean>
   onToggleMute: () => void
+  onChangeMessage: (messageId: string, content: string | null) => Promise<boolean>
   onReload: () => void
 }
 
 /** Phòng đang mở: tin (cũ → mới), ô soạn tin (Enter gửi, Shift+Enter xuống dòng), các trạng thái tải / lỗi / mất mạng. */
-export function MessageThread({ conversation, messages, state, online, sendError, onBack, onSend, onSendImages, onToggleMute, onReload }: MessageThreadProps) {
+export function MessageThread({ conversation, messages, state, online, sendError, onBack, onSend, onSendImages, onToggleMute, onChangeMessage, onReload }: MessageThreadProps) {
   const { t } = useI18n()
   const [text, setText] = useState("")
   const [sending, setSending] = useState(false)
@@ -119,7 +120,7 @@ export function MessageThread({ conversation, messages, state, online, sendError
         ) : messages.length === 0 ? (
           <EmptyState title={t("chat.thread.emptyTitle")} reason={t("chat.thread.emptyReason")} />
         ) : (
-          messages.map((m) => <MessageItem key={m.id} message={m} onChanged={onReload} />)
+          messages.map((m) => <MessageItem key={m.id} message={m} onChanged={onReload} onChangeMessage={onChangeMessage} />)
         )}
         <div ref={endRef} />
       </div>

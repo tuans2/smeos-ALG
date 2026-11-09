@@ -41,3 +41,10 @@ export class ChatImageTooLargeError extends ChatDomainError {
     super(reason, "PAYLOAD_TOO_LARGE", "CHAT_IMAGE_TOO_LARGE")
   }
 }
+
+/** Tin không đổi được nữa (quá 24 giờ, đã thu hồi, thẻ / tin hệ thống) — 409. */
+export class MessageChangeNotAllowedError extends ChatDomainError {
+  constructor(reason = "Tin này không sửa hoặc thu hồi được nữa") {
+    super(reason, "CONFLICT", "MESSAGE_CHANGE_NOT_ALLOWED")
+  }
+}

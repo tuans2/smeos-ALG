@@ -143,6 +143,26 @@ export class InMemoryChatRepository implements IInternalChatRepository {
     this.readMarks.push({ conversationId, userId, organizationId })
   }
 
+  purged: { ownerOrgId: string; keys: string[] }[] = []
+
+  async editMessage(messageId: string, content: string, editedAt: Date): Promise<InternalChatMessage | null> {
+    const msg = this.messages.find((m) => m.id === messageId)
+    if (!msg || msg.isDeleted) return null
+    msg.content = content
+    msg.editedAt = editedAt.toISOString()
+    return msg
+  }
+
+  async deleteMessage(messageId: string, _deletedAt: Date, purge: { ownerOrgId: string; keys: string[] }): Promise<boolean> {
+    const msg = this.messages.find((m) => m.id === messageId)
+    if (!msg || msg.isDeleted) return false
+    msg.isDeleted = true
+    msg.content = ""
+    msg.attachments = []
+    this.purged.push(purge)
+    return true
+  }
+
   async updateCardIfStatus(messageId: string, expectedStatus: string, patch: Record<string, unknown>): Promise<InternalChatMessage | null> {
     const msg = this.messages.find((m) => m.id === messageId)
     const payload = msg?.actionPayload as Record<string, unknown> | undefined

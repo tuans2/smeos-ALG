@@ -49,6 +49,7 @@ export default function InternalChatPage() {
               onSend={chat.sendMessage}
               onSendImages={chat.sendImages}
               onToggleMute={chat.toggleMute}
+              onChangeMessage={chat.changeMessage}
               onReload={chat.reload}
             />
           ) : (

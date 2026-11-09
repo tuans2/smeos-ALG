@@ -10,6 +10,7 @@ import { CHAT_MESSAGE_MAX_LENGTH, CHAT_PAGE_MAX_LIMIT } from "@/modules/internal
 import { decodeMessageCursor, encodeMessageCursor } from "@/modules/internal-chat/domain/message-cursor"
 import { composeDecorators, GetConversationMessagesUseCase } from "@/modules/internal-chat/use-cases/get-conversation-messages"
 import { chatImageDecorator } from "@/modules/internal-chat/infra/chat-image-decorator"
+import { changeableDecorator } from "@/modules/internal-chat/use-cases/change-chat-message"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SendChatMessageUseCase } from "@/modules/internal-chat/use-cases/send-chat-message"
 import { subcontractCardDecorator } from "@/modules/internal-chat/infra/subcontract-card-decorator"
@@ -47,7 +48,8 @@ export const GET = handle<[{ params: Promise<{ id: string }> }]>(async (request,
 
   const decorate = composeDecorators(
     subcontractCardDecorator({ canFulfil: hasCapability(ctx, INTERNAL_CHAT_CAPABILITY.fulfilOrder) }),
-    chatImageDecorator(getStorageProvider())
+    chatImageDecorator(getStorageProvider()),
+    changeableDecorator()
   )
   const useCase = new GetConversationMessagesUseCase(getInternalChatRepository(), getChatLinkPolicy(), decorate)
   const page = await useCase.execute({

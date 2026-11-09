@@ -85,6 +85,13 @@ export interface IInternalChatRepository {
   mutedUserIds(conversationId: string): Promise<string[]>
   /** Đánh dấu đã đọc; chưa có dòng thành viên (vào theo tổ chức, D1) thì tạo với tổ chức của người đọc. */
   markRead(conversationId: string, userId: string, organizationId: string): Promise<void>
+  /** Đổi nội dung tin chữ / chú thích ảnh (ghi `editedAt`); tin đã thu hồi → null. */
+  editMessage(messageId: string, content: string, editedAt: Date): Promise<InternalChatMessage | null>
+  /**
+   * Thu hồi tin (xoá mềm): xoá nội dung và đính kèm, đưa `purgeKeys` vào hàng đợi xoá tệp của kho dưới tổ chức
+   * `ownerOrgId` (chủ phòng) — cùng một transaction. Đã thu hồi trước đó → false.
+   */
+  deleteMessage(messageId: string, deletedAt: Date, purge: { ownerOrgId: string; keys: string[] }): Promise<boolean>
   /**
    * Gộp `patch` vào `action_payload` chỉ khi thẻ còn ở trạng thái `expectedStatus` (một câu lệnh có điều kiện) —
    * hai người bấm cùng lúc thì chỉ một người thắng. Không khớp → null.

@@ -1,4 +1,5 @@
 import type { Prisma, PrismaClient } from "@/generated/prisma/client"
+import { asSystemDb } from "@/core/tenancy/db-context"
 import type { MessagePage, SendMessageParams } from "../domain/repositories/chat-repository.interface"
 import type { InternalChatMessage, InternalChatMessageKind } from "../domain/chat-entities"
 import { CHAT_PAGE_DEFAULT_LIMIT, CHAT_PAGE_MAX_LIMIT } from "../domain/chat-limits"
@@ -67,7 +68,8 @@ export class PrismaChatMessageStore {
   /** Trang tin mới nhất trước `before` (lấy giảm dần + 1 dòng dò "còn nữa", rồi đảo lại cũ → mới). */
   async listPage(conversationId: string, limit = CHAT_PAGE_DEFAULT_LIMIT, before?: MessageCursor | undefined): Promise<MessagePage> {
     const take = Math.min(Math.max(limit, 1), CHAT_PAGE_MAX_LIMIT)
-    const where: Prisma.internal_chat_messagesWhereInput = { conversation_id: conversationId, deleted_at: null }
+    // Tin đã thu hồi vẫn trả về (nội dung đã xoá) để phòng hiện "đã thu hồi" đúng chỗ
+    const where: Prisma.internal_chat_messagesWhereInput = { conversation_id: conversationId }
     if (before) {
       where.OR = [{ created_at: { lt: before.createdAt } }, { created_at: before.createdAt, id: { lt: before.id } }]
     }
@@ -125,6 +127,53 @@ export class PrismaChatMessageStore {
     return result
   }
 
+  async editMessage(messageId: string, content: string, editedAt: Date): Promise<InternalChatMessage | null> {
+    const current = await this.prisma.internal_chat_messages.findUnique({ where: { id: messageId }, select: { action_payload: true } })
+    const payload = (current?.action_payload as Record<string, unknown> | null) ?? {}
+    const { count } = await this.prisma.internal_chat_messages.updateMany({
+      where: { id: messageId, deleted_at: null },
+      data: { content, action_payload: { ...payload, editedAt: editedAt.toISOString() } as Prisma.InputJsonValue },
+    })
+    if (count !== 1) return null
+    const updated = await this.findById(messageId)
+    if (updated) await this.announce(updated.conversationId)
+    return updated
+  }
+
+  async deleteMessage(messageId: string, deletedAt: Date, purge: { ownerOrgId: string; keys: string[] }): Promise<boolean> {
+    // Có ảnh: dòng hàng đợi xoá tệp mang tổ chức chủ phòng (chủ khoá kho) — cửa hàng đối tác thu hồi ảnh của mình thì
+    // RLS chặn ghi dòng đó; chạy quyền hệ thống có nhãn. Quyền thu hồi đã kiểm ở use-case (người gửi, phòng, 24 giờ).
+    const run = <T>(fn: () => Promise<T>) => (purge.keys.length > 0 ? asSystemDb("internal-chat: thu hồi ảnh + hàng đợi xoá tệp của chủ phòng", fn) : fn())
+    const conversationId = await run(() => this.prisma.$transaction(async (tx) => {
+      const row = await tx.internal_chat_messages.findFirst({ where: { id: messageId, deleted_at: null }, select: { conversation_id: true } })
+      if (!row) return null
+      const { count } = await tx.internal_chat_messages.updateMany({
+        where: { id: messageId, deleted_at: null },
+        data: { deleted_at: deletedAt, content: "", attachments: [], action_payload: {} },
+      })
+      if (count !== 1) return null
+      // Tệp ảnh của tin: vào hàng đợi xoá của kho (dưới tổ chức chủ phòng — khoá nằm ở đó). Cron xử lý theo cờ
+      // STORAGE_DELETE_PAYLOADS và legal hold; tin đã bỏ khoá nên đếm tham chiếu về 0.
+      for (const key of purge.keys) {
+        await tx.storage_outbox.upsert({
+          where: { op_storage_key: { op: "DELETE", storage_key: key } },
+          create: { organization_id: purge.ownerOrgId, op: "DELETE", storage_key: key, asset_id: null },
+          update: { done_at: null, attempts: 0, last_error: null },
+        })
+      }
+      return row.conversation_id
+    }))
+    if (conversationId) await this.announce(conversationId)
+    return conversationId !== null
+  }
+
+  /** Báo SSE "phòng vừa đổi" sau khi sửa / thu hồi. */
+  private async announce(conversationId: string): Promise<void> {
+    if (!this.onRoomEvent) return
+    const conv = await this.prisma.internal_chat_conversations.findUnique({ where: { id: conversationId }, select: { organization_id: true, counterpart_org_id: true, branch_id: true } })
+    if (conv) this.onRoomEvent({ conversationId, organizationId: conv.organization_id, counterpartOrgId: conv.counterpart_org_id, branchId: conv.branch_id })
+  }
+
   /**
    * Gộp `patch` vào payload thẻ khi trạng thái còn là `expectedStatus`. Điều kiện nằm ngay trong câu UPDATE nên người
    * bấm sau (chờ khoá dòng rồi đánh giá lại WHERE trên bản mới) nhận 0 dòng → null.
@@ -154,5 +203,12 @@ export function mapMessage(row: MessageRow): InternalChatMessage {
     actionPayload: (row.action_payload as Record<string, unknown> | null) ?? {},
     isDeleted: row.deleted_at !== null,
     createdAt: row.created_at,
+    ...editedAtOf(row),
   }
+}
+
+function editedAtOf(row: MessageRow): { editedAt?: string } {
+  if (row.message_type !== "TEXT" && row.message_type !== "IMAGE") return {}
+  const at = (row.action_payload as Record<string, unknown> | null)?.editedAt
+  return typeof at === "string" ? { editedAt: at } : {}
 }

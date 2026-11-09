@@ -246,6 +246,14 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     return this.messageStore.markRead(conversationId, userId, organizationId)
   }
 
+  editMessage(messageId: string, content: string, editedAt: Date): Promise<InternalChatMessage | null> {
+    return this.messageStore.editMessage(messageId, content, editedAt)
+  }
+
+  deleteMessage(messageId: string, deletedAt: Date, purge: { ownerOrgId: string; keys: string[] }): Promise<boolean> {
+    return this.messageStore.deleteMessage(messageId, deletedAt, purge)
+  }
+
   updateCardIfStatus(messageId: string, expectedStatus: string, patch: Record<string, unknown>): Promise<InternalChatMessage | null> {
     return this.messageStore.updateCardIfStatus(messageId, expectedStatus, patch)
   }

@@ -66,7 +66,11 @@ export function useInternalChat() {
       const incoming = json.data as InternalChatMessage[]
       setMessages((prev) => {
         const known = new Map(prev.filter((m) => m.messageType === "IMAGE").map((m) => [m.id, m]))
-        return incoming.map((m) => known.get(m.id) ?? m)
+        return incoming.map((m) => {
+          const old = known.get(m.id)
+          const unchanged = old && old.isDeleted === m.isDeleted && old.editedAt === m.editedAt && old.canChange === m.canChange
+          return unchanged ? old : m
+        })
       })
       setThreadState("ready")
     } catch {
@@ -177,6 +181,22 @@ export function useInternalChat() {
     return false
   }, [activeConv, fetchMessages, t])
 
+  /** Sửa (`content`) hoặc thu hồi (`content` = null) tin của chính mình — xong thì đọc lại phòng. */
+  const changeMessage = useCallback(async (messageId: string, content: string | null): Promise<boolean> => {
+    setSendError(null)
+    try {
+      const res = await fetch(`/api/v1/internal-chat/messages/${messageId}`, content === null
+        ? { method: "DELETE" }
+        : { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content }) })
+      if (activeConv) await fetchMessages(activeConv.id)
+      if (res.ok) return true
+      setSendError(t(res.status === 409 ? "chat.errors.changeTooLate" : res.status === 404 ? "chat.errors.readOnly" : "chat.errors.changeFailed"))
+    } catch {
+      setSendError(t("chat.errors.offlineSend"))
+    }
+    return false
+  }, [activeConv, fetchMessages, t])
+
   /** Tắt / bật thông báo tin nhắn của phòng đang mở cho chính mình. */
   const toggleMute = useCallback(async () => {
     if (!activeConv) return
@@ -192,7 +212,7 @@ export function useInternalChat() {
   }, [activeConv, t])
 
   return {
-    conversations, listState, activeConv, setActiveConv, messages, threadState, online, sendError, sendMessage, sendImages, toggleMute,
+    conversations, listState, activeConv, setActiveConv, messages, threadState, online, sendError, sendMessage, sendImages, toggleMute, changeMessage,
     reload: () => (activeConv ? fetchMessages(activeConv.id) : fetchConversations()),
   }
 }
