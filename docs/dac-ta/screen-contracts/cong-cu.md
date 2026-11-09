@@ -102,6 +102,8 @@ acceptance:
   mở Bước 2.
 - Bước 2: Thẻ chào sản phẩm (tư vấn bán hàng, `SalesPitchCard` — không phải thiệp) dựng từ dữ liệu đã duyệt + hồ sơ cửa
   hàng; chốt thẻ → lưu `products.attributes.sales_pitch` (Kho sản phẩm, có số lần chốt). Thay cho bản lưu cũ ở localStorage.
+  Chưa duyệt: thẻ mở thẳng tab "Chỉnh sửa thông tin" (`initialTab="edit"`) — nút chính "Duyệt nội dung" thấy ngay; duyệt
+  và lưu xong tự mở Bước 3. Đã lưu: thẻ mở tab "Thẻ chào khách" (PO 09/11/2026 — trước đó nút duyệt nằm khuất ở tab khác).
 - Bước 3 (Đợt 2): 4 ô nền tảng (Facebook, Instagram, TikTok, Zalo — chọn nhiều) + `CostPreview` → Content Engine viết từ
   dữ liệu ĐÃ DUYỆT (Brief lấy Thẻ chào → Bài giới thiệu → Thẻ sản phẩm khi sản phẩm chưa có báo cáo thị trường,
   `content-engine/domain/approved-product-context.ts`); xem trước + sửa từng bài bằng thẻ chuẩn `MultichannelPostCard`;

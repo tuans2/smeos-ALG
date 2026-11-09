@@ -59,6 +59,8 @@ export function SalesPitchStep({ journey }: { journey: ContentJourney }) {
       await saveSalesPitch(view.product.id, pitchToRecord(p))
       await journey.reload()
       setJustSaved(true)
+      // Duyệt xong → sang luôn Bước 3 (cùng kiểu luồng Thương hiệu: xác nhận bước này mở bước kế)
+      journey.setPicked("CHANNEL_POSTS")
     } catch (e) {
       setError(errorText(e) || "Chưa lưu được Thẻ chào sản phẩm")
     } finally {
@@ -73,7 +75,7 @@ export function SalesPitchStep({ journey }: { journey: ContentJourney }) {
           <p className="text-caption font-semibold text-text-muted">Sản phẩm đang làm</p>
           <p className="truncate text-title-sm font-bold text-text">{view.product.name}</p>
           <p className="text-caption text-text-muted">
-            {saved ? `Đã lưu vào Kho sản phẩm · lần ${saved.version} · ${formatDateTime(saved.finalized_at)}` : "Chưa chốt — kiểm tra thẻ bên dưới rồi bấm chốt để lưu vào Kho."}
+            {saved ? `Đã lưu vào Kho sản phẩm · lần ${saved.version} · ${formatDateTime(saved.finalized_at)}` : "Chưa duyệt — kiểm tra thông tin bên dưới rồi bấm “Duyệt nội dung” để lưu vào Kho và mở Bước 3."}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -87,7 +89,8 @@ export function SalesPitchStep({ journey }: { journey: ContentJourney }) {
       {!canSave && <p className="rounded-xl border border-warning-border bg-warning-bg px-4 py-3 text-body-sm text-warning-text">Bạn xem và sửa được thẻ, nhưng chưa có quyền lưu vào Kho — nhờ quản lý cửa hàng chốt giúp.</p>}
       {saving && <p className="text-caption text-text-muted" aria-live="polite">Đang lưu vào Kho sản phẩm…</p>}
 
-      <SalesPitchCard key={`${view.product.id}:${saved?.version ?? 0}`} pitchData={pitch} onFinalize={(p) => void finalize(p)} />
+      {/* Chưa duyệt → mở thẳng tab "Chỉnh sửa thông tin", nơi có nút "Duyệt nội dung"; đã lưu → xem Thẻ chào khách */}
+      <SalesPitchCard key={`${view.product.id}:${saved?.version ?? 0}`} pitchData={pitch} initialTab={saved ? "card" : "edit"} onFinalize={(p) => void finalize(p)} />
 
       <LibraryPickerDialog open={libraryOpen} require="copy" onClose={() => setLibraryOpen(false)} onPick={(id) => journey.setProduct(id, "SALES_PITCH")} />
     </div>
