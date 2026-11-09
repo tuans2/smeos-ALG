@@ -1,36 +1,30 @@
 # Phạm vi Giai đoạn 1 — 123 chức năng bàn giao ALG
 
-Bản xem của `src/lib/delivery/gd1.manifest.json`, phục vụ điểm duyệt sau Bước 1 trong [kế hoạch](BANGIAO_GD1_123_CHUC_NANG.md). Khi hai nơi khác nhau, manifest là nguồn đúng.
+Bản xem của `src/lib/delivery/gd1.manifest.json`. Chủ dự án chốt phạm vi ngày 10/11/2026 (điểm duyệt sau Bước 1 trong [kế hoạch](BANGIAO_GD1_123_CHUC_NANG.md)). Khi hai nơi khác nhau, manifest là nguồn đúng.
 
 ## 1. Tổng quan
 
 | Nhóm trang | Số trang |
 |---|---:|
 | Thuộc 123 chức năng | 55 |
-| Khung để 3 tầng vận hành | 23 |
-| Chờ bạn quyết (mặc định không giao) | 10 |
+| Ngoài 123 nhưng giao, gồm khung 3 tầng | 33 |
 | Không giao | 26 |
 | **Tổng** | **114** |
 
-Ước tính phần code đi theo danh sách này: 3.013/3.874 tệp, 376/532 API, code giữ lại dùng 141/154 bảng. Danh sách API đầy đủ sẽ được tính ở Bước 2.
+Ước tính phần code đi theo danh sách này: 3.068/3.874 tệp, 386/532 API, code giữ lại dùng 141/154 bảng. Danh sách API đầy đủ sẽ được tính ở Bước 2.
 
-## 2. Cần bạn quyết
+## 2. Chức năng 9.14 và SocialFlow
 
-Mặc định các trang dưới đây **không giao**. Nếu cần giao, chuyển sang nhóm khung.
+Đăng bài đã chạy ngay trong smeOS (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động.
 
-| Trang | Lý do còn phân vân |
-|---|---|
-| `/bang-gia`, `/bang-gia/[id]` | Bảng giá, không có trong kịch bản nghiệm thu |
-| `/ho-so`, `/ho-so/danh-thiep`, `/ho-so/thu-vien-thuong-hieu` | Hồ sơ thương hiệu mở rộng; 9.2 và 9.3 đã dùng Cài đặt tiệm |
-| `/so-lieu`, `/du-lieu` | Mục menu của tầng Chuỗi, không có trong 123 chức năng |
-| `/tinh-gia/gia-ban`, `/tinh-gia/du-toan` | Công cụ tính giá mở rộng |
-| `/san-pham/[id]/tinh-nang` | Trang cha của màn nội dung tư vấn 2.9 |
+Mô-đun `src/modules/social-publishing` gọi thẳng API của Meta, TikTok, Zalo. Việc còn lại trong bản giao:
 
-**Chức năng 9.14 (SSO):** code có, nhưng ứng dụng liên kết SocialFlow không thuộc bản giao. Cần chốt với ALG chức năng này được nghiệm thu thế nào.
+- `src/components/dashboard/marketing-workspace.tsx` ở trang chủ còn gọi bài đăng qua proxy SocialFlow: chuyển sang mô-đun mới hoặc bỏ khối này.
+- Bỏ route `/api/v1/proxy/[...path]`, biến `SOCIALFLOW_URL`, `LOCALBUDD_URL`.
+- Bỏ chữ "SocialFlow" trên màn hình (`api-tokens-panel.tsx`, `post-status-report-card.tsx`, `connector-catalog.ts`).
+- Đăng thật lên Meta, TikTok, Zalo cần ALG có ứng dụng được các nền tảng này duyệt.
 
-## 3. Khung để 3 tầng vận hành
-
-Không có mã riêng trong 123 chức năng, nhưng thiếu thì 3 tầng không chạy đúng.
+## 3. Ngoài 123 nhưng giao
 
 | Trang | Lý do |
 |---|---|
@@ -39,6 +33,11 @@ Không có mã riêng trong 123 chức năng, nhưng thiếu thì 3 tầng khôn
 | `/dieu-phoi/doi-tac` | Quản lý chi nhánh và xưởng của tầng Chuỗi |
 | `/van-hanh/phe-duyet`, `/van-hanh/truong-du-lieu`, `/van-hanh/suc-khoe`, `/van-hanh/nhat-ky`, `/van-hanh/du-lieu`, `/van-hanh/hang-doi-loi`, `/van-hanh/tich-hop` | Console vận hành của tầng Mẹ |
 | `/bst/[orgSlug]/[catalogCode]`, `/chinh-sach-bao-mat` | Trang công khai dùng chung |
+| `/bang-gia`, `/bang-gia/[id]` | Bảng giá, không có trong kịch bản nghiệm thu — ngoài 123, chủ dự án chốt giao 10/11/2026 |
+| `/ho-so`, `/ho-so/danh-thiep`, `/ho-so/thu-vien-thuong-hieu` | Hồ sơ thương hiệu mở rộng; 9.2 và 9.3 đã dùng Cài đặt tiệm — ngoài 123, chủ dự án chốt giao 10/11/2026 |
+| `/so-lieu`, `/du-lieu` | Mục menu của tầng Chuỗi, không có trong 123 chức năng — ngoài 123, chủ dự án chốt giao 10/11/2026 |
+| `/tinh-gia/gia-ban`, `/tinh-gia/du-toan` | Công cụ tính giá mở rộng — ngoài 123, chủ dự án chốt giao 10/11/2026 |
+| `/san-pham/[id]/tinh-nang` | Trang cha của màn nội dung tư vấn 2.9 — ngoài 123, chủ dự án chốt giao 10/11/2026 |
 
 ## 4. Không giao
 
@@ -55,11 +54,11 @@ Không có mã riêng trong 123 chức năng, nhưng thiếu thì 3 tầng khôn
 
 | Phần | Tác vụ | Quyết định |
 |---|---|---|
-| `workers/vision` | `vision.analyze` | Giao |
-| `workers/shared` | — | Giao |
-| `workers/media_ai` | `media.optimize`, `media.variant`, `media.variant.cloud` | Mặc định không giao. Không chức năng nào trong 123 gọi tới; cần xác nhận ở bước 2 rằng worker vision không phụ thuộc |
-| `workers/media_ai/video` | `video.render` | Không giao |
-| `workers/media_ai/audio` | `audio.generate`, `audio.voice_clone` | Không giao |
+| `workers/vision` | `vision.analyze` | Giao. |
+| `workers/shared` | — | Giao. |
+| `workers/media_ai` | `media.optimize`, `media.variant`, `media.variant.cloud` | Giao. Trang duyệt và luồng tạo sản phẩm có gọi xử lý ảnh. |
+| `workers/media_ai/video` | `video.render` | Không giao. Vòng lặp trong workers/media_ai/jobs/worker.py đang nhận cả tác vụ này, cần tách ở Bước 2. |
+| `workers/media_ai/audio` | `audio.generate`, `audio.voice_clone` | Không giao. Vòng lặp trong workers/media_ai/jobs/worker.py đang nhận cả tác vụ này, cần tách ở Bước 2. |
 
 Các tác vụ `product.copy.generate`, `content.generate` không có worker Python xử lý.
 
@@ -214,7 +213,7 @@ Các tác vụ `product.copy.generate`, `content.generate` không có worker Pyt
 | 9.2 | Hồ sơ thương hiệu | `/cai-dat` | 1 | 1 |
 | 9.3 | Hồ sơ kinh doanh | `/cai-dat` | 1 | 1 |
 | 9.4 | Thư viện tài nguyên & thùng rác 30 ngày | `/kho-du-lieu`, `/san-pham` | 3 | 2 |
-| 9.5 | Quản lý kết nối Webhook/API key | `/tich-hop` | 26 | 1 |
+| 9.5 | Quản lý kết nối Webhook/API key | `/tich-hop` | 25 | 1 |
 | 9.6 | Quản lý tác vụ nền & chạy lại tác vụ lỗi | `/job`, `/job/[id]` | 1 | 1 |
 | 9.7 | Cấu hình chính sách & trần chi phí AI tháng | `/cai-dat-ai`, `/muc-dung` | 3 | 2 |
 | 9.8 | Console quản trị nền tảng đa cửa hàng | `/van-hanh`, `/van-hanh/to-chuc` | 1 | 1 |
@@ -223,7 +222,7 @@ Các tác vụ `product.copy.generate`, `content.generate` không có worker Pyt
 | 9.11 | Duyệt 2 bước cho thao tác nhạy cảm | `/don-hang`, `/san-pham/[id]` | 2 | 3 |
 | 9.12 | Cơ chế chặn tự nâng quyền chính mình | `/cai-dat/thanh-vien`, `/san-pham/[id]` | 0 | 4 |
 | 9.13 | Cách ly phân quyền dữ liệu theo chi nhánh | `/cai-dat/thanh-vien` | 0 | 2 |
-| 9.14 | Đăng nhập 1 lần (SSO 15 phút) | Chỉ API | 1 | 1 |
+| 9.14 | Đăng nhập 1 lần (SSO 15 phút) | `/cong-cu` | 1 | 1 |
 
 ### Nhóm 10 — Credit AI, hạn mức & thuê bao SaaS (8)
 

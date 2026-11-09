@@ -1636,7 +1636,6 @@
         "/api/v1/product-intelligence/[id]",
         "/api/v1/product-photo/[id]",
         "/api/v1/products/[id]",
-        "/api/v1/proxy/[...path]",
         "/api/v1/quotations/[id]",
         "/api/v1/shop-reviews/[id]",
         "/api/v1/short-links/[id]",
@@ -1777,13 +1776,16 @@
       "id": "9.14",
       "group": 9,
       "name": "Đăng nhập 1 lần (SSO 15 phút)",
-      "pages": [],
+      "pages": [
+        "/cong-cu"
+      ],
       "apis": [
         "/api/v1/sso/refresh"
       ],
       "scenarios": [
         "I-09"
-      ]
+      ],
+      "acceptanceNote": "Đăng bài đã chạy ngay trong smeOS (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động."
     },
     {
       "id": "10.1",
@@ -1967,18 +1969,16 @@
         "/bst/[orgSlug]/[catalogCode]",
         "/chinh-sach-bao-mat"
       ]
-    }
-  ],
-  "undecided": [
+    },
     {
-      "reason": "Bảng giá, không có trong kịch bản nghiệm thu",
+      "reason": "Bảng giá, không có trong kịch bản nghiệm thu — ngoài 123, chủ dự án chốt giao 10/11/2026",
       "pages": [
         "/bang-gia",
         "/bang-gia/[id]"
       ]
     },
     {
-      "reason": "Hồ sơ thương hiệu mở rộng; 9.2 và 9.3 đã dùng Cài đặt tiệm",
+      "reason": "Hồ sơ thương hiệu mở rộng; 9.2 và 9.3 đã dùng Cài đặt tiệm — ngoài 123, chủ dự án chốt giao 10/11/2026",
       "pages": [
         "/ho-so",
         "/ho-so/danh-thiep",
@@ -1986,26 +1986,27 @@
       ]
     },
     {
-      "reason": "Mục menu của tầng Chuỗi, không có trong 123 chức năng",
+      "reason": "Mục menu của tầng Chuỗi, không có trong 123 chức năng — ngoài 123, chủ dự án chốt giao 10/11/2026",
       "pages": [
         "/so-lieu",
         "/du-lieu"
       ]
     },
     {
-      "reason": "Công cụ tính giá mở rộng",
+      "reason": "Công cụ tính giá mở rộng — ngoài 123, chủ dự án chốt giao 10/11/2026",
       "pages": [
         "/tinh-gia/gia-ban",
         "/tinh-gia/du-toan"
       ]
     },
     {
-      "reason": "Trang cha của màn nội dung tư vấn 2.9",
+      "reason": "Trang cha của màn nội dung tư vấn 2.9 — ngoài 123, chủ dự án chốt giao 10/11/2026",
       "pages": [
         "/san-pham/[id]/tinh-nang"
       ]
     }
   ],
+  "undecided": [],
   "excluded": [
     {
       "reason": "Tầng SaaS Ngành",
@@ -2075,24 +2076,7 @@
       {
         "path": "workers/shared",
         "jobs": []
-      }
-    ],
-    "exclude": [
-      {
-        "path": "workers/media_ai/video",
-        "jobs": [
-          "video.render"
-        ]
       },
-      {
-        "path": "workers/media_ai/audio",
-        "jobs": [
-          "audio.generate",
-          "audio.voice_clone"
-        ]
-      }
-    ],
-    "undecided": [
       {
         "path": "workers/media_ai",
         "jobs": [
@@ -2100,7 +2084,24 @@
           "media.variant",
           "media.variant.cloud"
         ],
-        "reason": "Không chức năng nào trong 123 gọi tới; cần xác nhận ở bước 2 rằng worker vision không phụ thuộc"
+        "note": "Trang duyệt và luồng tạo sản phẩm có gọi xử lý ảnh"
+      }
+    ],
+    "exclude": [
+      {
+        "path": "workers/media_ai/video",
+        "jobs": [
+          "video.render"
+        ],
+        "note": "Vòng lặp trong workers/media_ai/jobs/worker.py đang nhận cả tác vụ này, cần tách ở Bước 2"
+      },
+      {
+        "path": "workers/media_ai/audio",
+        "jobs": [
+          "audio.generate",
+          "audio.voice_clone"
+        ],
+        "note": "Vòng lặp trong workers/media_ai/jobs/worker.py đang nhận cả tác vụ này, cần tách ở Bước 2"
       }
     ],
     "webSide": [

@@ -41,7 +41,7 @@ Hiện trạng đã đo:
 | Vận hành | Runbook đúng thực tế; diễn tập khôi phục CSDL đạt (chưa từng làm); giám sát và cảnh báo chạy |
 | Bàn giao | Tài liệu kỹ thuật và hướng dẫn sử dụng khớp bản giao; danh sách giấy phép bên thứ ba |
 
-**Điểm duyệt:** bạn duyệt danh sách và bảng tiêu chuẩn.
+**Điểm duyệt:** chủ dự án chốt ngày 10/11/2026: giao 10 trang từng chờ quyết và 23 trang khung; 9.14 theo hướng đăng bài ngay trong smeOS. Chi tiết: [phạm vi](BANGIAO_GD1_PHAM_VI.md).
 
 ## Bước 2 — Dựng cơ chế (không đổi hành vi khi chưa bật)
 
@@ -82,7 +82,8 @@ Hiện trạng đã đo:
 ## Bước 4 — Hoàn thiện đến khi đạt tiêu chuẩn
 
 - Đã biết: mở 13 chức năng đang khoá; xử lý 5 chức năng làm một phần (4.30, 4.32, 8.1, 9.1, 9.14); sửa lỗi audit thuộc phạm vi (ví dụ L-05 nút Lưu ở `/dieu-phoi/doi-tac`).
-- 9.14 phụ thuộc SocialFlow, vốn không giao: cần chốt lại nghĩa của chức năng này với ALG.
+- 9.14: đăng bài đã chạy ngay trong smeOS (D-46), không còn ứng dụng liên kết. Nghiệm thu mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên 15 phút kiểm bằng test. Cần báo ALG đổi câu chữ bước I-09.
+- Gỡ phần còn gọi SocialFlow/LocalBudd khỏi bản giao: khối bài đăng ở trang chủ (`marketing-workspace.tsx`), route proxy, biến `SOCIALFLOW_URL`, `LOCALBUDD_URL`, chữ "SocialFlow" trên màn hình.
 - Mỗi đầu việc: code + test + tài liệu trong một commit; Thẻ chào và Catalog phải có test khoá hành vi trước khi sửa.
 - Việc có ảnh do người dùng tải lên đi theo quyết định Q12 trong `KE_HOACH_HOAN_THIEN_54_CHUC_NANG.md`; phát sinh khác thì hỏi bạn.
 

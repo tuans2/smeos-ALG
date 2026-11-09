@@ -89,6 +89,10 @@ describe("danh sách giai đoạn 1", () => {
     expect(undecidedAndExcluded).toEqual([])
   })
 
+  it("không còn trang chờ quyết sau điểm duyệt Bước 1", () => {
+    expect([...undecided]).toEqual([])
+  })
+
   it("tầng SaaS Ngành không nằm trong bản giao", () => {
     expect(excluded.has("/van-hanh/nganh")).toBe(true)
     expect(delivered.has("/van-hanh/nganh")).toBe(false)
