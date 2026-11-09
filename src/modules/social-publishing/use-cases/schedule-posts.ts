@@ -1,7 +1,6 @@
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
-import { scopedWhere, type TenantContext } from "@/core/tenancy"
-import { prisma } from "@/core/tenancy/infra/prisma"
+import type { TenantContext } from "@/core/tenancy"
 import type { SocialChannel } from "@/core/ports/publisher-provider"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { CHANNEL_RULES, validatePost } from "../domain/channel-rules"
@@ -53,10 +52,7 @@ export async function schedulePosts(ctx: TenantContext, input: SchedulePostsInpu
   const channels = [...new Set(input.channels)]
   if (channels.length === 0) throw validationFailed({ channels: "Chọn ít nhất một kênh" })
 
-  const generation = await prisma.content_generations.findFirst({
-    where: scopedWhere(ctx, { id: input.generationId, trashed_at: null }),
-    select: { id: true, status: true, product_id: true, approved_posts: true },
-  })
+  const generation = await deps.repo.findGeneration(ctx, input.generationId)
   if (!generation) throw notFound()
   if (generation.status !== "APPROVED" && generation.status !== "SCHEDULED") throw conflict("Duyệt bài ở Bước 3 trước khi đăng")
 
@@ -91,10 +87,7 @@ export async function schedulePosts(ctx: TenantContext, input: SchedulePostsInpu
     idempotencyKey: `${input.idempotencyKey}:${d.channel}`,
   })))
 
-  await prisma.content_generations.updateMany({
-    where: scopedWhere(ctx, { id: generation.id }),
-    data: { status: "SCHEDULED", social_post_ids: rows.map((r) => r.id) },
-  })
+  await deps.repo.markGenerationScheduled(ctx, generation.id, rows.map((r) => r.id))
   await recordAuditLog(ctx, {
     action: "social_post.schedule",
     entityType: "content_generations",

@@ -82,6 +82,19 @@ export class SocialPostRepository {
     return r.count === 1
   }
 
+  /** Lượt bài nguồn (Bước 3) của chính tổ chức, bỏ bản trong thùng rác. */
+  findGeneration(ctx: TenantContext, id: string) {
+    return this.db.content_generations.findFirst({
+      where: scopedWhere(ctx, { id, trashed_at: null }),
+      select: { id: true, status: true, product_id: true, approved_posts: true },
+    })
+  }
+
+  /** Lượt bài đã đưa vào hàng đợi đăng → SCHEDULED, ghi mã các bài đăng. */
+  async markGenerationScheduled(ctx: TenantContext, id: string, postIds: readonly string[]): Promise<void> {
+    await this.db.content_generations.updateMany({ where: scopedWhere(ctx, { id }), data: { status: "SCHEDULED", social_post_ids: [...postIds] } })
+  }
+
   // ── Hệ thống (lượt cron) ───────────────────────────────────────────────────────────────────────────────
 
   /** Bài "PUBLISHING" treo quá lâu (tiến trình chết giữa chừng) → trả về hàng đợi để thử lại. */
