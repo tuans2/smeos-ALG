@@ -486,6 +486,17 @@ Phát hiện, chưa sửa (ghi để PO quyết):
 
 | Mức | Lỗi | Tái hiện |
 |---|---|---|
-| **P1** | **Một khách tiềm năng làm hỏng danh sách khách của cả tổ chức.** `createStaffLead` và `captureLead` (form công khai, quét QR) gọi `findOrCreateCustomer` với `deliveryAddress: ""`. Lớp mã hoá dữ liệu cá nhân (`pii-write.ts`) mã hoá cả chuỗi rỗng thành bản mã có phần thân rỗng (`pii1.<v>.<iv>.<tag>.`), còn `decryptPii` (`pii-cipher.ts`) coi phần thân rỗng là bản mã hỏng và ném lỗi. Mọi lượt đọc khách đó → 500: `GET /crm/customers`, `GET /customer-segments/{id}/customers`, xuất khách… Người lạ gửi form để lại thông tin công khai là đủ làm sập màn Khách hàng của tiệm | Tạo một khách tiềm năng (`POST /leads`, lý do `WALK_IN`) → `GET /crm/customers` từ 200 thành 500 (đã chạy thử trên CSDL test). Test hợp đồng đợt này tách khách tiềm năng sang tổ chức riêng để không vướng lỗi |
+| **P1** | **Một khách tiềm năng làm hỏng danh sách khách của cả tổ chức.** `createStaffLead` và `captureLead` (form công khai, quét QR) gọi `findOrCreateCustomer` với `deliveryAddress: ""`. Lớp mã hoá dữ liệu cá nhân (`pii-write.ts`) mã hoá cả chuỗi rỗng thành bản mã có phần thân rỗng (`pii1.<v>.<iv>.<tag>.`), còn `decryptPii` (`pii-cipher.ts`) coi phần thân rỗng là bản mã hỏng và ném lỗi. Mọi lượt đọc khách đó → 500: `GET /crm/customers`, `GET /customer-segments/{id}/customers`, xuất khách… Người lạ gửi form để lại thông tin công khai là đủ làm sập màn Khách hàng của tiệm | Tạo một khách tiềm năng (`POST /leads`, lý do `WALK_IN`) → `GET /crm/customers` từ 200 thành 500 (đã chạy thử trên CSDL test). Đã sửa ở §27 |
 | P3 | `POST /delivery/my-runs/{id}` dùng `.parse` thẳng (lỗi zod vẫn ra 400 qua `handle`) | — |
 | P3 | `PATCH /campaigns/{id}` khai `objective`/`status` bằng mảng chữ cứng, không dùng `CAMPAIGN_OBJECTIVES`/`CAMPAIGN_STATUSES` như `POST` — sẽ lệch khi thêm giá trị | giữ nguyên văn khi chuyển |
+
+## 27. Nhật ký sửa — lỗi P1 phát hiện ở §26 (09/11/2026)
+
+Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **Một khách tiềm năng làm danh sách khách của cả tổ chức trả 500** — `createStaffLead` và `captureCatalogLead` (form công khai) tạo khách với địa chỉ `""`; bản mã AES-GCM của chuỗi rỗng có phần thân rỗng (`pii1.<v>.<iv>.<tag>.`), `decryptPii` kiểm `!body` nên coi là bản mã hỏng | `decryptPii` (`core/security/pii-cipher.ts`) chỉ từ chối khi không đủ đúng 5 phần hoặc thiếu tiền tố/iv/thẻ; phần thân rỗng giải ra `""` và GCM vẫn kiểm thẻ xác thực (sai khoá/sửa bản mã vẫn lỗi). Sửa ở chỗ đọc nên các dòng đã ghi trước đây đọc lại được, không cần chuyển dữ liệu; địa chỉ vẫn lưu dạng bản mã. Test hợp đồng §26 bỏ tổ chức tách riêng | `tests/tenant/lead-customer-empty-address.test.ts` (2 ca đỏ trên mã cũ: 500 — nhân viên thêm, form catalog công khai), `pii-cipher.test.ts` (chuỗi rỗng; thiếu/thừa phần → lỗi), `internal-contract-marketing.test.ts` |
+
+Chưa sửa (ngoài phạm vi, cùng khuôn): `openSecret` (`core/security/secret-box.ts`) và `unwrapDataKey` cũng kiểm `!body` — bí mật rỗng không mở được. Khoá dữ liệu luôn 32 byte nên `unwrapDataKey` không gặp; `openSecret` chỉ gặp nếu có nơi ghi bí mật rỗng.
+

@@ -30,7 +30,6 @@ const ps = (id: string) => ({ params: Promise.resolve({ id }) })
 describe("hợp đồng — khách hàng & marketing", () => {
   let t: Tenant
   let other: Tenant
-  let leadT: Tenant
   let customerId: string
   const get = (path: string, who: Tenant = t) => withSession(`${BASE}${path}`, who.token)
   const send = (path: string, method: string, body?: unknown, who: Tenant = t) =>
@@ -40,8 +39,6 @@ describe("hợp đồng — khách hàng & marketing", () => {
     await resetDatabase()
     t = await createTenant("hop-dong-marketing")
     other = await createTenant("hop-dong-marketing-khac")
-    // Khách tạo từ khách tiềm năng có địa chỉ rỗng làm hỏng danh sách khách của tổ chức (audit API §26) — tách tổ chức riêng.
-    leadT = await createTenant("hop-dong-marketing-lead")
     customerId = (await new CustomerRepository().create(t.ctx, { name: "Chị Lan", phone: "0901234567" })).id
     await prisma.customers.update({ where: { id: customerId }, data: { tier: "VIP" } })
   })
@@ -50,12 +47,12 @@ describe("hợp đồng — khách hàng & marketing", () => {
   })
 
   it("khách tiềm năng: thêm, danh sách, đổi trạng thái", async () => {
-    const created = await expectContract(await createLead(send("/leads", "POST", { name: "Anh Minh", phone: "0912345678", reason: "QUOTE_REQUEST", message: "Cần trước thứ Sáu" }, leadT)), 201, R.leadCreatedResponse, "lead-create")
+    const created = await expectContract(await createLead(send("/leads", "POST", { name: "Anh Minh", phone: "0912345678", reason: "QUOTE_REQUEST", message: "Cần trước thứ Sáu" })), 201, R.leadCreatedResponse, "lead-create")
     const id = String((created.lead as { id: string }).id)
-    await expectContract(await listLeads(get("/leads?limit=10", leadT)), 200, R.leadsResponse, "leads")
-    await expectContract(await patchLead(send(`/leads/${id}`, "PATCH", { status: "CONTACTED" }, leadT), ps(id)), 200, R.leadResponse, "lead-patch")
+    await expectContract(await listLeads(get("/leads?limit=10")), 200, R.leadsResponse, "leads")
+    await expectContract(await patchLead(send(`/leads/${id}`, "PATCH", { status: "CONTACTED" }), ps(id)), 200, R.leadResponse, "lead-patch")
     expect((await patchLead(send(`/leads/${id}`, "PATCH", { status: "CONTACTED" }, other), ps(id))).status).toBe(404)
-    expect((await listLeads(get("/leads?limit=abc", leadT))).status).toBe(400)
+    expect((await listLeads(get("/leads?limit=abc"))).status).toBe(400)
   })
 
   it("chiến dịch và chỉ số marketing", async () => {
