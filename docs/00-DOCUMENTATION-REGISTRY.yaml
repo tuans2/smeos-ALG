@@ -875,6 +875,34 @@ documents:
     dependencies: ["docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md", "docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md"]
     supersedes: []
 
+  - id: "DOC-05-BANGIAO-GD1-KE-HOACH"
+    path: "docs/plan/BANGIAO_GD1_123_CHUC_NANG.md"
+    title: "Kế hoạch bàn giao Giai đoạn 1 cho ALG — 3 tầng, 123 chức năng"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Các bước chuẩn bị, audit, hoàn thiện, cắt repo và kiểm tra trước khi bàn giao Giai đoạn 1 cho ALG"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: true
+    owner: "Product Owner"
+    dependencies: ["docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx", "docs/audit/feature-completeness-2026-11/README.md"]
+    supersedes: []
+
+  - id: "DOC-05-BANGIAO-GD1-PHAM-VI"
+    path: "docs/plan/BANGIAO_GD1_PHAM_VI.md"
+    title: "Phạm vi Giai đoạn 1 — 123 chức năng bàn giao ALG"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Bản xem của danh sách giai đoạn 1: màn hình của từng chức năng, trang thuộc khung 3 tầng, trang không giao và phần chờ quyết"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["src/lib/delivery/gd1.manifest.json", "docs/plan/BANGIAO_GD1_123_CHUC_NANG.md"]
+    supersedes: []
+
   - id: "DOC-05-BAO-CAO-ANH-XA-123"
     path: "docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md"
     title: "Báo cáo ánh xạ 123 chức năng bàn giao ALG với mã nguồn smeOS"
