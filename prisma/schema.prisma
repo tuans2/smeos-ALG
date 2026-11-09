@@ -294,6 +294,8 @@ model organizations {
   organization_links_as_child                      organization_links[]            @relation("OrgLinkChild")
   custom_domains                                   custom_domains[]
   brand_style_options                              brand_style_options[]
+  social_posts                                     social_posts[]
+  social_post_attempts                             social_post_attempts[]
 
   @@index([industry_key])
 }
@@ -1155,6 +1157,7 @@ model products {
   greeting_sessions_by_selected_product_id greeting_sessions[]       @relation("fk_greeting_sessions_selected_product_id")
   greeting_catalog_events_by_product_id    greeting_catalog_events[] @relation("fk_greeting_catalog_events_product_id")
   sales_channel_listings_by_product_id     sales_channel_listings[]  @relation("fk_sales_channel_listings_product_id")
+  social_posts_by_product_id               social_posts[]            @relation("fk_social_posts_product_id")
 
   @@unique([organization_id, code])
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
@@ -3215,12 +3218,78 @@ model content_generations {
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
-  fk_product products? @relation("fk_content_generations_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+  fk_product                            products?      @relation("fk_content_generations_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+  social_posts_by_content_generation_id social_posts[] @relation("fk_social_posts_content_generation_id")
 
   @@index([organization_id, asset_id, topic_id, mode])
   @@index([organization_id, created_at])
   @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([purge_after])
+}
+
+/// Bài đăng tự động lên mạng xã hội (Bước 4 "Đăng tự động", PO 08/11/2026 — module `social-publishing`, thay phần đăng
+/// bài của SocialFlow). TENANT. Mỗi dòng = MỘT bài trên MỘT kênh. Đăng qua API chính thức của nền tảng (Meta Graph,
+/// Zalo OA, TikTok Content Posting) bằng kết nối của chính tổ chức; không lưu mật khẩu nền tảng.
+model social_posts {
+  id                    String    @id @default(uuid())
+  organization_id       String
+  /// Lượt bài đã duyệt ở Bước 3 (`content_generations`) — null khi không đi từ hành trình
+  content_generation_id String?
+  product_id            String?
+  /// facebook | instagram | zalo | tiktok — CHECK trong migration
+  channel               String
+  text                  String
+  hashtags              Json      @default("[]")
+  /// Mã ảnh trong kho (`assets.id`) theo thứ tự đăng; link ký sinh lúc đăng, không lưu link
+  media_asset_ids       Json      @default("[]")
+  /// QUEUED | PUBLISHING | PUBLISHED | FAILED | CANCELED — CHECK trong migration
+  status                String    @default("QUEUED")
+  scheduled_at          DateTime  @db.Timestamptz(3)
+  /// Lần thử kế tiếp (thử lại có giới hạn, `social-publishing/domain/post-lifecycle.ts`)
+  next_attempt_at       DateTime? @db.Timestamptz(3)
+  attempt_count         Int       @default(0)
+  published_at          DateTime? @db.Timestamptz(3)
+  external_post_id      String?
+  external_url          String?
+  last_error_code       String?
+  last_error_message    String?
+  /// Chống đăng trùng: cùng khoá trong một tổ chức chỉ có một bài
+  idempotency_key       String
+  created_by            String
+  created_at            DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime  @updatedAt @db.Timestamptz(3)
+
+  organization          organizations          @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  fk_content_generation content_generations?   @relation("fk_social_posts_content_generation_id", fields: [content_generation_id], references: [id], onDelete: SetNull)
+  fk_product            products?              @relation("fk_social_posts_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+  attempts              social_post_attempts[]
+
+  @@unique([organization_id, idempotency_key])
+  @@index([organization_id, created_at])
+  @@index([status, next_attempt_at])
+  @@index([content_generation_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
+}
+
+/// Nhật ký từng lần đăng của một bài (đối soát, hiện lý do lỗi). TENANT. Chỉ thêm, không sửa.
+model social_post_attempts {
+  id               String   @id @default(uuid())
+  organization_id  String
+  social_post_id   String
+  attempt_no       Int
+  /// PUBLISHED | RETRY | FAILED — CHECK trong migration
+  outcome          String
+  error_code       String?
+  error_message    String?
+  external_post_id String?
+  duration_ms      Int?
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  post         social_posts  @relation(fields: [social_post_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([social_post_id, created_at])
 }
 
 /// Giọng nhân bản của chủ tiệm (Khu vực C — Voice Clone, 24/09/2026). TENANT.

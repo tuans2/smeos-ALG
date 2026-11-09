@@ -12,9 +12,10 @@ import { BudgetMatchingModal } from "@/components/sales/budget-matching-modal"
 import type { ProductMatchCandidate } from "@/modules/products/domain/budget-flower-matcher"
 import { useI18n } from "@/lib/i18n"
 import { PageHeader } from "@/components/ui/page-header"
+import { PUBLIC_COLLECTION } from "@/modules/toolkit/domain/collection-names"
 
 /**
- * Trang Chức năng 09: Tạo catalog và bộ sưu tập.
+ * Trang Chức năng 09: Bộ sưu tập chung (một link cho nhiều khách).
  *
  * Chuyên sâu quản lý catalog trực tuyến và showroom sản phẩm số hóa.
  */
@@ -185,7 +186,8 @@ function CatalogHeader({
   return (
     <PageHeader
       className="flex-shrink-0 border-b border-border bg-surface px-[18px] py-4"
-      title="Tạo catalog & bộ sưu tập"
+      title={PUBLIC_COLLECTION.name}
+      tip={PUBLIC_COLLECTION.hint}
       actions={
         <>
           {onOpenBudgetMatcher && (

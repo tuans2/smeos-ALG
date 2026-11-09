@@ -44,8 +44,8 @@ export interface OrderSourceDefinition {
 }
 
 export const ORDER_SOURCES: Readonly<Record<OrderSourceCode, OrderSourceDefinition>> = {
-  BROCHURE: { code: "BROCHURE", label: "Thẻ chào", entryStage: "LEGACY_BROCHURE", hasLead: true, hasCustomerEntryActions: true },
-  CATALOG: { code: "CATALOG", label: "Catalog", entryStage: "LEAD", hasLead: true, hasCustomerEntryActions: true },
+  BROCHURE: { code: "BROCHURE", label: "Bộ sưu tập riêng", entryStage: "LEGACY_BROCHURE", hasLead: true, hasCustomerEntryActions: true },
+  CATALOG: { code: "CATALOG", label: "Bộ sưu tập chung", entryStage: "LEAD", hasLead: true, hasCustomerEntryActions: true },
   LANDING: { code: "LANDING", label: "Landing page", entryStage: "LEAD", hasLead: true, hasCustomerEntryActions: true },
   SHORT_LINK: { code: "SHORT_LINK", label: "Mã QR / link rút gọn", entryStage: "LEAD", hasLead: true, hasCustomerEntryActions: false },
   CHAT: { code: "CHAT", label: "Trò chuyện", entryStage: "LEAD", hasLead: true, hasCustomerEntryActions: false },

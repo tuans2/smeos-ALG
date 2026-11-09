@@ -21,7 +21,7 @@ export function getStoreJourneys(industryKey?: string | null): JourneyDefinition
       case "greeting-card-hub":
         return {
           ...j,
-          goal: "Thẻ chào sản phẩm",
+          goal: "Bộ sưu tập riêng",
           description: `Gửi ${terms.catalogTitle.toLowerCase()} cho khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.`,
         }
       case "market-intelligence-explore":
@@ -67,7 +67,7 @@ export function getStoreJourneys(industryKey?: string | null): JourneyDefinition
       case "create-catalog-collection":
         return {
           ...j,
-          goal: "Trang bán hàng",
+          goal: "Bộ sưu tập chung",
           description: `Tạo trang web ${terms.catalogTitle.toLowerCase()} kèm mã QR để in ấn hoặc gửi khách.`,
           steps: j.steps.map((s, idx) =>
             idx === 0 ? { ...s, label: `Tuyển chọn danh sách ${terms.sampleProduct.toLowerCase()}` } : s

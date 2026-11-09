@@ -109,8 +109,8 @@ const GROUP_2_TOOLS: readonly ToolDefinition[] = [
     href: "/landing-page", statusNote: "Trang giới thiệu cửa hàng có link chia sẻ — chuẩn UX 03c",
   },
   {
-    id: 9, name: "Tạo catalog và bộ sưu tập",
-    description: "Tổ chức sản phẩm theo danh mục với link chia sẻ và bộ lọc",
+    id: 9, name: "Tạo bộ sưu tập chung",
+    description: "Một link dùng chung cho nhiều khách: đăng fanpage, website hoặc in mã QR",
     icon: "BookOpen", label: "STORE", status: "DONE", progress: 100,
     href: "/catalog", statusNote: "Showroom số hoá theo danh mục, link chia sẻ và bộ lọc — chuẩn UX 03c",
   },
@@ -142,8 +142,8 @@ const GROUP_3_TOOLS: readonly ToolDefinition[] = [
     href: "/thu-hut-khach", statusNote: "Link ngắn có thống kê và nguồn chiến dịch trỏ tới catalog/trang sản phẩm; chưa có chọn phiên bản + thanh toán ngay trên link",
   },
   {
-    id: 14, name: "Tạo catalog bán hàng theo nhu cầu",
-    description: "Bộ sưu tập sản phẩm chọn lọc theo nhu cầu khách",
+    id: 14, name: "Tạo bộ sưu tập riêng",
+    description: "Gửi đích danh một khách hoặc cho một nhu cầu cụ thể",
     icon: "ShoppingBag", label: "STORE", status: "DONE", progress: 100,
     href: "/the-chao?quick=true", statusNote: "Tư vấn chốt đơn 1-1 — tạo nhanh BST theo ngân sách & dịp (<10s)",
   },

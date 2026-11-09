@@ -5,8 +5,8 @@
 export const greetingCardEn = {
   header: {
     breadcrumb: "Orders",
-    title: "Showcase Card",
-    description: "Send product catalogs for customers to browse, select, order, and pay directly on mobile.",
+    title: "Private collection",
+    description: "A private link sent to one customer or for one specific need. The customer picks, orders, pays and tracks the order on the link.",
     guideButton: "Showcase Guide",
     todoButton: "Action Items",
     modes: {

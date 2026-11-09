@@ -41,7 +41,7 @@
   - Danh mục Asset: Nâng cấp Asset #24 (Bản báo giá chi tiết) lên trạng thái Sẵn (`READY`), nâng tổng số Asset Sẵn lên 25;
   - Giao diện `/cong-cu`: Bổ sung quy trình 5 bước khép kín cho Module Bán hàng (Chọn khách → Tư vấn Thẻ chào → Lập báo giá → Chốt duyệt → Đơn hàng);
   - Screen Contract mới `bao-gia.md`, cập nhật `README.md`;
-  - Kiểm thử: 100% test cách ly tenant (`quotation-isolation.test.ts`), 100% test freeze (`catalog-freeze`; `the-chao-freeze` gỡ 05/11/2026 theo D-47), 100% test SSOT đa ngành (5 trụ cột đạt), UX Lint ratchet đạt 119 (giảm từ 120).
+  - Kiểm thử: 100% test cách ly tenant (`quotation-isolation.test.ts`), 100% test freeze (`catalog-freeze` gỡ 09/11/2026 theo D-66; `the-chao-freeze` gỡ 05/11/2026 theo D-47), 100% test SSOT đa ngành (5 trụ cột đạt), UX Lint ratchet đạt 119 (giảm từ 120).
 
 
 **30/09 (Trưa) — Nâng cấp Kiến trúc Journey-First UX Architecture: Hoàn tất 100% Đạt Chuẩn Production Ready.**

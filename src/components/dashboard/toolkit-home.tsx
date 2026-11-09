@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import React, { useState, useMemo } from "react"
+import { useSearchParams } from "next/navigation"
 import { Search } from "@/components/ui/icon-set/search"
 import { Input } from "@/components/ui/input"
 import {
@@ -99,7 +100,9 @@ export function ToolkitHome() {
   const isDev = useIsDev()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedStatus, setSelectedStatus] = useState<StatusFilter>("ALL")
-  const [selectedKey, setSelectedKey] = useState<string | null>(null)
+  // `?muc=` mở thẳng một nhóm (hành trình Tạo nội dung giữ sản phẩm đang làm trên URL, tải lại vẫn đúng chỗ)
+  const params = useSearchParams()
+  const [selectedKey, setSelectedKey] = useState<string | null>(() => params.get("muc"))
 
   const modules = useMemo(() => getVisibleBusinessModules(isDev), [isDev])
   const storeOperations = useMemo(() => getStoreOperationsSection(isDev), [isDev])

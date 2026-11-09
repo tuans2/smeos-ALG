@@ -4,6 +4,7 @@ import { orderScheduleError } from "../domain/holiday-policy"
 import { assertHolidayCapacity } from "./holiday-capacity"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
 import { SOLD_OUT_MESSAGE } from "../domain/product-availability"
+import { brochureEntryActions } from "../domain/brochure-entry-actions"
 import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { validateCustomerOrderInput, normalizePhone } from "../domain/greeting-card-rules"
 import type { CustomerOrderSubmitInput, GreetingCatalogProduct } from "../domain/greeting-card-types"
@@ -32,6 +33,8 @@ async function orderableFromCatalog(
 ): Promise<{ catalog: PublicCatalog; product: GreetingCatalogProduct }> {
   const catalog = await repo.getPublicCatalogById(catalogId)
   if (!catalog) throw notFound()
+  // Chủ cửa hàng tắt "Đặt hàng" cho Bộ sưu tập riêng → không báo giá / nhận đơn
+  if (!brochureEntryActions(catalog.organization.settings).order) throw notFound()
   const item = catalog.items.find((i) => i.product.id === productId)
   if (!item) throw notFound()
   const urls = await repo.getAssetsStorageMap(catalog.organization_id, collectImageAssetIds([item]))

@@ -86693,8 +86693,8 @@
     "/internal/integrations-sweep": {
       "post": {
         "operationId": "runIntegrationsSweep",
-        "summary": "Xử lý sự kiện tích hợp đến hạn, kiểm kết nối, kéo đơn kênh bán",
-        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. Mỗi lượt có giới hạn (100 sự kiện, 50 lượt kiểm, 20 kết nối kênh bán).",
+        "summary": "Xử lý sự kiện tích hợp đến hạn, kiểm kết nối, kéo đơn kênh bán, đăng bài mạng xã hội đến hạn",
+        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. Mỗi lượt có giới hạn (100 sự kiện, 50 lượt kiểm, 20 kết nối kênh bán, 20 bài đăng).",
         "tags": [
           "Tác vụ định kỳ (cron)"
         ],
@@ -86769,12 +86769,37 @@
                         "imported"
                       ],
                       "additionalProperties": false
+                    },
+                    "social": {
+                      "type": "object",
+                      "properties": {
+                        "published": {
+                          "type": "number"
+                        },
+                        "retrying": {
+                          "type": "number"
+                        },
+                        "failed": {
+                          "type": "number"
+                        },
+                        "recovered": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "published",
+                        "retrying",
+                        "failed",
+                        "recovered"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
                     "events",
                     "health",
-                    "orders"
+                    "orders",
+                    "social"
                   ],
                   "additionalProperties": false
                 }

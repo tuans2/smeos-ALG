@@ -1,7 +1,8 @@
 import { normalizeOrderAddress } from "../domain/delivery-address"
 import { orderScheduleError } from "../domain/holiday-policy"
 import { assertHolidayCapacity } from "./holiday-capacity"
-import { unprocessable, validationFailed } from "@/core/http/errors"
+import { notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { brochureEntryActions } from "../domain/brochure-entry-actions"
 import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import { BrochureOrderRepository, getBrochureOrderRepository } from "../infra/brochure-order-repository"
 import { validateCustomerOrderInput } from "../domain/greeting-card-rules"
@@ -34,6 +35,7 @@ export async function submitBrochureOrder(
   // Idempotent: phiên đã có đơn → trả lại đúng đơn đó (khách bấm hai lần, mạng chập chờn).
   const existing = await existingOrderResult(session, shop.settings, orders)
   if (existing) return existing
+  if (!brochureEntryActions(shop.settings).order) throw notFound()
 
   // Đọc ngành từ settings để bỏ qua kiểm tra khung giờ giao cho HOMESTAY/FNB/SERVICES
   const industryKey = typeof (shop.settings as Record<string, unknown> | null)?.industry === "string"
@@ -103,9 +105,10 @@ export async function quoteBrochureSession(
   repo = getGreetingCardRepository()
 ): Promise<QuoteResult> {
   const session = await loadPublicSession(sendCode, repo)
+  const shop = await repo.getShopProfile(session.organization_id)
+  if (!brochureEntryActions(shop.settings).order) throw notFound()
   if (!session.selected_product_id) throw unprocessable("Vui lòng chọn sản phẩm trước")
   const product = await resolveOrderableProduct(session, session.selected_product_id, repo)
-  const shop = await repo.getShopProfile(session.organization_id)
   const promo = promotionForQuote(session.catalog.filters, shop.settings, req.selectedPromotionId, await loadPolicyGovernance(session.organization_id))
   const result = await quoteForProduct(session.organization_id, product, req, shop.settings, undefined, promo.promotion, session.catalog.filters, session.catalog_id)
   const fullSlots = await fullSlotsOn(session.organization_id, req.deliveryDate, shop.settings)

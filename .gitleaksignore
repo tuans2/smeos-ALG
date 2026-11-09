@@ -32,3 +32,8 @@ defd6270331917f3fbf372f12afc92b27b2325b3:src/components/coordinator/product-remi
 # Khoá HMAC giả trong unit test Integration hub (nhánh claude/festive-newton-srgq9i, 30–31/10/2026) — giá trị giả, không phải bí mật thật
 e3c27f6095e8e0e1366d67aeebf28040a951bc72:src/modules/integration-hub/use-cases/__tests__/integration-hub-use-cases.test.ts:generic-api-key:10
 0ccc5b8785a9920fe2a2d4b823a38b5e866ed418:src/modules/integration-hub/use-cases/__tests__/integration-governance.test.ts:generic-api-key:10
+# Khoá giả trong test hợp đồng OpenAPI nội bộ (nhánh claude/beautiful-bell-d9vfz8, 08/11/2026) — "hop-dong-…" và
+# "bi-mat-123456" là giá trị test, không phải bí mật thật (đã đọc tận mắt; PO duyệt thêm 09/11/2026, PR #12).
+# CI tải mọi nhánh (fetch-depth: 0) nên gitleaks quét cả nhánh này.
+ccbec661ad7921774cb8376bbccf33c63f894139:tests/tenant/internal-contract-integrations.test.ts:generic-api-key:32
+21582ffb82e5118780427ed9a06b4c66d3b56c64:tests/tenant/internal-contract-chat.test.ts:generic-api-key:70

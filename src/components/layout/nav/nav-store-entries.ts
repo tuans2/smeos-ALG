@@ -3,6 +3,7 @@
  */
 
 import type { NavEntry } from "./nav-types"
+import { PRIVATE_COLLECTION, PUBLIC_COLLECTION } from "@/modules/toolkit/domain/collection-names"
 
 export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   // 01 · CÔNG CỤ
@@ -25,21 +26,23 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/the-chao",
-    label: "Thẻ chào sản phẩm",
+    label: PRIVATE_COLLECTION.name,
+    hint: PRIVATE_COLLECTION.hint,
     group: "cong-cu",
     iconKey: "CreditCard",
     navKey: "greeting-card",
     capability: "R1",
-    mobileLabel: "Thẻ chào",
+    mobileLabel: PRIVATE_COLLECTION.mobileLabel,
   },
   {
     href: "/catalog",
-    label: "Tạo catalog",
+    label: PUBLIC_COLLECTION.name,
+    hint: PUBLIC_COLLECTION.hint,
     group: "cong-cu",
     iconKey: "Globe",
     navKey: "catalog",
     capability: "J1",
-    mobileLabel: "Catalog",
+    mobileLabel: PUBLIC_COLLECTION.mobileLabel,
   },
   {
     href: "/tai-anh",

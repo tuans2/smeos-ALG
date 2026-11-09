@@ -7,6 +7,7 @@ import {
   type ProductInquiryInput,
 } from "@/modules/crm/domain/product-inquiry"
 import { ProductInquiryRepository } from "@/modules/crm/infra/product-inquiry-repository"
+import { captureInquiryLead } from "@/modules/acquisition/use-cases/capture-inquiry-lead"
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { BrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 
@@ -15,22 +16,30 @@ const INQUIRY_WINDOW_MS = 60 * 60_000
 
 export interface PublicProductInquiryInput extends ProductInquiryInput {
   productId: string
+  /** Khách tích "đồng ý để cửa hàng liên hệ lại" → ghi thêm lead (bản cũ không gửi → chỉ ghi hội thoại) */
+  consent?: boolean | undefined
 }
+
+type LeadCapture = typeof captureInquiryLead
 
 type CatalogItems = Array<{ product: { id: string; code: string; name: string } }>
 
 interface Deps {
   checkout: BrochureCheckoutRepository
   inquiries: ProductInquiryRepository
+  captureLead: LeadCapture
 }
 
-/** Phần chung: mẫu phải thuộc danh sách của bộ sưu tập/link (sai → 404), chặn gửi dồn, ghi khách + hội thoại. */
+/**
+ * Phần chung: mẫu phải thuộc danh sách của bộ sưu tập/link (sai → 404), chặn gửi dồn, ghi khách +
+ * hội thoại; khách đồng ý được liên hệ → ghi thêm lead nguồn BROCHURE.
+ */
 async function recordInquiry(
   organizationId: string,
   items: CatalogItems,
   input: PublicProductInquiryInput,
   source: { catalogId: string; sendCode?: string | undefined },
-  { checkout, inquiries }: Deps,
+  { checkout, inquiries, captureLead }: Deps,
 ): Promise<{ conversationId: string }> {
   const item = items.find((i) => i.product.id === input.productId)
   if (!item) throw notFound()
@@ -48,7 +57,7 @@ async function recordInquiry(
     deliveryAddress: "",
   })
   const product = { id: item.product.id, code: item.product.code, name: item.product.name }
-  return inquiries.create({
+  const conversation = await inquiries.create({
     organizationId,
     customerId,
     title: inquiryTitle(product),
@@ -62,6 +71,17 @@ async function recordInquiry(
       variantName: input.variantName?.trim().slice(0, 120) || null,
     },
   })
+  if (input.consent === true) {
+    await captureLead({
+      organizationId,
+      customerId,
+      name: input.customerName,
+      phone,
+      message: inquiryContent(product, input),
+      sourceRef: source.sendCode ?? source.catalogId,
+    })
+  }
+  return conversation
 }
 
 /**
@@ -74,12 +94,13 @@ export async function submitProductInquiry(
   repo = new GreetingCardRepository(),
   checkout = new BrochureCheckoutRepository(),
   inquiries = new ProductInquiryRepository(),
+  captureLead: LeadCapture = captureInquiryLead,
 ): Promise<{ conversationId: string }> {
   const errors = validateProductInquiry(input)
   if (Object.keys(errors).length > 0) throw validationFailed(errors)
   const catalog = await repo.getPublicCatalogById(catalogId)
   if (!catalog) throw notFound()
-  return recordInquiry(catalog.organization_id, catalog.items, input, { catalogId }, { checkout, inquiries })
+  return recordInquiry(catalog.organization_id, catalog.items, input, { catalogId }, { checkout, inquiries, captureLead })
 }
 
 /** Như trên, từ link chào riêng `/b/<mã>`: tổ chức và danh sách mẫu suy từ phiên của mã đó. */
@@ -89,10 +110,11 @@ export async function submitBrochureInquiry(
   repo = new GreetingCardRepository(),
   checkout = new BrochureCheckoutRepository(),
   inquiries = new ProductInquiryRepository(),
+  captureLead: LeadCapture = captureInquiryLead,
 ): Promise<{ conversationId: string }> {
   const errors = validateProductInquiry(input)
   if (Object.keys(errors).length > 0) throw validationFailed(errors)
   const session = await repo.getPublicSessionBySendCode(sendCode)
   if (!session?.catalog) throw notFound()
-  return recordInquiry(session.organization_id, session.catalog.items, input, { catalogId: session.catalog_id, sendCode: session.send_code }, { checkout, inquiries })
+  return recordInquiry(session.organization_id, session.catalog.items, input, { catalogId: session.catalog_id, sendCode: session.send_code }, { checkout, inquiries, captureLead })
 }

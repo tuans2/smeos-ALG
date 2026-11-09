@@ -96,6 +96,8 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
   const [selecting, setSelecting] = useState(false)
   const [contactProduct, setContactProduct] = useState<GreetingCatalogProduct | null>(null)
   const inquiryUrl = `/api/v1/public/brochure/${session.sendCode}/inquiry`
+  // Công tắc chủ cửa hàng: tắt Đặt hàng → mẫu nào cũng mở khung liên hệ; bật Liên hệ → nút "Nhắn tin"
+  const entry = initialData.entryActions ?? { order: true, contact: false }
 
   // Hướng dẫn chuyển khoản luôn lấy từ server theo cấu hình của tiệm.
   const [orderResult, setOrderResult] = useState<OrderState | null>(() =>
@@ -140,8 +142,8 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       setSelectError(SOLD_OUT_MESSAGE)
       return
     }
-    // Mẫu "Liên hệ": không chọn để đặt, mở khung Gọi / Zalo / Nhắn tin
-    if (product.priceMode === "CONTACT") {
+    // Mẫu "Liên hệ" hoặc cửa hàng tắt Đặt hàng: không chọn để đặt, mở khung Gọi / Zalo / Nhắn tin
+    if (product.priceMode === "CONTACT" || !entry.order) {
       setContactProduct(product)
       return
     }
@@ -216,6 +218,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
                   currentProduct?.id
                 ),
               onCall: () => track("contact_call_clicked", currentProduct?.id),
+              onMessage: entry.contact && currentProduct ? () => setContactProduct(currentProduct) : undefined,
             }
       }
     />
@@ -293,7 +296,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
         )}
 
         {contactProduct && (
-          <ContactProductSheet product={contactProduct} shop={shop} inquiryUrl={inquiryUrl} onClose={() => setContactProduct(null)} />
+          <ContactProductSheet product={contactProduct} shop={shop} inquiryUrl={inquiryUrl} priceOnRequest={contactProduct.priceMode === "CONTACT"} onClose={() => setContactProduct(null)} />
         )}
 
         {step === "PAYMENT" && orderResult && (

@@ -97,6 +97,8 @@ Danh mục mã là **hằng số đóng trong mã** (`src/modules/orders/domain/
 
 **Với Thẻ chào (B1):** phiên `greeting_sessions` **vẫn là** lead của Thẻ chào, không chép sang bảng khác. Mục (7) với đơn Thẻ chào là **thêm** một bản ghi lead *sau khi* bộ quét huỷ đơn như cũ — không đổi lúc huỷ, lý do huỷ, audit `system:hold-expiry` hay trạng thái phiên.
 
+**Bộ sưu tập riêng (Thẻ chào) — tin nhắn tư vấn (PO 09/11/2026):** khách gửi form "Nhắn tin" ở `/b`, `/g`, `/bst` và tích đồng ý được liên hệ → ngoài yêu cầu tư vấn trong Hội thoại, ghi **thêm** một lead nguồn `BROCHURE`, lý do `CONTACT` (mục A1–A2), `source_ref` = mã link riêng hoặc id bộ sưu tập (`acquisition/use-cases/capture-inquiry-lead.ts`). Cùng SĐT đã có đủ lead trong giờ qua (`LEAD_PHONE_LIMIT_PER_HOUR`) → không ghi thêm lead. Phiên `greeting_sessions` không đổi.
+
 ### 3.2 Nút "Đặt hàng" và "Liên hệ / Cần tư vấn" — component bật/tắt
 
 PO 31/10: hai lựa chọn là **component** Điều hành bật/tắt **cho toàn bộ hoặc từng nguồn**.
@@ -108,6 +110,7 @@ PO 31/10: hai lựa chọn là **component** Điều hành bật/tắt **cho to�
   ```
   Giải theo thứ tự: `bySource[nguồn]` → `default` → mặc định hệ thống. Ít nhất một nút phải bật (kiểm ở use-case, 422 nếu tắt cả hai).
 - **Mặc định hệ thống:** `order: true, contact: true` cho nguồn mới; **`BROCHURE`: `order: true, contact: false`** → trang khách Thẻ chào hiển thị y như hiện nay cho đến khi Điều hành chủ động bật (B1).
+- **`BROCHURE` đã nối (PO 09/11/2026):** trang khách `/b`, `/g`, `/bst` đọc công tắc qua `greeting-card/domain/brochure-entry-actions.ts`. Tắt Đặt hàng → mẫu nào cũng mở khung liên hệ; chọn mẫu / báo giá / gửi đơn trả 404. Bật Liên hệ → thêm nút "Nhắn tin" chung. Mẫu giá "Liên hệ" luôn có khung liên hệ.
 - Domain thuần: `resolveEntryActions(settings, source)` trong `src/modules/orders/domain/entry-actions.ts`; component dùng chung `src/components/order-entry/entry-action-bar.tsx`.
 - Quyền sửa: Điều hành (năng lực cài đặt hiện có của ngăn "Cài đặt" Thẻ chào). Cài đặt đặt trong mục Đơn hàng › Cài đặt, mỗi nguồn một dòng hai công tắc.
 

@@ -5,8 +5,8 @@
 export const greetingCardVi = {
   header: {
     breadcrumb: "Đơn hàng",
-    title: "Thẻ chào & Danh mục mẫu",
-    description: "Gửi khách bộ sưu tập mẫu để xem, chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.",
+    title: "Bộ sưu tập riêng",
+    description: "Link riêng gửi đích danh một khách hoặc cho một nhu cầu cụ thể. Khách chọn mẫu, đặt hàng, thanh toán và theo dõi đơn ngay trên link.",
     guideButton: "Hướng dẫn thẻ chào",
     todoButton: "Việc cần làm",
     modes: {

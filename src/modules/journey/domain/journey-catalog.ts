@@ -14,8 +14,8 @@ import type { JourneyDefinition } from "./journey-model"
 export const STORE_JOURNEYS: JourneyDefinition[] = [
   {
     id: "greeting-card-hub",
-    goal: "Thẻ chào sản phẩm",
-    description: "Gửi bộ sưu tập sản phẩm cho khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.",
+    goal: "Bộ sưu tập riêng",
+    description: "Gửi bộ sưu tập riêng cho từng khách chọn mẫu, đặt hàng và thanh toán ngay trên điện thoại.",
     icon: "Sparkles",
     badgeText: "Nổi bật",
     roleScope: "STORE",
@@ -221,8 +221,8 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "create-catalog-collection",
-    goal: "Trang bán hàng",
-    description: "Tạo trang web bộ sưu tập hoa kèm mã QR để in lên thiệp hoặc đặt ở quầy.",
+    goal: "Bộ sưu tập chung",
+    description: "Tạo trang bộ sưu tập dùng chung kèm mã QR để in lên thiệp hoặc đặt ở quầy.",
     icon: "BookOpen",
     roleScope: "STORE",
     category: "SINGLE",

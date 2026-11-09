@@ -45,7 +45,7 @@ export const zaloOaEventBody = z.looseObject({
   message: z.object({ text: z.string().optional() }).optional(),
 })
 
-// ── Catalog công khai — BẢN SAO lược đồ của route đóng băng (`catalog-freeze.test.ts`) ──────────────
+// ── Catalog công khai — BẢN SAO lược đồ của route Catalog (từng đóng băng, PO gỡ 09/11/2026 — D-66) ──
 // Route không đổi; `tests/unit/public/public-catalog-contract.test.ts` gửi cùng bộ mẫu tới route thật và
 // tới bản sao để giữ hai bên khớp.
 const utmField = z.string().max(100).optional()
@@ -107,6 +107,8 @@ export const brochureInquiryBody = z.object({
   customerPhone: z.string().max(20),
   message: z.string().max(INQUIRY_MESSAGE_MAX * 2),
   variantName: z.string().max(120).optional(),
+  /** Khách đồng ý để cửa hàng liên hệ lại → ghi thêm lead */
+  consent: z.boolean().optional(),
   /** Ô bẫy máy tự điền */
   website: z.string().max(200).optional(),
 })
@@ -178,6 +180,8 @@ export const greetingCatalogInquiryBody = z.object({
   customerPhone: z.string().max(20),
   message: z.string().max(INQUIRY_MESSAGE_MAX * 2),
   variantName: z.string().max(120).optional(),
+  /** Khách đồng ý để cửa hàng liên hệ lại → ghi thêm lead */
+  consent: z.boolean().optional(),
   /** Ô bẫy máy tự điền */
   website: z.string().max(200).optional(),
 })

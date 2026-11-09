@@ -41,7 +41,7 @@ export const DOMAINS = [
   ]],
   ["AI, nội dung, marketing", [
     "ai_capabilities", "ai_models", "ai_policies", "ai_requests", "ai_evaluations", "provider_cost_entries", "provider_health",
-    "generation_jobs", "job_events", "journey_runs", "content_drafts", "content_generations", "content_metrics",
+    "generation_jobs", "job_events", "journey_runs", "content_drafts", "content_generations", "content_metrics", "social_posts", "social_post_attempts",
     "content_opportunities", "campaigns", "campaign_packages", "brand_profiles", "brand_style_options", "brand_library_items", "brand_library_versions",
     "video_jobs", "video_scenes", "voice_clones", "music_tracks", "topics", "topic_scores", "topic_signals", "trend_signals",
     "trend_timeseries", "research_runs", "market_sources",

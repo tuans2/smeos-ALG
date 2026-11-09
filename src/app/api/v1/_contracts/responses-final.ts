@@ -53,6 +53,8 @@ export const integrationsSweepResponse = z.strictObject({
   events: z.strictObject({ done: z.number(), failed: z.number(), dead: z.number() }),
   health: z.strictObject({ checked: z.number(), degraded: z.number() }),
   orders: z.strictObject({ connections: z.number(), imported: z.number() }),
+  /** Bài mạng xã hội đến hạn (tối đa 20 mỗi lượt) — `recovered`: bài kẹt trạng thái đang đăng được trả lại hàng đợi. */
+  social: z.strictObject({ published: z.number(), retrying: z.number(), failed: z.number(), recovered: z.number() }),
 })
 /** Mỗi tác vụ con hỏng riêng → `null`, lượt quét vẫn 200. `sentDetails`/`errors` chỉ khi có, tối đa vài dòng. */
 export const dispatchSweepResponse = z.strictObject({

@@ -29,8 +29,8 @@ describe("hàng đợi lead chung", () => {
   })
 
   it("nhãn nguồn là tiếng Việt", () => {
-    expect(leadSourceLabel("CATALOG_LINK")).toBe("Catalog")
-    expect(leadSourceLabel("BROCHURE")).toBe("Thẻ chào")
+    expect(leadSourceLabel("CATALOG_LINK")).toBe("Bộ sưu tập chung")
+    expect(leadSourceLabel("BROCHURE")).toBe("Bộ sưu tập riêng")
     expect(leadSourceLabel(null)).toBe("Khác")
   })
 })
