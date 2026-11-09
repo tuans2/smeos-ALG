@@ -3,6 +3,7 @@
 import React from "react"
 import type { ActionCardOrderPayload, InternalChatMessage } from "@/modules/internal-chat/domain/chat-entities"
 import { formatTime } from "@/lib/i18n/formatters"
+import { safeImageSrc } from "@/lib/safe-image-src"
 import { ActionCardOrder } from "./action-card-order"
 import { SubcontractTaskCard } from "./subcontract-task-card"
 
@@ -25,6 +26,18 @@ export function MessageItem({ message, onChanged }: { message: InternalChatMessa
       </div>
       {message.messageType === "ACTION_CARD_SUBCONTRACT" ? (
         <SubcontractTaskCard message={message} />
+      ) : message.messageType === "IMAGE" ? (
+        <div className="space-y-1.5 max-w-lg">
+          <div className="grid grid-cols-2 gap-1.5">
+            {message.attachments.map((url, i) => (
+              <a key={url} href={safeImageSrc(url)} target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden border border-border bg-surface">
+                {/* eslint-disable-next-line @next/next/no-img-element -- URL ký có hạn của kho, không qua bộ tối ưu ảnh */}
+                <img src={safeImageSrc(url)} alt={`Ảnh ${i + 1}${message.content ? `: ${message.content}` : ""}`} loading="lazy" className="w-full h-32 object-cover" />
+              </a>
+            ))}
+          </div>
+          {message.content && <div className="p-3 bg-surface border border-border rounded-2xl text-meta text-text whitespace-pre-line break-words">{message.content}</div>}
+        </div>
       ) : message.messageType === "ACTION_CARD_ORDER" ? (
         // Thẻ đơn kiểu cũ (gửi tay qua dispatch-to-chat) — máy chủ chỉ cho tổ chức được giao bấm
         <ActionCardOrder messageId={message.id} payload={message.actionPayload as ActionCardOrderPayload} isSender={false} onActionComplete={onChanged} />

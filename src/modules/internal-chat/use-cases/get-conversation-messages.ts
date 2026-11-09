@@ -7,6 +7,15 @@ import { assertConversationAccess, type ChatCaller } from "./conversation-access
 /** Bổ sung cho trang tin sau khi đã kiểm quyền phòng (vd. trạng thái thật của thẻ đơn gia công). */
 export type MessagePageDecorator = (items: InternalChatMessage[], conversation: InternalChatConversation, caller: ChatCaller) => Promise<InternalChatMessage[]>
 
+/** Chạy lần lượt nhiều bộ bổ sung (thẻ đơn gia công, ảnh). */
+export function composeDecorators(...decorators: MessagePageDecorator[]): MessagePageDecorator {
+  return async (items, conversation, caller) => {
+    let out = items
+    for (const decorate of decorators) out = await decorate(out, conversation, caller)
+    return out
+  }
+}
+
 export interface GetConversationMessagesInput {
   conversationId: string
   userId: string

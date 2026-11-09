@@ -43,6 +43,7 @@ export default function InternalChatPage() {
               sendError={chat.sendError}
               onBack={() => chat.setActiveConv(null)}
               onSend={chat.sendMessage}
+              onSendImages={chat.sendImages}
               onReload={chat.reload}
             />
           ) : (

@@ -58,7 +58,12 @@ export function useInternalChat() {
       if (res.status === 404 || res.status === 403) return setThreadState("forbidden")
       const json = await res.json()
       if (!json.success || !Array.isArray(json.data)) return setThreadState("error")
-      setMessages(json.data)
+      // Giữ nguyên tin ảnh đã tải: URL ký đổi mỗi lần đọc, thay vào sẽ làm ảnh tải lại 5 giây/lần
+      const incoming = json.data as InternalChatMessage[]
+      setMessages((prev) => {
+        const known = new Map(prev.filter((m) => m.messageType === "IMAGE").map((m) => [m.id, m]))
+        return incoming.map((m) => known.get(m.id) ?? m)
+      })
       setThreadState("ready")
     } catch {
       setThreadState((s) => (s === "ready" ? s : "error"))
@@ -124,8 +129,29 @@ export function useInternalChat() {
     return false
   }, [activeConv])
 
+  /** Gửi ảnh (≤ 5, kèm chú thích) — xong thì đọc lại phòng để có URL ký. */
+  const sendImages = useCallback(async (files: File[], caption: string): Promise<boolean> => {
+    if (!activeConv || files.length === 0) return false
+    setSendError(null)
+    const form = new FormData()
+    files.forEach((f) => form.append("files", f))
+    form.append("caption", caption)
+    try {
+      const res = await fetch(`${API}/${activeConv.id}/images`, { method: "POST", body: form })
+      if (res.ok) {
+        await fetchMessages(activeConv.id)
+        return true
+      }
+      const json = await res.json().catch(() => null)
+      setSendError(res.status === 413 ? "Mỗi ảnh tối đa 10 MB." : json?.error?.message ?? "Chưa gửi được ảnh. Thử lại sau.")
+    } catch {
+      setSendError("Mất kết nối — ảnh chưa được gửi.")
+    }
+    return false
+  }, [activeConv, fetchMessages])
+
   return {
-    conversations, listState, activeConv, setActiveConv, messages, threadState, online, sendError, sendMessage,
+    conversations, listState, activeConv, setActiveConv, messages, threadState, online, sendError, sendMessage, sendImages,
     reload: () => (activeConv ? fetchMessages(activeConv.id) : fetchConversations()),
   }
 }

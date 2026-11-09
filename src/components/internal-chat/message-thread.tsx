@@ -3,6 +3,9 @@
 import React, { useEffect, useRef, useState } from "react"
 import type { InternalChatConversation, InternalChatMessage } from "@/modules/internal-chat/domain/chat-entities"
 import { CHAT_MESSAGE_MAX_LENGTH } from "@/modules/internal-chat/domain/chat-limits"
+import { MAX_CHAT_IMAGE_BYTES, MAX_CHAT_IMAGES_PER_MESSAGE } from "@/modules/internal-chat/domain/chat-image"
+import { ImagePlus } from "@/components/ui/icon-set/image-plus"
+import { X } from "@/components/ui/icon-set/x"
 import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Send } from "@/components/ui/icon-set/send"
 import { Button } from "@/components/ui/button"
@@ -21,14 +24,45 @@ interface MessageThreadProps {
   sendError: string | null
   onBack: () => void
   onSend: (text: string) => Promise<boolean>
+  onSendImages: (files: File[], caption: string) => Promise<boolean>
   onReload: () => void
 }
 
 /** Phòng đang mở: tin (cũ → mới), ô soạn tin (Enter gửi, Shift+Enter xuống dòng), các trạng thái tải / lỗi / mất mạng. */
-export function MessageThread({ conversation, messages, state, online, sendError, onBack, onSend, onReload }: MessageThreadProps) {
+export function MessageThread({ conversation, messages, state, online, sendError, onBack, onSend, onSendImages, onReload }: MessageThreadProps) {
   const [text, setText] = useState("")
   const [sending, setSending] = useState(false)
+  const [files, setFiles] = useState<Array<{ file: File; url: string }>>([])
+  const [pickError, setPickError] = useState<string | null>(null)
   const endRef = useRef<HTMLDivElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  // Giải phóng ảnh xem trước: khi bỏ ảnh, khi gửi xong (`clearFiles`) và khi rời màn (ref giữ danh sách mới nhất)
+  const filesRef = useRef(files)
+  useEffect(() => {
+    filesRef.current = files
+  }, [files])
+  useEffect(() => () => filesRef.current.forEach((f) => URL.revokeObjectURL(f.url)), [])
+  const removeFile = (url: string) => {
+    URL.revokeObjectURL(url)
+    setFiles((prev) => prev.filter((x) => x.url !== url))
+  }
+  const clearFiles = () => {
+    files.forEach((f) => URL.revokeObjectURL(f.url))
+    setFiles([])
+  }
+
+  const pick = (list: FileList | null) => {
+    if (!list) return
+    setPickError(null)
+    const chosen = Array.from(list)
+    if (chosen.some((f) => f.size > MAX_CHAT_IMAGE_BYTES)) setPickError("Mỗi ảnh tối đa 10 MB.")
+    const room = MAX_CHAT_IMAGES_PER_MESSAGE - files.length
+    const ok = chosen.filter((f) => f.size <= MAX_CHAT_IMAGE_BYTES)
+    if (ok.length > room) setPickError(`Mỗi tin gửi tối đa ${MAX_CHAT_IMAGES_PER_MESSAGE} ảnh.`)
+    const added = ok.slice(0, Math.max(0, room)).map((file) => ({ file, url: URL.createObjectURL(file) }))
+    if (added.length > 0) setFiles([...files, ...added])
+  }
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
@@ -36,9 +70,13 @@ export function MessageThread({ conversation, messages, state, online, sendError
 
   const submit = async () => {
     const value = text.trim()
-    if (!value || sending) return
+    if ((!value && files.length === 0) || sending) return
     setSending(true)
-    if (await onSend(value)) setText("")
+    const sent = files.length > 0 ? await onSendImages(files.map((f) => f.file), value) : await onSend(value)
+    if (sent) {
+      setText("")
+      clearFiles()
+    }
     setSending(false)
   }
 
@@ -70,6 +108,20 @@ export function MessageThread({ conversation, messages, state, online, sendError
         <div ref={endRef} />
       </div>
 
+      {files.length > 0 && (
+        <ul className="px-3 pt-3 bg-surface border-t border-border flex gap-2 overflow-x-auto" aria-label="Ảnh sẽ gửi">
+          {files.map((f, i) => (
+            <li key={f.url} className="relative shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element -- ảnh xem trước cục bộ (blob:) */}
+              <img src={f.url} alt={`Ảnh chọn ${i + 1}`} className="w-16 h-16 rounded-lg object-cover border border-border" />
+              <Button type="button" variant="ghost" size="sm" className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-surface border border-border" aria-label={`Bỏ ảnh ${i + 1}`} onClick={() => removeFile(f.url)}>
+                <X className="w-3 h-3" aria-hidden="true" />
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <form
         className="p-3 bg-surface border-t border-border flex gap-2 items-end"
         onSubmit={(e) => {
@@ -77,12 +129,27 @@ export function MessageThread({ conversation, messages, state, online, sendError
           void submit()
         }}
       >
+        <input
+          ref={fileRef}
+          type="file"
+          multiple
+          accept="image/jpeg,image/png,image/webp"
+          className="sr-only"
+          aria-label="Chọn ảnh để gửi"
+          onChange={(e) => {
+            pick(e.target.files)
+            e.target.value = ""
+          }}
+        />
+        <Button type="button" variant="ghost" size="sm" className="h-10 w-10 p-0 shrink-0" aria-label="Đính kèm ảnh" disabled={state === "forbidden" || files.length >= MAX_CHAT_IMAGES_PER_MESSAGE} onClick={() => fileRef.current?.click()}>
+          <ImagePlus className="w-5 h-5" aria-hidden="true" />
+        </Button>
         <label htmlFor="chat-composer" className="sr-only">Nội dung tin nhắn</label>
         <Textarea
           id="chat-composer"
           rows={1}
           maxLength={CHAT_MESSAGE_MAX_LENGTH}
-          placeholder="Nhập tin nhắn… (Enter để gửi, Shift+Enter xuống dòng)"
+          placeholder={files.length > 0 ? "Thêm chú thích cho ảnh (không bắt buộc)" : "Nhập tin nhắn… (Enter để gửi, Shift+Enter xuống dòng)"}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -93,12 +160,12 @@ export function MessageThread({ conversation, messages, state, online, sendError
           }}
           className="flex-1 resize-none min-h-0 max-h-32"
         />
-        <Button type="submit" disabled={!text.trim() || sending || state === "forbidden"} size="default" className="shrink-0">
+        <Button type="submit" disabled={(!text.trim() && files.length === 0) || sending || state === "forbidden"} size="default" className="shrink-0">
           <Send className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
           Gửi
         </Button>
       </form>
-      {sendError && <p role="alert" className="px-3 pb-2 text-caption text-danger-text bg-surface">{sendError}</p>}
+      {(pickError || sendError) && <p role="alert" className="px-3 pb-2 text-caption text-danger-text bg-surface">{pickError || sendError}</p>}
     </div>
   )
 }

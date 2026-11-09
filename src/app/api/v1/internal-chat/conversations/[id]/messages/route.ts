@@ -8,7 +8,9 @@ import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-
 import { getChatLinkPolicy } from "@/modules/internal-chat/infra/prisma-chat-link-policy"
 import { CHAT_MESSAGE_MAX_LENGTH, CHAT_PAGE_MAX_LIMIT } from "@/modules/internal-chat/domain/chat-limits"
 import { decodeMessageCursor, encodeMessageCursor } from "@/modules/internal-chat/domain/message-cursor"
-import { GetConversationMessagesUseCase } from "@/modules/internal-chat/use-cases/get-conversation-messages"
+import { composeDecorators, GetConversationMessagesUseCase } from "@/modules/internal-chat/use-cases/get-conversation-messages"
+import { chatImageDecorator } from "@/modules/internal-chat/infra/chat-image-decorator"
+import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { SendChatMessageUseCase } from "@/modules/internal-chat/use-cases/send-chat-message"
 import { subcontractCardDecorator } from "@/modules/internal-chat/infra/subcontract-card-decorator"
 import { OrganizationChatNotifier } from "@/modules/internal-chat/infra/chat-notifier"
@@ -43,7 +45,10 @@ export const GET = handle<[{ params: Promise<{ id: string }> }]>(async (request,
   const before = query.data.before ? decodeMessageCursor(query.data.before) : undefined
   if (before === null) throw validationFailed({ before: "Con trỏ trang không hợp lệ" })
 
-  const decorate = subcontractCardDecorator({ canFulfil: hasCapability(ctx, INTERNAL_CHAT_CAPABILITY.fulfilOrder) })
+  const decorate = composeDecorators(
+    subcontractCardDecorator({ canFulfil: hasCapability(ctx, INTERNAL_CHAT_CAPABILITY.fulfilOrder) }),
+    chatImageDecorator(getStorageProvider())
+  )
   const useCase = new GetConversationMessagesUseCase(getInternalChatRepository(), getChatLinkPolicy(), decorate)
   const page = await useCase.execute({
     conversationId,

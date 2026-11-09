@@ -12,7 +12,7 @@
 | Kiểm nội dung tải lên | `assets/domain/upload-content-rules.ts` (`maxUploadBytes`, `checkUploadContent` magic bytes) |
 | Ký URL | `assets/infra/storage-signing.ts` (`verifyStorageSignature(key, exp, sig, method)`), env `STORAGE_SIGNING_SECRET` → fallback `SESSION_SECRET` |
 | Route phục vụ | `src/app/api/v1/storage/[...key]/route.ts` — GET/PUT đều kiểm chữ ký; SVG kèm CSP sandbox |
-| Registry SSOT | `assets/infra/storage-registry-keys.ts` — `STORAGE_REFERENCE_SOURCES` (10 nguồn, gồm JSON `generation_jobs.output.*`, `order_coordinations.metadata.qc_photos/pod_photos`) |
+| Registry SSOT | `assets/infra/storage-registry-keys.ts` — `STORAGE_REFERENCE_SOURCES` (10 nguồn, gồm JSON `generation_jobs.output.*`, `order_coordinations.metadata.qc_photos/pod_photos`; 09/11/2026 thêm `internal_chat_messages.attachments` — ảnh trong tin trao đổi nội bộ) |
 | Vòng đời | `assets/domain/asset-lifecycle.ts` (`isUnderLegalHold`, `MAX_OUTBOX_ATTEMPTS = 5`), `payload-deletion.ts`, `use-cases/process-storage-outbox.ts`; cột `assets.trashed_at/purge_after/legal_hold_until`, bảng `storage_outbox`, `organizations.legal_hold_until` |
 | Thùng rác | `storage/use-cases/manage-trash.ts`, `storage/infra/trash-repository.ts` (port `ITrashRepository`) — giữ **30 ngày** |
 | Dọn định kỳ | `storage/use-cases/sweep-storage-lifecycle.ts`, gọi từ cron `api/v1/internal/chain-dispatch-sweep` |

@@ -35,3 +35,9 @@ export class CardActionConflictError extends ChatDomainError {
     super(reason, "CONFLICT", "CARD_ALREADY_HANDLED")
   }
 }
+
+export class ChatImageTooLargeError extends ChatDomainError {
+  constructor(reason = "Mỗi ảnh tối đa 10 MB") {
+    super(reason, "PAYLOAD_TOO_LARGE", "CHAT_IMAGE_TOO_LARGE")
+  }
+}
