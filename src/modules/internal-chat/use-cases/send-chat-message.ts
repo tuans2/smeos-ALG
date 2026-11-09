@@ -3,6 +3,7 @@ import type { InternalChatMessage } from "../domain/chat-entities"
 import { CHAT_MESSAGE_MAX_LENGTH } from "../domain/chat-limits"
 import { InvalidMessageContentError } from "../domain/errors"
 import { assertConversationAccess } from "./conversation-access"
+import type { IChatNotifier } from "./chat-notifier"
 
 export interface SendChatMessageInput {
   conversationId: string
@@ -20,11 +21,12 @@ export interface SendChatMessageInput {
 export class SendChatMessageUseCase {
   constructor(
     private readonly chatRepo: IInternalChatRepository,
-    private readonly linkPolicy: IChatLinkPolicy
+    private readonly linkPolicy: IChatLinkPolicy,
+    private readonly notifier?: IChatNotifier | undefined
   ) {}
 
   async execute(input: SendChatMessageInput): Promise<InternalChatMessage> {
-    await assertConversationAccess(this.chatRepo, this.linkPolicy, input.conversationId, input)
+    const conversation = await assertConversationAccess(this.chatRepo, this.linkPolicy, input.conversationId, input)
 
     const trimmed = input.content.trim()
     if (!trimmed) throw new InvalidMessageContentError("Tin nhắn không được để trống")
@@ -32,12 +34,14 @@ export class SendChatMessageUseCase {
       throw new InvalidMessageContentError(`Tin nhắn dài quá ${CHAT_MESSAGE_MAX_LENGTH} ký tự`)
     }
 
-    return this.chatRepo.sendMessage({
+    const message = await this.chatRepo.sendMessage({
       conversationId: input.conversationId,
       senderUserId: input.userId,
       senderRole: input.userRole,
       messageType: "TEXT",
       content: trimmed,
     })
+    await this.notifier?.messageReceived({ conversation, senderOrgId: input.organizationId, preview: trimmed })
+    return message
   }
 }

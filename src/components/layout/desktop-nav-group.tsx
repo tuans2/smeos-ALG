@@ -21,6 +21,7 @@ import {
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { ToolkitShortcutsGroup } from "./toolkit-shortcuts-group"
 import { getAllToolkitNavEntries } from "./nav-toolkit-shortcuts"
+import { InternalChatUnreadBadge } from "@/components/internal-chat/internal-chat-unread-badge"
 
 export interface DesktopNavGroupProps {
   group: NavGroupType
@@ -167,6 +168,7 @@ export function DesktopNavGroup({
               item={entry}
               active={isActive(entry)}
               iconComponent={ICONS[entry.iconKey]}
+              trailing={entry.navKey === "internal-chat" ? <InternalChatUnreadBadge /> : undefined}
               onClick={() => onNavigate(entry.href)}
             />
           ))}

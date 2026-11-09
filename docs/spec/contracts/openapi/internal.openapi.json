@@ -44140,6 +44140,9 @@
                           "telegramLinked": {
                             "type": "boolean"
                           },
+                          "partnerStore": {
+                            "type": "boolean"
+                          },
                           "zalo": {
                             "type": "boolean"
                           }
@@ -44152,6 +44155,7 @@
                           "isActive",
                           "telegramChatId",
                           "telegramLinked",
+                          "partnerStore",
                           "zalo"
                         ],
                         "additionalProperties": false

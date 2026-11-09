@@ -2,6 +2,7 @@ import type { IInternalChatRepository } from "../domain/chat-repository.interfac
 import { partnerRoomKey } from "../domain/conversation-access-policy"
 import { plainDispatchText, type SubcontractCardPayload } from "../domain/subcontract-card"
 import { ensurePartnerConversation } from "./ensure-room"
+import type { IChatNotifier } from "./chat-notifier"
 
 export interface PostSubcontractMessageInput {
   chainOrgId: string
@@ -30,7 +31,8 @@ export interface ChatRoomOwnerLookup {
 export async function postSubcontractMessage(
   chatRepo: IInternalChatRepository,
   owners: ChatRoomOwnerLookup,
-  input: PostSubcontractMessageInput
+  input: PostSubcontractMessageInput,
+  notifier?: IChatNotifier | undefined
 ): Promise<boolean> {
   let room = await chatRepo.findConversationByRoomKey(input.chainOrgId, partnerRoomKey(input.partnerOrgId))
   if (!room) {
@@ -51,5 +53,6 @@ export async function postSubcontractMessage(
     content: input.isInvite ? body : [title, body].filter(Boolean).join("\n"),
     ...(input.isInvite ? { actionPayload: payload as unknown as Record<string, unknown> } : {}),
   })
+  if (input.isInvite) await notifier?.orderInvite({ chainOrgId: input.chainOrgId, partnerOrgId: input.partnerOrgId, orderCode: input.orderCode })
   return true
 }

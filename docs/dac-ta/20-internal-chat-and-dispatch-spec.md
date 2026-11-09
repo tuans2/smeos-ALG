@@ -2,7 +2,7 @@
 **Mã phân hệ:** `src/modules/internal-chat/`  
 **Phiên bản:** v1.0.0 (SSOT)  
 **Ngày lập:** 25/10/2026  
-**Trạng thái:** DRAFT / APPROVED FOR IMPLEMENTATION
+**Trạng thái:** Đã triển khai một phần (09/11/2026) — **trạng thái thật và quyết định PO ở `docs/plan/hoan-thien-chat-noi-bo.md`** (v3, §10). Các mục §3 (bảng `chat_*`) và §6 (lộ trình) bên dưới là bản thiết kế ban đầu, đã lỗi thời: bảng thật là `internal_chat_*` (đặc tả 07 §34), quyền theo tổ chức + `S1`/`S2`, thẻ đơn gia công phản chiếu Thẻ Gia Công.
 
 ---
 

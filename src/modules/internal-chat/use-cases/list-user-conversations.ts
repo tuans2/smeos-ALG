@@ -27,3 +27,15 @@ export class ListUserConversationsUseCase {
     })
   }
 }
+
+/** Trần số phòng cộng dồn cho số đếm trên menu — danh sách luôn có giới hạn. */
+export const UNREAD_ROOM_SCAN_LIMIT = 100
+
+/** Tổng tin chưa đọc trong (tối đa 100) phòng gần nhất của người xem. */
+export async function countUnreadMessages(
+  chatRepo: IInternalChatRepository,
+  viewer: { userId: string; organizationId: string; branchId?: string | null | undefined }
+): Promise<number> {
+  const { items } = await chatRepo.listConversations({ ...viewer, limit: UNREAD_ROOM_SCAN_LIMIT, offset: 0 })
+  return items.reduce((sum, c) => sum + (c.unreadCount ?? 0), 0)
+}

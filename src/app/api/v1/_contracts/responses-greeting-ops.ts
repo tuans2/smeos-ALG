@@ -135,6 +135,8 @@ export const chainBranchesResponse = data(
       isActive: z.boolean(),
       telegramChatId: z.string().nullable(),
       telegramLinked: z.boolean(),
+      /** Cửa hàng đối tác có tài khoản smeOS (dòng ứng viên mang `partner_org_id`) */
+      partnerStore: z.boolean(),
       zalo: z.boolean(),
     })
   )
