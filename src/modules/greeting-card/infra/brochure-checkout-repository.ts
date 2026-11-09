@@ -293,7 +293,7 @@ export class BrochureCheckoutRepository {
           last_active_at: new Date(),
         },
       })
-      if (attached.count === 0) throw conflict("Thẻ chào này đã có đơn hàng")
+      if (attached.count === 0) throw conflict("Link này đã có đơn hàng")
 
       await tx.greeting_journey_events.create({
         data: {

@@ -13,7 +13,7 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
   {
     key: "ORDER_RECEIVED",
     label: "Đơn hàng mới",
-    description: "Khi có đơn hàng mới từ khách (tại quầy, online, thẻ chào)",
+    description: "Khi có đơn hàng mới từ khách (tại quầy, online, bộ sưu tập riêng)",
     group: "ORDER",
     tier: "STORE",
     version: 1,

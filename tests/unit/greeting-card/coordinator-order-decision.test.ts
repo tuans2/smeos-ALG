@@ -217,7 +217,7 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
       "order-3",
       expect.objectContaining({
         reference: "BROCHURE-order-3",
-        note: "Xác nhận chuyển khoản qua Thẻ chào (Điều hành duyệt)",
+        note: "Xác nhận chuyển khoản qua Bộ sưu tập riêng (Điều hành duyệt)",
       })
     )
   })

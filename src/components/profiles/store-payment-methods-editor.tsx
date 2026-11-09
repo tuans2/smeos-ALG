@@ -85,7 +85,7 @@ export function StorePaymentMethodsEditor() {
               <Landmark size={18} className="text-primary" /> Cơ Chế Nhận Thanh Toán & Đối Soát
             </h2>
             <p className="text-caption text-text-muted mt-1">
-              Thiết lập các phương thức thanh toán hiển thị cho khách hàng trên Thẻ Chào, trang đặt hàng và tại điểm bán.
+              Thiết lập các phương thức thanh toán hiển thị cho khách hàng trên bộ sưu tập riêng, trang đặt hàng và tại điểm bán.
             </p>
           </div>
           <span

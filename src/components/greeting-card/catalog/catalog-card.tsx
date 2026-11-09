@@ -97,7 +97,7 @@ export function CatalogCard({
         <Button variant="outline"
           type="button"
           onClick={onPreview}
-          title="Xem trước giao diện thẻ chào khách hàng"
+          title="Xem trước giao diện khách sẽ thấy"
           aria-label={`Xem trước link công khai của ${catalog.name}`}
           className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text inline-flex items-center"
         >

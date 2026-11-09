@@ -27,15 +27,15 @@ export function BrochureUserGuideModal() {
             ? "border-border bg-surface text-primary shadow-xs"
             : "border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-text active:bg-surface active:text-primary",
         )}
-        title="Hướng dẫn dùng thẻ chào"
+        title="Hướng dẫn dùng bộ sưu tập riêng"
       >
         <HelpCircle size={16} className={open ? "text-primary" : "text-text-muted"} aria-hidden="true" />
-        <span className="hidden sm:inline">Hướng dẫn thẻ chào</span>
+        <span className="hidden sm:inline">Hướng dẫn</span>
       </Button>
 
       {open && (
         <Dialog open onOpenChange={(o) => { if (!o) setOpen(false) }} size="lg"
-          title={<span className="flex items-center gap-2"><BookOpen size={20} className="text-primary" />Hướng dẫn Thẻ chào & {ti("sampleProduct")}</span>}>
+          title={<span className="flex items-center gap-2"><BookOpen size={20} className="text-primary" />Hướng dẫn Bộ sưu tập riêng</span>}>
           <div className="-m-5 sm:-m-6 flex flex-col">
             {/* Role Tabs */}
             <div className="flex border-b border-border bg-surface-alt px-5 pt-2">

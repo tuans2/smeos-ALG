@@ -188,7 +188,7 @@ function ExportOrdersButtonInner({
             </div>
 
             <p className="text-caption text-text-muted">
-              File Excel gồm: đơn hàng, chi tiết sản phẩm, sổ thu tiền, phiên Thẻ Chào.
+              File Excel gồm: đơn hàng, chi tiết sản phẩm, sổ thu tiền, phiên bộ sưu tập riêng.
               Tối đa 5.000 đơn.
             </p>
 

@@ -247,7 +247,7 @@ function CaiDatTiemContent() {
               <Gift size={18} className="text-primary" /> Chương Trình Ưu Đãi Mua Sắm
             </h2>
             <p className="text-caption text-text-muted mb-4">
-              Cài đặt các mã ưu đãi hoặc quà tặng kèm tự động áp dụng khi khách duyệt thẻ chào mẫu.
+              Cài đặt các mã ưu đãi hoặc quà tặng kèm tự động áp dụng khi khách xem bộ sưu tập riêng.
             </p>
 
             {policies ? (

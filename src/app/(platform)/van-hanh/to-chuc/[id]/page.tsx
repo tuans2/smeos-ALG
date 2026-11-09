@@ -271,7 +271,7 @@ export default function ChiTietToChucPage() {
           <div>
             <p className="text-body-sm font-bold text-text">Gói Ngôn Ngữ & Quốc Tế (SaaS Unlock)</p>
             <p className="text-caption text-text-muted">
-              Admin SaaS cấp quyền cho cửa hàng này được phép sử dụng ngôn ngữ nào trên Thẻ Chào.
+              Admin SaaS cấp quyền cho cửa hàng này được phép sử dụng ngôn ngữ nào trên Bộ sưu tập riêng.
             </p>
           </div>
         </div>
@@ -295,7 +295,7 @@ export default function ChiTietToChucPage() {
               <span className="text-body">🇬🇧</span>
               <div>
                 <p className="text-caption font-bold text-text">Tiếng Anh (en — Quốc tế / Kiều bào)</p>
-                <p className="text-caption text-text-muted">Cho phép cửa hàng tạo Thẻ chào & nhận đơn từ nước ngoài</p>
+                <p className="text-caption text-text-muted">Cho phép cửa hàng tạo bộ sưu tập riêng & nhận đơn từ nước ngoài</p>
               </div>
             </div>
             <Checkbox

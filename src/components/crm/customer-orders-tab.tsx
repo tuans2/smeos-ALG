@@ -22,7 +22,7 @@ interface CustomerOrder {
 const STATUS_TEXT: Record<string, string> = {
   DRAFT: "Nháp", CONFIRMED: "Đã xác nhận", PROCESSING: "Đang làm", DELIVERED: "Đã giao", COMPLETED: "Hoàn tất", CANCELLED: "Đã huỷ",
 }
-const SOURCE_TEXT: Record<string, string> = { BROCHURE: "Thẻ Chào", MANUAL: "Nhập tay", CHAT: "Hội thoại", CATALOG: "Danh mục" }
+const SOURCE_TEXT: Record<string, string> = { BROCHURE: "Bộ sưu tập riêng", MANUAL: "Nhập tay", CHAT: "Hội thoại", CATALOG: "Bộ sưu tập chung" }
 
 /** Tab "Đơn đã đặt" (checklist ALG 4.11): mọi đơn của khách, bấm để mở chi tiết đơn. */
 export function CustomerOrdersTab({ customerId }: { customerId: string }) {

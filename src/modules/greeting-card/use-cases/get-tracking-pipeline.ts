@@ -146,7 +146,7 @@ export async function loadTrackingDataset(
   // 1. Process Orders
   const orderItems: TrackingPipelineItem[] = orders.map((order) => {
     const session = order.greeting_sessions[0]
-    const product = orderProductView(order, productImages, "Sản phẩm Thẻ chào")
+    const product = orderProductView(order, productImages, "Sản phẩm Bộ sưu tập riêng")
     const deliveryAddress = loose(order.delivery_address)
     const deliveryWindow = loose(order.delivery_window)
 
@@ -204,7 +204,7 @@ export async function loadTrackingDataset(
       sessionId: session?.id || "",
       orderCode: order.code,
       sendCode: session?.send_code || order.code,
-      catalogName: session?.catalog?.name || "Bộ sưu tập Thẻ chào",
+      catalogName: session?.catalog?.name || "Bộ sưu tập riêng",
       customerName: order.customer?.name || deliveryAddress?.recipientName || "Khách hàng",
       customerPhone: order.customer?.phone || deliveryAddress?.phone || "",
       recipientName: deliveryAddress?.recipientName ?? null,
@@ -296,7 +296,7 @@ export async function loadTrackingDataset(
       sessionId: session.id,
       orderCode: null,
       sendCode: session.send_code,
-      catalogName: session.catalog?.name || "Bộ sưu tập Thẻ chào",
+      catalogName: session.catalog?.name || "Bộ sưu tập riêng",
       customerName: session.customer_name || "Khách đang xem mẫu",
       customerPhone: session.customer_phone || "",
       recipientName: null,

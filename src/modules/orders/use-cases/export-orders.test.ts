@@ -116,7 +116,7 @@ describe("exportOrdersToExcel", () => {
     expect(wb.SheetNames).toContain("Đơn hàng")
     expect(wb.SheetNames).toContain("Chi tiết SP")
     expect(wb.SheetNames).toContain("Sổ thu tiền")
-    expect(wb.SheetNames).toContain("Thẻ Chào")
+    expect(wb.SheetNames).toContain("Bộ sưu tập riêng")
 
     const orderSheet = XLSX.utils.sheet_to_json<Record<string, unknown>>(wb.Sheets["Đơn hàng"]!)
     expect(orderSheet[0]?.["Mã đơn"]).toBe("DH-0001")

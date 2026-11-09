@@ -84,7 +84,7 @@ export function detectResponseStyle(query: string, userRole?: string): OpsRespon
 const ACTION_INTENT_MAP: Array<{ patterns: string[]; nodeId: string }> = [
   {
     patterns: [
-      "bộ sưu tập", "tạo thẻ", "thẻ chào", "tạo bộ sưu tập", "thẻ bộ sưu tập",
+      "bộ sưu tập", "tạo thẻ", "thẻ chào", "bộ sưu tập riêng", "tạo bộ sưu tập", "thẻ bộ sưu tập",
       "link chào", "link gửi khách", "gửi zalo", "chọn hoa", "cọc tiền", "đặt cọc",
       "vietqr cọc", "phễu cọc", "duyệt cọc", "brochure", "link đặt hàng", "gửi nhanh",
       "journeywizard", "inboxbutton", "hộp việc", "shopprofilereadiness"

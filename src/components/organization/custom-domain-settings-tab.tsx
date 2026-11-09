@@ -108,7 +108,7 @@ export function CustomDomainSettingsTab() {
     <div className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6 shadow-xs">
       <div>
         <h2 className="mb-1 flex items-center gap-2 text-title-sm font-extrabold text-text"><Globe size={18} className="text-primary" /> Tên miền riêng</h2>
-        <p className="text-caption text-text-muted">Khách mở trang danh mục và Thẻ Chào của cửa hàng bằng tên miền của bạn, ví dụ hoa.tiemcuaban.vn.</p>
+        <p className="text-caption text-text-muted">Khách mở trang bộ sưu tập chung và bộ sưu tập riêng của cửa hàng bằng tên miền của bạn, ví dụ hoa.tiemcuaban.vn.</p>
       </div>
       <form className="flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); void add() }}>
         <Input value={hostname} onChange={(e) => setHostname(e.target.value)} placeholder="hoa.tiemcuaban.vn" aria-label="Tên miền" className="min-w-[14rem] flex-1" />

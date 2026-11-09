@@ -81,7 +81,7 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
             {[
               { step: 1, label: "Chọn khách", desc: "CRM & Khách tiềm năng", href: "/khach-hang" },
-              { step: 2, label: "Tư vấn mẫu", desc: "Thẻ chào & Bộ sưu tập", href: "/the-chao" },
+              { step: 2, label: "Tư vấn mẫu", desc: "Bộ sưu tập riêng", href: "/the-chao" },
               { step: 3, label: "Lập báo giá", desc: "Bảng tính chi phí có số", href: "/bao-gia" },
               { step: 4, label: "Chốt duyệt", desc: "Gửi link báo giá khách", href: "/bao-gia" },
               { step: 5, label: "Đơn hàng", desc: "Tự động chuyển thành đơn", href: "/don-hang" },

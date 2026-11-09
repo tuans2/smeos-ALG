@@ -26,7 +26,7 @@ interface CopilotMessage {
 
 const QUICK_PROMPTS = [
   "Làm sao in phiếu chế tác giấu giá cho thợ xưởng?",
-  "Cách tạo link thẻ chào gửi Zalo và cọc VietQR?",
+  "Cách tạo link bộ sưu tập riêng gửi Zalo và cọc VietQR?",
   "Tải file Excel mẫu để nhập sản phẩm hàng loạt?",
   "Cách cấp tài khoản nhân viên mới trong 10 giây?",
 ]
