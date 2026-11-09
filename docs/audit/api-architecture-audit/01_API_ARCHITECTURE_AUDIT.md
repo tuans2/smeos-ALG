@@ -572,3 +572,23 @@ Phát hiện, chưa sửa (không có P1 trong phạm vi core):
 | P3 | `GET /noi-bo/identity` không đòi mã năng lực: mọi vai (kể cả Shipper) thấy tên và email của mọi thành viên | Phiên Shipper → 200 kèm `members` |
 | P3 | `GET /field-config/catalogs` chỉ kiểm phiên, không kiểm `R1` như đặc tả 06 và chú thích use-case ghi | Đọc mã |
 | P3 | `GET /field-config?entity=` lạ → 200 rỗng thay vì 400; tạo trường trùng nhãn → khoá thêm hậu tố, không báo trùng | — |
+
+## 32. Nhật ký sửa — OpenAPI nội bộ, đợt cuối (09/11/2026)
+
+Phủ 3 nhóm, 8 route, 9 operation (tổng 541): `/catalog-links/*`, `/product-intelligence/{id}`, `/internal/*` (cron). **Hết phạm vi OpenAPI nội bộ** — mọi thư mục route dưới `src/app/api/v1/` đã nằm trong `INTERNAL_COVERED_PREFIXES`, trừ `public` / `platform` / `integration` (có `public.openapi.json`, `platform.openapi.json`, `integration.openapi.json` riêng).
+
+| Việc | Tệp |
+|---|---|
+| `catalog-links` thuộc vùng Catalog đóng băng: route KHÔNG sửa; OpenAPI dùng BẢN SAO lược đồ, test đối chiếu gửi cùng bộ mẫu tới route thật và bản sao (cùng khuôn `catalog-generate`, §20) | `_contracts/requests-final.ts`, `tests/unit/catalog-links/catalog-links-contract.test.ts` |
+| Phản hồi chặt; báo cáo phân tích dùng lại `productIntelligenceReportSchema` (`creative-production/contracts`) | `_contracts/responses-final.ts` |
+| Operation; cron mô tả xác thực bằng `x-cron-secret` (không phiên) | `_contracts/ops-final.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật (chỉ GỌI route catalog-links), kể cả 401 của cron và 404 cách ly | `tests/tenant/internal-contract-final.test.ts` |
+
+Phát hiện, chưa sửa (không có P1):
+
+| Mức | Lỗi |
+|---|---|
+| P3 | `GET /catalog-links/{slug}` (công khai) trả `created_by` — mã người dùng nội bộ lộ cho khách quét QR. Vùng đóng băng: cần PO mở băng để sửa |
+| P3 | `GET /product-intelligence/{id}` nhánh dự phòng (bản phân tích ảnh) đặt `productName` = mã ảnh (UUID) thay vì tên sản phẩm |
+| P3 | `/internal/health` và `/internal/chain-dispatch-sweep` trả 401 bằng thân cũ `{ error: "Unauthorized" }` (không theo envelope lỗi chung); `/internal/integrations-sweep` thì theo envelope |
+| P3 | `POST /catalog-links/{slug}/revoke` lần hai → 400 (nên là 409 hoặc 200 không đổi) |
