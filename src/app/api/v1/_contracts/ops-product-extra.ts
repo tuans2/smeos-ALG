@@ -9,7 +9,7 @@ const PHOTO = "Ảnh studio & bộ ảnh sản phẩm"
 const CR = "Đề xuất sửa sản phẩm"
 const AV = "Lịch khả dụng"
 const NF = "Của tổ chức khác → 404."
-const IDEM = "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá trả job cũ, không trừ credit lần hai. Hết credit → 422. Ảnh `asset_id` của tổ chức khác hoặc lạ → 404."
+const IDEM = "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá, cùng thân trả job cũ, không trừ credit lần hai; cùng khoá khác thân → 422 `IDEMPOTENCY_KEY_REUSED`. Hết credit → 422. Ảnh `asset_id` của tổ chức khác hoặc lạ → 404."
 const STATIC = "Danh mục tĩnh, không cần phiên (không đọc dữ liệu tổ chức)."
 
 export const PRODUCT_EXTRA_OPERATIONS: OpenApiOperation[] = [

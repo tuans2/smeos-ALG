@@ -156,6 +156,8 @@ export const listOrdersQuery = z.object({
   sale_id: z.string().max(64).optional(),
   /** 1–100, mặc định 50. */
   limit: limit100,
+  /** `next_cursor` của trang trước (mờ). */
+  cursor: z.string().optional(),
 })
 export const approvalRequestsQuery = z.object({ status: z.string().optional(), limit: limit100 })
 export const exportOrdersQuery = z.object({

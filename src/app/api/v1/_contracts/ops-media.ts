@@ -9,7 +9,7 @@ const OPT = "Ảnh — tối ưu & duyệt ảnh chính"
 const VAR = "Ảnh — biến thể marketing"
 const JOB = [...BODY_ERRORS, 404, 409, 422, 429]
 const IDEM =
-  "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá trả job cũ (`deduped`), không trừ credit lần hai. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429."
+  "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá, cùng thân trả job cũ (`deduped`), không trừ credit lần hai; cùng khoá khác thân → 422 `IDEMPOTENCY_KEY_REUSED`. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429."
 const NF = "Job của tổ chức khác → 404."
 const o = "/media/optimizations/{id}"
 const v = "/media/variants/{id}"

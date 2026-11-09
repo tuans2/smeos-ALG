@@ -31,7 +31,7 @@ describe("lọc nâng cao danh sách đơn", () => {
   }
   const codes = async (path: string, token = a.token) => {
     const body = await readJson(await listOrders(withSession(`${BASE}/orders${path}`, token)))
-    return (body.orders as { code: string }[]).map((o) => o.code).sort()
+    return (body.data as { code: string }[]).map((o) => o.code).sort()
   }
 
   beforeEach(async () => {

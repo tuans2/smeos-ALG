@@ -199,7 +199,14 @@ export interface OrderFilter {
   deliveryTo?: string | undefined
   saleId?: string | undefined
   limit?: number | undefined
-  cursor?: string | undefined
+  /** Trang sau (audit API-10): đơn tạo trước mốc này, cùng mốc thì `id` nhỏ hơn. */
+  cursor?: OrderListCursor | undefined
+}
+
+/** Khoá trang của danh sách đơn — sắp `created_at` giảm dần rồi `id` giảm dần (ổn định khi trùng thời điểm). */
+export interface OrderListCursor {
+  createdAt: string
+  id: string
 }
 
 export interface OrderSlaCalculation {

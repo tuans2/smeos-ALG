@@ -65,10 +65,10 @@ export function SalesWorkspace() {
     try {
       const [reminders, drafts] = await Promise.all([
         layJson<{ items: Reminder[] }>("/api/v1/crm/reminders/upcoming?days=14"),
-        layJson<{ orders: DraftOrder[]; total: number }>("/api/v1/orders?status=DRAFT&limit=5"),
+        layJson<{ data: DraftOrder[]; meta: { total: number } }>("/api/v1/orders?status=DRAFT&limit=5"),
       ])
       setNhacViec(reminders?.items ?? null)
-      setDonNhap(drafts)
+      setDonNhap(drafts ? { orders: drafts.data, total: drafts.meta.total } : null)
     } catch (e) {
       if (e instanceof ChuaDangNhap) {
         router.push("/dang-nhap" as never)

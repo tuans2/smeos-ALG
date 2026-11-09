@@ -59,11 +59,11 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
   {
     method: "post", path: "/integration/jobs", operationId: "integrationCreateJob", tags: tags("Job & mức dùng"),
     summary: "Tạo job thay mặt tổ chức",
-    description: "Cùng đường kiểm hạn mức → ghi usage → tạo job như job nội bộ. Cùng `idempotency_key` → trả job cũ với 200.",
+    description: "Cùng đường kiểm hạn mức → ghi usage → tạo job như job nội bộ. Cùng `idempotency_key`, cùng `feature`/`payload` → trả job cũ với 200; cùng khoá mà thân khác hiện vẫn trả job cũ (máy chủ ghi cảnh báo) — sẽ đổi thành 422 `IDEMPOTENCY_KEY_REUSED` như API nội bộ sau thời gian báo trước (audit API-11); client nên tạo khoá mới cho mỗi yêu cầu mới.",
     security: BOTH, body: req.createJobBody,
     responses: {
       201: { description: "Job mới", schema: res.createJobResponse },
-      200: { description: "Job đã có với cùng `idempotency_key` (`deduped: true`)", schema: res.createJobResponse },
+      200: { description: "Job đã có với cùng `idempotency_key` và cùng thân (`deduped: true`)", schema: res.createJobResponse },
     },
     errors: [400, 413, 422, ...BASE_ERRORS],
   },

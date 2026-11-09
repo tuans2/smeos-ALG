@@ -40,12 +40,13 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | 409 | `CONFLICT` | Xung đột trạng thái, ví dụ duyệt một bản ghi đã duyệt |
 | 413 | `PAYLOAD_TOO_LARGE` | Thân JSON vượt 2 MB (`details.max_bytes`); `handle()` chặn theo `content-length` hoặc khi đọc luồng vượt trần — tải tệp đi `formData`/URL ký, không qua trần này (07/11/2026, audit API-17) |
 | 422 | `QUOTA_EXCEEDED` | Vượt hạn mức, job không được tạo |
+| 422 | `IDEMPOTENCY_KEY_REUSED` | Cùng `Idempotency-Key` mà thân khác — job không được tạo; `details.job_id` là job của yêu cầu trước (audit API-11, PO 09/11/2026) |
 | 429 | `RATE_LIMITED` | Kèm `Retry-After` (giây tới cuối cửa sổ). Mọi phản hồi của route có giới hạn tần suất (qua `handle()`) kèm `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset` theo luật còn ít lượt nhất (07/11/2026, audit API-08; trước đó mã không đặt header nào) |
 | 500 | `INTERNAL` | Không lộ chi tiết |
 
 **Bản ghi của tổ chức khác trả 404, không trả 403.** Trả 403 là xác nhận bản ghi đó tồn tại — rò rỉ thông tin xuyên tổ chức bằng chính mã lỗi.
 
-**Chống trùng.** Mọi `POST` tạo job nhận `Idempotency-Key`. Cùng khoá trong 24 giờ trả lại job cũ thay vì tạo job mới. Người dùng bấm hai lần không bị trừ credit hai lần. Cùng khoá mà `payload`/sản phẩm khác: vẫn trả job cũ, máy chủ ghi cảnh báo `jobs.idempotency_payload_mismatch` (không ghi nội dung) để đo trước khi quyết chặn 422 (PO 07/11/2026).
+**Chống trùng.** Mọi `POST` tạo job nhận `Idempotency-Key`. Cùng khoá trong 24 giờ trả lại job cũ thay vì tạo job mới. Người dùng bấm hai lần không bị trừ credit hai lần. Cùng khoá mà `payload`/sản phẩm khác → 422 `IDEMPOTENCY_KEY_REUSED`, không tạo job (PO 09/11/2026, audit API-11; trước đó trả job cũ và chỉ ghi cảnh báo `jobs.idempotency_payload_mismatch` — cảnh báo vẫn ghi, không kèm nội dung). Miễn trừ có lý do (`KEY_REUSE_ALLOWED`, `src/modules/jobs/domain/idempotency.ts`): `creative.scene_plan` và `product.copy.generate` cố ý mở lại kết quả theo khoá cố định. `/integration/*` giữ hành vi cũ trong thời gian báo trước thay đổi phá vỡ (≥ 90 ngày, mục dưới). `POST /orders` chưa phát hiện được cùng khoá khác thân (không lưu thân).
 
 **Lưu đệm.** Phản hồi JSON mặc định `Cache-Control: no-store`; route tự đặt `cache-control` (ảnh công khai, tệp xuất) được giữ nguyên (07/11/2026, audit API-17). Ngoại lệ trả `no-cache` (`src/core/http/ack-routes.ts`): mọi phản hồi lỗi (≥ 400, chỉ có envelope `{ error }`) và route chỉ trả xác nhận mà trang khách gọi không đọc thân (`ACK_ONLY_ROUTES` — sự kiện catalog/brochure Thẻ chào, nhận chủ phiên brochure): với `no-store`, Chromium không hoàn tất request chưa đọc thân, giữ kết nối và trang không bao giờ rảnh mạng.
 
@@ -599,7 +600,7 @@ Nội dung nhắc mua sinh từ dịp và sản phẩm. Không endpoint nào g�
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công · `?delivery_from=&delivery_to=` (YYYY-MM-DD, theo `delivery_window.date` hoặc giờ hẹn đơn Điều phối, giờ Việt Nam; ngày sai định dạng bị bỏ qua) · `?sale_id=` (Sale phụ trách, hoặc người tạo khi đơn chưa gán Sale) · `?limit=` 1–100, mặc định 50, ngoài khoảng/không phải số nguyên → 400 (audit API-03, 06/11/2026) |
+| GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công · `?delivery_from=&delivery_to=` (YYYY-MM-DD, theo `delivery_window.date` hoặc giờ hẹn đơn Điều phối, giờ Việt Nam; ngày sai định dạng bị bỏ qua) · `?sale_id=` (Sale phụ trách, hoặc người tạo khi đơn chưa gán Sale) · `?limit=` 1–100, mặc định 50, ngoài khoảng/không phải số nguyên → 400 (audit API-03, 06/11/2026) · Phân trang con trỏ: `?cursor=` = `next_cursor` của trang trước (mờ; hỏng → 400), mới trước — phản hồi `{ data, next_cursor, meta: { total } }`, `total` đếm cả danh sách đang lọc (audit API-10, PO 09/11/2026; trước đó `{ orders, total }` chỉ trang đầu) |
 | POST | `/orders` | `R2` | `customerId`, `branchId`, `items[].productId/variantId` của tổ chức khác → 404; đơn giá số nguyên ≥ 0, số lượng 1–999, `deliveryWindow.date` dạng `YYYY-MM-DD` (audit BL-13); dòng có `productId` với giá > 0 dưới giá sàn → 422 `BELOW_FLOOR` nếu người tạo không có `C10` (audit BL-07), vượt giá trần → 422 `ABOVE_CEILING` nếu không có `C9` (PO 07/11/2026, Q3); ngày giao trước hôm nay (giờ VN) hoặc SĐT người nhận không phải số Việt Nam → 400 (PO 07/11/2026, Q11–Q12); sản phẩm theo dõi tồn theo số lượng bị trừ tồn cùng giao dịch, không đủ → 409 (Q9) — huỷ đơn (`/orders/:id/cancel`, `/coordinator/orders/:id/cancel`) hoàn lại đúng một lần. Header `Idempotency-Key` (tuỳ chọn, ≤ 255 ký tự): gửi lại cùng khoá → trả đơn đã tạo, 201 + `Idempotent-Replayed: true`, không tạo đơn thứ hai (audit API-11, 07/11/2026) |
 | GET · PATCH | `/orders/:id` | `R1` · `R3` | PATCH không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` → 422 (audit BL-01): xác nhận đi qua thu tiền/duyệt giao trước, hoàn tất qua Điều phối, huỷ qua `POST /orders/:id/cancel` |
 | POST | `/orders/:id/assign` | `R4` | Người nhận việc phải là thành viên đang hoạt động của tổ chức (khác → 422); giao lại thu hồi phân công cũ |
@@ -789,7 +790,7 @@ Khuôn video là enum `video_format`: `REEL_15S` · `TIKTOK_30S` · `STORY_15S` 
 | GET | `/assets` | `G1` | Liệt kê asset, lọc theo sản phẩm và `kind` |
 | POST | `/assets/:id/approve` | `I2` | Duyệt asset dẫn xuất |
 | GET | `/media/optimizations` | `I2` | Hàng chờ duyệt ảnh đã tối ưu M04a — chỉ người duyệt (PO 07/11/2026, audit API-12) |
-| POST | `/jobs/batch` | mã "run" theo `module` (`MODULE_RUN_CAPABILITY`, mặc định từ chối — RS-8) | Tạo job cho một module với danh sách mã `AIC` chọn sẵn. Sửa dòng này 05/10/2026: route đã gác từ RS-8 18/09, đặc tả ghi "chưa gác" là cũ · Thân kiểm bằng zod (`capabilities` 1–50 mã); `Idempotency-Key` **bắt buộc** — thiếu → 400, máy chủ không tự sinh khoá (audit API-05, 06/11/2026) |
+| POST | `/jobs/batch` | mã "run" theo `module` (`MODULE_RUN_CAPABILITY`, mặc định từ chối — RS-8) | Tạo job cho một module với danh sách mã `AIC` chọn sẵn. Sửa dòng này 05/10/2026: route đã gác từ RS-8 18/09, đặc tả ghi "chưa gác" là cũ · Thân kiểm bằng zod (`capabilities` 1–50 mã); `Idempotency-Key` **bắt buộc** — thiếu → 400, máy chủ không tự sinh khoá (audit API-05, 06/11/2026) · Trả **202** `{ job_id, status, usage }` — job đã nhận, worker chạy sau (audit API-16, PO 09/11/2026; trước đó 200) |
 | POST | `/media/variants/batch` | `I4` | |
 | POST | `/media/background-removal` | — | **ĐÃ ĐÓNG ở P24**, luôn trả 409 kèm đường thay thế |
 | GET | `/ai-capabilities` | `U1` | |

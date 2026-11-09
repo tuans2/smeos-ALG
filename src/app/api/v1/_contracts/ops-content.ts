@@ -13,7 +13,7 @@ const SHARED = "Dữ liệu thị trường dùng chung toàn nền tảng (khô
 
 export const CONTENT_OPERATIONS: OpenApiOperation[] = [
   op(CE, { method: "post", path: "/content-engine/generations", operationId: "generateContent", summary: "Chuỗi agent viết bài đa kênh", cap: "I1", body: req.generateContentBodySchema,
-    description: "Header `Idempotency-Key` bắt buộc (thiếu → 400). Cần `asset_id` hoặc `product_id`. 201 tạo mới; trùng khoá → 200 bản cũ (`deduped`), hoặc 202 khi lượt đầu còn chạy (theo dõi `GET /jobs/{id}`), không trừ credit lần hai. AI không chạy được → bài dựng sẵn (`source`, `needsReview` trên từng bài). Hết credit → 422.",
+    description: "Header `Idempotency-Key` bắt buộc (thiếu → 400). Cần `asset_id` hoặc `product_id`. 201 tạo mới; trùng khoá cùng thân → 200 bản cũ (`deduped`), hoặc 202 khi lượt đầu còn chạy; trùng khoá khác thân → 422 `IDEMPOTENCY_KEY_REUSED` (theo dõi `GET /jobs/{id}`), không trừ credit lần hai. AI không chạy được → bài dựng sẵn (`source`, `needsReview` trên từng bài). Hết credit → 422.",
     ok: [201, { description: "Bài vừa viết", schema: res.generationCreatedResponse }], errors: [...BODY_ERRORS, 404, 422] }),
   op(CE, { method: "get", path: "/content-engine/generations", operationId: "findLatestGeneration", summary: "Bản bài viết mới nhất khớp bộ lọc", cap: "I1", query: req.generationLookupQuerySchema,
     description: "Không tạo job, không trừ credit. Chưa có → `generation: null`.", ok: [200, { description: "Bản mới nhất", schema: res.generationLookupResponse }], errors: [400] }),

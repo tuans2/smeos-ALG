@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { errorText } from "@/lib/error-text"
 import { mergePhotos, planScan, pollDecision, POLL_INTERVAL_MS, type PhotoBatchMode } from "@/modules/content-studio/domain/photo-batch"
 import { requestScan, scanResults, scanStatus, uploadPhoto, type ScanResult } from "./content-api"
+import { requestKey, type HeldKey } from "./request-key"
 
 export interface PickedPhoto {
   readonly id: string
@@ -51,7 +52,7 @@ export function usePhotoScan(): PhotoScanState {
   const [extraPhotos, setExtraPhotos] = useState<PickedPhoto[]>([])
   const [errors, setErrors] = useState<string[]>([])
   const jobRef = useRef<string | null>(null)
-  const keyRef = useRef<string | null>(null)
+  const keyRef = useRef<HeldKey | null>(null)
   const alive = useRef(true)
 
   useEffect(() => () => { alive.current = false }, [])
@@ -117,9 +118,10 @@ export function usePhotoScan(): PhotoScanState {
           ids.push(await uploadPhoto(p.file, null))
         }
         const plan = planScan(mode, ids)
-        keyRef.current ??= `content-scan-${crypto.randomUUID()}`
+        // Thử lại sau lỗi tải lại ảnh → mã ảnh mới → khoá mới (cùng khoá khác thân: máy chủ trả 422, audit API-11).
+        keyRef.current = requestKey(keyRef.current, plan.scanAssetIds.join(","), () => `content-scan-${crypto.randomUUID()}`)
         setProgress("Đang gửi ảnh đi quét…")
-        jobRef.current = await requestScan(plan.scanAssetIds, keyRef.current)
+        jobRef.current = await requestScan(plan.scanAssetIds, keyRef.current.key)
         setExtraPhotos(mode === "ONE_PRODUCT" ? photos.slice(1) : [])
       }
       setPhase("scanning")

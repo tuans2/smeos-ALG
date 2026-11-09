@@ -29,6 +29,8 @@ export const POST = handle(async (request) => {
     payload: parsed.data.payload,
     productId: parsed.data.product_id ?? null,
     idempotencyKey: parsed.data.idempotency_key,
+    // Bên thứ ba: chưa chặn 422 khi cùng khoá khác thân — cần báo trước ≥ 90 ngày (đặc tả 06, audit API-11); chờ PO chốt ngày.
+    keyReuse: "legacy",
   })
 
   return jsonResponse(result, { status: result.deduped ? 200 : 201 })

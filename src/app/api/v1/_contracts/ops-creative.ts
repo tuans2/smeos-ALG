@@ -12,7 +12,7 @@ const PLAN = "Creative Studio — kế hoạch & nội dung"
 const SCENE = "Creative Studio — kịch bản phân cảnh & video"
 const PKG = "Creative Studio — gói chiến dịch"
 const ACT = [...BODY_ERRORS, 404, 409, 422]
-const IDEM = "Header `Idempotency-Key` bắt buộc. Trừ credit theo bảng giá; hết credit → 422 `QUOTA_EXCEEDED`."
+const IDEM = "Header `Idempotency-Key` bắt buộc; cùng khoá khác thân → 422 `IDEMPOTENCY_KEY_REUSED` (riêng kịch bản phân cảnh được mở lại theo khoá cố định). Trừ credit theo bảng giá; hết credit → 422 `QUOTA_EXCEEDED`."
 const NF = " Gói của tổ chức khác → 404."
 const p = "/creative-production/packages/{id}"
 

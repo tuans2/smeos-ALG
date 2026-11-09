@@ -20,9 +20,9 @@ function post(body: unknown, key: string | null = "khoa-1"): Request {
 describe("POST /api/v1/jobs/batch", () => {
   beforeEach(() => enqueueJob.mockClear())
 
-  it("tạo job với khoá client gửi, giữ hình dạng phản hồi cũ", async () => {
+  it("tạo job với khoá client gửi → 202 (audit API-16), giữ hình dạng thân cũ", async () => {
     const res = await POST(post(valid))
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(202)
     expect(await res.json()).toEqual({ job_id: "job-1", status: "QUEUED", usage: { cost_credit: 2, balance_after: 98 } })
     expect(enqueueJob).toHaveBeenCalledWith(ctx, expect.objectContaining({ idempotencyKey: "khoa-1", productId: "p-1" }))
   })

@@ -7,10 +7,11 @@ import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency"
 import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { listOrders } from "@/modules/orders/use-cases/list-orders"
 import { parseDeliveryDate } from "@/modules/orders/domain/order-list-filter"
-import type { OrderStatus, ProductionStatus, DeliveryStatus } from "@/modules/orders/domain/order-types"
+import type { OrderListCursor, OrderStatus, ProductionStatus, DeliveryStatus } from "@/modules/orders/domain/order-types"
+import { decodeCursor, encodeCursor } from "@/core/http/pagination"
 import { createOrderBody } from "@/app/api/v1/_contracts/requests-orders"
 
-/** `GET /api/v1/orders` (R1) — Danh sách đơn hàng */
+/** `GET /api/v1/orders` (R1) — Danh sách đơn hàng, phân trang con trỏ `{ data, next_cursor, meta: { total } }` */
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "R1")
@@ -33,6 +34,7 @@ export const GET = handle(async (request) => {
     throw validationFailed({ limit: "Phải là số nguyên từ 1 đến 100" })
   }
 
+  const cursor = readOrderCursor(url.searchParams.get("cursor"))
   const result = await listOrders(ctx, {
     status: status || undefined,
     productionStatus: productionStatus || undefined,
@@ -44,10 +46,24 @@ export const GET = handle(async (request) => {
     deliveryTo,
     saleId,
     limit,
+    cursor,
   })
-
-  return jsonResponse(result)
+  // Chuẩn v1.1 (audit API-10, PO 09/11/2026): `{ data, next_cursor }`, tổng ở `meta.total` — trước đây `{ orders, total }`.
+  return jsonResponse({
+    data: result.orders,
+    next_cursor: result.nextCursor ? encodeCursor({ at: result.nextCursor.createdAt, id: result.nextCursor.id }) : null,
+    meta: { total: result.total },
+  })
 })
+
+/** Con trỏ mờ `{ at, id }` (base64url); hỏng/giả → 400 `cursor`. */
+function readOrderCursor(raw: string | null): OrderListCursor | undefined {
+  if (!raw) return undefined
+  const value = decodeCursor(raw)
+  const at = typeof value.at === "string" ? value.at : ""
+  if (typeof value.id !== "string" || !value.id || Number.isNaN(Date.parse(at))) throw validationFailed({ cursor: "Con trỏ không hợp lệ" })
+  return { createdAt: at, id: value.id }
+}
 
 /**
  * `POST /api/v1/orders` (R2) — Tạo đơn hàng mới. Header `Idempotency-Key` (tuỳ chọn, ≤ 255 ký tự): gửi lại cùng

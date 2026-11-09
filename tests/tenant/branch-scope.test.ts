@@ -56,7 +56,7 @@ describe("cách ly dữ liệu theo chi nhánh", () => {
     const other = await order("DH-Q3", q3)
 
     const codes = async (token: string) =>
-      ((await readJson(await listOrders(withSession(`${BASE}/orders`, token)))).orders as { code: string }[]).map((o) => o.code).sort()
+      ((await readJson(await listOrders(withSession(`${BASE}/orders`, token)))).data as { code: string }[]).map((o) => o.code).sort()
     expect(await codes(lan.token)).toEqual(["DH-Q1"])
     expect(await codes(a.token)).toEqual(["DH-Q1", "DH-Q3"])
 

@@ -9,7 +9,7 @@ const JOB = "Tác vụ AI"
 const VIS = "Phân tích ảnh sản phẩm"
 const AUD = "Âm thanh — giọng đọc & nhạc"
 const VID = "Video"
-const IDEM = "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá trả job cũ, không trừ credit lần hai. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429."
+const IDEM = "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá, cùng thân trả job cũ, không trừ credit lần hai; cùng khoá khác thân → 422 `IDEMPOTENCY_KEY_REUSED`. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429."
 const NF = "Của tổ chức khác → 404."
 /** Không thấy job → 404, sai trạng thái → 409 (sửa 08/11/2026, audit API §13 — trước đó trả 500). */
 const VNF = "Không thấy job (kể cả của tổ chức khác) → 404."
@@ -30,8 +30,8 @@ export const AI_STUDIO_OPERATIONS: OpenApiOperation[] = [
     description: `Chỉ tác vụ \`FAILED\` — khác → 409. Lượt trước đã được hoàn credit thì trừ lại đúng giá (không đủ → 422). ${NF}`,
     ok: [200, { description: "Tác vụ", schema: res.jobResponse }], errors: [404, 409, 422] }),
   op(JOB, { method: "post", path: "/jobs/batch", operationId: "createModuleJob", summary: "Tạo tác vụ cho một module với các mã năng lực AI chọn sẵn", cap: "mã chạy theo `module`",
-    body: req.jobBatchBody, description: `Quyền chạy suy từ \`module\` (bảng \`MODULE_RUN_CAPABILITY\`, module lạ bị từ chối — 403); \`feature\` phải khớp module (400). ${IDEM}`,
-    ok: [200, { description: "Tác vụ đã xếp", schema: res.jobCreatedResponse }], errors: [...BODY_ERRORS, 422, 429] }),
+    body: req.jobBatchBody, description: `Quyền chạy suy từ \`module\` (bảng \`MODULE_RUN_CAPABILITY\`, module lạ bị từ chối — 403); \`feature\` phải khớp module (400). 202: job đã nhận, worker chạy sau — theo dõi bằng \`GET /jobs/{id}\` (audit API-16). ${IDEM}`,
+    ok: [202, { description: "Tác vụ đã xếp", schema: res.jobCreatedResponse }], errors: [...BODY_ERRORS, 422, 429] }),
 
   op(VIS, { method: "post", path: "/vision/analyses", operationId: "requestAnalysis", summary: "Phân tích ảnh sản phẩm (xếp job)", cap: "H1", body: req.visionAnalysisBody,
     description: `${IDEM} Ảnh/sản phẩm của tổ chức khác → 404.`, ok: [201, { description: "Job đã xếp", schema: res.analysisCreatedResponse }], errors: [...BODY_ERRORS, 404, 422, 429] }),
