@@ -12783,6 +12783,1444 @@
         "x-legacy-error-envelope": true
       }
     },
+    "/content-engine/catalog-generate": {
+      "post": {
+        "operationId": "generateCatalogContent",
+        "summary": "Viết lời giới thiệu bộ sưu tập catalog",
+        "description": "AI không chạy được → nội dung dựng sẵn (vẫn 200), không chặn.",
+        "tags": [
+          "Viết nội dung AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "collectionName": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "occasion": {
+                    "type": "string"
+                  },
+                  "productCount": {
+                    "default": 0,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "styleVariant": {
+                    "default": "MODERN_SHOWROOM",
+                    "type": "string",
+                    "enum": [
+                      "EDITORIAL_LOOKBOOK",
+                      "MODERN_SHOWROOM",
+                      "COMPACT_LIST"
+                    ]
+                  },
+                  "userDirectives": {
+                    "type": "string"
+                  },
+                  "productIds": {
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    }
+                  }
+                },
+                "required": [
+                  "collectionName"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Nội dung catalog",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "styleVariant": {
+                          "type": "string",
+                          "enum": [
+                            "EDITORIAL_LOOKBOOK",
+                            "MODERN_SHOWROOM",
+                            "COMPACT_LIST"
+                          ]
+                        },
+                        "badge": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "curatorNote": {
+                          "type": "string"
+                        },
+                        "ctaText": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "styleVariant",
+                        "badge",
+                        "title",
+                        "description",
+                        "curatorNote",
+                        "ctaText"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "J7"
+      }
+    },
+    "/content-engine/generations": {
+      "post": {
+        "operationId": "generateContent",
+        "summary": "Chuỗi agent viết bài đa kênh",
+        "description": "Header `Idempotency-Key` bắt buộc (thiếu → 400). Cần `asset_id` hoặc `product_id`. 201 tạo mới; trùng khoá → 200 bản cũ (`deduped`), hoặc 202 khi lượt đầu còn chạy (theo dõi `GET /jobs/{id}`), không trừ credit lần hai. AI không chạy được → bài dựng sẵn (`source`, `needsReview` trên từng bài). Hết credit → 422.",
+        "tags": [
+          "Viết nội dung AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "product_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "analysis_run_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "topic_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "scene_plan_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "channels": {
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "facebook",
+                        "instagram",
+                        "tiktok",
+                        "zalo"
+                      ],
+                      "description": "Kênh bài đăng: facebook | instagram | tiktok | zalo"
+                    }
+                  },
+                  "content_provider": {
+                    "description": "Nhà cung cấp nội dung cho lượt này (claude_opus | openai_structured | gemini_pro | claude_sonnet | gemini_flash | openai_direct); bỏ trống = thứ tự ưu tiên của tiệm",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 40
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "channels"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bài vừa viết",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job_id": {
+                      "type": "string"
+                    },
+                    "generation_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "posts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      }
+                    },
+                    "overall_score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "needs_review": {
+                      "type": "boolean"
+                    },
+                    "deduped": {
+                      "type": "boolean"
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "cost_credit": {
+                          "type": "number"
+                        },
+                        "balance_after": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "cost_credit",
+                        "balance_after"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "job_id",
+                    "generation_id",
+                    "status",
+                    "posts",
+                    "overall_score",
+                    "needs_review",
+                    "deduped",
+                    "usage"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "I1"
+      },
+      "get": {
+        "operationId": "findLatestGeneration",
+        "summary": "Bản bài viết mới nhất khớp bộ lọc",
+        "description": "Không tạo job, không trừ credit. Chưa có → `generation: null`.",
+        "tags": [
+          "Viết nội dung AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "name": "topic_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "name": "scene_plan_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "AUTHENTIC",
+                    "CREATIVE"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bản mới nhất",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "generation": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "job_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "origin": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "asset_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "product_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "topic_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "scene_plan_id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "mode": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "channels": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "posts": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {}
+                              }
+                            },
+                            "approved_posts": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {}
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "overall_score": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "rubric_version": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "prompt_versions": {},
+                            "created_at": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "job_id",
+                            "origin",
+                            "status",
+                            "asset_id",
+                            "product_id",
+                            "topic_id",
+                            "scene_plan_id",
+                            "mode",
+                            "channels",
+                            "posts",
+                            "approved_posts",
+                            "overall_score",
+                            "rubric_version",
+                            "prompt_versions",
+                            "created_at"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "generation"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I1"
+      }
+    },
+    "/content-engine/generations/{id}": {
+      "get": {
+        "operationId": "getGeneration",
+        "summary": "Một bản bài viết (kèm brief và chiến lược)",
+        "description": "Của tổ chức khác → 404.",
+        "tags": [
+          "Viết nội dung AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bản bài viết",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "origin": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "asset_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "product_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "topic_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "scene_plan_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "mode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "posts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      }
+                    },
+                    "approved_posts": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "additionalProperties": {}
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "overall_score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "rubric_version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "prompt_versions": {},
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "brief": {},
+                    "strategy": {},
+                    "brief_version": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "job_id",
+                    "origin",
+                    "status",
+                    "asset_id",
+                    "product_id",
+                    "topic_id",
+                    "scene_plan_id",
+                    "mode",
+                    "channels",
+                    "posts",
+                    "approved_posts",
+                    "overall_score",
+                    "rubric_version",
+                    "prompt_versions",
+                    "created_at",
+                    "brief",
+                    "strategy",
+                    "brief_version"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "I1"
+      }
+    },
+    "/content-engine/generations/{id}/approve": {
+      "post": {
+        "operationId": "approveGeneration",
+        "summary": "Chốt bài AI viết thành bài đã duyệt",
+        "description": "Có thể sửa chữ/hashtag từng kênh trước khi chốt (`edited: true`). Ghi nhật ký kiểm toán cùng giao dịch. Của tổ chức khác → 404.",
+        "tags": [
+          "Viết nội dung AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "posts": {
+                    "maxItems": 4,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "channel": {
+                          "type": "string",
+                          "enum": [
+                            "facebook",
+                            "instagram",
+                            "tiktok",
+                            "zalo"
+                          ],
+                          "description": "Kênh bài đăng: facebook | instagram | tiktok | zalo"
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 5000
+                        },
+                        "hashtags": {
+                          "maxItems": 30,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100
+                          }
+                        }
+                      },
+                      "required": [
+                        "channel"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bài đã duyệt",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "approved_by": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "approved_posts": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string"
+                            },
+                            "additionalProperties": {}
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "status",
+                    "approved_by",
+                    "approved_posts",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "J5"
+      }
+    },
+    "/content-engine/landing-generate": {
+      "post": {
+        "operationId": "generateLandingContent",
+        "summary": "Viết nội dung 7 phần của landing page",
+        "description": "Mô tả bán hàng lấy từ bản đã duyệt của sản phẩm (máy chủ tự đọc theo `id`); ưu đãi chỉ lấy từ Hồ sơ tiệm — `discountPercent` trình duyệt gửi bị bỏ qua. Lưu vào Kho dữ liệu. AI không chạy được → nội dung dựng sẵn (vẫn 200), không chặn.",
+        "tags": [
+          "Viết nội dung AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "occasionId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "occasionLabel": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "archetypeId": {
+                    "type": "string"
+                  },
+                  "selectedProducts": {
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64
+                        },
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "price": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "category": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "name"
+                      ]
+                    }
+                  },
+                  "userDirectives": {
+                    "type": "string"
+                  },
+                  "discountPercent": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "usps": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "guarantees": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "targetAudience": {
+                    "type": "string"
+                  },
+                  "designDirection": {
+                    "type": "string"
+                  },
+                  "pageType": {
+                    "type": "string",
+                    "enum": [
+                      "STORE_BRAND",
+                      "CHAIN_BRAND",
+                      "CAMPAIGN_SEASONAL",
+                      "SHOWCASE_HIGHLIGHT"
+                    ]
+                  }
+                },
+                "required": [
+                  "occasionId",
+                  "occasionLabel"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gói nội dung",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "hero": {
+                          "type": "object",
+                          "properties": {
+                            "badge": {
+                              "type": "string"
+                            },
+                            "headline": {
+                              "type": "string"
+                            },
+                            "subHeadline": {
+                              "type": "string"
+                            },
+                            "countdownLabel": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "badge",
+                            "headline",
+                            "subHeadline",
+                            "countdownLabel"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "story": {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "string"
+                            },
+                            "paragraphs": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "quote": {
+                              "type": "string"
+                            },
+                            "floristName": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "title",
+                            "paragraphs",
+                            "quote",
+                            "floristName"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "perks": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "icon": {
+                                "type": "string",
+                                "enum": [
+                                  "camera",
+                                  "clock",
+                                  "shield",
+                                  "gift"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "title",
+                              "description",
+                              "icon"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "steps": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "step": {
+                                "type": "number"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "step",
+                              "title",
+                              "description"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "faq": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "question": {
+                                "type": "string"
+                              },
+                              "answer": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "question",
+                              "answer"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "lead": {
+                          "type": "object",
+                          "properties": {
+                            "tag": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "discountBadge": {
+                              "type": "string"
+                            },
+                            "urgencyNotice": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "tag",
+                            "title",
+                            "description",
+                            "discountBadge",
+                            "urgencyNotice"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "landing_page_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "hero",
+                        "story",
+                        "perks",
+                        "steps",
+                        "faq",
+                        "lead",
+                        "landing_page_id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "J7"
+      }
+    },
+    "/content-engine/rewrite": {
+      "post": {
+        "operationId": "rewriteText",
+        "summary": "Viết lại nhanh một câu (3 gợi ý)",
+        "description": "Mã năng lực kiểm trong route. Giữ 1 lượt `content.rewrite` trước khi gọi AI — hết credit → 422 `QUOTA_EXCEEDED` (không gian dùng thử không trừ); gợi ý dựng sẵn (`fallback: true`) thì hoàn. 30 lần/10 phút/người, 200 lần/giờ/tổ chức → 429. Trả envelope cũ `{ success: true, … }`.",
+        "tags": [
+          "Viết nội dung AI"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "field_type": {
+                    "default": "general",
+                    "type": "string",
+                    "enum": [
+                      "gift",
+                      "guarantee",
+                      "cta",
+                      "description",
+                      "general"
+                    ]
+                  },
+                  "style": {
+                    "default": "luxurious",
+                    "type": "string",
+                    "enum": [
+                      "luxurious",
+                      "sweet",
+                      "concise",
+                      "creative"
+                    ]
+                  }
+                },
+                "required": [
+                  "text"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gợi ý",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "suggestions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "fallback": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "suggestions"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "một trong `F2`, `L2`, `L3`"
+      }
+    },
     "/coordinator/exceptions/{id}/resolve": {
       "post": {
         "operationId": "resolveCoordinatorException",
@@ -76808,6 +78246,1939 @@
           }
         },
         "x-capability": "mã chạy theo `module`"
+      }
+    },
+    "/market-intelligence/health": {
+      "get": {
+        "operationId": "getMarketProviderHealth",
+        "summary": "Sức khoẻ các nguồn dữ liệu xu hướng",
+        "description": "Dữ liệu thị trường dùng chung toàn nền tảng (không theo tổ chức).",
+        "tags": [
+          "Xu hướng thị trường & đọc ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nguồn",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "providers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      }
+                    }
+                  },
+                  "required": [
+                    "providers"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "V1"
+      }
+    },
+    "/market-intelligence/opportunities": {
+      "get": {
+        "operationId": "listContentOpportunities",
+        "summary": "Cơ hội nội dung đã cá nhân hoá cho tổ chức",
+        "description": "`limit` mặc định 20, máy chủ kẹp 1–100; phân trang con trỏ (`nextCursor`). `limit` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §22).",
+        "tags": [
+          "Xu hướng thị trường & đọc ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^-?\\d+$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "min_score",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timeframe",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cơ hội",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      }
+                    },
+                    "nextCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "total": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "nextCursor",
+                    "total"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "V2"
+      }
+    },
+    "/market-intelligence/product-intelligence": {
+      "post": {
+        "operationId": "analyzeProductIntelligence",
+        "summary": "Phân tích sản phẩm với xu hướng (hợp đồng Chặng 03)",
+        "description": "Đầu vào là đầu ra Chặng 02 (đã sửa). Thiếu `components` hiện trả 500 thay vì 400 (lỗi đã ghi nhận, audit API §22).",
+        "tags": [
+          "Xu hướng thị trường & đọc ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "product_name": {
+                    "type": "string"
+                  },
+                  "image_url": {
+                    "type": "string"
+                  },
+                  "asset_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "BẮT BUỘC từ 22/09/2026 (nợ #118)"
+                  },
+                  "components": {
+                    "description": "Đầu ra Chặng 02 (đã sửa)",
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "flowerType": {
+                          "type": "string",
+                          "description": "Tên hoa/lá, vd. Hoa hồng đỏ"
+                        },
+                        "quantityEstimate": {
+                          "type": "number",
+                          "description": "Số lượng ước tính"
+                        },
+                        "unit": {
+                          "type": "string",
+                          "description": "Đơn vị, vd. bông, cành"
+                        },
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "dominant",
+                            "supporting",
+                            "foliage"
+                          ],
+                          "description": "Vai trò; lá/cành đệm là foliage"
+                        },
+                        "color": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "flowerType",
+                        "quantityEstimate",
+                        "unit",
+                        "role"
+                      ]
+                    }
+                  },
+                  "attributes": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "mainColors": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "secondaryColors": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "style": {
+                            "type": "string"
+                          },
+                          "shape": {
+                            "type": "string"
+                          },
+                          "sizeEstimate": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "mainColors",
+                          "secondaryColors",
+                          "style",
+                          "shape",
+                          "sizeEstimate"
+                        ]
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "mainColors": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "secondaryColors": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "style": {
+                              "type": "string"
+                            },
+                            "shape": {
+                              "type": "string"
+                            },
+                            "sizeEstimate": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "mainColors",
+                            "secondaryColors",
+                            "style",
+                            "shape",
+                            "sizeEstimate"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "packaging": {
+                    "type": "object",
+                    "properties": {
+                      "wrappingMaterial": {
+                        "type": "string"
+                      },
+                      "wrappingColor": {
+                        "type": "string"
+                      },
+                      "ribbon": {
+                        "type": "string"
+                      },
+                      "accessories": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "card": {
+                        "type": "object",
+                        "properties": {
+                          "hasCard": {
+                            "type": "boolean"
+                          },
+                          "cardType": {
+                            "type": "string",
+                            "enum": [
+                              "Thiệp gập thiết kế",
+                              "Tag cắm mini",
+                              "Biển mica nghệ thuật",
+                              "Banner dải băng chữ",
+                              "Khác"
+                            ]
+                          },
+                          "printedText": {
+                            "description": "Chữ in/viết bóc tách qua OCR",
+                            "type": "string"
+                          },
+                          "color": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "hasCard"
+                        ]
+                      },
+                      "ribbonDetail": {
+                        "type": "object",
+                        "properties": {
+                          "ribbonColor": {
+                            "type": "string"
+                          },
+                          "ribbonMaterial": {
+                            "type": "string"
+                          },
+                          "bowStyle": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "otherAccessories": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "type": "number"
+                            },
+                            "unit": {
+                              "type": "string"
+                            },
+                            "color": {
+                              "type": "string"
+                            },
+                            "note": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "quantity",
+                            "unit"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "wrappingMaterial",
+                      "wrappingColor",
+                      "ribbon",
+                      "accessories"
+                    ]
+                  },
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "likelyOccasions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "likelyAudience": {
+                        "type": "string"
+                      },
+                      "suggestedPrice": {
+                        "type": "number"
+                      },
+                      "confidence": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "likelyOccasions",
+                      "likelyAudience",
+                      "suggestedPrice",
+                      "confidence"
+                    ]
+                  },
+                  "commercial_passport": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "suggestedName": {
+                            "type": "string"
+                          },
+                          "shortHeadline": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "style": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "seoKeywords": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "occasions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "targetAudience": {
+                            "type": "object",
+                            "properties": {
+                              "recipient": {
+                                "type": "string"
+                              },
+                              "buyerPersona": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "recipient",
+                              "buyerPersona"
+                            ]
+                          },
+                          "flowerMeaningStory": {
+                            "type": "string"
+                          },
+                          "keySellingPoints": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "cardMessageSuggestions": {
+                            "type": "object",
+                            "properties": {
+                              "romantic": {
+                                "type": "string"
+                              },
+                              "subtle": {
+                                "type": "string"
+                              },
+                              "congratulatory": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "romantic",
+                              "subtle",
+                              "congratulatory"
+                            ]
+                          },
+                          "careInstructions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "priceSegment": {
+                            "type": "string",
+                            "enum": [
+                              "budget",
+                              "standard",
+                              "premium",
+                              "luxury"
+                            ]
+                          },
+                          "priceRange": {
+                            "type": "object",
+                            "properties": {
+                              "minPrice": {
+                                "type": "number"
+                              },
+                              "targetPrice": {
+                                "type": "number"
+                              },
+                              "maxPrice": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "minPrice",
+                              "targetPrice",
+                              "maxPrice"
+                            ]
+                          },
+                          "recommendedUpsells": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "suggestedName",
+                          "shortHeadline",
+                          "description",
+                          "style",
+                          "tags",
+                          "seoKeywords",
+                          "occasions",
+                          "targetAudience",
+                          "flowerMeaningStory",
+                          "keySellingPoints",
+                          "cardMessageSuggestions",
+                          "careInstructions",
+                          "priceSegment",
+                          "priceRange",
+                          "recommendedUpsells"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Báo cáo phân tích",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "product_analysis_runs.id"
+                    },
+                    "productName": {
+                      "type": "string"
+                    },
+                    "imageUrl": {
+                      "type": "string"
+                    },
+                    "trendFitScore": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "audienceFitScore": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "contentFitScore": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    },
+                    "overallFit": {
+                      "type": "string",
+                      "enum": [
+                        "HIGH",
+                        "MEDIUM",
+                        "LOW"
+                      ]
+                    },
+                    "components": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "flowerType": {
+                            "type": "string",
+                            "description": "Tên hoa/lá, vd. Hoa hồng đỏ"
+                          },
+                          "quantityEstimate": {
+                            "type": "number",
+                            "description": "Số lượng ước tính"
+                          },
+                          "unit": {
+                            "type": "string",
+                            "description": "Đơn vị, vd. bông, cành"
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "dominant",
+                              "supporting",
+                              "foliage"
+                            ],
+                            "description": "Vai trò; lá/cành đệm là foliage"
+                          },
+                          "color": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "flowerType",
+                          "quantityEstimate",
+                          "unit",
+                          "role"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "attributes": {
+                      "type": "object",
+                      "properties": {
+                        "mainColors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "secondaryColors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "style": {
+                          "type": "string"
+                        },
+                        "shape": {
+                          "type": "string"
+                        },
+                        "sizeEstimate": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "mainColors",
+                        "secondaryColors",
+                        "style",
+                        "shape",
+                        "sizeEstimate"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "packaging": {
+                      "type": "object",
+                      "properties": {
+                        "wrappingMaterial": {
+                          "type": "string"
+                        },
+                        "wrappingColor": {
+                          "type": "string"
+                        },
+                        "ribbon": {
+                          "type": "string"
+                        },
+                        "accessories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "card": {
+                          "type": "object",
+                          "properties": {
+                            "hasCard": {
+                              "type": "boolean"
+                            },
+                            "cardType": {
+                              "type": "string",
+                              "enum": [
+                                "Thiệp gập thiết kế",
+                                "Tag cắm mini",
+                                "Biển mica nghệ thuật",
+                                "Banner dải băng chữ",
+                                "Khác"
+                              ]
+                            },
+                            "printedText": {
+                              "description": "Chữ in/viết bóc tách qua OCR",
+                              "type": "string"
+                            },
+                            "color": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "hasCard"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "ribbonDetail": {
+                          "type": "object",
+                          "properties": {
+                            "ribbonColor": {
+                              "type": "string"
+                            },
+                            "ribbonMaterial": {
+                              "type": "string"
+                            },
+                            "bowStyle": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "otherAccessories": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "unit": {
+                                "type": "string"
+                              },
+                              "color": {
+                                "type": "string"
+                              },
+                              "note": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "quantity",
+                              "unit"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "wrappingMaterial",
+                        "wrappingColor",
+                        "ribbon",
+                        "accessories"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "context": {
+                      "type": "object",
+                      "properties": {
+                        "likelyOccasions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "likelyAudience": {
+                          "type": "string"
+                        },
+                        "suggestedPrice": {
+                          "type": "number"
+                        },
+                        "confidence": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "likelyOccasions",
+                        "likelyAudience",
+                        "suggestedPrice",
+                        "confidence"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "commercialPassport": {
+                      "type": "object",
+                      "properties": {
+                        "suggestedName": {
+                          "type": "string"
+                        },
+                        "shortHeadline": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "style": {
+                          "type": "string"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "seoKeywords": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "occasions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "targetAudience": {
+                          "type": "object",
+                          "properties": {
+                            "recipient": {
+                              "type": "string"
+                            },
+                            "buyerPersona": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "recipient",
+                            "buyerPersona"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "flowerMeaningStory": {
+                          "type": "string"
+                        },
+                        "keySellingPoints": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "cardMessageSuggestions": {
+                          "type": "object",
+                          "properties": {
+                            "romantic": {
+                              "type": "string"
+                            },
+                            "subtle": {
+                              "type": "string"
+                            },
+                            "congratulatory": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "romantic",
+                            "subtle",
+                            "congratulatory"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "careInstructions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "priceSegment": {
+                          "type": "string",
+                          "enum": [
+                            "budget",
+                            "standard",
+                            "premium",
+                            "luxury"
+                          ]
+                        },
+                        "priceRange": {
+                          "type": "object",
+                          "properties": {
+                            "minPrice": {
+                              "type": "number"
+                            },
+                            "targetPrice": {
+                              "type": "number"
+                            },
+                            "maxPrice": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "minPrice",
+                            "targetPrice",
+                            "maxPrice"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "recommendedUpsells": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "suggestedName",
+                        "shortHeadline",
+                        "description",
+                        "style",
+                        "tags",
+                        "seoKeywords",
+                        "occasions",
+                        "targetAudience",
+                        "flowerMeaningStory",
+                        "keySellingPoints",
+                        "cardMessageSuggestions",
+                        "careInstructions",
+                        "priceSegment",
+                        "priceRange",
+                        "recommendedUpsells"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "trendFitMatrix": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "attribute": {
+                            "type": "string"
+                          },
+                          "productValue": {
+                            "type": "string"
+                          },
+                          "marketSignal": {
+                            "type": "string"
+                          },
+                          "matchStatus": {
+                            "type": "string",
+                            "enum": [
+                              "MATCH",
+                              "PARTIAL",
+                              "MISMATCH"
+                            ]
+                          },
+                          "lifecycle": {
+                            "type": "string",
+                            "enum": [
+                              "EMERGING",
+                              "GROWING",
+                              "PEAK",
+                              "STABLE",
+                              "DECLINING"
+                            ]
+                          },
+                          "note": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "attribute",
+                          "productValue",
+                          "marketSignal",
+                          "matchStatus",
+                          "lifecycle",
+                          "note"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "improvements": {
+                      "type": "object",
+                      "properties": {
+                        "keep": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "improve": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "test": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "keep",
+                        "improve",
+                        "test"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "topics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "angleCategory": {
+                            "type": "string",
+                            "enum": [
+                              "EMOTIONAL",
+                              "PROBLEM_SOLUTION",
+                              "PRODUCT_SHOWCASE",
+                              "EDUCATIONAL",
+                              "TREND",
+                              "PRICE_VALUE"
+                            ]
+                          },
+                          "hook": {
+                            "type": "string"
+                          },
+                          "format": {
+                            "type": "string",
+                            "enum": [
+                              "REELS_TIKTOK_9_16",
+                              "CAROUSEL_PHOTO_1_1",
+                              "STORY_DAILY"
+                            ]
+                          },
+                          "cta": {
+                            "type": "string"
+                          },
+                          "evidenceNote": {
+                            "type": "string"
+                          },
+                          "referenceUrl": {
+                            "type": "string"
+                          },
+                          "platform": {
+                            "type": "string",
+                            "enum": [
+                              "tiktok",
+                              "youtube",
+                              "google",
+                              "facebook"
+                            ]
+                          },
+                          "dualVideoEvidence": {
+                            "type": "object",
+                            "properties": {
+                              "youtube": {
+                                "type": "object",
+                                "properties": {
+                                  "thumbnailUrl": {
+                                    "type": "string"
+                                  },
+                                  "videoUrl": {
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "type": "string"
+                                  },
+                                  "author": {
+                                    "type": "string"
+                                  },
+                                  "metrics": {
+                                    "type": "string"
+                                  },
+                                  "alt": {
+                                    "type": "string"
+                                  },
+                                  "isLiveEvidence": {
+                                    "description": "false = danh mục tham khảo (metrics ƯỚC TÍNH) — giao diện phải gắn nhãn",
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "thumbnailUrl",
+                                  "videoUrl",
+                                  "title",
+                                  "author",
+                                  "metrics"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "tiktok": {
+                                "type": "object",
+                                "properties": {
+                                  "thumbnailUrl": {
+                                    "type": "string"
+                                  },
+                                  "videoUrl": {
+                                    "type": "string"
+                                  },
+                                  "title": {
+                                    "type": "string"
+                                  },
+                                  "author": {
+                                    "type": "string"
+                                  },
+                                  "metrics": {
+                                    "type": "string"
+                                  },
+                                  "alt": {
+                                    "type": "string"
+                                  },
+                                  "isLiveEvidence": {
+                                    "description": "false = danh mục tham khảo (metrics ƯỚC TÍNH) — giao diện phải gắn nhãn",
+                                    "type": "boolean"
+                                  }
+                                },
+                                "required": [
+                                  "thumbnailUrl",
+                                  "videoUrl",
+                                  "title",
+                                  "author",
+                                  "metrics"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "youtube",
+                              "tiktok"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "title",
+                          "angleCategory",
+                          "hook",
+                          "format",
+                          "cta",
+                          "evidenceNote"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "10 chủ đề của Chặng 04 IDEATE"
+                    },
+                    "readiness": {
+                      "type": "object",
+                      "properties": {
+                        "productRecognition": {
+                          "type": "boolean"
+                        },
+                        "trendFit": {
+                          "type": "boolean"
+                        },
+                        "audienceDefined": {
+                          "type": "boolean"
+                        },
+                        "positioningDefined": {
+                          "type": "boolean"
+                        },
+                        "visualQuality": {
+                          "type": "string",
+                          "enum": [
+                            "EXCELLENT",
+                            "ACCEPTABLE",
+                            "NEEDS_IMPROVEMENT"
+                          ]
+                        },
+                        "videoPotential": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "productRecognition",
+                        "trendFit",
+                        "audienceDefined",
+                        "positioningDefined",
+                        "visualQuality",
+                        "videoPotential"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "productName",
+                    "imageUrl",
+                    "trendFitScore",
+                    "audienceFitScore",
+                    "contentFitScore",
+                    "overallFit",
+                    "components",
+                    "attributes",
+                    "packaging",
+                    "context",
+                    "trendFitMatrix",
+                    "improvements",
+                    "topics",
+                    "readiness",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "V1"
+      }
+    },
+    "/market-intelligence/research-runs": {
+      "post": {
+        "operationId": "triggerResearchRun",
+        "summary": "Kích hoạt lượt nghiên cứu xu hướng",
+        "description": "Dữ liệu thị trường dùng chung toàn nền tảng (không theo tổ chức). Thân sai lược đồ không bị từ chối — lùi về `MANUAL` không tham số. Chưa giới hạn tần suất (audit API §22).",
+        "tags": [
+          "Xu hướng thị trường & đọc ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "run_type": {
+                    "type": "string",
+                    "enum": [
+                      "DAILY_DEEP",
+                      "INTRADAY_PULSE",
+                      "WEEKLY_DEEP",
+                      "MANUAL"
+                    ]
+                  },
+                  "keyword": {
+                    "type": "string"
+                  },
+                  "geo": {
+                    "type": "string"
+                  },
+                  "timeframe": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Lượt đã xếp",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "runId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "runType": {
+                      "type": "string",
+                      "enum": [
+                        "DAILY_DEEP",
+                        "INTRADAY_PULSE",
+                        "WEEKLY_DEEP",
+                        "MANUAL"
+                      ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "runId",
+                    "status",
+                    "runType",
+                    "createdAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "V1"
+      },
+      "get": {
+        "operationId": "listResearchRuns",
+        "summary": "20 lượt nghiên cứu gần nhất",
+        "description": "Dữ liệu thị trường dùng chung toàn nền tảng (không theo tổ chức).",
+        "tags": [
+          "Xu hướng thị trường & đọc ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lượt nghiên cứu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "run_type": {
+                            "type": "string",
+                            "enum": [
+                              "DAILY_DEEP",
+                              "INTRADAY_PULSE",
+                              "WEEKLY_DEEP",
+                              "MANUAL"
+                            ]
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "started_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "completed_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "sources_attempted": {
+                            "type": "number"
+                          },
+                          "sources_succeeded": {
+                            "type": "number"
+                          },
+                          "sources_failed": {
+                            "type": "number"
+                          },
+                          "records_collected": {
+                            "type": "number"
+                          },
+                          "topics_created": {
+                            "type": "number"
+                          },
+                          "opportunities_created": {
+                            "type": "number"
+                          },
+                          "error_summary": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "run_type",
+                          "status",
+                          "started_at",
+                          "completed_at",
+                          "sources_attempted",
+                          "sources_succeeded",
+                          "sources_failed",
+                          "records_collected",
+                          "topics_created",
+                          "opportunities_created",
+                          "error_summary",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "V1"
+      }
+    },
+    "/market-intelligence/vision-extract": {
+      "post": {
+        "operationId": "extractProductVision",
+        "summary": "Đọc ảnh sản phẩm (hợp đồng Chặng 02)",
+        "description": "Ảnh đọc từ kho theo `asset_id` của đúng tổ chức (`image_url` client gửi bị bỏ qua); thu 1 credit khi mô hình thật sự đọc ảnh, đã có kết quả của ảnh này → trả lại (`reused`). Không mô hình nào đọc được hoặc không có tệp trong kho → 500 `INTERNAL` (đã hoàn credit). Ảnh của tổ chức khác → 404.",
+        "tags": [
+          "Xu hướng thị trường & đọc ảnh"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image_url": {
+                    "description": "BỎ QUA từ 25/09/2026 — máy chủ đọc ảnh từ kho theo asset_id; giữ để client cũ không vỡ",
+                    "type": "string"
+                  },
+                  "asset_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Ảnh đã lưu kho của đúng tổ chức (bắt buộc từ 25/09/2026)"
+                  },
+                  "product_title": {
+                    "type": "string"
+                  },
+                  "reanalyze_key": {
+                    "description": "Người dùng xác nhận phân tích LẠI ảnh đã có kết quả: bỏ kết quả cũ, gọi mô hình mới và thu credit; cùng khoá = cùng một lần bấm (chống trừ hai lần)",
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "asset_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đặc trưng thị giác",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "productName": {
+                      "type": "string"
+                    },
+                    "imageUrl": {
+                      "type": "string"
+                    },
+                    "assetId": {
+                      "type": "string"
+                    },
+                    "reused": {
+                      "description": "true = kết quả cũ của chính ảnh này (không gọi mô hình, không thu credit)",
+                      "type": "boolean"
+                    },
+                    "components": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "flowerType": {
+                            "type": "string",
+                            "description": "Tên hoa/lá, vd. Hoa hồng đỏ"
+                          },
+                          "quantityEstimate": {
+                            "type": "number",
+                            "description": "Số lượng ước tính"
+                          },
+                          "unit": {
+                            "type": "string",
+                            "description": "Đơn vị, vd. bông, cành"
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "dominant",
+                              "supporting",
+                              "foliage"
+                            ],
+                            "description": "Vai trò; lá/cành đệm là foliage"
+                          },
+                          "color": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "flowerType",
+                          "quantityEstimate",
+                          "unit",
+                          "role"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Hoa + lá đệm (role foliage) — không có mảng riêng"
+                    },
+                    "attributes": {
+                      "type": "object",
+                      "properties": {
+                        "mainColors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "secondaryColors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "style": {
+                          "type": "string"
+                        },
+                        "shape": {
+                          "type": "string"
+                        },
+                        "sizeEstimate": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "mainColors",
+                        "secondaryColors",
+                        "style",
+                        "shape",
+                        "sizeEstimate"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "packaging": {
+                      "type": "object",
+                      "properties": {
+                        "wrappingMaterial": {
+                          "type": "string"
+                        },
+                        "wrappingColor": {
+                          "type": "string"
+                        },
+                        "ribbon": {
+                          "type": "string"
+                        },
+                        "accessories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "card": {
+                          "type": "object",
+                          "properties": {
+                            "hasCard": {
+                              "type": "boolean"
+                            },
+                            "cardType": {
+                              "type": "string",
+                              "enum": [
+                                "Thiệp gập thiết kế",
+                                "Tag cắm mini",
+                                "Biển mica nghệ thuật",
+                                "Banner dải băng chữ",
+                                "Khác"
+                              ]
+                            },
+                            "printedText": {
+                              "description": "Chữ in/viết bóc tách qua OCR",
+                              "type": "string"
+                            },
+                            "color": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "hasCard"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "ribbonDetail": {
+                          "type": "object",
+                          "properties": {
+                            "ribbonColor": {
+                              "type": "string"
+                            },
+                            "ribbonMaterial": {
+                              "type": "string"
+                            },
+                            "bowStyle": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "otherAccessories": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "unit": {
+                                "type": "string"
+                              },
+                              "color": {
+                                "type": "string"
+                              },
+                              "note": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "quantity",
+                              "unit"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "wrappingMaterial",
+                        "wrappingColor",
+                        "ribbon",
+                        "accessories"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "context": {
+                      "type": "object",
+                      "properties": {
+                        "likelyOccasions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "likelyAudience": {
+                          "type": "string"
+                        },
+                        "suggestedPrice": {
+                          "type": "number"
+                        },
+                        "confidence": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "likelyOccasions",
+                        "likelyAudience",
+                        "suggestedPrice",
+                        "confidence"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "source": {
+                      "description": "vision_ai = mô hình vừa đọc ảnh (thu credit) · m01 = kết quả M01 đã lưu (miễn phí)",
+                      "type": "string",
+                      "enum": [
+                        "vision_ai",
+                        "m01"
+                      ]
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "cost_credit": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "balance_after": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "cost_credit",
+                        "balance_after"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "productName",
+                    "imageUrl",
+                    "components",
+                    "attributes",
+                    "packaging",
+                    "context"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "V1"
       }
     },
     "/media/background-removal": {

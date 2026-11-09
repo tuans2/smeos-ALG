@@ -412,3 +412,19 @@ Ghi nhận:
 - `product-copies` trả thẳng dòng CSDL (không `{ data }`), `PATCH` sai thân trả lỗi chỉ có `message` (không `details`) — giữ nguyên, ghi ở OpenAPI.
 - Một lượt phân tích chỉ có một bản dữ liệu bán hàng: gọi `generate` lần hai (khoá idempotency khác) trả lại bản cũ, không gọi AI và không tạo job mới.
 - 8 phép thử lỗi (bước bị khoá, mục đã lưu trữ, mã lạ, mã không phải UUID) không có đường nào trả 500.
+
+## 22. Nhật ký sửa — OpenAPI nội bộ, đợt viết nội dung AI & xu hướng thị trường (08/11/2026)
+
+Phủ thêm 2 nhóm vào `internal.openapi.json`: `/content-engine/*` (6 route, 7 operation), `/market-intelligence/*` (5 route, 6 operation) — tổng 416 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 3 route (landing page, viết lại nhanh, lượt nghiên cứu) chuyển nguyên văn về `src/app/api/v1/_contracts/requests-content.ts`, route import lại; `catalog-generate` nằm trong vùng Catalog đóng băng — route KHÔNG sửa, `catalogGenerateBody` là bản sao, cùng bộ mẫu gửi tới route thật và bản sao phải cho cùng kết luận (`tests/unit/content-engine/catalog-generate-contract.test.ts`, 10 mẫu); thân bài đa kênh dùng hợp đồng `content-engine/contracts/generation.ts`, đọc ảnh/phân tích sản phẩm dùng hợp đồng Chặng 02/03 (xuất lại, cả lược đồ đầu ra). Phản hồi còn lại khai `strictObject` (`responses-content.ts`), đối chiếu mẫu ghi từ phản hồi thật | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật với cổng AI giả lập trả "không chạy được" (đúng kết quả cổng thật, không ném lỗi): bài đa kênh (tra, xem, duyệt, tạo mới → bài dựng sẵn 201, thiếu khoá idempotency 400), landing page, catalog, viết lại nhanh (`fallback: true`); xu hướng thị trường (cơ hội, lượt nghiên cứu, sức khoẻ nguồn), đọc ảnh (cổng trả ví dụ đầu ra Chặng 02, ảnh thật trong kho đĩa), phân tích sản phẩm (thân theo ví dụ Chặng 03) | `tests/tenant/internal-contract-content.test.ts` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `POST /market-intelligence/product-intelligence` thiếu `components` → use-case ném `Error` trần → 500, không phải 400 (đã thử).
+- `GET /market-intelligence/opportunities?limit=abc` → 500 (`parseInt` → `NaN` vào Prisma; đã thử). `min_score` không phải số bị bỏ qua.
+- `POST /market-intelligence/research-runs`: lượt nghiên cứu và lịch sử (`research_runs`, `provider_health`) là dữ liệu chung toàn nền tảng, không có `organization_id` — người dùng của bất kỳ tổ chức nào có `V1` cũng kích hoạt được lượt chạy cho cả nền tảng và xem được lịch sử của mọi lượt; chưa giới hạn tần suất; thân sai lược đồ không bị từ chối mà lùi về `MANUAL`. Không lộ dữ liệu tổ chức, nhưng là bề mặt tốn tài nguyên chung — nên giới hạn tần suất hoặc chuyển sang Console Vận hành Nền tảng.
+- `POST /market-intelligence/vision-extract` khi không có tệp trong kho trả 500 kèm thông báo chứa khoá kho nội bộ (`org/<id>/unfiled/<id>.jpg`) — lộ chi tiết nội bộ trong lỗi 500.
+- Bài học test: `expectContract(res, status, schema)` bỏ qua bước kiểm khi `schema` là `undefined` — một lần xuất lại sai tên lược đồ đã làm ca phân tích sản phẩm xanh rỗng cho tới khi `typecheck` bắt được. Các đợt trước đều qua `typecheck` nên không bị ảnh hưởng.

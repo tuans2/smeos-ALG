@@ -1,7 +1,7 @@
-import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { landingGenerateBody } from "@/app/api/v1/_contracts/requests-content"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
@@ -12,38 +12,13 @@ import { LANDING_TYPE_OPTIONS } from "@/modules/landing-page/domain/preset-catal
 import { saveLandingPage } from "@/modules/landing-page/use-cases/save-landing-page"
 import { getApprovedSellingNotes } from "@/modules/product-copies/use-cases/get-approved-selling-notes"
 
-const PAGE_TYPES = LANDING_TYPE_OPTIONS.map((o) => o.type) as [string, ...string[]]
-
-const requestSchema = z.object({
-  occasionId: z.string().min(1),
-  occasionLabel: z.string().min(1),
-  archetypeId: z.string().optional(),
-  selectedProducts: z.array(
-    z.object({
-      /** Chỉ để máy chủ tự đọc mô tả bán hàng đã duyệt của tenant — không nhận mô tả từ trình duyệt */
-      id: z.string().min(1).max(64).optional(),
-      name: z.string().min(1),
-      code: z.string().optional(),
-      price: z.number().nullable().optional(),
-      category: z.string().nullable().optional(),
-    })
-  ).default([]),
-  userDirectives: z.string().optional(),
-  discountPercent: z.number().int().min(1).max(99).optional(),
-  usps: z.array(z.string()).optional(),
-  guarantees: z.array(z.string()).optional(),
-  targetAudience: z.string().optional(),
-  designDirection: z.string().optional(),
-  pageType: z.enum(PAGE_TYPES).optional(),
-})
-
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   // J7 — sinh nội dung AI cho landing/catalog (PO 30/10/2026, trả nợ #170)
   requireCapability(ctx, "J7")
 
   const body = await request.json().catch(() => null)
-  const parsed = requestSchema.safeParse(body)
+  const parsed = landingGenerateBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }
