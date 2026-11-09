@@ -113,7 +113,7 @@ describe("6 Business Modules & Store Operations (PO 01/11/2026)", () => {
     expect(prod.deferredAssets).toEqual([])
 
     // Các nhóm khác không đổi
-    for (const m of getAllBusinessModules().filter((x) => x.key !== "brand" && x.key !== "content")) {
+    for (const m of getAllBusinessModules().filter((x) => x.key !== "brand" && x.key !== "content" && x.key !== "promotion")) {
       expect(m.journey).toBeNull()
       expect(m.deferredTools).toEqual([])
     }
@@ -132,13 +132,35 @@ describe("6 Business Modules & Store Operations (PO 01/11/2026)", () => {
     expect(prod.deferredAssets).toEqual([])
   })
 
+  it("Quảng bá sản phẩm: 3 ô chức năng thay lưới cũ; 11 công cụ + ấn phẩm cũ PHÁT_TRIỂN_SAU chỉ dev thấy (PO 09/11/2026)", () => {
+    const dev = getAllBusinessModules().find((m) => m.key === "promotion")!
+    expect(dev.journey).toBe("PROMOTION_HUB")
+    expect(dev.tools).toEqual([])
+    expect(dev.assets).toEqual([])
+    expect(dev.deferredTools.filter((t) => !t.isRoadmap).map((t) => t.id).sort((a, b) => a - b)).toEqual([8, 9, 10, 12, 13, 14, 21, 25, 54, 61, 66])
+    expect(dev.deferredAssets.length).toBeGreaterThan(0)
+    for (const a of dev.deferredAssets) expect(a.module).toBe("promotion")
+
+    const prod = getVisibleBusinessModules(false).find((m) => m.key === "promotion")!
+    expect(prod.journey).toBe("PROMOTION_HUB")
+    expect(prod.tools).toEqual([])
+    expect(prod.assets).toEqual([])
+    expect(prod.deferredTools).toEqual([])
+    expect(prod.deferredAssets).toEqual([])
+
+    // Bán hàng, Chăm sóc, Ấn phẩm giữ lưới cũ
+    for (const key of ["sales", "care", "print"]) {
+      expect(getAllBusinessModules().find((m) => m.key === key)!.journey).toBeNull()
+    }
+  })
+
   it("số liệu đầu trang không đếm công cụ PHÁT_TRIỂN_SAU", () => {
     const hidden = deferredToolIds()
-    expect([...hidden].sort((a, b) => a - b)).toEqual([0, 1, 2, 3, 4, 5, 6, 11, 22, 45, 49, 51, 52, 53, 64])
+    expect([...hidden].sort((a, b) => a - b)).toEqual([0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 21, 22, 25, 45, 49, 51, 52, 53, 54, 61, 64, 66])
     const all = countByStatus()
     const shown = countByStatus(hidden)
     const total = (c: Record<string, number>) => Object.values(c).reduce((a, b) => a + b, 0)
     expect(total(all)).toBe(67)
-    expect(total(shown)).toBe(67 - 15)
+    expect(total(shown)).toBe(67 - 26)
   })
 })
