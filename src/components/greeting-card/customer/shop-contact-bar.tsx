@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { useState, useEffect } from "react"
-import { ChevronDown, MessageCircle, QrCode } from "@/components/ui/icons"
+import { ChevronDown, MessageCircle, MessageSquareText, QrCode } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { generateQRCodeDataUrl } from "@/core/media/qr-engine"
 import { SHOP_INFO_EVENT, ShopInfoSheet, ShopLogo, type ShopInfoSection } from "./shop-info-sheet"
@@ -12,7 +12,7 @@ import { LanguageToggle } from "./language-toggle"
 interface ShopContactBarProps {
   shop: ShopContact
   /** Mẫu khách đang xem: bấm Zalo thì chép sẵn tin nhắn hỏi đúng mẫu này */
-  inquiry?: { onZalo: () => void; onCall?: () => void } | undefined
+  inquiry?: { onZalo: () => void; onCall?: () => void; onMessage?: (() => void) | undefined } | undefined
 }
 
 /**
@@ -73,6 +73,18 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
             >
               <QrCode size={16} aria-hidden="true" />
               <span>Mã QR</span>
+            </Button>
+          )}
+
+          {/* Nút Nhắn tin (form tư vấn) — chỉ khi chủ cửa hàng bật "Liên hệ" */}
+          {inquiry?.onMessage && (
+            <Button variant="outline"
+              type="button"
+              onClick={inquiry.onMessage}
+              className="py-0 inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-muted transition-colors"
+            >
+              <MessageSquareText size={16} aria-hidden="true" />
+              <span>Nhắn tin</span>
             </Button>
           )}
 

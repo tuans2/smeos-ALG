@@ -93,4 +93,6 @@ export const brochureViewResponse = z.strictObject({
   shipping: shippingSettings,
   payment: vietQrInstructions.nullable(),
   trackingTriggerPolicy: z.enum(["PAYMENT_ONLY", "PAYMENT_OR_COORDINATOR"]).optional(),
+  /** Công tắc "Đặt hàng" / "Liên hệ" của chủ cửa hàng cho Bộ sưu tập riêng */
+  entryActions: z.strictObject({ order: z.boolean(), contact: z.boolean() }),
 })

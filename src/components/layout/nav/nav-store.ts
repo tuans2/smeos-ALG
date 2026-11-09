@@ -23,16 +23,6 @@ function adaptStoreEntries(industryKey?: string | null): readonly NavEntry[] {
   const terms = getIndustryTerminology(industryKey)
 
   return visible.map((entry) => {
-    if (entry.href === "/the-chao") {
-      const shortTitle = terms.catalogTitle.length > 20
-        ? terms.catalogTitle.replace(/ & .*/, "")
-        : terms.catalogTitle
-      return {
-        ...entry,
-        label: `Thẻ chào & ${shortTitle}`,
-        mobileLabel: shortTitle.slice(0, 8),
-      }
-    }
     if (entry.href === "/san-pham/tao-moi") {
       return { ...entry, label: terms.createButtonLabel, mobileLabel: "Tạo mới" }
     }

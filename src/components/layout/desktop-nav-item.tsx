@@ -165,7 +165,7 @@ export function DesktopNavItem({
         onClick={onClick}
         aria-current={active ? "page" : undefined}
         aria-label={collapsed ? item.label : undefined}
-        title={collapsed ? undefined : item.label}
+        title={collapsed ? undefined : item.hint ? `${item.label}: ${item.hint}` : item.label}
         className={cn("h-auto", 
           "cursor-pointer",
           itemBaseClass(isSubItem, collapsed),

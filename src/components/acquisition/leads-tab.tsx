@@ -29,7 +29,7 @@ const FILTER_GROUPS: { id: GroupId; label: string; statuses: readonly LeadStatus
 
 function sourceLabel(lead: LeadItem): string {
   if (lead.short_link) return lead.short_link.placement_label ? `${lead.short_link.name} · ${lead.short_link.placement_label}` : lead.short_link.name
-  return lead.source === "CATALOG_LINK" ? "Trang catalog" : lead.source === "SHORT_LINK" ? "Link/QR" : leadSourceLabel(lead.source)
+  return lead.source === "CATALOG_LINK" ? "Bộ sưu tập chung" : lead.source === "SHORT_LINK" ? "Link/QR" : leadSourceLabel(lead.source)
 }
 
 function getGroupCount(groupId: GroupId, counts: Record<string, number> | null): number {

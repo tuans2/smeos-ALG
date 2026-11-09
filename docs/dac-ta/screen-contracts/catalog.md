@@ -123,3 +123,6 @@ acceptance:
 - **Tắt Liên hệ:** ẩn Zalo/Gọi ở thanh đáy, thẻ sản phẩm, header, chi tiết mẫu và khối để lại số. Chỉ bật Liên hệ: như trước (Nhắn Zalo đặt hoa + Gọi).
 - Bản xem trước landing đọc cài đặt nguồn Landing (`GET /orders/entry-actions`, cần `R1`); không đọc được thì xem theo mặc định và ghi chú rõ dưới khung.
 - Chi tiết mẫu bỏ các cam kết viết cứng ("3–5 ngày", "tặng thiệp & banner", "chụp ảnh duyệt", "đã gồm thuế & thiệp") — chưa phải cam kết tiệm khai.
+
+### Tên "Bộ sưu tập chung" (09/11/2026, PO)
+Tiêu đề trang `/catalog` và mục menu đổi thành **Bộ sưu tập chung**; dấu "?" cạnh tiêu đề nói mục đích: một link dùng chung cho nhiều khách (fanpage, website, mã QR), khách xem rồi đặt hàng hoặc để lại liên hệ. Nguồn chữ: `src/modules/toolkit/domain/collection-names.ts`. Đường dẫn `/catalog`, `/c/[slug]` giữ nguyên.

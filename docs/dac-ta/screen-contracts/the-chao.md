@@ -121,3 +121,7 @@ lint:ux sau: không tăng vi phạm · nợ mở: thông báo đẩy/Zalo cho ti
 
 ## 15. Progressive disclosure & rủi ro (03c) — 29/10/2026
 Catalog bán hàng theo nhu cầu (`/the-chao?quick=true`, đợt A-4). Thay đổi: `ConfirmDialog` cho ẩn bộ sưu tập (R2), xoá mẫu khỏi bộ sưu tập (R3), thu hồi link khách (R3); `<select>` mẫu giao diện có nhãn; khối chưa tới lượt không còn làm mờ chữ (2,49:1 → đạt); cảnh báo hồ sơ dùng `text-warning-text`. axe 390px: 0 lỗi.
+
+## 16. Tên "Bộ sưu tập riêng" và nút Đặt hàng / Liên hệ — 09/11/2026 (PO)
+- Tên hiển thị: **Bộ sưu tập riêng** (menu, thư viện công cụ, hành trình, tiêu đề trang); dấu "?" cạnh tiêu đề nói mục đích: link riêng gửi đích danh một khách hoặc cho một nhu cầu cụ thể. Nguồn chữ: `src/modules/toolkit/domain/collection-names.ts`. Đường dẫn `/the-chao` giữ nguyên.
+- Trang khách `/b/[sendCode]`, `/g/[id]`, `/bst/...` đọc công tắc Đặt hàng / Liên hệ của nguồn `BROCHURE` (Đơn hàng › Cài đặt › Nút trên trang khách). Mặc định giữ như trước: Đặt hàng bật, Liên hệ tắt. Chi tiết: `public-b-sendcode.md` §6.

@@ -36,12 +36,12 @@ const LEAD_REASON_LABELS: Record<string, string> = {
 }
 
 const LEAD_SOURCE_LABELS: Record<string, string> = {
-  CATALOG_LINK: "Catalog",
+  CATALOG_LINK: "Bộ sưu tập chung",
   SHORT_LINK: "Mã QR / link rút gọn",
   LANDING: "Landing page",
   CHAT: "Trò chuyện",
   MANUAL: "Nhập tay",
-  BROCHURE: "Thẻ chào",
+  BROCHURE: "Bộ sưu tập riêng",
   CHANNEL: "Kênh bán ngoài",
 }
 

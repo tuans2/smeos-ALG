@@ -52,7 +52,7 @@ export default async function PublicGreetingCatalogPage({ params }: PageProps) {
   return (
     <>
       {data.shop && <ShopContactBar shop={data.shop} />}
-      <BrochurePublicView catalog={data.catalog} products={data.products} shipping={data.shipping} shop={data.shop} />
+      <BrochurePublicView catalog={data.catalog} products={data.products} shipping={data.shipping} shop={data.shop} entryActions={data.entryActions} />
     </>
   )
 }

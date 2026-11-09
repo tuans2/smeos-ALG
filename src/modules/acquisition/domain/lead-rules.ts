@@ -91,7 +91,7 @@ export function canTransitionLeadStatus(current: string, next: LeadStatus): bool
   return allowed ? allowed.includes(next) : false
 }
 
-export type LeadSource = "CATALOG_LINK" | "SHORT_LINK" | "LANDING" | "CHAT" | "MANUAL"
+export type LeadSource = "CATALOG_LINK" | "SHORT_LINK" | "LANDING" | "CHAT" | "MANUAL" | "BROCHURE"
 
 export interface LeadInput {
   name: string

@@ -4,6 +4,7 @@
  */
 
 import type { NavEntry, NavGroup, NavView } from "./nav-types"
+import { PRIVATE_COLLECTION, PUBLIC_COLLECTION } from "@/modules/toolkit/domain/collection-names"
 
 export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   // 1. TRUNG TÂM ĐIỀU HÀNH
@@ -44,21 +45,23 @@ export const INDUSTRY_NAV_ENTRIES: readonly NavEntry[] = [
   },
   {
     href: "/catalog",
-    label: "Catalog & QR",
+    label: PUBLIC_COLLECTION.name,
+    hint: PUBLIC_COLLECTION.hint,
     group: "cong-cu-ban-hang",
     iconKey: "QrCode",
     navKey: "industry-catalog",
     capability: "J1",
-    mobileLabel: "Catalog",
+    mobileLabel: PUBLIC_COLLECTION.mobileLabel,
   },
   {
     href: "/the-chao",
-    label: "Thẻ chào sản phẩm",
+    label: PRIVATE_COLLECTION.name,
+    hint: PRIVATE_COLLECTION.hint,
     group: "cong-cu-ban-hang",
     iconKey: "CreditCard",
     navKey: "industry-greeting-card",
     capability: "R1",
-    mobileLabel: "Thẻ chào",
+    mobileLabel: PRIVATE_COLLECTION.mobileLabel,
   },
   {
     href: "/market-intelligence",

@@ -115,14 +115,14 @@ describe("nav-model (Kiến trúc điều hướng SSOT)", () => {
     const taoMoiFashion = fashionEntries.find((e) => e.href === "/san-pham/tao-moi")
     const quetAnhFashion = fashionEntries.find((e) => e.href === "/tai-anh")
 
-    expect(theChaoFashion?.label).toBe("Thẻ chào & Bộ sưu tập Lookbook")
+    expect(theChaoFashion?.label).toBe("Bộ sưu tập riêng")
     expect(taoMoiFashion?.label).toBe("Thêm mẫu thiết kế")
     expect(quetAnhFashion?.label).toBe("Quét mẫu trang phục")
 
     // Ngành mặc định (FLORAL)
     const floralNav = buildNav(() => true, null, "FLORAL")
     const floralEntries = floralNav.groups.flatMap((g) => g.entries)
-    expect(floralEntries.find((e) => e.href === "/the-chao")?.label).toBe("Thẻ chào sản phẩm")
+    expect(floralEntries.find((e) => e.href === "/the-chao")?.label).toBe("Bộ sưu tập riêng")
   })
 
   it("9. Vai platform_admin → đủ 6 nhóm quản trị nền tảng (tong-quan, to-chuc-dich-vu, san-pham-kho-platform, ha-tang-tai-nguyen, do-tin-cay-bao-mat, thiet-lap-platform)", () => {

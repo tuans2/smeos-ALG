@@ -70,6 +70,7 @@
 | D-63 | Người nhận và VAT của đơn (07/11/2026) | **P-3 chia ba bước** (P-3a bảng + backfill + ghi kép, P-3b chuyển đọc, P-3c bỏ nơi cũ); **gồm cả thông tin hoá đơn VAT** — mọi dữ liệu cá nhân của đơn ở `order_recipients` | ADR-014 D-P2, bước P-3 (duyệt schema P-3a cùng ngày) |
 | D-64 | Chia sẻ đơn gia công (07/11/2026) | **Làm ngay** (P-4): quyền xem đơn của chi nhánh ở `shared_order_access`; chi nhánh làm đơn còn **7 ngày** sau khi đơn đóng; chi nhánh được mời **mất quyền ngay** khi hết vòng / chi nhánh khác nhận; tin mời Telegram/Zalo **chỉ ghi khu vực** | ADR-014 D-P6, bước P-4 |
 | D-65 | Mã hoá dữ liệu cá nhân (07/11/2026) | **Phạm vi A**: dữ liệu của khách cuối (khách, lead, link Thẻ chào, người nhận + VAT của đơn, SĐT shipper); **khoá chủ `PII_ENCRYPTION_KEY`** ở Render, người vận hành tạo và sao lưu; tìm khách theo **4 số cuối hoặc đủ số**; **chia 3 PR** (P-5a/b/c) | ADR-014 D-P3, bước P-5 |
+| D-66 | Catalog / Bộ sưu tập chung (09/11/2026) | **Gỡ đóng băng.** Catalog được sửa để hợp nhất hai loại bộ sưu tập (tên "Bộ sưu tập chung" / "Bộ sưu tập riêng", cùng công tắc Đặt hàng / Liên hệ, lead từ tin nhắn tư vấn) | Bỏ `catalog-freeze.test.ts` + manifest; giữ toàn bộ test hành vi Catalog (gồm hai test bản sao lược đồ route Catalog); tệp Catalog còn import barrel icon chuyển sang `icon-barrel-legacy.txt` (chỉ thu hẹp); nguyên tắc B5 vẫn áp dụng |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 
