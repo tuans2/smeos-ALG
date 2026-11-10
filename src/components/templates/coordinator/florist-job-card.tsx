@@ -15,6 +15,7 @@ import type { FlowerBomItem, FoliageBomItem, WrappingLayer, AccessoryBomItem, St
 import type { VisibleCustomField } from "@/components/coordinator/custom-fields-section"
 import { FloristJobBom, formatAddress, maskPhoneNumber } from "./florist-job-bom"
 import { FloristJobCardRecipient } from "./florist-job-card-recipient"
+import { DimensionPhotoFrame, AssemblyStepsPanel } from "./florist-job-card-spec"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { AVI_LOTUS_BRAND_VARS, AVI_LOTUS_LOGO } from "./avi-lotus-brand"
@@ -38,6 +39,10 @@ export interface FloristJobCardProps {
   recipientPhone?: string | undefined
   deliveryAddress?: StructuredAddress | string | unknown
   customFields?: VisibleCustomField[] | undefined
+  /** Kích thước thành phẩm ước tính (Product Master Index) — ẩn khi chưa đo, không bịa số. */
+  dimensions?: { heightCm: number; widthCm: number } | undefined
+  /** Các bước cắm tham khảo (Product Master Index) — ẩn khi chưa ai nhập, không bịa quy trình. */
+  assemblySteps?: string[] | undefined
   onConfirmAcceptance?: (suggestedFee: number) => void
   onCancelOrder?: () => void
   onPrint?: () => void
@@ -61,6 +66,8 @@ export function FloristJobCard({
   recipientPhone,
   deliveryAddress,
   customFields = [],
+  dimensions,
+  assemblySteps,
   onConfirmAcceptance,
   onCancelOrder,
   onPrint,
@@ -222,15 +229,7 @@ export function FloristJobCard({
                 <span className="text-caption font-normal text-[var(--avi-ink-muted)]">Giao: {deliveryTargetTime}</span>
               )}
             </span>
-            <div className="relative aspect-square w-full rounded-xl overflow-hidden border border-[var(--avi-ink-08)] bg-[var(--avi-cream)]">
-              {sampleImageUrl ? (
-                <img src={sampleImageUrl} alt={ti.sampleProduct} crossOrigin="anonymous" className="h-full w-full object-cover" />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center text-[var(--avi-ink-muted)] text-caption">
-                  Chưa có ảnh mẫu
-                </div>
-              )}
-            </div>
+            <DimensionPhotoFrame sampleImageUrl={sampleImageUrl} alt={ti.sampleProduct} dimensions={dimensions} />
 
             {/* Target Ready Time Badge */}
             <div className="p-2.5 rounded-xl bg-[var(--avi-brick-10)] border border-[var(--avi-brick-25)] flex items-center justify-between text-caption">
@@ -263,6 +262,8 @@ export function FloristJobCard({
         {/* Recipe & Details */}
         <div className="md:col-span-2 flex flex-col gap-4">
           <FloristJobBom flowers={flowers} foliage={foliage} wrapping={wrapping} accessories={accessories} />
+
+          {assemblySteps && assemblySteps.length > 0 && <AssemblyStepsPanel steps={assemblySteps} />}
 
           {/* Card Message */}
           {cardMessage && (
