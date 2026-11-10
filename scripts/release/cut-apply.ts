@@ -4,11 +4,27 @@ import { existsSync, mkdirSync, symlinkSync, unlinkSync, readFileSync, readdirSy
 import path from "node:path"
 
 import { rebuildBaselines } from "./cut-baselines"
+import { carryIgnores, parseGitleaksIgnore, renderGitleaksIgnore, type CarriedIgnores } from "./cut-gitleaks"
 import type { CutManifest, CutPlan } from "./cut-plan"
 import { renderCutRoutes, routesFile } from "./gen-phase-routes"
 import { tracePhase } from "./trace-phase"
 
 /** Thực hiện bản cắt trên cây đã giải nén (Bước 2.3 mục 3–7). Trả nội dung báo cáo. */
+/** `.gitleaksignore` của repo nguồn ở mốc cắt, đối chiếu với bản cắt (`cut-gitleaks.ts`). */
+function carryGitleaksIgnores(root: string, repo: string, ref: string): CarriedIgnores {
+  const show = (spec: string): string | null => {
+    try {
+      return execFileSync("git", ["show", spec], { cwd: repo, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }).toString()
+    } catch {
+      return null
+    }
+  }
+  const source = show(`${ref}:.gitleaksignore`)
+  if (!source) return { entries: [], dropped: [] }
+  const readCut = (file: string) => (existsSync(path.join(root, file)) ? readFileSync(path.join(root, file), "utf8") : null)
+  return carryIgnores(parseGitleaksIgnore(source), (commit, file) => show(`${commit}:${file}`), readCut)
+}
+
 function removeEmptyDirs(dir: string): void {
   for (const entry of readdirSync(dir)) {
     const full = path.join(dir, entry)
@@ -74,17 +90,23 @@ export function applyCut(root: string, phase: string, manifest: CutManifest, pla
     writeFileSync(target, content)
   }
 
+  const commit = (message: string) => {
+    execFileSync("git", ["add", "-A"], { cwd: root })
+    execFileSync("git", ["-c", "user.name=smeOS release", "-c", "user.email=release@invalid", "commit", "-q", "-m", message], { cwd: root })
+    return execFileSync("git", ["rev-parse", "HEAD"], { cwd: root }).toString().trim()
+  }
   execFileSync("git", ["init", "-q", "-b", "main"], { cwd: root })
-  execFileSync("git", ["add", "-A"], { cwd: root })
-  execFileSync(
-    "git",
-    ["-c", "user.name=smeOS release", "-c", "user.email=release@invalid", "commit", "-q", "-m", `chore: bản giao ${phase.toUpperCase()}`],
-    { cwd: root },
-  )
+  const first = commit(`chore: bản giao ${phase.toUpperCase()}`)
+  const gitleaks = carryGitleaksIgnores(root, repo, ref)
+  if (gitleaks.entries.length) {
+    // Dấu vân tay gitleaks gắn với commit chứa dòng bị báo, nên ghi ở commit thứ hai trỏ về commit đầu
+    writeFileSync(path.join(root, ".gitleaksignore"), renderGitleaksIgnore(first, gitleaks.entries))
+    commit("chore: mang sang báo nhầm gitleaks đã duyệt")
+  }
 
   const files = listFiles(root).sort()
   const sums = files.map((file) => `${createHash("sha256").update(readFileSync(path.join(root, file))).digest("hex")}  ${file}`)
-  return renderCutReport({ phase, ref, plan, baselines, regenerated, overlay: overlayFiles, files: files.length, sums })
+  return renderCutReport({ phase, ref, plan, baselines, regenerated, overlay: overlayFiles, gitleaks, files: files.length, sums })
 }
 
 interface ReportInput {
@@ -94,11 +116,12 @@ interface ReportInput {
   baselines: { file: string; removed: string[] }[]
   regenerated: string[]
   overlay: string[]
+  gitleaks: CarriedIgnores
   files: number
   sums: string[]
 }
 
-function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, files, sums }: ReportInput): string {
+function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, gitleaks, files, sums }: ReportInput): string {
   const byReason = new Map<string, number>()
   for (const removal of plan.removals) byReason.set(removal.reason, (byReason.get(removal.reason) ?? 0) + 1)
   const review = plan.droppedTests.filter((test) => test.touchesDelivered)
@@ -138,6 +161,11 @@ function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, fi
     "## Lớp phủ",
     "",
     ...(overlay.length ? overlay.map((file) => `- \`${file}\``) : ["Không có."]),
+    "",
+    "## Báo nhầm gitleaks mang sang",
+    "",
+    `Mang sang ${gitleaks.entries.length} dòng. Không mang sang (tệp không giao hoặc dòng đã đổi): ${gitleaks.dropped.length}.`,
+    ...gitleaks.dropped.map((entry) => `- \`${entry}\``),
     "",
     "## Phụ thuộc vào vùng không giao",
     "",
