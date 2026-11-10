@@ -10,7 +10,7 @@ import { dirname, join, resolve } from "node:path"
  */
 const ROOT = resolve(__dirname, "../../..")
 /** Nợ có sẵn trên `main`, ngoài phạm vi chat (`[PROD]`): sửa xong thì xoá khỏi đây — test bên dưới sẽ nhắc. */
-const KNOWN_BROKEN = new Set(["nap:phan-tich"])
+const KNOWN_BROKEN = new Set<string>()
 const IMPORT_RE = /^\s*(?:import|export)\s+(?!type\b)(?:[^"';]*?\sfrom\s+)?["']([^"']+)["']/gm
 
 function resolveLocal(fromFile: string, spec: string): string | null {
