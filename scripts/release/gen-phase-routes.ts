@@ -52,7 +52,12 @@ function moduleRows(trace: PhaseTrace): string[] {
     .map(([name, all]) => `| \`${name}\` | ${kept.get(name) ?? 0}/${all} |`)
 }
 
-export function renderReport(phase: string, trace: PhaseTrace, accepted: ReadonlySet<string>): string {
+export function renderReport(
+  phase: string,
+  trace: PhaseTrace,
+  accepted: ReadonlySet<string>,
+  gated: ReadonlySet<string> = new Set(),
+): string {
   const violations = trace.violations.map((v) => {
     const key = `${v.from} → ${v.to}`
     return `| \`${v.from}\` | \`${v.to}\` | ${accepted.has(key) ? "Đã ghi nhận, xử lý ở Bước 4" : "**Mới — phải xử lý**"} |`
@@ -77,10 +82,14 @@ export function renderReport(phase: string, trace: PhaseTrace, accepted: Readonl
     "",
     "## Liên kết tới trang không giao",
     "",
-    "Đường dẫn viết cứng trong mã được giao; bật chế độ giai đoạn hoặc trong bản cắt, người dùng bấm vào sẽ gặp trang 404. Xử lý ở Bước 4.",
+    "Đường dẫn viết cứng trong mã được giao. Nút hoặc khối dẫn tới đó phải ẩn khi trang không thuộc giai đoạn (`isHrefInPhase`), " +
+      "nếu không người dùng bấm vào sẽ gặp trang 404 khi bật chế độ giai đoạn hoặc trong bản cắt.",
     "",
     trace.deadLinks.length
-      ? "| Từ | Tới |\n|---|---|\n" + trace.deadLinks.map((l) => `| \`${l.from}\` | \`${l.to}\` |`).join("\n")
+      ? "| Từ | Tới | Trạng thái |\n|---|---|---|\n" +
+        trace.deadLinks
+          .map((l) => `| \`${l.from}\` | \`${l.to}\` | ${gated.has(`${l.from} → ${l.to}`) ? "Ẩn khi không thuộc giai đoạn" : "**Mới — phải xử lý**"} |`)
+          .join("\n")
       : "Không có.",
     "",
     "## Mô-đun bị cắt giữa chừng",
@@ -100,4 +109,8 @@ export function renderReport(phase: string, trace: PhaseTrace, accepted: Readonl
 
 export function acceptedViolations(manifest: PhaseManifest): Set<string> {
   return new Set(manifest.acceptedViolations.flatMap((group) => group.items))
+}
+
+export function gatedLinks(manifest: PhaseManifest): Set<string> {
+  return new Set((manifest.gatedLinks ?? []).flatMap((group) => group.items))
 }

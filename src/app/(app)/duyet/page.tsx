@@ -25,6 +25,7 @@ import {
   type PendingProductCopy,
 } from "./approval-tab-panels"
 import { PageHeader } from "@/components/ui/page-header"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 export default function DuyetPage() {
   const { t } = useI18n()
@@ -286,7 +287,7 @@ export default function DuyetPage() {
             optimizations={optimizations}
             dangDuyet={dangDuyet}
             onApprove={duyetToiUu}
-            onNavigateStudio={() => router.push("/creative-studio" as never)}
+            onNavigateStudio={isHrefInPhase("/creative-studio") ? () => router.push("/creative-studio" as never) : undefined}
           />
         )}
 

@@ -1,14 +1,14 @@
 import { readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 
-import { acceptedViolations, loadManifest, renderReport, renderRoutes, reportFile, routesFile } from "./gen-phase-routes"
+import { acceptedViolations, gatedLinks, loadManifest, renderReport, renderRoutes, reportFile, routesFile } from "./gen-phase-routes"
 import { tracePhase } from "./trace-phase"
 
 /**
  * Ghi lại danh sách route và báo cáo phụ thuộc của một giai đoạn bàn giao.
  *
  *   npm run release:routes            # ghi lại hai tệp (mặc định gd1)
- *   npm run release:routes -- --check # báo lỗi nếu tệp đã cũ hoặc có phụ thuộc mới vào vùng không giao (CI)
+ *   npm run release:routes -- --check # báo lỗi nếu tệp đã cũ, có phụ thuộc mới vào vùng không giao, hoặc liên kết chết chưa ẩn (CI)
  */
 const ROOT = process.cwd()
 
@@ -18,9 +18,10 @@ function main(): void {
   const manifest = loadManifest(ROOT, phase)
   const trace = tracePhase(ROOT, manifest)
   const accepted = acceptedViolations(manifest)
+  const gated = gatedLinks(manifest)
   const outputs = [
     [routesFile(phase), renderRoutes(phase, trace)],
-    [reportFile(phase), renderReport(phase, trace, accepted)],
+    [reportFile(phase), renderReport(phase, trace, accepted, gated)],
   ] as const
   const stale = outputs.filter(([file, content]) => {
     try {
@@ -30,14 +31,17 @@ function main(): void {
     }
   })
   const fresh = trace.violations.filter((v) => !accepted.has(`${v.from} → ${v.to}`))
+  const ungated = trace.deadLinks.filter((l) => !gated.has(`${l.from} → ${l.to}`))
   if (check) {
     for (const [file] of stale) console.error(`[release:routes] ${file} đã cũ — chạy npm run release:routes`)
     for (const v of fresh) console.error(`[release:routes] phụ thuộc vùng không giao: ${v.from} → ${v.to}`)
-    process.exit(stale.length || fresh.length ? 1 : 0)
+    for (const l of ungated) console.error(`[release:routes] liên kết tới trang không giao chưa ẩn: ${l.from} → ${l.to}`)
+    process.exit(stale.length || fresh.length || ungated.length ? 1 : 0)
   }
   for (const [file, content] of outputs) writeFileSync(path.join(ROOT, file), content)
   console.log(`[release:routes] ${phase}: ${trace.pages.length} trang, ${trace.apis.length} API, ${trace.files.length} tệp`)
   for (const v of fresh) console.warn(`[release:routes] phụ thuộc mới chưa ghi nhận: ${v.from} → ${v.to}`)
+  for (const l of ungated) console.warn(`[release:routes] liên kết tới trang không giao chưa ẩn: ${l.from} → ${l.to}`)
 }
 
 main()

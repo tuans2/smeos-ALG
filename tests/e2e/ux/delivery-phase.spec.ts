@@ -58,4 +58,17 @@ test.describe("Chế độ giai đoạn bàn giao", () => {
     }
     expect(phaseRoutes(phase!).pages).toContain("/don-hang")
   })
+
+  test("thanh dưới trên điện thoại không còn mục dẫn tới trang ngoài phạm vi", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await createTestUserAndLogin(page)
+    await page.goto("/")
+    const bottomNav = page.getByRole("navigation", { name: "Điều hướng nhanh" })
+    await expect(bottomNav).toBeVisible()
+    const hrefs = await bottomNav.locator("a[href^='/']").evaluateAll((links) => links.map((a) => a.getAttribute("href") ?? ""))
+    expect(hrefs.length).toBeGreaterThan(0)
+    expect(hrefs.filter((href) => !isHrefInPhase(href, phase))).toEqual([])
+    // Trang /them không giao: mục "Thêm" ẩn, menu đầy đủ mở bằng nút ☰
+    if (!isHrefInPhase("/them", phase)) await expect(bottomNav.getByRole("link", { name: "Thêm" })).toHaveCount(0)
+  })
 })

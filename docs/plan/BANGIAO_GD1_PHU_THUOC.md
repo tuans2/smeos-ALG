@@ -8,37 +8,31 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 |---|---:|---:|
 | Trang | 90 | 26 |
 | API | 475 | 61 |
-| Tệp trong `src/` | 3502 | 656 |
+| Tệp trong `src/` | 3501 | 657 |
 
 ## Code trong phạm vi chạm vùng không giao
 
 | Từ | Tới | Trạng thái |
 |---|---|---|
 | `src/app/api/v1/_contracts/requests-tools.ts` | `/api/v1/proxy/[...path]` | Đã ghi nhận, xử lý ở Bước 4 |
-| `src/components/dashboard/marketing-workspace.tsx` | `/api/v1/proxy/[...path]` | Đã ghi nhận, xử lý ở Bước 4 |
 
 ## Liên kết tới trang không giao
 
-Đường dẫn viết cứng trong mã được giao; bật chế độ giai đoạn hoặc trong bản cắt, người dùng bấm vào sẽ gặp trang 404. Xử lý ở Bước 4.
+Đường dẫn viết cứng trong mã được giao. Nút hoặc khối dẫn tới đó phải ẩn khi trang không thuộc giai đoạn (`isHrefInPhase`), nếu không người dùng bấm vào sẽ gặp trang 404 khi bật chế độ giai đoạn hoặc trong bản cắt.
 
-| Từ | Tới |
-|---|---|
-| `src/app/(app)/duyet/page.tsx` | `/creative-studio` |
-| `src/app/(app)/tai-anh/page.tsx` | `/creative-studio` |
-| `src/components/catalog/share-catalog-modal.tsx` | `/noi-dung` |
-| `src/components/dashboard/crm-toolkit-grid.tsx` | `/hoi-thoai` |
-| `src/components/dashboard/crm-workspace.tsx` | `/hoi-thoai` |
-| `src/components/dashboard/customer-service-workspace.tsx` | `/hoi-thoai` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/creative-studio` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/lich-dang` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/market-intelligence` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/noi-dung` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/video` |
-| `src/components/dashboard/store-growth-center.tsx` | `/creative-studio` |
-| `src/components/dashboard/store-growth-center.tsx` | `/market-intelligence` |
-| `src/components/layout/bottom-nav.tsx` | `/them` |
-| `src/components/organization/ai-channels-settings-tab.tsx` | `/ket-noi` |
-| `src/components/products/one-image-kit-dialog.tsx` | `/in-an` |
+| Từ | Tới | Trạng thái |
+|---|---|---|
+| `src/app/(app)/duyet/page.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
+| `src/app/(app)/tai-anh/page.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
+| `src/components/catalog/share-catalog-modal.tsx` | `/noi-dung` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/crm-toolkit-grid.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/crm-workspace.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/customer-service-workspace.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/store-growth-center.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/store-growth-center.tsx` | `/market-intelligence` | Ẩn khi không thuộc giai đoạn |
+| `src/components/layout/bottom-nav.tsx` | `/them` | Ẩn khi không thuộc giai đoạn |
+| `src/components/organization/ai-channels-settings-tab.tsx` | `/ket-noi` | Ẩn khi không thuộc giai đoạn |
+| `src/components/products/one-image-kit-dialog.tsx` | `/in-an` | Ẩn khi không thuộc giai đoạn |
 
 ## Mô-đun bị cắt giữa chừng
 

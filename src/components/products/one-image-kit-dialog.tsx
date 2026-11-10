@@ -10,6 +10,7 @@ import { ImagePlus } from "@/components/ui/icon-set/image-plus"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import { uploadImageFile } from "./ai-product-helpers"
 import { KIT_STEP_LABEL, kitOutputCount, type KitResult } from "@/modules/journey/domain/one-image-kit"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 const API = "/api/v1/products/one-image-kit"
 const POLL_MS = 3000
@@ -134,7 +135,7 @@ export function OneImageKitDialog({ open, onOpenChange }: { open: boolean; onOpe
                   <p className="whitespace-pre-line">{p.text}</p>
                 </li>
               ))}
-              {out.printRenditionId && <li><Link className="underline" href={"/in-an" as Route}>Thẻ A6 trong mục In ấn</Link></li>}
+              {out.printRenditionId && isHrefInPhase("/in-an") && <li><Link className="underline" href={"/in-an" as Route}>Thẻ A6 trong mục In ấn</Link></li>}
             </ul>
             {result.status === "FAILED" && <Button type="button" variant="outline" onClick={() => void run()}>Chạy lại bước còn thiếu</Button>}
           </div>

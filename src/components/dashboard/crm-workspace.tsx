@@ -24,6 +24,7 @@ import {
 import type { CustomerMasterIndex } from "@/modules/crm/domain/customer-master-index"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import { PageHeader } from "@/components/ui/page-header"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 class ChuaDangNhap extends Error {}
 
@@ -165,7 +166,7 @@ export function CrmWorkspace() {
               Chăm sóc theo dịp
             </Button>
           )}
-          {can("T1") && (
+          {can("T1") && isHrefInPhase("/hoi-thoai") && (
             <Button size="sm" variant="outline" onClick={() => router.push("/hoi-thoai" as Route)}>
               <MessageSquare size={16} aria-hidden="true" />
               Hội thoại tư vấn

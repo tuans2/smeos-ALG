@@ -15,6 +15,7 @@ import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { mobileSecondSlot, NAV_ENTRIES, type NavEntry } from "./nav-model"
 import { NAV_ICONS as ICONS } from "./nav-icons"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 export function BottomNav() {
   const pathname = usePathname()
@@ -146,8 +147,8 @@ export function BottomNav() {
         })()
       )}
 
-      {/* 5. Thêm */}
-      {(() => {
+      {/* 5. Thêm — trang /them không thuộc giai đoạn bàn giao thì ẩn; menu đầy đủ vẫn mở bằng nút ☰ */}
+      {isHrefInPhase("/them") && (() => {
         const isThemActive = pathname === "/them" || pathname.startsWith("/them/")
         return (
           <Link

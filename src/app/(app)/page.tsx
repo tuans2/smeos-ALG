@@ -23,7 +23,10 @@ import { cookies } from "next/headers"
 import { ExperienceGrid } from "@/components/dashboard/experience-grid"
 import { SalesWorkspace } from "@/components/dashboard/sales-workspace"
 import { ProductManagerWorkspace } from "@/components/dashboard/product-manager-workspace"
+// @release-strip — trang Tiếp thị chỉ dẫn tới công cụ không giao (Sáng tạo, Nội dung, Video, Lịch đăng) và gọi proxy SocialFlow
 import { MarketingWorkspace } from "@/components/dashboard/marketing-workspace"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
+// @release-strip-end
 import { CrmWorkspace } from "@/components/dashboard/crm-workspace"
 import { CustomerServiceWorkspace } from "@/components/dashboard/customer-service-workspace"
 import { StoreGrowthCenter } from "@/components/dashboard/store-growth-center"
@@ -77,8 +80,12 @@ export default async function DashboardPage() {
       return <SalesWorkspace />
     case "PRODUCT_WORKSPACE":
       return <ProductManagerWorkspace />
+    // @release-strip
     case "CREATIVE_WORKSPACE":
-      return <MarketingWorkspace />
+      // Mọi lối đi của trang Tiếp thị dẫn tới công cụ ngoài giai đoạn bàn giao → dùng trang chủ cửa hàng (nhánh mặc định)
+      if (isHrefInPhase("/creative-studio")) return <MarketingWorkspace />
+      return <StoreJourneyHome />
+    // @release-strip-end
     case "CRM_WORKSPACE":
       return <CrmWorkspace />
     case "CUSTOMER_SERVICE_WORKSPACE":

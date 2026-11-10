@@ -2153,15 +2153,27 @@
   },
   "acceptedViolations": [
     {
-      "reason": "Khối bài đăng ở trang chủ còn gọi proxy SocialFlow — Bước 4 chuyển sang mô-đun social-publishing hoặc bỏ khối",
-      "items": [
-        "src/components/dashboard/marketing-workspace.tsx → /api/v1/proxy/[...path]"
-      ]
-    },
-    {
       "reason": "Lược đồ OpenAPI nội bộ (main, PR #16) nhắc route proxy trong chú thích — không phải phụ thuộc lúc chạy; bản cắt lọc operation theo route còn lại (isKnownApiRoute)",
       "items": [
         "src/app/api/v1/_contracts/requests-tools.ts → /api/v1/proxy/[...path]"
+      ]
+    }
+  ],
+  "gatedLinks": [
+    {
+      "reason": "Nút hoặc khối dẫn tới trang không giao ẩn khi trang không thuộc giai đoạn (isHrefInPhase); smeOS không bật giai đoạn thì giữ nguyên. Trang Tiếp thị rơi về trang chủ cửa hàng và bị bỏ khỏi bản cắt (@release-strip).",
+      "items": [
+        "src/app/(app)/duyet/page.tsx → /creative-studio",
+        "src/app/(app)/tai-anh/page.tsx → /creative-studio",
+        "src/components/catalog/share-catalog-modal.tsx → /noi-dung",
+        "src/components/dashboard/crm-toolkit-grid.tsx → /hoi-thoai",
+        "src/components/dashboard/crm-workspace.tsx → /hoi-thoai",
+        "src/components/dashboard/customer-service-workspace.tsx → /hoi-thoai",
+        "src/components/dashboard/store-growth-center.tsx → /creative-studio",
+        "src/components/dashboard/store-growth-center.tsx → /market-intelligence",
+        "src/components/layout/bottom-nav.tsx → /them",
+        "src/components/organization/ai-channels-settings-tab.tsx → /ket-noi",
+        "src/components/products/one-image-kit-dialog.tsx → /in-an"
       ]
     }
   ],

@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   acceptedViolations,
+  gatedLinks,
   loadManifest,
   renderCutRoutes,
   renderReport,
@@ -72,7 +73,7 @@ describe("phạm vi gd1 dò từ code hiện tại", () => {
 
   it("danh sách route và báo cáo phụ thuộc đã sinh lại (npm run release:routes)", () => {
     expect(readFileSync(path.join(root, routesFile("gd1")), "utf8")).toBe(renderRoutes("gd1", trace))
-    expect(readFileSync(path.join(root, reportFile("gd1")), "utf8")).toBe(renderReport("gd1", trace, acceptedViolations(manifest)))
+    expect(readFileSync(path.join(root, reportFile("gd1")), "utf8")).toBe(renderReport("gd1", trace, acceptedViolations(manifest), gatedLinks(manifest)))
   })
 
   it("bản cắt gắn sẵn giai đoạn, chặn trang đã cắt, API lấy theo route còn trên đĩa bản cắt", () => {
@@ -89,6 +90,15 @@ describe("phạm vi gd1 dò từ code hiện tại", () => {
   it("không có phụ thuộc mới vào vùng không giao", () => {
     const accepted = acceptedViolations(manifest)
     expect(trace.violations.map((v) => `${v.from} → ${v.to}`).filter((key) => !accepted.has(key))).toEqual([])
+  })
+
+  it("mọi liên kết tới trang không giao đều đã ẩn theo giai đoạn, và tệp đó thật sự kiểm `isHrefInPhase`", () => {
+    const gated = gatedLinks(manifest)
+    expect(trace.deadLinks.map((l) => `${l.from} → ${l.to}`).filter((key) => !gated.has(key))).toEqual([])
+    const current = new Set(trace.deadLinks.map((l) => `${l.from} → ${l.to}`))
+    expect([...gated].filter((key) => !current.has(key))).toEqual([])
+    const files = new Set(trace.deadLinks.map((l) => l.from))
+    expect([...files].filter((file) => !readFileSync(path.join(root, file), "utf8").includes("isHrefInPhase("))).toEqual([])
   })
 
   it("phụ thuộc đã ghi nhận vẫn còn thật — hết thì xoá khỏi manifest", () => {

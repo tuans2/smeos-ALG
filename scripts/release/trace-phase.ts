@@ -20,6 +20,8 @@ export interface PhaseManifest {
   registryFiles: { files: string[] }
   /** Phụ thuộc vào vùng không giao đã được ghi nhận, dạng `từ → tới`. */
   acceptedViolations: { items: string[] }[]
+  /** Liên kết viết cứng tới trang không giao đã được ẩn khi không thuộc giai đoạn (`isHrefInPhase`), dạng `từ → tới`. */
+  gatedLinks?: { items: string[] }[]
 }
 
 export interface Violation {

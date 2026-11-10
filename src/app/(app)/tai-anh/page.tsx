@@ -32,6 +32,7 @@ import {
 } from "@/components/templates/product-analysis"
 import type { Route } from "next"
 import { PageHeader } from "@/components/ui/page-header"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 // ============================================================
 // API HELPERS
@@ -829,8 +830,7 @@ export default function TaiAnhPage() {
       || "Sản phẩm"
     // Chặn cứng (nợ #118, 22/09/2026): ảnh chưa lưu vào kho (`assets`) thì
     // không có gì để bàn giao an toàn sang Creative Studio — cùng luật với
-    // Chặng 05 CHOOSE ở `/thi-truong` (`CreativeHandoffModal`). KHÔNG còn
-    // truyền `imageUrl` qua query string — Creative Studio tự resolve ảnh
+    // Chặng 05 CHOOSE ở `/thi-truong` (`CreativeHandoffModal`). KHÔNG còn truyền `imageUrl` qua query string — Creative Studio tự resolve ảnh
     // qua `GET /api/v1/assets/:id/view-url` bằng `assetId`.
     const assetId = (analysisData?.["asset_id"] as string) || selectedAssetIds[0]
     if (!assetId) {
@@ -1233,7 +1233,7 @@ export default function TaiAnhPage() {
               </div>
             )}
 
-            {approvalState === "APPROVED" && (
+            {approvalState === "APPROVED" && isHrefInPhase("/creative-studio") && (
               <div className="w-full max-w-3xl border-t border-border pt-5">
                 <div className="flex items-center justify-between rounded-xl bg-success-bg border border-success/30 p-4">
                   <div>
@@ -1340,9 +1340,9 @@ export default function TaiAnhPage() {
               <Button variant="secondary" onClick={() => setPhase("upload")}>
                 Phân tích ảnh khác
               </Button>
-              <Button onClick={handleGoCreativeStudio}>
+              {isHrefInPhase("/creative-studio") && <Button onClick={handleGoCreativeStudio}>
                 Tới Creative Studio
-              </Button>
+              </Button>}
               <Button onClick={() => router.push("/")}>Quay về Trang chủ</Button>
             </div>
           </div>
