@@ -3,12 +3,12 @@ import type { OpsKnowledgeNode } from "./schema"
 export const NODE_03_THE_CHAO: OpsKnowledgeNode = {
   id: "node-03-the-chao",
   moduleIndex: 3,
-  moduleTitle: "Chức năng 03: Thẻ Chào Sản Phẩm",
+  moduleTitle: "Bộ sưu tập riêng",
   topicTitle: "Brochure Sản Phẩm Trực Tuyến & Cọc Tiền VietQR Tự Động",
   routePath: "/the-chao",
   targetRoles: ["ALL", "QUAN_LY", "BAN_HANG"],
   keywords: [
-    "thẻ chào", "tạo thẻ", "bộ sưu tập", "tạo bộ sưu tập", "thẻ bộ sưu tập", "bộ sưu tập mẫu",
+    "thẻ chào", "bộ sưu tập riêng", "tạo thẻ", "bộ sưu tập", "tạo bộ sưu tập", "thẻ bộ sưu tập", "bộ sưu tập mẫu",
     "thẻ", "thẻ mẫu", "thẻ chào mẫu", "thẻ chào sản phẩm", "brochure", "link chào", "link đặt hàng",
     "link bộ sưu tập", "gửi zalo", "vietqr", "cọc tiền", "đặt cọc", "phễu cọc", "gửi nhanh",
     "quản lý", "hộp việc", "gán thợ", "tạo link", "ảnh bill", "ảnh chuyển khoản",
@@ -19,13 +19,13 @@ export const NODE_03_THE_CHAO: OpsKnowledgeNode = {
   stepByStepSOP: [
     {
       stepNumber: 1,
-      actionText: "Vào mục 'Thẻ chào': Mở ở menu bên trái, sau đó bấm nút 'Gửi nhanh' ở góc trên",
+      actionText: "Vào mục 'Bộ sưu tập riêng': Mở ở menu bên trái, sau đó bấm nút 'Gửi nhanh' ở góc trên",
       expectedResult: "Màn hình mở giao diện tạo link di động gửi khách",
     },
     {
       stepNumber: 2,
       actionText: "Bước 1 - Chọn bộ sưu tập: Chọn dịp hoa (Sinh nhật, Khai trương...) và chọn các sản phẩm ưng ý",
-      expectedResult: "Danh sách sản phẩm được thêm vào thẻ chào gửi khách",
+      expectedResult: "Danh sách sản phẩm được thêm vào bộ sưu tập riêng gửi khách",
     },
     {
       stepNumber: 3,
@@ -52,9 +52,9 @@ export const NODE_03_THE_CHAO: OpsKnowledgeNode = {
     "Mặc định shipper không thu tiền mặt: khách chuyển khoản phần còn lại, tiệm xác nhận tiền xong mới giao. Muốn shipper thu tiền mặt khi giao thì bật 'Cho phép shipper thu tiền mặt phần còn lại' ở Hồ sơ cửa hàng.",
     "Điều phối từ chối nhận đơn mà Điều hành chưa duyệt kịp hạn thì đơn tự huỷ và báo khách, nhưng tiền không tự chuyển: Hộp việc của Điều hành hiện 'Đơn tự huỷ — cần hoàn …đ cho khách'. Chuyển khoản hoàn xong thì bấm 'Đã hoàn tiền cho khách' để ghi sổ.",
   ],
-  actionLabel: "Mở Bảng Thẻ Chào Sản Phẩm",
+  actionLabel: "Mở Bộ sưu tập riêng",
   quickPrompts: [
-    "Cách tạo link Thẻ chào gửi Zalo cho khách chọn hoa?",
+    "Cách tạo link Bộ sưu tập riêng gửi Zalo cho khách chọn hoa?",
     "Khách quét mã VietQR đặt cọc tự động như thế nào?",
     "Xem thông báo đơn cọc mới ở đâu?",
     "Đơn tự huỷ cần hoàn tiền thì xử lý thế nào?",

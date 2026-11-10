@@ -217,11 +217,11 @@ export const KNOWLEDGE_MODULES: ModuleKnowledgeSpec[] = [
   {
     id: "the_chao_mau_hoa",
     code: "THẺ CHÀO",
-    title: "Thẻ Chào Mẫu Hoa, Bán Hàng Đa Kênh & Theo Dõi Tiến Độ",
-    badgeLabel: "THẺ CHÀO MẪU HOA 9 BƯỚC",
+    title: "Bộ sưu tập riêng: bán hàng đa kênh & theo dõi tiến độ",
+    badgeLabel: "QUY TRÌNH 9 BƯỚC",
     summary: "Quy trình gửi link bộ sưu tập cho khách lướt chọn mẫu hoa, tự động tạo đơn, thanh toán chuyển khoản VietQR, nghiệm thu ảnh 10 phút và theo dõi tiến độ.",
     routePath: "/the-chao",
-    actionButtonLabel: "Mở Phân Hệ Thẻ Chào Mẫu Hoa",
+    actionButtonLabel: "Mở Bộ sưu tập riêng",
     atomicFields: [
       { name: "Bộ sưu tập nguồn", dataType: "Select", required: true, description: "Bộ sưu tập mẫu hoa gửi khách", example: "Bộ sưu tập Hoa Sinh Nhật Mùa Thu" },
       { name: "Mã nhân viên phụ trách", dataType: "Text", required: true, description: "Mã nhân viên sale gửi link để ghi nhận hoa hồng", example: "NV-SALE-02" },
@@ -237,6 +237,6 @@ export const KNOWLEDGE_MODULES: ModuleKnowledgeSpec[] = [
       "⚡ Bấm vào thẻ đơn hàng trên Kanban để xem toàn bộ thông tin người nhận, lời chúc thiệp",
       "📜 Trích xuất Lịch sử đơn hàng để gửi bằng chứng đối soát minh bạch cho khách khi có tranh chấp",
     ],
-    copilotPrompt: "Hướng dẫn toàn bộ quy trình Thẻ Chào mẫu hoa cho Điều hành, Sale và Điều phối?",
+    copilotPrompt: "Hướng dẫn toàn bộ quy trình Bộ sưu tập riêng cho Điều hành, Sale và Điều phối?",
   },
 ]

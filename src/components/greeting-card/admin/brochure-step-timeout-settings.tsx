@@ -65,7 +65,7 @@ export function BrochureStepTimeoutSettings() {
       </div>
 
       <p className="text-caption text-text-muted leading-relaxed">
-        Thiết lập thời gian tối đa cho khách hàng thao tác tại từng chặng. Khi quá thời hạn, hệ thống sẽ tự động hủy kích hoạt link hoặc hủy đơn và hiển thị rõ lý do trên trang Theo dõi tiến độ. Từng Thẻ Chào có thể tùy biến lại các thông số này.
+        Thiết lập thời gian tối đa cho khách hàng thao tác tại từng chặng. Khi quá thời hạn, hệ thống sẽ tự động hủy kích hoạt link hoặc hủy đơn và hiển thị rõ lý do trên trang Theo dõi tiến độ. Từng bộ sưu tập riêng có thể tùy biến lại các thông số này.
       </p>
 
       {savedPolicy === null ? (

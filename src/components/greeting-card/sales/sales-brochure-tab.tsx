@@ -88,7 +88,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
             <RefreshCw size={14} aria-hidden="true" /> Làm mới
           </Button>
           <Button type="button" size="sm" onClick={() => setIsModalOpen(true)} className="h-9 gap-1.5 bg-primary text-body-sm font-bold text-white hover:bg-primary-dark">
-            <Plus size={16} aria-hidden="true" /> Tạo Thẻ Chào Mới
+            <Plus size={16} aria-hidden="true" /> Tạo link mới
           </Button>
         </div>
       </div>
@@ -154,7 +154,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
       ) : shown.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border p-8 text-center text-body-sm text-text-muted flex flex-col items-center gap-2">
           <p>
-            {term ? `Không tìm thấy đơn hoặc link nào phù hợp với "${search.trim()}".` : bucket ? "Không có khách nào trong mục này." : "Chưa có khách nào đang theo dõi. Tạo Thẻ Chào Mới để gửi khách."}
+            {term ? `Không tìm thấy đơn hoặc link nào phù hợp với "${search.trim()}".` : bucket ? "Không có khách nào trong mục này." : "Chưa có khách nào đang theo dõi. Tạo link mới để gửi khách."}
           </p>
           {term && scope === "MINE" && canSeeAll && work.items.some(matchesSearch) && (
             <Button

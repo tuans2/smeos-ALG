@@ -18,6 +18,35 @@ export interface CapabilityGrant {
  * an toàn có chủ đích, không phải thiếu sót; xem `docs/dac-ta/TECHNICAL_DEBT.md`
  * nếu sản phẩm cần một khái niệm "trần theo cấp bậc" cho vai riêng sau này.
  */
+/**
+ * Sàn của vai Điều hành (audit API §30): `F1` (xem tổ chức, danh sách vai) và `F5` (sửa vai) không tắt được trên vai
+ * `dieu_hanh`. Thiếu sàn này Điều hành tự bỏ `F5` khỏi vai của mình rồi không bật lại được — tổ chức chỉ có tài khoản
+ * Điều hành mất hẳn quyền chỉnh vai. Còn `F5` thì mọi mã khác đều bật lại được.
+ */
+export const OWNER_ROLE_FLOOR: Readonly<Record<string, readonly string[]>> = { dieu_hanh: ["F1", "F5"] }
+
+/**
+ * Áp sàn LÚC TÍNH QUYỀN (PO duyệt 09/11/2026, audit API §34): vai trong `OWNER_ROLE_FLOOR` luôn có các mã sàn, kể cả
+ * khi `capability_overrides` đang tắt chúng — mở lại cho tổ chức đã tự khoá trước khi lệnh ghi bị chặn (§30). Gọi sau
+ * `mergeOverrides`, trước `applyHardCap`; phạm vi giữ theo lớp một nếu có, không thì `ORGANIZATION`.
+ */
+export function applyRoleFloor(
+  roleKey: string,
+  merged: ReadonlyMap<string, CapabilityScope>,
+  base: ReadonlyMap<string, CapabilityScope>
+): Map<string, CapabilityScope> {
+  const out = new Map(merged)
+  for (const code of OWNER_ROLE_FLOOR[roleKey] ?? []) {
+    if (!out.has(code)) out.set(code, base.get(code) ?? "ORGANIZATION")
+  }
+  return out
+}
+
+/** `true` khi tắt `code` trên vai `roleKey` sẽ xuyên sàn. */
+export function breaksRoleFloor(code: string, roleKey: string): boolean {
+  return OWNER_ROLE_FLOOR[roleKey]?.includes(code) ?? false
+}
+
 export function passesHardCap(code: string, roleKey: string): boolean {
   const cap = hardCapOf(code)
   if (!cap) return true

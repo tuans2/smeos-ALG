@@ -1,12 +1,12 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { createInternalConversationBody, openInternalRoomBody } from "@/app/api/v1/_contracts/requests-chat"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { isAllowedChatTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { getChatLinkPolicy } from "@/modules/internal-chat/infra/prisma-chat-link-policy"
-import { CLIENT_CREATABLE_CONVERSATION_TYPES } from "@/modules/internal-chat/domain/chat-limits"
 import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { ListUserConversationsUseCase } from "@/modules/internal-chat/use-cases/list-user-conversations"
 import { CreateOrGetConversationUseCase } from "@/modules/internal-chat/use-cases/create-or-get-conversation"
@@ -15,21 +15,6 @@ import { PrismaPartnerOrderStats } from "@/modules/internal-chat/infra/prisma-pa
 import { PrismaChatRoomDirectory } from "@/modules/internal-chat/infra/prisma-chat-room-directory"
 import { INTERNAL_CHAT_CAPABILITY } from "@/modules/internal-chat/domain/chat-capabilities"
 
-/** Nút "Nhắn tin": mở phòng của đúng một cặp (chuỗi ↔ cửa hàng đối tác, hoặc chi nhánh nội bộ) — IC-2.6. */
-const openRoomSchema = z.union([
-  z.object({ partnerOrgId: z.string().uuid() }).strict(),
-  z.object({ chainOrgId: z.string().uuid() }).strict(),
-  z.object({ branchId: z.string().uuid() }).strict(),
-])
-
-const createConversationSchema = z.object({
-  // `PLATFORM_TENANT` (Nền tảng ↔ khách) không cho client tự tạo
-  conversationType: z.enum(CLIENT_CREATABLE_CONVERSATION_TYPES),
-  title: z.string().trim().max(200).optional(),
-  targetOrganizationId: z.string().uuid().optional(),
-  targetUserId: z.string().uuid().optional(),
-  orderId: z.string().uuid().optional(),
-})
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -70,7 +55,7 @@ export const POST = handle(async (request) => {
   requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
   const body = await request.json().catch(() => null)
 
-  const room = openRoomSchema.safeParse(body)
+  const room = openInternalRoomBody.safeParse(body)
   if (room.success) {
     const chatRepo = getInternalChatRepository()
     const conversation = await openRoom(
@@ -81,7 +66,7 @@ export const POST = handle(async (request) => {
     return jsonResponse({ success: true, data: conversation })
   }
 
-  const parsed = createConversationSchema.safeParse(body)
+  const parsed = createInternalConversationBody.safeParse(body)
 
   if (!parsed.success) {
     const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")

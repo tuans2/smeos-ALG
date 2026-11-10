@@ -33,8 +33,8 @@ export const TRASH_TYPE_LABEL: Readonly<Record<TrashItemType, string>> = {
   PRODUCT: "Sản phẩm",
   VIDEO: "Video",
   CONTENT: "Nội dung",
-  CATALOG: "Catalog",
-  GREETING_CATALOG: "Thẻ chào",
+  CATALOG: "Bộ sưu tập chung",
+  GREETING_CATALOG: "Bộ sưu tập riêng",
   LANDING: "Landing page",
 }
 
@@ -42,8 +42,8 @@ export const TRASH_TYPE_LABEL: Readonly<Record<TrashItemType, string>> = {
 export const LIBRARY_TRASH_SUBJECT: Readonly<Record<LibraryTrashType, string>> = {
   VIDEO: "Video",
   CONTENT: "Nội dung",
-  CATALOG: "Catalog",
-  GREETING_CATALOG: "Thẻ chào",
+  CATALOG: "Bộ sưu tập chung",
+  GREETING_CATALOG: "Bộ sưu tập riêng",
   LANDING: "Landing page",
 }
 

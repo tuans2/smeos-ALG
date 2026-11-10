@@ -4,6 +4,7 @@ import { useRef, useState } from "react"
 import { errorText } from "@/lib/error-text"
 import { approvePosts, generatePosts, type ChannelPost } from "./content-api"
 import type { ContentJourney } from "./use-content-journey"
+import { requestKey, type HeldKey } from "./request-key"
 
 export const POST_CHANNELS = [
   { id: "facebook", label: "Facebook", hint: "Bài kể chuyện kèm album ảnh" },
@@ -28,7 +29,8 @@ export function useChannelPosts(journey: ContentJourney) {
   const [busy, setBusy] = useState<"writing" | "approving" | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
-  const keyRef = useRef<string | null>(null)
+  /** Khoá của lượt viết đang thử; đổi kênh/sản phẩm thì khoá mới (`requestKey`). */
+  const keyRef = useRef<HeldKey | null>(null)
 
   const base = latest ? (latest.status === "DRAFT" ? latest.posts : latest.approved_posts ?? latest.posts) : []
   const posts: ChannelPost[] = base.map((p) => edits[`${latest?.generation_id}:${p.channel}`] ?? p)
@@ -39,9 +41,9 @@ export function useChannelPosts(journey: ContentJourney) {
     const productId = journey.view?.product.id
     if (!productId || channels.length === 0 || busy) return
     setBusy("writing"); setError(null); setNotice(null)
-    keyRef.current ??= `content-posts-${productId}-${crypto.randomUUID()}`
+    keyRef.current = requestKey(keyRef.current, `${productId}|${[...channels].sort().join(",")}`, () => `content-posts-${productId}-${crypto.randomUUID()}`)
     try {
-      const r = await generatePosts(productId, channels, keyRef.current)
+      const r = await generatePosts(productId, channels, keyRef.current.key)
       keyRef.current = null
       if (r.status === "FAILED") setError("Chưa viết được bài — thử lại sau ít phút")
       else if (r.status === "PROCESSING") setNotice("Lượt viết trước vẫn đang chạy — tải lại sau ít giây để xem kết quả")

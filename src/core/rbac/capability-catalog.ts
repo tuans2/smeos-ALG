@@ -241,7 +241,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   R10: { name: "order.payment.refund", group: "order_operations", label: "Ghi nhận hoàn tiền đơn hàng", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // PO 08/10/2026 (thay quyết định 06/10 "giữ R9 cho Sale/Điều phối" ở Thẻ chào): chỉ Điều hành —
   // người giữ tài khoản ngân hàng — xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào. Trần cứng.
-  R11: { name: "order.transfer.confirm", group: "order_operations", label: "Xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
+  R11: { name: "order.transfer.confirm", group: "order_operations", label: "Xác nhận tiền chuyển khoản và báo giá đơn Bộ sưu tập riêng", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   R12: { name: "order.coordinator_reminder.configure", group: "order_operations", label: "Sửa thời điểm nhắc việc Điều phối (chung và theo sản phẩm)", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R13: { name: "data.export", group: "order_operations", label: "Xuất đơn hàng / khách hàng ra tệp Excel (Điều hành cấp cho người khác khi duyệt)", defaultRoles: ["dieu_hanh", "ke_toan"] },
   // PO 22/10/2026 — trang cửa hàng nhận gia công: chỉ tài khoản cửa hàng thấy đơn của CHÍNH chi nhánh mình
@@ -250,7 +250,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   R14: { name: "order.branch_inbox", group: "order_operations", label: "Xem và nhận đơn gia công của chi nhánh mình", defaultRoles: ["dieu_hanh", "cua_hang"], hardCap: ["dieu_hanh", "cua_hang"] },
   // PO 31/10/2026 — Đơn hàng đa nguồn (KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §5.2). Chỉ áp cho đơn NGOÀI Thẻ chào
   // (Thẻ chào giữ R11 cho báo giá). R15: Sale báo giá. R16: Điều hành duyệt "giao trước, thu sau" — trần cứng.
-  R15: { name: "order.quote", group: "order_operations", label: "Báo giá đơn hàng (ngoài Thẻ chào)", defaultRoles: ["dieu_hanh", "sale"] },
+  R15: { name: "order.quote", group: "order_operations", label: "Báo giá đơn hàng (ngoài Bộ sưu tập riêng)", defaultRoles: ["dieu_hanh", "sale"] },
   R16: { name: "order.deliver_before_pay.approve", group: "order_operations", label: "Duyệt giao trước, thu sau cho đơn ngoài chính sách", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // PO Q7 (04/11/2026) — vai Thợ cắm hoa, Shipper, Kế toán (checklist ALG 1.12, 4.5, 4.13). Kế toán không xác nhận tiền.
   R17: { name: "order.assigned_work", group: "order_operations", label: "Xem và báo tiến độ việc chế tác được giao cho mình", defaultRoles: ["dieu_hanh", "dieu_phoi", "tho_cam"] },

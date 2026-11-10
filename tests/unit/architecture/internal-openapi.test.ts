@@ -22,7 +22,7 @@ function routeFiles(dir: string): string[] {
     return entry === "route.ts" ? [full] : []
   })
 }
-const openApiPath = (file: string) => `/${path.relative(API, path.dirname(file)).split(path.sep).join("/")}`.replace(/\[(\w+)\]/g, "{$1}")
+const openApiPath = (file: string) => `/${path.relative(API, path.dirname(file)).split(path.sep).join("/")}`.replace(/\[(?:\.\.\.)?(\w+)\]/g, "{$1}") // `[...key]` (bắt mọi đường dẫn) → `{key}`
 const normalize = (p: string) => p.replace(/\{\w+\}/g, "{id}")
 
 describe("OpenAPI nội bộ — API tiệm", () => {

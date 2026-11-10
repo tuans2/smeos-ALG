@@ -1,8 +1,7 @@
-import { z } from "zod"
+import { editInternalMessageBody } from "@/app/api/v1/_contracts/requests-chat"
 import { ok } from "@/core/http/contract-responses"
 import { defineRoute } from "@/core/http/define-route"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import { CHAT_MESSAGE_MAX_LENGTH } from "@/modules/internal-chat/domain/chat-limits"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { getChatLinkPolicy } from "@/modules/internal-chat/infra/prisma-chat-link-policy"
 import { deleteChatMessage, editChatMessage } from "@/modules/internal-chat/use-cases/change-chat-message"
@@ -17,7 +16,7 @@ const deps = () => ({ chatRepo: getInternalChatRepository(), linkPolicy: getChat
 export const PATCH = defineRoute({
   auth: { kind: "tenant", capability: "S1" },
   rateLimit: { scope: "internal-chat-message-change", limit: 30, windowMs: 60_000, per: "user" },
-  body: z.object({ content: z.string().max(CHAT_MESSAGE_MAX_LENGTH, `Tin nhắn tối đa ${CHAT_MESSAGE_MAX_LENGTH} ký tự`) }).strict(),
+  body: editInternalMessageBody,
   handler: async ({ ctx, params, body }) => {
     const message = await editChatMessage(deps(), {
       messageId: params.id ?? "",

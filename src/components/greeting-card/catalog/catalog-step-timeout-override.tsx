@@ -68,7 +68,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
           <Timer size={16} className="text-primary" aria-hidden="true" />
-          <span>Thời hạn & Tự động huỷ đơn cho Thẻ chào này</span>
+          <span>Thời hạn & tự động huỷ đơn cho bộ sưu tập này</span>
         </h4>
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
@@ -124,14 +124,14 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
               </li>
             </ul>
             <p className="pt-1 text-meta text-primary font-medium">
-              Bỏ chọn &ldquo;Kế thừa mặc định&rdquo; để tùy biến thời hạn riêng cho Thẻ Chào / đợt sự kiện này.
+              Bỏ chọn &ldquo;Kế thừa mặc định&rdquo; để tùy biến thời hạn riêng cho bộ sưu tập / đợt sự kiện này.
             </p>
           </div>
         </div>
       ) : (
         <div className="space-y-2.5 rounded-xl border border-primary/30 bg-surface-alt p-3.5">
           <p className="text-caption font-bold text-primary">
-            Đang tùy biến riêng cho Thẻ chào này (ghi đè cài đặt của tiệm):
+            Đang tùy biến riêng cho bộ sưu tập này (ghi đè cài đặt của tiệm):
           </p>
 
           {/* 1. Hủy nếu không mở link */}

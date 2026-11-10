@@ -118,7 +118,7 @@ export function VoucherBatchesClient() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageHeader
           title="Phát hành mã giảm giá"
-          description="Tạo mã để khách nhập khi đặt hàng qua Thẻ chào và Catalog."
+          description="Tạo mã để khách nhập khi đặt hàng qua bộ sưu tập riêng và bộ sưu tập chung."
         />
         <Button onClick={openForm}>
           <Plus className="h-4 w-4" aria-hidden />

@@ -76,7 +76,7 @@ describe("Điều phối tôn trọng khoá đơn Thẻ chào", () => {
     const res = await call(handler, id, body, method)
     expect(res.status).toBe(409)
     const err = (await readJson(res)).error as { message: string }
-    expect(err.message).toContain("Thẻ chào")
+    expect(err.message).toContain("Bộ sưu tập riêng")
     expect(await snapshot(id)).toEqual(before)
   })
 

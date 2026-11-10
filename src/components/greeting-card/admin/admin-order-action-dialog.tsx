@@ -148,7 +148,7 @@ export function AdminOrderActionDialog({
         await apiSend(`/api/v1/greeting-card/orders/${order.id}/quote`, "POST", {
           totalVnd: amountVnd, ...(text.trim() ? { reason: text.trim() } : {}),
         }, "Không lưu được báo giá")
-        onDone({ message: `Đã báo giá ${vnd(amountVnd)} cho đơn ${order.code}. Khách mở lại Thẻ chào sẽ thấy mã QR thanh toán.` })
+        onDone({ message: `Đã báo giá ${vnd(amountVnd)} cho đơn ${order.code}. Khách mở lại link sẽ thấy mã QR thanh toán.` })
       } else if (type === "collect") {
         await apiSend(`/api/v1/greeting-card/orders/${order.id}/confirm-payment`, "POST", {
           amountVnd, ...(text.trim() ? { reference: text.trim() } : {}),

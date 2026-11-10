@@ -1,12 +1,13 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { sendInternalMessageBody } from "@/app/api/v1/_contracts/requests-chat"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { INTERNAL_CHAT_CAPABILITY } from "@/modules/internal-chat/domain/chat-capabilities"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { getChatLinkPolicy } from "@/modules/internal-chat/infra/prisma-chat-link-policy"
-import { CHAT_MESSAGE_MAX_LENGTH, CHAT_PAGE_MAX_LIMIT } from "@/modules/internal-chat/domain/chat-limits"
+import { CHAT_PAGE_MAX_LIMIT } from "@/modules/internal-chat/domain/chat-limits"
 import { decodeMessageCursor, encodeMessageCursor } from "@/modules/internal-chat/domain/message-cursor"
 import { composeDecorators, GetConversationMessagesUseCase } from "@/modules/internal-chat/use-cases/get-conversation-messages"
 import { chatImageDecorator } from "@/modules/internal-chat/infra/chat-image-decorator"
@@ -15,17 +16,6 @@ import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-f
 import { SendChatMessageUseCase } from "@/modules/internal-chat/use-cases/send-chat-message"
 import { subcontractCardDecorator } from "@/modules/internal-chat/infra/subcontract-card-decorator"
 import { createChatNotifier } from "@/modules/internal-chat/infra/chat-notifier"
-
-/**
- * Client chỉ gửi tin chữ. `.strict()`: thân có `actionPayload` / `attachments` / loại khác `TEXT` → 400 — thẻ đơn
- * và tin hệ thống chỉ do use-case máy chủ sinh (trước đây client tự gửi được `SYSTEM_NOTICE` với payload tuỳ ý).
- */
-const sendMessageSchema = z
-  .object({
-    content: z.string().max(CHAT_MESSAGE_MAX_LENGTH, `Tin nhắn tối đa ${CHAT_MESSAGE_MAX_LENGTH} ký tự`),
-    messageType: z.literal("TEXT").optional(),
-  })
-  .strict()
 
 const listQuerySchema = z.object({
   before: z.string().max(120).optional(),
@@ -73,7 +63,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
   const { id: conversationId } = await context.params
   const body = await request.json().catch(() => null)
-  const parsed = sendMessageSchema.safeParse(body)
+  const parsed = sendInternalMessageBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ reason: issuesOf(parsed.error) })
 
   const chatRepo = getInternalChatRepository()

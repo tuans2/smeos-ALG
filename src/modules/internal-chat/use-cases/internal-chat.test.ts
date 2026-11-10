@@ -119,7 +119,7 @@ describe("Internal Chat Use Cases", () => {
     await expect(accept(card2.id)).rejects.toThrow(CardActionConflictError)
   })
 
-  it("không phải tổ chức được giao, người gửi thẻ, người ngoài, tin không phải thẻ → 404 và thẻ không đổi", async () => {
+  it("không phải tổ chức được giao, người gửi thẻ, người ngoài → 404; tin không phải thẻ → 409; thẻ không đổi", async () => {
     const conv = await partnerRoom()
     const card = await orderCard(conv)
     await expect(accept(card.id, STRANGER)).rejects.toThrow(ChatAccessDeniedError)
@@ -130,7 +130,7 @@ describe("Internal Chat Use Cases", () => {
     await expect(accept(card.id, STRANGER)).rejects.toThrow(ChatAccessDeniedError)
 
     const text = await send().execute({ conversationId: conv.id, ...CHAIN, userRole: "x", content: "chào" })
-    await expect(accept(text.id)).rejects.toThrow(ChatAccessDeniedError)
+    await expect(accept(text.id)).rejects.toMatchObject({ code: "CONFLICT", chatCode: "NOT_ORDER_ACTION_CARD" })
 
     expect((card.actionPayload as Record<string, unknown>).status).toBe("PENDING_ACCEPT")
     expect(repo.messages.some((m) => m.messageType === "SYSTEM_NOTICE")).toBe(false)
@@ -147,5 +147,15 @@ describe("Internal Chat Use Cases", () => {
     const older = await get.execute({ conversationId: conv.id, ...PARTNER, limit: 2, before: latest.nextCursor! })
     expect(older.items.map((m) => m.content)).toEqual(["tin 1", "tin 2"])
     expect(repo.readMarks).toHaveLength(1)
+  })
+
+  it("người không tham gia hội thoại hoặc mã tin lạ → 404 (mã NOT_FOUND), thẻ không đổi", async () => {
+    const card = await orderCard(await partnerRoom())
+    const outsider = act().execute({ messageId: card.id, userId: STRANGER.userId, userOrgId: STRANGER.organizationId, userRole: "x", action: "REJECT_ORDER" })
+    await expect(outsider).rejects.toThrow(ChatAccessDeniedError)
+    await expect(outsider).rejects.toMatchObject({ code: "NOT_FOUND" })
+    await expect(accept("msg-khong-co")).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect((repo.messages.find((m) => m.id === card.id)?.actionPayload as Record<string, unknown>).status).toBe("PENDING_ACCEPT")
+    expect(repo.messages).toHaveLength(1)
   })
 })

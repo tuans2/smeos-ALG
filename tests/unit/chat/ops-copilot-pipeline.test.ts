@@ -63,7 +63,7 @@ describe("Ops Copilot Multi-Agent Pipeline Architecture (Giai Đoạn 1 Nâng C�
       expect(facts.nodeId).toBe("node-03-the-chao")
       expect(facts.moduleIndex).toBe(3)
       expect(facts.routePath).toBe("/the-chao")
-      expect(facts.actionLabel).toBe("Mở Bảng Thẻ Chào Sản Phẩm")
+      expect(facts.actionLabel).toBe("Mở Bộ sưu tập riêng")
       expect(facts.steps.length).toBeGreaterThan(0)
       expect(facts.caveats.length).toBeGreaterThan(0)
       expect(facts.confidenceScore).toBeGreaterThanOrEqual(90)
@@ -96,7 +96,7 @@ describe("Ops Copilot Multi-Agent Pipeline Architecture (Giai Đoạn 1 Nâng C�
 
       // Template fallback vẫn đảm bảo metadata chuẩn
       expect(draft.targetRoute).toBe("/the-chao")
-      expect(draft.actionLabel).toBe("Mở Bảng Thẻ Chào Sản Phẩm")
+      expect(draft.actionLabel).toBe("Mở Bộ sưu tập riêng")
       expect(draft.bodyText).toContain("Liên kết nghiệp vụ liên quan:")
     })
 
@@ -150,7 +150,7 @@ describe("Ops Copilot Multi-Agent Pipeline Architecture (Giai Đoạn 1 Nâng C�
 
       expect(result.matchedKnowledgeId).toBe("node-03-the-chao")
       expect(result.targetRoute).toBe("/the-chao")
-      expect(result.actionLabel).toBe("Mở Bảng Thẻ Chào Sản Phẩm")
+      expect(result.actionLabel).toBe("Mở Bộ sưu tập riêng")
       expect(result.replyText).toBeTruthy()
       expect(result.confidenceScore).toBeGreaterThanOrEqual(90)
       expect(result.isUnresolvedQuery).toBe(false)

@@ -9,10 +9,10 @@ const JOB = "Tác vụ AI"
 const VIS = "Phân tích ảnh sản phẩm"
 const AUD = "Âm thanh — giọng đọc & nhạc"
 const VID = "Video"
-const IDEM = "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá trả job cũ, không trừ credit lần hai. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429."
+const IDEM = "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá, cùng thân trả job cũ, không trừ credit lần hai; cùng khoá khác thân → 422 `IDEMPOTENCY_KEY_REUSED`. Hết credit → 422 `QUOTA_EXCEEDED`; chạy dồn dập → 429."
 const NF = "Của tổ chức khác → 404."
-/** Use-case video ném `Error` trần khi không thấy job/sai trạng thái → 500 (lỗi đã ghi nhận ở audit §13). */
-const VBUG = "Không thấy job (kể cả của tổ chức khác) hoặc sai trạng thái hiện trả 500 thay vì 404/409 — lỗi đã ghi nhận."
+/** Không thấy job → 404, sai trạng thái → 409 (sửa 08/11/2026, audit API §13 — trước đó trả 500). */
+const VNF = "Không thấy job (kể cả của tổ chức khác) → 404."
 const j = "/jobs/{id}"
 const a = "/vision/analyses/{id}"
 const v = "/video/jobs/{id}"
@@ -30,8 +30,8 @@ export const AI_STUDIO_OPERATIONS: OpenApiOperation[] = [
     description: `Chỉ tác vụ \`FAILED\` — khác → 409. Lượt trước đã được hoàn credit thì trừ lại đúng giá (không đủ → 422). ${NF}`,
     ok: [200, { description: "Tác vụ", schema: res.jobResponse }], errors: [404, 409, 422] }),
   op(JOB, { method: "post", path: "/jobs/batch", operationId: "createModuleJob", summary: "Tạo tác vụ cho một module với các mã năng lực AI chọn sẵn", cap: "mã chạy theo `module`",
-    body: req.jobBatchBody, description: `Quyền chạy suy từ \`module\` (bảng \`MODULE_RUN_CAPABILITY\`, module lạ bị từ chối — 403); \`feature\` phải khớp module (400). ${IDEM}`,
-    ok: [200, { description: "Tác vụ đã xếp", schema: res.jobCreatedResponse }], errors: [...BODY_ERRORS, 422, 429] }),
+    body: req.jobBatchBody, description: `Quyền chạy suy từ \`module\` (bảng \`MODULE_RUN_CAPABILITY\`, module lạ bị từ chối — 403); \`feature\` phải khớp module (400). 202: job đã nhận, worker chạy sau — theo dõi bằng \`GET /jobs/{id}\` (audit API-16). ${IDEM}`,
+    ok: [202, { description: "Tác vụ đã xếp", schema: res.jobCreatedResponse }], errors: [...BODY_ERRORS, 422, 429] }),
 
   op(VIS, { method: "post", path: "/vision/analyses", operationId: "requestAnalysis", summary: "Phân tích ảnh sản phẩm (xếp job)", cap: "H1", body: req.visionAnalysisBody,
     description: `${IDEM} Ảnh/sản phẩm của tổ chức khác → 404.`, ok: [201, { description: "Job đã xếp", schema: res.analysisCreatedResponse }], errors: [...BODY_ERRORS, 404, 422, 429] }),
@@ -78,15 +78,15 @@ export const AI_STUDIO_OPERATIONS: OpenApiOperation[] = [
     ok: [200, { description: "Job video", schema: res.videoJobsResponse }] }),
   op(VID, { method: "post", path: "/video/jobs", operationId: "createVideoJob", summary: "Tạo job video (bản nháp kịch bản)", cap: "I1", body: req.videoJobBodySchema,
     ok: [201, { description: "Job video", schema: res.videoJobRecordSchema }], errors: BODY_ERRORS }),
-  op(VID, { method: "get", path: v, operationId: "getVideoJob", summary: "Một job video (kèm URL ký để phát)", cap: "I1", description: VBUG,
-    ok: [200, { description: "Job video", schema: res.videoJobViewResponse }], errors: [500] }),
+  op(VID, { method: "get", path: v, operationId: "getVideoJob", summary: "Một job video (kèm URL ký để phát)", cap: "I1", description: VNF,
+    ok: [200, { description: "Job video", schema: res.videoJobViewResponse }], errors: [404] }),
   op(VID, { method: "patch", path: `${v}/storyboard`, operationId: "updateStoryboard", summary: "Biên soạn phân cảnh", cap: "I1", body: req.storyboardBody,
-    description: `Đang render hoặc phân cảnh sai luật (2–15 cảnh) cũng trả 500. ${VBUG}`, ok: [200, { description: "Job video", schema: res.videoJobRecordSchema }], errors: [...BODY_ERRORS, 500] }),
+    description: `Đang render → 409; phân cảnh sai luật của khuôn (số cảnh, thời lượng) → 422. ${VNF}`, ok: [200, { description: "Job video", schema: res.videoJobRecordSchema }], errors: [...BODY_ERRORS, 404, 409, 422] }),
   op(VID, { method: "post", path: `${v}/render`, operationId: "renderVideo", summary: "Dựng video từ phân cảnh", cap: "I1", body: req.videoRenderBody,
-    description: "Thân không bắt buộc; cảnh còn trống ảnh tự lấp, vẫn trống → 422. Job của tổ chức khác → 404. Trừ credit theo nhà cung cấp đứng đầu.",
+    description: "Thân không bắt buộc (không phải JSON → 400); cảnh còn trống ảnh tự lấp, vẫn trống → 422. Job của tổ chức khác → 404. Trừ credit theo nhà cung cấp đứng đầu.",
     ok: [200, { description: "Job video và job dựng", schema: res.videoRenderResponse }], errors: [...BODY_ERRORS, 404, 422] }),
   op(VID, { method: "post", path: `${v}/approve-script`, operationId: "approveVideoScript", summary: "Duyệt kịch bản video (cổng 1)", cap: "P3",
-    description: `Mã năng lực kiểm ở use-case. ${VBUG}`, ok: [200, { description: "Job video", schema: res.videoJobRecordSchema }], errors: [500] }),
+    description: `Mã năng lực kiểm ở use-case. Đã duyệt hoặc không ở bản nháp → 409; phân cảnh sai luật → 422. ${VNF}`, ok: [200, { description: "Job video", schema: res.videoJobRecordSchema }], errors: [404, 409, 422] }),
   op(VID, { method: "post", path: `${v}/approve-video`, operationId: "approveVideoOutput", summary: "Duyệt video thành phẩm (cổng 2)", cap: "P4",
-    description: `Mã năng lực kiểm ở use-case (trần cứng). ${VBUG}`, ok: [200, { description: "Job video", schema: res.videoJobRecordSchema }], errors: [500] }),
+    description: `Mã năng lực kiểm ở use-case (trần cứng). Đã duyệt hoặc chưa dựng xong → 409; dựng xong mà không có tệp video → 422. ${VNF}`, ok: [200, { description: "Job video", schema: res.videoJobRecordSchema }], errors: [404, 409, 422] }),
 ]

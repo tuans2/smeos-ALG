@@ -1,6 +1,6 @@
 import type { IChatLinkPolicy, IInternalChatRepository } from "../domain/chat-repository.interface"
 import type { InternalChatMessage, ActionCardOrderPayload } from "../domain/chat-entities"
-import { ChatAccessDeniedError, CardActionConflictError } from "../domain/errors"
+import { ChatAccessDeniedError, CardActionConflictError, ChatDomainError } from "../domain/errors"
 import { assertConversationAccess } from "./conversation-access"
 
 export interface HandleCardActionInput {
@@ -35,8 +35,11 @@ export class HandleCardActionUseCase {
       branchId: input.userBranchId,
     })
 
+    // Đã qua kiểm quyền vào phòng nên báo rõ 409 không lộ gì (khớp OpenAPI của main, audit API §15)
+    if (message.messageType !== "ACTION_CARD_ORDER") {
+      throw new ChatDomainError("Tin nhắn này không có nút nhận hoặc từ chối đơn", "CONFLICT", "NOT_ORDER_ACTION_CARD")
+    }
     const card = message.actionPayload as Partial<ActionCardOrderPayload>
-    if (message.messageType !== "ACTION_CARD_ORDER") throw new ChatAccessDeniedError()
     if (card.assignedPartnerOrgId !== input.userOrgId || message.senderUserId === input.userId) throw new ChatAccessDeniedError()
     if (card.status !== "PENDING_ACCEPT") throw new CardActionConflictError()
 

@@ -29,7 +29,7 @@ export const NODE_02_DON_HANG: OpsKnowledgeNode = {
     },
     {
       stepNumber: 2,
-      actionText: "Duyệt tiền cọc VietQR: Mở tab 'Duyệt TT Thẻ Chào', kiểm tra tài khoản ngân hàng báo có rồi bấm 'Xác nhận đã nhận tiền'",
+      actionText: "Duyệt tiền cọc VietQR: Mở mục 'Bộ sưu tập riêng' ở tab Điều hành, kiểm tra tài khoản ngân hàng báo có rồi bấm 'Xác nhận đã nhận tiền'",
       expectedResult: "Đơn chuyển sang trạng thái đã chốt và tự động nhảy sang cột 'Đang chế tác'",
     },
     {

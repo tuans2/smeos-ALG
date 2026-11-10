@@ -11,8 +11,8 @@ import { createTenant, readJson, withSession, type Tenant } from "../helpers/fix
 import type { OrderRecord } from "@/modules/orders/domain/order-types"
 
 type OrderListBody = {
-  total: number
-  orders: OrderRecord[]
+  meta: { total: number }
+  data: OrderRecord[]
 }
 
 const BASE = "http://localhost/api/v1"
@@ -152,12 +152,12 @@ describe("cách ly tenant — đơn hàng và vận hành M10 (P22)", () => {
     )
 
     const listA = (await readJson(await listOrders(withSession(`${BASE}/orders`, a.token)))) as OrderListBody
-    expect(listA.total).toBe(1)
-    expect(listA.orders[0]?.items?.[0]?.description).toBe("Đơn Org A")
+    expect(listA.meta.total).toBe(1)
+    expect(listA.data[0]?.items?.[0]?.description).toBe("Đơn Org A")
 
     const listB = (await readJson(await listOrders(withSession(`${BASE}/orders`, b.token)))) as OrderListBody
-    expect(listB.total).toBe(1)
-    expect(listB.orders[0]?.items?.[0]?.description).toBe("Đơn Org B")
+    expect(listB.meta.total).toBe(1)
+    expect(listB.data[0]?.items?.[0]?.description).toBe("Đơn Org B")
   })
 
   it("GET /orders/:id/events và /print không thể đọc chéo giữa hai tổ chức", async () => {

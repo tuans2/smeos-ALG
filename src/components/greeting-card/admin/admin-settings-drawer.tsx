@@ -29,7 +29,7 @@ export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
   const isChain = isChainOrganizationType(useSession().organizationType)
 
   return (
-    <Drawer open onOpenChange={(o) => { if (!o) onClose() }} size="lg" className="sm:max-w-3xl bg-bg" title="Cài đặt Thẻ chào">
+    <Drawer open onOpenChange={(o) => { if (!o) onClose() }} size="lg" className="sm:max-w-3xl bg-bg" title="Cài đặt Bộ sưu tập riêng">
         <div className="flex flex-col gap-4">
           <BrochureWorkflowSettings />
           <BrochureStepTimeoutSettings />

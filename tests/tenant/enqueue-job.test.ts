@@ -118,12 +118,17 @@ describe("enqueueJob", () => {
     })
     const second = await enqueueJob(ctx, {
       feature: "vision.analyze",
-      payload: { asset_ids: ["x", "y"] }, // payload khác — vẫn dedupe theo khoá, không theo nội dung
+      payload: { asset_ids: ["x"] },
       idempotencyKey: "dup-key-1",
     })
 
     expect(second.deduped).toBe(true)
     expect(second.job.id).toBe(first.job.id)
+
+    // Cùng khoá, payload khác → 422 (audit API-11, PO 09/11/2026; trước đây vẫn trả job cũ) — không trừ credit, không ghi usage
+    await expect(
+      enqueueJob(ctx, { feature: "vision.analyze", payload: { asset_ids: ["x", "y"] }, idempotencyKey: "dup-key-1" })
+    ).rejects.toMatchObject({ code: "IDEMPOTENCY_KEY_REUSED" })
 
     const organization = await prisma.organizations.findUnique({ where: { id: a.organizationId } })
     expect(organization?.credit_balance).toBe(9) // trừ đúng một lần

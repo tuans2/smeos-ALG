@@ -1,14 +1,10 @@
 import { requireCapability } from "@/core/rbac/capabilities"
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { retryProductPhoto } from "@/modules/product-photo-studio/use-cases/retry-product-photo"
-
-const retrySchema = z.object({
-  retry_hint: z.string().optional(),
-})
+import { productPhotoRetryBody } from "@/app/api/v1/_contracts/requests-product-extra"
 
 export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request)
@@ -22,7 +18,7 @@ export const POST = handle(async (request, context: { params: Promise<{ id: stri
   }
 
   const body = await request.json().catch(() => ({}))
-  const parsed = retrySchema.safeParse(body)
+  const parsed = productPhotoRetryBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

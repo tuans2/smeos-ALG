@@ -57,7 +57,7 @@ export const settingsVi = {
     promotions: "5. Ưu Đãi",
     commitments: "6. Cam Kết",
     agreements: "7. Thỏa Thuận",
-    brochureFlow: "8. Thẻ Chào & Quy Trình",
+    brochureFlow: "8. Bộ sưu tập riêng & quy trình",
     aiChannels: "9. AI & Kênh",
     collectionProfile: "10. Thu Thập Chuỗi",
     fields: "11. Trường Dữ Liệu",

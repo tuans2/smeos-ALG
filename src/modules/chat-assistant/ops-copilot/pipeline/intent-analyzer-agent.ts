@@ -67,7 +67,7 @@ export class IntentAnalyzerAgent {
 
     // 5. Trích xuất các mẫu nhận diện hành động & từ lóng ngành hoa
     const actionPatterns = [
-      "tạo thẻ", "bộ sưu tập", "thẻ chào", "in phiếu", "phiếu xưởng", "giấu giá",
+      "tạo thẻ", "bộ sưu tập", "thẻ chào", "bộ sưu tập riêng", "bộ sưu tập chung", "in phiếu", "phiếu xưởng", "giấu giá",
       "ẩn giá", "phiếu giao", "tạo hoa", "công thức cành", "bom", "atomic bom", "nhập excel",
       "drive", "quét ảnh", "đếm cành", "kịch bản zalo", "kho dữ liệu", "thùng rác",
       "hồ sơ", "stk", "ngân hàng", "vietqr", "thêm nhân viên", "phân quyền",
