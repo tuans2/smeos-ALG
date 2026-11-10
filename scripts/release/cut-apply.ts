@@ -34,12 +34,19 @@ function regenerate(root: string, repo: string, scripts: readonly string[], avai
   if (!existsSync(modules)) return []
   const link = path.join(root, "node_modules")
   symlinkSync(modules, link)
+  // Prisma client đã sinh (`src/generated`, không commit): lược đồ OpenAPI import mã chạy thật chạm tới nó
+  // (vd. requests-marketing → create-staff-lead → prisma), nên gắn tạm như `node_modules`.
+  const generated = path.join(repo, "src", "generated")
+  const generatedLink = path.join(root, "src", "generated")
+  const linkGenerated = existsSync(generated) && !existsSync(generatedLink)
+  if (linkGenerated) symlinkSync(generated, generatedLink)
   try {
     const ran = scripts.filter((name) => name in available)
     for (const name of ran) execFileSync("npm", ["run", "--silent", name], { cwd: root, stdio: ["ignore", "ignore", "inherit"] })
     return ran
   } finally {
     unlinkSync(link)
+    if (linkGenerated) unlinkSync(generatedLink)
   }
 }
 
