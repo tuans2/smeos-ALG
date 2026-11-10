@@ -178,6 +178,9 @@ jobs:
       SESSION_SECRET: ci-only-not-a-real-secret
       INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
       SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret
+      # Bản build production đòi khoá chủ PII (src/core/security/pii-cipher.ts) cho các API ghi dữ liệu cá nhân
+      # (vd. bắn đơn chuỗi trong internal-chat-journey.spec.ts). Khoá giả, 32 byte base64 của chữ "ci-only-…". PO duyệt 10/11/2026.
+      PII_ENCRYPTION_KEY: Y2ktb25seS1ub3QtYS1yZWFsLXBpaS1rZXktMzJiISE=
       OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
       # Bản build/chạy production trên CI không có kho S3 — cho phép đĩa cục bộ (P0-05).
       ALLOW_LOCAL_STORAGE: "true"
