@@ -48,7 +48,12 @@ export function useInternalChat() {
       setConversations(list)
       setListState("ready")
       const wanted = new URLSearchParams(window.location.search).get("phong")
-      if (list.length > 0) setActiveConv((prev) => prev ?? list.find((c) => c.id === wanted) ?? null)
+      // Phòng mở qua đường dẫn (POST) chưa có tên bên kia / trạng thái theo người xem → lấy bản trong danh sách
+      setActiveConv((prev) => {
+        if (!prev) return list.find((c) => c.id === wanted) ?? null
+        const fresh = list.find((c) => c.id === prev.id)
+        return fresh && (fresh.counterpartName !== prev.counterpartName || fresh.isMuted !== prev.isMuted) ? { ...prev, ...fresh } : prev
+      })
     } catch {
       setListState((s) => (s === "ready" ? s : "error"))
     }
@@ -121,23 +126,23 @@ export function useInternalChat() {
     return () => clearInterval(timer)
   }, [fetchConversations, live])
 
+  // Theo MÃ phòng, không theo đối tượng: cập nhật tên / tắt tiếng của phòng không được làm tải lại tin
+  const activeConvId = activeConv?.id ?? null
   useEffect(() => {
-    activeId.current = activeConv?.id ?? null
-    if (!activeConv) return
-    const id = activeConv.id
+    activeId.current = activeConvId
+    if (!activeConvId) return
     void Promise.resolve().then(() => {
       setMessages([])
       setThreadState("loading")
-      return fetchMessages(id)
+      return fetchMessages(activeConvId)
     })
-  }, [activeConv, fetchMessages])
+  }, [activeConvId, fetchMessages])
 
   useEffect(() => {
-    if (!activeConv) return
-    const id = activeConv.id
-    const timer = setInterval(() => fetchMessages(id), live ? THREAD_POLL_MS.push : THREAD_POLL_MS.poll)
+    if (!activeConvId) return
+    const timer = setInterval(() => fetchMessages(activeConvId), live ? THREAD_POLL_MS.push : THREAD_POLL_MS.poll)
     return () => clearInterval(timer)
-  }, [activeConv, fetchMessages, live])
+  }, [activeConvId, fetchMessages, live])
 
   const sendMessage = useCallback(async (text: string): Promise<boolean> => {
     if (!activeConv) return false

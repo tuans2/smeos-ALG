@@ -42,7 +42,7 @@ export const chatVi = {
     chooseImages: "Chọn ảnh để gửi",
     attach: "Đính kèm ảnh",
     composerLabel: "Nội dung tin nhắn",
-    placeholder: "Nhập tin nhắn… (Enter để gửi, Shift+Enter xuống dòng)",
+    placeholder: "Nhập tin nhắn…",
     captionPlaceholder: "Thêm chú thích cho ảnh (không bắt buộc)",
     send: "Gửi",
     imageTooLarge: "Mỗi ảnh tối đa 10 MB.",

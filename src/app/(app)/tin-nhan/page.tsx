@@ -21,12 +21,16 @@ export default function InternalChatPage() {
   const active = chat.activeConv
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] overflow-hidden bg-bg p-3 md:p-4 gap-3">
-      <PageHeader
-        title={<><MessageSquare className="w-5 h-5 text-primary" aria-hidden="true" /> {t("chat.page.title")}</>}
-        description={t("chat.page.description")}
-      />
-      <ChatDispatchStats />
+    // Điện thoại: trừ thanh tiêu đề (64px) và thanh điều hướng dưới (4.5rem + vùng an toàn) để ô soạn tin không bị che;
+    // đang mở phòng thì ẩn phần đầu trang để dành chỗ cho tin nhắn
+    <div className="flex flex-col h-[calc(100dvh-64px-4.5rem-env(safe-area-inset-bottom))] md:h-[calc(100vh-64px)] overflow-hidden bg-bg p-3 md:p-4 gap-3">
+      <div className={active ? "hidden md:block space-y-3" : "space-y-3"}>
+        <PageHeader
+          title={<><MessageSquare className="w-5 h-5 text-primary" aria-hidden="true" /> {t("chat.page.title")}</>}
+          description={t("chat.page.description")}
+        />
+        <ChatDispatchStats />
+      </div>
       <div className="flex flex-1 min-h-0 gap-4">
         <Card className={`${active ? "hidden md:flex" : "flex"} w-full md:w-80 lg:w-96 flex-col overflow-hidden p-0`} variant="default">
           <ConversationList

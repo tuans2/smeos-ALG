@@ -6,6 +6,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 import { PrismaClient } from "@/generated/prisma/client"
 import { RlsPool } from "@/core/tenancy/infra/rls-pool"
 import { withTenantDb } from "@/core/tenancy/db-context"
+import { PrismaChatMessageStore } from "@/modules/internal-chat/infra/prisma-chat-message-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, linkPartner, makeChainOrganization, type Tenant } from "../helpers/fixtures"
@@ -123,5 +124,31 @@ describe("RLS enforce — phòng trao đổi chuỗi ↔ cửa hàng đối tác
     )).rejects.toThrow()
     const updated = await withTenantDb(third.organizationId, () => enforce.internal_chat_messages.updateMany({ data: { content: "sửa lén" } }))
     expect(updated.count).toBe(0)
+  })
+
+  it("cửa hàng thu hồi tin của mình: tin chữ chạy thẳng quyền cửa hàng; tin ảnh ghi được hàng đợi xoá tệp dưới tổ chức chuỗi", async () => {
+    const store = new PrismaChatMessageStore(enforce)
+    const text = await prisma.internal_chat_messages.create({
+      data: { conversation_id: roomId, organization_id: chain.organizationId, counterpart_org_id: partner.organizationId, sender_user_id: partner.userId, sender_role: "cua_hang", content: "thu hồi tôi" },
+    })
+    expect(await withTenantDb(partner.organizationId, () => store.deleteMessage(text.id, new Date(), { ownerOrgId: chain.organizationId, keys: [] }))).toBe(true)
+
+    const key = `org/${chain.organizationId}/chat-${roomId}/anh.jpg`
+    const image = await prisma.internal_chat_messages.create({
+      data: { conversation_id: roomId, organization_id: chain.organizationId, counterpart_org_id: partner.organizationId, sender_user_id: partner.userId, sender_role: "cua_hang", message_type: "IMAGE", attachments: [key] },
+    })
+    // Ghi thẳng dòng hàng đợi của chuỗi từ phiên cửa hàng bị RLS chặn — lý do thao tác thu hồi ảnh chạy quyền hệ thống có nhãn
+    await expect(withTenantDb(partner.organizationId, () =>
+      enforce.storage_outbox.create({ data: { organization_id: chain.organizationId, op: "DELETE", storage_key: `${key}.thu` } })
+    )).rejects.toThrow()
+    expect(await withTenantDb(partner.organizationId, () => store.deleteMessage(image.id, new Date(), { ownerOrgId: chain.organizationId, keys: [key] }))).toBe(true)
+    expect(await prisma.storage_outbox.findFirst({ where: { storage_key: key } })).toMatchObject({ organization_id: chain.organizationId, op: "DELETE" })
+    expect(await prisma.internal_chat_messages.findUniqueOrThrow({ where: { id: image.id } })).toMatchObject({ content: "", attachments: [] })
+
+    // Tổ chức thứ ba không thu hồi được tin trong phòng (không thấy dòng)
+    const other = await prisma.internal_chat_messages.create({
+      data: { conversation_id: roomId, organization_id: chain.organizationId, counterpart_org_id: partner.organizationId, sender_user_id: chain.userId, sender_role: "dieu_phoi", content: "của chuỗi" },
+    })
+    expect(await withTenantDb(third.organizationId, () => store.deleteMessage(other.id, new Date(), { ownerOrgId: chain.organizationId, keys: [] }))).toBe(false)
   })
 })

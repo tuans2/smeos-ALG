@@ -42,7 +42,7 @@ export function MessageThread({ conversation, messages, state, online, sendError
   const endRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  // Giải phóng ảnh xem trước: khi bỏ ảnh, khi gửi xong (`clearFiles`) và khi rời màn (ref giữ danh sách mới nhất)
+  // Giải phóng ảnh xem trước: khi bỏ ảnh, khi gửi xong (chỉ ảnh đã gửi) và khi rời màn (ref giữ danh sách mới nhất)
   const filesRef = useRef(files)
   useEffect(() => {
     filesRef.current = files
@@ -51,10 +51,6 @@ export function MessageThread({ conversation, messages, state, online, sendError
   const removeFile = (url: string) => {
     URL.revokeObjectURL(url)
     setFiles((prev) => prev.filter((x) => x.url !== url))
-  }
-  const clearFiles = () => {
-    files.forEach((f) => URL.revokeObjectURL(f.url))
-    setFiles([])
   }
 
   const pick = (list: FileList | null) => {
@@ -74,13 +70,18 @@ export function MessageThread({ conversation, messages, state, online, sendError
   }, [messages.length])
 
   const submit = async () => {
-    const value = text.trim()
-    if ((!value && files.length === 0) || sending) return
+    const raw = text
+    const value = raw.trim()
+    const batch = files
+    if ((!value && batch.length === 0) || sending) return
     setSending(true)
-    const sent = files.length > 0 ? await onSendImages(files.map((f) => f.file), value) : await onSend(value)
+    const sent = batch.length > 0 ? await onSendImages(batch.map((f) => f.file), value) : await onSend(value)
     if (sent) {
-      setText("")
-      clearFiles()
+      // Chỉ xoá đúng phần vừa gửi — người dùng có thể đã gõ tiếp / chọn thêm ảnh trong lúc chờ
+      setText((current) => (current === raw ? "" : current))
+      const sentUrls = new Set(batch.map((f) => f.url))
+      batch.forEach((f) => URL.revokeObjectURL(f.url))
+      setFiles((prev) => prev.filter((f) => !sentUrls.has(f.url)))
     }
     setSending(false)
   }

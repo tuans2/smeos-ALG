@@ -42,7 +42,7 @@ export const chatEn = {
     chooseImages: "Choose images to send",
     attach: "Attach images",
     composerLabel: "Message",
-    placeholder: "Type a message… (Enter to send, Shift+Enter for a new line)",
+    placeholder: "Type a message…",
     captionPlaceholder: "Add a caption (optional)",
     send: "Send",
     imageTooLarge: "Each image can be at most 10 MB.",
