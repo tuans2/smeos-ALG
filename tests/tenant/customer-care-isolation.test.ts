@@ -80,7 +80,7 @@ describe("Marketing & Sales Center — Cách ly tenant cho Chăm sóc khách hà
         organization_id: a.organizationId,
         code: "KH-0001",
         name: "Khách của A",
-        phone: "0901234567",
+        phone: "0123456789",
       },
     })
 
