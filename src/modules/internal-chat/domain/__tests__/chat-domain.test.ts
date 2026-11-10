@@ -17,20 +17,20 @@ describe("con trỏ trang tin nhắn", () => {
 
 describe("địa chỉ trên thẻ đơn", () => {
   it("ghép các phần thành chữ, không phải JSON", () => {
-    expect(formatCardAddress({ recipientName: "An", phone: "0900000000", street: "12 Lê Lợi", ward: "Phường Bến Nghé", province: "TP Hồ Chí Minh" })).toBe(
+    expect(formatCardAddress({ recipientName: "An", phone: "0123456789", street: "12 Lê Lợi", ward: "Phường Bến Nghé", province: "TP Hồ Chí Minh" })).toBe(
       "12 Lê Lợi, Phường Bến Nghé, TP Hồ Chí Minh"
     )
   })
 
   it("không lặp phần đã có sẵn trong dòng địa chỉ ghép, không lộ SĐT", () => {
-    const text = formatCardAddress({ phone: "0900000000", street: "12 Lê Lợi, Phường Bến Nghé, TP Hồ Chí Minh", ward: "Phường Bến Nghé" })
+    const text = formatCardAddress({ phone: "0123456789", street: "12 Lê Lợi, Phường Bến Nghé, TP Hồ Chí Minh", ward: "Phường Bến Nghé" })
     expect(text).toBe("12 Lê Lợi, Phường Bến Nghé, TP Hồ Chí Minh")
-    expect(text).not.toContain("0900000000")
+    expect(text).not.toContain("0123456789")
   })
 
   it("chuỗi giữ nguyên; trống → undefined", () => {
     expect(formatCardAddress(" 5 Hai Bà Trưng ")).toBe("5 Hai Bà Trưng")
     expect(formatCardAddress(null)).toBeUndefined()
-    expect(formatCardAddress({ phone: "0900000000" })).toBeUndefined()
+    expect(formatCardAddress({ phone: "0123456789" })).toBeUndefined()
   })
 })
