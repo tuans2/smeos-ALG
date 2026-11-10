@@ -18,7 +18,7 @@ describe("evaluateBannerQc", () => {
     productImageUrl: "https://example.com/product.jpg",
     brandInfo: {
       shopName: "Tiệm Thời Trang Xinh",
-      hotline: "0901234567",
+      hotline: "0123456789",
       address: "123 Phố Huế, Hà Nội",
     },
     stylePresetId: "VIBRANT_SALE",

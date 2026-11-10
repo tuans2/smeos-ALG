@@ -69,7 +69,7 @@ describe("hợp đồng — Thương hiệu, thư viện nhận diện, dữ li�
     await expectContract(await brandKit(get("/brand-kit")), 200, R.brandKitResponse, "brand-kit-empty")
     const product = await prisma.products.create({ data: { organization_id: t.organizationId, code: "SP-1", name: "Bó hồng đỏ", status: "ACTIVE" } })
     await putBusinessProfile(t.ctx, {
-      display_name: "Tiệm hoa Mộc Lan", phone: "0901234567", address: "12 Lê Lợi, Quận 1",
+      display_name: "Tiệm Hoa Thử", phone: "0123456789", address: "12 Lê Lợi, Quận 1",
       description: "Hoa tươi cắm theo yêu cầu cho văn phòng.", target_customers: ["Văn phòng tặng sếp"],
     })
     await putBrandProfile(t.ctx, { brand_assets: { storefront_photos: ["org/x/cua-hang.jpg"], intro_video: "org/x/gioi-thieu.mp4", featured_product_ids: [product.id] } })
