@@ -30,7 +30,6 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 | `src/components/dashboard/customer-service-workspace.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
 | `src/components/dashboard/store-growth-center.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
 | `src/components/dashboard/store-growth-center.tsx` | `/market-intelligence` | Ẩn khi không thuộc giai đoạn |
-| `src/components/layout/bottom-nav.tsx` | `/them` | Ẩn khi không thuộc giai đoạn |
 | `src/components/organization/ai-channels-settings-tab.tsx` | `/ket-noi` | Ẩn khi không thuộc giai đoạn |
 | `src/components/products/one-image-kit-dialog.tsx` | `/in-an` | Ẩn khi không thuộc giai đoạn |
 

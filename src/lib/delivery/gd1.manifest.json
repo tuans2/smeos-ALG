@@ -2161,7 +2161,7 @@
   ],
   "gatedLinks": [
     {
-      "reason": "Nút hoặc khối dẫn tới trang không giao ẩn khi trang không thuộc giai đoạn (isHrefInPhase); smeOS không bật giai đoạn thì giữ nguyên. Trang Tiếp thị rơi về trang chủ cửa hàng và bị bỏ khỏi bản cắt (@release-strip).",
+      "reason": "Nút hoặc khối dẫn tới trang không giao ẩn khi trang không thuộc giai đoạn (isHrefInPhase); smeOS không bật giai đoạn thì giữ nguyên. Mục \"Thêm\" ở thanh dưới điện thoại mở ngăn menu thay vì sang /them. Trang Tiếp thị rơi về trang chủ cửa hàng và bị bỏ khỏi bản cắt (@release-strip).",
       "items": [
         "src/app/(app)/duyet/page.tsx → /creative-studio",
         "src/app/(app)/tai-anh/page.tsx → /creative-studio",
@@ -2171,7 +2171,6 @@
         "src/components/dashboard/customer-service-workspace.tsx → /hoi-thoai",
         "src/components/dashboard/store-growth-center.tsx → /creative-studio",
         "src/components/dashboard/store-growth-center.tsx → /market-intelligence",
-        "src/components/layout/bottom-nav.tsx → /them",
         "src/components/organization/ai-channels-settings-tab.tsx → /ket-noi",
         "src/components/products/one-image-kit-dialog.tsx → /in-an"
       ]
