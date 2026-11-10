@@ -69,6 +69,15 @@ Hiện trạng đã đo:
 
 **Xong khi:** bản cắt thử qua typecheck, test, build; bật chế độ `gd1` thì menu chỉ còn phạm vi và URL ngoài phạm vi trả 404.
 
+**Trạng thái 10/11/2026 — mã Bước 2 xong, chờ CI:**
+
+- 2.1–2.2: `src/lib/delivery/delivery-phase.ts`, `route-match.ts`; danh sách route sinh vào `gd1.routes.json` bằng `npm run release:routes` (test giữ khớp mã). `src/proxy.ts` trả 404 cho trang/API ngoài phạm vi; menu (`nav-phase.ts`), lưới công cụ, hành trình lọc theo phạm vi; tầng SaaS Ngành không có menu. Không đặt biến thì không đổi gì (có test).
+- 2.3: `npm run release:cut -- gd1 <mốc> <thư mục>` (`scripts/release/`). Khối chỉ thuộc smeOS đánh dấu `@release-strip` trong mã (seed cửa hàng riêng, trang chủ tầng Ngành). Lớp phủ `releases/gd1/overlay/` mới có README; `.env.example`, `render.yaml`, CI riêng cho ALG chưa làm.
+- 2.4: `node scripts/handover-check.mjs --dir <bản cắt> --recipient ALG --baseline releases/gd1/leak-baseline.json`. Baseline hiện có 337 mục (số điện thoại, email, tên bên khác, mật khẩu viết cứng, đường dẫn máy) — dọn ở Bước 4, chỉ được giảm.
+- 2.5: [báo cáo phụ thuộc](BANGIAO_GD1_PHU_THUOC.md): 1 lời gọi proxy SocialFlow, 28 liên kết tới trang không giao, các mô-đun bị cắt giữa chừng. Worker `media_ai` chỉ nhận tác vụ âm thanh/video khi bản cài có mô-đun đó.
+- 2.6: `.github/workflows/release-gd1.yml` — workflow riêng chứ không thêm vào `ci.yml`, để không chạy trên `main` và không chặn deploy của Render. Test tenant/platform trên bản cắt chạy hằng đêm; E2E trên bản cắt chưa có.
+- Đo tại máy (mốc trước khi đẩy): bản cắt còn 90/116 trang, 454/530 API; typecheck 0 lỗi, `npm test` xanh, build xanh, pytest worker xanh. 116 test bị bỏ khỏi bản cắt, 65 trong đó chạm code được giao — danh sách trong báo cáo cắt, cần người xem lại ở điểm duyệt Bước 5.
+
 ## Bước 3 — Audit trên môi trường chỉ bật 123 chức năng
 
 - Môi trường: bản build production chạy local, CSDL `*_test`, `NEXT_PUBLIC_DELIVERY_PHASE=gd1`. Dữ liệu dựng theo trang "Chuẩn bị" của file nghiệm thu.

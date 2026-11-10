@@ -903,6 +903,20 @@ documents:
     dependencies: ["src/lib/delivery/gd1.manifest.json", "docs/plan/BANGIAO_GD1_123_CHUC_NANG.md"]
     supersedes: []
 
+  - id: "DOC-05-BANGIAO-GD1-PHU-THUOC"
+    path: "docs/plan/BANGIAO_GD1_PHU_THUOC.md"
+    title: "Phụ thuộc của bản giao GD1"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Báo cáo sinh tự động (npm run release:routes): số trang/API/tệp giữ, code trong phạm vi chạm vùng không giao, liên kết tới trang không giao, mô-đun bị cắt giữa chừng, API bị chặn ở chế độ gd1"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["src/lib/delivery/gd1.manifest.json", "docs/plan/BANGIAO_GD1_123_CHUC_NANG.md"]
+    supersedes: []
+
   - id: "DOC-05-BAO-CAO-ANH-XA-123"
     path: "docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md"
     title: "Báo cáo ánh xạ 123 chức năng bàn giao ALG với mã nguồn smeOS"

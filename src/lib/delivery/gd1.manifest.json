@@ -2065,6 +2065,86 @@
       ]
     }
   ],
+  "frameworkRoutes": [
+    {
+      "reason": "Kiểm tra sống của Render và giám sát",
+      "routes": [
+        "/api/health",
+        "/api/health/ready",
+        "/api/v1/internal/health",
+        "/api/v1/platform/health"
+      ]
+    },
+    {
+      "reason": "Cron nội bộ trong render.yaml (smeos-cron-dispatch-sweep)",
+      "routes": [
+        "/api/v1/internal/chain-dispatch-sweep",
+        "/api/v1/internal/integrations-sweep"
+      ]
+    },
+    {
+      "reason": "Đăng nhập, phiên, lời mời",
+      "routes": [
+        "/api/v1/auth/login",
+        "/api/v1/auth/logout",
+        "/api/v1/auth/me",
+        "/api/v1/auth/session-status",
+        "/api/v1/auth/signup",
+        "/api/v1/session/organization",
+        "/api/v1/session/password",
+        "/api/v1/session/invitations",
+        "/api/v1/session/invitations/[id]/accept",
+        "/api/v1/session/invitations/[id]/decline"
+      ]
+    },
+    {
+      "reason": "Webhook thanh toán SePay của Thẻ Chào (4.28)",
+      "routes": [
+        "/api/v1/greeting-card/integrations/payment-webhook"
+      ]
+    },
+    {
+      "reason": "Link rút gọn và chuyển hướng công khai (5.2)",
+      "routes": [
+        "/r/[code]",
+        "/s/[code]/mo"
+      ]
+    }
+  ],
+  "excludedApis": [
+    {
+      "reason": "Proxy sang SocialFlow/LocalBudd — bỏ khỏi bản giao (D-46)",
+      "prefixes": [
+        "/api/v1/proxy"
+      ]
+    }
+  ],
+  "rootFiles": [
+    "src/proxy.ts",
+    "src/instrumentation.ts",
+    "src/app/layout.tsx",
+    "src/app/not-found.tsx",
+    "src/app/global-error.tsx",
+    "src/app/globals.css",
+    "prisma/seed.ts"
+  ],
+  "registryFiles": {
+    "reason": "Bảng tra tiền tố route (quyền, bỏ qua RLS, danh sách route của chế độ giai đoạn), không phải lời gọi API — không dùng để dò phạm vi",
+    "files": [
+      "src/modules/organization/domain/tool-route-entitlement.ts",
+      "src/core/tenancy/db-context.ts",
+      "src/lib/delivery/gd1.routes.json",
+      "src/lib/delivery/delivery-phase.ts"
+    ]
+  },
+  "acceptedViolations": [
+    {
+      "reason": "Khối bài đăng ở trang chủ còn gọi proxy SocialFlow — Bước 4 chuyển sang mô-đun social-publishing hoặc bỏ khối",
+      "items": [
+        "src/components/dashboard/marketing-workspace.tsx → /api/v1/proxy/[...path]"
+      ]
+    }
+  ],
   "workers": {
     "deliver": [
       {
@@ -2107,6 +2187,107 @@
     "webSide": [
       "product.copy.generate",
       "content.generate"
+    ]
+  },
+  "cut": {
+    "keepTopLevel": [
+      ".env.example",
+      ".github",
+      ".gitignore",
+      "LICENSE",
+      "README.md",
+      "docker",
+      "docker-compose.yml",
+      "docs",
+      "eslint.config.mjs",
+      "next.config.ts",
+      "package-lock.json",
+      "package.json",
+      "playwright.config.ts",
+      "postcss.config.mjs",
+      "prisma",
+      "prisma.config.ts",
+      "public",
+      "render.yaml",
+      "scripts",
+      "src",
+      "tests",
+      "tsconfig.json",
+      "vitest.config.ts",
+      "workers"
+    ],
+    "keepDocs": [
+      "docs/tai-lieu-ky-thuat/",
+      "docs/huong-dan-su-dung/",
+      "docs/nghiem-thu/",
+      "docs/handover/OPERATIONS_RUNBOOK.md",
+      "docs/design-system/",
+      "docs/dac-ta/screen-contracts/",
+      "docs/dac-ta/ux-patterns/"
+    ],
+    "removePaths": [
+      {
+        "reason": "Seed và dữ liệu của cửa hàng khác",
+        "paths": [
+          "prisma/seed/sync-siin-store.ts",
+          "prisma/seed/clean-siin-store-orders.ts",
+          "prisma/seed/dev-moclan-data.ts",
+          "prisma/seed/dev-shop-moclan.ts",
+          "public/brand/moc-lan-"
+        ]
+      },
+      {
+        "reason": "Dữ liệu chợ đối tác và nhập liệu Avi Gift",
+        "paths": [
+          "src/modules/avi-gift-import/",
+          "scripts/nap-avi-gift",
+          "scripts/doi-chieu-avi-gift.ts",
+          "src/modules/platform/domain/partner-marketplace-data.json",
+          "scripts/nap-cho-doi-tac.ts"
+        ]
+      },
+      {
+        "reason": "Worker video và âm thanh không giao",
+        "paths": [
+          "workers/media_ai/video/",
+          "workers/media_ai/audio/",
+          "workers/tests/video/"
+        ]
+      },
+      {
+        "reason": "Công cụ phát hành và bàn giao nội bộ của smeOS",
+        "paths": [
+          "scripts/release/",
+          "scripts/handover-",
+          "tests/unit/release/"
+        ]
+      }
+    ],
+    "dropNpmScripts": [
+      "dev:all",
+      "predev:all",
+      "worker:socialflow",
+      "worker:localbudd",
+      "worker:video",
+      "worker:market-intelligence",
+      "dev:core",
+      "release:routes",
+      "release:cut",
+      "handover:check"
+    ],
+    "removedPythonPackages": [
+      "media_ai.audio",
+      "media_ai.video"
+    ],
+    "overlay": "releases/gd1/overlay",
+    "regenerate": [
+      "gen:erd",
+      "gen:tenant-registry",
+      "gen:tokens-doc",
+      "gen:schemas:creative",
+      "gen:schemas:coordinator",
+      "gen:schemas:content-engine",
+      "gen:openapi"
     ]
   }
 }

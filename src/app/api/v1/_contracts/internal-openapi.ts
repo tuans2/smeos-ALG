@@ -1,4 +1,5 @@
 import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi"
+import { isKnownApiRoute } from "@/lib/delivery/delivery-phase"
 
 import { AI_STUDIO_OPERATIONS } from "./ops-ai-studio"
 import { COORDINATOR_OPERATIONS } from "./ops-coordinator"
@@ -21,7 +22,11 @@ export const INTERNAL_OPENAPI_PATH = "docs/spec/contracts/openapi/internal.opena
 
 export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video"] as const
 
-export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS]
+/** Mọi operation đã khai — test giữ ở smeOS không có operation nào trỏ route không tồn tại. */
+export const INTERNAL_OPERATIONS_DECLARED: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS]
+
+/** Bản cắt bàn giao chỉ còn route được giao: bỏ operation của route đã cắt (kế hoạch GD1, Bước 2.3). */
+export const INTERNAL_OPERATIONS: OpenApiOperation[] = INTERNAL_OPERATIONS_DECLARED.filter((o) => isKnownApiRoute(o.path))
 
 export function buildInternalOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({

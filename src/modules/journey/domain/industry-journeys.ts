@@ -10,8 +10,16 @@
 import type { JourneyDefinition } from "./journey-model"
 import { STORE_JOURNEYS, NETWORK_JOURNEYS } from "./journey-catalog"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { filterByPhase } from "@/lib/delivery/delivery-phase"
+
+/** Chế độ giai đoạn bàn giao: bỏ hành trình dẫn tới trang ngoài phạm vi (hành trình nhiều bước giữ nguyên). */
+const inPhase = (journeys: JourneyDefinition[]) => filterByPhase(journeys, (j) => j.primaryHref)
 
 export function getStoreJourneys(industryKey?: string | null): JourneyDefinition[] {
+  return inPhase(storeJourneysFor(industryKey))
+}
+
+function storeJourneysFor(industryKey?: string | null): JourneyDefinition[] {
   if (!industryKey || industryKey === "FLORAL") {
     return STORE_JOURNEYS
   }
@@ -106,6 +114,10 @@ export function getStoreJourneys(industryKey?: string | null): JourneyDefinition
  * Thay thế thuật ngữ hardcode "điện hoa / hoa" bằng từ điển ngành SSOT.
  */
 export function getNetworkJourneys(industryKey?: string | null): JourneyDefinition[] {
+  return inPhase(networkJourneysFor(industryKey))
+}
+
+function networkJourneysFor(industryKey?: string | null): JourneyDefinition[] {
   if (!industryKey || industryKey === "FLORAL") {
     return NETWORK_JOURNEYS
   }
