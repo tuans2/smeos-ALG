@@ -14,6 +14,7 @@ import { storageVi } from "./storage"
 import { profileVi } from "./profile"
 import { settingsVi } from "./settings"
 import { notificationsVi } from "./notifications"
+import { chatVi } from "./chat"
 
 export const viDictionary = {
   common: commonVi,
@@ -28,6 +29,7 @@ export const viDictionary = {
   profile: profileVi,
   settings: settingsVi,
   notifications: notificationsVi,
+  chat: chatVi,
 } as const
 
 export type I18nSchema = typeof viDictionary

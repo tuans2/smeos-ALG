@@ -1,240 +1,161 @@
 import { describe, it, expect, beforeEach } from "vitest"
-import type { IInternalChatRepository, CreateConversationParams, ListConversationsFilter, SendMessageParams } from "../domain/chat-repository.interface"
-import type { InternalChatConversation, InternalChatMessage, InternalChatParticipant } from "../domain/chat-entities"
+import type { InternalChatConversation, InternalChatMessage } from "../domain/chat-entities"
+import { CHAT_MESSAGE_MAX_LENGTH } from "../domain/chat-limits"
+import { CardActionConflictError, ChatAccessDeniedError, ConversationNotFoundError, InvalidMessageContentError } from "../domain/errors"
 import { SendChatMessageUseCase } from "./send-chat-message"
 import { CreateOrGetConversationUseCase } from "./create-or-get-conversation"
 import { HandleCardActionUseCase } from "./handle-card-action"
-import { ChatAccessDeniedError, ConversationNotFoundError, InvalidMessageContentError } from "../domain/errors"
+import { GetConversationMessagesUseCase } from "./get-conversation-messages"
+import { FakeLinkPolicy, InMemoryChatRepository } from "./__tests__/in-memory-chat-repo"
 
-class InMemoryChatRepository implements IInternalChatRepository {
-  public conversations: InternalChatConversation[] = []
-  public participants: InternalChatParticipant[] = []
-  public messages: InternalChatMessage[] = []
-
-  async createConversation(params: CreateConversationParams): Promise<InternalChatConversation> {
-    const conv: InternalChatConversation = {
-      id: "conv-1",
-      organizationId: params.organizationId,
-      conversationType: params.conversationType,
-      title: params.title ?? null,
-      orderId: params.orderId ?? null,
-      metadata: params.metadata ?? {},
-      createdBy: params.createdBy,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      lastMessageAt: new Date(),
-    }
-    this.conversations.push(conv)
-
-    params.participantUserIds.forEach((p, idx) => {
-      this.participants.push({
-        id: `part-${idx}`,
-        conversationId: conv.id,
-        userId: p.userId,
-        organizationId: p.organizationId,
-        roleInChat: (p.roleInChat as InternalChatParticipant["roleInChat"] | undefined) ?? "MEMBER",
-        lastReadAt: new Date(),
-        isMuted: false,
-        joinedAt: new Date(),
-      })
-    })
-
-    return conv
-  }
-
-  async findConversationById(id: string): Promise<InternalChatConversation | null> {
-    return this.conversations.find((c) => c.id === id) ?? null
-  }
-
-  async findConversationByOrderId(orderId: string): Promise<InternalChatConversation | null> {
-    return this.conversations.find((c) => c.orderId === orderId) ?? null
-  }
-
-  async listConversations(filter: ListConversationsFilter): Promise<{ items: InternalChatConversation[]; total: number }> {
-    return { items: this.conversations, total: this.conversations.length }
-  }
-
-  async getParticipants(conversationId: string): Promise<InternalChatParticipant[]> {
-    return this.participants.filter((p) => p.conversationId === conversationId)
-  }
-
-  async isParticipant(conversationId: string, userId: string): Promise<boolean> {
-    return this.participants.some((p) => p.conversationId === conversationId && p.userId === userId)
-  }
-
-  async addParticipant(conversationId: string, participant: { userId: string; organizationId: string; roleInChat?: string }): Promise<void> {
-    this.participants.push({
-      id: `part-${Date.now()}`,
-      conversationId,
-      userId: participant.userId,
-      organizationId: participant.organizationId,
-      roleInChat: (participant.roleInChat as InternalChatParticipant["roleInChat"] | undefined) ?? "MEMBER",
-      lastReadAt: new Date(),
-      isMuted: false,
-      joinedAt: new Date(),
-    })
-  }
-
-  async sendMessage(params: SendMessageParams): Promise<InternalChatMessage> {
-    const msg: InternalChatMessage = {
-      id: `msg-${Date.now()}`,
-      conversationId: params.conversationId,
-      senderUserId: params.senderUserId,
-      senderRole: params.senderRole,
-      messageType: (params.messageType as InternalChatMessage["messageType"] | undefined) ?? "TEXT",
-      content: params.content,
-      attachments: params.attachments ?? [],
-      actionPayload: params.actionPayload ?? {},
-      isDeleted: false,
-      createdAt: new Date(),
-    }
-    this.messages.push(msg)
-    return msg
-  }
-
-  async findMessageById(messageId: string): Promise<InternalChatMessage | null> {
-    return this.messages.find((m) => m.id === messageId) ?? null
-  }
-
-  async listMessages(conversationId: string): Promise<InternalChatMessage[]> {
-    return this.messages.filter((m) => m.conversationId === conversationId)
-  }
-
-  async markRead(): Promise<void> {}
-
-  async updateActionPayload(messageId: string, newPayload: Record<string, unknown>): Promise<InternalChatMessage> {
-    const msg = this.messages.find((m) => m.id === messageId)
-    if (!msg) throw new Error("Not found")
-    msg.actionPayload = newPayload
-    return msg
-  }
-}
+const CHAIN = { userId: "chain-user", organizationId: "chain-org" }
+const PARTNER = { userId: "partner-user", organizationId: "partner-org" }
+const STRANGER = { userId: "stranger-user", organizationId: "stranger-org" }
 
 describe("Internal Chat Use Cases", () => {
   let repo: InMemoryChatRepository
+  let links: FakeLinkPolicy
 
   beforeEach(() => {
     repo = new InMemoryChatRepository()
+    links = new FakeLinkPolicy()
   })
 
-  it("tạo cuộc hội thoại thành công với các thành viên ban đầu", async () => {
-    const useCase = new CreateOrGetConversationUseCase(repo)
-    const conv = await useCase.execute({
-      organizationId: "org-1",
-      userId: "user-1",
-      userRole: "coordinator",
-      conversationType: "CHAIN_PARTNER",
-      targetUserId: "partner-1",
-      targetOrganizationId: "org-partner",
-      title: "Trao đổi gia công Chi nhánh A",
-    })
-
-    expect(conv.id).toBe("conv-1")
-    expect(repo.participants).toHaveLength(2)
-  })
-
-  it("gửi tin nhắn kiểm tra quyền thành viên và nội dung không rỗng", async () => {
-    const createCase = new CreateOrGetConversationUseCase(repo)
-    const conv = await createCase.execute({
-      organizationId: "org-1",
-      userId: "user-1",
-      userRole: "coordinator",
-      conversationType: "CHAIN_PARTNER",
-    })
-
-    const sendCase = new SendChatMessageUseCase(repo)
-
-    // Người lạ không phải participant gửi tin → throw ChatAccessDeniedError
-    await expect(
-      sendCase.execute({
-        conversationId: conv.id,
-        userId: "stranger-99",
-        userRole: "member",
-        content: "Xin chào",
-      })
-    ).rejects.toThrow(ChatAccessDeniedError)
-
-    // Gửi tin nhắn rỗng → throw InvalidMessageContentError
-    await expect(
-      sendCase.execute({
-        conversationId: conv.id,
-        userId: "user-1",
-        userRole: "coordinator",
-        content: "   ",
-      })
-    ).rejects.toThrow(InvalidMessageContentError)
-
-    // Gửi tin nhắn hợp lệ
-    const msg = await sendCase.execute({
-      conversationId: conv.id,
-      userId: "user-1",
-      userRole: "coordinator",
-      content: "Đơn hàng gấp cần làm ngay",
-    })
-
-    expect(msg.content).toBe("Đơn hàng gấp cần làm ngay")
-    expect(repo.messages).toHaveLength(1)
-  })
-
-  it("xử lý nhận đơn trên Action Card cập nhật living state", async () => {
-    const createCase = new CreateOrGetConversationUseCase(repo)
-    const conv = await createCase.execute({
-      organizationId: "org-1",
-      userId: "user-1",
-      userRole: "coordinator",
+  async function partnerRoom(): Promise<InternalChatConversation> {
+    return repo.createConversation({
+      organizationId: CHAIN.organizationId,
       conversationType: "ORDER_THREAD",
       orderId: "order-123",
+      createdBy: CHAIN.userId,
+      participantUserIds: [
+        { userId: CHAIN.userId, organizationId: CHAIN.organizationId, roleInChat: "OWNER" },
+        { userId: PARTNER.userId, organizationId: PARTNER.organizationId },
+      ],
     })
+  }
 
-    const sendCase = new SendChatMessageUseCase(repo)
-    const cardMsg = await sendCase.execute({
+  /** Thẻ đơn do máy chủ sinh (như DispatchOrderToChatUseCase) — client không gửi được thẻ. */
+  async function orderCard(conv: InternalChatConversation): Promise<InternalChatMessage> {
+    return repo.sendMessage({
       conversationId: conv.id,
-      userId: "user-1",
-      userRole: "coordinator",
-      content: "Điều phối đơn #ORD-01",
+      senderUserId: CHAIN.userId,
+      senderRole: "dieu_phoi",
       messageType: "ACTION_CARD_ORDER",
-      actionPayload: { orderId: "order-123", status: "PENDING_ACCEPT" },
+      content: "Điều phối đơn #ORD-01",
+      actionPayload: { orderId: "order-123", orderCode: "ORD-01", priceVnd: 500000, status: "PENDING_ACCEPT", assignedPartnerOrgId: PARTNER.organizationId },
     })
+  }
 
-    // Đối tác được mời vào luồng đơn (như `dispatch-order-to-chat`) — chỉ người tham gia mới bấm được nút.
-    await repo.addParticipant(conv.id, { userId: "partner-user-1", organizationId: "partner-org-1" })
-    const handleActionCase = new HandleCardActionUseCase(repo)
-    const updated = await handleActionCase.execute({
-      messageId: cardMsg.id,
-      userId: "partner-user-1",
-      userOrgId: "partner-org-1",
-      action: "ACCEPT_ORDER",
+  const send = () => new SendChatMessageUseCase(repo, links)
+  const act = () => new HandleCardActionUseCase(repo, links)
+  const accept = (messageId: string, who = PARTNER) =>
+    act().execute({ messageId, userId: who.userId, userOrgId: who.organizationId, userRole: "cua_hang", action: "ACCEPT_ORDER" })
+
+  it("tạo cuộc hội thoại thành công với các thành viên ban đầu", async () => {
+    const conv = await new CreateOrGetConversationUseCase(repo, links).execute({
+      ...CHAIN,
+      userRole: "dieu_hanh",
+      conversationType: "CHAIN_PARTNER",
+      targetUserId: PARTNER.userId,
+      targetOrganizationId: PARTNER.organizationId,
     })
-
-    expect((updated.actionPayload as { status?: string }).status).toBe("ACCEPTED")
-    // Giữ trạng thái sống của thẻ — trước 08/11/2026 cả `action_payload` bị ghi đè, mất mã đơn.
-    expect((updated.actionPayload as { orderId?: string }).orderId).toBe("order-123")
-    expect(repo.messages).toHaveLength(2) // 1 card msg + 1 system announcement
+    expect(conv.conversationType).toBe("CHAIN_PARTNER")
+    expect(repo.participants.filter((p) => p.conversationId === conv.id)).toHaveLength(2)
   })
 
-  it("người không tham gia hội thoại hoặc mã tin lạ → 404, thẻ không đổi", async () => {
-    const conv = await new CreateOrGetConversationUseCase(repo).execute({
-      organizationId: "org-1", userId: "user-1", userRole: "coordinator", conversationType: "ORDER_THREAD", orderId: "order-9",
-    })
-    const card = await new SendChatMessageUseCase(repo).execute({
-      conversationId: conv.id, userId: "user-1", userRole: "coordinator", content: "Đơn #9", messageType: "ACTION_CARD_ORDER",
-      actionPayload: { orderId: "order-9", status: "PENDING_ACCEPT" },
-    })
-    const useCase = new HandleCardActionUseCase(repo)
-    const outsider = useCase.execute({ messageId: card.id, userId: "user-org-khac", userOrgId: "org-khac", action: "REJECT_ORDER" })
+  it("tạo lại phòng 1-1 với cùng người thì dùng lại phòng cũ, không sinh phòng trùng", async () => {
+    const useCase = new CreateOrGetConversationUseCase(repo, links)
+    const input = { ...CHAIN, userRole: "dieu_hanh", conversationType: "CHAIN_PARTNER" as const, targetUserId: PARTNER.userId, targetOrganizationId: PARTNER.organizationId }
+    const first = await useCase.execute(input)
+    const second = await useCase.execute(input)
+    expect(second.id).toBe(first.id)
+    expect(repo.conversations).toHaveLength(1)
+  })
+
+  it("gửi tin kiểm thành viên, nội dung không rỗng, độ dài, và luôn là tin chữ", async () => {
+    const conv = await partnerRoom()
+    await expect(send().execute({ conversationId: "khong-co", ...CHAIN, userRole: "x", content: "a" })).rejects.toThrow(ConversationNotFoundError)
+    await expect(send().execute({ conversationId: conv.id, ...STRANGER, userRole: "x", content: "a" })).rejects.toThrow(ChatAccessDeniedError)
+    await expect(send().execute({ conversationId: conv.id, ...CHAIN, userRole: "x", content: "   " })).rejects.toThrow(InvalidMessageContentError)
+    await expect(send().execute({ conversationId: conv.id, ...CHAIN, userRole: "x", content: "a".repeat(CHAT_MESSAGE_MAX_LENGTH + 1) })).rejects.toThrow(InvalidMessageContentError)
+
+    const msg = await send().execute({ conversationId: conv.id, ...PARTNER, userRole: "cua_hang", content: " Đơn gấp cần làm ngay " })
+    expect(msg.content).toBe("Đơn gấp cần làm ngay")
+    expect(msg.messageType).toBe("TEXT")
+  })
+
+  it("đối tác có liên kết không còn ACTIVE: không đọc, không gửi, không bấm thẻ", async () => {
+    const conv = await partnerRoom()
+    const card = await orderCard(conv)
+    links.active = false
+    await expect(send().execute({ conversationId: conv.id, ...PARTNER, userRole: "x", content: "chào" })).rejects.toThrow(ChatAccessDeniedError)
+    await expect(new GetConversationMessagesUseCase(repo, links).execute({ conversationId: conv.id, ...PARTNER })).rejects.toThrow(ChatAccessDeniedError)
+    await expect(accept(card.id)).rejects.toThrow(ChatAccessDeniedError)
+    // Chuỗi vẫn xem được lịch sử phòng của mình
+    const page = await new GetConversationMessagesUseCase(repo, links).execute({ conversationId: conv.id, ...CHAIN })
+    expect(page.items).toHaveLength(1)
+  })
+
+  it("nhận đơn: gộp trạng thái vào thẻ, giữ nguyên mã đơn / giá, đăng tin hệ thống theo vai thật", async () => {
+    const card = await orderCard(await partnerRoom())
+    const updated = await accept(card.id)
+    const payload = updated.actionPayload as Record<string, unknown>
+    expect(payload.status).toBe("ACCEPTED")
+    expect(payload.orderCode).toBe("ORD-01")
+    expect(payload.priceVnd).toBe(500000)
+    expect(payload.assignedPartnerOrgId).toBe(PARTNER.organizationId)
+    expect(payload.actionByUserId).toBe(PARTNER.userId)
+    const notice = repo.messages.find((m) => m.messageType === "SYSTEM_NOTICE")
+    expect(notice?.senderRole).toBe("cua_hang")
+  })
+
+  it("thẻ đã xử lý → 409; người bấm sau trong lúc đua cũng → 409", async () => {
+    const card = await orderCard(await partnerRoom())
+    await accept(card.id)
+    await expect(accept(card.id)).rejects.toThrow(CardActionConflictError)
+
+    const card2 = await orderCard(repo.conversations[0]!)
+    repo.updateCardIfStatus = async () => null // người khác vừa bấm trước
+    await expect(accept(card2.id)).rejects.toThrow(CardActionConflictError)
+  })
+
+  it("không phải tổ chức được giao, người gửi thẻ, người ngoài → 404; tin không phải thẻ → 409; thẻ không đổi", async () => {
+    const conv = await partnerRoom()
+    const card = await orderCard(conv)
+    await expect(accept(card.id, STRANGER)).rejects.toThrow(ChatAccessDeniedError)
+    await expect(accept(card.id, CHAIN)).rejects.toThrow(ChatAccessDeniedError)
+    await expect(accept("khong-co")).rejects.toThrow(ChatAccessDeniedError)
+
+    await repo.addParticipant(conv.id, STRANGER) // vào được phòng nhưng không phải tổ chức được giao
+    await expect(accept(card.id, STRANGER)).rejects.toThrow(ChatAccessDeniedError)
+
+    const text = await send().execute({ conversationId: conv.id, ...CHAIN, userRole: "x", content: "chào" })
+    await expect(accept(text.id)).rejects.toMatchObject({ code: "CONFLICT", chatCode: "NOT_ORDER_ACTION_CARD" })
+
+    expect((card.actionPayload as Record<string, unknown>).status).toBe("PENDING_ACCEPT")
+    expect(repo.messages.some((m) => m.messageType === "SYSTEM_NOTICE")).toBe(false)
+  })
+
+  it("đọc tin: trang mới nhất mới đánh dấu đã đọc; trang cũ hơn thì không", async () => {
+    const conv = await partnerRoom()
+    for (let i = 0; i < 5; i++) await send().execute({ conversationId: conv.id, ...CHAIN, userRole: "x", content: `tin ${i}` })
+    const get = new GetConversationMessagesUseCase(repo, links)
+    const latest = await get.execute({ conversationId: conv.id, ...PARTNER, limit: 2 })
+    expect(latest.items.map((m) => m.content)).toEqual(["tin 3", "tin 4"])
+    expect(repo.readMarks).toHaveLength(1)
+
+    const older = await get.execute({ conversationId: conv.id, ...PARTNER, limit: 2, before: latest.nextCursor! })
+    expect(older.items.map((m) => m.content)).toEqual(["tin 1", "tin 2"])
+    expect(repo.readMarks).toHaveLength(1)
+  })
+
+  it("người không tham gia hội thoại hoặc mã tin lạ → 404 (mã NOT_FOUND), thẻ không đổi", async () => {
+    const card = await orderCard(await partnerRoom())
+    const outsider = act().execute({ messageId: card.id, userId: STRANGER.userId, userOrgId: STRANGER.organizationId, userRole: "x", action: "REJECT_ORDER" })
     await expect(outsider).rejects.toThrow(ChatAccessDeniedError)
     await expect(outsider).rejects.toMatchObject({ code: "NOT_FOUND" })
-    await expect(useCase.execute({ messageId: "msg-khong-co", userId: "user-1", userOrgId: "org-1", action: "ACCEPT_ORDER" })).rejects.toMatchObject({ code: "NOT_FOUND" })
-    expect(repo.messages.find((m) => m.id === card.id)?.actionPayload).toEqual({ orderId: "order-9", status: "PENDING_ACCEPT" })
+    await expect(accept("msg-khong-co")).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect((repo.messages.find((m) => m.id === card.id)?.actionPayload as Record<string, unknown>).status).toBe("PENDING_ACCEPT")
     expect(repo.messages).toHaveLength(1)
-  })
-
-  it("tin không phải thẻ đơn → 409", async () => {
-    const conv = await new CreateOrGetConversationUseCase(repo).execute({
-      organizationId: "org-1", userId: "user-1", userRole: "coordinator", conversationType: "ORDER_THREAD", orderId: "order-10",
-    })
-    const text = await new SendChatMessageUseCase(repo).execute({ conversationId: conv.id, userId: "user-1", userRole: "coordinator", content: "Chào đối tác" })
-    await expect(new HandleCardActionUseCase(repo).execute({ messageId: text.id, userId: "user-1", userOrgId: "org-1", action: "ACCEPT_ORDER" }))
-      .rejects.toMatchObject({ code: "CONFLICT" })
   })
 })

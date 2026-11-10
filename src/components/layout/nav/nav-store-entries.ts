@@ -219,6 +219,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     group: "van-hanh",
     iconKey: "MessageSquare",
     navKey: "internal-chat",
+    capability: "S1",
     mobileLabel: "Tin nhắn",
   },
 

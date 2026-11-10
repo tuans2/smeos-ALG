@@ -19,6 +19,8 @@ import type { StepBypassRequestInfo } from "@/components/greeting-card/subcontra
 import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 interface SubcontractPageData extends SubcontractClaimCardProps {
+  /** Cửa hàng đối tác có tài khoản smeOS — mở phòng Trao đổi nội bộ với chuỗi */
+  inAppChatUrl?: string | null | undefined
   craftFeeDeductions?: Array<{ amountVnd: number; reason: string }>
   craftFeePayableVnd?: number
   orderStatus?: string | null
@@ -109,6 +111,15 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         <p className="text-caption text-text-muted mt-1">
           {orderData.branchName ? `Chi nhánh: ${orderData.branchName}` : "Vui lòng kiểm tra và tiếp nhận đơn hàng"}
         </p>
+        {orderData.inAppChatUrl?.startsWith("/tin-nhan") && (
+          <p className="mt-3 text-caption text-text-muted max-w-sm mx-auto">
+            Cửa hàng đã có tài khoản smeOS —{" "}
+            <a href={orderData.inAppChatUrl} className="font-semibold text-primary underline underline-offset-2">
+              làm đơn trong Trao đổi nội bộ
+            </a>{" "}
+            để theo dõi mọi đơn của chuỗi ở một chỗ.
+          </p>
+        )}
       </header>
 
       {actionError && (

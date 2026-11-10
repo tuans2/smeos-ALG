@@ -40,6 +40,7 @@ import {
   type NavEntry,
 } from "@/components/layout/nav-model"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
+import { InternalChatUnreadBadge } from "@/components/internal-chat/internal-chat-unread-badge"
 
 const ICONS: Record<string, ComponentType<{ size?: number; className?: string; strokeWidth?: number }>> = {
   Users,
@@ -193,6 +194,7 @@ export default function ThemPage() {
           <Icon size={18} strokeWidth={1.8} className="text-primary" />
           <span className="text-body-sm font-medium text-text">{item.label}</span>
         </div>
+        {item.navKey === "internal-chat" && <InternalChatUnreadBadge />}
         <ChevronRight size={18} strokeWidth={2} className="text-text-muted" />
       </Link>
     )

@@ -34,6 +34,8 @@ export const subcontractViewResponse = z.strictObject({
     orderCode: z.string(),
     branchId: z.string(),
     branchName: z.string(),
+    /** Cửa hàng đối tác có tài khoản smeOS: đường dẫn mở phòng với chuỗi (null = chi nhánh / xưởng ngoài) */
+    inAppChatUrl: z.string().nullable(),
     product: z.strictObject({
       name: z.string(),
       imageUrl: z.string().nullable(),

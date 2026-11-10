@@ -1,3 +1,5 @@
+import { z } from "zod"
+
 import type { OpenApiOperation } from "@/core/http/openapi"
 
 import { BODY_ERRORS, op } from "./internal-op"
@@ -11,6 +13,7 @@ const HOOK = "Webhook kênh chat"
 const IN = "Chat nội bộ"
 const NF = "Hội thoại của tổ chức khác → 404."
 const MEMBER = "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404."
+const NOTE_AUDIT = "Nhật ký kiểm toán chỉ ghi loại tin và độ dài, không ghi nội dung."
 const LEGACY = "Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`)."
 /** Route trả `{ error: "chuỗi" }` cho bên gọi ngoài thay cho envelope `Error` chung. */
 const legacyErrors = (o: OpenApiOperation): OpenApiOperation => ({ ...o, extensions: { ...o.extensions, "x-legacy-error-envelope": true } })
@@ -61,15 +64,37 @@ export const CHAT_OPERATIONS: OpenApiOperation[] = [
     query: req.internalConversationsQuery, description: `Không cần mã năng lực. ${LEGACY}`,
     ok: [200, { description: "Hội thoại", schema: res.internalConversationsResponse }] }),
   op(IN, { method: "post", path: "/internal-chat/conversations", operationId: "createInternalConversation", summary: "Tạo hoặc lấy lại hội thoại nội bộ", cap: null,
-    body: req.createInternalConversationBody,
-    description: `Không cần mã năng lực. \`targetUserId\` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc \`orderId\` của tổ chức khác → 404. Sai lược đồ → 400 \`details.reason\` (một chuỗi). ${LEGACY}`,
+    body: z.union([req.openInternalRoomBody, req.createInternalConversationBody]),
+    description: `Thân \`{ partnerOrgId }\` / \`{ chainOrgId }\` / \`{ branchId }\` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — \`PLATFORM_TENANT\` client không tự tạo được (→ 400). \`targetUserId\` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc \`orderId\` của tổ chức khác → 404. Sai lược đồ → 400 \`details.reason\` (một chuỗi). ${LEGACY}`,
     ok: [200, { description: "Hội thoại", schema: res.internalConversationResponse }], errors: [...BODY_ERRORS, 404] }),
   op(IN, { method: "get", path: "/internal-chat/conversations/{id}/messages", operationId: "listInternalMessages", summary: "Tin nhắn của hội thoại nội bộ", cap: null,
     description: `${MEMBER} ${LEGACY}`, ok: [200, { description: "Tin nhắn", schema: res.internalMessagesResponse }], errors: [404] }),
   op(IN, { method: "post", path: "/internal-chat/conversations/{id}/messages", operationId: "sendInternalMessage", summary: "Gửi tin nhắn nội bộ", cap: null,
-    body: req.sendInternalMessageBody, description: `${MEMBER} Tin rỗng không kèm tệp → 400. ${LEGACY}`,
+    body: req.sendInternalMessageBody, description: `${MEMBER} Chỉ tin chữ: thân có \`actionPayload\` / \`attachments\` / loại khác \`TEXT\` hoặc tin rỗng → 400 (thẻ đơn và tin hệ thống chỉ do máy chủ sinh; ảnh gửi qua \`/images\`). ${LEGACY}`,
     ok: [200, { description: "Tin đã gửi", schema: res.internalMessageResponse }], errors: [...BODY_ERRORS, 404] }),
   op(IN, { method: "post", path: "/internal-chat/messages/{id}/action", operationId: "handleInternalCardAction", summary: "Bấm nút trên thẻ hành động (nhận/từ chối đơn)", cap: null,
-    body: req.internalCardActionBody, description: `${MEMBER} Chỉ thẻ đơn (\`ACTION_CARD_ORDER\`) — tin khác → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. ${LEGACY}`,
+    body: req.internalCardActionBody, description: `${MEMBER} Chỉ tổ chức được giao, không phải người gửi thẻ (khác → 404). Tin không phải thẻ đơn (\`ACTION_CARD_ORDER\`) → 409; thẻ đã xử lý hoặc vừa bị người khác xử lý → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. ${LEGACY}`,
     ok: [200, { description: "Tin sau khi cập nhật", schema: res.internalMessageResponse }], errors: [...BODY_ERRORS, 404, 409] }),
+  op(IN, { method: "patch", path: "/internal-chat/messages/{id}", operationId: "editInternalMessage", summary: "Sửa tin của mình (trong 24 giờ)", cap: "S1",
+    body: req.editInternalMessageBody,
+    description: `Chỉ người gửi, chỉ tin chữ / chú thích ảnh. Tin của người khác hoặc ngoài phòng → 404; quá 24 giờ, đã thu hồi, thẻ đơn, tin hệ thống → 409. ${NOTE_AUDIT}`,
+    ok: [200, { description: "Tin sau khi sửa", schema: res.internalMessageDataResponse }], errors: [...BODY_ERRORS, 404, 409, 429] }),
+  op(IN, { method: "delete", path: "/internal-chat/messages/{id}", operationId: "deleteInternalMessage", summary: "Thu hồi tin của mình (trong 24 giờ)", cap: "S1",
+    description: `Xoá mềm: xoá nội dung và đính kèm; ảnh vào hàng đợi xoá tệp của tổ chức chủ phòng. Cùng luật 404 / 409 như sửa tin. ${NOTE_AUDIT}`,
+    ok: [200, { description: "Đã thu hồi", schema: res.internalMessageDeletedResponse }], errors: [404, 409, 429] }),
+  op(IN, { method: "patch", path: "/internal-chat/conversations/{id}/mute", operationId: "muteInternalConversation", summary: "Tắt / bật thông báo của phòng cho chính mình", cap: "S1",
+    body: req.muteInternalConversationBody, description: "Không vào được phòng → 404.",
+    ok: [200, { description: "Trạng thái tắt tiếng", schema: res.internalMuteResponse }], errors: [...BODY_ERRORS, 404] }),
+  op(IN, { method: "post", path: "/internal-chat/conversations/{id}/images", operationId: "sendInternalImages", summary: "Gửi 1–5 ảnh kèm chú thích trong một tin", cap: "S1",
+    multipart: req.internalChatImagesForm,
+    description: "Kiểm byte thật từng ảnh (JPG/PNG/WebP, ≤ 10 MB, ≤ 5 ảnh). `attachments` là khoá kho; đọc lại phòng để có URL ký. Không vào được phòng → 404.",
+    ok: [201, { description: "Tin ảnh vừa tạo", schema: res.internalMessageDataResponse }], errors: [...BODY_ERRORS, 404, 429] }),
+  op(IN, { method: "get", path: "/internal-chat/unread", operationId: "countInternalUnread", summary: "Tổng tin chưa đọc của tôi", cap: "S1",
+    ok: [200, { description: "Số tin chưa đọc", schema: res.internalUnreadResponse }] }),
+  op(IN, { method: "get", path: "/internal-chat/stats", operationId: "internalChatStats", summary: "Số liệu giao đơn qua chat 30 ngày (phía chuỗi)", cap: "S1",
+    description: "Tổ chức không có cửa hàng đối tác → toàn 0. Chỉ số đếm.",
+    ok: [200, { description: "Số liệu", schema: res.internalChatStatsResponse }] }),
+  op(IN, { method: "get", path: "/internal-chat/stream", operationId: "streamInternalChat", summary: "Luồng báo phòng có tin mới (SSE)", cap: "S1",
+    description: "`text/event-stream`: sự kiện `connected`, rồi `room` với `{ conversationId }` (không có nội dung tin); ping 25 giây; đóng sau 30 phút, trình duyệt tự nối lại. Lọc theo tổ chức và chi nhánh của phiên.",
+    ok: [200, { description: "Luồng sự kiện", contentType: "text/event-stream" }] }),
 ]

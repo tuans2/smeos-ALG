@@ -24,6 +24,8 @@ export interface NotifyOrganizationInput {
   /** Biến điền vào deepLinkTemplate của sự kiện, vd. { orderId }. */
   linkVars?: Record<string, string> | undefined
   parentOrgId?: string | undefined
+  /** Người không nhận lần này (vd. đã tắt tiếng phòng trao đổi nội bộ). */
+  excludeUserIds?: readonly string[] | undefined
 }
 
 export type NotifyDeps = {
@@ -42,7 +44,8 @@ export async function notifyOrganization(input: NotifyOrganizationInput, deps: N
     }
     // Đọc dư một chút vì một số thành viên sẽ bị lọc theo vai
     const { organizationType, parentChainOrgId, members } = await deps.listMembers(input.organizationId, MAX_RECIPIENTS_PER_EVENT * 4)
-    const recipients = selectRecipients(event, members, { organizationType, ownerUserId: input.ownerUserId ?? null })
+    const excluded = new Set(input.excludeUserIds ?? [])
+    const recipients = selectRecipients(event, members, { organizationType, ownerUserId: input.ownerUserId ?? null }).filter((r) => !excluded.has(r.userId))
     const deepLink = input.deepLink ?? fillDeepLink(event.deepLinkTemplate, input.linkVars ?? {})
     let sent = 0
     let failed = 0

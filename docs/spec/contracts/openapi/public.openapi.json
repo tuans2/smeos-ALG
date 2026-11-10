@@ -9754,6 +9754,12 @@
                         "branchName": {
                           "type": "string"
                         },
+                        "inAppChatUrl": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "product": {
                           "type": "object",
                           "properties": {
@@ -10138,6 +10144,7 @@
                         "orderCode",
                         "branchId",
                         "branchName",
+                        "inAppChatUrl",
                         "product",
                         "deliveryAddress",
                         "deliveryTime",

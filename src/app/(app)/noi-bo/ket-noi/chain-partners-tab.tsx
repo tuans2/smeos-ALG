@@ -68,7 +68,7 @@ export function ChainPartnersTab({
                     {r.partnershipType}
                   </span>
                   <Link
-                    href="/tin-nhan"
+                    href={(r.chainOrgId ? `/tin-nhan?chuoi=${r.chainOrgId}` : "/tin-nhan") as never}
                     className="p-2 rounded-lg bg-primary-subtle hover:bg-primary-subtle/80 text-primary transition-colors"
                     title="Nhắn tin với chuỗi"
                   >
@@ -111,7 +111,7 @@ export function ChainPartnersTab({
                     {r.partnershipType}
                   </span>
                   <Link
-                    href="/tin-nhan"
+                    href={(r.partnerOrgId ? `/tin-nhan?doi-tac=${r.partnerOrgId}` : "/tin-nhan") as never}
                     className="p-2 rounded-lg bg-primary-subtle hover:bg-primary-subtle/80 text-primary transition-colors"
                     title="Nhắn tin với đối tác"
                   >

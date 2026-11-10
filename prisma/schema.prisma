@@ -292,6 +292,10 @@ model organizations {
   reconciliation_findings                          reconciliation_findings[]
   organization_links_as_parent                     organization_links[]            @relation("OrgLinkParent")
   organization_links_as_child                      organization_links[]            @relation("OrgLinkChild")
+  /// Phòng trao đổi của chuỗi mà tổ chức này là bên kia (cửa hàng đối tác) — kế hoạch chat nội bộ D3
+  internal_chat_counterpart_conversations          internal_chat_conversations[]   @relation("ChatCounterpartOrg")
+  /// Dòng ứng viên bắn đơn trong chuỗi đại diện cho tổ chức này (cửa hàng đối tác) — D9
+  partner_dispatch_branches                        branches[]                      @relation("BranchPartnerOrg")
   custom_domains                                   custom_domains[]
   brand_style_options                              brand_style_options[]
   social_posts                                     social_posts[]
@@ -370,22 +374,28 @@ model branches {
   bypass_count         Int      @default(0)
   cancellation_history Json? // tối đa 50 mục gần nhất
   bypass_history       Json?
+  /// Cửa hàng đối tác (tổ chức riêng, liên kết chuỗi ACTIVE) mà dòng ứng viên bắn đơn này đại diện — null = chi nhánh của chính tổ chức (D9)
+  partner_org_id       String?
   created_at           DateTime @default(now()) @db.Timestamptz(3)
 
   updated_at   DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations       @relation(fields: [organization_id], references: [id])
+  partner_org  organizations?      @relation("BranchPartnerOrg", fields: [partner_org_id], references: [id], onDelete: SetNull)
   inventory    product_inventory[]
 
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
-  memberships_by_branch_id     memberships[]     @relation("fk_memberships_branch_id")
-  generation_jobs_by_branch_id generation_jobs[] @relation("fk_generation_jobs_branch_id")
-  products_by_branch_id        products[]        @relation("fk_products_branch_id")
-  pricing_rules_by_branch_id   pricing_rules[]   @relation("fk_pricing_rules_branch_id")
-  orders_by_branch_id          orders[]          @relation("fk_orders_branch_id")
-  customers_by_branch_id       customers[]       @relation("fk_customers_branch_id")
+  memberships_by_branch_id     memberships[]                 @relation("fk_memberships_branch_id")
+  generation_jobs_by_branch_id generation_jobs[]             @relation("fk_generation_jobs_branch_id")
+  products_by_branch_id        products[]                    @relation("fk_products_branch_id")
+  pricing_rules_by_branch_id   pricing_rules[]               @relation("fk_pricing_rules_branch_id")
+  orders_by_branch_id          orders[]                      @relation("fk_orders_branch_id")
+  customers_by_branch_id       customers[]                   @relation("fk_customers_branch_id")
+  internal_chat_conversations  internal_chat_conversations[] @relation("ChatBranchRoom")
 
   @@unique([organization_id, code])
+  @@unique([organization_id, partner_org_id])
   @@index([organization_id])
+  @@index([partner_org_id])
 }
 
 model roles {
@@ -4109,27 +4119,38 @@ model greeting_journey_events {
 
 // ─── Internal Chat (ChainOS / PlatformOS) ────────────────────────────────────
 model internal_chat_conversations {
-  id                String   @id @default(uuid())
-  organization_id   String
-  conversation_type String // PLATFORM_TENANT | CHAIN_PARTNER | ORDER_THREAD
-  title             String?
-  order_id          String?
-  metadata          Json     @default("{}")
-  created_by        String // user_id of creator
-  last_message_at   DateTime @default(now()) @db.Timestamptz(3)
-  created_at        DateTime @default(now()) @db.Timestamptz(3)
-  updated_at        DateTime @updatedAt @db.Timestamptz(3)
+  id                 String   @id @default(uuid())
+  organization_id    String
+  conversation_type  String // PLATFORM_TENANT | CHAIN_PARTNER | CHAIN_BRANCH | ORDER_THREAD
+  title              String?
+  order_id           String?
+  metadata           Json     @default("{}")
+  created_by         String // user_id of creator
+  /// Bên kia của phòng liên tổ chức (cửa hàng đối tác). RLS cho tổ chức này thấy phòng (D3, D4)
+  counterpart_org_id String?
+  /// Phòng chi nhánh nội bộ (`CHAIN_BRANCH`) — D10
+  branch_id          String?
+  /// Khoá chống trùng phòng trong tổ chức: `partner:<tổ chức đối tác>` | `branch:<chi nhánh>`; null = phòng thường
+  room_key           String?
+  last_message_at    DateTime @default(now()) @db.Timestamptz(3)
+  created_at         DateTime @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations                @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   participants internal_chat_participants[]
   messages     internal_chat_messages[]
 
   // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
-  fk_order orders? @relation("fk_internal_chat_conversations_order_id", fields: [order_id], references: [id], onDelete: SetNull)
+  fk_order        orders?        @relation("fk_internal_chat_conversations_order_id", fields: [order_id], references: [id], onDelete: SetNull)
+  counterpart_org organizations? @relation("ChatCounterpartOrg", fields: [counterpart_org_id], references: [id], onDelete: SetNull)
+  branch          branches?      @relation("ChatBranchRoom", fields: [branch_id], references: [id], onDelete: SetNull)
 
   @@unique([id, organization_id])
+  @@unique([organization_id, room_key])
   @@index([organization_id, conversation_type])
   @@index([order_id])
+  @@index([counterpart_org_id])
+  @@index([branch_id])
 }
 
 model internal_chat_participants {
@@ -4153,19 +4174,21 @@ model internal_chat_participants {
 }
 
 model internal_chat_messages {
-  id              String    @id @default(uuid())
-  conversation_id String
+  id                 String    @id @default(uuid())
+  conversation_id    String
   /// Sao từ internal_chat_conversations; trigger điền khi bên ghi bỏ trống.
-  organization_id String
-  sender_user_id  String
-  sender_role     String
-  message_type    String    @default("TEXT") // TEXT | IMAGE | ACTION_CARD_ORDER | ACTION_CARD_QC | SYSTEM_NOTICE
-  content         String    @default("")
-  attachments     String[]  @default([])
-  action_payload  Json?
+  organization_id    String
+  /// Sao từ phòng (bên kia của phòng liên tổ chức) để RLS cho cửa hàng đối tác đọc/ghi tin (D3, D4)
+  counterpart_org_id String?
+  sender_user_id     String
+  sender_role        String
+  message_type       String    @default("TEXT") // TEXT | IMAGE | ACTION_CARD_ORDER | ACTION_CARD_QC | SYSTEM_NOTICE
+  content            String    @default("")
+  attachments        String[]  @default([])
+  action_payload     Json?
   /// Xoá mềm thống nhất bằng mốc thời gian (thay is_deleted, 05/11/2026).
-  deleted_at      DateTime? @db.Timestamptz(3)
-  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  deleted_at         DateTime? @db.Timestamptz(3)
+  created_at         DateTime  @default(now()) @db.Timestamptz(3)
 
   updated_at   DateTime                    @default(now()) @updatedAt @db.Timestamptz(3)
   conversation internal_chat_conversations @relation(fields: [conversation_id, organization_id], references: [id, organization_id], onDelete: Cascade)
@@ -4174,6 +4197,7 @@ model internal_chat_messages {
 
   @@index([conversation_id, created_at])
   @@index([organization_id])
+  @@index([counterpart_org_id])
   @@index([sender_user_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 

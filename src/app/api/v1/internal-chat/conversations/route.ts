@@ -1,16 +1,28 @@
+import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
-import { createInternalConversationBody } from "@/app/api/v1/_contracts/requests-chat"
+import { createInternalConversationBody, openInternalRoomBody } from "@/app/api/v1/_contracts/requests-chat"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { notFound, validationFailed } from "@/core/http/errors"
 import { isAllowedChatTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
+import { getChatLinkPolicy } from "@/modules/internal-chat/infra/prisma-chat-link-policy"
+import { getOrderRepository } from "@/modules/orders/infra/order-repository"
 import { ListUserConversationsUseCase } from "@/modules/internal-chat/use-cases/list-user-conversations"
 import { CreateOrGetConversationUseCase } from "@/modules/internal-chat/use-cases/create-or-get-conversation"
+import { openRoom } from "@/modules/internal-chat/use-cases/open-room"
+import { PrismaPartnerOrderStats } from "@/modules/internal-chat/infra/prisma-partner-order-stats"
+import { PrismaChatRoomDirectory } from "@/modules/internal-chat/infra/prisma-chat-room-directory"
+import { INTERNAL_CHAT_CAPABILITY } from "@/modules/internal-chat/domain/chat-capabilities"
+
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   const url = new URL(request.url)
-  const conversationType = url.searchParams.get("type") as never
+  requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
+  const typeParsed = z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "CHAIN_BRANCH", "ORDER_THREAD"]).optional().safeParse(url.searchParams.get("type") || undefined)
+  if (!typeParsed.success) throw validationFailed({ type: "Loại cuộc hội thoại không hợp lệ" })
+  const conversationType = typeParsed.data
   const orderId = url.searchParams.get("orderId") ?? undefined
 
   const chatRepo = getInternalChatRepository()
@@ -19,9 +31,17 @@ export const GET = handle(async (request) => {
   const result = await useCase.execute({
     userId: ctx.userId,
     organizationId: ctx.organizationId,
-    conversationType: conversationType || undefined,
+    branchId: ctx.branchId,
+    conversationType,
     orderId,
   })
+
+  // Phía chuỗi: mỗi phòng cửa hàng đối tác kèm số đơn cửa hàng đang giữ (IC-5.5)
+  const partnerIds = result.items.filter((c) => c.organizationId === ctx.organizationId && c.counterpartOrgId).map((c) => c.counterpartOrgId!)
+  if (partnerIds.length > 0) {
+    const active = await new PrismaPartnerOrderStats().activeOrdersByPartner(ctx.organizationId, partnerIds)
+    for (const c of result.items) if (c.counterpartOrgId && c.organizationId === ctx.organizationId) c.activeOrderCount = active.get(c.counterpartOrgId) ?? 0
+  }
 
   return jsonResponse({
     success: true,
@@ -32,7 +52,20 @@ export const GET = handle(async (request) => {
 
 export const POST = handle(async (request) => {
   const { resolved, ctx } = await requireTenantContext(request)
+  requireCapability(ctx, INTERNAL_CHAT_CAPABILITY.use)
   const body = await request.json().catch(() => null)
+
+  const room = openInternalRoomBody.safeParse(body)
+  if (room.success) {
+    const chatRepo = getInternalChatRepository()
+    const conversation = await openRoom(
+      { chatRepo, linkPolicy: getChatLinkPolicy(), directory: new PrismaChatRoomDirectory() },
+      { userId: ctx.userId, organizationId: ctx.organizationId, branchId: ctx.branchId },
+      room.data
+    )
+    return jsonResponse({ success: true, data: conversation })
+  }
+
   const parsed = createInternalConversationBody.safeParse(body)
 
   if (!parsed.success) {
@@ -46,8 +79,14 @@ export const POST = handle(async (request) => {
     throw notFound()
   }
 
+  // Luồng theo đơn chỉ gắn với đơn của CHÍNH tổ chức — trước đây tổ chức khác gắn được mã đơn của chuỗi vào phòng
+  // của mình, rồi lệnh gửi đơn của chuỗi (tra phòng theo mã đơn) đăng thẻ đơn sang phòng đó.
+  if (parsed.data.orderId && !(await getOrderRepository().findById(ctx.organizationId, parsed.data.orderId))) {
+    throw notFound()
+  }
+
   const chatRepo = getInternalChatRepository()
-  const useCase = new CreateOrGetConversationUseCase(chatRepo)
+  const useCase = new CreateOrGetConversationUseCase(chatRepo, getChatLinkPolicy())
 
   const conversation = await useCase.execute({
     organizationId: ctx.organizationId,

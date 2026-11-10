@@ -3195,6 +3195,18 @@ Quan hệ chuỗi ↔ cửa hàng đối tác: từ 06/11/2026 là `organization
 
 Chat nội bộ: `internal_chat_conversations` thuộc tổ chức tạo (`organization_id`); `internal_chat_participants` ghi người tham gia kèm tổ chức của họ (cho phép đối tác chuỗi cùng một luồng đơn); `internal_chat_messages` theo cuộc hội thoại. Chỉ người tham gia đọc/gửi tin; luồng đơn của tổ chức khác không tự tham gia được; chỉ mời được người của chính tổ chức hoặc chuỗi/đối tác đang liên kết ACTIVE. Ca thử: `tests/tenant/internal-chat-isolation.test.ts`.
 
+**Cập nhật 09/11/2026 — phòng theo đối tác (migration `20261109150000_internal_chat_partner_rooms`, PO duyệt D3, D4, D9, D10, kế hoạch `docs/plan/hoan-thien-chat-noi-bo.md`).** Chỉ thêm cột nullable / index / khoá ngoại / trigger và thay policy:
+
+| Bảng | Cột mới | Ý nghĩa |
+|---|---|---|
+| `internal_chat_conversations` | `counterpart_org_id` (FK `organizations`, SET NULL, index) | Bên kia của phòng liên tổ chức (cửa hàng đối tác); phòng luôn thuộc tổ chức chuỗi |
+| | `branch_id` (FK `branches`, SET NULL, index) | Phòng chi nhánh nội bộ (`CHAIN_BRANCH`) |
+| | `room_key` (unique cùng `organization_id`) | Chống trùng phòng: `partner:<tổ chức đối tác>` · `branch:<chi nhánh>`; null = phòng thường |
+| `internal_chat_messages` | `counterpart_org_id` (index) | Sao từ phòng (code ghi + trigger `internal_chat_messages_fill_counterpart`) để RLS đọc được |
+| `branches` | `partner_org_id` (FK `organizations`, SET NULL; unique cùng `organization_id`) | Dòng ứng viên bắn đơn của chuỗi đại diện cho một cửa hàng đối tác (D9) |
+
+Quyền vào phòng theo tổ chức + năng lực `S1` (D1): `internal_chat_participants` chỉ còn lưu đã đọc / tắt tiếng, tạo khi mở lần đầu. RLS `tenant_isolation` của phòng và tin: `organization_id = app.org_id` **hoặc** `counterpart_org_id = app.org_id` cho cả `USING` và `WITH CHECK` (D4; không dùng `rls_system`). Ca thử: `tests/tenant/internal-chat-partner-rooms.test.ts`, `tests/tenant/internal-chat-rls.test.ts`, `tests/tenant/chain-partner-dispatch-candidate.test.ts`.
+
 ```prisma
 model internal_chat_conversations {
   id                String   @id @default(uuid())

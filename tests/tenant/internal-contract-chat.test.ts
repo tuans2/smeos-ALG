@@ -18,10 +18,12 @@ import { GET as listInternalMessages, POST as sendInternal } from "@/app/api/v1/
 import { GET as listInternal, POST as createInternal } from "@/app/api/v1/internal-chat/conversations/route"
 import { POST as cardAction } from "@/app/api/v1/internal-chat/messages/[id]/action/route"
 import { POST as createProduct } from "@/app/api/v1/products/route"
+import { POST as createOrderRoute } from "@/app/api/v1/orders/route"
+import { POST as dispatchToChat } from "@/app/api/v1/coordinator/orders/[id]/dispatch-to-chat/route"
 
 import { expectContract } from "../helpers/contract"
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, linkPartner, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
 /** Hợp đồng phản hồi `/chat/*` và `/internal-chat/*` (OpenAPI nội bộ, PO 07/11/2026) trên CSDL thật. */
 const BASE = "http://localhost/api/v1"
@@ -97,19 +99,26 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
     expect((await zaloHook(raw("/chat/webhooks/zalo", JSON.stringify({ oa_id: "oa-la", event_name: "user_send_text" })) as never)).status).toBe(401)
   })
 
-  it("chat nội bộ: tạo, danh sách, gửi tin, tin nhắn, bấm nút trên thẻ đơn", async () => {
-    const created = await expectContract(await createInternal(send("/internal-chat/conversations", "POST", { conversationType: "PLATFORM_TENANT", title: "Hỏi nền tảng" })), 200, R.internalConversationResponse, "ichat-conv")
-    const id = String((created.data as { id: string }).id)
-    await expectContract(await listInternal(get("/internal-chat/conversations?type=PLATFORM_TENANT")), 200, R.internalConversationsResponse, "ichat-convs")
-    const card = await expectContract(
-      await sendInternal(send(`/internal-chat/conversations/${id}/messages`, "POST", {
-        content: "Đơn mới cho đối tác", messageType: "ACTION_CARD_ORDER", actionPayload: { orderId: "o-1", orderCode: "DH-001", status: "PENDING_ACCEPT" },
-      }), ps(id)),
-      200, R.internalMessageResponse, "ichat-send"
-    )
+  it("chat nội bộ: mở phòng đối tác, danh sách, gửi tin, tin nhắn, bấm nút trên thẻ đơn", async () => {
+    // Luồng thật (kế hoạch chat nội bộ GĐ1–3): chuỗi liên kết cửa hàng đối tác; client không tự tạo phòng
+    // PLATFORM_TENANT hay gửi thẻ — thẻ đơn do Điều phối giao vào chat.
+    const partner = await createTenant("hop-dong-chat-doi-tac")
+    await makeChainOrganization(t)
+    await linkPartner(t, partner, { code: "HD-01" })
+
+    const room = await expectContract(await createInternal(send("/internal-chat/conversations", "POST", { partnerOrgId: partner.organizationId })), 200, R.internalConversationResponse, "ichat-conv")
+    const id = String((room.data as { id: string }).id)
+    await expectContract(await listInternal(get("/internal-chat/conversations")), 200, R.internalConversationsResponse, "ichat-convs")
+    await expectContract(await sendInternal(send(`/internal-chat/conversations/${id}/messages`, "POST", { content: "Chiều nay có đơn cho tiệm" }), ps(id)), 200, R.internalMessageResponse, "ichat-send")
     await expectContract(await listInternalMessages(get(`/internal-chat/conversations/${id}/messages`), ps(id)), 200, R.internalMessagesResponse, "ichat-messages")
     expect((await listInternalMessages(get(`/internal-chat/conversations/${id}/messages`, other), ps(id))).status).toBe(404)
-    const cardId = String((card.data as { id: string }).id)
-    await expectContract(await cardAction(send(`/internal-chat/messages/${cardId}/action`, "POST", { action: "ACCEPT_ORDER" }), ps(cardId)), 200, R.internalMessageResponse, "ichat-action")
+
+    const order = await readJson(await createOrderRoute(send("/orders", "POST", { items: [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 300000 }] })))
+    const orderId = String((order as { order: { id: string } }).order.id)
+    const dispatched = await readJson(await dispatchToChat(
+      send(`/coordinator/orders/${orderId}/dispatch-to-chat`, "POST", { targetPartnerOrgId: partner.organizationId, targetPartnerUserId: partner.userId }), ps(orderId)
+    ))
+    const cardId = String((dispatched as { data: { message: { id: string } } }).data.message.id)
+    await expectContract(await cardAction(send(`/internal-chat/messages/${cardId}/action`, "POST", { action: "ACCEPT_ORDER" }, partner), ps(cardId)), 200, R.internalMessageResponse, "ichat-action")
   })
 })

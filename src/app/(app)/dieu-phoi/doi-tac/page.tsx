@@ -182,7 +182,7 @@ export default function ChainPartnersPage() {
                   <span>Phân quyền</span>
                 </Button>
                 <Link
-                  href={"/tin-nhan" as never}
+                  href={`/tin-nhan?doi-tac=${p.partnerOrgId}` as never}
                   className="p-2 bg-primary-muted hover:bg-primary-muted/80 text-primary rounded-xl text-caption font-semibold flex items-center justify-center transition-colors"
                   title="Nhắn tin nội bộ"
                 >

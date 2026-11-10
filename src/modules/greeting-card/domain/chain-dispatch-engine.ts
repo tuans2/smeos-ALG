@@ -39,6 +39,8 @@ export interface BranchCandidate {
   isActive: boolean
   /** Các kênh kết nối tự động (Telegram, Zalo, Messenger) */
   channels?: BranchChannelConfig | undefined
+  /** Cửa hàng đối tác (tổ chức riêng) mà ứng viên này đại diện — nhận thêm thẻ mời trong Trao đổi nội bộ (D9) */
+  partnerOrgId?: string | null | undefined
 }
 
 export interface ScoredBranch {

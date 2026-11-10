@@ -7682,6 +7682,12 @@
                               }
                             ]
                           },
+                          "partner_org_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "created_at": {
                             "type": "string",
                             "format": "date-time",
@@ -7716,6 +7722,7 @@
                           "bypass_count",
                           "cancellation_history",
                           "bypass_history",
+                          "partner_org_id",
                           "created_at",
                           "updated_at"
                         ],
@@ -7923,6 +7930,12 @@
                             }
                           ]
                         },
+                        "partner_org_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "created_at": {
                           "type": "string",
                           "format": "date-time",
@@ -7957,6 +7970,7 @@
                         "bypass_count",
                         "cancellation_history",
                         "bypass_history",
+                        "partner_org_id",
                         "created_at",
                         "updated_at"
                       ],
@@ -8175,6 +8189,12 @@
                             }
                           ]
                         },
+                        "partner_org_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
                         "created_at": {
                           "type": "string",
                           "format": "date-time",
@@ -8209,6 +8229,7 @@
                         "bypass_count",
                         "cancellation_history",
                         "bypass_history",
+                        "partner_org_id",
                         "created_at",
                         "updated_at"
                       ],
@@ -69455,6 +69476,9 @@
                           "telegramLinked": {
                             "type": "boolean"
                           },
+                          "partnerStore": {
+                            "type": "boolean"
+                          },
                           "zalo": {
                             "type": "boolean"
                           }
@@ -69467,6 +69491,7 @@
                           "isActive",
                           "telegramChatId",
                           "telegramLinked",
+                          "partnerStore",
                           "zalo"
                         ],
                         "additionalProperties": false
@@ -87504,6 +87529,7 @@
               "enum": [
                 "PLATFORM_TENANT",
                 "CHAIN_PARTNER",
+                "CHAIN_BRANCH",
                 "ORDER_THREAD"
               ]
             }
@@ -87556,6 +87582,7 @@
                             "enum": [
                               "PLATFORM_TENANT",
                               "CHAIN_PARTNER",
+                              "CHAIN_BRANCH",
                               "ORDER_THREAD"
                             ]
                           },
@@ -87577,6 +87604,18 @@
                               "type": "string"
                             },
                             "additionalProperties": {}
+                          },
+                          "counterpartOrgId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "branchId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
                           },
                           "createdBy": {
                             "type": "string"
@@ -87601,6 +87640,15 @@
                           },
                           "lastMessageSnippet": {
                             "type": "string"
+                          },
+                          "counterpartName": {
+                            "type": "string"
+                          },
+                          "isMuted": {
+                            "type": "boolean"
+                          },
+                          "activeOrderCount": {
+                            "type": "number"
                           }
                         },
                         "required": [
@@ -87647,7 +87695,7 @@
       "post": {
         "operationId": "createInternalConversation",
         "summary": "Tạo hoặc lấy lại hội thoại nội bộ",
-        "description": "Không cần mã năng lực. `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi). Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Thân `{ partnerOrgId }` / `{ chainOrgId }` / `{ branchId }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi). Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -87661,37 +87709,87 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "conversationType": {
-                    "type": "string",
-                    "enum": [
-                      "PLATFORM_TENANT",
-                      "CHAIN_PARTNER",
-                      "ORDER_THREAD"
+                "anyOf": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "partnerOrgId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          }
+                        },
+                        "required": [
+                          "partnerOrgId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "chainOrgId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          }
+                        },
+                        "required": [
+                          "chainOrgId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branchId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          }
+                        },
+                        "required": [
+                          "branchId"
+                        ],
+                        "additionalProperties": false
+                      }
                     ]
                   },
-                  "title": {
-                    "type": "string"
-                  },
-                  "targetOrganizationId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "targetUserId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "orderId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "conversationType": {
+                        "type": "string",
+                        "enum": [
+                          "CHAIN_PARTNER",
+                          "ORDER_THREAD"
+                        ]
+                      },
+                      "title": {
+                        "type": "string",
+                        "maxLength": 200
+                      },
+                      "targetOrganizationId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "targetUserId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "orderId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      }
+                    },
+                    "required": [
+                      "conversationType"
+                    ]
                   }
-                },
-                "required": [
-                  "conversationType"
                 ]
               }
             }
@@ -87734,6 +87832,7 @@
                           "enum": [
                             "PLATFORM_TENANT",
                             "CHAIN_PARTNER",
+                            "CHAIN_BRANCH",
                             "ORDER_THREAD"
                           ]
                         },
@@ -87755,6 +87854,18 @@
                             "type": "string"
                           },
                           "additionalProperties": {}
+                        },
+                        "counterpartOrgId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "branchId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
                         "createdBy": {
                           "type": "string"
@@ -87779,6 +87890,15 @@
                         },
                         "lastMessageSnippet": {
                           "type": "string"
+                        },
+                        "counterpartName": {
+                          "type": "string"
+                        },
+                        "isMuted": {
+                          "type": "boolean"
+                        },
+                        "activeOrderCount": {
+                          "type": "number"
                         }
                       },
                       "required": [
@@ -87828,6 +87948,232 @@
           }
         },
         "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/internal-chat/conversations/{id}/images": {
+      "post": {
+        "operationId": "sendInternalImages",
+        "summary": "Gửi 1–5 ảnh kèm chú thích trong một tin",
+        "description": "Kiểm byte thật từng ảnh (JPG/PNG/WebP, ≤ 10 MB, ≤ 5 ảnh). `attachments` là khoá kho; đọc lại phòng để có URL ký. Không vào được phòng → 404.",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary",
+                      "contentEncoding": "binary"
+                    }
+                  },
+                  "caption": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "files"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tin ảnh vừa tạo",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "conversationId": {
+                          "type": "string"
+                        },
+                        "senderUserId": {
+                          "type": "string"
+                        },
+                        "senderRole": {
+                          "type": "string"
+                        },
+                        "senderName": {
+                          "type": "string"
+                        },
+                        "messageType": {
+                          "type": "string",
+                          "enum": [
+                            "TEXT",
+                            "IMAGE",
+                            "ACTION_CARD_ORDER",
+                            "ACTION_CARD_QC",
+                            "ACTION_CARD_SUBCONTRACT",
+                            "SYSTEM_NOTICE"
+                          ]
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "actionPayload": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        "isDeleted": {
+                          "type": "boolean"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "canChange": {
+                          "type": "boolean"
+                        },
+                        "editedAt": {
+                          "type": "string"
+                        },
+                        "subcontractView": {
+                          "type": "object",
+                          "properties": {
+                            "stage": {
+                              "type": "string"
+                            },
+                            "closedReason": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "deadlineAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "productionStatus": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "deliveryStatus": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actionUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "stage",
+                            "closedReason",
+                            "deadlineAt",
+                            "productionStatus",
+                            "deliveryStatus",
+                            "actionUrl"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "conversationId",
+                        "senderUserId",
+                        "senderRole",
+                        "messageType",
+                        "content",
+                        "attachments",
+                        "actionPayload",
+                        "isDeleted",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "S1"
       }
     },
     "/internal-chat/conversations/{id}/messages": {
@@ -87903,6 +88249,7 @@
                               "IMAGE",
                               "ACTION_CARD_ORDER",
                               "ACTION_CARD_QC",
+                              "ACTION_CARD_SUBCONTRACT",
                               "SYSTEM_NOTICE"
                             ]
                           },
@@ -87929,6 +88276,59 @@
                             "type": "string",
                             "format": "date-time",
                             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "canChange": {
+                            "type": "boolean"
+                          },
+                          "editedAt": {
+                            "type": "string"
+                          },
+                          "subcontractView": {
+                            "type": "object",
+                            "properties": {
+                              "stage": {
+                                "type": "string"
+                              },
+                              "closedReason": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "deadlineAt": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "productionStatus": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "deliveryStatus": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "actionUrl": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "stage",
+                              "closedReason",
+                              "deadlineAt",
+                              "productionStatus",
+                              "deliveryStatus",
+                              "actionUrl"
+                            ],
+                            "additionalProperties": false
                           }
                         },
                         "required": [
@@ -87945,11 +88345,18 @@
                         ],
                         "additionalProperties": false
                       }
+                    },
+                    "nextCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   },
                   "required": [
                     "success",
-                    "data"
+                    "data",
+                    "nextCursor"
                   ],
                   "additionalProperties": false
                 }
@@ -87974,7 +88381,7 @@
       "post": {
         "operationId": "sendInternalMessage",
         "summary": "Gửi tin nhắn nội bộ",
-        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Tin rỗng không kèm tệp → 400. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tin chữ: thân có `actionPayload` / `attachments` / loại khác `TEXT` hoặc tin rỗng → 400 (thẻ đơn và tin hệ thống chỉ do máy chủ sinh; ảnh gửi qua `/images`). Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -88001,33 +88408,18 @@
                 "type": "object",
                 "properties": {
                   "content": {
-                    "default": "",
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 4000
                   },
                   "messageType": {
                     "type": "string",
-                    "enum": [
-                      "TEXT",
-                      "IMAGE",
-                      "ACTION_CARD_ORDER",
-                      "ACTION_CARD_QC",
-                      "SYSTEM_NOTICE"
-                    ]
-                  },
-                  "attachments": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "actionPayload": {
-                    "type": "object",
-                    "propertyNames": {
-                      "type": "string"
-                    },
-                    "additionalProperties": {}
+                    "const": "TEXT"
                   }
-                }
+                },
+                "required": [
+                  "content"
+                ],
+                "additionalProperties": false
               }
             }
           }
@@ -88080,6 +88472,7 @@
                             "IMAGE",
                             "ACTION_CARD_ORDER",
                             "ACTION_CARD_QC",
+                            "ACTION_CARD_SUBCONTRACT",
                             "SYSTEM_NOTICE"
                           ]
                         },
@@ -88106,6 +88499,59 @@
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "canChange": {
+                          "type": "boolean"
+                        },
+                        "editedAt": {
+                          "type": "string"
+                        },
+                        "subcontractView": {
+                          "type": "object",
+                          "properties": {
+                            "stage": {
+                              "type": "string"
+                            },
+                            "closedReason": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "deadlineAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "productionStatus": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "deliveryStatus": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actionUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "stage",
+                            "closedReason",
+                            "deadlineAt",
+                            "productionStatus",
+                            "deliveryStatus",
+                            "actionUrl"
+                          ],
+                          "additionalProperties": false
                         }
                       },
                       "required": [
@@ -88157,11 +88603,426 @@
         "x-capability": "phiên đăng nhập"
       }
     },
+    "/internal-chat/conversations/{id}/mute": {
+      "patch": {
+        "operationId": "muteInternalConversation",
+        "summary": "Tắt / bật thông báo của phòng cho chính mình",
+        "description": "Không vào được phòng → 404.",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "muted": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "muted"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Trạng thái tắt tiếng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "muted": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "muted"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "S1"
+      }
+    },
+    "/internal-chat/messages/{id}": {
+      "patch": {
+        "operationId": "editInternalMessage",
+        "summary": "Sửa tin của mình (trong 24 giờ)",
+        "description": "Chỉ người gửi, chỉ tin chữ / chú thích ảnh. Tin của người khác hoặc ngoài phòng → 404; quá 24 giờ, đã thu hồi, thẻ đơn, tin hệ thống → 409. Nhật ký kiểm toán chỉ ghi loại tin và độ dài, không ghi nội dung.",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "maxLength": 4000
+                  }
+                },
+                "required": [
+                  "content"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tin sau khi sửa",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "conversationId": {
+                          "type": "string"
+                        },
+                        "senderUserId": {
+                          "type": "string"
+                        },
+                        "senderRole": {
+                          "type": "string"
+                        },
+                        "senderName": {
+                          "type": "string"
+                        },
+                        "messageType": {
+                          "type": "string",
+                          "enum": [
+                            "TEXT",
+                            "IMAGE",
+                            "ACTION_CARD_ORDER",
+                            "ACTION_CARD_QC",
+                            "ACTION_CARD_SUBCONTRACT",
+                            "SYSTEM_NOTICE"
+                          ]
+                        },
+                        "content": {
+                          "type": "string"
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "actionPayload": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        },
+                        "isDeleted": {
+                          "type": "boolean"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "canChange": {
+                          "type": "boolean"
+                        },
+                        "editedAt": {
+                          "type": "string"
+                        },
+                        "subcontractView": {
+                          "type": "object",
+                          "properties": {
+                            "stage": {
+                              "type": "string"
+                            },
+                            "closedReason": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "deadlineAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "productionStatus": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "deliveryStatus": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actionUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "stage",
+                            "closedReason",
+                            "deadlineAt",
+                            "productionStatus",
+                            "deliveryStatus",
+                            "actionUrl"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "conversationId",
+                        "senderUserId",
+                        "senderRole",
+                        "messageType",
+                        "content",
+                        "attachments",
+                        "actionPayload",
+                        "isDeleted",
+                        "createdAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "S1"
+      },
+      "delete": {
+        "operationId": "deleteInternalMessage",
+        "summary": "Thu hồi tin của mình (trong 24 giờ)",
+        "description": "Xoá mềm: xoá nội dung và đính kèm; ảnh vào hàng đợi xoá tệp của tổ chức chủ phòng. Cùng luật 404 / 409 như sửa tin. Nhật ký kiểm toán chỉ ghi loại tin và độ dài, không ghi nội dung.",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đã thu hồi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-capability": "S1"
+      }
+    },
     "/internal-chat/messages/{id}/action": {
       "post": {
         "operationId": "handleInternalCardAction",
         "summary": "Bấm nút trên thẻ hành động (nhận/từ chối đơn)",
-        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ thẻ đơn (`ACTION_CARD_ORDER`) — tin khác → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tổ chức được giao, không phải người gửi thẻ (khác → 404). Tin không phải thẻ đơn (`ACTION_CARD_ORDER`) → 409; thẻ đã xử lý hoặc vừa bị người khác xử lý → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -88195,7 +89056,8 @@
                     ]
                   },
                   "rejectedReason": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 500
                   }
                 },
                 "required": [
@@ -88253,6 +89115,7 @@
                             "IMAGE",
                             "ACTION_CARD_ORDER",
                             "ACTION_CARD_QC",
+                            "ACTION_CARD_SUBCONTRACT",
                             "SYSTEM_NOTICE"
                           ]
                         },
@@ -88279,6 +89142,59 @@
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "canChange": {
+                          "type": "boolean"
+                        },
+                        "editedAt": {
+                          "type": "string"
+                        },
+                        "subcontractView": {
+                          "type": "object",
+                          "properties": {
+                            "stage": {
+                              "type": "string"
+                            },
+                            "closedReason": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "deadlineAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "productionStatus": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "deliveryStatus": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "actionUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "stage",
+                            "closedReason",
+                            "deadlineAt",
+                            "productionStatus",
+                            "deliveryStatus",
+                            "actionUrl"
+                          ],
+                          "additionalProperties": false
                         }
                       },
                       "required": [
@@ -88328,6 +89244,198 @@
           }
         },
         "x-capability": "phiên đăng nhập"
+      }
+    },
+    "/internal-chat/stats": {
+      "get": {
+        "operationId": "internalChatStats",
+        "summary": "Số liệu giao đơn qua chat 30 ngày (phía chuỗi)",
+        "description": "Tổ chức không có cửa hàng đối tác → toàn 0. Chỉ số đếm.",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Số liệu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "days": {
+                          "type": "number"
+                        },
+                        "invites_in_chat": {
+                          "type": "number"
+                        },
+                        "partner_claims": {
+                          "type": "number"
+                        },
+                        "partner_stores": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "days",
+                        "invites_in_chat",
+                        "partner_claims",
+                        "partner_stores"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "S1"
+      }
+    },
+    "/internal-chat/stream": {
+      "get": {
+        "operationId": "streamInternalChat",
+        "summary": "Luồng báo phòng có tin mới (SSE)",
+        "description": "`text/event-stream`: sự kiện `connected`, rồi `room` với `{ conversationId }` (không có nội dung tin); ping 25 giây; đóng sau 30 phút, trình duyệt tự nối lại. Lọc theo tổ chức và chi nhánh của phiên.",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Luồng sự kiện",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "S1"
+      }
+    },
+    "/internal-chat/unread": {
+      "get": {
+        "operationId": "countInternalUnread",
+        "summary": "Tổng tin chưa đọc của tôi",
+        "tags": [
+          "Chat nội bộ"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Số tin chưa đọc",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "unread_count": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "unread_count"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "S1"
       }
     },
     "/internal/chain-dispatch-sweep": {
