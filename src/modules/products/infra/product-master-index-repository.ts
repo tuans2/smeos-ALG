@@ -29,14 +29,7 @@ import type {
   ProductGalleryImage,
   StockStatus,
 } from "../domain/product-master-index"
-import {
-  readAssemblySteps,
-  readDimensions,
-  readOccasions,
-  readPrimaryColor,
-  readStyle,
-  readWrapStyle,
-} from "../domain/master-index-fields"
+import { readAssemblySteps, readDimensions, readOccasions, readPrimaryColor, readStyle, readWrapStyle } from "../domain/master-index-fields"
 import { toneChuDao } from "@/modules/product-copies/domain/analysis-projection"
 
 /** Hình dạng lỏng lẻo của một dòng `bom.flowers`/`bom.foliage` theo hợp đồng Vision — chỉ khai những khoá hàm này thật sự đọc. */

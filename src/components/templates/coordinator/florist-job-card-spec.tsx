@@ -61,7 +61,7 @@ export function AssemblyStepsPanel({ steps }: { steps: string[] }) {
       <ol className="flex flex-col gap-1.5">
         {steps.map((step, i) => (
           <li key={i} className="flex items-start gap-2 text-caption text-[var(--avi-ink)] leading-relaxed">
-            <span className="shrink-0 mt-0.5 w-4 h-4 rounded-full bg-[var(--avi-gold)] text-[var(--avi-gold-text)] text-[10px] font-black flex items-center justify-center">
+            <span className="shrink-0 mt-0.5 w-4 h-4 rounded-full bg-[var(--avi-gold)] text-[var(--avi-gold-text)] text-caption font-black flex items-center justify-center">
               {i + 1}
             </span>
             <span>{step}</span>

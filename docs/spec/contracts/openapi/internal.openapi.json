@@ -2622,6 +2622,12 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "warningTags": {
                                   "type": "array",
                                   "items": {
@@ -3985,6 +3991,12 @@
                                       "widthCm"
                                     ],
                                     "additionalProperties": false
+                                  },
+                                  "assemblySteps": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
                                   },
                                   "warningTags": {
                                     "type": "array",
@@ -5568,6 +5580,12 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "warningTags": {
                                   "type": "array",
                                   "items": {
@@ -6920,6 +6938,12 @@
                                     "widthCm"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "warningTags": {
                                   "type": "array",
@@ -8547,6 +8571,12 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "warningTags": {
                                   "type": "array",
                                   "items": {
@@ -9919,6 +9949,12 @@
                                     "widthCm"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "warningTags": {
                                   "type": "array",
@@ -11298,6 +11334,12 @@
                                     "widthCm"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "warningTags": {
                                   "type": "array",
@@ -12989,6 +13031,12 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "warningTags": {
                                   "type": "array",
                                   "items": {
@@ -14392,6 +14440,12 @@
                                     "widthCm"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "warningTags": {
                                   "type": "array",
@@ -15979,6 +16033,12 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "warningTags": {
                                   "type": "array",
                                   "items": {
@@ -17511,6 +17571,12 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "warningTags": {
                                   "type": "array",
                                   "items": {
@@ -18892,6 +18958,12 @@
                                     "widthCm"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "warningTags": {
                                   "type": "array",
@@ -20288,6 +20360,12 @@
                                   ],
                                   "additionalProperties": false
                                 },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "warningTags": {
                                   "type": "array",
                                   "items": {
@@ -21677,6 +21755,12 @@
                                     "widthCm"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "warningTags": {
                                   "type": "array",
@@ -23262,6 +23346,12 @@
                                     "widthCm"
                                   ],
                                   "additionalProperties": false
+                                },
+                                "assemblySteps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
                                 },
                                 "warningTags": {
                                   "type": "array",

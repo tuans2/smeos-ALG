@@ -225,7 +225,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
       : "success"
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" style={AVI_LOTUS_BRAND_VARS}>
       {/* ── Thanh tác vụ góc trên bên phải ── */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
@@ -251,7 +251,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             size="sm"
             variant="outline"
             onClick={handleSendZalo}
-            className="h-7 text-caption px-2.5 font-bold gap-1 border-[#0068FF]/30 text-[#0068FF] bg-[#0068FF]/10 hover:bg-[#0068FF]/15"
+            className="h-7 text-caption px-2.5 font-bold gap-1 border-info-border text-info-text bg-info-bg hover:bg-info-bg/80"
           >
             <Send size={12} />
             <span>Gửi Zalo</span>
@@ -512,7 +512,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
           <Button
             size="sm"
             onClick={onAdvanceStage}
-            className="bg-[#133d31] hover:bg-[#0c2920] text-white gap-1.5 px-4 font-bold shadow-sm"
+            className="bg-[var(--avi-primary)] hover:bg-[var(--avi-primary-dark)] text-white gap-1.5 px-4 font-bold shadow-sm"
           >
             <span>Chuyển bước</span>
             <ArrowRight size={14} />
