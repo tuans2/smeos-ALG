@@ -23,8 +23,8 @@ export const NODE_01_TRANG_CHU: OpsKnowledgeNode = {
     },
     {
       stepNumber: 2,
-      actionText: "Bắt đầu làm việc: Bấm nút 'Bắt đầu ngay' trên thẻ 'Thẻ Chào sản phẩm' để tạo link gửi khách Zalo",
-      expectedResult: "Hệ thống mở ngay màn hình tạo thẻ chào gửi khách",
+      actionText: "Bắt đầu làm việc: Bấm nút 'Bắt đầu ngay' trên thẻ 'Bộ sưu tập riêng' để tạo link gửi khách Zalo",
+      expectedResult: "Hệ thống mở ngay màn hình tạo bộ sưu tập riêng gửi khách",
     },
     {
       stepNumber: 3,
@@ -43,7 +43,7 @@ export const NODE_01_TRANG_CHU: OpsKnowledgeNode = {
     },
   ],
   caveatsAndGotchas: [
-    "Thẻ 'Thẻ Chào sản phẩm' đã sẵn sàng sử dụng; các thẻ tính năng nâng cao khác đang được mở dần theo lộ trình.",
+    "Thẻ 'Bộ sưu tập riêng' đã sẵn sàng sử dụng; các thẻ tính năng nâng cao khác đang được mở dần theo lộ trình.",
     "Bảng theo dõi của Quản lý sẽ tự động báo động khi có đơn hàng sắp trễ giờ hẹn của khách.",
   ],
   actionLabel: "Về Trang Chủ Điều Hành",

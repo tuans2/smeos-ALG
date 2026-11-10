@@ -49,10 +49,10 @@ export function LandingPageStudioClient() {
           variant="outline"
           size="sm"
           onClick={() => router.push("/the-chao" as never)}
-          aria-label="Thẻ chào và mã QR"
+          aria-label="Bộ sưu tập riêng"
           className="flex items-center gap-1.5 text-caption font-semibold"
         >
-          <QrCode className="h-3.5 w-3.5" aria-hidden="true" /> <span className="hidden sm:inline">Thẻ chào & QR</span>
+          <QrCode className="h-3.5 w-3.5" aria-hidden="true" /> <span className="hidden sm:inline">Bộ sưu tập riêng</span>
         </Button>
         }
       />

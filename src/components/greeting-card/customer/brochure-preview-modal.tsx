@@ -13,7 +13,7 @@ interface BrochurePreviewModalProps {
 
 export function BrochurePreviewModal({
   url,
-  title = "Xem trước Thẻ Chào & Bộ Sưu Tập",
+  title = "Xem trước bộ sưu tập",
   onClose,
 }: BrochurePreviewModalProps) {
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile")
@@ -88,7 +88,7 @@ export function BrochurePreviewModal({
             <iframe
               key={iframeKey}
               src={url}
-              title="Live Preview Thẻ Chào"
+              title="Xem trước trang khách"
               className="w-full flex-1 border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             />

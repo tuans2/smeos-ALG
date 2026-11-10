@@ -77,9 +77,9 @@ describe("Industry Notification Formatter", () => {
       expect(title).toContain("[Phiên sess-abc123]")
     })
 
-    it("fallback về [Thẻ Chào] khi không có mã nào", () => {
+    it("fallback về [Bộ sưu tập riêng] khi không có mã nào", () => {
       const { title } = formatIndustryStaffNotificationText("ORDER_RECEIVED", {})
-      expect(title).toContain("[Thẻ Chào]")
+      expect(title).toContain("[Bộ sưu tập riêng]")
     })
   })
 

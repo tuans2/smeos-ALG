@@ -14,7 +14,7 @@ export function formatIndustryStaffNotificationText(
   event: StaffNotifyEvent,
   ctx: StaffNotificationContext
 ): { title: string; message: string } {
-  const code = ctx.orderCode ? `[Đơn ${ctx.orderCode}]` : ctx.sessionId ? `[Phiên ${ctx.sessionId}]` : "[Thẻ Chào]"
+  const code = ctx.orderCode ? `[Đơn ${ctx.orderCode}]` : ctx.sessionId ? `[Phiên ${ctx.sessionId}]` : "[Bộ sưu tập riêng]"
   const customer = ctx.customerName ? `Khách: ${ctx.customerName}` : "Khách hàng"
   const amount = ctx.amountVnd != null ? ` · Số tiền: ${ctx.amountVnd.toLocaleString("vi-VN")} đ` : ""
   const item = ctx.productName ? ` · ${ctx.productName}` : ""

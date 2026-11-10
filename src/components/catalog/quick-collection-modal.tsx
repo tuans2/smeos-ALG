@@ -159,14 +159,14 @@ export function QuickCollectionModal({
 
       if (!sendLinkRes.ok) {
         const errJson = await sendLinkRes.json().catch(() => ({}))
-        const errMsg = errJson?.error?.message || errJson?.message || "Không thể tạo link Thẻ Chào gửi khách."
+        const errMsg = errJson?.error?.message || errJson?.message || "Không thể tạo link Bộ sưu tập riêng gửi khách."
         throw new Error(errMsg)
       }
 
       const sendLinkJson = await sendLinkRes.json().catch(() => ({}))
       const sendData = sendLinkJson.data
       if (!sendData?.shareUrl) {
-        throw new Error("Hệ thống không sinh được link Thẻ Chào gửi khách.")
+        throw new Error("Hệ thống không sinh được link Bộ sưu tập riêng gửi khách.")
       }
 
       const fullSendUrl = `${origin}${sendData.shareUrl}`

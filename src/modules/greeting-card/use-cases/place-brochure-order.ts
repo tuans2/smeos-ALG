@@ -143,7 +143,7 @@ export async function placeBrochureOrder(
       orderId: order.id,
       checkInDate: input.deliveryDate,
       checkOutDate: input.checkOutDate,
-      note: `Đặt từ Thẻ chào / Mã đơn ${order.code}`,
+      note: `Đặt từ Bộ sưu tập riêng / Mã đơn ${order.code}`,
     }).catch(() => null)
   }
 
