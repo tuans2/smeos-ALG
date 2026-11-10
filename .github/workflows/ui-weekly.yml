@@ -6,10 +6,18 @@ on:
     - cron: "0 3 * * 1"
   workflow_dispatch:
 
+# O-2 (docs/audit/GITHUB_ACTIONS_OPTIMIZATION_REPORT.md): bấm chạy tay nhiều lần liền chỉ giữ một lần chạy (lần đang
+# chạy không bị huỷ; lần chờ cũ được thay bằng lần mới nhất).
+concurrency:
+  group: ui-weekly
+  cancel-in-progress: false
+
 jobs:
   ui-enterprise-audit:
     name: Visual Regression & WCAG 2.2 AA (6 Viewports)
     runs-on: ubuntu-latest
+    # E2E UX trên CI mất ~6 phút + dựng ~4 phút. Mặc định 360 phút nếu dev server treo.
+    timeout-minutes: 60
     services:
       postgres:
         image: postgres:16

@@ -13,9 +13,17 @@ on:
 permissions:
   contents: read
 
+# O-1 (docs/audit/GITHUB_ACTIONS_OPTIMIZATION_REPORT.md): push mới vào cùng PR huỷ phân tích cũ của PR đó. Push lên
+# `main` và lịch tuần không bao giờ bị huỷ (nhóm theo sự kiện + SHA) — Render đọc mọi check của commit trên `main`.
+concurrency:
+  group: codeql-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   analyze:
     runs-on: ubuntu-latest
+    # Đo được: JS/TS ~10 phút, Python ~5 phút (10/11/2026). Mặc định 360 phút nếu treo.
+    timeout-minutes: 30
     permissions:
       contents: read
       security-events: write
@@ -26,7 +34,27 @@ jobs:
         language: ["javascript-typescript", "python"]
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
+        with:
+          # PR: cần commit cha của merge ref (HEAD^1 = đầu `main`) để biết PR đổi những tệp nào.
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}
+      # O-6: PR không đổi tệp Python nào thì phân tích Python cho ra đúng kết quả của `main` — bỏ qua (~5 phút/PR).
+      # Chỉ áp cho ngôn ngữ python trên pull_request; JS/TS luôn chạy. Push lên `main` và lịch tuần LUÔN phân tích đủ
+      # cả hai (bắt cả phát hiện mới do bộ truy vấn CodeQL cập nhật). Job vẫn XANH khi bỏ qua. Không đọc được diff → chạy đủ.
+      - name: Phạm vi — cần phân tích ngôn ngữ này không
+        id: scope
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ] || [ "${{ matrix.language }}" != "python" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if ! changed=$(git diff --name-only HEAD^1 HEAD); then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if printf '%s\n' "$changed" | grep -qE '\.py$|^workers/|^\.github/workflows/codeql\.yml$|^scripts/codeql-'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=codeql-python::PR không đổi tệp Python — bỏ qua phân tích Python trên PR; main và lịch tuần vẫn chạy đủ."
+          fi
+      - if: steps.scope.outputs.run == 'true'
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           queries: security-extended
@@ -39,17 +67,19 @@ jobs:
       # PR đỏ, 07/11/2026). Giữ phân tích, ghi SARIF ra đĩa, lưu làm artifact và tự chặn khi có phát hiện mức cao/
       # nghiêm trọng MỚI; 19 phát hiện có sẵn nằm trong mốc nợ `scripts/codeql-baseline.json`. PO duyệt 07/11/2026.
       # Bật lại code scanning thì có thể trả `upload` về mặc định.
-      - uses: github/codeql-action/analyze@v3
+      - if: steps.scope.outputs.run == 'true'
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
           upload: never
           output: codeql-results
       - name: Lưu kết quả CodeQL
-        if: always()
+        if: always() && steps.scope.outputs.run == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: codeql-${{ matrix.language }}
           path: codeql-results
           retention-days: 14
       - name: Chặn khi có phát hiện mức cao hoặc nghiêm trọng mới (so với scripts/codeql-baseline.json)
+        if: steps.scope.outputs.run == 'true'
         run: python3 scripts/codeql-gate.py codeql-results ${{ matrix.language }}

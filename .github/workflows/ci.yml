@@ -6,9 +6,18 @@ on:
   pull_request:
     branches: ["main"]
 
+# Tối ưu phút Actions (docs/audit/GITHUB_ACTIONS_OPTIMIZATION_REPORT.md, O-1): push mới vào cùng một PR huỷ run cũ
+# của PR đó — kết quả run cũ không còn ai đọc. Push lên `main` KHÔNG bao giờ bị huỷ: nhóm theo SHA nên mỗi commit
+# có run riêng, và Render (`autoDeployTrigger: checksPass`) cần check xanh của TỪNG commit trên `main` để deploy.
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   web:
     runs-on: ubuntu-latest
+    # Run xanh dài nhất đo được ~51 phút (10/11/2026). Không đặt thì mặc định 360 phút: một bước treo đốt 6 giờ.
+    timeout-minutes: 75
     services:
       postgres:
         image: postgres:16
@@ -53,6 +62,20 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npx prisma generate
+      # Postgres của CI là container dùng một lần rồi bỏ: không cần bền khi mất điện. Tắt fsync/full_page_writes/
+      # synchronous_commit làm mỗi lần `resetDatabase()` (TRUNCATE ~150 bảng, gọi trước gần như mọi ca tenant) nhanh
+      # ~3,9× khi đo (579 → 150 ms). Không đổi ngữ nghĩa giao dịch, khoá hay mức cô lập — chỉ bỏ bước ghi đĩa
+      # đồng bộ. Cả ba tham số đổi được bằng reload, không phải khởi động lại container.
+      - name: Postgres CI dùng một lần — tắt ghi đĩa đồng bộ
+        env:
+          PGPASSWORD: floraos
+        run: |
+          psql -h localhost -U floraos -d postgres -v ON_ERROR_STOP=1 \
+            -c "ALTER SYSTEM SET fsync = off" \
+            -c "ALTER SYSTEM SET full_page_writes = off" \
+            -c "ALTER SYSTEM SET synchronous_commit = off" \
+            -c "SELECT pg_reload_conf()"
+          psql -h localhost -U floraos -d postgres -Atc "SELECT name || '=' || setting FROM pg_settings WHERE name IN ('fsync','full_page_writes','synchronous_commit')"
       # Dựng CSDL bằng đúng lệnh production dùng (`migrate deploy`), rồi đòi
       # migration khớp schema.prisma: sửa schema mà quên `prisma migrate dev` là đỏ.
       - run: npm run db:deploy
@@ -103,12 +126,15 @@ jobs:
       # xem tests/platform/cach-ly-platform.test.ts.
       - name: Test cách ly Console Vận hành Nền tảng
         run: npm run test:platform
-      - run: npm run build
+      # KHÔNG còn `npm run build` ở đây (O-3): `e2e-ux` vốn đã `next build` đúng commit này để chạy E2E, nay build đó
+      # bật lại kiểm kiểu (gồm typed routes trong `.next/types`) nên một lần build thay được cả hai — trước đây
+      # mỗi run build 2 lần (~5,2 phút ở đây + ~1,8 phút ở `e2e-ux`). Cổng build vẫn bắt buộc, chỉ đổi job.
 
   # Chuỗi cung ứng (rà soát 21/10/2026, giai đoạn 3; PO duyệt 22/10). Repo công khai, nên một
   # khoá lọt vào bất kỳ commit nào là lộ ngay — quét toàn lịch sử, không chỉ commit mới.
   security:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -133,35 +159,67 @@ jobs:
   # Ratchet thuật ngữ ngành — job riêng, chạy song song để không che các cổng bắt buộc của `web`.
   industry-terms:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "22.x"
-          cache: "npm"
-      - run: npm ci
+      # Script chỉ dùng `node:fs`/`node:path`, nên không cần `npm ci` đầy đủ (62 s cho một bước 1 s — O-4): chỉ lấy
+      # `tsx` đúng phiên bản ghim trong package-lock.json (~4 s). Cùng script, cùng cờ với `npm run audit:industry:check`.
+      # Script mà thêm import gói npm thì bước này đỏ (không tìm thấy gói) — hỏng theo hướng an toàn, khi đó trả lại `npm ci`.
       - name: Thuật ngữ ngành hardcode (ratchet — không thêm vi phạm mới)
-        run: npm run audit:industry:check
+        run: |
+          TSX_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/tsx'].version")
+          npm exec --yes --package="tsx@${TSX_VERSION}" -- tsx scripts/industry-term-audit.ts --check
 
   worker:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: workers
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+        with:
+          # PR: cần commit cha của merge ref (HEAD^1 = đầu `main`) để biết PR đổi những tệp nào.
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}
+      # O-5: pytest của worker chỉ đọc tệp trong `workers/` (đã rà `workers/tests`). 95/102 commit trên `main`
+      # (20/10–10/11/2026) không chạm `workers/`, nên trên PR không đổi `workers/` (và không đổi tệp này) thì bỏ qua
+      # cài đặt + pytest. Job vẫn chạy và XANH — tên check `worker` mà ruleset/Render đọc không đổi. Push lên `main`
+      # LUÔN chạy đủ, nên commit được deploy luôn có pytest thật. Không đọc được diff thì chạy đủ (an toàn).
+      - name: Phạm vi — PR có đổi mã worker không
+        id: scope
+        working-directory: .
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if ! changed=$(git diff --name-only HEAD^1 HEAD); then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if printf '%s\n' "$changed" | grep -qE '^(workers/|\.github/workflows/ci\.yml$)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=worker::PR không đổi workers/ — bỏ qua pytest trên PR; push lên main vẫn chạy đủ."
+          fi
+      - if: steps.scope.outputs.run == 'true'
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: workers/requirements.txt
       # Worker âm thanh/video gọi ffmpeg thật (phối trộn, đo độ to) — runner
       # ubuntu-latest không cài sẵn, thiếu thì 12 ca test_audio_worker /
       # test_voice_clone_worker đỏ `FileNotFoundError: 'ffmpeg'`.
-      - run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
-      - run: pip install -r requirements.txt
-      - run: python -m pytest tests -q
+      - if: steps.scope.outputs.run == 'true'
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+      - if: steps.scope.outputs.run == 'true'
+        run: pip install -r requirements.txt
+      - if: steps.scope.outputs.run == 'true'
+        run: python -m pytest tests -q
 
   e2e-ux:
     runs-on: ubuntu-latest
+    # Run đo được ~11 phút (build 1,8 + E2E 6,2); build nay kiểm kiểu thêm ~3,5 phút. Mặc định 360 phút nếu treo.
+    timeout-minutes: 40
     services:
       postgres:
         image: postgres:16
@@ -185,9 +243,9 @@ jobs:
       # heap mặc định ~2 GB của runner và chết OOM (PR #188, 07/11/2026). `npm run typecheck` nay dùng TypeScript 7
       # (bản Go, không bị trần heap của Node). Runner có ~7 GB RAM. PO duyệt 07/11/2026.
       NODE_OPTIONS: --max-old-space-size=4096
-      # Job `web` đã typecheck đúng commit này (`npm run typecheck`, TypeScript 7); `next build` ở đây không kiểm
-      # kiểu lần nữa — như Render (`render.yaml`). PO duyệt 07/11/2026.
-      SKIP_BUILD_TYPECHECK: "true"
+      # KHÔNG đặt SKIP_BUILD_TYPECHECK ở đây nữa (O-3): đây là lần `next build` DUY NHẤT của CI nên nó phải kiểm kiểu
+      # như build cũ của job `web` — `npm run typecheck` chạy trước khi có `.next/types`, nên typed routes chỉ được kiểm
+      # ở bước build này. Render vẫn bỏ kiểm kiểu (`render.yaml`) vì commit nó deploy đã qua bước này.
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
