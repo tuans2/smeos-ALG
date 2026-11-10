@@ -19,3 +19,10 @@ globalThis.fetch = (async (input: RequestInfo | URL) => {
   const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url
   throw new Error(`[tests/setup] Mạng thật bị chặn trong test: ${url} — hãy mock fetch.`)
 }) as typeof fetch
+
+/**
+ * Bản cắt bàn giao gắn sẵn chế độ giai đoạn (`builtIn` trong `src/lib/delivery/gd1.routes.json`). Unit test mô tả
+ * dữ liệu danh mục đầy đủ (menu, công cụ, hành trình) nên mặc định tắt hẳn chế độ; test cần chế độ thì tự
+ * `vi.stubEnv`, test đường dẫn điều hướng lọc theo giai đoạn gắn sẵn (`nav-href-exists.test.ts`).
+ */
+process.env.NEXT_PUBLIC_DELIVERY_PHASE ??= "off"

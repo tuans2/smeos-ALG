@@ -47,6 +47,14 @@ describe("chế độ tắt — mọi thứ như cũ", () => {
     vi.unstubAllEnvs()
   })
 
+  it("`off` tắt hẳn chế độ (unit test mặc định đặt giá trị này — tests/setup.ts)", () => {
+    vi.stubEnv("NEXT_PUBLIC_DELIVERY_PHASE", "off")
+    expect(activeDeliveryPhase()).toBeNull()
+    vi.stubEnv("NEXT_PUBLIC_DELIVERY_PHASE", "gd1")
+    expect(activeDeliveryPhase()).toBe("gd1")
+    vi.unstubAllEnvs()
+  })
+
   it("bản cắt gắn sẵn giai đoạn (builtIn) thì chế độ luôn bật", () => {
     expect(builtInDeliveryPhase({ gd1: { ...phaseRoutes("gd1"), builtIn: true } })).toBe("gd1")
   })

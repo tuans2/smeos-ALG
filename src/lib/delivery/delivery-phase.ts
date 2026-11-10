@@ -34,11 +34,13 @@ export function builtInDeliveryPhase(routes: Record<DeliveryPhase, PhaseRoutes> 
 }
 
 /**
- * Đọc biến môi trường, không có thì lấy giai đoạn gắn sẵn của bản cắt. `NEXT_PUBLIC_` được Next.js gắn cứng
- * lúc build nên client và server thấy cùng giá trị.
+ * Đọc biến môi trường, không có thì lấy giai đoạn gắn sẵn của bản cắt; `off` tắt hẳn, kể cả bản cắt.
+ * `NEXT_PUBLIC_` được Next.js gắn cứng lúc build nên client và server thấy cùng giá trị.
  */
 export function activeDeliveryPhase(): DeliveryPhase | null {
-  return resolveDeliveryPhase(process.env.NEXT_PUBLIC_DELIVERY_PHASE) ?? builtInDeliveryPhase()
+  const value = process.env.NEXT_PUBLIC_DELIVERY_PHASE
+  if (value === "off") return null
+  return resolveDeliveryPhase(value) ?? builtInDeliveryPhase()
 }
 
 export function phaseRoutes(phase: DeliveryPhase): PhaseRoutes {
