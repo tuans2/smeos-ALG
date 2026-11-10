@@ -8,7 +8,7 @@ export const LIBRARY_TAB_LABEL: Readonly<Record<LibraryType, string>> = {
   audio: "Âm thanh",
   content: "Nội dung",
   catalog: "Catalog",
-  greeting_catalog: "Thẻ chào",
+  greeting_catalog: "Bộ sưu tập riêng",
   landing: "Landing page",
 }
 
@@ -19,7 +19,7 @@ export const LIBRARY_CREATE_LABEL: Readonly<Record<LibraryType, string>> = {
   audio: "Thêm âm thanh",
   content: "Tạo nội dung mới",
   catalog: "Tạo catalog",
-  greeting_catalog: "Tạo thẻ chào",
+  greeting_catalog: "Tạo bộ sưu tập riêng",
   landing: "Tạo landing page",
 }
 

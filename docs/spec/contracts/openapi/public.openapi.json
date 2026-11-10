@@ -11251,6 +11251,7 @@
                   "PAYLOAD_TOO_LARGE",
                   "QUOTA_EXCEEDED",
                   "UNPROCESSABLE_ENTITY",
+                  "IDEMPOTENCY_KEY_REUSED",
                   "RATE_LIMITED",
                   "INTERNAL"
                 ]

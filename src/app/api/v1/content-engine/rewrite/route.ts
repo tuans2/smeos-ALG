@@ -1,7 +1,7 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { handle, jsonResponse } from "@/core/http/response"
+import { rewriteBody } from "@/app/api/v1/_contracts/requests-content"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { callCapability, type AdapterOutcome } from "@/core/ai/gateway"
 import { aiGatewayDeps } from "@/core/ai/wiring"
@@ -10,12 +10,6 @@ import type { AiModelCandidate } from "@/core/ai/domain/routing"
 import { getBrandProfile } from "@/modules/profiles/use-cases/get-brand-profile"
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
 import { holdRewriteCredit, requireRewriteCapability } from "@/modules/content-engine/use-cases/rewrite-credit"
-
-const requestSchema = z.object({
-  text: z.string().trim().min(1, "Nội dung cần viết lại không được rỗng").max(500),
-  field_type: z.enum(["gift", "guarantee", "cta", "description", "general"]).default("general"),
-  style: z.enum(["luxurious", "sweet", "concise", "creative"]).default("luxurious"),
-})
 
 const STYLE_PROMPTS: Record<string, string> = {
   luxurious: "Sang trọng, đẳng cấp, tinh tế chuẩn boutique cao cấp.",
@@ -47,7 +41,7 @@ export const POST = handle(async (request) => {
   await enforceRateLimit(request, { scope: "content-rewrite-org", limit: 200, windowMs: 60 * 60_000, subject: ctx.organizationId })
 
   const body = await request.json().catch(() => null)
-  const parsed = requestSchema.safeParse(body)
+  const parsed = rewriteBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

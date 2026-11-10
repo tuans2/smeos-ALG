@@ -16,6 +16,7 @@ export type ErrorCode =
   | "PAYLOAD_TOO_LARGE"
   | "QUOTA_EXCEEDED"
   | "UNPROCESSABLE_ENTITY"
+  | "IDEMPOTENCY_KEY_REUSED"
   | "RATE_LIMITED"
   | "INTERNAL"
 
@@ -33,6 +34,8 @@ const HTTP_STATUS: Record<ErrorCode, number> = {
   PAYLOAD_TOO_LARGE: 413,
   QUOTA_EXCEEDED: 422,
   UNPROCESSABLE_ENTITY: 422,
+  // Cùng `Idempotency-Key`, khác thân (audit API-11, PO 09/11/2026)
+  IDEMPOTENCY_KEY_REUSED: 422,
   RATE_LIMITED: 429,
   INTERNAL: 500,
 }

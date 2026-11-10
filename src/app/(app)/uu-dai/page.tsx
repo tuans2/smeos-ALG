@@ -14,7 +14,7 @@ export default function UuDaiPage() {
       <TierGovernanceMatrixClient
         systemKey="PROMOTIONS"
         title="Ưu đãi và giảm giá"
-        description="Bật hoặc tắt các ưu đãi áp dụng cho khách khi đặt hàng qua Thẻ chào và Catalog. Thay đổi ở đây cũng hiện ở Cài đặt → Ưu đãi."
+        description="Bật hoặc tắt các ưu đãi áp dụng cho khách khi đặt hàng qua bộ sưu tập riêng và bộ sưu tập chung. Thay đổi ở đây cũng hiện ở Cài đặt → Ưu đãi."
       />
     </div>
   )

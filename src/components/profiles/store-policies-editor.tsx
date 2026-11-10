@@ -194,7 +194,7 @@ export function StorePoliciesEditor({
                   onCheckedChange={(checked) => setIntakeCta({ ...intakeCta, enabled: checked === true })}
                 />
                 <span className="text-body-sm font-bold text-text">
-                  Bật dòng ưu đãi khi khách mở link Thẻ Chào (Chặng 1)
+                  Bật dòng ưu đãi khi khách mở link bộ sưu tập riêng
                 </span>
               </label>
 

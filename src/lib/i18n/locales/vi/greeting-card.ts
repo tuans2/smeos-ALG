@@ -7,7 +7,7 @@ export const greetingCardVi = {
     breadcrumb: "Đơn hàng",
     title: "Bộ sưu tập riêng",
     description: "Link riêng gửi đích danh một khách hoặc cho một nhu cầu cụ thể. Khách chọn mẫu, đặt hàng, thanh toán và theo dõi đơn ngay trên link.",
-    guideButton: "Hướng dẫn thẻ chào",
+    guideButton: "Hướng dẫn",
     todoButton: "Việc cần làm",
     modes: {
       quickSend: "Gửi nhanh",
@@ -36,7 +36,7 @@ export const greetingCardVi = {
     noChannel: "Không chọn kênh",
   },
   guideModal: {
-    title: "Hướng dẫn sử dụng Thẻ chào",
+    title: "Hướng dẫn sử dụng Bộ sưu tập riêng",
     step1: "Tạo bộ sưu tập mẫu phù hợp với dịp lễ hoặc nhu cầu khách hàng",
     step2: "Sao chép link và gửi cho khách qua Zalo hoặc Facebook",
     step3: "Khách lướt xem mẫu, chọn lời nhắn thẻ đính kèm và đặt hàng trực tiếp",

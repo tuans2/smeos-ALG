@@ -88,7 +88,7 @@ export function StoreGrowthCenter() {
         layJson<Job[]>("/api/v1/jobs").catch(() => [] as Job[]),
         layJson<Product[]>("/api/v1/products?limit=5").catch(() => [] as Product[]),
         layJson<UsageSummary>("/api/v1/usage/summary").catch(() => null),
-        layJson<{ items: DraftOrder[] }>("/api/v1/orders?status=DRAFT&limit=5").catch(() => ({ items: [] })),
+        layJson<{ data: DraftOrder[] }>("/api/v1/orders?status=DRAFT&limit=5").catch(() => ({ data: [] })),
         fetchPendingApprovalCount(),
       ])
 
@@ -104,7 +104,7 @@ export function StoreGrowthCenter() {
       const pApprovals = soChoDuyet ?? 0
       setPendingApprovals(pApprovals)
 
-      const dOrders = dsDonHang?.items ?? []
+      const dOrders = dsDonHang?.data ?? []
       setDraftOrders(dOrders)
 
       const totalActions = fJobs.length + pApprovals + dOrders.length

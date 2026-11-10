@@ -138,7 +138,7 @@ export async function adminConfirmBrochurePayment(
   const defaultRef = isAuto ? "AUTO_SYSTEM_15M" : `BROCHURE-${orderId.slice(0, 8)}`
   const defaultNote = isAuto
     ? "Hệ thống tự động xác nhận chuyển khoản sau 15 phút (có ảnh bill hợp lệ)"
-    : "Xác nhận chuyển khoản qua Thẻ chào (Điều hành duyệt)"
+    : "Xác nhận chuyển khoản qua Bộ sưu tập riêng (Điều hành duyệt)"
 
   const workflow = parseBrochureWorkflowPolicy(shop.settings, shop.type)
 

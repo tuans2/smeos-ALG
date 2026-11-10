@@ -20,7 +20,7 @@ export async function selectBrochureProduct(
   // Chủ cửa hàng tắt "Đặt hàng" cho Bộ sưu tập riêng → không có lối chọn mẫu để đặt
   if (!brochureEntryActions(session.organization?.settings).order) throw notFound()
   if (session.order_id || !canTransitionSessionStatus(session.status as GreetingSessionStatus, "SELECTED")) {
-    throw conflict("Thẻ chào này đã có đơn hàng, không thể đổi mẫu")
+    throw conflict("Link này đã có đơn hàng, không thể đổi mẫu")
   }
 
   const product = await resolveOrderableProduct(session, productId, repo)

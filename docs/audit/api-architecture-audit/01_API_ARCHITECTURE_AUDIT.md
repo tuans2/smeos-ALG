@@ -296,5 +296,343 @@ PO chốt 07/11/2026: 8 dòng lệch năng lực sửa đặc tả theo mã (`GE
 | API-15 nội bộ (đợt tác vụ AI) | Thêm 32 operation (25 route) `/jobs/*`, `/vision/*`, `/audio/*`, `/video/*` (tổng 281). Thân job âm thanh/video và bản ghi video dùng thẳng hợp đồng Chặng 06b/06d; lược đồ của 7 route chuyển nguyên văn về `requests-ai-studio.ts`; luồng sự kiện (SSE), CSV, tệp nhạc khai kiểu nội dung riêng. Phát hiện ngoài phạm vi (chưa sửa): use-case video (`get-video-job`, `update-storyboard`, `approve-storyboard`, `approve-video-output`) ném `Error` trần khi không thấy job — kể cả job của tổ chức khác — hoặc sai trạng thái, nên trả 500 thay vì 404/409; `POST /video/jobs/:id/render` gặp thân không phải JSON cũng trả 500 (`JSON.parse` trực tiếp) | `tests/unit/architecture/internal-openapi.test.ts`, `tests/tenant/internal-contract-ai-studio.test.ts` (kết quả worker chèn thẳng, `fetch` giả lập) |
 | API-02 (giao diện) | "Viết lại bằng AI" bị chặn giờ báo lý do: hết credit (422 `QUOTA_EXCEEDED`) → "Tiệm đã hết credit…", thiếu quyền (403) → "Tài khoản của bạn chưa được dùng…" (`src/lib/ai-rewrite-error.ts`). Form hồ sơ (`ai-rewrite-input.tsx`) trước đó bịa 3 gợi ý tại chỗ khi lỗi; form sản phẩm (`ai-product-enrichment-modal.tsx`) im lặng. Lỗi khác giữ cách xử lý cũ | `src/lib/ai-rewrite-error.test.ts` (đỏ trên mã cũ) |
 
-Hoãn (PO 07/11/2026): chặn 422 `IDEMPOTENCY_KEY_REUSED` khi khoá trùng mà thân khác. Lý do: tạo kịch bản Creative Studio (`creative.scene_plan`) cố ý gửi lại cùng khoá `scenePlanKey(assetId, topicId, mode)` (`src/components/creative-studio/scene-plan-client.ts`) để mở lại kịch bản đã có, trong khi thân có thể khác (nhà viết, dữ liệu thương hiệu) — chặn cho mọi job sẽ làm vỡ luồng đó. Khi làm lại: chặn mặc định và miễn trừ có lý do cho feature dùng khoá cố định, hoặc đổi luồng mở lại kịch bản sang đọc thẳng. Job vẫn chỉ ghi cảnh báo `jobs.idempotency_payload_mismatch`; `POST /orders` không lưu thân nên chưa phát hiện được.
+**Đã làm ở §36 (09/11/2026), trừ `/integration/*` và `POST /orders`.** Hoãn (PO 07/11/2026): chặn 422 `IDEMPOTENCY_KEY_REUSED` khi khoá trùng mà thân khác. Lý do: tạo kịch bản Creative Studio (`creative.scene_plan`) cố ý gửi lại cùng khoá `scenePlanKey(assetId, topicId, mode)` (`src/components/creative-studio/scene-plan-client.ts`) để mở lại kịch bản đã có, trong khi thân có thể khác (nhà viết, dữ liệu thương hiệu) — chặn cho mọi job sẽ làm vỡ luồng đó. Khi làm lại: chặn mặc định và miễn trừ có lý do cho feature dùng khoá cố định, hoặc đổi luồng mở lại kịch bản sang đọc thẳng. Job vẫn chỉ ghi cảnh báo `jobs.idempotency_payload_mismatch`; `POST /orders` không lưu thân nên chưa phát hiện được.
+
+
+## 14. Nhật ký sửa — lỗi 500 phát hiện khi viết OpenAPI nội bộ (08/11/2026)
+
+Sửa các đường trả 500 đã ghi "chưa sửa" ở §13 (đợt Creative Studio, đợt tác vụ AI), theo chuẩn tài liệu 02 §2/§5: không thấy hoặc của tổ chức khác → 404, sai trạng thái → 409, vi phạm luật nghiệp vụ → 422, thân hỏng → 400. Không đổi hình dạng phản hồi thành công.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-01 / API-16 | Use-case video `get-video-job`, `update-storyboard`, `approve-storyboard`, `approve-video-output` ném `AppError` thay cho `Error` trần (`src/modules/video-studio/use-cases/video-errors.ts`): không thấy job → 404 (câu lỗi không nhắc mã job); luật duyệt trong `domain/video-approval-rules.ts` ghi thêm `kind` (`state` → 409, `content` → 422); đang render mà sửa phân cảnh → 409; phân cảnh sai luật của khuôn → 422 | `tests/tenant/api-error-mapping.test.ts` (4 ca video đỏ trên mã cũ: 500 `INTERNAL`), `src/modules/video-studio/use-cases/__tests__/video-errors.test.ts` |
+| API-01 | `POST /video/jobs/:id/render`: thân không phải JSON → 400 `details.body` (trước đó `JSON.parse` trần → 500) | `tests/tenant/api-error-mapping.test.ts` (đỏ trên mã cũ) |
+| API-01 | `POST /creative-production/package`: lược đồ thân (`requests-creative.ts`) đòi ít nhất một trong `creativeResult`/`authenticResult` → 400 (trước đó hàm `packageCampaign()` ném `Error` → 500) | `tests/tenant/api-error-mapping.test.ts` (đỏ trên mã cũ) |
+| API-15 | OpenAPI nội bộ: bỏ ghi chú "hiện trả 500" của 5 operation video và `packageCampaignDraft`, khai 404/409/422 thật; `internal.openapi.json` sinh lại | `tests/unit/architecture/internal-openapi.test.ts` |
+
+Còn lại, chưa sửa (ngoài phạm vi đợt này):
+- `POST /video/jobs/:id/render` vẫn trả 422 khi sai trạng thái (kịch bản chưa duyệt, đang/đã render) — theo chuẩn là 409; đổi là thay mã trạng thái client đang thấy nên để đợt riêng.
+- `POST /creative-production/package`: `creativeResult`/`authenticResult` vẫn là `z.any()` — gửi đối tượng sai hình dạng (vd. thiếu `mediaPlanItems`) vẫn có thể thành 500. `mediaPlanItems[].targetPlatform` của chế độ AUTHENTIC vẫn mang tên khung cắt ngoài kiểu TS.
+- Điều phối "Nhận đơn" luôn 409 khi đơn đã tự ghi cọc (§13, đợt Thẻ chào) — lỗi nghiệp vụ, không phải 500.
+
+## 15. Nhật ký sửa — OpenAPI nội bộ, đợt thông báo & chat (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/notification/*` (11 route, 18 operation), `/chat/*` (8 route, 13 operation), `/internal-chat/*` (3 route, 5 operation) — tổng 317 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 11 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-notification.ts` và `requests-chat.ts` (route import lại). Danh sách kênh thông báo giống hệt nhau ở 5 route gom thành `notifyChannelSchema`. Thân do route tự đọc (tạo/gửi hội thoại tư vấn, chốt đơn từ chat) có lược đồ mô tả. Phản hồi khai `strictObject` (`responses-notification.ts`, `responses-chat.ts`), giữ nguyên các envelope cũ `{ success: true, … }` đã có trong `api-envelope-legacy.txt`; khung chat công khai và webhook Facebook/Zalo khai `x-legacy-error-envelope` | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật: hộp thư, SSE, tuỳ chọn, chính sách tổ chức, mặc định cửa hàng, khoá cứng hai tầng; hội thoại tư vấn (cổng AI giả lập), chốt đơn nháp, kênh, hạn mức chat công khai, khung chat công khai, đường từ chối của webhook; chat nội bộ hai tổ chức | `tests/tenant/internal-contract-notification.test.ts`, `tests/tenant/internal-contract-chat.test.ts` |
+| API-12 | Đặc tả 06 dòng `/chat/channels`: POST gác `T4` ở use-case (`configure-chat-channel.ts`), chỉ GET chưa gác — câu cũ "route không gọi qua nó" đã lỗi thời | `npm run check:docs`, `internal-openapi.test.ts` (`x-capability` ↔ đặc tả 06) |
+
+Phát hiện khi viết hợp đồng — hai lỗi P1 đã sửa ở §16; còn lại chưa sửa:
+
+- `GET /notification/inbox` và `GET /chat/conversations`: `page`/`limit` không phải số → 500 (`parseInt`/`Number` → `NaN` vào Prisma). Hộp thư kẹp `limit` 1–100 nhưng `pagination.limit` báo lại số đã gửi; `chat/conversations` không có trần `limit`.
+- `PATCH /notification/preferences` chỉ xét khoá cứng của tầng TRÊN `STORE`, nên khoá tầng cửa hàng (`/notification/store-hard-locks`) không chặn người dùng bật lại; luật gửi (`resolveCascade`) vẫn áp khoá đó nên tuỳ chọn được lưu nhưng không có hiệu lực. Lỗi 403 ở đây trả envelope cũ `{ error: "chuỗi", reason }`.
+- `GET /notification/events?tier=` không kiểm giá trị; `GET /chat/channels` và `GET /chat/public-limits` chưa gác mã năng lực (đã ghi RS-8).
+
+## 16. Nhật ký sửa — hai lỗi P1 phát hiện ở §15 (08/11/2026)
+
+Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **Cách ly tenant** — `POST /internal-chat/messages/{id}/action` ghi `action_payload` theo `where: { id }`, không kiểm tin thuộc tổ chức nào hay người bấm có tham gia hội thoại không; người của tổ chức bất kỳ biết mã tin sửa được thẻ của tổ chức khác và đăng tin hệ thống vào hội thoại đó. Kèm: ghi đè toàn bộ payload (mất `orderId`/`orderCode`), mã tin lạ → 500 | `HandleCardActionUseCase` đọc tin (`findMessageById`, thêm vào cổng `IInternalChatRepository`): không thấy, đã xoá, hoặc người bấm không tham gia → 404 (`ChatAccessDeniedError`, như mọi đường chat nội bộ); tin không phải thẻ đơn → 409; trạng thái mới gộp lên payload cũ. Test đơn vị cũ cho người KHÔNG tham gia bấm nút (khoá đúng hành vi lỗi) — nay mời đối tác vào hội thoại trước | `tests/tenant/chat-p1-fixes.test.ts` (3 ca đỏ trên mã cũ: tổ chức khác bấm được → 200, mã lạ → 500, mất mã đơn), `src/modules/internal-chat/use-cases/internal-chat.test.ts` |
+| **Credit kênh ngoài** — `checkAndDeductUsageCredit` trừ credit rồi ghi `usage.workspace_id = "system"`; khoá ngoại `usage_workspace_id_fkey` (05/11/2026) chặn, nên từ 05/11 mọi lượt AI trả lời qua khung chat công khai, Facebook Messenger, Zalo OA của tiệm còn credit đều hỏng sau khi đã trừ credit | Tra workspace mặc định của tổ chức (cũ nhất, cùng luật `findDefaultForSessionOrganization`) TRƯỚC khi trừ; không có workspace → không trừ, trợ lý trả câu mời chờ nhân viên như khi hết credit | `tests/tenant/chat-p1-fixes.test.ts` (đỏ trên mã cũ: 500; nay 200, số dư −1, một dòng `usage` đúng workspace) |
+
+Chưa làm: hoàn credit cho các lượt đã trừ mà không trả lời được trong khoảng 05/11–08/11/2026 — cần đối soát sổ cái credit (`credit_transactions` có dòng `kind = USAGE`, `service = CHAT`, lý do "Trả lời AI qua …" mà không có dòng `usage` `chat.message.ai_reply` tương ứng) trên CSDL thật; không làm được từ môi trường soạn mã.
+
+## 17. Nhật ký sửa — OpenAPI nội bộ, đợt chi nhánh & chuỗi (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/branches/*` (2 route, 3 operation), `/branch-portal/*` (1 route, 1 operation), `/chain/*` (9 route, 10 operation) — tổng 331 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 4 route (tạo/sửa chi nhánh, đăng ký cửa hàng đối tác, rời chuỗi) chuyển nguyên văn về `src/app/api/v1/_contracts/requests-chain.ts`, route import lại. Thân hồ sơ thu thập (`rules`) có lược đồ mô tả theo kiểu `CollectionRule` — route vẫn đọc thô. Phản hồi khai `strictObject` (`responses-chain.ts`), gồm dòng `branches` nguyên bản và định nghĩa trường của Field Registry v2 | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật hai tổ chức: chi nhánh (tạo, trùng mã 409, sửa, của tổ chức khác 404), cổng chi nhánh, hồ sơ thu thập (đọc, xem trước, phát hành), cửa hàng đối tác, tóm tắt và thư mục dữ liệu (chuỗi khác 404), liên kết phía cửa hàng (đồng ý, rời, từ chối; phía chuỗi gọi 404) | `tests/tenant/internal-contract-chain-org.test.ts` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `PUT /chain/collection-profile` và `POST /chain/collection-profile/preview`: thiếu `rules` hoặc không phải mảng → route ném `Error` trần → 500 (đã thử). `PUT` với quy tắc sai luật → `publish-chain-collection-profile.ts` cũng ném `Error` trần → 500 (đọc mã); `/preview` trả lỗi đó trong `validation.issues`.
+- `POST /chain/partner-stores` trùng mã cửa hàng trong tổ chức → 500 (vỡ ràng buộc duy nhất), không phải 409 như `POST /branches` (đã thử).
+- `get-store-folder-data.ts` lùi về giá cố định 250.000đ khi sản phẩm tồn kho chưa có `price_vnd` — số bịa hiện trên thư mục dữ liệu cửa hàng (trái quyết định nợ #87 "không bịa giá").
+
+## 18. Nhật ký sửa — OpenAPI nội bộ, đợt tính giá & bảng giá (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/costing/*` (9 route, 11 operation), `/pricing-rules` (1 route, 2 operation), `/price-lists/*` (2 route, 6 operation) — tổng 350 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 7 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-costing.ts`, route import lại; thân bảng giá giữ ở `price-lists/schema.ts` (dùng chung POST/PUT kèm hàm đổi) và được xuất lại. Phản hồi khai `strictObject` (`responses-costing.ts`), viết từ kiểu TS rồi đối chiếu với mẫu ghi từ phản hồi thật (`CAPTURE_CONTRACT_DIR`) | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật: hồ sơ ngành, nguyên liệu (tạo, sửa giá, cảnh báo biến động, lịch sử), công thức (bản nháp từ BOM, lưu, đọc lại), giá vốn + kịch bản giá (kèm giá đối thủ), áp giá, dự toán mua + đánh dấu đã mua, quy tắc giá, bảng giá (tạo, danh sách, bản in, sửa, bật/tắt, bỏ) | `tests/tenant/internal-contract-costing.test.ts` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `GET /pricing-rules?branch_id=` nhận mã chi nhánh của tổ chức khác hoặc không tồn tại → 200, lặp lại mã đó ở `branch_id` và trả cấu hình của tổ chức phiên (không lộ dữ liệu tổ chức khác — dòng quy tắc vẫn lọc theo phiên). `PUT` đã kiểm chi nhánh → 404; `GET` nên làm như vậy (luật 2 CLAUDE.md: khác tổ chức → 404).
+- Envelope trộn: `/pricing-rules` và `/price-lists/*` trả thẳng đối tượng (không `{ data }`), `DELETE /price-lists/:id` trả `{ ok: true }` — đã có trong `api-envelope-legacy.txt`, ghi rõ ở OpenAPI.
+
+## 19. Nhật ký sửa — OpenAPI nội bộ, đợt Trung tâm Tích hợp, token & SSO (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/integrations/*` (12 route, 13 operation), `/integration-tokens/*` (3 route, 4 operation), `/sso/*` (1 route, 1 operation) — tổng 368 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi. (`/integration/*` — Integration API cho bên thứ ba — đã có tệp riêng `integration.openapi.json` từ đợt 4.)
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 7 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-integrations.ts`, route import lại (đăng/gỡ tin dùng chung một lược đồ giống hệt). Phản hồi khai `strictObject` (`responses-integrations.ts`) từ kiểu TS của `integration-hub` và `integration`, đối chiếu mẫu ghi từ phản hồi thật. Mã năng lực `W1`–`W5` kiểm ở use-case — OpenAPI ghi rõ | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật, không gọi nhà cung cấp thật (đầu nối thử `test_echo`, `test_shop`): kết nối (tạo, tổng quan, kiểm tra, đổi khoá, nhật ký, phát lại, ngắt), kênh bán (đăng, tin & đơn, còn/hết hàng, gỡ), quản trị chuỗi (cửa hàng thường → 422), token (cấp, danh sách, xoay, thu hồi; tổ chức khác → 404), làm mới SSO (cookie `smeos_sso`) | `tests/tenant/internal-contract-integrations.test.ts` |
+| Tài liệu | Đặc tả 06 dòng `/sso/refresh` ghi cookie `floraos_sso` — tên cũ; mã đặt `smeos_sso` (`SSO_COOKIE`, `core/http/cookies.ts`), vẫn đọc cookie cũ để tương thích. Sửa dòng đặc tả | `npm run check:docs` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `POST /integration-tokens/:id/rotate` cấp token mới với thời hạn MẶC ĐỊNH (`resolveExpiry(now, undefined)`), không giữ `ttl_days` đã chọn lúc cấp — token cấp 30 ngày xoay ra token 90 ngày (đã thử). Người cấp token ngắn hạn có chủ đích sẽ vô tình kéo dài hạn khi xoay.
+- Chú thích đầu `sso/refresh/route.ts` vẫn nói cookie `floraos_session`/`floraos_sso` (tên cũ) — chỉ là chú thích, không đổi ở đợt này.
+- Không có đường nào trả 500 trong 12 phép thử lỗi (đầu nối lạ, khoá sai, mã không phải UUID, `ttl_days` sai, đầu nối quản trị lạ).
+
+## 20. Nhật ký sửa — OpenAPI nội bộ, đợt tư liệu & kho tệp (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/assets/*` (5 route, 7 operation), `/asset-usages/*` (2 route, 3 operation), `/storage/*` (6 route, 8 operation) — tổng 386 operation. Chỉ ghi tài liệu, không đổi hành vi, cách ghi/xoá tệp hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 5 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-storage.ts` (kèm hai danh sách giá trị nơi dùng/trạng thái mà `GET /asset-usages` dùng chung), route import lại; thân `POST /assets` là hợp đồng Chặng 01 (xuất lại). Phản hồi khai `strictObject` (`responses-storage.ts`), đối chiếu mẫu ghi từ phản hồi thật. `/storage/{key}` (route bắt mọi đường dẫn `[...key]`) khai xác thực bằng chữ ký URL, không cần phiên; test kiến trúc đổi `[...key]` → `{key}` khi so route ↔ operation | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật và kho đĩa cục bộ: xin URL tải lên → tải thẳng bằng URL ký → ghi nhận asset → danh sách, đọc, URL xem, đọc tệp (cả `Range` 206, thiếu chữ ký 400), duyệt, xoá (204); thùng rác (chuyển, liệt kê, khôi phục, xoá vĩnh viễn, thiếu `type` 400); Kho dữ liệu (tóm tắt, danh sách); nơi dùng tư liệu (tạo, danh sách, sửa, `limit` sai 400) | `tests/tenant/internal-contract-storage.test.ts` |
+
+Ghi nhận:
+- Thùng rác trả envelope cũ `{ success: true }`, `PUT /storage/{key}` trả `{ ok, key }` (đã có trong `api-envelope-legacy.txt`).
+- `x-capability` của `GET · POST /storage/trash` chỉ ghi `G3`: cột năng lực của đặc tả 06 viết `` `G3` \| `L4` \| `A3` \| `B6` `` — bộ tách cột của `internal-openapi.test.ts` (và `check:docs`) cắt ở dấu `|` dù đã thoát, nên chỉ đọc được `G3`. Ba mã còn lại ghi trong mô tả operation. Nên viết lại cột đó bằng `·` khi sửa đặc tả lần tới.
+- 14 phép thử lỗi (mã lạ, khoá kho của tổ chức khác, chi nhánh lạ, `type` thư viện sai, `limit` không phải số…) không có đường nào trả 500.
+
+## 21. Nhật ký sửa — OpenAPI nội bộ, đợt Thương hiệu & dữ liệu bán hàng (08/11/2026)
+
+Phủ thêm 3 nhóm vào `internal.openapi.json`: `/brand-kit/*` (5 route, 5 operation), `/brand-library/*` (4 route, 6 operation), `/product-copies/*` (5 route, 6 operation) — tổng 403 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi. (Cụm nội dung còn lại — `content-engine`, `market-intelligence` — làm ở đợt sau.)
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 5 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-brand.ts` (Bộ nhận diện và Landing page dùng chung một lược đồ giống hệt), route import lại. Thân `product-copies` do route/use-case tự kiểm có lược đồ mô tả; danh sách trường sửa được đối chiếu với `validateProductCopyEdited` | `tests/unit/architecture/internal-request-parity.test.ts` (5 mẫu), `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi khai `strictObject` (`responses-brand.ts`), đối chiếu mẫu ghi từ phản hồi thật; kiểm trên CSDL thật với cổng AI giả lập (dữ liệu bán hàng trả bản cố định, khẩu hiệu/landing lùi về nội dung dựng sẵn): mục Thương hiệu từ hồ sơ trống tới xuất bản landing page, thư viện nhận diện (tạo, sửa, phiên bản, mục chuỗi), dữ liệu bán hàng (sinh, sửa, trường lạ 400, duyệt, từ chối, thiếu khoá idempotency 400) | `tests/tenant/internal-contract-brand.test.ts` |
+| API-12 | Đặc tả 06 bảng `product-copies`: `GET /product-copies` ghi "chưa gác" — mã gác `H5` ở `listProductCopies`; cột "Gác ở đâu" ghi `route` cho cả 6 dòng trong khi cả 6 gác ở use-case. Sửa theo mã | `npm run check:docs`, `internal-openapi.test.ts` |
+
+Ghi nhận:
+- `product-copies` trả thẳng dòng CSDL (không `{ data }`), `PATCH` sai thân trả lỗi chỉ có `message` (không `details`) — giữ nguyên, ghi ở OpenAPI.
+- Một lượt phân tích chỉ có một bản dữ liệu bán hàng: gọi `generate` lần hai (khoá idempotency khác) trả lại bản cũ, không gọi AI và không tạo job mới.
+- 8 phép thử lỗi (bước bị khoá, mục đã lưu trữ, mã lạ, mã không phải UUID) không có đường nào trả 500.
+
+## 22. Nhật ký sửa — OpenAPI nội bộ, đợt viết nội dung AI & xu hướng thị trường (08/11/2026)
+
+Phủ thêm 2 nhóm vào `internal.openapi.json`: `/content-engine/*` (6 route, 7 operation), `/market-intelligence/*` (5 route, 6 operation) — tổng 416 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 3 route (landing page, viết lại nhanh, lượt nghiên cứu) chuyển nguyên văn về `src/app/api/v1/_contracts/requests-content.ts`, route import lại; `catalog-generate` nằm trong vùng Catalog đóng băng — route KHÔNG sửa, `catalogGenerateBody` là bản sao, cùng bộ mẫu gửi tới route thật và bản sao phải cho cùng kết luận (`tests/unit/content-engine/catalog-generate-contract.test.ts`, 10 mẫu); thân bài đa kênh dùng hợp đồng `content-engine/contracts/generation.ts`, đọc ảnh/phân tích sản phẩm dùng hợp đồng Chặng 02/03 (xuất lại, cả lược đồ đầu ra). Phản hồi còn lại khai `strictObject` (`responses-content.ts`), đối chiếu mẫu ghi từ phản hồi thật | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật với cổng AI giả lập trả "không chạy được" (đúng kết quả cổng thật, không ném lỗi): bài đa kênh (tra, xem, duyệt, tạo mới → bài dựng sẵn 201, thiếu khoá idempotency 400), landing page, catalog, viết lại nhanh (`fallback: true`); xu hướng thị trường (cơ hội, lượt nghiên cứu, sức khoẻ nguồn), đọc ảnh (cổng trả ví dụ đầu ra Chặng 02, ảnh thật trong kho đĩa), phân tích sản phẩm (thân theo ví dụ Chặng 03) | `tests/tenant/internal-contract-content.test.ts` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `POST /market-intelligence/product-intelligence` thiếu `components` → use-case ném `Error` trần → 500, không phải 400 (đã thử).
+- `GET /market-intelligence/opportunities?limit=abc` → 500 (`parseInt` → `NaN` vào Prisma; đã thử). `min_score` không phải số bị bỏ qua.
+- `POST /market-intelligence/research-runs`: lượt nghiên cứu và lịch sử (`research_runs`, `provider_health`) là dữ liệu chung toàn nền tảng, không có `organization_id` — người dùng của bất kỳ tổ chức nào có `V1` cũng kích hoạt được lượt chạy cho cả nền tảng và xem được lịch sử của mọi lượt; chưa giới hạn tần suất; thân sai lược đồ không bị từ chối mà lùi về `MANUAL`. Không lộ dữ liệu tổ chức, nhưng là bề mặt tốn tài nguyên chung — nên giới hạn tần suất hoặc chuyển sang Console Vận hành Nền tảng.
+- `POST /market-intelligence/vision-extract` khi không có tệp trong kho trả 500 kèm thông báo chứa khoá kho nội bộ (`org/<id>/unfiled/<id>.jpg`) — lộ chi tiết nội bộ trong lỗi 500.
+- Bài học test: `expectContract(res, status, schema)` bỏ qua bước kiểm khi `schema` là `undefined` — một lần xuất lại sai tên lược đồ đã làm ca phân tích sản phẩm xanh rỗng cho tới khi `typecheck` bắt được. Các đợt trước đều qua `typecheck` nên không bị ảnh hưởng.
+
+## 23. Nhật ký sửa — OpenAPI nội bộ, đợt phiên, báo cáo, bản in, mã giảm giá, credit (09/11/2026)
+
+Phủ thêm 5 nhóm vào `internal.openapi.json`: `/session/*` (5 route, 5 operation), `/reports/*` (5 route, 5 operation), `/print/*` (4 route, 5 operation), `/vouchers/*` (3 route, 5 operation), `/usage/*` (3 route, 4 operation) — tổng 440 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 7 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-misc.ts`, route import lại; thân tạo bản in là lược đồ của module `print` (xuất lại). Phản hồi khai `strictObject` (`responses-misc.ts`) từ kiểu TS của `reporting`, `print`, `promotions`, `usage`, đối chiếu mẫu ghi từ phản hồi thật. Báo cáo và hạn mức credit gác mã năng lực ở use-case (`R20`, `G8`/`U2`) — OpenAPI ghi rõ | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật: lời mời (xem, nhận, từ chối), đổi tổ chức (cookie `smeos_sso`, tổ chức không phải thành viên 404), đổi mật khẩu; 5 báo cáo (kỳ ngược 400); lịch sử, tổng hợp, hạn mức credit; đợt mã giảm giá (tạo, danh sách, xem, tạm dừng, xuất CSV); bản in (kiểm trước khi in, tạo, danh sách, xem, xuất PDF) | `tests/tenant/internal-contract-misc.test.ts` |
+
+Phát hiện khi viết hợp đồng (chưa sửa):
+- `GET /reports/*?from=abc`: ngày sai định dạng bị bỏ qua, dùng kỳ mặc định (200) — đặc tả 06 ghi "sai → 400"; chỉ kỳ quá 366 ngày hoặc `from` > `to` mới trả 400 (đã thử).
+- Đặc tả 06 mục 14 (dòng "Chưa có: … `/vouchers`") còn ghi endpoint mã giảm giá chưa xây, trong khi `/vouchers/batches/*` đã có và có dòng riêng trong đặc tả — dòng "chưa có" là cũ (nằm trong danh sách RS-7 chờ PO, không tự sửa).
+- Lỗi sai thân của `/print/*` trả `details` dạng bản đồ trường → câu (không phải `details.issues` như chuẩn v1.1).
+- Lịch sử credit (`GET /usage`) rỗng trong test — lược đồ dòng `usage` viết theo lược đồ CSDL, chưa đối chiếu trên dòng thật.
+- 19 phép thử lỗi (mật khẩu sai/yếu, mã trùng, vượt trần %, ngày ngược, `limit`/`period` sai, mã lạ) không có đường nào trả 500.
+
+## 24. Nhật ký sửa — OpenAPI nội bộ, đợt hồ sơ & kênh cửa hàng (09/11/2026)
+
+Phủ thêm 7 nhóm vào `internal.openapi.json`: `/business-profile/*` (2 route, 3 operation), `/brand-profile` (1 route, 2 operation), `/store/*` (1 route, 1 operation), `/store-share-link/*` (2 route, 3 operation), `/shop-reviews/*` (2 route, 4 operation), `/custom-domains/*` (3 route, 4 operation), `/short-links/*` (3 route, 4 operation) — tổng 461 operation. Chỉ ghi tài liệu, không đổi hành vi hay hình dạng phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-15 | Lược đồ zod khai trong 8 route chuyển nguyên văn về `src/app/api/v1/_contracts/requests-profile.ts`, route import lại; thân link động giữ ở `short-links/schema.ts` (dùng chung POST/PATCH, xuất lại). Phản hồi khai `strictObject` (`responses-profile.ts`), đối chiếu mẫu ghi từ phản hồi thật | `tests/unit/architecture/internal-openapi.test.ts` |
+| API-15 | Phản hồi kiểm trên CSDL thật: hồ sơ doanh nghiệp/thương hiệu, dữ liệu mẫu theo ngành (tổ chức thường 403, không gian trải nghiệm 200, ngành lạ 400), minh bạch thu thập, link hồ sơ công khai (cần đủ hồ sơ kể cả logo), đánh giá khách (tổ chức khác 404), tên miền riêng (xác minh không thấy TXT → `verified: false`), link/QR động và thống kê | `tests/tenant/internal-contract-profile.test.ts` |
+
+Phát hiện khi viết hợp đồng — lỗi P1 đã sửa ở §25; còn lại chưa sửa:
+- ~~**Cách ly tenant (P1)**~~ (đã sửa §25) — `GET /store/collection-transparency?storeId=`: `getStoreCollectionTransparency` gọi `findBranchBasic(storeId)` và `getStoreDsa(storeId)` (`field-platform/infra/chain-collection-repository.ts`) đọc `branches` theo `id` KHÔNG lọc tổ chức. Người của tổ chức A gửi mã chi nhánh của tổ chức B → 200 kèm tên chi nhánh của B (đã thử: "Chi nhánh bí mật của Q") và mức trần lan truyền tính theo thoả thuận chia sẻ dữ liệu (DSA) của B. Mã lạ cũng trả 200 thay vì 404. Vi phạm luật 2 CLAUDE.md (khác tổ chức → 404). Route anh em `GET /chain/stores-data/:storeId` đã kiểm đúng (§17).
+- `PUT /brand-profile`: `logo_asset_id` không được kiểm — mã lạ hoặc ảnh của tổ chức khác vẫn lưu (đã thử). Không lộ ảnh (`logo_url` ký theo tổ chức phiên → `null`), nhưng hồ sơ bị tính là đã có logo nên link hồ sơ công khai xuất bản được với logo không tồn tại.
+- Link/QR động trả cả trường đếm nội bộ của Prisma `_count: { leads }` ra API.
+- Phản hồi không bọc `{ data }` ở `business-profile`, `brand-profile`, `short-links`; sai thân `short-links` trả `details.body` một câu chung.
+- 10 phép thử lỗi khác (số sao, đích link ra ngoài, `days` sai, tên miền sai/trùng, mã lạ) đều trả đúng mã, không có 500.
+
+## 25. Nhật ký sửa — lỗi P1 phát hiện ở §24 (09/11/2026)
+
+Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **Cách ly tenant** — `GET /store/collection-transparency?storeId=` đọc `branches` và thoả thuận chia sẻ dữ liệu theo `id` không lọc tổ chức: mã chi nhánh của tổ chức khác → 200 kèm tên chi nhánh và mức trần DSA của tổ chức đó; mã lạ → 200 | `getStoreCollectionTransparency` (`field-platform/use-cases/get-store-collection-transparency.ts`) trả `null` khi không thấy chi nhánh hoặc `branches.organization_id` khác tổ chức của phiên, TRƯỚC khi đọc DSA (cùng khuôn `getStoreFolderData`); route đổi `null` thành 404. Test đơn vị cũ giả lập "không thấy chi nhánh" vẫn ra kết quả (khoá đúng hành vi lỗi) — nay giả lập chi nhánh của chính tổ chức, thêm ca khác tổ chức/mã lạ → `null` và không đọc DSA | `tests/tenant/store-transparency-isolation.test.ts` (2 ca đỏ trên mã cũ: 200), `chain-collection-profile.use-case.test.ts`, `internal-contract-profile.test.ts` |
+
+Chưa sửa (P3, ghi ở §24): `PUT /brand-profile` nhận `logo_asset_id` lạ/của tổ chức khác.
+
+## 26. Nhật ký sửa — OpenAPI nội bộ, đợt khách hàng & marketing (09/11/2026)
+
+Phủ 8 nhóm, 14 route, 22 operation (tổng 483): `/leads/*`, `/campaigns/*`, `/marketing-center/kpis`, `/customer-segments/*`, `/customers/{id}/interactions`, `/customer-interactions`, `/occasions/*`, `/delivery/my-runs/*`.
+
+| Việc | Tệp |
+|---|---|
+| Lược đồ yêu cầu từng khai trong 6 route (`campaigns`, `campaigns/[id]`, `delivery/my-runs/[id]`, `leads/[id]`, `occasions`, `occasions/[id]`) chuyển NGUYÊN VĂN, route import lại; phân khúc và tương tác dùng lược đồ use-case `crm` (xuất lại); thân `POST /leads` và các query chỉ mô tả | `_contracts/requests-marketing.ts` |
+| Phản hồi chặt sinh từ kiểu TS, đối chiếu mẫu thật; `assetUsage` của đợt kho tệp được xuất để dùng chung | `_contracts/responses-marketing.ts`, `responses-storage.ts` |
+| Operation + mã năng lực theo spec 06 | `_contracts/ops-marketing.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật, kể cả đường lỗi 400/404/409 đã mô tả | `tests/tenant/internal-contract-marketing.test.ts` |
+
+Phát hiện, chưa sửa (ghi để PO quyết):
+
+| Mức | Lỗi | Tái hiện |
+|---|---|---|
+| **P1** | **Một khách tiềm năng làm hỏng danh sách khách của cả tổ chức.** `createStaffLead` và `captureLead` (form công khai, quét QR) gọi `findOrCreateCustomer` với `deliveryAddress: ""`. Lớp mã hoá dữ liệu cá nhân (`pii-write.ts`) mã hoá cả chuỗi rỗng thành bản mã có phần thân rỗng (`pii1.<v>.<iv>.<tag>.`), còn `decryptPii` (`pii-cipher.ts`) coi phần thân rỗng là bản mã hỏng và ném lỗi. Mọi lượt đọc khách đó → 500: `GET /crm/customers`, `GET /customer-segments/{id}/customers`, xuất khách… Người lạ gửi form để lại thông tin công khai là đủ làm sập màn Khách hàng của tiệm | Tạo một khách tiềm năng (`POST /leads`, lý do `WALK_IN`) → `GET /crm/customers` từ 200 thành 500 (đã chạy thử trên CSDL test). Đã sửa ở §27 |
+| P3 | `POST /delivery/my-runs/{id}` dùng `.parse` thẳng (lỗi zod vẫn ra 400 qua `handle`) | — |
+| P3 | `PATCH /campaigns/{id}` khai `objective`/`status` bằng mảng chữ cứng, không dùng `CAMPAIGN_OBJECTIVES`/`CAMPAIGN_STATUSES` như `POST` — sẽ lệch khi thêm giá trị | giữ nguyên văn khi chuyển |
+
+## 27. Nhật ký sửa — lỗi P1 phát hiện ở §26 (09/11/2026)
+
+Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **Một khách tiềm năng làm danh sách khách của cả tổ chức trả 500** — `createStaffLead` và `captureCatalogLead` (form công khai) tạo khách với địa chỉ `""`; bản mã AES-GCM của chuỗi rỗng có phần thân rỗng (`pii1.<v>.<iv>.<tag>.`), `decryptPii` kiểm `!body` nên coi là bản mã hỏng | `decryptPii` (`core/security/pii-cipher.ts`) chỉ từ chối khi không đủ đúng 5 phần hoặc thiếu tiền tố/iv/thẻ; phần thân rỗng giải ra `""` và GCM vẫn kiểm thẻ xác thực (sai khoá/sửa bản mã vẫn lỗi). Sửa ở chỗ đọc nên các dòng đã ghi trước đây đọc lại được, không cần chuyển dữ liệu; địa chỉ vẫn lưu dạng bản mã. Test hợp đồng §26 bỏ tổ chức tách riêng | `tests/tenant/lead-customer-empty-address.test.ts` (2 ca đỏ trên mã cũ: 500 — nhân viên thêm, form catalog công khai), `pii-cipher.test.ts` (chuỗi rỗng; thiếu/thừa phần → lỗi), `internal-contract-marketing.test.ts` |
+
+Chưa sửa (ngoài phạm vi, cùng khuôn): `openSecret` (`core/security/secret-box.ts`) và `unwrapDataKey` cũng kiểm `!body` — bí mật rỗng không mở được. Khoá dữ liệu luôn 32 byte nên `unwrapDataKey` không gặp; `openSecret` chỉ gặp nếu có nơi ghi bí mật rỗng.
+
+## 28. Nhật ký sửa — OpenAPI nội bộ, đợt sản phẩm phụ (09/11/2026)
+
+Phủ 4 nhóm, 10 route, 13 operation (tổng 496): `/product-photo/*`, `/product-image-set/*`, `/product-change-requests/*`, `/availability/*`. Chỉ thêm tài liệu và chuyển lược đồ — không đổi hành vi tính năng tải ảnh.
+
+| Việc | Tệp |
+|---|---|
+| Lược đồ yêu cầu từng khai trong 6 route chuyển NGUYÊN VĂN, route import lại; query chỉ mô tả | `_contracts/requests-product-extra.ts` |
+| Phản hồi chặt sinh từ kiểu TS, đối chiếu mẫu thật; dùng lại `jobCreatedResponse` (đợt tác vụ AI) và `productRow` (đợt nhóm lõi) | `_contracts/responses-product-extra.ts` |
+| Operation + mã năng lực theo spec 06; `operationId` hàng chờ là `listChangeRequestQueue` (tên `listProductChangeRequests` đã dùng cho `GET /products/{id}/change-requests`) | `_contracts/ops-product-extra.ts`, `internal-openapi.ts` |
+| Spec 06: `GET /product-photo`, `GET /product-image-set` ghi *(phiên)* nhưng route không kiểm phiên — sửa cột theo mã thành *(công khai)* | `docs/dac-ta/06-api-specification.md` |
+| Test hợp đồng trên CSDL thật, kể cả đường lỗi 400/404/422 đã mô tả | `tests/tenant/internal-contract-product-extra.test.ts` |
+
+Phát hiện, chưa sửa (không có P1):
+
+| Mức | Lỗi |
+|---|---|
+| P3 | `GET /product-photo` và `GET /product-image-set` không cần phiên và trả cả `promptDirective` (câu lệnh gửi mô hình ảnh) — có nên đòi phiên và ẩn câu lệnh không là quyết định của PO |
+| P3 | `GET /product-photo/{id}` khi job chưa có điểm trả `qcEvaluation.passed: true`, mọi tiêu chí 1; `GET /product-image-set/{id}` khi chưa xong trả `url` từng biến thể là ảnh gốc kèm `passed: true`. Giao diện dựa `canApprove`/`status` thì không sai, nhưng dễ đọc nhầm là đã đạt |
+| P3 | `GET /availability/board?month=` sai dạng → lặng lẽ trả tháng hiện tại thay vì 400 |
+| P3 | `POST /product-change-requests/{id}/approve` trả dòng `products` nguyên bản (snake_case), khác các phản hồi camelCase còn lại của nhóm |
+
+## 29. Nhật ký sửa — OpenAPI nội bộ, đợt quản trị & AI (09/11/2026)
+
+Phủ 10 nhóm, 14 route, 18 operation (tổng 514): `/roles/*`, `/workspaces`, `/ux-rollout-flags`, `/audit-logs/*`, `/subscription`, `/billing/sepay`, `/ai-policy`, `/ai-capabilities`, `/ai-requests/*`, `/content-guard/validate`.
+
+| Việc | Tệp |
+|---|---|
+| Lược đồ yêu cầu từng khai trong 7 route chuyển NGUYÊN VĂN, route import lại; query chỉ mô tả | `_contracts/requests-admin.ts` |
+| Phản hồi chặt sinh từ dòng Prisma và kiểu TS, đối chiếu mẫu thật (webhook SePay ghi bằng khoá thử qua `vi.mock`, cùng cách `subscription-guard.test.ts`) | `_contracts/responses-admin.ts` |
+| Operation + mã năng lực theo spec 06 | `_contracts/ops-admin.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật, kể cả đường lỗi 400/401/404 đã mô tả | `tests/tenant/internal-contract-admin.test.ts` |
+
+Phát hiện, chưa sửa (không có P1):
+
+| Mức | Lỗi | Tái hiện |
+|---|---|---|
+| **P2** | **Điều hành tự khoá quyền quản lý vai trò.** `PATCH /roles/{id}/capabilities` cho bỏ `F5` khỏi chính vai `dieu_hanh` (200); từ phiên đó gọi lại để bật `F5` → 403 vì phiên đã mất `F5`. Tổ chức chỉ có tài khoản Điều hành mất hẳn quyền chỉnh vai cho đến khi nền tảng can thiệp. Chưa có sàn "không bỏ được `F1`/`F5` khỏi vai Điều hành" | Đã sửa ở §30 |
+| P3 | `GET /ai-requests/review?limit=abc` → 500 (`take: NaN` xuống Prisma); `/ai-requests` cùng tham số thì bỏ qua | — |
+| P3 | `POST /roles` trùng tên tạo vai mới với `key` thêm hậu tố, không báo trùng | — |
+| P3 | `GET /ai-requests`: `from`/`to`/`limit` sai dạng bị bỏ qua thay vì 400 | — |
+
+## 30. Nhật ký sửa — lỗi P2 phát hiện ở §29 (09/11/2026)
+
+Người dùng yêu cầu sửa trước khi phủ tiếp OpenAPI.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **Điều hành tự khoá quyền quản lý vai trò** — `PATCH /roles/{id}/capabilities` cho tắt `F5` (và `F1`) trên chính vai `dieu_hanh`; phiên mất `F5` nên không bật lại được (403) | Thêm sàn quyền trong lõi RBAC, đặt cạnh trần cứng: `OWNER_ROLE_FLOOR` / `breaksRoleFloor` (`core/rbac/permission-resolver.ts`) — vai `dieu_hanh` luôn giữ `F1` (xem tổ chức, danh sách vai) và `F5` (sửa vai); còn `F5` thì mọi mã khác bật lại được. `updateRoleCapabilities` kiểm sàn cùng vòng với trần cứng, TRƯỚC khi ghi: xuyên sàn → 422 `UNPROCESSABLE_ENTITY` kèm `details.capability`, không ghi gì kể cả thay đổi hợp lệ khác trong cùng yêu cầu. Spec 06 và mô tả OpenAPI cập nhật | `tests/tenant/role-owner-floor.test.ts` (3 ca đỏ trên mã cũ: 200/403), `permission-resolver.test.ts` |
+
+Tổ chức đã tự khoá TRƯỚC bản sửa (dòng `capability_overrides` cũ tắt `F5`): đã xử lý ở §34 — sàn áp cả lúc tính quyền.
+
+## 31. Nhật ký sửa — OpenAPI nội bộ, đợt công cụ (09/11/2026)
+
+Phủ 5 nhóm, 10 route, 18 operation (tổng 532): `/ad-banner-poster/*`, `/field-config/*`, `/template-overrides/*`, `/noi-bo/identity`, `/proxy/{path}` (5 phương thức).
+
+| Việc | Tệp |
+|---|---|
+| Lược đồ yêu cầu từng khai trong 4 route chuyển NGUYÊN VĂN, route import lại; trường dữ liệu dùng lược đồ `field-platform/adapters/http-schemas` (xuất lại); query và thân proxy chỉ mô tả | `_contracts/requests-tools.ts` |
+| Phản hồi chặt sinh từ kiểu TS và dòng `template_overrides`, đối chiếu mẫu thật (danh mục nền tảng gieo trong test rồi dọn — `resetDatabase` không xoá bảng nền tảng); proxy trả nguyên văn phản hồi hệ thống đích, không có lược đồ | `_contracts/responses-tools.ts` |
+| Operation + mã năng lực theo spec 06 | `_contracts/ops-tools.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật, kể cả đường lỗi 400/404 đã mô tả | `tests/tenant/internal-contract-tools.test.ts` |
+
+Phát hiện, chưa sửa (không có P1 trong phạm vi core):
+
+| Mức | Lỗi | Tái hiện |
+|---|---|---|
+| **P2** | **`/proxy/{path}` chuyển tiếp cả khi chưa đăng nhập.** Core chỉ đòi phiên cho lệnh ghi `api/accounts` của SocialFlow (`J5`); mọi đường dẫn khác trong danh sách trắng — gồm `api/v1/worker/cron` của LocalBudd — được chuyển tiếp với danh tính `none`, an toàn hoàn toàn dựa vào hệ thống đích tự kiểm. Core thành điểm chuyển tiếp công khai vào mạng nội bộ của SocialFlow/LocalBudd | Đã sửa ở §33 |
+| P2 | `/proxy`: hệ thống đích không gọi được → 500 với thông báo chứa địa chỉ nội bộ của hệ thống đích | Đã sửa ở §33 |
+| P2 | `generateBannerCopyUseCase` gọi LLM trực tiếp qua `createContentLLM` (`core/ai/adapters/multi-llm-provider.ts`), không qua `callCapability` — trái quy tắc AI bắt buộc (CLAUDE.md mục 5): bỏ qua trần mô hình, sàn quyền riêng tư, sổ `ai_requests` | Đã sửa ở §33 |
+| P3 | `GET /noi-bo/identity` không đòi mã năng lực: mọi vai (kể cả Shipper) thấy tên và email của mọi thành viên | Phiên Shipper → 200 kèm `members` |
+| P3 | `GET /field-config/catalogs` chỉ kiểm phiên, không kiểm `R1` như đặc tả 06 và chú thích use-case ghi | Đọc mã |
+| P3 | `GET /field-config?entity=` lạ → 200 rỗng thay vì 400; tạo trường trùng nhãn → khoá thêm hậu tố, không báo trùng | — |
+
+## 32. Nhật ký sửa — OpenAPI nội bộ, đợt cuối (09/11/2026)
+
+Phủ 3 nhóm, 8 route, 9 operation (tổng 541): `/catalog-links/*`, `/product-intelligence/{id}`, `/internal/*` (cron). **Hết phạm vi OpenAPI nội bộ** — mọi thư mục route dưới `src/app/api/v1/` đã nằm trong `INTERNAL_COVERED_PREFIXES`, trừ `public` / `platform` / `integration` (có `public.openapi.json`, `platform.openapi.json`, `integration.openapi.json` riêng).
+
+| Việc | Tệp |
+|---|---|
+| `catalog-links` thuộc vùng Catalog đóng băng: route KHÔNG sửa; OpenAPI dùng BẢN SAO lược đồ, test đối chiếu gửi cùng bộ mẫu tới route thật và bản sao (cùng khuôn `catalog-generate`, §20) | `_contracts/requests-final.ts`, `tests/unit/catalog-links/catalog-links-contract.test.ts` |
+| Phản hồi chặt; báo cáo phân tích dùng lại `productIntelligenceReportSchema` (`creative-production/contracts`) | `_contracts/responses-final.ts` |
+| Operation; cron mô tả xác thực bằng `x-cron-secret` (không phiên) | `_contracts/ops-final.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật (chỉ GỌI route catalog-links), kể cả 401 của cron và 404 cách ly | `tests/tenant/internal-contract-final.test.ts` |
+
+Phát hiện, chưa sửa (không có P1):
+
+| Mức | Lỗi |
+|---|---|
+| P3 | `GET /catalog-links/{slug}` (công khai) trả `created_by` — mã người dùng nội bộ lộ cho khách quét QR. Vùng đóng băng: cần PO mở băng để sửa |
+| P3 | `GET /product-intelligence/{id}` nhánh dự phòng (bản phân tích ảnh) đặt `productName` = mã ảnh (UUID) thay vì tên sản phẩm |
+| P3 | `/internal/health` và `/internal/chain-dispatch-sweep` trả 401 bằng thân cũ `{ error: "Unauthorized" }` (không theo envelope lỗi chung); `/internal/integrations-sweep` thì theo envelope |
+| P3 | `POST /catalog-links/{slug}/revoke` lần hai → 400 (nên là 409 hoặc 200 không đổi) |
+
+## 33. Nhật ký sửa — ba lỗi P2 phát hiện ở §31 (09/11/2026)
+
+Người dùng yêu cầu sửa trước khi làm tiếp.
+
+| Lỗi | Đã sửa | Test |
+|---|---|---|
+| **`/proxy/{path}` chuyển tiếp khi chưa đăng nhập** — chỉ lệnh ghi `api/accounts` đòi phiên; mọi đường dẫn khác trong danh sách trắng (gồm `api/v1/worker/cron` của LocalBudd) được chuyển tiếp với danh tính `none` | Route luôn gọi `requireTenantContext` trước khi chuyển tiếp (sau kiểm `client` và danh sách trắng); `api/accounts` ghi vẫn đòi `J5`. Mọi nơi gọi proxy trong mã đều là màn hình của người đã đăng nhập; không cron/máy nào gọi qua proxy (đã `grep` mã, `render.yaml`, `workers/`) | `tests/tenant/proxy-auth.test.ts` (đỏ trên mã cũ: 500 vì đã gọi mạng thay vì 401) |
+| **`/proxy` lộ địa chỉ nội bộ khi lỗi** — `sendToSibling` ghép nguyên văn lỗi mạng (có URL hệ thống đích) vào thông báo 500 | Lỗi mạng → `log.error("proxy.upstream_failed", …)` giữ chi tiết; phản hồi chỉ còn "Không gọi được <hệ thống>, vui lòng thử lại sau". Thông báo hết giờ không đổi (không có địa chỉ) | `proxy-auth.test.ts` (đỏ trên mã cũ: thân chứa địa chỉ) |
+| **Chữ banner gọi LLM ngoài cổng AI** — `generateBannerCopyUseCase` gọi `createContentLLM().complete()` thẳng với `organizationId: "system"`: bỏ qua trần mô hình, sàn quyền riêng tư, sổ `ai_requests` | Dời lời gọi LLM vào adapter `ad-banner-poster/adapters/banner-copy-ai-adapter.ts` (kiểm JSON + luật ưu đãi tiệm trước khi chấm điểm); use-case gọi `callCapability` năng lực `content_generation` (AIC-23, sàn `SHOP`, cùng năng lực với landing/catalog) bằng `aiGatewayDeps(ctx)` và tổ chức thật của phiên. Không có phiên, cổng trả `khong_chay_duoc` hoặc lỗi → mẫu dựng sẵn như cũ. Route truyền `{ ctx }` | `ad-banner-poster/use-cases/banner-copy-gateway.test.ts` (4 ca), `banner-use-cases.test.ts` giữ nguyên |
+
+## 34. Nhật ký sửa — sàn vai Điều hành lúc tính quyền (09/11/2026)
+
+PO duyệt phương án "áp sàn cả lúc tính quyền" cho tổ chức đã tự khoá `F5` trước bản sửa §30 (không xoá tay dữ liệu).
+
+| Việc | Đã làm | Test |
+|---|---|---|
+| Dòng `capability_overrides` cũ tắt `F1`/`F5` của vai `dieu_hanh` vẫn khoá tổ chức | `applyRoleFloor` (`core/rbac/permission-resolver.ts`) bật lại các mã của `OWNER_ROLE_FLOOR` sau `mergeOverrides`, trước `applyHardCap`; phạm vi giữ theo lớp một. Gọi ở MỘT chỗ — `CapabilityRepository.resolveGrants` — nên phiên (`resolveSession`), `GET /roles` và kết quả `PATCH /roles/{id}/capabilities` cùng thấy. Không xoá/sửa dữ liệu: dòng cũ vẫn nằm đó nhưng không còn hiệu lực với hai mã sàn; ngoại lệ trên mã khác vẫn áp. Vai khác không đổi | `tests/tenant/role-owner-floor.test.ts` (ca mới đỏ trên mã cũ: phiên mất `F1` → `GET /roles` 403), `permission-resolver.test.ts` |
+
+## 35. Nhật ký sửa — OpenAPI nội bộ, hai nhóm mới từ `main` (09/11/2026)
+
+Sau khi gộp `main` vào nhánh, PO duyệt phủ nốt hai nhóm route mới của hành trình Tạo nội dung 4 bước: `/content-studio/*` (4 route), `/social-publishing/*` (8 route) — 14 operation (tổng 555). Mọi thư mục route dưới `src/app/api/v1/` nay đều có OpenAPI.
+
+| Việc | Tệp |
+|---|---|
+| 12 route đã viết bằng `defineRoute`; lược đồ thân/query khai tại chỗ trong 4 route chuyển NGUYÊN VĂN về `_contracts`, route import lại (không đổi hành vi) | `_contracts/requests-studio.ts` |
+| Phản hồi chặt theo chuẩn v1.1 (`{ data }`, `{ data, next_cursor }`, snake_case) sinh từ kiểu TS, đối chiếu mẫu thật; Thẻ chào dùng lại `salesPitchRecord` | `_contracts/responses-studio.ts` |
+| Operation + mã năng lực theo spec 06 (`L1`/`L3`/`H1`/`J5`/`W2`); `callback` khai 303 | `_contracts/ops-studio.ts`, `internal-openapi.ts` |
+| Test hợp đồng trên CSDL thật (nền tảng mạng xã hội giả lập qua tham số `fetch` của use-case), kể cả 400/404/409 đã mô tả | `tests/tenant/internal-contract-studio.test.ts` |
+
+Ghi nhận khi dò đường lỗi (đúng luật, chỉ ghi để mô tả chính xác): lên lịch kênh chưa có bài đã duyệt → 400 trước khi xét kết nối (409 chỉ khi có bài mà kênh chưa kết nối); chọn Trang Facebook không trong danh sách chờ → 400 `details.page_id` (không phải 404). Không phát hiện lỗi P1/P2.
+
+## 36. Nhật ký sửa — API-10, API-11, API-16 (09/11/2026)
+
+PO yêu cầu làm ba mục đang hoãn. Không đổi `prisma/schema.prisma`, CI, dependency.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-10 | `GET /orders` phân trang con trỏ theo chuẩn v1.1: `{ data, next_cursor, meta: { total } }` (trước `{ orders, total }`, chỉ trang đầu). Thứ tự `created_at` giảm dần rồi `id` giảm dần (`ORDER_LIST_ORDER_BY`, `orders/infra/order-list-where.ts`) — đơn trùng thời điểm không lặp/sót giữa hai trang; lấy dư 1 dòng để biết còn trang. `cursor` mờ base64url `{ at, id }` qua `decodeCursor`/`encodeCursor` chung, hỏng → 400; `total` đếm cả danh sách đang lọc (không theo con trỏ); giữ `limit` 1–100 mặc định 50. Repository trả `OrderListPage`. Năm màn đọc danh sách đổi theo (Đơn hàng, Bàn làm việc Sale, bảng Quản lý cửa hàng, Trung tâm mạng lưới hoa, Trung tâm tăng trưởng) — hai màn cuối trước đây đọc nhầm khoá `items` nên luôn hiện 0 đơn, nay đọc đúng | `tests/tenant/order-cursor-pagination.test.ts` (đi hết trang, trùng thời điểm, total, con trỏ khác tổ chức), `tests/unit/orders/list-orders-limit-route.test.ts`, `order-isolation`, `order-filters`, `branch-scope`, `internal-contract-orders` |
+| API-11 | `enqueueJob`: cùng `Idempotency-Key` mà `payload`/sản phẩm khác → 422 `IDEMPOTENCY_KEY_REUSED` (`details.job_id` = job của yêu cầu trước), không tạo job; cảnh báo `jobs.idempotency_payload_mismatch` vẫn ghi. Mã mới trong `core/http/errors.ts` (OpenAPI cả bốn tệp sinh lại). Miễn trừ có lý do `KEY_REUSE_ALLOWED` (`jobs/domain/idempotency.ts`): `creative.scene_plan` (mở lại kịch bản theo khoá cố định — lý do PO hoãn 07/11) và `product.copy.generate` (khoá `product-copy:<analysisId>`, `product_id` lấy từ bản phân tích có thể được gắn sau). Rà 23 nơi gọi `enqueueJob`: khoá máy chủ tự ghép có thân cố định theo khoá (phân tích ảnh, biến thể, Từ 1 ảnh); nhập lịch sử Avi không đi qua `enqueueJob`. Hai hook Tạo nội dung giữ khoá qua lần thử lại sau lỗi dù người dùng đổi kênh / ảnh tải lại có mã mới → nay khoá gắn theo chữ ký yêu cầu (`components/content-studio/request-key.ts`), đổi yêu cầu thì khoá mới. **Chưa áp:** `/integration/jobs` giữ hành vi cũ (`keyReuse: "legacy"`) — thay đổi phá vỡ với bên thứ ba cần báo trước ≥ 90 ngày (đặc tả 06 "Version và gỡ endpoint"), chờ PO chốt ngày; `POST /orders` không lưu thân nên chưa phát hiện được — cần thêm cột (đổi schema, chờ PO) | `tests/tenant/job-idempotency-mismatch.test.ts` (nội bộ → 422, đỏ trên mã cũ; Integration giữ cũ; miễn trừ mở lại), `request-key.test.ts` |
+| API-16 | `POST /jobs/batch` trả **202** (đặc tả 06 luật 4), thân giữ nguyên `{ job_id, status, usage }`; `FeaturePicker` kiểm `res.ok` nên không phải sửa | `tests/unit/jobs/batch-route.test.ts`, `internal-contract-ai-studio.test.ts` |
+
+Rủi ro đã cân nhắc: đổi hình dạng `GET /orders` và mã `jobs/batch` là thay đổi tại chỗ trên API chỉ giao diện SMEOS gọi; giao diện đổi cùng commit nên bản triển khai mới nhất quán — tab trình duyệt mở từ bản cũ cần tải lại trang (đặc tả 06 yêu cầu báo trước 30 ngày cho loại API này; PO yêu cầu làm ngay).
 

@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { enumParam } from "@/core/http/query-params"
 import { CAMPAIGN_OBJECTIVES, CAMPAIGN_STATUSES } from "@/modules/marketing-center/domain/campaign"
@@ -7,15 +6,7 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { createCampaignUseCase } from "@/modules/marketing-center/use-cases/create-campaign.use-case"
 import { listCampaignsUseCase } from "@/modules/marketing-center/use-cases/list-campaigns.use-case"
-
-const createCampaignSchema = z.object({
-  name: z.string().min(1, "Tên chiến dịch không được để trống").max(150),
-  objective: z.enum(CAMPAIGN_OBJECTIVES),
-  occasion_code: z.string().nullable().optional(),
-  starts_at: z.string().nullable().optional(),
-  ends_at: z.string().nullable().optional(),
-  status: z.enum(CAMPAIGN_STATUSES).optional(),
-})
+import { createCampaignSchema } from "@/app/api/v1/_contracts/requests-marketing"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)

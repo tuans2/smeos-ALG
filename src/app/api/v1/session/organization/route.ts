@@ -1,14 +1,12 @@
-import { z } from "zod"
 
 import { serializeSsoCookie } from "@/core/http/cookies"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { switchOrganizationBody } from "@/app/api/v1/_contracts/requests-misc"
 import { resolveSession } from "@/modules/organization/use-cases/resolve-session"
 import { switchOrganization } from "@/modules/organization/use-cases/switch-organization"
 import { ssoClaimsFor, SSO_TOKEN_TTL_SECONDS } from "@/modules/sso/domain/sso-claims"
 import { signSsoToken } from "@/modules/sso/infra/sso-jwt"
-
-const schema = z.object({ organization_id: z.string() })
 
 /**
  * Chỗ duy nhất trong toàn bộ API mà client được nêu tên một tổ chức. Mọi
@@ -16,7 +14,7 @@ const schema = z.object({ organization_id: z.string() })
  */
 export const POST = handle(async (request) => {
   const resolved = await resolveSession(request)
-  const parsed = schema.safeParse(await request.json().catch(() => null))
+  const parsed = switchOrganizationBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const organization = await switchOrganization({

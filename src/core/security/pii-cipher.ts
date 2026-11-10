@@ -79,8 +79,11 @@ export function piiKeyVersion(sealed: string): number | null {
 }
 
 export function decryptPii(key: Buffer, sealed: string): string {
-  const [prefix, , iv, tag, body] = sealed.split(".")
-  if (prefix !== PREFIX || !iv || !tag || !body) throw new Error("Bản mã dữ liệu cá nhân không hợp lệ")
+  const parts = sealed.split(".")
+  const [prefix, , iv, tag, body] = parts
+  // Phần thân rỗng là bản mã hợp lệ của chuỗi rỗng (GCM vẫn kiểm thẻ xác thực) — trước đây bị coi là hỏng, nên khách
+  // tạo từ khách tiềm năng (địa chỉ `""`) làm mọi lượt đọc danh sách khách của tổ chức trả 500 (audit API §27).
+  if (parts.length !== 5 || prefix !== PREFIX || !iv || !tag || body === undefined) throw new Error("Bản mã dữ liệu cá nhân không hợp lệ")
   return open(key, iv, tag, body).toString("utf8")
 }
 

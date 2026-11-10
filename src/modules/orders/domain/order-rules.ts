@@ -208,6 +208,6 @@ export function generateOrderCode(seqNumber: number, date = new Date()): string 
  */
 export function brochureLockReason(order: { source?: string | null | undefined }): string | null {
   return order.source === "BROCHURE"
-    ? "Đơn này đến từ Thẻ chào — vui lòng cập nhật ở trang Thẻ chào để giữ đúng luật thu tiền và báo khách."
+    ? "Đơn này đến từ Bộ sưu tập riêng — vui lòng cập nhật ở trang Bộ sưu tập riêng để giữ đúng luật thu tiền và báo khách."
     : null
 }

@@ -1,5 +1,6 @@
 import { type TenantContext } from "@/core/tenancy";
 import { requireCapability } from "@/core/rbac/capabilities";
+import { videoJobNotFound } from "./video-errors";
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory";
 import { ASSET_VIEW_URL_TTL_SECONDS } from "@/modules/assets/use-cases/get-asset-view-url";
 import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
@@ -24,7 +25,7 @@ export class GetVideoJobUseCase {
 
     const job = await this.repo.findById(ctx, jobId);
     if (!job) {
-      throw new Error(`Không tìm thấy tác vụ video với mã: ${jobId}`);
+      throw videoJobNotFound();
     }
 
     await settleVideoRenderCredit(ctx, jobId).catch(() => undefined);

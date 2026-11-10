@@ -1,11 +1,10 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
 import { createWorkspace } from "@/modules/organization/use-cases/create-workspace"
 import { listWorkspaces } from "@/modules/organization/use-cases/list-workspaces"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { createWorkspaceBody } from "@/app/api/v1/_contracts/requests-admin"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -13,16 +12,11 @@ export const GET = handle(async (request) => {
   return jsonResponse({ data: await listWorkspaces(ctx), next_cursor: null })
 })
 
-const schema = z.object({
-  name: z.string().min(1),
-  kind: z.enum(["EXPERIENCE", "PRODUCTION"]),
-})
-
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "F8")
 
-  const parsed = schema.safeParse(await request.json().catch(() => null))
+  const parsed = createWorkspaceBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const workspace = await createWorkspace(ctx, parsed.data)

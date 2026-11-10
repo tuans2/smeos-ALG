@@ -1,18 +1,11 @@
 import { requireCapability } from "@/core/rbac/capabilities"
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { createProductPhotoJob } from "@/modules/product-photo-studio/use-cases/create-product-photo-job"
 import { BACKGROUND_PRESETS, ASPECT_RATIO_OPTIONS } from "@/modules/product-photo-studio/domain/preset-catalog"
-
-const postSchema = z.object({
-  asset_id: z.string().min(1, "Bắt buộc phải có asset_id"),
-  preset_id: z.string().optional(),
-  aspect_ratio: z.string().optional(),
-  custom_note: z.string().optional(),
-})
+import { productPhotoBody } from "@/app/api/v1/_contracts/requests-product-extra"
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -24,7 +17,7 @@ export const POST = handle(async (request) => {
   }
 
   const body = await request.json().catch(() => null)
-  const parsed = postSchema.safeParse(body)
+  const parsed = productPhotoBody.safeParse(body)
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

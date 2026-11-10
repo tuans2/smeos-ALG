@@ -23,5 +23,13 @@ export function buildOrderListWhere(organizationId: string, filter: OrderFilter)
   // Lọc nâng cao: ngày giao, nhân viên bán (checklist ALG 4.3)
   where.AND = orderListExtraWhere({ deliveryFrom: filter.deliveryFrom, deliveryTo: filter.deliveryTo, saleId: filter.saleId }, multiSourceSaleWhere)
     .AND as Prisma.ordersWhereInput[]
+  // Phân trang con trỏ (audit API-10): sau mốc (created_at, id) theo thứ tự giảm dần của `ORDER_LIST_ORDER_BY`.
+  if (filter.cursor) {
+    const at = new Date(filter.cursor.createdAt)
+    where.AND = [...where.AND, { OR: [{ created_at: { lt: at } }, { created_at: at, id: { lt: filter.cursor.id } }] }]
+  }
   return where
 }
+
+export const ORDER_LIST_ORDER_BY: Prisma.ordersOrderByWithRelationInput[] = [{ created_at: "desc" }, { id: "desc" }]
+

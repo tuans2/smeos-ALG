@@ -92,6 +92,10 @@ class InMemoryChatRepository implements IInternalChatRepository {
     return msg
   }
 
+  async findMessageById(messageId: string): Promise<InternalChatMessage | null> {
+    return this.messages.find((m) => m.id === messageId) ?? null
+  }
+
   async listMessages(conversationId: string): Promise<InternalChatMessage[]> {
     return this.messages.filter((m) => m.conversationId === conversationId)
   }
@@ -192,6 +196,8 @@ describe("Internal Chat Use Cases", () => {
       actionPayload: { orderId: "order-123", status: "PENDING_ACCEPT" },
     })
 
+    // Đối tác được mời vào luồng đơn (như `dispatch-order-to-chat`) — chỉ người tham gia mới bấm được nút.
+    await repo.addParticipant(conv.id, { userId: "partner-user-1", organizationId: "partner-org-1" })
     const handleActionCase = new HandleCardActionUseCase(repo)
     const updated = await handleActionCase.execute({
       messageId: cardMsg.id,
@@ -201,6 +207,34 @@ describe("Internal Chat Use Cases", () => {
     })
 
     expect((updated.actionPayload as { status?: string }).status).toBe("ACCEPTED")
+    // Giữ trạng thái sống của thẻ — trước 08/11/2026 cả `action_payload` bị ghi đè, mất mã đơn.
+    expect((updated.actionPayload as { orderId?: string }).orderId).toBe("order-123")
     expect(repo.messages).toHaveLength(2) // 1 card msg + 1 system announcement
+  })
+
+  it("người không tham gia hội thoại hoặc mã tin lạ → 404, thẻ không đổi", async () => {
+    const conv = await new CreateOrGetConversationUseCase(repo).execute({
+      organizationId: "org-1", userId: "user-1", userRole: "coordinator", conversationType: "ORDER_THREAD", orderId: "order-9",
+    })
+    const card = await new SendChatMessageUseCase(repo).execute({
+      conversationId: conv.id, userId: "user-1", userRole: "coordinator", content: "Đơn #9", messageType: "ACTION_CARD_ORDER",
+      actionPayload: { orderId: "order-9", status: "PENDING_ACCEPT" },
+    })
+    const useCase = new HandleCardActionUseCase(repo)
+    const outsider = useCase.execute({ messageId: card.id, userId: "user-org-khac", userOrgId: "org-khac", action: "REJECT_ORDER" })
+    await expect(outsider).rejects.toThrow(ChatAccessDeniedError)
+    await expect(outsider).rejects.toMatchObject({ code: "NOT_FOUND" })
+    await expect(useCase.execute({ messageId: "msg-khong-co", userId: "user-1", userOrgId: "org-1", action: "ACCEPT_ORDER" })).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(repo.messages.find((m) => m.id === card.id)?.actionPayload).toEqual({ orderId: "order-9", status: "PENDING_ACCEPT" })
+    expect(repo.messages).toHaveLength(1)
+  })
+
+  it("tin không phải thẻ đơn → 409", async () => {
+    const conv = await new CreateOrGetConversationUseCase(repo).execute({
+      organizationId: "org-1", userId: "user-1", userRole: "coordinator", conversationType: "ORDER_THREAD", orderId: "order-10",
+    })
+    const text = await new SendChatMessageUseCase(repo).execute({ conversationId: conv.id, userId: "user-1", userRole: "coordinator", content: "Chào đối tác" })
+    await expect(new HandleCardActionUseCase(repo).execute({ messageId: text.id, userId: "user-1", userOrgId: "org-1", action: "ACCEPT_ORDER" }))
+      .rejects.toMatchObject({ code: "CONFLICT" })
   })
 })

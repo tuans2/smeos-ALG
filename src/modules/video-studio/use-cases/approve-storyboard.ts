@@ -1,5 +1,6 @@
 import { type TenantContext } from "@/core/tenancy";
 import { requireCapability } from "@/core/rbac/capabilities";
+import { approvalBlocked, videoJobNotFound } from "./video-errors";
 import type { IVideoJobRepository } from "../domain/repositories/video-job-repository.interface";
 import {
   getVideoJobRepository,
@@ -21,7 +22,7 @@ export class ApproveStoryboardUseCase {
 
     const job = await this.repo.findById(ctx, jobId);
     if (!job) {
-      throw new Error(`Không tìm thấy tác vụ video với mã: ${jobId}`);
+      throw videoJobNotFound();
     }
 
     const check = canApproveScript({
@@ -40,7 +41,7 @@ export class ApproveStoryboardUseCase {
     });
 
     if (!check.allowed) {
-      throw new Error(check.reason || "Không đủ điều kiện để phê duyệt kịch bản");
+      throw approvalBlocked(check, "Không đủ điều kiện để phê duyệt kịch bản");
     }
 
     await this.repo.approveScript(ctx, jobId, ctx.userId ?? "system");

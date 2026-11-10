@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -7,16 +6,12 @@ import {
   checkFlowerContent,
   sanitizeFlowerContent,
 } from "@/core/ai/domain/flower-content-guard"
-
-const validateSchema = z.object({
-  text: z.string().min(1, "Văn bản kiểm duyệt không được để trống"),
-  autoSanitize: z.boolean().optional(),
-})
+import { validateContentBody } from "@/app/api/v1/_contracts/requests-admin"
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
 
-  const parsed = validateSchema.safeParse(await request.json().catch(() => null))
+  const parsed = validateContentBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }
@@ -34,7 +29,6 @@ export const POST = handle(async (request) => {
       forbiddenStyles = JSON.stringify(brandProfile.forbidden_styles)
     }
   }
-
 
   const check = checkFlowerContent(parsed.data.text, {
     brandForbiddenStyles: forbiddenStyles,

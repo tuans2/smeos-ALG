@@ -1,5 +1,5 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { deleteHardLockSchema, postHardLockSchema } from "@/app/api/v1/_contracts/requests-notification"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import {
@@ -8,36 +8,6 @@ import {
   removeHardLock,
 } from "@/modules/notification/use-cases/manage-hard-locks"
 import type { NotifyChannel } from "@/modules/notification/domain/events/_contract"
-
-const postHardLockSchema = z.object({
-  eventKey: z.string().min(1),
-  channel: z.enum([
-    "APP_INBOX",
-    "EMAIL",
-    "PUSH",
-    "TELEGRAM",
-    "ZALO",
-    "SMS",
-    "WHATSAPP",
-    "MESSENGER",
-  ]),
-  enabled: z.boolean(),
-  reason: z.string().optional(),
-})
-
-const deleteHardLockSchema = z.object({
-  eventKey: z.string().min(1),
-  channel: z.enum([
-    "APP_INBOX",
-    "EMAIL",
-    "PUSH",
-    "TELEGRAM",
-    "ZALO",
-    "SMS",
-    "WHATSAPP",
-    "MESSENGER",
-  ]),
-})
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)

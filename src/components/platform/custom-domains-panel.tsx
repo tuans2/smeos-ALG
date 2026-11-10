@@ -51,7 +51,7 @@ export function CustomDomainsPanel({ organizationId }: { organizationId: string 
     <Card className="space-y-3 p-4">
       <div className="border-b border-border pb-2">
         <p className="text-body-sm font-bold text-text">Tên miền riêng</p>
-        <p className="text-caption text-text-muted">Tên miền cửa hàng gắn cho trang danh mục và Thẻ Chào. Khoá thì tên miền ngừng mở trang ngay.</p>
+        <p className="text-caption text-text-muted">Tên miền cửa hàng gắn cho trang bộ sưu tập chung và bộ sưu tập riêng. Khoá thì tên miền ngừng mở trang ngay.</p>
       </div>
       {rows?.length === 0 && <p className="text-caption text-text-muted">Tổ chức chưa gắn tên miền riêng.</p>}
       {rows?.map((row) => (

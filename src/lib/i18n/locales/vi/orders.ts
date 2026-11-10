@@ -86,11 +86,11 @@ export const ordersVi = {
   "coordinator": {
     "title": "Điều phối đơn hàng",
     "statusBadge": "Đang vận hành",
-    "subtitle": "Tháp điều phối đơn hàng · Kết nối đối tác gia công & Đơn đặt từ thẻ chào",
+    "subtitle": "Tháp điều phối đơn hàng · Kết nối đối tác gia công & Đơn đặt từ bộ sưu tập riêng",
     "receiveNewOrder": "Tiếp nhận đơn mới",
     "tabs": {
       "tower": "Tháp điều phối đơn hàng",
-      "brochure": "Đơn từ thẻ chào"
+      "brochure": "Đơn từ bộ sưu tập riêng"
     }
   }
 } as const

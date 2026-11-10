@@ -393,7 +393,7 @@ export function AccountStorageHub({
               Mọi thứ cửa hàng đã tạo, ở một chỗ
             </h2>
             <p className="text-body-sm text-text-muted mt-0.5">
-              Ảnh, video, âm thanh, nội dung, catalog, thẻ chào và kịch bản tư vấn. Mục đã xóa được giữ 30 ngày trong Thùng rác.
+              Ảnh, video, âm thanh, nội dung, bộ sưu tập chung, bộ sưu tập riêng và kịch bản tư vấn. Mục đã xóa được giữ 30 ngày trong Thùng rác.
             </p>
           </div>
 
