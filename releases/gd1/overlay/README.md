@@ -51,3 +51,4 @@ cd workers && python -m pytest tests -q
 - `render.yaml`: Render Blueprint gồm web, worker `media_ai`, worker `vision`, cron 5 phút, Redis và Postgres. Render chỉ deploy commit trên `main` khi CI xanh.
 - Không đặt `NEXT_PUBLIC_APP_ENV=production`: biến này bật khoá "Sắp ra mắt" dành cho bản đầy đủ.
 - Khoá `PII_ENCRYPTION_KEY` tự tạo và sao lưu trước khi nhận dữ liệu khách thật (sổ tay vận hành §14).
+- Thêm `.github/CODEOWNERS` với tài khoản GitHub của người duyệt cho các vùng hệ thống thiết kế (`src/styles/tokens/`, `src/components/ui/`, `src/components/layout/`, `docs/design-system/`).

@@ -77,7 +77,9 @@ Hiện trạng đã đo:
 - 2.5: [báo cáo phụ thuộc](BANGIAO_GD1_PHU_THUOC.md): 1 lời gọi proxy SocialFlow, 16 liên kết viết cứng tới trang không giao (xử lý ở Bước 4), các mô-đun bị cắt giữa chừng. Worker `media_ai` chỉ nhận tác vụ âm thanh/video khi bản cài có mô-đun đó.
 - 2.6: `.github/workflows/release-gd1.yml` — workflow riêng chứ không thêm vào `ci.yml`, để không chạy trên `main` và không chặn deploy của Render. Test tenant/platform và E2E (`tests/e2e/ux/delivery-phase.spec.ts`: menu chỉ còn phạm vi, URL ngoài phạm vi trả 404) trên bản cắt chạy hằng đêm.
 - CI của ALG chưa gồm 3 cổng của smeOS vì đỏ trên bản cắt: `check:docs` (đặc tả 06/07 còn mô tả route và bảng không giao, đòi `CLAUDE.md`), `check:template-ssot` (SSOT mẫu còn liệt kê thành phần đã cắt), `check:industry`. Thêm lại khi làm tài liệu khớp bản giao (Bước 4).
-- Đo tại máy: MEASURE_PLACEHOLDER
+- Bản cắt gắn sẵn chế độ giai đoạn; `NEXT_PUBLIC_DELIVERY_PHASE=off` tắt hẳn (unit test đặt mặc định `off` trong `tests/setup.ts` để mô tả danh mục đầy đủ; `nav-href-exists` lọc theo giai đoạn gắn sẵn nên vẫn chạy trên bản cắt). Lớp phủ có test `render.yaml` riêng; khối kiểm `CODEOWNERS` bỏ qua trong bản cắt.
+- Báo nhầm gitleaks đã duyệt được mang sang bản cắt theo nội dung dòng (`scripts/release/cut-gitleaks.ts`), ghi `.gitleaksignore` ở commit thứ hai của bản cắt. Công cụ cắt cần đủ lịch sử git (từ chối chạy trên bản clone nông).
+- Đo tại máy ngày 10/11/2026 (mốc `1edea663`): bản cắt 90/116 trang, 475/536 API, 5.126 tệp; kiểm rò rỉ sạch (337 mục baseline); typecheck, ESLint ratchet, `check:layers`, `check:tokens-doc`, `check:screen-contracts`, `lint:ux`, `check:migrations`, `audit:industry:check` xanh; `npm test` 698 tệp, 4.315 đạt, 2 bỏ qua; build xanh; E2E `delivery-phase`, `navigation`, `a11y-done-tools` 9/9. Trên CI cùng ngày: gitleaks trên bản cắt sạch (20 báo nhầm mang sang). Test tenant/platform, toàn bộ E2E và pytest worker trên bản cắt: xem lượt chạy `release-gd1` mới nhất. 116 test bị bỏ khỏi bản cắt, 67 chạm code được giao — danh sách trong báo cáo cắt, cần người xem lại ở điểm duyệt Bước 5.
 
 ## Bước 3 — Audit trên môi trường chỉ bật 123 chức năng
 
