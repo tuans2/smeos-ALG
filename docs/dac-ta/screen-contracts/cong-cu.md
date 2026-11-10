@@ -15,7 +15,7 @@ acceptance:
 
 # Screen Contract — Trung tâm Tiếp thị & Bán hàng (/cong-cu)
 
-**Tuyến:** `/cong-cu` · **Tệp chính:** `src/app/(app)/cong-cu/page.tsx`, `src/components/dashboard/toolkit-home.tsx` · **Cập nhật:** 01/11/2026 · **Thẻ:** PR-0
+**Tuyến:** `/cong-cu` · **Tệp chính:** `src/app/(app)/cong-cu/page.tsx`, `src/components/dashboard/toolkit-home.tsx` · **Cập nhật:** 09/11/2026 · **Thẻ:** PR-0
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `dieu_hanh`, `marketing`, `sale` · Vai phụ: `dieu_phoi`, `nhan_vien`
@@ -123,3 +123,30 @@ acceptance:
   Thẻ nhóm trên lưới ghi "4 bước: Thẻ sản phẩm · Thẻ chào · Bài đăng · Đăng tự động".
 - API: `GET /api/v1/content-studio/products` (L1, Kho kèm cờ), `GET /api/v1/content-studio/products/[id]` (L1),
   `PUT /api/v1/content-studio/products/[id]/sales-pitch` (L3), `GET /api/v1/content-studio/scans/[jobId]` (H1).
+
+## 12. Nhóm "Quảng bá sản phẩm" dạng ô 3 chức năng (PO 09/11/2026, D-67)
+- **Thay thế** lưới 11 công cụ + ấn phẩm của nhóm bằng **3 ô chức năng độc lập** (`src/components/promotion-hub/*`) —
+  không khoá thứ tự, không đánh số bước, không ổ khoá. Ô đang mở nhớ trên URL: `?muc=promotion&o=landing|chung|rieng`.
+  - **Landing page**: danh sách landing chiến dịch (tên, ngày tạo, trạng thái; Xem · Chép link · Tải QR · Ngừng chia sẻ
+    qua `ConfirmDialog` R3) → "Tạo landing mới" mở `LandingTypeSelector` (chỉ "Trang chiến dịch & dịp lễ đặc biệt" và
+    "Trang chào dịch vụ & công trình tiêu biểu") + `LandingCampaignTab` có sẵn. Trang chính thức của cửa hàng vẫn thuộc §10.
+  - **Bộ sưu tập chung**: danh sách bộ sưu tập chung (cùng thao tác) → "Tạo bộ sưu tập" mở `CatalogManagementTab` có sẵn.
+  - **Bộ sưu tập riêng**: nhúng `JourneyWizard` của /the-chao (gửi nhanh 3 bước) + "Link gửi gần đây" (5 link) + lối
+    "Quản lý đơn và theo dõi" sang `/the-chao?mode=manager`. Thanh tab khoá của /the-chao không đổi.
+- Dòng phụ trên ô (`promotionSummary`): "N trang đang chạy" / "Chưa có trang nào", "N bộ sưu tập đang chạy",
+  "N link đã gửi" / "Chưa gửi khách nào"; nguồn lỗi → "Chưa tải được số liệu"; thiếu quyền → "Bạn chưa có quyền …"
+  (ô vẫn hiện, mở ra nói rõ thiếu quyền — không ẩn im lặng).
+- Phân loại link (`src/modules/catalog-links/domain/catalog-link-kind.ts`, cùng quy tắc trang công khai `/c/[slug]`):
+  `store_official === true` → trang chính thức (không hiện ở đây); có `occasion`/`archetype`/`generatedPackage` → landing
+  chiến dịch; còn lại → bộ sưu tập chung. Số đếm chỉ tính link đang mở.
+- Nhắc nhẹ, không chặn (trên 3 ô): hồ sơ cửa hàng chưa đủ → "Hoàn thiện hồ sơ" (/ho-so); Kho chưa có sản phẩm đã duyệt →
+  "Tạo Thẻ sản phẩm" (`/cong-cu?muc=content&buoc=the-san-pham`).
+- Dữ liệu (SWR, tải song song, mỗi nguồn lỗi riêng): `GET /api/v1/catalog-links?include_revoked=true` (J1),
+  `GET /api/v1/greeting-card/send-links?limit=100` (R1), `GET /api/v1/products?limit=1&status=ACTIVE` (L1), hồ sơ cửa hàng.
+  Ghi: `POST /api/v1/catalog-links` (J1, luồng có sẵn), `POST /api/v1/catalog-links/[slug]/revoke` (J2), `POST
+  /api/v1/greeting-card/send-links` (R2). Không thêm endpoint, không đổi lược đồ hay quyền.
+- **PHÁT_TRIỂN_SAU:** 11 công cụ (8, 9, 10, 12, 13, 14, 21, 25, 54, 61, 66) + ấn phẩm `promotion` dời vào
+  `deferredTools`/`deferredAssets`, chỉ môi trường phát triển thấy; số liệu đầu trang không đếm. Menu bên trái và các
+  trang cũ (Ưu đãi, mã giảm giá, QR, link bán hàng, bảng giá…) không đổi. Thẻ nhóm trên lưới ghi
+  "3 chức năng: Landing · Bộ sưu tập chung · Bộ sưu tập riêng".
+- Kịch bản audit: `scripts/ux-audit/scenarios/cong-cu-quang-ba.mjs`.

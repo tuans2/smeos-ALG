@@ -2,6 +2,7 @@ import type { ICatalogLinkRepository } from "../domain/repositories/catalog-link
 import { buildOfficialStoreInfo, type PublicOfficialStoreInfo } from "./official-store-info"
 import { parseEntryActionsSettings, resolveEntryActions, type EntryActions } from "@/modules/orders/domain/entry-actions"
 import { getCatalogLinkRepository } from "../infra/catalog-link-repository"
+import { isLandingFilters } from "../domain/catalog-link-kind"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import { landingVisualFor } from "@/modules/landing-page/domain/archetype-style"
 import { getPublicReviewsForOrganization } from "@/modules/shop-reviews/use-cases/get-public-reviews"
@@ -284,7 +285,7 @@ export async function getPublicCatalog(
     if (signed) resolvedHeroImageUrl = signed
   }
 
-  const isLanding = Boolean(filters.occasion || filters.archetype || filters.generatedPackage)
+  const isLanding = isLandingFilters(filters)
   const entryActions = resolveEntryActions(parseEntryActionsSettings(org?.settings), isLanding ? "LANDING" : "CATALOG")
 
   return {
