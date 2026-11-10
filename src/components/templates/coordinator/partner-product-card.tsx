@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useRef, useCallback, useState } from "react"
-import { Flower2 } from "@/components/ui/icon-set/flower2"
 import { Clock } from "@/components/ui/icon-set/clock"
 import { MapPin } from "@/components/ui/icon-set/map-pin"
 import { Copy } from "@/components/ui/icon-set/copy"
@@ -13,12 +12,10 @@ import { ClipboardList } from "@/components/ui/icon-set/clipboard-list"
 import { MessageSquare } from "@/components/ui/icon-set/message-square"
 import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Image as ImageIcon } from "@/components/ui/icon-set/image"
-import { Scissors } from "@/components/ui/icon-set/scissors"
 import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/toast"
-import { Badge } from "@/components/ui/badge"
 import type {
   AccessoryBomItem,
   FlowerBomItem,
@@ -28,6 +25,8 @@ import type {
 } from "@/modules/products/domain/product-master-index"
 import type { VisibleCustomField } from "@/components/coordinator/custom-fields-section"
 import { formatDateTime } from "@/lib/i18n/formatters"
+import { PartnerProductCardBom } from "./partner-product-card-bom"
+import { AVI_LOTUS_BRAND_VARS, AVI_LOTUS_LOGO } from "./avi-lotus-brand"
 
 // ---------------------------------------------------------------------------
 // Types
@@ -134,7 +133,7 @@ export function buildZaloText(props: PartnerProductCardProps): string {
 
   lines.push(``)
   lines.push(`━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`smeOS • Hệ thống Điều phối Tự động`)
+  lines.push(`🌸 AVI LOTUS GROUP • Kết nối giá trị, đồng hành phát triển`)
 
   return lines.join("\n")
 }
@@ -207,7 +206,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
       const { toPng } = await import("html-to-image")
       const dataUrl = await toPng(cardRef.current, { pixelRatio: 2, backgroundColor: "#ffffff", cacheBust: true })
       const link = document.createElement("a")
-      link.download = `smeOS_the-san-pham_${orderCode}.png`
+      link.download = `AviLotus_the-san-pham_${orderCode}.png`
       link.href = dataUrl
       link.click()
     } catch (err) {
@@ -230,11 +229,11 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
       {/* ── Thanh tác vụ góc trên bên phải ── */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-md bg-primary-muted text-primary text-caption font-black uppercase border border-primary-border tracking-wider">
+          <span className="px-2.5 py-0.5 rounded-md bg-[var(--avi-primary-10)] text-[var(--avi-primary)] text-caption font-black uppercase border border-[var(--avi-primary-30)] tracking-wider">
             T02 • PRODUCT CARD
           </span>
-          <span className="text-caption font-bold text-text-muted">PHIẾU ĐẶT HÀNG GỬI ĐỐI TÁC</span>
-          <span className="text-body-sm font-extrabold text-text">#{orderCode}</span>
+          <span className="text-caption font-bold text-[var(--avi-ink-muted)]">PHIẾU ĐẶT HÀNG GỬI ĐỐI TÁC</span>
+          <span className="text-body-sm font-extrabold text-[var(--avi-ink)]">#{orderCode}</span>
         </div>
 
         {/* Primary Visible Buttons + Overflow Menu */}
@@ -243,7 +242,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             size="sm"
             variant="outline"
             onClick={handleCopyZalo}
-            className="h-7 text-caption px-2.5 font-bold gap-1 border-success-border text-success-text bg-success-bg hover:bg-success-bg/80"
+            className="h-7 text-caption px-2.5 font-bold gap-1 border-[var(--avi-sage)]/50 text-[var(--avi-primary)] bg-[var(--avi-sage-10)] hover:bg-[var(--avi-sage-15)]"
           >
             {copied ? <CheckCircle2 size={13} /> : <Copy size={13} />}
             <span>{copied ? "Đã copy!" : "Copy Zalo"}</span>
@@ -252,7 +251,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             size="sm"
             variant="outline"
             onClick={handleSendZalo}
-            className="h-7 text-caption px-2.5 font-bold gap-1 border-info-border text-info-text bg-info-bg hover:bg-info-bg/80"
+            className="h-7 text-caption px-2.5 font-bold gap-1 border-[#0068FF]/30 text-[#0068FF] bg-[#0068FF]/10 hover:bg-[#0068FF]/15"
           >
             <Send size={12} />
             <span>Gửi Zalo</span>
@@ -261,7 +260,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             size="sm"
             variant="outline"
             onClick={handleDownloadPng}
-            className="h-7 text-caption px-2.5 font-bold gap-1 border-border text-text-muted bg-surface-alt hover:bg-surface-alt/80"
+            className="h-7 text-caption px-2.5 font-bold gap-1 border-[var(--avi-ink-15)] text-[var(--avi-ink-muted)] bg-[var(--avi-cream)] hover:opacity-80"
           >
             <Download size={12} />
             <span>Tải PNG</span>
@@ -273,13 +272,18 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
       <Card
         ref={cardRef}
         data-testid="t07-png-export-region"
-        className="rounded-2xl border-2 border-danger-border bg-white p-0 shadow-lg overflow-hidden"
+        style={AVI_LOTUS_BRAND_VARS}
+        className="rounded-2xl border border-[var(--avi-primary-15)] bg-white p-0 shadow-lg overflow-hidden"
       >
-        {/* Header gradient */}
-        <div className="bg-gradient-to-r from-primary via-primary to-primary-dark px-5 py-3.5 flex items-center justify-between">
+        {/* Header — nền thương hiệu AVI LOTUS GROUP */}
+        <div
+          className="px-5 py-3.5 flex items-center justify-between"
+          style={{ background: `linear-gradient(to right, var(--avi-primary), var(--avi-primary-dark))` }}
+        >
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <Flower2 size={18} className="text-white" />
+            <div className="w-9 h-9 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center p-1.5 shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={AVI_LOTUS_LOGO.iconWhite} alt="AVI LOTUS GROUP" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="text-white/80 text-caption font-bold uppercase tracking-wider">
@@ -305,8 +309,15 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
         <div className="p-5 flex flex-col gap-4">
           {/* Rủi ro cảnh báo */}
           {riskLevel && riskLevel !== "NORMAL" && riskReason && (
-            <div className="flex items-start gap-2 p-2.5 rounded-xl bg-warning-bg border border-warning-border text-warning-text text-caption font-medium">
-              <AlertTriangle size={14} className="shrink-0 text-warning mt-0.5" />
+            <div
+              className="flex items-start gap-2 p-2.5 rounded-xl text-caption font-medium"
+              style={{
+                background: riskLevel === "ATTENTION" ? "var(--avi-gold-10)" : "var(--avi-brick-10)",
+                border: `1px solid ${riskLevel === "ATTENTION" ? "var(--avi-gold-30)" : "var(--avi-brick-25)"}`,
+                color: riskLevel === "ATTENTION" ? "var(--avi-gold-text)" : "var(--avi-brick)",
+              }}
+            >
+              <AlertTriangle size={14} className="shrink-0 mt-0.5" />
               <span>{riskReason}</span>
             </div>
           )}
@@ -314,7 +325,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
           {/* Row 1: Ảnh + Thông tin sản phẩm */}
           <div className="flex gap-4">
             {/* Ảnh mẫu lớn */}
-            <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-xl border-2 border-primary-border overflow-hidden shrink-0 relative bg-surface-alt shadow-sm">
+            <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-xl border-2 border-[var(--avi-primary-20)] overflow-hidden shrink-0 relative bg-[var(--avi-cream)] shadow-sm">
               {sampleImageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -323,13 +334,13 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-text-muted gap-1.5">
+                <div className="w-full h-full flex flex-col items-center justify-center text-[var(--avi-ink-muted)] gap-1.5">
                   <ImageIcon size={32} />
                   <span className="text-caption font-medium">Chưa có ảnh mẫu</span>
                 </div>
               )}
               {/* Badge ảnh mẫu */}
-              <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-danger/90 text-white text-caption font-black uppercase backdrop-blur-sm">
+              <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-[var(--avi-primary)]/90 text-white text-caption font-black uppercase backdrop-blur-sm">
                 Ảnh Mẫu
               </div>
             </div>
@@ -337,10 +348,10 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             {/* Thông tin sản phẩm */}
             <div className="flex-1 flex flex-col gap-2.5 min-w-0">
               <div>
-                <div className="text-caption font-bold text-primary uppercase tracking-wide mb-0.5">
+                <div className="text-caption font-bold text-[var(--avi-primary)] uppercase tracking-wide mb-0.5">
                   Tên sản phẩm
                 </div>
-                <div className="text-body font-extrabold text-text leading-snug">
+                <div className="text-body font-extrabold text-[var(--avi-ink)] leading-snug">
                   {productTitle}
                 </div>
               </div>
@@ -348,11 +359,11 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
               {/* Giá */}
               <div className="flex items-center gap-3 flex-wrap">
                 {partnerPayoutVnd != null && partnerPayoutVnd > 0 && (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-success-bg border border-success-border">
-                    <Banknote size={14} className="text-success" />
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--avi-gold-10)] border border-[var(--avi-gold-30)]">
+                    <Banknote size={14} className="text-[var(--avi-gold-text)]" />
                     <div>
-                      <div className="text-caption font-bold text-success uppercase">Giá công đối tác</div>
-                      <div className="text-body-sm font-black text-success-text">
+                      <div className="text-caption font-bold text-[var(--avi-gold-text)] uppercase">Giá công đối tác</div>
+                      <div className="text-body-sm font-black text-[var(--avi-gold-text)]">
                         {partnerPayoutVnd.toLocaleString("vi-VN")}đ
                       </div>
                     </div>
@@ -362,120 +373,46 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
 
               {/* Đối tác đã phân công */}
               {partnerName && (
-                <div className="px-2.5 py-1 rounded-lg bg-info-bg border border-info-border text-caption font-bold text-info-text inline-flex items-center gap-1.5 self-start">
+                <div className="px-2.5 py-1 rounded-lg bg-[var(--avi-blue-15)] border border-[var(--avi-blue)]/50 text-caption font-bold text-[var(--avi-blue-text)] inline-flex items-center gap-1.5 self-start">
                   🏪 Xưởng: {partnerName}
                 </div>
               )}
             </div>
           </div>
 
-          {/* Row 2: BOM — Công thức cành hoa */}
-          {flowers.length > 0 && (
-            <div className="p-3.5 rounded-xl bg-primary-muted/60 border border-primary-border">
-              <div className="flex items-center gap-1.5 mb-2.5">
-                <Scissors size={13} className="text-primary" />
-                <span className="text-caption font-extrabold text-primary-dark uppercase tracking-wide">
-                  Công Thức Cành Hoa
-                </span>
-                <Badge tone="danger" className="text-caption font-black ml-1">
-                  {flowers.length} loại
-                </Badge>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                {flowers.map((fl, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface border border-primary-muted shadow-xs"
-                  >
-                    <span className="w-6 h-6 rounded-full bg-primary-muted text-primary text-caption font-black flex items-center justify-center shrink-0">
-                      {i + 1}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-caption font-bold text-text truncate flex items-center gap-1.5 flex-wrap">
-                        <span>{fl.flowerName}</span>
-                        {fl.shade && (
-                          <span className="px-1 py-0 rounded bg-surface-alt text-text-muted text-caption font-bold">
-                            {fl.shade}
-                          </span>
-                        )}
-                        {typeof fl.budCount === "number" && fl.budCount > 0 && (
-                          <span className="px-1 py-0 rounded bg-warning-bg text-warning-text text-caption font-bold">
-                            {fl.budCount} nụ chưa nở
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-caption text-text-muted font-medium">
-                        {fl.quantity} {fl.unit} • {fl.color}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* ĐP-2.12 (26/09/2026): lá/gói/phụ kiện thật từ snapshot Master Index — trước bản
-              này T07-BRIEF chỉ có cành hoa, thợ không biết gói/phụ kiện đúng mẫu là gì. */}
-          {(foliage.length > 0 || wrapping.length > 0 || accessories.length > 0) && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-caption">
-              {foliage.length > 0 && (
-                <div className="p-2.5 rounded-lg bg-success-bg/60 border border-success-border">
-                  <span className="font-bold text-success-text block mb-1">🌿 Lá/cành đệm</span>
-                  <div className="text-success space-y-0.5">
-                    {foliage.map((fol, i) => (
-                      <div key={i}>• {fol.name} ({fol.role}){fol.quantity ? ` × ${fol.quantity} ${fol.unit}` : ""}</div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {wrapping.length > 0 && (
-                <div className="p-2.5 rounded-lg bg-info-bg/60 border border-info-border">
-                  <span className="font-bold text-info-text block mb-1">🎁 Gói ({wrapping.length} lớp)</span>
-                  <div className="text-info space-y-0.5">
-                    {wrapping.map((w, i) => (
-                      <div key={i}>• {w.layer}: {w.material}, {w.color}</div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {accessories.length > 0 && (
-                <div className="p-2.5 rounded-lg bg-accent-bg/60 border border-accent-border">
-                  <span className="font-bold text-accent-text block mb-1">✨ Phụ kiện</span>
-                  <div className="text-accent-text space-y-0.5">
-                    {accessories.map((a, i) => (
-                      <div key={i}>• {a.name} ({a.material}, {a.color}){a.printedText ? ` — "${a.printedText}"` : ""}</div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          {/* Row 2: BOM — Công thức cành hoa (tách sang partner-product-card-bom.tsx) */}
+          <PartnerProductCardBom
+            flowers={flowers}
+            foliage={foliage}
+            wrapping={wrapping}
+            accessories={accessories}
+          />
 
           {/* Row 3: Thông tin giao hàng */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Địa chỉ giao */}
-            <div className="p-3 rounded-xl bg-surface-alt border border-border flex flex-col gap-1.5">
+            <div className="p-3 rounded-xl bg-[var(--avi-cream)] border border-[var(--avi-ink-08)] flex flex-col gap-1.5">
               <div className="flex items-center gap-1.5">
-                <MapPin size={13} className="text-danger-text" />
-                <span className="text-caption font-bold text-text-muted uppercase">Địa chỉ giao hàng</span>
+                <MapPin size={13} className="text-[var(--avi-brick)]" />
+                <span className="text-caption font-bold text-[var(--avi-ink-muted)] uppercase">Địa chỉ giao hàng</span>
                 {typeof deliveryAddress === "object" && deliveryAddress !== null && (
-                  <span className="text-caption font-bold text-danger-text bg-danger-bg px-1.5 py-0.5 rounded border border-danger-border">
+                  <span className="text-caption font-bold text-[var(--avi-brick)] bg-[var(--avi-brick-10)] px-1.5 py-0.5 rounded border border-[var(--avi-brick-25)]">
                     Chuẩn 5 tầng
                   </span>
                 )}
               </div>
-              <div className="text-caption font-bold text-text leading-relaxed">
+              <div className="text-caption font-bold text-[var(--avi-ink)] leading-relaxed">
                 {formattedAddress}
               </div>
               {typeof deliveryAddress === "object" && deliveryAddress !== null && (
                 <div className="flex items-center gap-1 flex-wrap pt-0.5">
-                  <span className="px-1.5 py-0.5 rounded bg-primary-muted text-primary text-caption font-bold">
+                  <span className="px-1.5 py-0.5 rounded bg-[var(--avi-primary-10)] text-[var(--avi-primary)] text-caption font-bold">
                     {deliveryAddress.ward}
                   </span>
-                  <span className="px-1.5 py-0.5 rounded bg-info-bg text-info-text text-caption font-bold">
+                  <span className="px-1.5 py-0.5 rounded bg-[var(--avi-blue-15)] text-[var(--avi-blue-text)] text-caption font-bold">
                     {deliveryAddress.district}
                   </span>
-                  <span className="px-1.5 py-0.5 rounded bg-accent-bg text-accent-text text-caption font-bold">
+                  <span className="px-1.5 py-0.5 rounded bg-[var(--avi-gold-10)] text-[var(--avi-gold-text)] text-caption font-bold">
                     {deliveryAddress.city}
                   </span>
                 </div>
@@ -483,14 +420,14 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             </div>
 
             {/* Người nhận */}
-            <div className="p-3 rounded-xl bg-surface-alt border border-border flex flex-col gap-1.5">
+            <div className="p-3 rounded-xl bg-[var(--avi-cream)] border border-[var(--avi-ink-08)] flex flex-col gap-1.5">
               <div className="flex items-center gap-1.5">
-                <span className="text-caption font-bold text-text-muted uppercase">👤 Người nhận hàng</span>
+                <span className="text-caption font-bold text-[var(--avi-ink-muted)] uppercase">👤 Người nhận hàng</span>
               </div>
-              <div className="text-caption font-bold text-text">
+              <div className="text-caption font-bold text-[var(--avi-ink)]">
                 {recipientName}
               </div>
-              <div className="text-caption text-text-muted font-medium">
+              <div className="text-caption text-[var(--avi-ink-muted)] font-medium">
                 📞 {recipientPhone}
               </div>
             </div>
@@ -498,13 +435,13 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
 
           {/* Row 4: Thiệp */}
           {cardMessage && (
-            <div className="p-3 rounded-xl bg-warning-bg/60 border border-warning-border flex items-start gap-2">
-              <MessageSquare size={14} className="text-warning shrink-0 mt-0.5" />
+            <div className="p-3 rounded-xl bg-[var(--avi-pink-25)] border border-[var(--avi-pink)] flex items-start gap-2">
+              <MessageSquare size={14} className="text-[var(--avi-pink-text)] shrink-0 mt-0.5" />
               <div>
-                <div className="text-caption font-bold text-warning uppercase mb-0.5">
+                <div className="text-caption font-bold text-[var(--avi-pink-text)] uppercase mb-0.5">
                   Nội dung thiệp chúc mừng
                 </div>
-                <div className="text-caption text-warning-text font-semibold italic leading-relaxed">
+                <div className="text-caption text-[var(--avi-pink-text)] font-semibold italic leading-relaxed">
                   &ldquo;{cardMessage}&rdquo;
                 </div>
               </div>
@@ -513,13 +450,13 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
 
           {/* Row 5: Ghi chú kỹ thuật */}
           {technicalNotes && (
-            <div className="p-3 rounded-xl bg-accent-bg/60 border border-accent-border flex items-start gap-2">
-              <ClipboardList size={14} className="text-accent shrink-0 mt-0.5" />
+            <div className="p-3 rounded-xl bg-[var(--avi-sage-10)] border border-[var(--avi-sage-40)] flex items-start gap-2">
+              <ClipboardList size={14} className="text-[var(--avi-primary)] shrink-0 mt-0.5" />
               <div>
-                <div className="text-caption font-bold text-accent-text uppercase mb-0.5">
+                <div className="text-caption font-bold text-[var(--avi-primary)] uppercase mb-0.5">
                   Ghi chú kỹ thuật từ Điều phối
                 </div>
-                <div className="text-caption text-accent-text font-medium leading-relaxed whitespace-pre-line">
+                <div className="text-caption text-[var(--avi-ink)] font-medium leading-relaxed whitespace-pre-line">
                   {technicalNotes}
                 </div>
               </div>
@@ -528,9 +465,9 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
 
           {/* Row 6: Trường tự tạo hiện cho đối tác (ĐP-3.16) */}
           {customFields.length > 0 && (
-            <div className="p-3 rounded-xl bg-surface-alt border border-border">
-              <div className="text-caption font-bold text-text-muted uppercase mb-1">Thông tin bổ sung</div>
-              <div className="space-y-0.5 text-caption text-text">
+            <div className="p-3 rounded-xl bg-[var(--avi-cream)] border border-[var(--avi-ink-08)]">
+              <div className="text-caption font-bold text-[var(--avi-ink-muted)] uppercase mb-1">Thông tin bổ sung</div>
+              <div className="space-y-0.5 text-caption text-[var(--avi-ink)]">
                 {customFields.map((f) => (
                   <div key={f.key}>
                     <span className="font-semibold">{f.label}:</span> {String(f.value)}
@@ -541,9 +478,13 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="px-5 py-3 bg-surface-alt border-t border-border flex items-center justify-between text-caption text-text-muted">
-          <span>smeOS Coordinator • Phiếu T02 tự động</span>
+        {/* Footer — thương hiệu AVI LOTUS GROUP */}
+        <div className="px-5 py-3 bg-[var(--avi-cream)] border-t border-[var(--avi-ink-08)] flex items-center justify-between text-caption text-[var(--avi-ink-muted)]">
+          <span className="flex items-center gap-1.5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={AVI_LOTUS_LOGO.iconDark} alt="" className="h-3.5 w-auto opacity-70" />
+            AVI LOTUS GROUP • Phiếu đặt hoa đối tác tự động
+          </span>
           <span className="font-bold">
             {formatDateTime(new Date())}
           </span>
@@ -571,7 +512,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
           <Button
             size="sm"
             onClick={onAdvanceStage}
-            className="bg-danger hover:bg-danger-text text-white gap-1.5 px-4 font-bold shadow-sm"
+            className="bg-[#133d31] hover:bg-[#0c2920] text-white gap-1.5 px-4 font-bold shadow-sm"
           >
             <span>Chuyển bước</span>
             <ArrowRight size={14} />
