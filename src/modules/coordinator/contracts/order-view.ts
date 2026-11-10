@@ -40,6 +40,7 @@ const CoordinatorProductSnapshotSchema = z.object({
   tierCount: z.number().optional(),
   substitutionPolicy: z.object({ allowed: z.boolean(), note: z.string().optional() }).optional(),
   dimensions: z.object({ heightCm: z.number(), widthCm: z.number() }).optional(),
+  assemblySteps: z.array(z.string()).optional(),
   warningTags: z.array(z.string()),
   quotePriceVnd: z.number().nullable(),
   masterUpdatedAt: z.string(),

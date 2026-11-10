@@ -258,6 +258,8 @@ export function CoordinatorOrderDetailModal({
                 recipientPhone={order.recipientPhone}
                 deliveryAddress={order.deliveryAddress}
                 customFields={partnerVisibleCustomFields}
+                dimensions={order.product?.dimensions}
+                assemblySteps={order.product?.assemblySteps}
                 onConfirmAcceptance={onConfirmAcceptance}
                 onCancelOrder={onCancelFloristOrder}
                 onPrint={() => window.print()}

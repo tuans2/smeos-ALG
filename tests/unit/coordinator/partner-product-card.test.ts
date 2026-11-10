@@ -45,7 +45,7 @@ describe("PartnerProductCard — ĐP-1.1: giá bán khách không lộ cho đố
     const html = renderToStaticMarkup(createElement(PartnerProductCard, props))
 
     const regionStart = html.indexOf('data-testid="t07-png-export-region"')
-    const regionEnd = html.indexOf("Phiếu T02 tự động")
+    const regionEnd = html.indexOf("Phiếu đặt hoa đối tác tự động")
     expect(regionStart).toBeGreaterThan(-1)
     expect(regionEnd).toBeGreaterThan(regionStart)
     const pngRegionHtml = html.slice(regionStart, regionEnd)
