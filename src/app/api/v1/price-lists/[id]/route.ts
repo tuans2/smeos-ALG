@@ -1,7 +1,6 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { priceListActiveBody } from "@/app/api/v1/_contracts/requests-costing"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import {
@@ -33,13 +32,11 @@ export const PUT = handle(async (request, context: Params) => {
   return jsonResponse(await savePriceList(ctx, id, toPriceListInput(parsed.data)))
 })
 
-const patchSchema = z.object({ active: z.boolean() })
-
 /** `PATCH /price-lists/:id` (`L3`) — công tắc Đang dùng. */
 export const PATCH = handle(async (request, context: Params) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "L3")
-  const parsed = patchSchema.safeParse(await request.json().catch(() => null))
+  const parsed = priceListActiveBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   const { id } = await context.params
   return jsonResponse(await setPriceListActive(ctx, id, parsed.data.active))

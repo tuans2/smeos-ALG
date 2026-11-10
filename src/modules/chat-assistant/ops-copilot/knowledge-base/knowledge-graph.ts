@@ -18,7 +18,7 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
         nodeId: "node-09-ho-so-cua-hang",
         title: "Cấu hình STK Ngân Hàng VietQR",
         route: "/ho-so",
-        relationReason: "Bắt buộc điền STK ngân hàng ở Hồ sơ để mã VietQR cọc tiền hiển thị trên thẻ chào.",
+        relationReason: "Bắt buộc điền STK ngân hàng ở Hồ sơ để mã VietQR cọc tiền hiển thị trên bộ sưu tập riêng.",
       },
       {
         nodeId: "node-02-don-hang",
@@ -102,7 +102,7 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
       },
       {
         nodeId: "node-03-the-chao",
-        title: "Ghim Mẫu Vào Thẻ Chào Gửi Zalo",
+        title: "Ghim mẫu vào bộ sưu tập riêng gửi Zalo",
         route: "/the-chao",
         relationReason: "Đưa ngay kịch bản Zalo và mẫu vừa phân tích vào Brochure di động gửi khách.",
       },
@@ -113,7 +113,7 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
     relations: [
       {
         nodeId: "node-03-the-chao",
-        title: "Đồng Bộ Mã VietQR Sang Thẻ Chào",
+        title: "Đồng bộ mã VietQR sang bộ sưu tập riêng",
         route: "/the-chao",
         relationReason: "Mọi thay đổi STK ngân hàng thụ hưởng sẽ cập nhật lập tức lên link gửi khách.",
       },

@@ -63,13 +63,13 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
 
   return (
     <Dialog open onOpenChange={(o) => { if (!o && !creating) onClose() }} size="sm"
-      title="Tạo Thẻ Chào Gửi Khách Hàng">
+      title="Tạo link riêng gửi khách">
       <div className="flex flex-col gap-4">
         {createdLink ? (
           <div className="flex flex-col gap-3 py-2">
             <div className="p-3 bg-success-bg border border-success/30 rounded-xl text-success text-body-sm font-bold flex items-center gap-2">
               <Check size={18} />
-              <span>Đã tạo link Thẻ chào thành công!</span>
+              <span>Đã tạo link riêng thành công!</span>
             </div>
             <div className="p-3 bg-surface-muted rounded-xl border border-border text-body-sm font-mono break-all">{createdLink}</div>
             {linkExpiryLabel(expiresAt) && <p className="text-caption text-text-muted">{linkExpiryLabel(expiresAt)}</p>}

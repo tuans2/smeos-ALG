@@ -169,7 +169,7 @@ describe("Ops Copilot Knowledge Base & Adaptive Persona Engine (10 Chức Năng 
 
       expect(res.replyText).toContain("1. **Trang Chủ")
       expect(res.replyText).toContain("2. **Đơn Hàng")
-      expect(res.replyText).toContain("3. **Thẻ Chào")
+      expect(res.replyText).toContain("3. **Bộ sưu tập riêng")
       expect(res.replyText).toContain("10. **Cài Đặt & Thành Viên")
     })
   })

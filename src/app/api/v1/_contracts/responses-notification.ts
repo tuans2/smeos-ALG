@@ -1,0 +1,85 @@
+import { z } from "zod"
+
+import { notifyChannelSchema } from "./requests-notification"
+
+/**
+ * Phản hồi `/api/v1/notification/*` (OpenAPI nội bộ, PO 07/11/2026). Sinh từ kiểu TS của use-case (`cascading-policy`,
+ * `notification-preference-repository.interface`, danh mục sự kiện `domain/events`) rồi kiểm bằng phản hồi thật ở
+ * `tests/tenant/internal-contract-notification.test.ts`. Hình dạng giữ nguyên như route trả hôm nay — gồm cả các
+ * `{ success: true, … }` cũ (route có trong `api-envelope-legacy.txt`).
+ */
+const timestamp = z.iso.datetime()
+const TIER = z.enum(["MOTHER", "INDUSTRY", "CHAIN", "STORE"])
+const PRIORITY = z.enum(["NORMAL", "URGENT", "CRITICAL"])
+const data = <T extends z.ZodType>(schema: T) => z.strictObject({ data: schema })
+
+const eventDefinition = z.strictObject({
+  key: z.string(),
+  label: z.string(),
+  description: z.string(),
+  group: z.string(),
+  tier: TIER,
+  version: z.number(),
+  defaultVisibleToTiers: z.array(z.enum(["INDUSTRY", "CHAIN", "STORE"])),
+  roleDefaults: z.array(
+    z.strictObject({
+      roleKey: z.string(),
+      channels: z.array(notifyChannelSchema),
+      priority: PRIORITY,
+      dispatchMode: z.enum(["OWNER", "BROADCAST"]),
+    })
+  ),
+  deepLinkTemplate: z.string().optional(),
+  iconName: z.string().optional(),
+  deprecated: z.boolean().optional(),
+  replacedBy: z.string().optional(),
+})
+export const eventsResponse = data(z.array(eventDefinition))
+
+/** Kênh → đang bật toàn sàn. `APP_INBOX` luôn bật. */
+export const channelsResponse = data(z.record(z.string(), z.boolean()))
+
+const inboxItem = z.strictObject({
+  id: z.string(),
+  userId: z.string(),
+  organizationId: z.string(),
+  eventKey: z.string(),
+  title: z.string(),
+  message: z.string(),
+  deepLink: z.string().nullable().optional(),
+  priority: z.string(),
+  isRead: z.boolean(),
+  readAt: timestamp.nullable().optional(),
+  createdAt: timestamp,
+})
+export const inboxResponse = z.strictObject({
+  data: z.array(inboxItem),
+  pagination: z.strictObject({ page: z.number(), limit: z.number(), total: z.number(), unreadCount: z.number() }),
+})
+/** `success` = false khi tin không thuộc người/tổ chức của phiên (không đổi gì). */
+export const inboxReadResponse = z.strictObject({ success: z.boolean(), id: z.string() })
+export const inboxReadAllResponse = z.strictObject({ success: z.literal(true), count: z.number() })
+
+const preferenceRecord = z.strictObject({
+  eventKey: z.string(),
+  channel: notifyChannelSchema,
+  enabled: z.boolean(),
+  priority: PRIORITY.optional(),
+})
+export const preferencesResponse = data(z.array(preferenceRecord))
+
+/** Lệnh ghi trả lại đúng thân đã gửi (sau khi lược đồ kiểm) dưới `updated`. */
+const echo = (key: "updated" | "hardLock" | "removed") => z.strictObject({ success: z.literal(true), [key]: z.record(z.string(), z.unknown()) })
+export const updatedResponse = echo("updated")
+export const hardLockSetResponse = echo("hardLock")
+export const hardLockRemovedResponse = echo("removed")
+
+const hardLock = z.strictObject({
+  eventKey: z.string(),
+  channel: notifyChannelSchema,
+  tier: TIER,
+  scopeId: z.string(),
+  enabled: z.boolean(),
+  reason: z.string().optional(),
+})
+export const hardLocksResponse = data(z.array(hardLock))

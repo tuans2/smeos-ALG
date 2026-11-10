@@ -87,14 +87,14 @@ export function StoreManagerDashboard() {
           layJson<UsageSummary>("/api/v1/usage/summary"),
           // Trước đây `limit=1` mỗi nguồn → tối đa 2 (audit hành trình K2, UJ-07)
           fetchPendingApprovalCount(),
-          layJson<{ orders: DraftOrder[]; total: number }>("/api/v1/orders?status=DRAFT&limit=10"),
+          layJson<{ data: DraftOrder[]; meta: { total: number } }>("/api/v1/orders?status=DRAFT&limit=10"),
         ])
       setJobs(jobsRes?.data ?? null)
       setProducts(productsRes?.data ?? null)
       setUsage(usageRes)
       setSoChoDuyet(choDuyet)
-      setSoDonNhap(draftOrdersRes ? draftOrdersRes.total : null)
-      setDraftOrders(draftOrdersRes?.orders ?? [])
+      setSoDonNhap(draftOrdersRes ? draftOrdersRes.meta.total : null)
+      setDraftOrders(draftOrdersRes?.data ?? [])
     } catch (e) {
       if (e instanceof ChuaDangNhap) {
         router.push("/dang-nhap" as never)

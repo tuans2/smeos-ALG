@@ -1,17 +1,10 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { sendInternalMessageBody } from "@/app/api/v1/_contracts/requests-chat"
 import { validationFailed } from "@/core/http/errors"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getInternalChatRepository } from "@/modules/internal-chat/infra/prisma-chat-repository"
 import { GetConversationMessagesUseCase } from "@/modules/internal-chat/use-cases/get-conversation-messages"
 import { SendChatMessageUseCase } from "@/modules/internal-chat/use-cases/send-chat-message"
-
-const sendMessageSchema = z.object({
-  content: z.string().default(""),
-  messageType: z.enum(["TEXT", "IMAGE", "ACTION_CARD_ORDER", "ACTION_CARD_QC", "SYSTEM_NOTICE"]).optional(),
-  attachments: z.array(z.string()).optional(),
-  actionPayload: z.record(z.string(), z.unknown()).optional(),
-})
 
 export const GET = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
@@ -35,7 +28,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   const { resolved, ctx } = await requireTenantContext(request)
   const { id: conversationId } = await context.params
   const body = await request.json().catch(() => null)
-  const parsed = sendMessageSchema.safeParse(body)
+  const parsed = sendInternalMessageBody.safeParse(body)
 
   if (!parsed.success) {
     const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")

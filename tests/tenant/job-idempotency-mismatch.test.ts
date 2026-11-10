@@ -3,14 +3,17 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import { POST as createJob } from "@/app/api/v1/integration/jobs/route"
 import { POST as issueToken } from "@/app/api/v1/integration-tokens/route"
 import { log } from "@/core/observability/log"
+import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, readJson, withBearer, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
- * Audit API-11 (PO 07/11/2026): cùng `Idempotency-Key` mà khác thân → vẫn trả job cũ như trước (không
- * đổi hành vi), nhưng ghi `jobs.idempotency_payload_mismatch` để đo tần suất trước khi quyết chặn 422.
- * Postgres `jsonb` đổi thứ tự khoá — gửi lại đúng thân với khoá xáo trộn KHÔNG được tính là lệch.
+ * Audit API-11: cùng `Idempotency-Key` mà khác thân → 422 `IDEMPOTENCY_KEY_REUSED` trên mọi đường tạo job nội bộ (PO
+ * 09/11/2026; trước đó chỉ ghi cảnh báo và trả job cũ), không tạo job thứ hai. `/integration/jobs` (bên thứ ba) giữ hành
+ * vi cũ trong thời gian báo trước thay đổi phá vỡ (đặc tả 06: ≥ 90 ngày). Feature trong `KEY_REUSE_ALLOWED` (mở lại kết
+ * quả theo khoá cố định) vẫn trả job cũ. Postgres `jsonb` đổi thứ tự khoá — gửi lại đúng thân với khoá xáo trộn KHÔNG
+ * được tính là lệch.
  */
 const BASE = "http://localhost/api/v1"
 
@@ -30,7 +33,7 @@ describe("enqueueJob — cùng khoá, khác thân", () => {
     await disconnectDatabase()
   })
 
-  it("thân giống hệt (khoá xáo trộn) → trả job cũ, không cảnh báo; thân khác → vẫn trả job cũ, có cảnh báo", async () => {
+  it("Integration API: thân giống hệt (khoá xáo trộn) → job cũ, không cảnh báo; thân khác → vẫn job cũ (báo trước), có cảnh báo", async () => {
     const warn = vi.spyOn(log, "warn")
     const first = await send({ feature: "landing.create", payload: { page: "trang-chu", theme: { a: 1, b: 2 } }, idempotency_key: "khoa-1" })
     expect(first.status).toBe(201)
@@ -51,4 +54,20 @@ describe("enqueueJob — cùng khoá, khác thân", () => {
 
     expect(await prisma.generation_jobs.count({ where: { organization_id: a.organizationId } })).toBe(1)
   })
+
+  it("đường nội bộ: cùng khoá khác thân → 422 IDEMPOTENCY_KEY_REUSED, không tạo job thứ hai", async () => {
+    const ctx = { ...a.ctx, capabilities: new Set(["I1"]) }
+    const first = await enqueueJob(ctx, { feature: "landing.create", payload: { page: "a" }, idempotencyKey: "noi-bo-1" })
+    expect(await enqueueJob(ctx, { feature: "landing.create", payload: { page: "a" }, idempotencyKey: "noi-bo-1" })).toMatchObject({ deduped: true, job: { id: first.job.id } })
+    await expect(enqueueJob(ctx, { feature: "landing.create", payload: { page: "b" }, idempotencyKey: "noi-bo-1" })).rejects.toMatchObject({ code: "IDEMPOTENCY_KEY_REUSED", details: { job_id: first.job.id } })
+    expect(await prisma.generation_jobs.count({ where: { organization_id: a.organizationId, idempotency_key: "noi-bo-1" } })).toBe(1)
+  })
+
+  it("feature được miễn (mở lại kịch bản theo khoá cố định) → cùng khoá khác thân vẫn trả job cũ", async () => {
+    const ctx = { ...a.ctx, capabilities: new Set(["I1"]) }
+    const first = await enqueueJob(ctx, { feature: "creative.scene_plan", payload: { topic_id: "t1", platforms: ["facebook"] }, idempotencyKey: "kich-ban-1" })
+    const reopened = await enqueueJob(ctx, { feature: "creative.scene_plan", payload: { topic_id: "t1", platforms: ["zalo"] }, idempotencyKey: "kich-ban-1" })
+    expect(reopened).toMatchObject({ deduped: true, job: { id: first.job.id } })
+  })
 })
+

@@ -258,7 +258,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
         <p className="text-caption text-text-muted">
           {holidays.length > 0
             ? `Khách chọn ngày giao trùng ngày lễ sẽ cộng phụ phí: ${holidays.map((h) => `${h.name} +${h.surchargeVnd.toLocaleString("vi-VN")}đ`).join(" · ")}.`
-            : "Chưa có ngày lễ nào có phụ phí — khai trong Cài đặt Thẻ chào → Ngày lễ."}{" "}
+            : "Chưa có ngày lễ nào có phụ phí — khai trong Cài đặt Bộ sưu tập riêng → Ngày lễ."}{" "}
           Giờ chốt nhận đơn và số đơn tối đa ngày lễ luôn áp cho cả tiệm.
         </p>
       </div>

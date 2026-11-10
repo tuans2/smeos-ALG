@@ -61,7 +61,7 @@ function sourceLabel(s: string | null): string {
   const map: Record<string, string> = {
     MANUAL: "Nhập tay",
     CHAT: "Chat",
-    BROCHURE: "Thẻ Chào",
+    BROCHURE: "Bộ sưu tập riêng",
   }
   return (s && map[s]) ?? (s ?? "Khác")
 }
@@ -126,7 +126,7 @@ export async function exportOrdersToExcel(
       "Ghi chú giao": deliveryNote,
       "Lời chúc thiệp": o.card_message ?? "",
       "Ghi chú nội bộ": o.internal_note ?? "",
-      "Mã Thẻ Chào": session?.send_code ?? "",
+      "Mã link riêng": session?.send_code ?? "",
       "Tổng tiền (VNĐ)": Number(o.total_vnd),
       "Đã thu (VNĐ)": Number(o.paid_vnd),
       "Còn lại (VNĐ)": Number(o.balance_vnd),
@@ -176,8 +176,8 @@ export async function exportOrdersToExcel(
       sessionRows.push({
         "Mã đơn": o.code,
         "Mã link (Send Code)": s.send_code,
-        "Tên khách (Thẻ Chào)": s.customer_name ?? "",
-        "SĐT khách (Thẻ Chào)": s.customer_phone ?? "",
+        "Tên khách (Bộ sưu tập riêng)": s.customer_name ?? "",
+        "SĐT khách (Bộ sưu tập riêng)": s.customer_phone ?? "",
         "Sale phụ trách": s.sale_id,
         "Trạng thái link": s.status,
       })
@@ -206,7 +206,7 @@ export async function exportOrdersToExcel(
     { wch: 24 }, // Ghi chú giao
     { wch: 30 }, // Lời chúc thiệp
     { wch: 30 }, // Ghi chú nội bộ
-    { wch: 16 }, // Mã Thẻ Chào
+    { wch: 16 }, // Mã link riêng
     { wch: 16 }, // Tổng tiền (VNĐ)
     { wch: 14 }, // Đã thu (VNĐ)
     { wch: 14 }, // Còn lại (VNĐ)
@@ -238,7 +238,7 @@ export async function exportOrdersToExcel(
     wsSessions["!cols"] = [
       { wch: 14 }, { wch: 18 }, { wch: 22 }, { wch: 16 }, { wch: 24 }, { wch: 18 },
     ]
-    XLSX.utils.book_append_sheet(wb, wsSessions, "Thẻ Chào")
+    XLSX.utils.book_append_sheet(wb, wsSessions, "Bộ sưu tập riêng")
   }
 
   const raw = XLSX.write(wb, { bookType: "xlsx", type: "array" })

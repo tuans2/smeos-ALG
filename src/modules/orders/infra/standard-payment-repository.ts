@@ -50,7 +50,7 @@ export class StandardPaymentRepository {
         // Cùng giao dịch: chỉ một lượt nhận được dòng ngân hàng này — không bao giờ ghi thu hai lần.
         const claimed = await tx.greeting_payment_events.updateMany({
           where: { id: bankEventId, organization_id: ctx.organizationId, status: "UNMATCHED", order_id: null },
-          data: { status: "MATCHED", order_id: order.id, payment_id: payment.id, note: "Khớp đơn ngoài Thẻ chào (Đơn hàng)" },
+          data: { status: "MATCHED", order_id: order.id, payment_id: payment.id, note: "Khớp đơn ngoài Bộ sưu tập riêng (Đơn hàng)" },
         })
         if (claimed.count === 0) throw conflict("Giao dịch ngân hàng đã được xử lý")
       }

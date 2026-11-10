@@ -244,6 +244,11 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     })
   }
 
+  async findMessageById(messageId: string): Promise<InternalChatMessage | null> {
+    const row = await this.prisma.internal_chat_messages.findUnique({ where: { id: messageId }, include: { sender: { select: { name: true } } } })
+    return row ? this.mapMessage(row) : null
+  }
+
   async updateActionPayload(messageId: string, newPayload: Record<string, unknown>): Promise<InternalChatMessage> {
     const row = await this.prisma.internal_chat_messages.update({
       where: { id: messageId },

@@ -232,7 +232,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
           <div className="text-center">
             <p className="text-title-sm font-bold text-text">Chưa có {catalogHeading} nào</p>
             <p className="text-body-sm text-text-muted mt-1">
-              Tạo {catalogHeading} đầu tiên để bắt đầu gửi Thẻ Chào cho khách
+              Tạo {catalogHeading} đầu tiên để bắt đầu gửi link riêng cho khách
             </p>
           </div>
           <Button

@@ -20,7 +20,7 @@ interface JourneyStepperProps {
 
 export function JourneyStepper({ step, onStepClick }: JourneyStepperProps) {
   return (
-    <nav aria-label="Các bước gửi thẻ chào">
+    <nav aria-label="Các bước gửi bộ sưu tập riêng">
       <ol className="grid grid-cols-3 gap-2">
         {STEPS.map((s) => {
           const done = s.id < step

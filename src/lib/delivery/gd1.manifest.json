@@ -2143,6 +2143,12 @@
       "items": [
         "src/components/dashboard/marketing-workspace.tsx → /api/v1/proxy/[...path]"
       ]
+    },
+    {
+      "reason": "Lược đồ OpenAPI nội bộ (main, PR #16) nhắc route proxy trong chú thích — không phải phụ thuộc lúc chạy; bản cắt lọc operation theo route còn lại (isKnownApiRoute)",
+      "items": [
+        "src/app/api/v1/_contracts/requests-tools.ts → /api/v1/proxy/[...path]"
+      ]
     }
   ],
   "workers": {

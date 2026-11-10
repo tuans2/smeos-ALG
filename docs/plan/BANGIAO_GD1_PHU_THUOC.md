@@ -7,13 +7,14 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 | Mục | Giữ | Bị chặn hoặc bỏ |
 |---|---:|---:|
 | Trang | 90 | 26 |
-| API | 454 | 76 |
-| Tệp trong `src/` | 3392 | 660 |
+| API | 469 | 61 |
+| Tệp trong `src/` | 3446 | 657 |
 
 ## Code trong phạm vi chạm vùng không giao
 
 | Từ | Tới | Trạng thái |
 |---|---|---|
+| `src/app/api/v1/_contracts/requests-tools.ts` | `/api/v1/proxy/[...path]` | Đã ghi nhận, xử lý ở Bước 4 |
 | `src/components/dashboard/marketing-workspace.tsx` | `/api/v1/proxy/[...path]` | Đã ghi nhận, xử lý ở Bước 4 |
 
 ## Liên kết tới trang không giao
@@ -45,7 +46,7 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 
 | Mô-đun | Giữ |
 |---|---:|
-| `ai-governance` | 4/5 |
+| `ad-banner-poster` | 11/13 |
 | `assets` | 27/30 |
 | `audio-studio` | 12/17 |
 | `catalog-studio` | 9/10 |
@@ -53,38 +54,33 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `chat-assistant` | 50/53 |
 | `content-engine` | 43/44 |
 | `coordinator` | 51/70 |
-| `creative-production` | 16/68 |
-| `crm` | 32/34 |
-| `field-platform` | 40/47 |
+| `creative-production` | 17/68 |
+| `crm` | 33/34 |
+| `field-platform` | 41/47 |
 | `greeting-card` | 279/283 |
 | `integration` | 20/23 |
 | `integration-hub` | 34/35 |
 | `jobs` | 18/19 |
 | `journey` | 6/17 |
 | `landing-page` | 4/7 |
-| `market-intelligence` | 12/30 |
+| `market-intelligence` | 16/30 |
 | `media` | 11/21 |
-| `notification` | 34/37 |
-| `organization` | 90/95 |
+| `notification` | 36/37 |
+| `organization` | 91/95 |
 | `platform` | 54/61 |
-| `print` | 5/8 |
+| `print` | 6/8 |
 | `product-photo-studio` | 6/7 |
 | `products` | 69/73 |
 | `profiles` | 27/29 |
 | `sales` | 17/18 |
 | `templates` | 5/6 |
 | `toolkit` | 9/10 |
-| `video-studio` | 10/17 |
+| `video-studio` | 10/18 |
 
 ## API bị chặn khi bật chế độ giai đoạn
 
 Có route nhưng không trang, API hay tác vụ nào trong phạm vi gọi tới.
 
-- `/api/v1/ad-banner-poster/copy`
-- `/api/v1/ad-banner-poster/render`
-- `/api/v1/ad-banner-poster/save`
-- `/api/v1/ai-requests/review`
-- `/api/v1/ai-requests/summary`
 - `/api/v1/assets/[id]/approve`
 - `/api/v1/audio/jobs/[id]`
 - `/api/v1/audio/music-tracks`
@@ -114,20 +110,13 @@ Có route nhưng không trang, API hay tác vụ nào trong phạm vi gọi tớ
 - `/api/v1/customers/[id]/interactions`
 - `/api/v1/greeting-card/integrations/staff-notifications/saas-policy`
 - `/api/v1/jobs/[id]/events`
-- `/api/v1/market-intelligence/health`
-- `/api/v1/market-intelligence/product-intelligence`
-- `/api/v1/market-intelligence/research-runs`
 - `/api/v1/media/optimizations/[id]/download`
 - `/api/v1/media/variants/[id]`
 - `/api/v1/media/variants/[id]/approve`
 - `/api/v1/media/variants/[id]/download`
 - `/api/v1/media/variants/batch`
-- `/api/v1/noi-bo/identity`
-- `/api/v1/notification/inbox`
 - `/api/v1/notification/inbox/[id]/read`
 - `/api/v1/notification/inbox/mark-all-read`
-- `/api/v1/notification/preferences`
-- `/api/v1/notification/stream`
 - `/api/v1/platform/marketplace/import-excel`
 - `/api/v1/platform/marketplace/import-excel/preview`
 - `/api/v1/platform/marketplace/share-links`
@@ -141,14 +130,11 @@ Có route nhưng không trang, API hay tác vụ nào trong phạm vi gọi tớ
 - `/api/v1/platform/orgs-data/[orgId]`
 - `/api/v1/platform/orgs-data/[orgId]/assets/[assetId]/legal-hold`
 - `/api/v1/platform/orgs-data/[orgId]/legal-hold`
-- `/api/v1/print/preflight`
-- `/api/v1/print/renditions`
 - `/api/v1/print/renditions/[id]`
 - `/api/v1/print/renditions/[id]/export`
 - `/api/v1/product-photo/[id]/retry`
 - `/api/v1/proxy/[...path]`
 - `/api/v1/short-links/[id]/stats`
-- `/api/v1/store/collection-transparency`
 - `/api/v1/template-overrides/[templateKey]/[fieldKey]`
 - `/api/v1/video/jobs/[id]`
 - `/api/v1/video/jobs/[id]/approve-script`

@@ -30,11 +30,17 @@ export const contentRewriteBody = z.object({
 })
 
 // package/route.ts
-export const packageCampaignBody = z.object({
-  campaignName: z.string().optional(),
-  authenticResult: z.any().optional(),
-  creativeResult: z.any().optional(),
-})
+export const packageCampaignBody = z
+  .object({
+    campaignName: z.string().optional(),
+    authenticResult: z.any().optional(),
+    creativeResult: z.any().optional(),
+  })
+  // `packageCampaign()` cần ít nhất một kết quả; thiếu cả hai trước đây ném `Error` trần → 500 (audit API §13).
+  .refine((d) => Boolean(d.authenticResult) || Boolean(d.creativeResult), {
+    message: "Cần ít nhất một kết quả sản xuất (creativeResult hoặc authenticResult)",
+    path: ["creativeResult"],
+  })
 
 // packages/[id]/route.ts
 export const patchPackageBody = z.object({

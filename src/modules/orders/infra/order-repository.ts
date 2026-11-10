@@ -26,9 +26,9 @@ import type {
   OrderEventRecord,
   OrderEventAxis,
 } from "../domain/order-types"
-import type { IOrderRepository, PendingOrderEvent } from "../domain/repositories/order-repository.interface"
+import type { IOrderRepository, OrderListPage, PendingOrderEvent } from "../domain/repositories/order-repository.interface"
 import { linkLeadToOrder } from "./order-lead-link"
-import { buildOrderListWhere } from "./order-list-where"
+import { buildOrderListWhere, ORDER_LIST_ORDER_BY } from "./order-list-where"
 
 /** Hàng `orders` kèm các quan hệ mà truy vấn nào `include` thì có. */
 type OrderRow = orders & {
@@ -206,27 +206,17 @@ export class OrderRepository implements IOrderRepository {
     return row ? mapPrismaOrder(row) : null
   }
 
-  async list(organizationId: string, filter: OrderFilter = {}): Promise<{ orders: OrderRecord[]; total: number }> {
+  async list(organizationId: string, filter: OrderFilter = {}): Promise<OrderListPage> {
     const where = buildOrderListWhere(organizationId, filter)
-
+    const limit = filter.limit ?? 50
+    // Đếm tổng KHÔNG theo con trỏ (cả danh sách đang lọc); lấy dư 1 dòng để biết còn trang sau (audit API-10).
     const [total, rows] = await Promise.all([
-      prisma.orders.count({ where }),
-      prisma.orders.findMany({
-        where,
-        include: {
-          items: true,
-          assignments: true,
-          events: { orderBy: { created_at: "asc" } },
-        },
-        orderBy: { created_at: "desc" },
-        take: filter.limit ?? 50,
-      }),
+      prisma.orders.count({ where: buildOrderListWhere(organizationId, { ...filter, cursor: undefined }) }),
+      prisma.orders.findMany({ where, include: { items: true, assignments: true, events: { orderBy: { created_at: "asc" } } }, orderBy: ORDER_LIST_ORDER_BY, take: limit + 1 }),
     ])
-
-    return {
-      orders: rows.map(mapPrismaOrder),
-      total,
-    }
+    const page = rows.slice(0, limit)
+    const last = rows.length > limit ? page[page.length - 1] : undefined
+    return { orders: page.map(mapPrismaOrder), total, nextCursor: last ? { createdAt: last.created_at.toISOString(), id: last.id } : null }
   }
 
   async update(

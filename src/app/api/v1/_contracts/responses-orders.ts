@@ -91,7 +91,8 @@ export const order = z.strictObject({
   events: z.array(orderEvent).optional(),
 })
 export const orderResponse = z.strictObject({ order })
-export const ordersResponse = z.strictObject({ orders: z.array(order), total: z.number() })
+/** Chuẩn v1.1 (audit API-10): `total` đếm cả danh sách đang lọc, không theo con trỏ. */
+export const ordersResponse = z.strictObject({ data: z.array(order), next_cursor: z.string().nullable(), meta: z.strictObject({ total: z.number() }) })
 const sla = z.strictObject({
   totalDurationMinutes: z.number(),
   productionDurationMinutes: z.number().optional(),

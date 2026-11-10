@@ -138,6 +138,16 @@ export class ChatChannelRepository {
     channel: SupportedChatChannel,
     senderId: string
   ): Promise<boolean> {
+    // Sổ `usage` cần workspace thật (khoá ngoại `usage_workspace_id_fkey`, 05/11/2026). Trước 08/11/2026 dòng này ghi
+    // `workspace_id: "system"` — không có workspace mã đó, nên mọi lượt trả lời đã trừ credit rồi mới vỡ khi ghi sổ
+    // (khách nhận lỗi, credit mất). Tra workspace mặc định TRƯỚC khi trừ; tổ chức không có workspace → không trừ.
+    const workspace = await prisma.workspaces.findFirst({
+      where: { organization_id: organizationId },
+      orderBy: { created_at: "asc" },
+      select: { id: true },
+    })
+    if (!workspace) return false
+
     // Trừ có điều kiện (chống đua) và ghi sổ cái credit (checklist ALG 10.6)
     // Chạm hạn mức tháng cũng coi như hết credit: bot dừng, mời nhân viên trả lời tay
     const deducted = await new OrganizationRepository()
@@ -148,7 +158,7 @@ export class ChatChannelRepository {
     await prisma.usage.create({
       data: {
         organization_id: organizationId,
-        workspace_id: "system",
+        workspace_id: workspace.id,
         user_id: "customer",
         feature: "chat.message.ai_reply",
         cost_credit: costCredit,

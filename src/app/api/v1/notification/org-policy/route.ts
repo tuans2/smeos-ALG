@@ -1,5 +1,5 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { patchOrgPolicySchema } from "@/app/api/v1/_contracts/requests-notification"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import {
@@ -7,23 +7,6 @@ import {
   updateOrgNotificationPolicy,
 } from "@/modules/notification/use-cases/manage-org-policy"
 import type { NotifyChannel, NotifyPriority } from "@/modules/notification/domain/events/_contract"
-
-const patchOrgPolicySchema = z.object({
-  eventKey: z.string().min(1),
-  channel: z.enum([
-    "APP_INBOX",
-    "EMAIL",
-    "PUSH",
-    "TELEGRAM",
-    "ZALO",
-    "SMS",
-    "WHATSAPP",
-    "MESSENGER",
-  ]),
-  roleKey: z.string().min(1),
-  enabled: z.boolean(),
-  priorityOverride: z.enum(["NORMAL", "URGENT", "CRITICAL"]).optional(),
-})
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)

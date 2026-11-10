@@ -46,7 +46,7 @@ export const SESSION_STATUS_BADGE: Record<string, { label: string; className: st
 
 /** Hạn dùng link do Điều hành cài cho cả tiệm — sale không tự chọn. */
 export const LINK_LIFETIME_HINT =
-  "Link tự hết hạn theo thời gian Điều hành cài trong Cài đặt Thẻ chào (mặc định 24 giờ). Link đã có đơn luôn mở được để khách theo dõi."
+  "Link tự hết hạn theo thời gian Điều hành cài trong Cài đặt Bộ sưu tập riêng (mặc định 24 giờ). Link đã có đơn luôn mở được để khách theo dõi."
 
 /** "Dùng được đến 14:30 07/10" */
 export function linkExpiryLabel(expiresAt: string | null | undefined): string | null {

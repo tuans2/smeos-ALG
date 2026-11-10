@@ -72,7 +72,7 @@ export default function DonHangPage() {
     fetch(`/api/v1/orders${q ? `?${q}` : ""}`)
       .then((r) => r.json())
       .then((res) => {
-        if (res.orders) setOrders(res.orders)
+        if (Array.isArray(res.data)) setOrders(res.data)
       })
       .catch(() => {})
       .finally(() => setLoading(false))
@@ -155,19 +155,19 @@ export default function DonHangPage() {
         {activeTab === "sale" && (
           <>
             <Section title="Đơn từ nguồn khác"><WorkbenchList mode="sale" /></Section>
-            <Section title="Thẻ chào"><SalesBrochureTab /></Section>
+            <Section title="Bộ sưu tập riêng"><SalesBrochureTab /></Section>
           </>
         )}
         {activeTab === "approve" && (
           <>
             {can("R16") && <Section title="Chờ duyệt giao trước, thu sau"><ApprovalRequestsList /><DeliverBeforePaySettingsPanel /></Section>}
             {can("R11") && <Section title="Xác nhận tiền — đơn nguồn khác"><WorkbenchList mode="approve" /></Section>}
-            {can("R11") && <Section title="Thẻ chào"><AdminBrochurePaymentTab /></Section>}
+            {can("R11") && <Section title="Bộ sưu tập riêng"><AdminBrochurePaymentTab /></Section>}
           </>
         )}
         {activeTab === "coordinate" && (
           <>
-            <Section title="Thẻ chào"><CoordinatorBrochureTab /></Section>
+            <Section title="Bộ sưu tập riêng"><CoordinatorBrochureTab /></Section>
             <Section title="Đơn nguồn khác"><CoordinationQueueList /></Section>
           </>
         )}

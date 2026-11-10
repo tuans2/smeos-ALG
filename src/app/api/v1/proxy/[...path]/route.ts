@@ -51,11 +51,12 @@ async function proxyHandler(
     throw new AppError("NOT_FOUND", "Đường dẫn này không được proxy")
   }
 
+  // Luôn đòi phiên của tổ chức (audit API §33): trước đây chỉ lệnh ghi `api/accounts` mới kiểm, mọi đường dẫn khác trong
+  // danh sách trắng (kể cả `api/v1/worker/cron` của LocalBudd) được chuyển tiếp cho người chưa đăng nhập — core thành
+  // điểm chuyển tiếp công khai vào hệ thống ngoài. Mọi nơi gọi proxy đều là màn hình của người đã đăng nhập.
+  const { ctx } = await requireTenantContext(request)
   const capability = proxyCapabilityFor(client, request.method.toUpperCase(), normalized)
-  if (capability) {
-    const { ctx } = await requireTenantContext(request)
-    requireCapability(ctx, capability)
-  }
+  if (capability) requireCapability(ctx, capability)
 
   const res = await callProxy({ client, request, path })
   const err = toProxyError(res, client)

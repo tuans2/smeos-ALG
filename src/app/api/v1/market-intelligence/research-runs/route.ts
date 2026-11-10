@@ -1,17 +1,9 @@
-import { z } from "zod";
 import { handle, jsonResponse } from "@/core/http/response";
+import { researchRunBody } from "@/app/api/v1/_contracts/requests-content"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
 import { requireCapability } from "@/core/rbac/capabilities";
 import { triggerResearchRun } from "@/modules/market-intelligence/use-cases/trigger-research-run";
 import { marketIntelligenceRepo } from "@/modules/market-intelligence/infra/market-intelligence-repository";
-
-const postSchema = z.object({
-  run_type: z.enum(["DAILY_DEEP", "INTRADAY_PULSE", "WEEKLY_DEEP", "MANUAL"]).optional(),
-  keyword: z.string().optional(),
-  geo: z.string().optional(),
-  timeframe: z.string().optional(),
-  channel: z.string().optional(),
-});
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request);
@@ -19,7 +11,7 @@ export const POST = handle(async (request) => {
   requireCapability(ctx, "V1");
 
   const body = await request.json().catch(() => ({}));
-  const parsed = postSchema.safeParse(body);
+  const parsed = researchRunBody.safeParse(body);
   const runType = parsed.success && parsed.data.run_type ? parsed.data.run_type : "MANUAL";
   const params = parsed.success
     ? {

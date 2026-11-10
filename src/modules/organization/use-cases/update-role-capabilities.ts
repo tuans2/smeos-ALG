@@ -1,6 +1,6 @@
-import { AppError, notFound, validationFailed } from "@/core/http/errors"
+import { AppError, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import { isCapabilityCode } from "@/core/rbac/capability-catalog"
-import { passesHardCap } from "@/core/rbac/permission-resolver"
+import { breaksRoleFloor, passesHardCap } from "@/core/rbac/permission-resolver"
 import type { TenantContext } from "@/core/tenancy"
 import { CapabilityRepository, getCapabilityRepository } from "@/modules/organization/infra/capability-repository"
 import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
@@ -14,7 +14,8 @@ export type CapabilityChange = { code: string; allowed: boolean }
  * MỘT vai, kể cả vai hệ thống dùng chung (`src/core/rbac/README.md`).
  *
  * **Yêu cầu bật một mã bị trần cứng chặn với vai này bị từ chối, và KHÔNG ghi
- * gì** — kể cả những mã hợp lệ khác trong cùng yêu cầu. Trần cứng cắt sau
+ * gì** — kể cả những mã hợp lệ khác trong cùng yêu cầu. Tắt mã thuộc sàn của vai Điều hành (`F1`, `F5`) cũng bị từ
+ * chối (422) và không ghi gì (audit API §30). Trần cứng cắt sau
  * bảng công tắc; chấp nhận một phần yêu cầu là mở một khe hở im lặng: người
  * gọi tưởng cả yêu cầu đã áp dụng.
  */
@@ -37,6 +38,9 @@ export async function updateRoleCapabilities(
       throw new AppError("CAPABILITY_DENIED", `Trần cứng chặn ${change.code} với vai này`, {
         capability: change.code,
       })
+    }
+    if (!change.allowed && breaksRoleFloor(change.code, role.key)) {
+      throw unprocessable(`Không tắt được ${change.code} trên vai Điều hành — tắt thì không ai bật lại được`, { capability: change.code })
     }
   }
 

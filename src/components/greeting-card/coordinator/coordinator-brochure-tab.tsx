@@ -202,7 +202,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
             {term ? `Không tìm thấy đơn nào phù hợp với "${search.trim()}"` : bucket ? "Không có đơn nào trong mục này" : "Chưa có đơn nào cần làm"}
           </p>
           <p className="text-caption text-text-muted mt-1">
-            {term ? "Thử tìm theo tên khách, mã đơn khác hoặc số điện thoại." : "Khi khách đặt hoa qua Thẻ chào, đơn sẽ hiển thị ngay tại đây."}
+            {term ? "Thử tìm theo tên khách, mã đơn khác hoặc số điện thoại." : "Khi khách đặt hoa qua bộ sưu tập riêng, đơn sẽ hiển thị ngay tại đây."}
           </p>
         </div>
       ) : viewMode === "kanban" ? (

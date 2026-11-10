@@ -13,7 +13,7 @@ export const commonVi = {
     "flowerRecipe": "Công thức thành phần",
     "sampleProduct": "Sản phẩm chuẩn",
     "greetingCard": "Thiệp chúc mừng",
-    "brochure": "Thẻ chào & Giới thiệu",
+    "brochure": "Bộ sưu tập riêng",
     "storage": "Kho dữ liệu",
     "settings": "Cài đặt hệ thống",
     "journey": "Hành trình tác nghiệp"

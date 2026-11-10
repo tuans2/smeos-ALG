@@ -108,7 +108,7 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
     const bodyText = `${greeting} Em có thể hướng dẫn anh/chị thao tác 10 chức năng chính của tiệm:\n\n` +
       `1. **Trang Chủ:** Xem việc cần làm đầu ngày, theo dõi đơn tồn và hạn mức AI.\n` +
       `2. **Đơn Hàng & Xưởng:** Quản lý tiến độ đơn, in phiếu chế tác giấu giá và phiếu giao cho shipper.\n` +
-      `3. **Thẻ Chào Sản Phẩm:** Tạo link xem hoa gửi Zalo cho khách và nhận cọc tự động qua mã QR.\n` +
+      `3. **Bộ sưu tập riêng:** Tạo link xem hoa gửi Zalo cho khách và nhận cọc tự động qua mã QR.\n` +
       `4. **Sản Phẩm & Giá:** Quản lý bảng giá niêm yết, tra cứu mẫu theo dịp và khoảng giá.\n` +
       `5. **Tạo Sản Phẩm Mới:** Đăng sản phẩm mới, ghi rõ số thành phần để thợ chế tác chuẩn mẫu.\n` +
       `6. **Nhập từ Excel:** Nạp hàng loạt sản phẩm cũ và tải ảnh nhanh chóng.\n` +
@@ -136,7 +136,7 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
       greeting: "Dạ em xin phép hỗ trợ anh/chị ạ!",
       bodyText,
       targetRoute: "/the-chao",
-      actionLabel: "Xem Hướng Dẫn Thẻ Chào Sản Phẩm",
+      actionLabel: "Xem hướng dẫn Bộ sưu tập riêng",
     }
   }
 

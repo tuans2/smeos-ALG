@@ -5,26 +5,17 @@
  */
 
 import { requireCapability } from "@/core/rbac/capabilities"
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { registerPartnerStoreBody } from "@/app/api/v1/_contracts/requests-chain"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { registerPartnerStore } from "@/modules/field-platform/use-cases/register-partner-store"
 import { validationFailed } from "@/core/http/errors"
-
-const schema = z.object({
-  name: z.string().min(2, "Tên cửa hàng phải có ít nhất 2 ký tự"),
-  code: z.string().min(2, "Mã cửa hàng phải có ít nhất 2 ký tự"),
-  address: z.string().nullish(),
-  legalEntityId: z.string().min(2, "Mã pháp nhân / MST đối tác là bắt buộc"),
-  fieldCeilings: z.record(z.string(), z.enum(["NONE", "AGGREGATED", "MASKED", "RAW"] as const)),
-  validUntil: z.string().optional(),
-})
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "F2")
 
-  const parsed = schema.safeParse(await request.json().catch(() => null))
+  const parsed = registerPartnerStoreBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) {
     throw validationFailed({ issues: parsed.error.issues })
   }

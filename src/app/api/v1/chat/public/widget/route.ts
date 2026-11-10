@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { z } from "zod"
+import { publicChatWidgetBody } from "@/app/api/v1/_contracts/requests-chat"
 import { AppError } from "@/core/http/errors"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { log } from "@/core/observability/log"
@@ -13,12 +13,6 @@ import {
  * Khung chat AI trên trang công khai do công cụ SMEOS tạo (tổ chức suy từ slug).
  * Chỉ phục vụ cùng nguồn gốc — chưa mở CORS cho website ngoài (giai đoạn sau).
  */
-const publicChatSchema = z.object({
-  slug: z.string().min(1).max(120),
-  surface: z.enum(PUBLIC_CHAT_SURFACES).default("catalog"),
-  visitorId: z.string().min(1).max(64),
-  message: z.string().trim().min(1).max(2000),
-})
 
 const PUBLIC_MESSAGES: Partial<Record<string, string>> = {
   NOT_FOUND: "Không tìm thấy cửa hàng",
@@ -26,7 +20,7 @@ const PUBLIC_MESSAGES: Partial<Record<string, string>> = {
 }
 
 export async function POST(req: NextRequest) {
-  const parsed = publicChatSchema.safeParse(await req.json().catch(() => null))
+  const parsed = publicChatWidgetBody.safeParse(await req.json().catch(() => null))
   if (!parsed.success) {
     return NextResponse.json({ error: "Tham số không hợp lệ" }, { status: 400 })
   }

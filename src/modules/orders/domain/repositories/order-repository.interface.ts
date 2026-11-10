@@ -8,6 +8,7 @@ import type {
   CreateOrderInput,
   UpdateOrderInput,
   OrderFilter,
+  OrderListCursor,
   OrderRecord,
   OrderAssignmentRecord,
   OrderEventRecord,
@@ -45,8 +46,8 @@ export interface IOrderRepository {
   /** Tìm đơn hàng theo mã đơn hiển thị (code), có kiểm soát cách ly theo tenant. */
   findByCode(organizationId: string, code: string): Promise<OrderRecord | null>
 
-  /** Danh sách đơn hàng theo bộ lọc phân trang. */
-  list(organizationId: string, filter?: OrderFilter): Promise<{ orders: OrderRecord[]; total: number }>
+  /** Danh sách đơn hàng theo bộ lọc, phân trang con trỏ (audit API-10). */
+  list(organizationId: string, filter?: OrderFilter): Promise<OrderListPage>
 
   /**
    * Cập nhật thông tin / trạng thái đơn hàng. `events` (nếu có) được ghi CÙNG giao dịch với cập nhật — lỗi giữa
@@ -79,3 +80,11 @@ export interface IOrderRepository {
     reason?: string
   ): Promise<OrderEventRecord>
 }
+
+/** Một trang đơn: `total` đếm cả danh sách đang lọc (không theo con trỏ); `nextCursor` `null` khi hết. */
+export interface OrderListPage {
+  orders: OrderRecord[]
+  total: number
+  nextCursor: OrderListCursor | null
+}
+

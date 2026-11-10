@@ -90,7 +90,7 @@ export function BrochureLanguageSettings() {
       )
       await org.mutate()
       setDraft(null)
-      setMessage({ ok: true, text: "Đã lưu thiết lập ngôn ngữ Thẻ Chào thành công!" })
+      setMessage({ ok: true, text: "Đã lưu thiết lập ngôn ngữ Bộ sưu tập riêng thành công!" })
     } catch (err) {
       setMessage({ ok: false, text: err instanceof Error ? err.message : "Lỗi lưu cấu hình" })
     } finally {
@@ -110,7 +110,7 @@ export function BrochureLanguageSettings() {
             <Globe2 size={18} className="text-primary" /> Ngôn Ngữ & Trải Nghiệm Khách Quốc Tế
           </h3>
           <p className="text-meta text-text-muted mt-1 leading-relaxed">
-            Thiết lập ngôn ngữ hiển thị trên Thẻ Chào để gửi cho kiều bào và khách hàng quốc tế.
+            Thiết lập ngôn ngữ hiển thị trên bộ sưu tập riêng để gửi cho kiều bào và khách hàng quốc tế.
           </p>
         </div>
 
@@ -132,7 +132,7 @@ export function BrochureLanguageSettings() {
         {/* Bảng lựa chọn ngôn ngữ */}
         <div className="space-y-3">
           <label className="block text-body-sm font-bold text-text">
-            1. Danh sách ngôn ngữ trên Thẻ Chào
+            1. Danh sách ngôn ngữ trên Bộ sưu tập riêng
           </label>
 
           <RadioGroup
@@ -239,14 +239,14 @@ export function BrochureLanguageSettings() {
         {policy.activeLocales.length > 1 && (
           <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 flex items-start justify-between gap-4">
             <div>
-              <p className="text-body-sm font-bold text-text">Nút chuyển đổi ngôn ngữ trên Thẻ Chào</p>
+              <p className="text-body-sm font-bold text-text">Nút chuyển đổi ngôn ngữ trên Bộ sưu tập riêng</p>
               <p className="text-caption text-text-muted mt-0.5">
-                Hiển thị nút chọn ngôn ngữ (🇻🇳 VI / 🇬🇧 EN) ở góc trên Thẻ chào để khách có thể linh hoạt đổi ngôn ngữ.
+                Hiển thị nút chọn ngôn ngữ (🇻🇳 VI / 🇬🇧 EN) ở góc trên bộ sưu tập riêng để khách có thể linh hoạt đổi ngôn ngữ.
               </p>
             </div>
             <Checkbox
               checked={policy.enableLanguageSwitcher}
-              onCheckedChange={(checked) => setDraft({ ...policy, enableLanguageSwitcher: (checked === true) })} aria-label="Hiện nút chuyển ngôn ngữ trên Thẻ chào"
+              onCheckedChange={(checked) => setDraft({ ...policy, enableLanguageSwitcher: (checked === true) })} aria-label="Hiện nút chuyển ngôn ngữ trên bộ sưu tập riêng"
               className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer mt-1"
             />
           </div>
@@ -259,7 +259,7 @@ export function BrochureLanguageSettings() {
               2. Hướng dẫn thanh toán quốc tế (Wise / PayPal / Swift / Zelle)
             </label>
             <p className="text-caption text-text-muted">
-              Nội dung này sẽ hiển thị riêng cho khách quốc tế khi xem Thẻ chào bằng Tiếng Anh (song song với mã QR nội địa).
+              Nội dung này sẽ hiển thị riêng cho khách quốc tế khi xem bộ sưu tập riêng bằng Tiếng Anh (song song với mã QR nội địa).
             </p>
             <Textarea
               rows={3}
@@ -339,7 +339,7 @@ export function BrochureLanguageSettings() {
                 className="space-y-4"
               >
                 <p className="text-body-sm text-text-muted leading-relaxed">
-                  Gói Tiếng Anh cho phép bạn tạo Thẻ chào và thiệp điện tử chuẩn quốc tế gửi cho khách nước ngoài và kiều bào.
+                  Gói Tiếng Anh cho phép bạn tạo bộ sưu tập riêng và thiệp điện tử chuẩn quốc tế gửi cho khách nước ngoài và kiều bào.
                 </p>
 
                 <div className="space-y-1.5">
