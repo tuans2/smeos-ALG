@@ -3,17 +3,16 @@
 import React from "react"
 import { Trash2, Loader2, UploadCloud } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { LocalImagePreview } from "@/components/upload/local-image-preview"
 
 export interface SubcontractQcPreviewProps {
-  previewUrl: string
-  selectedFile: File | null
+  selectedFile: File
   uploadingQc: boolean
   onCancel: () => void
   onUpload: () => void
 }
 
 export function SubcontractQcPreview({
-  previewUrl,
   selectedFile,
   uploadingQc,
   onCancel,
@@ -22,15 +21,11 @@ export function SubcontractQcPreview({
   return (
     <div className="flex flex-col gap-3 p-3 rounded-xl bg-surface-muted border border-border">
       <div className="relative w-full h-56 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center">
-        <img
-          src={previewUrl}
-          alt="Xem trước ảnh chụp"
-          className="w-full h-full object-contain"
-        />
+        <LocalImagePreview file={selectedFile} label="Xem trước ảnh chụp" fit="contain" width={640} height={448} className="w-full h-full" />
       </div>
       <div className="flex items-center justify-between text-caption text-text-muted">
-        <span className="truncate max-w-[200px]">{selectedFile?.name}</span>
-        <span>{selectedFile ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB` : ""}</span>
+        <span className="truncate max-w-[200px]">{selectedFile.name}</span>
+        <span>{`${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB`}</span>
       </div>
       <div className="flex items-center gap-2 pt-1">
         <Button

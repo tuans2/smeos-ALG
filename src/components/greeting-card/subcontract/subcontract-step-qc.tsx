@@ -60,7 +60,6 @@ export function SubcontractStepQc({
   const [confirm, confirmDialog] = useConfirmDialog()
   const countdown = useStepCountdown(isUnlocked && !isCompleted ? deadlineMs : null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [uploadingQc, setUploadingQc] = useState(false)
   const [qcSuccessMsg, setQcSuccessMsg] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -88,17 +87,11 @@ export function SubcontractStepQc({
     }
 
     setSelectedFile(file)
-    const url = URL.createObjectURL(file)
-    setPreviewUrl(url)
     setErrorMsg(null)
   }
 
   function handleCancelPreview() {
     setSelectedFile(null)
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-      setPreviewUrl(null)
-    }
   }
 
   async function handleUploadQcPhoto() {
@@ -123,8 +116,9 @@ export function SubcontractStepQc({
         throw new Error(json?.error?.message || json?.message || "Không thể tải ảnh thành phẩm lên máy chủ")
       }
 
-      const uploadedUrl = json?.data?.photoUrl || previewUrl
-      if (uploadedUrl) setCurrentQcPhotos((prev) => [...prev, uploadedUrl])
+      // Chỉ thêm URL máy chủ trả về; URL ảnh cục bộ bị thu hồi ngay sau đó nên không dùng làm dự phòng
+      const uploadedUrl: unknown = json?.data?.photoUrl
+      if (typeof uploadedUrl === "string" && uploadedUrl) setCurrentQcPhotos((prev) => [...prev, uploadedUrl])
       setQcSuccessMsg(json?.data?.message || "Đã tải ảnh thành phẩm lên thành công và gửi kiểm định chất lượng!")
       handleCancelPreview()
       onQcUploaded?.()
@@ -278,9 +272,8 @@ export function SubcontractStepQc({
             )}
 
             {/* Xem trước ảnh vừa chọn từ máy */}
-            {previewUrl ? (
+            {selectedFile ? (
               <SubcontractQcPreview
-                previewUrl={previewUrl}
                 selectedFile={selectedFile}
                 uploadingQc={uploadingQc}
                 onCancel={handleCancelPreview}
@@ -296,7 +289,7 @@ export function SubcontractStepQc({
 
 
             {/* Danh sách các ảnh QC đã tải lên */}
-            {!previewUrl && (
+            {!selectedFile && (
               <SubcontractQcGallery
                 photos={currentQcPhotos}
                 onDeletePhoto={handleDeleteQcPhoto}

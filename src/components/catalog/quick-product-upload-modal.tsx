@@ -10,6 +10,7 @@ import { readApiError } from "@/components/greeting-card/api-error"
 import type { CatalogProduct } from "./catalog-management-tab"
 import { uploadProductImage, type UploadedImage } from "./quick-product-media"
 import { QuickProductAiFields } from "./quick-product-ai-fields"
+import { LocalImagePreview } from "@/components/upload/local-image-preview"
 import {
   AI_FIELDS, CATEGORY_OPTIONS, fillEmptyFields, visionToFields,
   type AiField, type AiFieldValues, type VisionResult,
@@ -32,7 +33,6 @@ export function QuickProductUploadModal({
 }: QuickProductUploadModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   // Ảnh đã lên kho (khi bấm Phân tích) — lưu sản phẩm dùng lại, không tải lần hai
   const [uploaded, setUploaded] = useState<UploadedImage | null>(null)
   const [code, setCode] = useState("")
@@ -59,7 +59,6 @@ export function QuickProductUploadModal({
     setSelectedFile(file)
     setUploaded(null)
     setAnalyzed(false)
-    setPreviewUrl(URL.createObjectURL(file))
     if (!code) setCode(`FL-${Date.now().toString().slice(-6)}`)
   }
 
@@ -182,10 +181,9 @@ export function QuickProductUploadModal({
               <ImageIcon size={13} className="text-primary" aria-hidden="true" />
               Ảnh chụp sản phẩm hoa
             </p>
-            {previewUrl ? (
+            {selectedFile ? (
               <div className="relative aspect-16/9 rounded-2xl overflow-hidden border border-border group bg-surface-alt">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={previewUrl} alt="Xem trước" className="w-full h-full object-cover" />
+                <LocalImagePreview file={selectedFile} label="Xem trước" width={640} height={360} className="w-full h-full" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <Button type="button" size="sm" variant="outline" onClick={() => fileInputRef.current?.click()} className="h-8 text-caption bg-white text-text">
                     Chọn ảnh khác
@@ -206,13 +204,13 @@ export function QuickProductUploadModal({
               </Button>
             )}
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileChange(f) }} />
-            {previewUrl && (
+            {selectedFile && (
               <Button type="button" variant="outline" onClick={() => void handleVisionAnalyze()} disabled={isAnalyzing || isSubmitting} className="mt-2 h-9 w-full text-caption font-bold gap-1.5">
                 <Sparkles size={14} className="text-primary" aria-hidden="true" />
                 {isAnalyzing ? "AI đang phân tích ảnh..." : analyzed ? "Phân tích lại (1 credit)" : "Phân tích ảnh bằng AI (1 credit)"}
               </Button>
             )}
-            {previewUrl && (
+            {selectedFile && (
               <p className="mt-1 text-caption text-text-muted">AI chỉ điền các ô còn trống về hoa; không đụng mã, giá hay ảnh.</p>
             )}
           </div>
