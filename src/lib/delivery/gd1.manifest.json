@@ -2117,6 +2117,20 @@
       "prefixes": [
         "/api/v1/proxy"
       ]
+    },
+    {
+      "reason": "API của Creative Studio (trang /creative-studio không giao); chỉ giữ /api/v1/creative-production/providers cho Cài đặt AI",
+      "prefixes": [
+        "/api/v1/creative-production/content-drafts",
+        "/api/v1/creative-production/content-rewrites",
+        "/api/v1/creative-production/package",
+        "/api/v1/creative-production/packages",
+        "/api/v1/creative-production/plan",
+        "/api/v1/creative-production/produce",
+        "/api/v1/creative-production/scene-plans",
+        "/api/v1/creative-production/scene-revisions",
+        "/api/v1/creative-production/video-assembly"
+      ]
     }
   ],
   "rootFiles": [
