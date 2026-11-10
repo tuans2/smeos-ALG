@@ -39,7 +39,10 @@ jobs:
     steps:
       - name: Thư mục bản cắt (ngoài repo)
         run: echo "CUT=$RUNNER_TEMP/gd1-cut" >> "$GITHUB_ENV"
+      # Đủ lịch sử: công cụ cắt đọc dòng bị báo nhầm ở commit cũ để mang `.gitleaksignore` sang bản cắt
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "22.x"
