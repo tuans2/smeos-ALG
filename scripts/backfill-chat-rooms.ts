@@ -7,8 +7,11 @@ import { partnerRoomKey } from "../src/modules/internal-chat/domain/conversation
 // ACTIVE) một dòng ứng viên bắn đơn. Mặc định CHẠY THỬ — chỉ đếm việc sẽ làm; thêm `--apply` mới ghi. Chạy lại an
 // toàn (phòng theo khoá chống trùng, ứng viên theo `partner_org_id` duy nhất).
 //
-//   npx tsx --env-file-if-exists=.env scripts/backfill-chat-rooms.ts            # chạy thử
-//   npx tsx --env-file-if-exists=.env scripts/backfill-chat-rooms.ts --apply    # ghi
+//   npm run chat:backfill-rooms                 # chạy thử
+//   npm run chat:backfill-rooms -- --apply      # ghi
+//
+// Phải chạy qua lệnh npm (có `--conditions=react-server`): chuỗi import chạm `server-only` (luồng sự kiện phòng →
+// redis-client), gọi `npx tsx` trần sẽ ném lỗi ngay khi nạp.
 //
 // Chỉ in id tổ chức (UUID) và số đếm — không in tên, SĐT, địa chỉ.
 async function main(): Promise<void> {

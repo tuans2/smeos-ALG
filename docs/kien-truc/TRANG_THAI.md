@@ -1031,7 +1031,7 @@ Ba quyết định dưới đây chặn go-live, không chặn việc dựng lư
 
 ## 6. Việc kế tiếp
 
-**Trao đổi nội bộ — GĐ1–GĐ9 XONG mã, chờ PR + PO nghiệm thu (09/11/2026).** Tiến độ từng giai đoạn: `docs/plan/hoan-thien-chat-noi-bo.md` §10. Khi triển khai: `npm run db:deploy` rồi `scripts/backfill-chat-rooms.ts` (chạy thử, rồi `--apply`); PO chạy kịch bản §8 rồi mở khoá `/tin-nhan` trên production.
+**Trao đổi nội bộ — GĐ1–GĐ9 XONG mã, chờ PR + PO nghiệm thu (09/11/2026).** Tiến độ từng giai đoạn: `docs/plan/hoan-thien-chat-noi-bo.md` §10. Khi triển khai: `npm run db:deploy` rồi `npm run chat:backfill-rooms` (chạy thử, rồi `npm run chat:backfill-rooms -- --apply`); PO chạy kịch bản §8 rồi mở khoá `/tin-nhan` trên production.
 
 **Nhóm "Quảng bá sản phẩm" dạng 3 ô chức năng — XONG mã, chờ PR (09/11/2026, D-67, `docs/plan/hoanthien-quangba.md`).** /cong-cu → "Quảng bá sản phẩm" thay lưới cũ bằng 3 ô độc lập (không khoá thứ tự): Landing page (landing chiến dịch, chỉ 2 loại trang chiến dịch) · Bộ sưu tập chung · Bộ sưu tập riêng (nhúng luồng gửi nhanh của /the-chao). Dùng lại luồng tạo có sẵn, không đổi API/lược đồ/quyền; phân loại link bằng `classifyCatalogLink` (cùng quy tắc trang công khai `/c/[slug]`). 11 công cụ + ấn phẩm cũ của nhóm dời vào "Phát triển sau"; menu bên trái và các trang cũ không đổi. Tải sản phẩm của /landing-page và /catalog gom vào `use-catalog-products.ts` (hành vi giữ nguyên). Screen Contract `cong-cu.md` §12. Chưa làm: đếm lượt xem từng trang (cần đổi lược đồ), ẩn mục Ưu đãi/QR/link bán hàng khỏi menu.
 
