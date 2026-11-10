@@ -76,8 +76,19 @@ describe("Chain Collection Profile Use-Cases (§9.5.8)", () => {
   })
 
   it("getStoreCollectionTransparency generates transparency items for a store", async () => {
+    vi.mocked(mockRepo.findBranchBasic).mockResolvedValueOnce({ id: "store-001", name: "Chi nhánh 1", organization_id: "org-123" })
     const res = await getStoreCollectionTransparency("store-001", "org-123", mockRepo)
-    expect(res.storeId).toBe("store-001")
-    expect(res.items.some((item) => item.fieldKey === "core.catalog.price_vnd")).toBe(true)
+    expect(res?.storeId).toBe("store-001")
+    expect(res?.storeName).toBe("Chi nhánh 1")
+    expect(res?.items.some((item) => item.fieldKey === "core.catalog.price_vnd")).toBe(true)
+  })
+
+  it("getStoreCollectionTransparency: chi nhánh của tổ chức khác hoặc mã lạ → null, không đọc DSA", async () => {
+    vi.mocked(mockRepo.getStoreDsa).mockClear()
+    vi.mocked(mockRepo.findBranchBasic).mockResolvedValueOnce({ id: "store-b", name: "Chi nhánh của B", organization_id: "org-b" })
+    expect(await getStoreCollectionTransparency("store-b", "org-123", mockRepo)).toBeNull()
+    vi.mocked(mockRepo.findBranchBasic).mockResolvedValueOnce(null)
+    expect(await getStoreCollectionTransparency("khong-co", "org-123", mockRepo)).toBeNull()
+    expect(mockRepo.getStoreDsa).not.toHaveBeenCalled()
   })
 })

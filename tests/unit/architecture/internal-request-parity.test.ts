@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest"
 
+import * as brand from "@/app/api/v1/_contracts/requests-brand"
 import * as req from "@/app/api/v1/_contracts/requests-orders"
+import { validateProductCopyEdited } from "@/modules/product-copies/domain/product-copy-rules"
 import { validateDeliverBeforePaySettings } from "@/modules/orders/workflow/deliver-before-pay"
 import { PAYMENT_METHODS } from "@/modules/orders/use-cases/confirm-order-payment"
 import { MAX_QUOTE_VND } from "@/modules/orders/use-cases/quote-order"
@@ -29,5 +31,17 @@ describe("lược đồ mô tả khớp hàm kiểm của module — đơn hàng
     [{ allowSelfDecide: "yes" }],
   ])("hạn mức giao trước %j", (sample) => {
     expect(req.deliverBeforePaySettingsBody.safeParse(sample).success).toBe(Object.keys(validateDeliverBeforePaySettings(sample)).length === 0)
+  })
+})
+
+describe("lược đồ mô tả khớp hàm kiểm của module — dữ liệu bán hàng (product-copies)", () => {
+  it.each([
+    [{}],
+    [{ suggested_name: "Bó hồng đỏ" }],
+    [Object.fromEntries(brand.PRODUCT_COPY_EDITED_KEYS_DOC.map((k) => [k, "x"]))],
+    [{ suggested_name: "x", price_vnd: 1 }],
+    [{ organization_id: "khac" }],
+  ])("trường được sửa %j", (sample) => {
+    expect(brand.productCopyEditedSchema.safeParse(sample).success).toBe(validateProductCopyEdited(sample))
   })
 })

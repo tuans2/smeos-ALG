@@ -1,17 +1,10 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { reviewAiRequest } from "@/modules/ai-governance/use-cases/review-ai-request"
 import { AiRequestRepository } from "@/core/ai/infra/ai-request-repository"
-
-const reviewSchema = z.object({
-  id: z.string().min(1),
-  action: z.enum(["approve", "reject", "modify"]),
-  note: z.string().max(1000).nullish(),
-})
+import { reviewAiRequestBody } from "@/app/api/v1/_contracts/requests-admin"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -45,7 +38,7 @@ export const POST = handle(async (request: Request) => {
   requireCapability(ctx, "U3")
 
   const body = await request.json().catch(() => null)
-  const parsed = reviewSchema.safeParse(body)
+  const parsed = reviewAiRequestBody.safeParse(body)
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const decision = await reviewAiRequest(

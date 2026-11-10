@@ -13,7 +13,7 @@
  *   module: string             // M01, M01b, M04a, M04b, M04c, M07, M09, M06, M05
  * }
  * 
- * Response:
+ * Response 202:
  * { job_id: string, status: JobStatus, usage: { cost_credit: number, balance_after: number } }
  */
 
@@ -88,14 +88,18 @@ async function batchJobHandler(request: Request) {
     idempotencyKey,
   });
 
-  return jsonResponse({
-    job_id: result.job.id,
-    status: result.job.status,
-    usage: {
-      cost_credit: result.usage.costCredit,
-      balance_after: result.usage.balanceAfter,
+  // 202: job đã nhận, worker chạy sau (đặc tả 06 luật 4, audit API-16, PO 09/11/2026); thân giữ nguyên cho FeaturePicker.
+  return jsonResponse(
+    {
+      job_id: result.job.id,
+      status: result.job.status,
+      usage: {
+        cost_credit: result.usage.costCredit,
+        balance_after: result.usage.balanceAfter,
+      },
     },
-  });
+    { status: 202 }
+  );
 }
 
 export const POST = handle(batchJobHandler);

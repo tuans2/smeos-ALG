@@ -1,5 +1,6 @@
 import { type TenantContext } from "@/core/tenancy";
 import { requireCapability } from "@/core/rbac/capabilities";
+import { approvalBlocked, videoJobNotFound } from "./video-errors";
 import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
 import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
 import type { IVideoJobRepository } from "../domain/repositories/video-job-repository.interface";
@@ -24,7 +25,7 @@ export class ApproveVideoOutputUseCase {
 
     const job = await this.repo.findById(ctx, jobId);
     if (!job) {
-      throw new Error(`Không tìm thấy tác vụ video với mã: ${jobId}`);
+      throw videoJobNotFound();
     }
 
     const check = canApproveVideo({
@@ -35,7 +36,7 @@ export class ApproveVideoOutputUseCase {
     });
 
     if (!check.allowed) {
-      throw new Error(check.reason || "Video chưa đủ điều kiện để phê duyệt");
+      throw approvalBlocked(check, "Video chưa đủ điều kiện để phê duyệt");
     }
 
     // Đánh dấu duyệt video

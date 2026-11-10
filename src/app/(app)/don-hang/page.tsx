@@ -72,7 +72,7 @@ export default function DonHangPage() {
     fetch(`/api/v1/orders${q ? `?${q}` : ""}`)
       .then((r) => r.json())
       .then((res) => {
-        if (res.orders) setOrders(res.orders)
+        if (Array.isArray(res.data)) setOrders(res.data)
       })
       .catch(() => {})
       .finally(() => setLoading(false))

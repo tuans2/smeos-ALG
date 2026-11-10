@@ -1,0 +1,167 @@
+import { z } from "zod"
+
+import { order } from "./responses-orders"
+
+/**
+ * Phản hồi `/api/v1/chat/*` và `/api/v1/internal-chat/*` (OpenAPI nội bộ, PO 07/11/2026). Sinh từ kiểu TS của
+ * `chat-assistant` và `internal-chat` rồi kiểm bằng phản hồi thật ở `tests/tenant/internal-contract-chat.test.ts`.
+ * Hình dạng giữ nguyên như route trả hôm nay — gồm cả `{ success: true, data }` cũ của chat nội bộ (route có trong
+ * `api-envelope-legacy.txt`). Mọi khoá bí mật của kênh đã che `••••` + 4 ký tự cuối.
+ */
+const timestamp = z.iso.datetime()
+const CHANNEL = z.enum(["INTERNAL_DASHBOARD", "STOREFRONT_CATALOG", "LANDING_PAGE", "FACEBOOK_MESSENGER", "ZALO_OA", "EMBEDDED_WIDGET"])
+
+const channelConfig = z.strictObject({
+  welcomeMessage: z.string().optional(),
+  avatarUrl: z.string().optional(),
+  botName: z.string().optional(),
+  fbPageId: z.string().optional(),
+  fbPageAccessToken: z.string().optional(),
+  fbVerifyToken: z.string().optional(),
+  zaloOaId: z.string().optional(),
+  zaloAppId: z.string().optional(),
+  zaloSecretKey: z.string().optional(),
+  zaloAccessToken: z.string().optional(),
+  zaloRefreshToken: z.string().optional(),
+  embedAllowedOrigins: z.array(z.string()).optional(),
+  publicSurfaces: z.array(z.string()).optional(),
+  publicChatLimits: z.strictObject({ perVisitor: z.number(), perIp: z.number(), approvedAt: z.string() }).optional(),
+})
+
+const channelStatus = z.strictObject({
+  channel: CHANNEL,
+  pricing: z.strictObject({
+    channel: CHANNEL,
+    name: z.string(),
+    description: z.string(),
+    isFree: z.boolean(),
+    monthlyCreditCost: z.number(),
+    messageCreditCost: z.number(),
+    requiresSetup: z.boolean(),
+    guideUrl: z.string().optional(),
+  }),
+  isEnabled: z.boolean(),
+  isSubscriptionActive: z.boolean(),
+  subscriptionExpiresAt: z.string().nullable(),
+  config: channelConfig,
+})
+/** `embedSnippet`: mã nhúng dựng từ slug của tiệm; `null` khi tiệm chưa có slug hoặc chưa cấu hình URL ứng dụng. */
+export const chatChannelsResponse = z.strictObject({ channels: z.array(channelStatus), embedSnippet: z.string().nullable() })
+export const chatChannelConfiguredResponse = z.strictObject({
+  channel: z.strictObject({
+    id: z.string(),
+    organizationId: z.string(),
+    channel: CHANNEL,
+    isEnabled: z.boolean(),
+    config: channelConfig,
+    subscriptionExpiresAt: z.string().nullable().optional(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+  }),
+})
+
+const conversation = z.strictObject({
+  id: z.string(),
+  organizationId: z.string(),
+  customerId: z.string().optional(),
+  title: z.string(),
+  channel: z.enum(["WEB_WIDGET", "INTERNAL_DASHBOARD", "ZALO"]),
+  status: z.enum(["ACTIVE", "CLOSED"]),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+export const chatConversationsResponse = z.strictObject({ items: z.array(conversation), count: z.number() })
+export const chatConversationResponse = z.strictObject({ conversation })
+
+const productCard = z.strictObject({
+  productId: z.string(),
+  productCode: z.string(),
+  productName: z.string(),
+  sampleImageUrl: z.string().optional(),
+  priceVnd: z.number().nullable(),
+  category: z.string(),
+  wrapStyle: z.string(),
+  reason: z.string(),
+})
+const message = z.strictObject({
+  id: z.string(),
+  organizationId: z.string(),
+  conversationId: z.string(),
+  senderType: z.enum(["USER", "ASSISTANT", "SYSTEM"]),
+  content: z.string(),
+  metadata: z
+    .strictObject({
+      suggestedProducts: z.array(productCard).optional(),
+      suggestedFlowers: z.array(productCard).optional(),
+      createdOrderId: z.string().optional(),
+      orderCode: z.string().optional(),
+      userIntent: z.string().optional(),
+      targetRoute: z.string().optional(),
+      actionLabel: z.string().optional(),
+      actionSteps: z.array(z.string()).optional(),
+      assistantType: z.enum(["OPS_COPILOT", "SALES_CONCIERGE"]).optional(),
+    })
+    .optional(),
+  createdAt: z.string(),
+})
+export const chatMessagesResponse = z.strictObject({ messages: z.array(message) })
+export const chatSendMessageResponse = z.strictObject({ userMessage: message, assistantMessage: message })
+export const chatCreateOrderResponse = z.strictObject({ order })
+
+const pendingLimit = z.strictObject({
+  per_visitor: z.number(),
+  per_ip: z.number(),
+  requested_at: z.string(),
+  requested_by: z.string(),
+  note: z.string().nullable(),
+})
+export const publicChatLimitsResponse = z.strictObject({
+  current: z.strictObject({ perVisitor: z.number(), perIp: z.number(), windowMs: z.number() }),
+  pending: pendingLimit.nullable(),
+})
+export const publicChatLimitRequestedResponse = z.strictObject({ pending: pendingLimit })
+
+export const publicChatWidgetResponse = z.strictObject({
+  replyText: z.string(),
+  suggestedProducts: z.array(productCard),
+  conversationId: z.string(),
+  channel: CHANNEL,
+})
+
+// ── Chat nội bộ ─────────────────────────────────────────────────────────────
+const internalConversation = z.strictObject({
+  id: z.string(),
+  organizationId: z.string(),
+  conversationType: z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "ORDER_THREAD"]),
+  title: z.string().nullable(),
+  orderId: z.string().nullable(),
+  metadata: z.record(z.string(), z.unknown()),
+  createdBy: z.string(),
+  createdAt: timestamp,
+  updatedAt: timestamp,
+  lastMessageAt: timestamp,
+  unreadCount: z.number().optional(),
+  lastMessageSnippet: z.string().optional(),
+})
+const internalMessage = z.strictObject({
+  id: z.string(),
+  conversationId: z.string(),
+  senderUserId: z.string(),
+  senderRole: z.string(),
+  senderName: z.string().optional(),
+  messageType: z.enum(["TEXT", "IMAGE", "ACTION_CARD_ORDER", "ACTION_CARD_QC", "SYSTEM_NOTICE"]),
+  content: z.string(),
+  attachments: z.array(z.string()),
+  actionPayload: z.record(z.string(), z.unknown()),
+  isDeleted: z.boolean(),
+  createdAt: timestamp,
+})
+const legacy = <T extends z.ZodType>(schema: T) => z.strictObject({ success: z.literal(true), data: schema })
+export const internalConversationsResponse = z.strictObject({ success: z.literal(true), data: z.array(internalConversation), total: z.number() })
+export const internalConversationResponse = legacy(internalConversation)
+export const internalMessagesResponse = legacy(z.array(internalMessage))
+export const internalMessageResponse = legacy(internalMessage)
+
+/** Webhook trả cho nhà cung cấp — không phải envelope `{ data }`. */
+export const facebookWebhookResponse = z.strictObject({ status: z.enum(["EVENT_RECEIVED", "ignored", "ok"]) })
+export const zaloWebhookResponse = z.strictObject({ error: z.literal(0), message: z.string() })

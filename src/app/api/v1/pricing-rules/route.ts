@@ -1,8 +1,7 @@
-import { z } from "zod"
-
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
+import { putPricingRuleBody } from "@/app/api/v1/_contracts/requests-costing"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getPricingRules } from "@/modules/products/use-cases/get-pricing-rules"
 import { putPricingRules } from "@/modules/products/use-cases/put-pricing-rules"
@@ -21,17 +20,11 @@ export const GET = handle(async (request) => {
   return jsonResponse(await getPricingRules(ctx, branchId))
 })
 
-const putSchema = z.object({
-  key: z.string().min(1),
-  value: z.unknown(),
-  branch_id: z.string().min(1).nullable().optional(),
-})
-
 export const PUT = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "L6")
 
-  const parsed = putSchema.safeParse(await request.json().catch(() => null))
+  const parsed = putPricingRuleBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const result = await putPricingRules(ctx, {

@@ -12,7 +12,7 @@ const OUTSIDE = "Chỉ đơn **ngoài Thẻ chào**; đơn Thẻ chào hoặc c�
 
 export const ORDER_OPERATIONS: OpenApiOperation[] = [
   op(ORDERS, { method: "get", path: "/orders", operationId: "listOrders", summary: "Danh sách đơn hàng", cap: "R1", query: req.listOrdersQuery,
-    description: "Lọc theo trạng thái, chi nhánh, khách, ngày giao (`delivery_from`/`delivery_to`), người bán; `limit` 1–100 (mặc định 50).",
+    description: "Lọc theo trạng thái, chi nhánh, khách, ngày giao (`delivery_from`/`delivery_to`), người bán; `limit` 1–100 (mặc định 50). Mới trước; phân trang con trỏ `cursor` = `next_cursor` của trang trước (hỏng → 400) — `{ data, next_cursor, meta: { total } }` (audit API-10, 09/11/2026; trước đó `{ orders, total }`).",
     ok: [200, { description: "Đơn kèm dòng hàng, phân công", schema: res.ordersResponse }], errors: [400] }),
   op(ORDERS, { method: "post", path: "/orders", operationId: "createOrder", summary: "Tạo đơn hàng", cap: "R2", body: req.createOrderBody,
     description: "Header `Idempotency-Key` tuỳ chọn: gửi lại cùng khoá trả đúng đơn đã tạo (201, header `Idempotent-Replayed: true`). Khách/chi nhánh/sản phẩm của tổ chức khác → 404.",

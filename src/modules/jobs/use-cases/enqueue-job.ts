@@ -8,7 +8,7 @@ import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 import { fundingSourceForWorkspace } from "@/modules/usage/domain/quota"
 import { UsageRepository, getUsageRepository } from "@/modules/usage/infra/usage-repository"
 
-import { samePayload } from "@/modules/jobs/domain/idempotency"
+import { allowsKeyReuse, samePayload } from "@/modules/jobs/domain/idempotency"
 import { isDuplicateIdempotencyError } from "@/modules/jobs/domain/job-rules"
 import { PostgresQueueProvider } from "@/modules/jobs/adapters/postgres-queue-provider"
 import type { generation_jobs } from "@/modules/jobs/infra/entities"
@@ -32,6 +32,9 @@ export type EnqueueJobInput = {
    *  lượt dùng thử — vẫn ghi một dòng `usage` 0 credit trỏ về job cha để đối
    *  soát. Job cha phải thuộc cùng tổ chức. */
   includedInJobId?: string | undefined
+  /** `legacy` — cùng khoá khác thân vẫn trả job cũ (chỉ cảnh báo). CHỈ cho `/integration/jobs` trong thời gian báo trước
+   *  thay đổi phá vỡ (đặc tả 06 "Version và gỡ endpoint": ≥ 90 ngày cho `/integration/*`, audit API-11). Mặc định 422. */
+  keyReuse?: "legacy" | undefined
 }
 
 export type EnqueueJobResult = {
@@ -66,8 +69,12 @@ export async function enqueueJob(
     )
     if (!existing) return null
     if (!samePayload(existing.payload, input.payload) || (existing.product_id ?? null) !== (input.productId ?? null)) {
-      // Cùng khoá, khác thân: vẫn trả job cũ như trước, chỉ để lại dấu vết để đo (không ghi nội dung payload)
+      // Không ghi nội dung payload vào log (dữ liệu khách).
       log.warn("jobs.idempotency_payload_mismatch", { feature: input.feature, job_id: existing.id })
+      // Cùng khoá, khác thân → 422 (audit API-11, PO 09/11/2026); trước đây trả job cũ — kết quả của một yêu cầu KHÁC.
+      if (input.keyReuse !== "legacy" && !allowsKeyReuse(input.feature)) {
+        throw new AppError("IDEMPOTENCY_KEY_REUSED", "Khoá Idempotency-Key này đã dùng cho một yêu cầu khác — tạo khoá mới cho yêu cầu mới", { job_id: existing.id })
+      }
     }
     return { job: existing, deduped: true, usage: { costCredit: 0, balanceAfter: null } }
   }

@@ -1,14 +1,8 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { moveTrashSchema } from "@/app/api/v1/_contracts/requests-storage"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getTrashList, moveToTrash } from "@/modules/storage/use-cases/manage-trash"
-import { TRASH_ITEM_TYPES } from "@/modules/storage/domain/trash-types"
-
-const moveTrashSchema = z.object({
-  id: z.string().min(1),
-  type: z.enum(TRASH_ITEM_TYPES),
-})
 
 export const GET = handle(async (request: Request) => {
   const { ctx } = await requireTenantContext(request)

@@ -22,6 +22,16 @@ describe("pii-cipher", () => {
     expect(() => decryptPii(newDataKey(master).key, a)).toThrow() // khoá của tổ chức khác
   })
 
+  it("chuỗi rỗng: mã hoá rồi giải mã ra chuỗi rỗng; vẫn kiểm thẻ xác thực; thiếu phần → lỗi", () => {
+    const { key } = newDataKey(master)
+    const empty = encryptPii(key, 1, "")
+    expect(empty.endsWith(".")).toBe(true)
+    expect(decryptPii(key, empty)).toBe("")
+    expect(() => decryptPii(newDataKey(master).key, empty)).toThrow()
+    expect(() => decryptPii(key, empty.slice(0, -1))).toThrow() // mất phần thân
+    expect(() => decryptPii(key, `${empty}.x`)).toThrow() // thừa phần
+  })
+
   it("khoá dữ liệu lưu dạng bọc; mở bằng đúng khoá chủ", () => {
     const { key, wrapped } = newDataKey(master)
     expect(wrapped.startsWith("v1.")).toBe(true)

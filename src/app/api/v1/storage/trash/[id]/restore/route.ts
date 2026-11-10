@@ -1,13 +1,8 @@
-import { z } from "zod"
-import { TRASH_ITEM_TYPES } from "@/modules/storage/domain/trash-types"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { restoreSchema } from "@/app/api/v1/_contracts/requests-storage"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { restoreFromTrash } from "@/modules/storage/use-cases/manage-trash"
-
-const restoreSchema = z.object({
-  type: z.enum(TRASH_ITEM_TYPES),
-})
 
 type Context = { params: Promise<{ id: string }> }
 

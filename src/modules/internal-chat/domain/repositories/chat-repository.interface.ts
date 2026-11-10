@@ -51,5 +51,6 @@ export interface IInternalChatRepository {
   sendMessage(params: SendMessageParams): Promise<InternalChatMessage>
   listMessages(conversationId: string, limit?: number | undefined, before?: Date | undefined): Promise<InternalChatMessage[]>
   markRead(conversationId: string, userId: string): Promise<void>
+  findMessageById(messageId: string): Promise<InternalChatMessage | null>
   updateActionPayload(messageId: string, newPayload: Record<string, unknown>): Promise<InternalChatMessage>
 }

@@ -1,5 +1,5 @@
-import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { patchPreferenceSchema } from "@/app/api/v1/_contracts/requests-notification"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import {
   getUserNotificationPreferences,
@@ -8,22 +8,6 @@ import {
 import { listHardLocks } from "@/modules/notification/use-cases/manage-hard-locks"
 import { getAppliedHardLock } from "@/modules/notification/domain/cascading-policy"
 import type { NotifyChannel } from "@/modules/notification/domain/events/_contract"
-
-const patchPreferenceSchema = z.object({
-  eventKey: z.string().min(1),
-  channel: z.enum([
-    "APP_INBOX",
-    "EMAIL",
-    "PUSH",
-    "TELEGRAM",
-    "ZALO",
-    "SMS",
-    "WHATSAPP",
-    "MESSENGER",
-  ]),
-  enabled: z.boolean(),
-  muteUntil: z.string().datetime().optional(),
-})
 
 export const GET = handle(async (request) => {
   const { ctx, resolved } = await requireTenantContext(request)

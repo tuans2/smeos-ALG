@@ -3,13 +3,12 @@
  * J1: Tạo catalog (cùng nhóm kênh bán với link catalog).
  */
 
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { createShortLinkBody } from "@/app/api/v1/_contracts/requests-profile"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { createShortLink, listShortLinks } from "@/modules/acquisition/use-cases/manage-short-links"
-import { shortLinkBodySchema } from "./schema"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -26,12 +25,10 @@ export const GET = handle(async (request) => {
   }))
 })
 
-const createSchema = shortLinkBodySchema.extend({ kind: z.string().max(20) })
-
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "J1")
-  const parsed = createSchema.safeParse(await request.json().catch(() => null))
+  const parsed = createShortLinkBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ body: "Dữ liệu không hợp lệ" })
   const { kind, ...input } = parsed.data
   return jsonResponse(await createShortLink(ctx, kind, input), { status: 201 })

@@ -1,18 +1,11 @@
-import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
+import { patchBrandLibraryBody } from "@/app/api/v1/_contracts/requests-brand"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getBrandLibraryItem, updateBrandLibraryItem } from "@/modules/profiles/use-cases/brand-library"
 
 type Ctx = { params: Promise<{ id: string }> }
-
-const patchSchema = z.object({
-  title: z.string().optional(),
-  description: z.string().nullish(),
-  share_with_members: z.boolean().optional(),
-  status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
-})
 
 export const GET = handle<[Ctx]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
@@ -23,7 +16,7 @@ export const GET = handle<[Ctx]>(async (request, context) => {
 export const PATCH = handle<[Ctx]>(async (request, context) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "F2")
-  const parsed = patchSchema.safeParse(await request.json().catch(() => null))
+  const parsed = patchBrandLibraryBody.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   const d = parsed.data
   const item = await updateBrandLibraryItem(ctx, (await context.params).id, {

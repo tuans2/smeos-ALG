@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { applyHardCap, mergeOverrides, passesHardCap } from "./permission-resolver"
+import { applyHardCap, applyRoleFloor, breaksRoleFloor, mergeOverrides, passesHardCap } from "./permission-resolver"
 
 describe("cổng năng lực — lớp ba, trần cứng cắt sau cùng", () => {
   it("mã không có trần cứng luôn qua được", () => {
@@ -69,3 +69,25 @@ describe("cổng năng lực — lớp ba, trần cứng cắt sau cùng", () =>
     expect(afterHardCap).toEqual([]) // ...nhưng lớp ba cắt sau cùng.
   })
 })
+
+describe("sàn của vai Điều hành", () => {
+  it("không tắt được F1, F5 trên vai dieu_hanh; mã khác và vai khác thì được", () => {
+    expect(breaksRoleFloor("F5", "dieu_hanh")).toBe(true)
+    expect(breaksRoleFloor("F1", "dieu_hanh")).toBe(true)
+    expect(breaksRoleFloor("A4", "dieu_hanh")).toBe(false)
+    expect(breaksRoleFloor("F1", "dieu_phoi")).toBe(false)
+    expect(breaksRoleFloor("F5", "vai-tu-tao")).toBe(false)
+  })
+})
+
+describe("sàn của vai Điều hành lúc tính quyền", () => {
+  it("ngoại lệ cũ tắt F5/F1 trên dieu_hanh vẫn bị sàn bật lại, giữ phạm vi lớp một; vai khác không đổi", () => {
+    const base = new Map([["F1", "ORGANIZATION" as const], ["F5", "ORGANIZATION" as const], ["A4", "ORGANIZATION" as const]])
+    const merged = mergeOverrides(base, [{ capability_code: "F5", allowed: false }, { capability_code: "F1", allowed: false }, { capability_code: "A4", allowed: false }])
+    const owner = applyHardCap("dieu_hanh", applyRoleFloor("dieu_hanh", merged, base)).map((g) => g.code)
+    expect(owner).toEqual(expect.arrayContaining(["F1", "F5"]))
+    expect(owner).not.toContain("A4") // ngoài sàn: ngoại lệ vẫn có hiệu lực
+    expect([...applyRoleFloor("dieu_phoi", merged, base).keys()]).not.toContain("F5")
+  })
+})
+

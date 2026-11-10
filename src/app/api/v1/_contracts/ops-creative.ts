@@ -12,7 +12,7 @@ const PLAN = "Creative Studio — kế hoạch & nội dung"
 const SCENE = "Creative Studio — kịch bản phân cảnh & video"
 const PKG = "Creative Studio — gói chiến dịch"
 const ACT = [...BODY_ERRORS, 404, 409, 422]
-const IDEM = "Header `Idempotency-Key` bắt buộc. Trừ credit theo bảng giá; hết credit → 422 `QUOTA_EXCEEDED`."
+const IDEM = "Header `Idempotency-Key` bắt buộc; cùng khoá khác thân → 422 `IDEMPOTENCY_KEY_REUSED` (riêng kịch bản phân cảnh được mở lại theo khoá cố định). Trừ credit theo bảng giá; hết credit → 422 `QUOTA_EXCEEDED`."
 const NF = " Gói của tổ chức khác → 404."
 const p = "/creative-production/packages/{id}"
 
@@ -24,8 +24,8 @@ export const CREATIVE_OPERATIONS: OpenApiOperation[] = [
     body: req.produceBody, description: "Hàm thuần — trả đầu vào cho các job, không tự tạo job.", ok: [201, { description: "Đề bài theo chủ đề", schema: plan.produceResponse }], errors: BODY_ERRORS }),
   op(PLAN, { method: "post", path: "/creative-production/package", operationId: "packageCampaignDraft", summary: "Gộp kết quả sản xuất thành bản nháp chiến dịch", cap: "I1",
     body: req.packageCampaignBody,
-    description: "Hàm thuần — không lưu (gói lưu được ở `POST /creative-production/packages`). Cần ít nhất một trong `creativeResult`/`authenticResult` (kết quả của `/produce`); thiếu cả hai hiện trả 500 (lỗi đã ghi nhận).",
-    ok: [201, { description: "Bản nháp chiến dịch", schema: plan.packageResponse }], errors: [...BODY_ERRORS, 500] }),
+    description: "Hàm thuần — không lưu (gói lưu được ở `POST /creative-production/packages`). Cần ít nhất một trong `creativeResult`/`authenticResult` (kết quả của `/produce`); thiếu cả hai → 400.",
+    ok: [201, { description: "Bản nháp chiến dịch", schema: plan.packageResponse }], errors: BODY_ERRORS }),
   op(PLAN, { method: "get", path: "/creative-production/content-drafts", operationId: "getContentDraft", summary: "Bản nháp bài đăng theo ảnh + chủ đề + chế độ", cap: "I1",
     query: req.contentDraftKeySchema, ok: [200, { description: "Bản nháp, hoặc `null`", schema: res.contentDraftResponse }], errors: [400] }),
   op(PLAN, { method: "put", path: "/creative-production/content-drafts", operationId: "saveContentDraft", summary: "Lưu bản nháp bài đăng", cap: "I1", body: req.contentDraftBodySchema,

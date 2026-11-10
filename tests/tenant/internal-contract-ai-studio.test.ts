@@ -106,7 +106,7 @@ describe("hợp đồng — tác vụ AI, phân tích ảnh, âm thanh, video", 
 
     const product = await expectContract(await productsPost(send("/products", "POST", { code: "AI0001", name: "Bó hoa", status: "ACTIVE" })), 201, null)
     const body = { productId: product.id, feature: "vision.analyze", capabilities: ["AIC-11"], module: "M01" }
-    await expectContract(await batchJob(send("/jobs/batch", "POST", body, true)), 200, R.jobCreatedResponse, "jobs-batch")
+    await expectContract(await batchJob(send("/jobs/batch", "POST", body, true)), 202, R.jobCreatedResponse, "jobs-batch")
   })
 
   it("phân tích ảnh: xếp job, hàng chờ, đã duyệt, sửa, duyệt, từ chối, xuất CSV, bộ máy", async () => {
