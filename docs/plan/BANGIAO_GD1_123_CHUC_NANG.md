@@ -69,14 +69,15 @@ Hiện trạng đã đo:
 
 **Xong khi:** bản cắt thử qua typecheck, test, build; bật chế độ `gd1` thì menu chỉ còn phạm vi và URL ngoài phạm vi trả 404.
 
-**Trạng thái 10/11/2026 — mã Bước 2 xong, chờ CI:**
+**Trạng thái 10/11/2026 — Bước 2 xong, bản cắt sẵn sàng cắt thử theo mốc:**
 
-- 2.1–2.2: `src/lib/delivery/delivery-phase.ts`, `route-match.ts`; danh sách route sinh vào `gd1.routes.json` bằng `npm run release:routes` (test giữ khớp mã). `src/proxy.ts` trả 404 cho trang/API ngoài phạm vi; menu (`nav-phase.ts`), lưới công cụ, hành trình lọc theo phạm vi; tầng SaaS Ngành không có menu. Không đặt biến thì không đổi gì (có test).
-- 2.3: `npm run release:cut -- gd1 <mốc> <thư mục>` (`scripts/release/`). Khối chỉ thuộc smeOS đánh dấu `@release-strip` trong mã (seed cửa hàng riêng, trang chủ tầng Ngành). Lớp phủ `releases/gd1/overlay/` mới có README; `.env.example`, `render.yaml`, CI riêng cho ALG chưa làm.
-- 2.4: `node scripts/handover-check.mjs --dir <bản cắt> --recipient ALG --baseline releases/gd1/leak-baseline.json`. Baseline hiện có 337 mục (số điện thoại, email, tên bên khác, mật khẩu viết cứng, đường dẫn máy) — dọn ở Bước 4, chỉ được giảm.
-- 2.5: [báo cáo phụ thuộc](BANGIAO_GD1_PHU_THUOC.md): 1 lời gọi proxy SocialFlow, 28 liên kết tới trang không giao, các mô-đun bị cắt giữa chừng. Worker `media_ai` chỉ nhận tác vụ âm thanh/video khi bản cài có mô-đun đó.
-- 2.6: `.github/workflows/release-gd1.yml` — workflow riêng chứ không thêm vào `ci.yml`, để không chạy trên `main` và không chặn deploy của Render. Test tenant/platform trên bản cắt chạy hằng đêm; E2E trên bản cắt chưa có.
-- Đo tại máy (mốc trước khi đẩy): bản cắt còn 90/116 trang, 454/530 API; typecheck 0 lỗi, `npm test` xanh, build xanh, pytest worker xanh. 116 test bị bỏ khỏi bản cắt, 65 trong đó chạm code được giao — danh sách trong báo cáo cắt, cần người xem lại ở điểm duyệt Bước 5.
+- 2.1–2.2: `src/lib/delivery/delivery-phase.ts`, `route-match.ts`; danh sách route sinh vào `gd1.routes.json` bằng `npm run release:routes` (test giữ khớp mã). `src/proxy.ts` trả 404 cho trang/API ngoài phạm vi; menu (`nav-phase.ts`), lưới công cụ, hành trình lọc theo phạm vi; tầng SaaS Ngành không có menu. Không đặt biến thì không đổi gì (có test). Bản cắt ghi `builtIn: true` và danh sách trang đã cắt vào `gd1.routes.json`: chế độ luôn bật mà không cần biến, nên menu, lưới công cụ, hành trình của bản cắt không còn trỏ tới trang đã cắt.
+- 2.3: `npm run release:cut -- gd1 <mốc> <thư mục>` (`scripts/release/`). Khối chỉ thuộc smeOS đánh dấu `@release-strip` trong mã (seed cửa hàng riêng, trang chủ tầng Ngành). Lớp phủ `releases/gd1/overlay/`: README, `.env.example` (chỉ biến bản cắt đọc), `render.yaml` (web, worker `media_ai`, worker `vision`, cron, Redis, Postgres; không có worker video; không đặt `NEXT_PUBLIC_APP_ENV` để khoá "Sắp ra mắt" không khoá nhầm chức năng giao), `.github/workflows/ci.yml` riêng cho ALG. Bản cắt bỏ `release-gd1.yml`, `ui-weekly.yml`, `CODEOWNERS` của smeOS; script được giữ tính theo CI của lớp phủ.
+- 2.4: `node scripts/handover-check.mjs --dir <bản cắt> --recipient ALG --baseline releases/gd1/leak-baseline.json`. Baseline hiện có 337 mục (số điện thoại, email, tên bên khác, mật khẩu viết cứng, đường dẫn máy) — dọn ở Bước 4, chỉ được giảm. Workflow quét thêm gitleaks trên bản cắt, đúng lệnh CI của ALG.
+- 2.5: [báo cáo phụ thuộc](BANGIAO_GD1_PHU_THUOC.md): 1 lời gọi proxy SocialFlow, 16 liên kết viết cứng tới trang không giao (xử lý ở Bước 4), các mô-đun bị cắt giữa chừng. Worker `media_ai` chỉ nhận tác vụ âm thanh/video khi bản cài có mô-đun đó.
+- 2.6: `.github/workflows/release-gd1.yml` — workflow riêng chứ không thêm vào `ci.yml`, để không chạy trên `main` và không chặn deploy của Render. Test tenant/platform và E2E (`tests/e2e/ux/delivery-phase.spec.ts`: menu chỉ còn phạm vi, URL ngoài phạm vi trả 404) trên bản cắt chạy hằng đêm.
+- CI của ALG chưa gồm 3 cổng của smeOS vì đỏ trên bản cắt: `check:docs` (đặc tả 06/07 còn mô tả route và bảng không giao, đòi `CLAUDE.md`), `check:template-ssot` (SSOT mẫu còn liệt kê thành phần đã cắt), `check:industry`. Thêm lại khi làm tài liệu khớp bản giao (Bước 4).
+- Đo tại máy: MEASURE_PLACEHOLDER
 
 ## Bước 3 — Audit trên môi trường chỉ bật 123 chức năng
 

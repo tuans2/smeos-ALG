@@ -75,14 +75,15 @@ describe("phạm vi gd1 dò từ code hiện tại", () => {
     expect(readFileSync(path.join(root, reportFile("gd1")), "utf8")).toBe(renderReport("gd1", trace, acceptedViolations(manifest)))
   })
 
-  it("bản cắt gắn sẵn giai đoạn, chặn trang đã cắt, chỉ kê API còn thật", () => {
-    const cutTrace = { ...trace, blockedPages: [], blockedApis: [] }
+  it("bản cắt gắn sẵn giai đoạn, chặn trang đã cắt, API lấy theo route còn trên đĩa bản cắt", () => {
+    const cutApis = ["/api/v1/creative-production/packages"]
+    const cutTrace = { ...trace, blockedPages: [], blockedApis: cutApis }
     const routes = JSON.parse(renderCutRoutes("gd1", cutTrace, trace)) as Record<string, unknown>
     expect(routes.builtIn).toBe(true)
     expect(routes.pages).toEqual(trace.pages)
-    expect(routes.blockedPages).toEqual(trace.blockedPages)
+    expect(routes.blockedPages).toEqual([...trace.blockedPages].sort())
     expect(routes.blockedPages).toContain("/creative-studio")
-    expect(routes.blockedApis).toEqual([])
+    expect(routes.blockedApis).toEqual(cutApis)
   })
 
   it("không có phụ thuộc mới vào vùng không giao", () => {
