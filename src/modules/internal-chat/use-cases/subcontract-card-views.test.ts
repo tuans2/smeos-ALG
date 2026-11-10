@@ -45,4 +45,8 @@ describe("thẻ đơn gia công phản chiếu trạng thái thật", () => {
   it("chữ tin Telegram → chữ thuần, bỏ link ký", () => {
     expect(plainDispatchText("<b>Đơn #1</b>\nGiao &amp; nhận: https://x.test/subcontract/1?t=abc\nHạn 30 phút")).toBe("Đơn #1\nGiao & nhận:\nHạn 30 phút")
   })
+
+  it("thẻ ghép từ mảnh không lọt qua bước bỏ thẻ", () => {
+    expect(plainDispatchText("<<b>script<b>>alert(1)")).not.toContain("<")
+  })
 })

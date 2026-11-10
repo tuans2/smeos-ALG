@@ -44,9 +44,13 @@ export function fulfilmentProgress(view: Pick<SubcontractCardView, "productionSt
 
 /** Chữ của tin gửi kênh nhân viên (HTML Telegram) → chữ thuần cho phòng trao đổi; bỏ link (link ký chỉ cấp lúc đọc). */
 export function plainDispatchText(html: string): string {
-  return html
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
+  // Bỏ thẻ lặp tới khi hết — một lượt có thể để lại thẻ ghép từ mảnh (CodeQL js/incomplete-multi-character-sanitization)
+  let text = html.replace(/<br\s*\/?>/gi, "\n")
+  for (let prev = ""; prev !== text; ) {
+    prev = text
+    text = text.replace(/<[^>]+>/g, "")
+  }
+  return text
     .replace(/https?:\/\/\S+/g, "")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")

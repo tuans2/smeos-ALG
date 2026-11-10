@@ -16,6 +16,7 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { conversationName } from "./conversation-list"
 import { MessageItem } from "./message-item"
+import { LocalImagePreview } from "./local-image-preview"
 import type { LoadState } from "./use-internal-chat"
 
 interface MessageThreadProps {
@@ -37,21 +38,14 @@ export function MessageThread({ conversation, messages, state, online, sendError
   const { t } = useI18n()
   const [text, setText] = useState("")
   const [sending, setSending] = useState(false)
-  const [files, setFiles] = useState<Array<{ file: File; url: string }>>([])
+  const [files, setFiles] = useState<Array<{ file: File; id: string }>>([])
   const [pickError, setPickError] = useState<string | null>(null)
   const endRef = useRef<HTMLDivElement>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
-  // Giải phóng ảnh xem trước: khi bỏ ảnh, khi gửi xong (chỉ ảnh đã gửi) và khi rời màn (ref giữ danh sách mới nhất)
-  const filesRef = useRef(files)
-  useEffect(() => {
-    filesRef.current = files
-  }, [files])
-  useEffect(() => () => filesRef.current.forEach((f) => URL.revokeObjectURL(f.url)), [])
-  const removeFile = (url: string) => {
-    URL.revokeObjectURL(url)
-    setFiles((prev) => prev.filter((x) => x.url !== url))
-  }
+  // Mã tạm cho từng ảnh đã chọn (khoá danh sách, bỏ ảnh); ảnh xem trước vẽ lên canvas, không cần thu hồi URL
+  const nextId = useRef(0)
+  const removeFile = (id: string) => setFiles((prev) => prev.filter((x) => x.id !== id))
 
   const pick = (list: FileList | null) => {
     if (!list) return
@@ -61,7 +55,7 @@ export function MessageThread({ conversation, messages, state, online, sendError
     const room = MAX_CHAT_IMAGES_PER_MESSAGE - files.length
     const ok = chosen.filter((f) => f.size <= MAX_CHAT_IMAGE_BYTES)
     if (ok.length > room) setPickError(t("chat.thread.tooManyImages", { max: MAX_CHAT_IMAGES_PER_MESSAGE }))
-    const added = ok.slice(0, Math.max(0, room)).map((file) => ({ file, url: URL.createObjectURL(file) }))
+    const added = ok.slice(0, Math.max(0, room)).map((file) => ({ file, id: `pick-${nextId.current++}` }))
     if (added.length > 0) setFiles([...files, ...added])
   }
 
@@ -79,9 +73,8 @@ export function MessageThread({ conversation, messages, state, online, sendError
     if (sent) {
       // Chỉ xoá đúng phần vừa gửi — người dùng có thể đã gõ tiếp / chọn thêm ảnh trong lúc chờ
       setText((current) => (current === raw ? "" : current))
-      const sentUrls = new Set(batch.map((f) => f.url))
-      batch.forEach((f) => URL.revokeObjectURL(f.url))
-      setFiles((prev) => prev.filter((f) => !sentUrls.has(f.url)))
+      const sentIds = new Set(batch.map((f) => f.id))
+      setFiles((prev) => prev.filter((f) => !sentIds.has(f.id)))
     }
     setSending(false)
   }
@@ -129,10 +122,9 @@ export function MessageThread({ conversation, messages, state, online, sendError
       {files.length > 0 && (
         <ul className="px-3 pt-3 bg-surface border-t border-border flex gap-2 overflow-x-auto" aria-label={t("chat.thread.pickedImages")}>
           {files.map((f, i) => (
-            <li key={f.url} className="relative shrink-0">
-              {/* eslint-disable-next-line @next/next/no-img-element -- ảnh xem trước cục bộ (blob:) */}
-              <img src={f.url} alt={t("chat.thread.pickedImage", { index: i + 1 })} className="w-16 h-16 rounded-lg object-cover border border-border" />
-              <Button type="button" variant="ghost" size="sm" className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-surface border border-border" aria-label={t("chat.thread.removeImage", { index: i + 1 })} onClick={() => removeFile(f.url)}>
+            <li key={f.id} className="relative shrink-0">
+              <LocalImagePreview file={f.file} label={t("chat.thread.pickedImage", { index: i + 1 })} className="w-16 h-16 rounded-lg border border-border" />
+              <Button type="button" variant="ghost" size="sm" className="absolute -top-2 -right-2 h-6 w-6 p-0 rounded-full bg-surface border border-border" aria-label={t("chat.thread.removeImage", { index: i + 1 })} onClick={() => removeFile(f.id)}>
                 <X className="w-3 h-3" aria-hidden="true" />
               </Button>
             </li>
