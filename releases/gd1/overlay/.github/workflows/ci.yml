@@ -1,0 +1,172 @@
+name: CI
+
+# Cổng kiểm của bản giao Giai đoạn 1. `render.yaml` đặt `autoDeployTrigger: checksPass`: Render chỉ deploy commit
+# trên `main` khi các job dưới đây xanh. Đổi tên, xoá job, hoặc bỏ `on.push.branches: ["main"]` là nới cổng production.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: smeos
+          POSTGRES_PASSWORD: smeos
+          POSTGRES_DB: smeos
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://smeos:smeos@localhost:5432/smeos
+      # `test:tenant`/`test:platform` TRUNCATE mọi bảng và chỉ chạy trên CSDL tên kết thúc bằng `_test`
+      DATABASE_URL_TEST: postgresql://smeos:smeos@localhost:5432/smeos_test
+      # Giá trị giả chỉ dùng trên CI. `src/lib/env.ts` bắt buộc 4 biến này có mặt.
+      SESSION_SECRET: ci-only-not-a-real-secret
+      INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
+      SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret
+      # Test chặn mạng (`tests/setup.ts`), nhưng bộ chuyển OpenAI đòi khoá có mặt lúc khởi tạo
+      OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
+      ALLOW_LOCAL_STORAGE: "true"
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+      - run: npm ci
+      - run: npx prisma generate
+      # Dựng CSDL bằng đúng lệnh production dùng, rồi đòi migration khớp schema.prisma
+      - run: npm run db:deploy
+      - name: Migration khớp schema.prisma
+        run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+      - name: Migration theo quy ước expand/contract
+        run: npm run check:migrations
+      - name: Dựng CSDL test
+        env:
+          PGPASSWORD: smeos
+        run: |
+          psql -h localhost -U smeos -d postgres -c 'CREATE DATABASE smeos_test'
+          DATABASE_URL=postgresql://smeos:smeos@localhost:5432/smeos_test npx prisma db push
+      - run: npm run db:seed
+      - run: npm run typecheck
+      # Ratchet: đỏ khi (tệp, luật) nào tăng lỗi ESLint so với scripts/eslint-baseline.json
+      - name: ESLint (ratchet — không thêm lỗi mới)
+        run: npm run lint:ratchet
+      - name: Ranh giới tầng kiến trúc
+        run: npm run check:layers
+      - name: Đồng bộ đặc tả Design Tokens
+        run: npm run check:tokens-doc
+      - name: Độ bao phủ Screen Contract
+        run: npm run check:screen-contracts -- --check
+      - run: npm run lint:ux -- --check
+      - run: npm test
+      # Cổng bắt buộc — không được bỏ qua hay đặt continue-on-error
+      - name: Test cách ly tổ chức
+        run: npm run test:tenant
+      - name: Test cách ly Console Vận hành Nền tảng
+        run: npm run test:platform
+      - run: npm run build
+
+  # Quét bí mật trên toàn lịch sử và lỗ hổng dependency chạy trên production
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Quét bí mật bằng gitleaks
+        env:
+          GITLEAKS_VERSION: "8.21.2"
+          GITLEAKS_SHA256: "5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba"
+        run: |
+          curl -sSL -o gitleaks.tgz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tgz" | sha256sum -c -
+          tar xzf gitleaks.tgz gitleaks
+          ./gitleaks git . --no-banner --redact --exit-code 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+      - name: npm audit (production, mức high)
+        run: npm audit --omit=dev --audit-level=high
+
+  # Ratchet thuật ngữ ngành — job riêng để không che các cổng bắt buộc của `web`
+  industry-terms:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+      - run: npm ci
+      - name: Thuật ngữ ngành viết cứng (ratchet — không thêm vi phạm mới)
+        run: npm run audit:industry:check
+
+  worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: workers
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python -m pytest tests -q
+
+  e2e-ux:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: smeos
+          POSTGRES_PASSWORD: smeos
+          POSTGRES_DB: smeos
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://smeos:smeos@localhost:5432/smeos
+      SESSION_SECRET: ci-only-not-a-real-secret
+      INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
+      SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret
+      OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
+      ALLOW_LOCAL_STORAGE: "true"
+      NODE_OPTIONS: --max-old-space-size=4096
+      # Job `web` đã typecheck đúng commit này
+      SKIP_BUILD_TYPECHECK: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+      # Bản build production đòi khoá chủ dữ liệu cá nhân cho các API ghi dữ liệu khách. Sinh khoá dùng một lần,
+      # không ghi khoá nào vào repo.
+      - name: Khoá dữ liệu cá nhân tạm cho lượt chạy
+        run: echo "PII_ENCRYPTION_KEY=$(openssl rand -base64 32)" >> "$GITHUB_ENV"
+      - run: npm ci
+      - run: npx prisma generate
+      - run: npm run db:deploy
+      - run: npm run db:seed
+      - run: npx playwright install chromium --with-deps
+      - run: npm run build
+      - name: Kiểm thử E2E giao diện theo vai và mốc trợ năng
+        run: E2E_WEB_COMMAND="npm run start" npx playwright test tests/e2e/ux
+      - name: Lưu kết quả E2E khi đỏ
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-ux-test-results
+          path: test-results/
+          retention-days: 7

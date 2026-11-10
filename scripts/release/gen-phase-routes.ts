@@ -26,6 +26,17 @@ export function renderRoutes(phase: string, trace: PhaseTrace): string {
   return `${JSON.stringify({ phase, pages, apis, blockedPages, blockedApis }, null, 2)}\n`
 }
 
+/**
+ * Danh sách route của bản cắt: route còn lại trong bản cắt, chế độ giai đoạn gắn sẵn (`builtIn`), và trang đã bị
+ * cắt (lấy từ lượt dò trên repo nguồn) làm `blockedPages` để menu, lưới công cụ, liên kết không trỏ tới chúng.
+ * `blockedApis` để rỗng: danh sách operation OpenAPI chỉ được tính theo route API còn thật trong bản cắt.
+ */
+export function renderCutRoutes(phase: string, cutTrace: PhaseTrace, sourceTrace: PhaseTrace): string {
+  const { pages, apis } = cutTrace
+  const blockedPages = sourceTrace.blockedPages.filter((page) => !pages.includes(page))
+  return `${JSON.stringify({ phase, builtIn: true, pages, apis, blockedPages, blockedApis: [] }, null, 2)}\n`
+}
+
 function moduleRows(trace: PhaseTrace): string[] {
   const total = new Map<string, number>()
   const kept = new Map<string, number>()

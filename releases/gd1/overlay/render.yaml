@@ -1,0 +1,266 @@
+# render.yaml — hạ tầng của bản giao Giai đoạn 1 (Render Blueprint)
+# Docs: https://render.com/docs/infrastructure-as-code
+#
+# Dựng lần đầu: Render → New → Blueprint, trỏ vào repo này.
+#   • Mọi dịch vụ đặt `autoDeployTrigger: checksPass` + `branch: main`: Render chỉ deploy commit trên `main`
+#     khi các check CI (`.github/workflows/ci.yml`) của commit đó xanh. Đổi tên hoặc xoá job CI là nới cổng
+#     production.
+#   • Bốn biến bắt buộc của mã (`src/lib/env.ts`) tự có: DATABASE_URL (`fromDatabase`), SESSION_SECRET,
+#     SSO_SESSION_SECRET, INTEGRATION_TOKEN_SECRET (`generateValue`). CRON_SECRET cũng tự sinh; cron lấy lại
+#     đúng giá trị qua `fromService.envVarKey`.
+#   • Khoá `sync: false` điền sau trong Render khi cần. Thiếu khoá nào thì tính năng tương ứng tắt, app vẫn chạy
+#     — riêng PII_ENCRYPTION_KEY phải có trước khi nhận dữ liệu khách thật.
+#   • Không đặt NEXT_PUBLIC_APP_ENV: biến này bật khoá "Sắp ra mắt" (`src/lib/feature-lock.ts`) vốn dành cho
+#     bản đầy đủ, sẽ khoá nhầm chức năng đã giao.
+#   • Tên dịch vụ, vùng và gói dưới đây là gợi ý — đổi theo tài khoản Render của bạn. Đổi tên thì đổi cả các
+#     chỗ `fromService`/`fromDatabase` trỏ tới.
+#   Sổ tay vận hành: docs/handover/OPERATIONS_RUNBOOK.md
+
+services:
+  # ── 1. Web — Next.js (giao diện + API /api/v1) ─────────────────────────────
+  - type: web
+    name: smeos-web
+    runtime: node
+    region: singapore
+    plan: starter
+    # Build không chạm CSDL. Migration + dữ liệu hệ thống chạy ở pre-deploy: sau build, trước khi bản mới
+    # nhận traffic; lỗi thì bản cũ vẫn chạy. `next build` cần hơn 2 GB heap.
+    buildCommand: npm ci --include=dev && npx prisma generate && NODE_OPTIONS=--max-old-space-size=4096 npm run build
+    preDeployCommand: npm run db:deploy && npm run db:seed
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    autoDeployTrigger: checksPass
+    branch: main
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smeos-postgres
+          property: connectionString
+      # Row Level Security theo tổ chức: off | audit | enforce (sổ tay vận hành §12)
+      - key: DB_RLS_MODE
+        value: audit
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      # `npm run start` là `next start -p 3200`
+      - key: PORT
+        value: "3200"
+      # Chỉ nạp dữ liệu hệ thống trên production, không tạo dữ liệu mẫu
+      - key: SEED_DEV_DATA
+        value: "false"
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=2048"
+      # Commit được deploy đã qua `npm run typecheck` ở CI
+      - key: SKIP_BUILD_TYPECHECK
+        value: "true"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: SSO_SESSION_SECRET
+        generateValue: true
+      - key: INTEGRATION_TOKEN_SECRET
+        generateValue: true
+      # Khoá chủ mã hoá dữ liệu cá nhân của khách, 32 byte base64 (`openssl rand -base64 32`). Tự tạo, tự đặt và
+      # sao lưu ở kho bí mật: mất khoá là mất dữ liệu. Không dùng generateValue vì dựng lại blueprint sẽ sinh khoá khác.
+      - key: PII_ENCRYPTION_KEY
+        sync: false
+      # Khoá ký URL kho tệp, tách khỏi SESSION_SECRET
+      - key: STORAGE_SIGNING_SECRET
+        generateValue: true
+      # Redis dùng chung cho giới hạn tần suất giữa các instance
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: smeos-redis
+          property: connectionString
+      # Secret của endpoint cron nội bộ; thiếu thì /api/v1/internal/* luôn từ chối trên production
+      - key: CRON_SECRET
+        generateValue: true
+      # Link công khai lấy RENDER_EXTERNAL_URL do Render cấp. Khi gắn tên miền riêng: thêm NEXT_PUBLIC_APP_URL.
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: STABILITY_API_KEY
+        sync: false
+      - key: PHOTOROOM_API_KEY
+        sync: false
+      - key: REPLICATE_API_TOKEN
+        sync: false
+      - key: FAL_KEY
+        sync: false
+      - key: STORAGE_ENDPOINT
+        sync: false
+      - key: STORAGE_BUCKET
+        sync: false
+      - key: STORAGE_ACCESS_KEY
+        sync: false
+      - key: STORAGE_SECRET_KEY
+        sync: false
+      - key: STORAGE_REGION
+        value: auto
+      - key: GREETING_CARD_ENABLED
+        value: "true"
+      # Email thông báo; thiếu SMTP_HOST thì kênh email tắt
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      # Telegram: bot thông báo 4 tầng và bot điều phối đơn gia công
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_DISPATCH_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_STAFF_BOT_TOKEN
+        sync: false
+      # Toạ độ địa chỉ giao cho điều phối chuỗi (thiếu: xếp hạng theo phường/quận)
+      - key: GOONG_API_KEY
+        sync: false
+      # Zalo OA chung của nền tảng — mời/nhắc việc chi nhánh
+      - key: ZALO_OA_APP_ID
+        sync: false
+      - key: ZALO_OA_APP_SECRET
+        sync: false
+      - key: ZALO_OA_REFRESH_TOKEN
+        sync: false
+      - key: ZALO_OA_WEBHOOK_SECRET
+        sync: false
+      - key: ZALO_OA_FOLLOW_URL
+        sync: false
+
+  # ── 2. Worker xử lý ảnh (media_ai) ─────────────────────────────────────────
+  - type: worker
+    name: smeos-worker-media
+    runtime: python
+    region: singapore
+    plan: starter
+    rootDir: workers
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m media_ai.jobs.worker
+    autoDeployTrigger: checksPass
+    branch: main
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smeos-postgres
+          property: connectionString
+      - key: DB_RLS_MODE
+        value: audit
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: PHOTOROOM_API_KEY
+        sync: false
+      - key: FAL_KEY
+        sync: false
+      - key: REPLICATE_API_TOKEN
+        sync: false
+      - key: STABILITY_API_KEY
+        sync: false
+      - key: STORAGE_ENDPOINT
+        sync: false
+      - key: STORAGE_BUCKET
+        sync: false
+      - key: STORAGE_ACCESS_KEY
+        sync: false
+      - key: STORAGE_SECRET_KEY
+        sync: false
+      - key: STORAGE_REGION
+        value: auto
+      - key: VARIANT_PROVIDER_ORDER
+        value: fal,stability
+      - key: VARIANT_INTEGRITY_THRESHOLD
+        value: "0.99"
+      - key: FAL_TIMEOUT_SECONDS
+        value: "60"
+
+  # ── 3. Worker nhận diện ảnh (vision) ───────────────────────────────────────
+  - type: worker
+    name: smeos-worker-vision
+    runtime: python
+    region: singapore
+    plan: starter
+    rootDir: workers
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m vision.jobs.worker
+    autoDeployTrigger: checksPass
+    branch: main
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smeos-postgres
+          property: connectionString
+      - key: DB_RLS_MODE
+        value: audit
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: STORAGE_ENDPOINT
+        sync: false
+      - key: STORAGE_BUCKET
+        sync: false
+      - key: STORAGE_ACCESS_KEY
+        sync: false
+      - key: STORAGE_SECRET_KEY
+        sync: false
+      - key: STORAGE_REGION
+        value: auto
+
+  # ── 4. Cron 5 phút/lần: nhắc mốc đơn gia công chuỗi, lượt Trung tâm Tích hợp, kiểm sức khoẻ ─
+  # Lượt quét cũng dọn job treo quá 15 phút. /internal/health không khoẻ → 503 → lượt cron thất bại → Render báo lỗi.
+  - type: cron
+    name: smeos-cron-dispatch-sweep
+    runtime: node
+    region: singapore
+    schedule: "*/5 * * * *"
+    autoDeployTrigger: checksPass
+    branch: main
+    buildCommand: echo "no build"
+    startCommand: >-
+      curl -fsS -X POST "http://$WEB_HOSTPORT/api/v1/internal/chain-dispatch-sweep"
+      -H "x-cron-secret: $CRON_SECRET" --max-time 120
+      && curl -fsS "http://$WEB_HOSTPORT/api/v1/internal/health"
+      -H "x-cron-secret: $CRON_SECRET" --max-time 20
+      && curl -fsS -X POST "http://$WEB_HOSTPORT/api/v1/internal/integrations-sweep"
+      -H "x-cron-secret: $CRON_SECRET" --max-time 60
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: WEB_HOSTPORT
+        fromService:
+          type: web
+          name: smeos-web
+          property: hostport
+      - key: CRON_SECRET
+        fromService:
+          type: web
+          name: smeos-web
+          envVarKey: CRON_SECRET
+
+  # ── Redis — bộ đếm giới hạn tần suất dùng chung các instance ───────────────
+  - type: keyvalue
+    name: smeos-redis
+    region: singapore
+    plan: 256mb
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: [] # chỉ dịch vụ nội bộ Render truy cập
+
+# ── PostgreSQL 16 ────────────────────────────────────────────────────────────
+databases:
+  - name: smeos-postgres
+    databaseName: smeos
+    user: smeos
+    region: singapore
+    plan: basic-256mb

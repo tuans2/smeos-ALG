@@ -1,7 +1,15 @@
 import { NextRequest } from "next/server"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { filterByPhase, isHrefInPhase, isRouteInPhase, phaseRoutes, resolveDeliveryPhase } from "@/lib/delivery/delivery-phase"
+import {
+  activeDeliveryPhase,
+  builtInDeliveryPhase,
+  filterByPhase,
+  isHrefInPhase,
+  isRouteInPhase,
+  phaseRoutes,
+  resolveDeliveryPhase,
+} from "@/lib/delivery/delivery-phase"
 import manifest from "@/lib/delivery/gd1.manifest.json"
 import { bestMatch, dirToPattern, matchScore } from "@/lib/delivery/route-match"
 import { proxy } from "@/proxy"
@@ -29,6 +37,18 @@ describe("chế độ tắt — mọi thứ như cũ", () => {
   it("chỉ nhận đúng giá trị gd1", () => {
     expect(resolveDeliveryPhase("gd1")).toBe("gd1")
     for (const value of [undefined, null, "", "GD1", "gd2", "all"]) expect(resolveDeliveryPhase(value)).toBeNull()
+  })
+
+  it("smeOS không gắn sẵn giai đoạn: không đặt biến thì chế độ tắt", () => {
+    expect(phaseRoutes("gd1").builtIn).toBeUndefined()
+    expect(builtInDeliveryPhase()).toBeNull()
+    vi.stubEnv("NEXT_PUBLIC_DELIVERY_PHASE", "")
+    expect(activeDeliveryPhase()).toBeNull()
+    vi.unstubAllEnvs()
+  })
+
+  it("bản cắt gắn sẵn giai đoạn (builtIn) thì chế độ luôn bật", () => {
+    expect(builtInDeliveryPhase({ gd1: { ...phaseRoutes("gd1"), builtIn: true } })).toBe("gd1")
   })
 
   it("không chặn route nào", () => {

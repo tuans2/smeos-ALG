@@ -5,7 +5,7 @@ import path from "node:path"
 
 import { rebuildBaselines } from "./cut-baselines"
 import type { CutManifest, CutPlan } from "./cut-plan"
-import { renderRoutes, routesFile } from "./gen-phase-routes"
+import { renderCutRoutes, routesFile } from "./gen-phase-routes"
 import { tracePhase } from "./trace-phase"
 
 /** Thực hiện bản cắt trên cây đã giải nén (Bước 2.3 mục 3–7). Trả nội dung báo cáo. */
@@ -65,8 +65,8 @@ export function applyCut(root: string, phase: string, manifest: CutManifest, pla
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`)
 
   const baselines = rebuildBaselines(root)
-  // Bản cắt không còn route ngoài phạm vi: danh sách chặn rỗng. Ghi trước khi sinh lại OpenAPI (đọc danh sách này)
-  writeFileSync(path.join(root, routesFile(phase)), renderRoutes(phase, tracePhase(root, manifest)))
+  // Chế độ giai đoạn gắn sẵn trong bản cắt. Ghi trước khi sinh lại OpenAPI (đọc danh sách này)
+  writeFileSync(path.join(root, routesFile(phase)), renderCutRoutes(phase, tracePhase(root, manifest), plan.trace))
   const regenerated = regenerate(root, repo, manifest.cut.regenerate, pkg.scripts)
   for (const [file, content] of overlay) {
     const target = path.join(root, file)

@@ -3,7 +3,15 @@ import path from "node:path"
 
 import { describe, expect, it } from "vitest"
 
-import { acceptedViolations, loadManifest, renderReport, renderRoutes, reportFile, routesFile } from "../../../scripts/release/gen-phase-routes"
+import {
+  acceptedViolations,
+  loadManifest,
+  renderCutRoutes,
+  renderReport,
+  renderRoutes,
+  reportFile,
+  routesFile,
+} from "../../../scripts/release/gen-phase-routes"
 import { apiReferences, importSpecifiers, normalizeApiRef, routesForRef } from "../../../scripts/release/trace-imports"
 import { tracePhase } from "../../../scripts/release/trace-phase"
 
@@ -65,6 +73,16 @@ describe("phạm vi gd1 dò từ code hiện tại", () => {
   it("danh sách route và báo cáo phụ thuộc đã sinh lại (npm run release:routes)", () => {
     expect(readFileSync(path.join(root, routesFile("gd1")), "utf8")).toBe(renderRoutes("gd1", trace))
     expect(readFileSync(path.join(root, reportFile("gd1")), "utf8")).toBe(renderReport("gd1", trace, acceptedViolations(manifest)))
+  })
+
+  it("bản cắt gắn sẵn giai đoạn, chặn trang đã cắt, chỉ kê API còn thật", () => {
+    const cutTrace = { ...trace, blockedPages: [], blockedApis: [] }
+    const routes = JSON.parse(renderCutRoutes("gd1", cutTrace, trace)) as Record<string, unknown>
+    expect(routes.builtIn).toBe(true)
+    expect(routes.pages).toEqual(trace.pages)
+    expect(routes.blockedPages).toEqual(trace.blockedPages)
+    expect(routes.blockedPages).toContain("/creative-studio")
+    expect(routes.blockedApis).toEqual([])
   })
 
   it("không có phụ thuộc mới vào vùng không giao", () => {

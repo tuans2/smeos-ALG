@@ -2229,7 +2229,8 @@
       "docs/handover/OPERATIONS_RUNBOOK.md",
       "docs/design-system/",
       "docs/dac-ta/screen-contracts/",
-      "docs/dac-ta/ux-patterns/"
+      "docs/dac-ta/ux-patterns/",
+      "docs/kien-truc/HUONG_DAN_DANG_KY_UNG_DUNG_MXH.md"
     ],
     "removePaths": [
       {
@@ -2266,6 +2267,14 @@
           "scripts/release/",
           "scripts/handover-",
           "tests/unit/release/"
+        ]
+      },
+      {
+        "reason": "CI và quy trình nội bộ của smeOS (bản giao có CI riêng trong lớp phủ)",
+        "paths": [
+          ".github/workflows/release-gd1.yml",
+          ".github/workflows/ui-weekly.yml",
+          ".github/CODEOWNERS"
         ]
       }
     ],
