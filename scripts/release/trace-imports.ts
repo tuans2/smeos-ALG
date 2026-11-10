@@ -73,7 +73,7 @@ export function apiReferences(source: string): string[] {
   for (const match of source.matchAll(CONST_API)) {
     const [, name, value] = match
     expanded = expanded.split(`\${${name}}`).join(value)
-    expanded = expanded.replace(new RegExp(`\\b${name!.replace(/\$/g, "\\$")}\\s*\\+\\s*["'\`]`, "g"), `"${value}`)
+    expanded = expanded.replace(new RegExp(`\\b${name!.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*\\+\\s*["'\`]`, "g"), `"${value}`)
   }
   const refs = new Set<string>()
   // `${BASE}` vừa thay có thể nằm giữa template — quét lại cả chuỗi đã mở rộng

@@ -42,6 +42,11 @@ describe("đọc import và tham chiếu API", () => {
     expect(normalizeApiRef("/api/v1/orders/{id}?page=2")).toBe("/api/v1/orders/*")
   })
 
+  it("tên hằng có `$` vẫn được thay khi nối chuỗi", () => {
+    const source = ['const API$BASE = "/api/v1/coordinator"', 'fetch(API$BASE + "/stats")'].join("\n")
+    expect(apiReferences(source)).toContain("/api/v1/coordinator/stats")
+  })
+
   it("tham chiếu khớp route động; chuỗi gốc lấy mọi route con", () => {
     const patterns = ["/api/v1/orders", "/api/v1/orders/[id]", "/api/v1/orders/[id]/close", "/api/v1/storage/[...key]"]
     expect(routesForRef("/api/v1/orders/*", patterns)).toEqual(["/api/v1/orders/[id]"])
