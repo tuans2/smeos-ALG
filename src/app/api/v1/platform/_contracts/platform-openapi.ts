@@ -1,4 +1,5 @@
 import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi"
+import { isKnownApiRoute } from "@/lib/delivery/delivery-phase"
 
 import { CONFIG_OPERATIONS } from "./ops-config"
 import { DATA_OPERATIONS } from "./ops-data"
@@ -11,7 +12,11 @@ import { ORG_OPERATIONS } from "./ops-orgs"
  */
 export const PLATFORM_OPENAPI_PATH = "docs/spec/contracts/openapi/platform.openapi.json"
 
-export const PLATFORM_OPERATIONS: OpenApiOperation[] = [...ORG_OPERATIONS, ...CONFIG_OPERATIONS, ...DATA_OPERATIONS]
+/** Mọi operation đã khai — test giữ ở smeOS không có operation nào trỏ route không tồn tại. */
+export const PLATFORM_OPERATIONS_DECLARED: OpenApiOperation[] = [...ORG_OPERATIONS, ...CONFIG_OPERATIONS, ...DATA_OPERATIONS]
+
+/** Bản cắt bàn giao chỉ còn route được giao: bỏ operation của route đã cắt (kế hoạch GD1, Bước 2.3). */
+export const PLATFORM_OPERATIONS: OpenApiOperation[] = PLATFORM_OPERATIONS_DECLARED.filter((o) => isKnownApiRoute(o.path))
 
 export function buildPlatformOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({

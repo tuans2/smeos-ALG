@@ -37,6 +37,7 @@ chính provider (`so_do_chi_phi_anh`), không dựng lại công thức.
 
 from __future__ import annotations
 
+import importlib
 import json
 import os
 import re
@@ -459,6 +460,20 @@ class _CoDungLai:
         self.dung = True
 
 
+# Tác vụ âm thanh (Audio Studio, Voice Clone) và dựng video M04c, theo thứ tự ưu tiên. Chỉ nhận khi bản cài
+# có mô-đun xử lý: bản giao GD1 bỏ `media_ai/audio`, `media_ai/video` (docs/plan/BANGIAO_GD1_PHAM_VI.md §5).
+OPTIONAL_JOBS = (
+    ("audio.generate", "media_ai.audio.audio_worker", "process_audio_generation_job"),
+    ("audio.voice_clone", "media_ai.audio.voice_clone_worker", "process_voice_clone_job"),
+    ("video.render", "media_ai.video.video_worker", "process_video_job"),
+)
+
+
+def available_optional_jobs(root: Path = Path(__file__).resolve().parents[2]) -> list[tuple[str, str, str]]:
+    """Tác vụ phụ mà bản cài này xử lý được (tệp xử lý có mặt dưới `workers/`)."""
+    return [job for job in OPTIONAL_JOBS if (root / f"{job[1].replace('.', '/')}.py").is_file()]
+
+
 def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
     from vision.providers.openai_structured import OpenAIStructuredProvider
 
@@ -468,21 +483,13 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
     enhancer = resolve_enhancer()  # Đa Provider: Studio làm mặc định, kèm fallback Real-ESRGAN/PIL
     reframer = SmartReframe()  # Smart Reframe 4 tỷ lệ
     channel = notify_channel_for(FEATURE)
-    video_feature = "video.render"
-    video_channel = notify_channel_for(video_feature)
+    optional_jobs = available_optional_jobs()
     variant_feature = "media.variant"
     variant_channel = notify_channel_for(variant_feature)
     # Nhánh Cloud của M04b (23/09/2026) — cùng `process_variant_job`, khác
     # nguồn hậu cảnh. Trước đó nhánh này chạy đồng bộ trong request HTTP.
     variant_cloud_feature = "media.variant.cloud"
     variant_cloud_channel = notify_channel_for(variant_cloud_feature)
-    # Audio Studio (Khu vực C) — trước 23/09/2026 không worker nào nhận
-    # `audio.generate`: job bị trừ credit rồi đứng PENDING mãi.
-    audio_feature = "audio.generate"
-    audio_channel = notify_channel_for(audio_feature)
-    # Nhân bản giọng chủ tiệm (ElevenLabs IVC, 24/09/2026).
-    voice_clone_feature = "audio.voice_clone"
-    voice_clone_channel = notify_channel_for(voice_clone_feature)
 
     cleaned_url = _clean_database_url(database_url)
     co = _CoDungLai()
@@ -496,11 +503,10 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
                 backoff = 1.0
                 with conn.cursor() as cur:
                     cur.execute(f"LISTEN {channel}")
-                    cur.execute(f"LISTEN {video_channel}")
                     cur.execute(f"LISTEN {variant_channel}")
                     cur.execute(f"LISTEN {variant_cloud_channel}")
-                    cur.execute(f"LISTEN {audio_channel}")
-                    cur.execute(f"LISTEN {voice_clone_channel}")
+                    for optional_feature, _, _ in optional_jobs:
+                        cur.execute(f"LISTEN {notify_channel_for(optional_feature)}")
 
                 while not co.dung:
                     # Thứ tự ưu tiên là thứ tự người dùng chờ: M04a đứng trước M04b vì
@@ -528,28 +534,8 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
                             process_variant_job(conn, variant_cloud_job)
                         continue
 
-                    # 2c. Audio Studio — voiceover + nhạc nền (Khu vực C)
-                    audio_job = claim_next(conn, audio_feature)
-                    if audio_job is not None:
-                        from media_ai.audio.audio_worker import process_audio_generation_job
-                        with job_db_context(conn, audio_job):
-                            process_audio_generation_job(conn, audio_job)
-                        continue
-
-                    # 2d. Nhân bản giọng (Khu vực C — Voice Clone)
-                    voice_clone_job = claim_next(conn, voice_clone_feature)
-                    if voice_clone_job is not None:
-                        from media_ai.audio.voice_clone_worker import process_voice_clone_job
-                        with job_db_context(conn, voice_clone_job):
-                            process_voice_clone_job(conn, voice_clone_job)
-                        continue
-
-                    # 3. Xử lý tác vụ dựng video M04c
-                    video_job = claim_next(conn, video_feature)
-                    if video_job is not None:
-                        from media_ai.video.video_worker import process_video_job
-                        with job_db_context(conn, video_job):
-                            process_video_job(conn, video_job)
+                    # 3. Âm thanh (voiceover + nhạc nền, nhân bản giọng) rồi dựng video M04c
+                    if _claim_optional(conn, optional_jobs):
                         continue
 
                     for _notify in conn.notifies(timeout=poll_interval_seconds):
@@ -562,6 +548,17 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
             backoff = min(backoff * 2, 60.0)
 
     print(f"[media] Worker {FEATURE} đã dừng.", flush=True)
+
+
+def _claim_optional(conn: psycopg.Connection, optional_jobs: list[tuple[str, str, str]]) -> bool:
+    """Nhận và xử lý một tác vụ phụ đầu tiên đang chờ; False khi không có."""
+    for feature, module, handler in optional_jobs:
+        job = claim_next(conn, feature)
+        if job is not None:
+            with job_db_context(conn, job):
+                getattr(importlib.import_module(module), handler)(conn, job)
+            return True
+    return False
 
 
 def _canh_bao_moi_truong() -> None:

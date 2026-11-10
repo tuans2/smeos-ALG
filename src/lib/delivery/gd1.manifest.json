@@ -1,0 +1,2299 @@
+{
+  "phase": "gd1",
+  "customer": "ALG",
+  "checklist": "docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx",
+  "features": [
+    {
+      "id": "1.1",
+      "group": 1,
+      "name": "Truy cập theo tổ chức (Multi-tenant)",
+      "pages": [],
+      "apis": [
+        "/api/v1/organizations"
+      ],
+      "scenarios": [
+        "S-01",
+        "S-02"
+      ],
+      "backendOnly": "Cách ly tổ chức ở tầng phiên và repository, áp dụng cho mọi trang và API."
+    },
+    {
+      "id": "1.2",
+      "group": 1,
+      "name": "Đăng nhập & thu hồi phiên cũ",
+      "pages": [
+        "/",
+        "/dang-nhap"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-01",
+        "A-02"
+      ]
+    },
+    {
+      "id": "1.3",
+      "group": 1,
+      "name": "Đăng xuất & vô hiệu hóa phiên tức thì",
+      "pages": [
+        "/cai-dat/thanh-vien"
+      ],
+      "apis": [
+        "/api/v1/auth/logout"
+      ],
+      "scenarios": [
+        "A-12",
+        "A-13"
+      ]
+    },
+    {
+      "id": "1.4",
+      "group": 1,
+      "name": "Bắt buộc đổi mật khẩu tạm lần đầu",
+      "pages": [
+        "/dang-nhap"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-01",
+        "A-05",
+        "S-09"
+      ]
+    },
+    {
+      "id": "1.5",
+      "group": 1,
+      "name": "Quản lý thông tin cửa hàng & logo an toàn",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [
+        "/api/v1/brand-profile",
+        "/api/v1/business-profile",
+        "/api/v1/organization/brand"
+      ],
+      "scenarios": [
+        "A-03"
+      ]
+    },
+    {
+      "id": "1.6",
+      "group": 1,
+      "name": "Khai báo chi nhánh & tọa độ quận/huyện",
+      "pages": [
+        "/san-pham",
+        "/san-pham/[id]",
+        "/san-pham/nhap-hang-loat"
+      ],
+      "apis": [
+        "/api/v1/branches",
+        "/api/v1/greeting-card/chain-branches/[branchCode]",
+        "/api/v1/greeting-card/chain-branches/bulk-import"
+      ],
+      "scenarios": [
+        "I-08"
+      ]
+    },
+    {
+      "id": "1.7",
+      "group": 1,
+      "name": "Khai báo dịp tặng hoa ngành chuẩn",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [
+        "/api/v1/occasions",
+        "/api/v1/occasions/[id]"
+      ],
+      "scenarios": [
+        "A-14"
+      ]
+    },
+    {
+      "id": "1.8",
+      "group": 1,
+      "name": "Chính sách cửa hàng (ngân hàng, phụ thu lễ)",
+      "pages": [
+        "/b/[sendCode]",
+        "/cai-dat"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-15",
+        "A-16",
+        "A-17",
+        "D-09"
+      ]
+    },
+    {
+      "id": "1.9",
+      "group": 1,
+      "name": "Cấu hình trường dữ liệu linh hoạt theo shop",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [
+        "/api/v1/field-config",
+        "/api/v1/field-config/settings"
+      ],
+      "scenarios": [
+        "A-18"
+      ]
+    },
+    {
+      "id": "1.10",
+      "group": 1,
+      "name": "Quản lý & mời thành viên",
+      "pages": [
+        "/cai-dat/thanh-vien"
+      ],
+      "apis": [
+        "/api/v1/members/[id]",
+        "/api/v1/members/invite"
+      ],
+      "scenarios": [
+        "A-04"
+      ]
+    },
+    {
+      "id": "1.11",
+      "group": 1,
+      "name": "Điều chỉnh/gỡ thành viên & thu hồi phiên ngay",
+      "pages": [
+        "/cai-dat/thanh-vien"
+      ],
+      "apis": [
+        "/api/v1/members/[id]",
+        "/api/v1/members/[id]/role",
+        "/api/v1/members/chain-branches",
+        "/api/v1/members/invite"
+      ],
+      "scenarios": [
+        "A-10",
+        "A-11",
+        "A-12"
+      ]
+    },
+    {
+      "id": "1.12",
+      "group": 1,
+      "name": "6 vai trò mặc định",
+      "pages": [
+        "/cai-dat/thanh-vien",
+        "/dang-nhap"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-04",
+        "A-05",
+        "A-06",
+        "A-07"
+      ]
+    },
+    {
+      "id": "1.13",
+      "group": 1,
+      "name": "Tạo vai trò tùy chỉnh",
+      "pages": [
+        "/cai-dat/thanh-vien",
+        "/cai-dat/thanh-vien/vai-tro",
+        "/vai-tro"
+      ],
+      "apis": [
+        "/api/v1/roles",
+        "/api/v1/roles/[id]/capabilities"
+      ],
+      "scenarios": [
+        "A-09",
+        "A-10",
+        "S-05"
+      ]
+    },
+    {
+      "id": "1.14",
+      "group": 1,
+      "name": "Hiển thị giao diện & menu theo quyền",
+      "pages": [
+        "/"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-08",
+        "S-03"
+      ]
+    },
+    {
+      "id": "1.15",
+      "group": 1,
+      "name": "Chặn thao tác vượt quyền & ghi log vi phạm",
+      "pages": [],
+      "apis": [],
+      "scenarios": [
+        "S-03",
+        "S-10"
+      ],
+      "backendOnly": "Ghi nhật ký khi bị từ chối quyền, áp dụng ở lớp kiểm năng lực."
+    },
+    {
+      "id": "1.16",
+      "group": 1,
+      "name": "Khóa cứng quyền nhạy cảm ở tầng server",
+      "pages": [
+        "/bao-gia",
+        "/cong-cu",
+        "/don-hang",
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/coordinator/orders/[id]/payments/[paymentId]/decision"
+      ],
+      "scenarios": [
+        "C-04",
+        "E-02",
+        "G-04",
+        "S-04",
+        "S-05",
+        "S-06"
+      ]
+    },
+    {
+      "id": "1.17",
+      "group": 1,
+      "name": "Nhật ký thao tác chi tiết IP/thiết bị",
+      "pages": [
+        "/audit"
+      ],
+      "apis": [
+        "/api/v1/audit-logs"
+      ],
+      "scenarios": [
+        "A-19",
+        "S-10"
+      ]
+    },
+    {
+      "id": "1.18",
+      "group": 1,
+      "name": "Gắn dữ liệu với tổ chức ở tầng database (RLS)",
+      "pages": [],
+      "apis": [],
+      "scenarios": [
+        "S-02",
+        "S-11"
+      ],
+      "backendOnly": "Row Level Security ở tầng cơ sở dữ liệu."
+    },
+    {
+      "id": "1.19",
+      "group": 1,
+      "name": "Chặn truy cập chéo (404 Not Found)",
+      "pages": [],
+      "apis": [],
+      "scenarios": [
+        "S-01",
+        "S-02",
+        "S-08"
+      ],
+      "backendOnly": "Kiểm thử cách ly chéo tổ chức, không có màn hình riêng."
+    },
+    {
+      "id": "2.1",
+      "group": 2,
+      "name": "Tạo thẻ sản phẩm mẫu hoa",
+      "pages": [
+        "/san-pham",
+        "/san-pham/[id]",
+        "/san-pham/tao-moi"
+      ],
+      "apis": [
+        "/api/v1/products"
+      ],
+      "scenarios": [
+        "B-01",
+        "B-02",
+        "B-14"
+      ]
+    },
+    {
+      "id": "2.2",
+      "group": 2,
+      "name": "Cập nhật thẻ sản phẩm & đồng bộ Thẻ Chào",
+      "pages": [
+        "/san-pham/[id]",
+        "/san-pham/kha-dung",
+        "/san-pham/nhap-hang-loat",
+        "/san-pham/tao-moi"
+      ],
+      "apis": [
+        "/api/v1/products/[id]",
+        "/api/v1/products/batch-import",
+        "/api/v1/products/bulk-status",
+        "/api/v1/products/drive-thumbnails",
+        "/api/v1/products/export",
+        "/api/v1/products/import-batches",
+        "/api/v1/products/master-index",
+        "/api/v1/products/one-image-kit"
+      ],
+      "scenarios": [
+        "B-11"
+      ]
+    },
+    {
+      "id": "2.3",
+      "group": 2,
+      "name": "Trạng thái sản phẩm (Nháp/Hoạt động/Lưu trữ)",
+      "pages": [
+        "/b/[sendCode]",
+        "/san-pham"
+      ],
+      "apis": [
+        "/api/v1/products/[id]",
+        "/api/v1/products/batch-import",
+        "/api/v1/products/bulk-status",
+        "/api/v1/products/drive-thumbnails",
+        "/api/v1/products/export",
+        "/api/v1/products/import-batches",
+        "/api/v1/products/master-index",
+        "/api/v1/products/one-image-kit",
+        "/api/v1/storage/[...key]",
+        "/api/v1/storage/trash"
+      ],
+      "scenarios": [
+        "B-07",
+        "B-09",
+        "B-15",
+        "D-05"
+      ]
+    },
+    {
+      "id": "2.4",
+      "group": 2,
+      "name": "Biến thể kích cỡ (Nhỏ/Vừa/Lớn/VIP)",
+      "pages": [
+        "/san-pham/[id]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "B-03"
+      ]
+    },
+    {
+      "id": "2.5",
+      "group": 2,
+      "name": "Định mức nguyên liệu BOM",
+      "pages": [
+        "/san-pham",
+        "/san-pham/tao-moi",
+        "/tinh-gia/cong-thuc"
+      ],
+      "apis": [
+        "/api/v1/costing/recipes/[productId]"
+      ],
+      "scenarios": [
+        "B-01"
+      ]
+    },
+    {
+      "id": "2.6",
+      "group": 2,
+      "name": "Nhập danh mục hàng loạt từ Excel/CSV",
+      "pages": [
+        "/san-pham",
+        "/san-pham/[id]",
+        "/san-pham/nhap-hang-loat"
+      ],
+      "apis": [
+        "/api/v1/products/[id]",
+        "/api/v1/products/batch-import"
+      ],
+      "scenarios": [
+        "B-04"
+      ]
+    },
+    {
+      "id": "2.7",
+      "group": 2,
+      "name": "Duyệt đề xuất thay đổi thông tin/giá 2 bước",
+      "pages": [
+        "/san-pham/[id]"
+      ],
+      "apis": [
+        "/api/v1/product-change-requests",
+        "/api/v1/products/[id]/change-requests"
+      ],
+      "scenarios": [
+        "B-10"
+      ]
+    },
+    {
+      "id": "2.8",
+      "group": 2,
+      "name": "Cấu hình khả dụng, ẩn mẫu theo ngày",
+      "pages": [
+        "/b/[sendCode]",
+        "/san-pham/[id]",
+        "/san-pham/kha-dung"
+      ],
+      "apis": [
+        "/api/v1/availability/blocks"
+      ],
+      "scenarios": [
+        "B-12",
+        "D-08"
+      ]
+    },
+    {
+      "id": "2.9",
+      "group": 2,
+      "name": "Lưu bộ nội dung tư vấn bán hàng chuẩn SEO",
+      "pages": [
+        "/san-pham/[id]",
+        "/san-pham/[id]/tinh-nang/product-copy/[copyId]"
+      ],
+      "apis": [
+        "/api/v1/product-copies",
+        "/api/v1/product-copies/[id]",
+        "/api/v1/product-copies/generate"
+      ],
+      "scenarios": [
+        "B-05",
+        "B-06"
+      ],
+      "jobs": [
+        "product.copy.generate"
+      ]
+    },
+    {
+      "id": "3.1",
+      "group": 3,
+      "name": "Cấu hình quy tắc giá 4 nhóm (Thưởng/Sàn/Trần)",
+      "pages": [
+        "/gia",
+        "/kho-du-lieu"
+      ],
+      "apis": [
+        "/api/v1/pricing-rules"
+      ],
+      "scenarios": [
+        "C-02"
+      ]
+    },
+    {
+      "id": "3.2",
+      "group": 3,
+      "name": "Bộ tính giá tự động (hoa + phí cắm + phụ phí)",
+      "pages": [
+        "/b/[sendCode]",
+        "/cai-dat"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-16",
+        "D-09"
+      ]
+    },
+    {
+      "id": "3.3",
+      "group": 3,
+      "name": "Tính giá vốn thực tế (nguyên liệu + bao bì + thợ)",
+      "pages": [
+        "/gia",
+        "/kho-du-lieu",
+        "/tinh-gia",
+        "/tinh-gia/gia-von",
+        "/tinh-gia/nguyen-lieu"
+      ],
+      "apis": [
+        "/api/v1/costing/products/[productId]/cost",
+        "/api/v1/costing/products/[productId]/price"
+      ],
+      "scenarios": [
+        "C-01"
+      ]
+    },
+    {
+      "id": "3.4",
+      "group": 3,
+      "name": "Kiểm soát cảnh báo & chặn giá dưới sàn",
+      "pages": [
+        "/bao-gia",
+        "/cong-cu"
+      ],
+      "apis": [],
+      "scenarios": [
+        "C-03",
+        "C-04"
+      ]
+    },
+    {
+      "id": "3.5",
+      "group": 3,
+      "name": "Quản lý ưu đãi, mã giảm giá, miễn phí ship",
+      "pages": [
+        "/b/[sendCode]",
+        "/cong-cu",
+        "/uu-dai",
+        "/uu-dai/ma-giam-gia"
+      ],
+      "apis": [
+        "/api/v1/vouchers/batches"
+      ],
+      "scenarios": [
+        "C-09",
+        "D-09"
+      ]
+    },
+    {
+      "id": "3.6",
+      "group": 3,
+      "name": "Phụ phí 6 kiểu dáng, hệ số ngày lễ 1.3x & VAT",
+      "pages": [
+        "/b/[sendCode]",
+        "/cai-dat"
+      ],
+      "apis": [],
+      "scenarios": [
+        "C-10",
+        "D-09"
+      ]
+    },
+    {
+      "id": "3.7",
+      "group": 3,
+      "name": "Đề xuất & duyệt giảm giá sâu trình Điều hành",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/discount-requests/[id]/decision",
+        "/api/v1/greeting-card/orders/[id]/discount-request"
+      ],
+      "scenarios": [
+        "C-11",
+        "E-09"
+      ]
+    },
+    {
+      "id": "3.8",
+      "group": 3,
+      "name": "Soạn & xem trước báo giá chuyên nghiệp",
+      "pages": [
+        "/bao-gia",
+        "/cong-cu"
+      ],
+      "apis": [
+        "/api/v1/quotations"
+      ],
+      "scenarios": [
+        "C-05"
+      ]
+    },
+    {
+      "id": "3.9",
+      "group": 3,
+      "name": "Lưu & quản lý báo giá theo mã",
+      "pages": [
+        "/bao-gia",
+        "/cong-cu"
+      ],
+      "apis": [
+        "/api/v1/quotations"
+      ],
+      "scenarios": [
+        "C-05"
+      ]
+    },
+    {
+      "id": "3.10",
+      "group": 3,
+      "name": "Điều chỉnh báo giá & lưu vết phiên bản",
+      "pages": [
+        "/bao-gia"
+      ],
+      "apis": [
+        "/api/v1/quotations/[id]/revisions"
+      ],
+      "scenarios": [
+        "C-06"
+      ]
+    },
+    {
+      "id": "3.11",
+      "group": 3,
+      "name": "Chia sẻ báo giá qua link / file PDF A6",
+      "pages": [
+        "/bg/[token]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "C-07"
+      ]
+    },
+    {
+      "id": "3.12",
+      "group": 3,
+      "name": "Chuyển báo giá chốt thành đơn hàng 1-click",
+      "pages": [
+        "/bao-gia"
+      ],
+      "apis": [
+        "/api/v1/quotations/[id]/convert"
+      ],
+      "scenarios": [
+        "C-08"
+      ]
+    },
+    {
+      "id": "3.13",
+      "group": 3,
+      "name": "Báo giá tự động realtime trên Thẻ Chào",
+      "pages": [
+        "/b/[sendCode]"
+      ],
+      "apis": [
+        "/api/v1/public/brochure/[sendCode]/quote",
+        "/api/v1/public/brochure/tracking/[code]",
+        "/api/v1/public/greeting-catalog/[id]/quote"
+      ],
+      "scenarios": [
+        "D-09"
+      ]
+    },
+    {
+      "id": "4.1",
+      "group": 4,
+      "name": "Tạo đơn hàng bán lẻ/chuỗi",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/coordinator/orders",
+        "/api/v1/orders"
+      ],
+      "scenarios": [
+        "G-01"
+      ]
+    },
+    {
+      "id": "4.2",
+      "group": 4,
+      "name": "Tự tạo đơn từ form khách trên Thẻ Chào/Link",
+      "pages": [
+        "/b/[sendCode]",
+        "/don-hang",
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/public/brochure/[sendCode]/order",
+        "/api/v1/public/brochure/tracking/[code]",
+        "/api/v1/public/greeting-catalog/[id]/order"
+      ],
+      "scenarios": [
+        "D-10",
+        "D-11"
+      ]
+    },
+    {
+      "id": "4.3",
+      "group": 4,
+      "name": "Danh sách/chi tiết đơn & lọc nâng cao",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/orders",
+        "/api/v1/orders",
+        "/api/v1/orders/[id]",
+        "/api/v1/orders/workbench"
+      ],
+      "scenarios": [
+        "G-02"
+      ]
+    },
+    {
+      "id": "4.4",
+      "group": 4,
+      "name": "3 hệ thống trạng thái độc lập",
+      "pages": [
+        "/",
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/orders"
+      ],
+      "scenarios": [
+        "E-06",
+        "G-03"
+      ]
+    },
+    {
+      "id": "4.5",
+      "group": 4,
+      "name": "Quản lý khung giờ giao & sức chứa chi nhánh",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/delivery/my-runs",
+        "/api/v1/members/[id]/phone"
+      ],
+      "scenarios": [
+        "F-01",
+        "F-02"
+      ]
+    },
+    {
+      "id": "4.6",
+      "group": 4,
+      "name": "Đổi thông tin đơn giữ vết",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [],
+      "scenarios": [
+        "E-14"
+      ]
+    },
+    {
+      "id": "4.7",
+      "group": 4,
+      "name": "Luồng hủy đơn & hoàn tiền duyệt 2 bước",
+      "pages": [
+        "/don-hang",
+        "/duyet",
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/orders/[id]/cancel",
+        "/api/v1/greeting-card/orders/[id]/refund",
+        "/api/v1/orders/[id]/cancel"
+      ],
+      "scenarios": [
+        "G-04",
+        "G-05"
+      ]
+    },
+    {
+      "id": "4.8",
+      "group": 4,
+      "name": "Lịch sử thao tác đơn tóm tắt",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/orders/[id]/events"
+      ],
+      "scenarios": [
+        "G-03"
+      ]
+    },
+    {
+      "id": "4.9",
+      "group": 4,
+      "name": "In phiếu xưởng (khổ A6) & thiệp/băng rôn",
+      "pages": [
+        "/don-hang",
+        "/in-phieu/[id]"
+      ],
+      "apis": [
+        "/api/v1/orders/[id]/print"
+      ],
+      "scenarios": [
+        "E-07"
+      ]
+    },
+    {
+      "id": "4.10",
+      "group": 4,
+      "name": "Xuất danh sách đơn Excel",
+      "pages": [
+        "/",
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/orders/[id]",
+        "/api/v1/orders/export"
+      ],
+      "scenarios": [
+        "G-06"
+      ]
+    },
+    {
+      "id": "4.11",
+      "group": 4,
+      "name": "Lịch sử đơn liên quan cùng khách hàng",
+      "pages": [
+        "/khach-hang"
+      ],
+      "apis": [
+        "/api/v1/crm/customers/[id]/orders"
+      ],
+      "scenarios": [
+        "G-07"
+      ]
+    },
+    {
+      "id": "4.12",
+      "group": 4,
+      "name": "Bảng điều phối phân cấp mức rủi ro trễ giờ",
+      "pages": [
+        "/dieu-phoi"
+      ],
+      "apis": [],
+      "scenarios": [
+        "G-08"
+      ]
+    },
+    {
+      "id": "4.13",
+      "group": 4,
+      "name": "Phân công thợ cắm & hàng đợi chế tác",
+      "pages": [
+        "/",
+        "/don-hang",
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/orders/[id]",
+        "/api/v1/orders/[id]/assign",
+        "/api/v1/orders/[id]/my-work",
+        "/api/v1/orders/my-work"
+      ],
+      "scenarios": [
+        "E-05",
+        "E-06"
+      ]
+    },
+    {
+      "id": "4.14",
+      "group": 4,
+      "name": "Theo dõi đơn thiếu thông tin",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/orders/[id]/info-requests"
+      ],
+      "scenarios": [
+        "E-13"
+      ]
+    },
+    {
+      "id": "4.15",
+      "group": 4,
+      "name": "Kiểm tra chất lượng QC",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/coordinator/orders/[id]/qc"
+      ],
+      "scenarios": [
+        "E-08"
+      ]
+    },
+    {
+      "id": "4.16",
+      "group": 4,
+      "name": "AI chấm ảnh QC so với mẫu gốc",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [],
+      "scenarios": [
+        "E-08"
+      ]
+    },
+    {
+      "id": "4.17",
+      "group": 4,
+      "name": "Bàn giao shipper & lên lịch giao lại",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [],
+      "scenarios": [
+        "F-01",
+        "F-05"
+      ]
+    },
+    {
+      "id": "4.18",
+      "group": 4,
+      "name": "Ảnh xác nhận giao hàng tận tay (POD) bắt buộc",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/coordinator/orders/[id]/confirm-delivery"
+      ],
+      "scenarios": [
+        "F-03",
+        "F-04"
+      ]
+    },
+    {
+      "id": "4.19",
+      "group": 4,
+      "name": "Bảng điều phối đối tác ngoài, đếm ngược",
+      "pages": [
+        "/dieu-phoi",
+        "/subcontract/[orderCode]"
+      ],
+      "apis": [
+        "/api/v1/public/subcontract/[orderCode]",
+        "/api/v1/public/subcontract/[orderCode]/request-bypass",
+        "/api/v1/public/subcontract/[orderCode]/submit-delivery",
+        "/api/v1/public/subcontract/[orderCode]/submit-shipper",
+        "/api/v1/public/subcontract/[orderCode]/upload-qc"
+      ],
+      "scenarios": [
+        "G-09"
+      ]
+    },
+    {
+      "id": "4.20",
+      "group": 4,
+      "name": "Cổng chi nhánh cách ly đơn hàng",
+      "pages": [
+        "/cua-hang"
+      ],
+      "apis": [
+        "/api/v1/branch-portal/orders"
+      ],
+      "scenarios": [
+        "G-10"
+      ]
+    },
+    {
+      "id": "4.21",
+      "group": 4,
+      "name": "Cấu hình sức chứa tối đa theo khung giờ/lễ",
+      "pages": [
+        "/b/[sendCode]",
+        "/cai-dat"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-17",
+        "D-12"
+      ]
+    },
+    {
+      "id": "4.22",
+      "group": 4,
+      "name": "Lập kế hoạch thanh toán cọc/còn lại tự động",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-15"
+      ]
+    },
+    {
+      "id": "4.23",
+      "group": 4,
+      "name": "Mã VietQR động",
+      "pages": [
+        "/b/[sendCode]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-10"
+      ]
+    },
+    {
+      "id": "4.24",
+      "group": 4,
+      "name": "Tải ảnh biên lai chuyển khoản & AI gợi ý",
+      "pages": [
+        "/g/[id]"
+      ],
+      "apis": [
+        "/api/v1/public/brochure/[sendCode]/payment-proof",
+        "/api/v1/public/brochure/tracking/[code]"
+      ],
+      "scenarios": [
+        "E-01"
+      ]
+    },
+    {
+      "id": "4.25",
+      "group": 4,
+      "name": "Điều hành \"Xác nhận tiền về\" mở đơn cắm",
+      "pages": [
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/orders/[id]/confirm-deposit"
+      ],
+      "scenarios": [
+        "E-02",
+        "E-03",
+        "E-04"
+      ]
+    },
+    {
+      "id": "4.26",
+      "group": 4,
+      "name": "Thu phần tiền còn lại",
+      "pages": [
+        "/don-hang",
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/orders/[id]/confirm-balance"
+      ],
+      "scenarios": [
+        "F-09",
+        "F-10"
+      ]
+    },
+    {
+      "id": "4.27",
+      "group": 4,
+      "name": "Ghi nhận hoàn tiền khi hủy đơn",
+      "pages": [
+        "/duyet",
+        "/the-chao"
+      ],
+      "apis": [],
+      "scenarios": [
+        "G-05"
+      ]
+    },
+    {
+      "id": "4.28",
+      "group": 4,
+      "name": "Đối soát tự động ngân hàng",
+      "pages": [
+        "/"
+      ],
+      "apis": [
+        "/api/v1/public/payments/sepay"
+      ],
+      "scenarios": [
+        "G-11"
+      ]
+    },
+    {
+      "id": "4.29",
+      "group": 4,
+      "name": "Tự động cập nhật trang theo dõi của khách",
+      "pages": [
+        "/don-hang",
+        "/g/[id]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "F-04",
+        "F-08"
+      ]
+    },
+    {
+      "id": "4.30",
+      "group": 4,
+      "name": "Cấu hình kênh báo tin nhân viên",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [],
+      "scenarios": [
+        "F-07"
+      ]
+    },
+    {
+      "id": "4.31",
+      "group": 4,
+      "name": "Tự động gửi Zalo ZNS / SMS cho khách",
+      "pages": [
+        "/the-chao"
+      ],
+      "apis": [],
+      "scenarios": [
+        "E-04",
+        "F-12"
+      ]
+    },
+    {
+      "id": "4.32",
+      "group": 4,
+      "name": "Tự động nhắc lịch giao trước 60 & 30 phút",
+      "pages": [
+        "/cai-dat",
+        "/dieu-phoi"
+      ],
+      "apis": [],
+      "scenarios": [
+        "F-06"
+      ]
+    },
+    {
+      "id": "5.1",
+      "group": 5,
+      "name": "Tạo bộ mẫu Thẻ Chào theo chủ đề/dịp",
+      "pages": [
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/catalogs"
+      ],
+      "scenarios": [
+        "D-01"
+      ]
+    },
+    {
+      "id": "5.2",
+      "group": 5,
+      "name": "Chia sẻ link rút gọn gắn mã nhân viên bán",
+      "pages": [
+        "/don-hang",
+        "/s/[code]",
+        "/the-chao"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-03",
+        "D-04",
+        "D-11"
+      ]
+    },
+    {
+      "id": "5.3",
+      "group": 5,
+      "name": "Cấu hình thời hạn & thu hồi link Thẻ Chào",
+      "pages": [
+        "/cai-dat",
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/store-share-link/revoke"
+      ],
+      "scenarios": [
+        "D-14",
+        "D-15"
+      ]
+    },
+    {
+      "id": "5.4",
+      "group": 5,
+      "name": "Tự tạo mã QR & ảnh ghép 3-4 mẫu",
+      "pages": [
+        "/the-chao"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-04"
+      ]
+    },
+    {
+      "id": "5.5",
+      "group": 5,
+      "name": "Công tắc cấu hình ẩn/hiện giá & thành phần",
+      "pages": [
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/display-settings"
+      ],
+      "scenarios": [
+        "D-02",
+        "D-13"
+      ]
+    },
+    {
+      "id": "5.6",
+      "group": 5,
+      "name": "Bảng bán hàng realtime theo dõi hành vi khách",
+      "pages": [
+        "/the-chao"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-06"
+      ]
+    },
+    {
+      "id": "5.7",
+      "group": 5,
+      "name": "Màn hình \"Hộp thư việc hôm nay\" ưu tiên",
+      "pages": [
+        "/the-chao"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-17"
+      ]
+    },
+    {
+      "id": "5.8",
+      "group": 5,
+      "name": "Cấu hình phân quyền xem đơn Sale",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/sale-visibility"
+      ],
+      "scenarios": [
+        "D-16"
+      ]
+    },
+    {
+      "id": "5.9",
+      "group": 5,
+      "name": "Khách xem mẫu hoa (vuốt, thả tim)",
+      "pages": [
+        "/b/[sendCode]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-05"
+      ]
+    },
+    {
+      "id": "5.10",
+      "group": 5,
+      "name": "Đặt hoa trực tiếp từ Thẻ Chào",
+      "pages": [
+        "/b/[sendCode]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-10"
+      ]
+    },
+    {
+      "id": "5.11",
+      "group": 5,
+      "name": "Nút \"Nhắn tư vấn mẫu này\" gắn mã sản phẩm",
+      "pages": [
+        "/b/[sendCode]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-07"
+      ]
+    },
+    {
+      "id": "5.12",
+      "group": 5,
+      "name": "Trang khách xem tiến độ cắm & ảnh thành phẩm",
+      "pages": [
+        "/b/[sendCode]",
+        "/don-hang",
+        "/g/[id]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "F-04",
+        "F-08"
+      ]
+    },
+    {
+      "id": "5.13",
+      "group": 5,
+      "name": "Khách duyệt ảnh QC thành phẩm trong 10 phút",
+      "pages": [
+        "/g/[id]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "E-10"
+      ]
+    },
+    {
+      "id": "5.14",
+      "group": 5,
+      "name": "Đề xuất thay loại hoa thiếu qua link duyệt",
+      "pages": [
+        "/don-hang",
+        "/g/[id]"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/orders/[id]/flower-substitute",
+        "/api/v1/public/brochure/tracking/[code]/flower-substitute-response"
+      ],
+      "scenarios": [
+        "E-11",
+        "E-12"
+      ]
+    },
+    {
+      "id": "5.15",
+      "group": 5,
+      "name": "Màn hình cảm ơn, mã giảm giá & đặt lại đơn",
+      "pages": [
+        "/g/[id]",
+        "/the-chao"
+      ],
+      "apis": [],
+      "scenarios": [
+        "D-02",
+        "F-11"
+      ]
+    },
+    {
+      "id": "6.1",
+      "group": 6,
+      "name": "Báo cáo tổng hợp đơn hàng & tỷ lệ hủy/trễ",
+      "pages": [
+        "/bao-cao",
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/reports/orders"
+      ],
+      "scenarios": [
+        "H-01"
+      ]
+    },
+    {
+      "id": "6.2",
+      "group": 6,
+      "name": "Báo cáo doanh thu thực thu vs dự kiến",
+      "pages": [
+        "/bao-cao"
+      ],
+      "apis": [
+        "/api/v1/reports/revenue"
+      ],
+      "scenarios": [
+        "H-02"
+      ]
+    },
+    {
+      "id": "6.3",
+      "group": 6,
+      "name": "Báo cáo sản phẩm bán chạy & tông màu ưa thích",
+      "pages": [
+        "/bao-cao",
+        "/san-pham"
+      ],
+      "apis": [
+        "/api/v1/reports/products"
+      ],
+      "scenarios": [
+        "H-03"
+      ]
+    },
+    {
+      "id": "6.4",
+      "group": 6,
+      "name": "Báo cáo phễu chuyển đổi Thẻ Chào & Sale",
+      "pages": [
+        "/the-chao"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/stats",
+        "/api/v1/greeting-card/stats/channels"
+      ],
+      "scenarios": [
+        "H-04"
+      ]
+    },
+    {
+      "id": "6.5",
+      "group": 6,
+      "name": "Báo cáo hiệu suất (Sale/Thợ/Shipper)",
+      "pages": [
+        "/bao-cao"
+      ],
+      "apis": [
+        "/api/v1/reports/performance"
+      ],
+      "scenarios": [
+        "H-05"
+      ]
+    },
+    {
+      "id": "6.6",
+      "group": 6,
+      "name": "Báo cáo đối chiếu thu tiền: sổ thu vs ngân hàng",
+      "pages": [
+        "/bao-cao"
+      ],
+      "apis": [
+        "/api/v1/reports/cashflow"
+      ],
+      "scenarios": [
+        "H-06"
+      ]
+    },
+    {
+      "id": "6.7",
+      "group": 6,
+      "name": "Báo cáo truy vết lịch sử đơn giải quyết khiếu nại",
+      "pages": [
+        "/don-hang"
+      ],
+      "apis": [],
+      "scenarios": [
+        "G-03"
+      ]
+    },
+    {
+      "id": "6.8",
+      "group": 6,
+      "name": "Xuất báo cáo tài chính ra Excel (.xlsx)",
+      "pages": [
+        "/",
+        "/don-hang"
+      ],
+      "apis": [
+        "/api/v1/orders/[id]",
+        "/api/v1/orders/export"
+      ],
+      "scenarios": [
+        "G-06"
+      ]
+    },
+    {
+      "id": "6.9",
+      "group": 6,
+      "name": "Báo cáo tiêu thụ hạn mức AI theo kỳ",
+      "pages": [
+        "/muc-dung"
+      ],
+      "apis": [
+        "/api/v1/usage/summary"
+      ],
+      "scenarios": [
+        "H-07"
+      ]
+    },
+    {
+      "id": "7.1",
+      "group": 7,
+      "name": "AI nhận diện ảnh mẫu (loại hoa, cành, màu)",
+      "pages": [
+        "/cong-cu",
+        "/duyet",
+        "/tai-anh"
+      ],
+      "apis": [
+        "/api/v1/vision/analyses"
+      ],
+      "scenarios": [
+        "B-13"
+      ],
+      "jobs": [
+        "vision.analyze"
+      ]
+    },
+    {
+      "id": "7.2",
+      "group": 7,
+      "name": "Bộ nội dung marketing tự động từ 1 ảnh",
+      "pages": [
+        "/san-pham"
+      ],
+      "apis": [
+        "/api/v1/products/[id]",
+        "/api/v1/products/one-image-kit",
+        "/api/v1/products/one-image-kit/run"
+      ],
+      "scenarios": [
+        "B-14"
+      ],
+      "jobs": [
+        "vision.analyze",
+        "product.copy.generate",
+        "content.generate"
+      ]
+    },
+    {
+      "id": "7.3",
+      "group": 7,
+      "name": "Màn hình kiểm tra sẵn sàng sản phẩm ra thị trường",
+      "pages": [
+        "/",
+        "/san-pham"
+      ],
+      "apis": [
+        "/api/v1/products/[id]",
+        "/api/v1/products/batch-import",
+        "/api/v1/products/bulk-status",
+        "/api/v1/products/drive-thumbnails",
+        "/api/v1/products/export",
+        "/api/v1/products/import-batches",
+        "/api/v1/products/master-index",
+        "/api/v1/products/one-image-kit"
+      ],
+      "scenarios": [
+        "B-07",
+        "B-08"
+      ]
+    },
+    {
+      "id": "8.1",
+      "group": 8,
+      "name": "Trình dựng Landing Page bộ sưu tập / sự kiện",
+      "pages": [
+        "/c/[slug]",
+        "/catalog",
+        "/cong-cu",
+        "/landing-page",
+        "/xem-truoc-trang"
+      ],
+      "apis": [
+        "/api/v1/public/catalog/[slug]/order"
+      ],
+      "scenarios": [
+        "I-10"
+      ]
+    },
+    {
+      "id": "9.1",
+      "group": 9,
+      "name": "Trao đổi / chat nội bộ trên từng đơn",
+      "pages": [
+        "/tin-nhan"
+      ],
+      "apis": [
+        "/api/v1/greeting-card/messages",
+        "/api/v1/internal-chat/conversations",
+        "/api/v1/internal-chat/conversations/[id]/messages",
+        "/api/v1/internal-chat/messages/[id]/action"
+      ],
+      "scenarios": [
+        "I-01"
+      ]
+    },
+    {
+      "id": "9.2",
+      "group": 9,
+      "name": "Hồ sơ thương hiệu",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [
+        "/api/v1/brand-profile"
+      ],
+      "scenarios": [
+        "A-03"
+      ]
+    },
+    {
+      "id": "9.3",
+      "group": 9,
+      "name": "Hồ sơ kinh doanh",
+      "pages": [
+        "/cai-dat"
+      ],
+      "apis": [
+        "/api/v1/business-profile"
+      ],
+      "scenarios": [
+        "A-03"
+      ]
+    },
+    {
+      "id": "9.4",
+      "group": 9,
+      "name": "Thư viện tài nguyên & thùng rác 30 ngày",
+      "pages": [
+        "/kho-du-lieu",
+        "/san-pham"
+      ],
+      "apis": [
+        "/api/v1/storage/[...key]",
+        "/api/v1/storage/trash",
+        "/api/v1/storage/trash/[id]/restore"
+      ],
+      "scenarios": [
+        "B-15",
+        "I-02"
+      ]
+    },
+    {
+      "id": "9.5",
+      "group": 9,
+      "name": "Quản lý kết nối Webhook/API key",
+      "pages": [
+        "/tich-hop"
+      ],
+      "apis": [
+        "/api/v1/asset-usages/[id]",
+        "/api/v1/assets/[id]",
+        "/api/v1/branches/[id]",
+        "/api/v1/brand-library/[id]",
+        "/api/v1/campaigns/[id]",
+        "/api/v1/catalog-links/[slug]",
+        "/api/v1/custom-domains/[id]",
+        "/api/v1/customer-segments/[id]",
+        "/api/v1/integration-tokens",
+        "/api/v1/integration-tokens/[id]",
+        "/api/v1/jobs/[id]",
+        "/api/v1/leads/[id]",
+        "/api/v1/members/[id]",
+        "/api/v1/occasions/[id]",
+        "/api/v1/orders/[id]",
+        "/api/v1/price-lists/[id]",
+        "/api/v1/product-copies/[id]",
+        "/api/v1/product-image-set/[id]",
+        "/api/v1/product-intelligence/[id]",
+        "/api/v1/product-photo/[id]",
+        "/api/v1/products/[id]",
+        "/api/v1/quotations/[id]",
+        "/api/v1/shop-reviews/[id]",
+        "/api/v1/short-links/[id]",
+        "/api/v1/storage/[...key]"
+      ],
+      "scenarios": [
+        "I-03"
+      ]
+    },
+    {
+      "id": "9.6",
+      "group": 9,
+      "name": "Quản lý tác vụ nền & chạy lại tác vụ lỗi",
+      "pages": [
+        "/job",
+        "/job/[id]"
+      ],
+      "apis": [
+        "/api/v1/jobs/[id]/retry"
+      ],
+      "scenarios": [
+        "I-04"
+      ]
+    },
+    {
+      "id": "9.7",
+      "group": 9,
+      "name": "Cấu hình chính sách & trần chi phí AI tháng",
+      "pages": [
+        "/cai-dat-ai",
+        "/muc-dung"
+      ],
+      "apis": [
+        "/api/v1/ai-policy",
+        "/api/v1/content-guard/validate",
+        "/api/v1/usage/limits"
+      ],
+      "scenarios": [
+        "I-05",
+        "I-06"
+      ]
+    },
+    {
+      "id": "9.8",
+      "group": 9,
+      "name": "Console quản trị nền tảng đa cửa hàng",
+      "pages": [
+        "/van-hanh",
+        "/van-hanh/to-chuc"
+      ],
+      "apis": [
+        "/api/v1/platform/overview"
+      ],
+      "scenarios": [
+        "J-04"
+      ]
+    },
+    {
+      "id": "9.9",
+      "group": 9,
+      "name": "Luồng thẩm định & duyệt đăng ký tổ chức mới",
+      "pages": [
+        "/dang-ky-thanh-cong",
+        "/dang-nhap",
+        "/van-hanh/dang-ky"
+      ],
+      "apis": [
+        "/api/v1/auth/signup",
+        "/api/v1/platform/registrations/[userId]/decision"
+      ],
+      "scenarios": [
+        "J-01",
+        "J-02"
+      ]
+    },
+    {
+      "id": "9.10",
+      "group": 9,
+      "name": "Khởi tạo tổ chức & khởi tạo gói dịch vụ",
+      "pages": [
+        "/van-hanh/to-chuc"
+      ],
+      "apis": [
+        "/api/v1/platform/organizations"
+      ],
+      "scenarios": [
+        "J-03"
+      ]
+    },
+    {
+      "id": "9.11",
+      "group": 9,
+      "name": "Duyệt 2 bước cho thao tác nhạy cảm",
+      "pages": [
+        "/don-hang",
+        "/san-pham/[id]"
+      ],
+      "apis": [
+        "/api/v1/orders/[id]",
+        "/api/v1/orders/approval-requests"
+      ],
+      "scenarios": [
+        "B-10",
+        "E-09",
+        "F-10"
+      ]
+    },
+    {
+      "id": "9.12",
+      "group": 9,
+      "name": "Cơ chế chặn tự nâng quyền chính mình",
+      "pages": [
+        "/cai-dat/thanh-vien",
+        "/san-pham/[id]"
+      ],
+      "apis": [],
+      "scenarios": [
+        "A-11",
+        "B-10",
+        "E-09",
+        "S-07"
+      ]
+    },
+    {
+      "id": "9.13",
+      "group": 9,
+      "name": "Cách ly phân quyền dữ liệu theo chi nhánh",
+      "pages": [
+        "/cai-dat/thanh-vien"
+      ],
+      "apis": [],
+      "scenarios": [
+        "I-07",
+        "S-08"
+      ]
+    },
+    {
+      "id": "9.14",
+      "group": 9,
+      "name": "Đăng nhập 1 lần (SSO 15 phút)",
+      "pages": [
+        "/cong-cu"
+      ],
+      "apis": [
+        "/api/v1/sso/refresh"
+      ],
+      "scenarios": [
+        "I-09"
+      ],
+      "acceptanceNote": "Đăng bài đã chạy ngay trong smeOS (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động."
+    },
+    {
+      "id": "10.1",
+      "group": 10,
+      "name": "Xem số dư credit AI & lịch sử tiêu thụ",
+      "pages": [
+        "/muc-dung"
+      ],
+      "apis": [
+        "/api/v1/usage",
+        "/api/v1/usage/summary"
+      ],
+      "scenarios": [
+        "H-07"
+      ]
+    },
+    {
+      "id": "10.2",
+      "group": 10,
+      "name": "Hoàn 100% credit AI khi tác vụ bị lỗi",
+      "pages": [],
+      "apis": [],
+      "scenarios": [
+        "J-08"
+      ],
+      "backendOnly": "Hoàn credit tự động trong luồng tác vụ nền."
+    },
+    {
+      "id": "10.3",
+      "group": 10,
+      "name": "Thiết lập hạn mức dịch vụ (trần AI, SMS, Zalo)",
+      "pages": [
+        "/muc-dung",
+        "/van-hanh/muc-dung",
+        "/van-hanh/to-chuc",
+        "/van-hanh/to-chuc/[id]"
+      ],
+      "apis": [
+        "/api/v1/platform/credit-pricing",
+        "/api/v1/platform/organizations/[id]/usage-limit",
+        "/api/v1/usage/limits"
+      ],
+      "scenarios": [
+        "I-05",
+        "J-05",
+        "J-06",
+        "J-07"
+      ]
+    },
+    {
+      "id": "10.4",
+      "group": 10,
+      "name": "Ghi nhận chi phí thật (USD/VND) đo lợi nhuận",
+      "pages": [
+        "/van-hanh/muc-dung"
+      ],
+      "apis": [
+        "/api/v1/platform/margin"
+      ],
+      "scenarios": [
+        "J-09"
+      ]
+    },
+    {
+      "id": "10.5",
+      "group": 10,
+      "name": "Cảnh báo khi credit AI còn dưới 20%",
+      "pages": [
+        "/muc-dung"
+      ],
+      "apis": [],
+      "scenarios": [
+        "I-05",
+        "J-07"
+      ]
+    },
+    {
+      "id": "10.6",
+      "group": 10,
+      "name": "Admin nạp / hoàn / tặng credit khuyến mãi",
+      "pages": [
+        "/van-hanh/to-chuc",
+        "/van-hanh/to-chuc/[id]"
+      ],
+      "apis": [
+        "/api/v1/platform/organizations/[id]/credits"
+      ],
+      "scenarios": [
+        "J-05"
+      ]
+    },
+    {
+      "id": "10.7",
+      "group": 10,
+      "name": "Quản lý & thu phí thuê bao SaaS",
+      "pages": [
+        "/muc-dung",
+        "/van-hanh/cau-hinh",
+        "/van-hanh/to-chuc",
+        "/van-hanh/to-chuc/[id]"
+      ],
+      "apis": [
+        "/api/v1/billing/sepay",
+        "/api/v1/platform/billing-account",
+        "/api/v1/platform/organizations/[id]/subscription",
+        "/api/v1/platform/subscription-invoices/[id]/mark-paid",
+        "/api/v1/subscription"
+      ],
+      "scenarios": [
+        "J-03",
+        "J-10",
+        "J-11"
+      ]
+    },
+    {
+      "id": "10.8",
+      "group": 10,
+      "name": "Cấu hình trỏ tên miền riêng (Custom Domain)",
+      "pages": [
+        "/cai-dat",
+        "/ch/[slug]",
+        "/van-hanh/to-chuc",
+        "/van-hanh/to-chuc/[id]"
+      ],
+      "apis": [
+        "/api/v1/custom-domains",
+        "/api/v1/platform/custom-domains/[id]/lock"
+      ],
+      "scenarios": [
+        "J-12",
+        "J-13",
+        "J-14"
+      ]
+    }
+  ],
+  "framework": [
+    {
+      "reason": "Ma trận quản trị Mẹ → Chuỗi → Cửa hàng, đang áp vào báo giá và đặt đơn",
+      "pages": [
+        "/cai-dat/ma-tran-camket",
+        "/cai-dat/ma-tran-chinhsach",
+        "/cai-dat/ma-tran-phigiacong",
+        "/cai-dat/ma-tran-thanhtoan-datco",
+        "/cai-dat/ma-tran-uudai",
+        "/van-hanh/ma-tran-camket",
+        "/van-hanh/ma-tran-chinhsach",
+        "/van-hanh/ma-tran-phigiacong",
+        "/van-hanh/ma-tran-thanhtoan-datco",
+        "/van-hanh/ma-tran-uudai",
+        "/van-hanh/quan-tri-ma-tran"
+      ]
+    },
+    {
+      "reason": "Ma trận thông báo theo tầng",
+      "pages": [
+        "/cai-dat/thong-bao",
+        "/van-hanh/thong-bao"
+      ]
+    },
+    {
+      "reason": "Quản lý chi nhánh và xưởng của tầng Chuỗi",
+      "pages": [
+        "/dieu-phoi/doi-tac"
+      ]
+    },
+    {
+      "reason": "Console vận hành của tầng Mẹ",
+      "pages": [
+        "/van-hanh/phe-duyet",
+        "/van-hanh/truong-du-lieu",
+        "/van-hanh/suc-khoe",
+        "/van-hanh/nhat-ky",
+        "/van-hanh/du-lieu",
+        "/van-hanh/hang-doi-loi",
+        "/van-hanh/tich-hop"
+      ]
+    },
+    {
+      "reason": "Trang công khai dùng chung",
+      "pages": [
+        "/bst/[orgSlug]/[catalogCode]",
+        "/chinh-sach-bao-mat"
+      ]
+    },
+    {
+      "reason": "Bảng giá, không có trong kịch bản nghiệm thu — ngoài 123, chủ dự án chốt giao 10/11/2026",
+      "pages": [
+        "/bang-gia",
+        "/bang-gia/[id]"
+      ]
+    },
+    {
+      "reason": "Hồ sơ thương hiệu mở rộng; 9.2 và 9.3 đã dùng Cài đặt tiệm — ngoài 123, chủ dự án chốt giao 10/11/2026",
+      "pages": [
+        "/ho-so",
+        "/ho-so/danh-thiep",
+        "/ho-so/thu-vien-thuong-hieu"
+      ]
+    },
+    {
+      "reason": "Mục menu của tầng Chuỗi, không có trong 123 chức năng — ngoài 123, chủ dự án chốt giao 10/11/2026",
+      "pages": [
+        "/so-lieu",
+        "/du-lieu"
+      ]
+    },
+    {
+      "reason": "Công cụ tính giá mở rộng — ngoài 123, chủ dự án chốt giao 10/11/2026",
+      "pages": [
+        "/tinh-gia/gia-ban",
+        "/tinh-gia/du-toan"
+      ]
+    },
+    {
+      "reason": "Trang cha của màn nội dung tư vấn 2.9 — ngoài 123, chủ dự án chốt giao 10/11/2026",
+      "pages": [
+        "/san-pham/[id]/tinh-nang"
+      ]
+    }
+  ],
+  "undecided": [],
+  "excluded": [
+    {
+      "reason": "Tầng SaaS Ngành",
+      "pages": [
+        "/van-hanh/nganh"
+      ]
+    },
+    {
+      "reason": "Sáng tạo ảnh, video, nội dung",
+      "pages": [
+        "/creative-studio",
+        "/video",
+        "/noi-dung",
+        "/kho-templates",
+        "/cong-cu/anh-san-pham",
+        "/cong-cu/bo-anh-san-pham",
+        "/cong-cu/poster-banner",
+        "/in-an"
+      ]
+    },
+    {
+      "reason": "Nghiên cứu thị trường và thu hút khách",
+      "pages": [
+        "/market-intelligence",
+        "/thu-hut-khach",
+        "/quang-ba/chien-dich",
+        "/cham-soc",
+        "/lich-dang"
+      ]
+    },
+    {
+      "reason": "Hội thoại đa kênh và kết nối ứng dụng ngoài",
+      "pages": [
+        "/hoi-thoai",
+        "/hoi-thoai/kenh-tich-hop",
+        "/chat",
+        "/ket-noi",
+        "/noi-bo/ket-noi"
+      ]
+    },
+    {
+      "reason": "Tri thức, bộ máy AI, mục phụ",
+      "pages": [
+        "/tri-thuc",
+        "/bo-may",
+        "/them"
+      ]
+    },
+    {
+      "reason": "Công cụ nội bộ của đội phát triển và chợ đối tác",
+      "pages": [
+        "/van-hanh/marketplace",
+        "/chia-se/cho-doi-tac/[token]",
+        "/van-hanh/thu-vien-giao-dien",
+        "/van-hanh/thu-vien-man-hinh"
+      ]
+    }
+  ],
+  "frameworkRoutes": [
+    {
+      "reason": "Kiểm tra sống của Render và giám sát",
+      "routes": [
+        "/api/health",
+        "/api/health/ready",
+        "/api/v1/internal/health",
+        "/api/v1/platform/health"
+      ]
+    },
+    {
+      "reason": "Cron nội bộ trong render.yaml (smeos-cron-dispatch-sweep)",
+      "routes": [
+        "/api/v1/internal/chain-dispatch-sweep",
+        "/api/v1/internal/integrations-sweep"
+      ]
+    },
+    {
+      "reason": "Đăng nhập, phiên, lời mời",
+      "routes": [
+        "/api/v1/auth/login",
+        "/api/v1/auth/logout",
+        "/api/v1/auth/me",
+        "/api/v1/auth/session-status",
+        "/api/v1/auth/signup",
+        "/api/v1/session/organization",
+        "/api/v1/session/password",
+        "/api/v1/session/invitations",
+        "/api/v1/session/invitations/[id]/accept",
+        "/api/v1/session/invitations/[id]/decline"
+      ]
+    },
+    {
+      "reason": "Webhook thanh toán SePay của Thẻ Chào (4.28)",
+      "routes": [
+        "/api/v1/greeting-card/integrations/payment-webhook"
+      ]
+    },
+    {
+      "reason": "Link rút gọn và chuyển hướng công khai (5.2)",
+      "routes": [
+        "/r/[code]",
+        "/s/[code]/mo"
+      ]
+    }
+  ],
+  "excludedApis": [
+    {
+      "reason": "Proxy sang SocialFlow/LocalBudd — bỏ khỏi bản giao (D-46)",
+      "prefixes": [
+        "/api/v1/proxy"
+      ]
+    }
+  ],
+  "rootFiles": [
+    "src/proxy.ts",
+    "src/instrumentation.ts",
+    "src/app/layout.tsx",
+    "src/app/not-found.tsx",
+    "src/app/global-error.tsx",
+    "src/app/globals.css",
+    "prisma/seed.ts"
+  ],
+  "registryFiles": {
+    "reason": "Bảng tra tiền tố route (quyền, bỏ qua RLS, danh sách route của chế độ giai đoạn), không phải lời gọi API — không dùng để dò phạm vi",
+    "files": [
+      "src/modules/organization/domain/tool-route-entitlement.ts",
+      "src/core/tenancy/db-context.ts",
+      "src/lib/delivery/gd1.routes.json",
+      "src/lib/delivery/delivery-phase.ts"
+    ]
+  },
+  "acceptedViolations": [
+    {
+      "reason": "Khối bài đăng ở trang chủ còn gọi proxy SocialFlow — Bước 4 chuyển sang mô-đun social-publishing hoặc bỏ khối",
+      "items": [
+        "src/components/dashboard/marketing-workspace.tsx → /api/v1/proxy/[...path]"
+      ]
+    },
+    {
+      "reason": "Lược đồ OpenAPI nội bộ (main, PR #16) nhắc route proxy trong chú thích — không phải phụ thuộc lúc chạy; bản cắt lọc operation theo route còn lại (isKnownApiRoute)",
+      "items": [
+        "src/app/api/v1/_contracts/requests-tools.ts → /api/v1/proxy/[...path]"
+      ]
+    }
+  ],
+  "workers": {
+    "deliver": [
+      {
+        "path": "workers/vision",
+        "jobs": [
+          "vision.analyze"
+        ]
+      },
+      {
+        "path": "workers/shared",
+        "jobs": []
+      },
+      {
+        "path": "workers/media_ai",
+        "jobs": [
+          "media.optimize",
+          "media.variant",
+          "media.variant.cloud"
+        ],
+        "note": "Trang duyệt và luồng tạo sản phẩm có gọi xử lý ảnh"
+      }
+    ],
+    "exclude": [
+      {
+        "path": "workers/media_ai/video",
+        "jobs": [
+          "video.render"
+        ],
+        "note": "Vòng lặp trong workers/media_ai/jobs/worker.py đang nhận cả tác vụ này, cần tách ở Bước 2"
+      },
+      {
+        "path": "workers/media_ai/audio",
+        "jobs": [
+          "audio.generate",
+          "audio.voice_clone"
+        ],
+        "note": "Vòng lặp trong workers/media_ai/jobs/worker.py đang nhận cả tác vụ này, cần tách ở Bước 2"
+      }
+    ],
+    "webSide": [
+      "product.copy.generate",
+      "content.generate"
+    ]
+  },
+  "cut": {
+    "keepTopLevel": [
+      ".env.example",
+      ".github",
+      ".gitignore",
+      "LICENSE",
+      "README.md",
+      "docker",
+      "docker-compose.yml",
+      "docs",
+      "eslint.config.mjs",
+      "next.config.ts",
+      "package-lock.json",
+      "package.json",
+      "playwright.config.ts",
+      "postcss.config.mjs",
+      "prisma",
+      "prisma.config.ts",
+      "public",
+      "render.yaml",
+      "scripts",
+      "src",
+      "tests",
+      "tsconfig.json",
+      "vitest.config.ts",
+      "workers"
+    ],
+    "keepDocs": [
+      "docs/tai-lieu-ky-thuat/",
+      "docs/huong-dan-su-dung/",
+      "docs/nghiem-thu/",
+      "docs/handover/OPERATIONS_RUNBOOK.md",
+      "docs/design-system/",
+      "docs/dac-ta/screen-contracts/",
+      "docs/dac-ta/ux-patterns/"
+    ],
+    "removePaths": [
+      {
+        "reason": "Seed và dữ liệu của cửa hàng khác",
+        "paths": [
+          "prisma/seed/sync-siin-store.ts",
+          "prisma/seed/clean-siin-store-orders.ts",
+          "prisma/seed/dev-moclan-data.ts",
+          "prisma/seed/dev-shop-moclan.ts",
+          "public/brand/moc-lan-"
+        ]
+      },
+      {
+        "reason": "Dữ liệu chợ đối tác và nhập liệu Avi Gift",
+        "paths": [
+          "src/modules/avi-gift-import/",
+          "scripts/nap-avi-gift",
+          "scripts/doi-chieu-avi-gift.ts",
+          "src/modules/platform/domain/partner-marketplace-data.json",
+          "scripts/nap-cho-doi-tac.ts"
+        ]
+      },
+      {
+        "reason": "Worker video và âm thanh không giao",
+        "paths": [
+          "workers/media_ai/video/",
+          "workers/media_ai/audio/",
+          "workers/tests/video/"
+        ]
+      },
+      {
+        "reason": "Công cụ phát hành và bàn giao nội bộ của smeOS",
+        "paths": [
+          "scripts/release/",
+          "scripts/handover-",
+          "tests/unit/release/"
+        ]
+      }
+    ],
+    "dropNpmScripts": [
+      "dev:all",
+      "predev:all",
+      "worker:socialflow",
+      "worker:localbudd",
+      "worker:video",
+      "worker:market-intelligence",
+      "dev:core",
+      "release:routes",
+      "release:cut",
+      "handover:check"
+    ],
+    "removedPythonPackages": [
+      "media_ai.audio",
+      "media_ai.video"
+    ],
+    "overlay": "releases/gd1/overlay",
+    "regenerate": [
+      "gen:erd",
+      "gen:tenant-registry",
+      "gen:tokens-doc",
+      "gen:schemas:creative",
+      "gen:schemas:coordinator",
+      "gen:schemas:content-engine",
+      "gen:openapi"
+    ]
+  }
+}

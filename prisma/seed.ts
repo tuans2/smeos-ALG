@@ -28,6 +28,7 @@ async function main(): Promise<void> {
   const { seedDecisionRegistry } = await import("./seed/decision-registry")
   await seedDecisionRegistry()
 
+  // @release-strip — dữ liệu mẫu của cửa hàng riêng, công cụ cắt bản giao bỏ cả khối (scripts/release/cut-strip.ts)
   // Dev fixture: chạy trong dev hoặc khi cờ SEED_DEV_DATA=true được bật (demo / staging deploy).
   // Tài khoản Siin Store cũng nằm sau cờ này: nó đặt mật khẩu viết cứng (công khai trong git)
   // cho tài khoản vai Điều hành — chạy trên production là trao chìa khoá cho bất kỳ ai đọc repo
@@ -38,6 +39,7 @@ async function main(): Promise<void> {
     const { seedDevShopMoclan } = await import("./seed/dev-shop-moclan")
     await seedDevShopMoclan()
   }
+  // @release-strip-end
 }
 
 main()

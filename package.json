@@ -44,6 +44,8 @@
     "ux:audit": "node scripts/ux-audit/run.mjs",
     "dev:link-skills": "node scripts/dev-link-skills.mjs",
     "handover:check": "node scripts/handover-check.mjs",
+    "release:routes": "tsx scripts/release/routes-cli.ts",
+    "release:cut": "tsx scripts/release/cut-cli.ts",
     "nap:danh-muc": "tsx --env-file-if-exists=.env scripts/nap-avi-gift-vao-core.ts",
     "nap:phan-tich": "tsx --env-file-if-exists=.env scripts/nap-avi-gift-phan-tich.ts",
     "nap:credit": "tsx --env-file-if-exists=.env scripts/nap-credit.ts",

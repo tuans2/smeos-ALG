@@ -1,4 +1,5 @@
 import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi"
+import { isKnownApiRoute } from "@/lib/delivery/delivery-phase"
 
 import { AI_STUDIO_OPERATIONS } from "./ops-ai-studio"
 import { BRAND_OPERATIONS } from "./ops-brand"
@@ -37,7 +38,11 @@ export const INTERNAL_OPENAPI_PATH = "docs/spec/contracts/openapi/internal.opena
 
 export const INTERNAL_COVERED_PREFIXES = ["orders", "quotations", "products", "crm", "members", "organizations", "organization", "auth", "greeting-card", "coordinator", "creative-production", "media", "jobs", "vision", "audio", "video", "notification", "chat", "internal-chat", "branches", "branch-portal", "chain", "costing", "pricing-rules", "price-lists", "integrations", "integration-tokens", "sso", "assets", "asset-usages", "storage", "brand-kit", "brand-library", "product-copies", "content-engine", "market-intelligence", "session", "reports", "print", "vouchers", "usage", "business-profile", "brand-profile", "store", "store-share-link", "shop-reviews", "custom-domains", "short-links", "leads", "campaigns", "marketing-center", "customer-segments", "customers", "customer-interactions", "occasions", "delivery", "product-photo", "product-image-set", "product-change-requests", "availability", "roles", "workspaces", "ux-rollout-flags", "audit-logs", "subscription", "billing", "ai-policy", "ai-capabilities", "ai-requests", "content-guard", "ad-banner-poster", "field-config", "template-overrides", "noi-bo", "proxy", "catalog-links", "product-intelligence", "internal", "content-studio", "social-publishing"] as const
 
-export const INTERNAL_OPERATIONS: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS, ...CHAIN_OPERATIONS, ...COSTING_OPERATIONS, ...INTEGRATION_HUB_OPERATIONS, ...STORAGE_OPERATIONS, ...BRAND_OPERATIONS, ...CONTENT_OPERATIONS, ...MISC_OPERATIONS, ...PROFILE_OPERATIONS, ...MARKETING_OPERATIONS, ...PRODUCT_EXTRA_OPERATIONS, ...ADMIN_OPERATIONS, ...TOOLS_OPERATIONS, ...FINAL_OPERATIONS, ...STUDIO_OPERATIONS]
+/** Mọi operation đã khai — test giữ ở smeOS không có operation nào trỏ route không tồn tại. */
+export const INTERNAL_OPERATIONS_DECLARED: OpenApiOperation[] = [...ORDER_OPERATIONS, ...PRODUCT_OPERATIONS, ...CRM_OPERATIONS, ...ORG_OPERATIONS, ...GREETING_ORDER_OPERATIONS, ...GREETING_OPERATIONS, ...COORDINATOR_OPERATIONS, ...CREATIVE_OPERATIONS, ...MEDIA_OPERATIONS, ...AI_STUDIO_OPERATIONS, ...NOTIFICATION_OPERATIONS, ...CHAT_OPERATIONS, ...CHAIN_OPERATIONS, ...COSTING_OPERATIONS, ...INTEGRATION_HUB_OPERATIONS, ...STORAGE_OPERATIONS, ...BRAND_OPERATIONS, ...CONTENT_OPERATIONS, ...MISC_OPERATIONS, ...PROFILE_OPERATIONS, ...MARKETING_OPERATIONS, ...PRODUCT_EXTRA_OPERATIONS, ...ADMIN_OPERATIONS, ...TOOLS_OPERATIONS, ...FINAL_OPERATIONS, ...STUDIO_OPERATIONS]
+
+/** Bản cắt bàn giao chỉ còn route được giao: bỏ operation của route đã cắt (kế hoạch GD1, Bước 2.3). */
+export const INTERNAL_OPERATIONS: OpenApiOperation[] = INTERNAL_OPERATIONS_DECLARED.filter((o) => isKnownApiRoute(o.path))
 
 export function buildInternalOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({

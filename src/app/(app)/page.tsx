@@ -31,7 +31,9 @@ import { FlowerNetworkCommandCenter } from "@/components/dashboard/flower-networ
 import { StoreJourneyHome } from "@/components/dashboard/store-journey-home"
 import { NetworkJourneyHome } from "@/components/dashboard/network-journey-home"
 import { PlatformJourneyHome } from "@/components/dashboard/platform-journey-home"
+// @release-strip — trang chủ tầng SaaS Ngành, không có trong bản giao GD1 (docs/plan/BANGIAO_GD1_PHAM_VI.md §4)
 import { IndustryJourneyHome } from "@/components/dashboard/industry-journey-home"
+// @release-strip-end
 import { ToolkitHome } from "@/components/dashboard/toolkit-home"
 import { FloristQueueHome } from "@/components/dashboard/florist-queue-home"
 import { ShipperRunsHome } from "@/components/dashboard/shipper-runs-home"
@@ -63,8 +65,10 @@ export default async function DashboardPage() {
       return <NetworkJourneyHome />
     case "PLATFORM_JOURNEY_HOME":
       return <PlatformJourneyHome />
+    // @release-strip
     case "INDUSTRY_JOURNEY_HOME":
       return <IndustryJourneyHome />
+    // @release-strip-end
     case "CONTROL_TOWER":
       return <NetworkJourneyHome />
     case "FLOWER_NETWORK_COMMAND_CENTER":

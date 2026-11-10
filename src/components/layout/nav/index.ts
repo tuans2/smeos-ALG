@@ -12,6 +12,7 @@ import { buildIndustryNav, INDUSTRY_NAV_ENTRIES } from "./nav-industry"
 import { buildChainNav, CHAIN_NAV_ENTRIES } from "./nav-chain"
 import { buildStoreNav, STORE_NAV_ENTRIES } from "./nav-store"
 import { withIntegrations } from "./nav-integrations"
+import { withDeliveryPhase } from "./nav-phase"
 
 export * from "./nav-types"
 export * from "./nav-mother"
@@ -46,7 +47,7 @@ export function buildNav(
   unlockedToolKeys?: string[] | null
 ): NavView {
   const tier = tierOf(organizationType, role)
-  return withIntegrations(buildTierNav(), tier, can, navHiddenKeys)
+  return withDeliveryPhase(withIntegrations(buildTierNav(), tier, can, navHiddenKeys), tier)
 
   function buildTierNav(): NavView {
     switch (tier) {

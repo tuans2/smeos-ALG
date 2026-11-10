@@ -1,0 +1,91 @@
+name: Bản giao GD1
+
+# Kế hoạch bàn giao GD1, Bước 2.6 (docs/plan/BANGIAO_GD1_123_CHUC_NANG.md): cắt thử bản giao từ commit đang kiểm
+# rồi chạy cổng trên chính bản cắt. Workflow riêng, KHÔNG chạy khi push lên `main`: Render deploy theo check
+# của commit trên `main` (`autoDeployTrigger: checksPass`, xem cuối ci.yml) — job này không được chặn production.
+# Test tenant/platform trên bản cắt chạy theo lịch hằng đêm.
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["Bangiao_GD1_123chunang"]
+  schedule:
+    - cron: "17 19 * * *"
+  workflow_dispatch:
+
+jobs:
+  cut:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: floraos
+          POSTGRES_PASSWORD: floraos
+          POSTGRES_DB: floraos
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://floraos:floraos@localhost:5432/floraos
+      DATABASE_URL_TEST: postgresql://floraos:floraos@localhost:5432/floraos_test
+      SESSION_SECRET: ci-only-not-a-real-secret
+      INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
+      SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret
+      OPENAI_API_KEY: ci-only-fake-key-network-is-blocked
+      ALLOW_LOCAL_STORAGE: "true"
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - name: Thư mục bản cắt (ngoài repo)
+        run: echo "CUT=$RUNNER_TEMP/gd1-cut" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "npm"
+      - run: npm ci
+      - run: npx prisma generate
+      - name: Danh sách route và báo cáo phụ thuộc khớp mã (không phụ thuộc mới vào vùng không giao)
+        run: npm run release:routes -- --check
+      - name: Cắt thử bản giao
+        run: npm run release:cut -- gd1 HEAD "$CUT"
+      - name: Kiểm rò rỉ trên bản cắt
+        run: node scripts/handover-check.mjs --dir "$CUT" --recipient ALG --baseline releases/gd1/leak-baseline.json
+      - name: Cài và dựng CSDL cho bản cắt
+        working-directory: ${{ env.CUT }}
+        env:
+          PGPASSWORD: floraos
+        run: |
+          npm ci
+          npx prisma generate
+          npm run db:deploy
+          psql -h localhost -U floraos -d postgres -c 'CREATE DATABASE floraos_test'
+          DATABASE_URL=postgresql://floraos:floraos@localhost:5432/floraos_test npx prisma db push
+          npm run db:seed
+      - name: Typecheck bản cắt
+        working-directory: ${{ env.CUT }}
+        run: npm run typecheck
+      - name: Unit test bản cắt
+        working-directory: ${{ env.CUT }}
+        run: npm test
+      - name: Test cách ly tổ chức và nền tảng trên bản cắt (hằng đêm)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        working-directory: ${{ env.CUT }}
+        run: npm run test:tenant && npm run test:platform
+      - name: Build bản cắt
+        working-directory: ${{ env.CUT }}
+        run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Worker trên bản cắt
+        working-directory: ${{ env.CUT }}/workers
+        run: pip install -r requirements.txt && python -m pytest tests -q
+      - name: Lưu báo cáo cắt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gd1-cut-report
+          path: ${{ runner.temp }}/gd1-cut.report.md
+          retention-days: 14

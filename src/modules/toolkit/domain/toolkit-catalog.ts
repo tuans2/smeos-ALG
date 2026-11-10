@@ -7,8 +7,8 @@
  *   FOUNDATION  – Nền tảng code sẵn, cần cấu trúc lại
  *   PLANNED     – Chưa có gì, cần xây mới hoàn toàn
  */
+import { filterByPhase } from "@/lib/delivery/delivery-phase"
 import { APP_PAGE_TOOLS } from "./app-page-tools"
-// ── Types ──────────────────────────────────────────────────────────
 
 export type ToolStatus = "DONE" | "IN_PROGRESS" | "FOUNDATION" | "PLANNED"
 
@@ -454,9 +454,9 @@ export const TOOLKIT_GROUPS: readonly ToolGroup[] = [
 
 // ── Helpers ────────────────────────────────────────────────────────
 
-/** Trả tất cả công cụ flat */
+/** Trả tất cả công cụ flat; chế độ giai đoạn bàn giao bỏ công cụ có trang ngoài phạm vi */
 export function getAllTools(): ToolDefinition[] {
-  return [...TOOLKIT_GROUPS.flatMap((g) => [...g.tools]), ...APP_PAGE_TOOLS]
+  return filterByPhase([...TOOLKIT_GROUPS.flatMap((g) => [...g.tools]), ...APP_PAGE_TOOLS], (t) => t.href)
 }
 
 /**
@@ -465,12 +465,10 @@ export function getAllTools(): ToolDefinition[] {
  * - Prod: chỉ hiện chức năng DONE
  */
 export function getVisibleGroups(isDev: boolean): ToolGroup[] {
-  if (isDev) return [...TOOLKIT_GROUPS]
-
   return TOOLKIT_GROUPS
     .map((group) => ({
       ...group,
-      tools: group.tools.filter((t) => t.status === "DONE"),
+      tools: filterByPhase(group.tools, (t) => t.href).filter((t) => isDev || t.status === "DONE"),
     }))
     .filter((group) => group.tools.length > 0)
 }

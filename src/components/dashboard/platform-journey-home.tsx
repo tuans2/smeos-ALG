@@ -6,6 +6,7 @@ import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
 import { Button } from "@/components/ui/button"
 import { PLATFORM_JOURNEYS } from "@/modules/journey/domain/journey-catalog"
+import { filterByPhase } from "@/lib/delivery/delivery-phase"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { createJourneyState } from "@/modules/journey/domain/journey-state"
 import { ChoiceGrid } from "@/components/journey/choice-grid"
@@ -180,7 +181,7 @@ export function PlatformJourneyHome({
     <ChoiceGrid
       title={t("home.tiers.mother.title")}
       subtitle={t("home.tiers.mother.subtitle")}
-      journeys={PLATFORM_JOURNEYS}
+      journeys={filterByPhase(PLATFORM_JOURNEYS, (j) => j.primaryHref)}
       featuredJourneyId="view-platform-overview"
       onSelectJourney={handleSelectJourney}
       onSwitchToExpertMode={() => handleToggleExpertMode(true)}
