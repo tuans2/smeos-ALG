@@ -33,7 +33,7 @@ export default function DangNhapPage() {
   }, [])
 
   return (
-    <div className="relative flex min-h-dvh flex-col justify-center overflow-hidden bg-bg px-[20px] sm:px-[30px] py-9">
+    <main className="relative flex min-h-dvh flex-col justify-center overflow-hidden bg-bg px-[20px] sm:px-[30px] py-9">
       <svg width="260" height="260" viewBox="0 0 260 260" className="pointer-events-none absolute -right-24 -top-24 opacity-50">
         <circle cx="130" cy="130" r="130" fill="var(--color-flora-leaf)" />
       </svg>
@@ -46,7 +46,7 @@ export default function DangNhapPage() {
             <path d="M50,50 C47,40 33,26 50,14 C67,26 53,40 50,50 Z" fill="var(--color-flora-sage)" transform="rotate(140 50 50)" />
             <circle cx="50" cy="50" r="3" fill="var(--color-flora-green)" />
           </svg>
-          <div className="text-display-xl font-extrabold tracking-tight text-primary">smeOS</div>
+          <h1 className="text-display-xl font-extrabold tracking-tight text-primary">smeOS</h1>
           <div className="text-center text-body-sm text-text-muted">
             {cheDo === "dung-thu"
               ? "Đăng ký dùng thử Cửa hàng mẫu theo ngành nghề — quản trị viên duyệt trước khi dùng"
@@ -119,7 +119,7 @@ export default function DangNhapPage() {
       <div className="pb-1 pt-9 text-center text-caption text-text-muted">
         © smeOS — Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ
       </div>
-    </div>
+    </main>
   )
 }
 

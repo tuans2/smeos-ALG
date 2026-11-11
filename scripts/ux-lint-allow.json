@@ -260,6 +260,16 @@
       "rule": "R18",
       "path": "src/components/greeting-card/customer/honeypot-field.tsx",
       "reason": "Ô bẫy chống spam phải là <input> thô ẩn khỏi người dùng/trình đọc màn hình để chỉ bot điền vào"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/(auth)/dang-nhap/page.tsx",
+      "reason": "Trang đăng nhập trước khi vào app, thương hiệu căn giữa — không có PageHeader/shell nên tên sản phẩm là <h1> duy nhất của trang (WCAG 1.3.1; DS-07)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/bg/[token]/page.tsx",
+      "reason": "Báo giá công khai gửi khách, không có shell/PageHeader — mã báo giá là <h1> duy nhất của trang (WCAG 1.3.1; DS-07)"
     }
   ]
 }
