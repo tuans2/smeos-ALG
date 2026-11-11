@@ -11,6 +11,7 @@ import { selectBrochureProduct } from "@/modules/greeting-card/use-cases/select-
 import { submitBrochureOrder } from "@/modules/greeting-card/use-cases/submit-brochure-order"
 import { proposeSubstitute, respondSubstitute, substituteOptions } from "@/modules/greeting-card/use-cases/substitute"
 import { getBrochureTracking } from "@/modules/greeting-card/use-cases/get-brochure-tracking"
+import { getGreetingCatalogForCustomer } from "@/modules/greeting-card/use-cases/get-greeting-catalog"
 import { flowerSubstituteOptions, proposeFlowerSubstitute, respondFlowerSubstitute } from "@/modules/greeting-card/use-cases/flower-substitute"
 
 /** Đề xuất mẫu thay thế (08/10/2026): mẫu cùng bộ sưu tập, khách chọn, giữ giá, cách ly tổ chức. */
@@ -129,6 +130,27 @@ describe("greeting-card: đề xuất mẫu thay thế", () => {
       storage_key: `org/${t.organizationId}/unfiled/${randomUUID()}.jpg`, mime_type: "image/jpeg", created_by: t.userId,
     } })
   }
+
+  it("công thức khai ở form sản phẩm theo đơn Thẻ Chào sang phiếu thợ và đề xuất thay hoa (5.14), không cần chèn tay", async () => {
+    const bom = { flowers: [
+      { name: "Hồng Ecuador", quantity: 10, unit: "cành", color: "Đỏ", role: "Hoa chính" },
+      { name: "Cúc Fiji", quantity: 5, unit: "cành", color: "Trắng", role: "Hoa phụ" },
+    ] }
+    const x = await new ProductRepository().create(a.ctx, { code: "HOA-BOM", name: "Bó có công thức", attributes: { price: 500000, bom } })
+    const catalog = await new GreetingCardRepository().createCatalog(a.ctx, { code: "bo-bom", name: "Bộ", productIds: [x.id], createdBy: a.userId })
+    const link = await createSendLink(staffA, { catalogId: catalog.id })
+    const view = await getGreetingCatalogForCustomer(link.sendCode)
+    expect(view.status === "ACTIVE" && "recipe" in (view.products[0] ?? {})).toBe(false)
+    await selectBrochureProduct(link.sendCode, x.id)
+    const order = await submitBrochureOrder(link.sendCode, ORDER)
+    const item = await prisma.order_items.findFirstOrThrow({ where: { order_id: order.orderId } })
+    expect((item.metadata as { flowers?: unknown }).flowers).toEqual([
+      { flowerName: "Hồng Ecuador", quantity: 10, unit: "cành", color: "Đỏ", role: "Chủ đạo" },
+      { flowerName: "Cúc Fiji", quantity: 5, unit: "cành", color: "Trắng", role: "Hoa phụ" },
+    ])
+    const opts = await flowerSubstituteOptions(staffA, order.orderId)
+    expect(opts.lines.map((l) => l.flowerName)).toEqual(["Cúc Fiji"])
+  })
 
   it("đổi một loại hoa phụ (ALG 5.14): có ảnh tiệm chụp, khách đồng ý → công thức của đơn đổi đúng dòng", async () => {
     const { order, y } = await placeOrder()

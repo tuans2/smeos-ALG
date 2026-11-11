@@ -11,7 +11,7 @@ import type {
 } from "../domain/greeting-card-types"
 import { loadPublicSession } from "./brochure-session-access"
 import { linkAvailability } from "../domain/greeting-card-rules"
-import { collectImageAssetIds, toCatalogProduct } from "./brochure-product-mapper"
+import { collectImageAssetIds, forCustomer, toCatalogProduct } from "./brochure-product-mapper"
 import { applyPriceVisibility, readPriceVisibility } from "../domain/price-visibility"
 import { toPublicCatalogFilters } from "../domain/greeting-template-registry"
 import type { ShopContact } from "../domain/shop-contact"
@@ -74,7 +74,7 @@ export async function getGreetingCatalogForCustomer(
   // Mẫu tạm hết hàng vẫn hiện (đánh dấu `available: false`) để khách xem mẫu tương tự / hỏi tiệm;
   // chọn và đặt mẫu hết hàng bị chặn ở máy chủ (`resolveOrderableProduct`).
   const visibility = readPriceVisibility(session.organization?.settings)
-  const products = items.map((item) => applyPriceVisibility(toCatalogProduct(item, urls), visibility))
+  const products = items.map((item) => forCustomer(applyPriceVisibility(toCatalogProduct(item, urls), visibility)))
   const shop = await repo.getShopProfile(session.organization_id)
   const contact = (await getShopContact(session.organization_id)) ?? {
     name: shop.name, phone: shop.phone, zaloUrl: null, address: null, logoUrl: null,
