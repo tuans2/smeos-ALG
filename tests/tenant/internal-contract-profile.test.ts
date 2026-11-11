@@ -49,7 +49,7 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
   it("hồ sơ doanh nghiệp, hồ sơ thương hiệu, dữ liệu mẫu theo ngành, minh bạch thu thập", async () => {
     await expectContract(await getBusiness(get("/business-profile")), 200, R.businessProfileResponse, "business-get-empty")
     await expectContract(
-      await putBusiness(send("/business-profile", "PUT", { display_name: "Tiệm hoa Mộc Lan", phone: "0901234567", address: "12 Lê Lợi", target_customers: ["Văn phòng"], operating_hours: { mon: "08:00-20:00" } })),
+      await putBusiness(send("/business-profile", "PUT", { display_name: "Tiệm hoa Hoa Mẫu", phone: "0901234567", address: "12 Lê Lợi", target_customers: ["Văn phòng"], operating_hours: { mon: "08:00-20:00" } })),
       200, R.businessProfileResponse, "business-put"
     )
     await expectContract(await getBusiness(get("/business-profile")), 200, R.businessProfileResponse, "business-get")
@@ -83,7 +83,7 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
   })
 
   it("tên miền riêng: gắn, danh sách, xác minh, gỡ", async () => {
-    const created = await expectContract(await addDomain(send("/custom-domains", "POST", { hostname: "hoa-moclan.vn" })), 201, R.domainResponse, "domain-add")
+    const created = await expectContract(await addDomain(send("/custom-domains", "POST", { hostname: "hoa-hoamau.vn" })), 201, R.domainResponse, "domain-add")
     const id = String((created.data as { id: string }).id)
     await expectContract(await listDomains(get("/custom-domains")), 200, R.domainsResponse, "domains")
     const verify = await verifyDomain(send(`/custom-domains/${id}/verify`, "POST"), ps(id))
@@ -92,7 +92,7 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
   })
 
   it("link/QR động: tạo, danh sách, sửa, thống kê", async () => {
-    const created = await expectContract(await createShortLink(send("/short-links", "POST", { kind: "QR", name: "QR quầy", targetPath: "/c/moc-lan", placementLabel: "Quầy thu ngân" })), 201, R.shortLinkResponse, "short-create")
+    const created = await expectContract(await createShortLink(send("/short-links", "POST", { kind: "QR", name: "QR quầy", targetPath: "/c/hoa-mau", placementLabel: "Quầy thu ngân" })), 201, R.shortLinkResponse, "short-create")
     const id = String(created.id ?? (created.data as { id?: string } | undefined)?.id)
     await expectContract(await listShortLinks(get("/short-links?limit=10")), 200, R.shortLinksResponse, "short-list")
     await expectContract(await patchShortLink(send(`/short-links/${id}`, "PATCH", { name: "QR quầy chính", isActive: false }), ps(id)), 200, R.shortLinkResponse, "short-patch")

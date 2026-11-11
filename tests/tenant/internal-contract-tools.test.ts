@@ -40,10 +40,10 @@ describe("hợp đồng — ấn phẩm quảng cáo, trường dữ liệu, ghi
 
   it("ấn phẩm quảng cáo: ưu đãi, viết chữ, dựng, lưu thư viện", async () => {
     await expectContract(await promotions(get("/ad-banner-poster/copy")), 200, R.bannerPromotionsResponse, "banner-promotions")
-    const copy = await expectContract(await bannerCopy(send("/ad-banner-poster/copy", "POST", { occasion_key: "women_day", occasion_label: "8/3", shop_name: "Tiệm hoa Mộc Lan", product_title: "Bó hồng pastel" })), 200, R.bannerCopyResponse, "banner-copy")
+    const copy = await expectContract(await bannerCopy(send("/ad-banner-poster/copy", "POST", { occasion_key: "women_day", occasion_label: "8/3", shop_name: "Tiệm hoa Hoa Mẫu", product_title: "Bó hồng pastel" })), 200, R.bannerCopyResponse, "banner-copy")
     const c = copy.copy as { headline: string; subHeadline: string; promotionBadge: string; ctaText: string }
     await expectContract(
-      await bannerRender(send("/ad-banner-poster/render", "POST", { occasion_key: "women_day", occasion_label: "8/3", copy: c, brand_info: { shopName: "Tiệm hoa Mộc Lan", hotline: "0901234567" }, style_preset_id: "FESTIVE_SEASON", target_formats: ["1:1", "9:16"] })),
+      await bannerRender(send("/ad-banner-poster/render", "POST", { occasion_key: "women_day", occasion_label: "8/3", copy: c, brand_info: { shopName: "Tiệm hoa Hoa Mẫu", hotline: "0901234567" }, style_preset_id: "FESTIVE_SEASON", target_formats: ["1:1", "9:16"] })),
       200, R.bannerRenderResponse, "banner-render"
     )
     await expectContract(await bannerSave(send("/ad-banner-poster/save", "POST", { title: "Banner 8/3", asset_type_code: "BANNER", image_data: PNG_1X1, width: 1, height: 1 })), 201, R.bannerSavedResponse, "banner-save")
@@ -62,7 +62,7 @@ describe("hợp đồng — ấn phẩm quảng cáo, trường dữ liệu, ghi
   })
 
   it("ghi đè mẫu, định danh tổ chức, proxy", async () => {
-    await expectContract(await putOverride(send("/template-overrides", "PUT", { templateFamily: "ST", templateKey: "sales_pitch_zalo", fieldKey: "greeting_line", value: "Chào anh/chị, Mộc Lan xin gửi mẫu hoa" })), 200, R.templateOverrideResponse, "override-put")
+    await expectContract(await putOverride(send("/template-overrides", "PUT", { templateFamily: "ST", templateKey: "sales_pitch_zalo", fieldKey: "greeting_line", value: "Chào anh/chị, Hoa Mẫu xin gửi mẫu hoa" })), 200, R.templateOverrideResponse, "override-put")
     await expectContract(await listOverrides(get("/template-overrides?templateKey=sales_pitch_zalo")), 200, R.templateOverridesResponse, "overrides")
     expect((await listOverrides(get("/template-overrides"))).status).toBe(400)
     expect((await putOverride(send("/template-overrides", "PUT", { templateFamily: "ST", templateKey: "khong-co", fieldKey: "x", value: "y" }))).status).toBe(400)
