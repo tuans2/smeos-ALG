@@ -53,7 +53,7 @@ const ERROR_DESCRIPTIONS: Record<number, string> = {
   400: "Sai lược đồ thân/query hoặc thân không phải JSON (`VALIDATION_FAILED`, `details.issues`)",
   401: "Thiếu hoặc sai token / phiên SSO (`UNAUTHENTICATED`)",
   402: "Gói thuê bao quá hạn — chỉ xem (`SUBSCRIPTION_OVERDUE`)",
-  403: "Thiếu mã năng lực hoặc token của app không được đọc tài nguyên này (`CAPABILITY_DENIED`)",
+  403: "Thiếu mã năng lực hoặc token của app không được đọc tài nguyên này (`CAPABILITY_DENIED`); tổ chức tạm ngưng hoặc đang rời nền tảng (`ORGANIZATION_INACTIVE`)",
   404: "Không tìm thấy, hoặc thuộc tổ chức khác (`NOT_FOUND`)",
   409: "Xung đột trạng thái (`CONFLICT`)",
   413: "Thân yêu cầu vượt 2 MB (`PAYLOAD_TOO_LARGE`, `details.max_bytes`)",

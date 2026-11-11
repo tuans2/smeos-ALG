@@ -135391,6 +135391,7 @@
                   "PASSWORD_CHANGE_REQUIRED",
                   "CROSS_ORIGIN_REJECTED",
                   "SUBSCRIPTION_OVERDUE",
+                  "ORGANIZATION_INACTIVE",
                   "NOT_FOUND",
                   "CONFLICT",
                   "PAYLOAD_TOO_LARGE",
@@ -135449,7 +135450,7 @@
         }
       },
       "Error403": {
-        "description": "Thiếu mã năng lực hoặc token của app không được đọc tài nguyên này (`CAPABILITY_DENIED`)",
+        "description": "Thiếu mã năng lực hoặc token của app không được đọc tài nguyên này (`CAPABILITY_DENIED`); tổ chức tạm ngưng hoặc đang rời nền tảng (`ORGANIZATION_INACTIVE`)",
         "headers": {},
         "content": {
           "application/json": {
