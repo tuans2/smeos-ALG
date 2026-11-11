@@ -40,3 +40,6 @@ ccbec661ad7921774cb8376bbccf33c63f894139:tests/tenant/internal-contract-integrat
 # Khoá chủ PII giả của job e2e-ux trong CI (nhánh claude/trusting-ramanujan-f6y2cw, PR #18, 10/11/2026) — base64 của
 # chữ "ci-only-not-a-real-pii-key-32b!!", không phải bí mật thật (đã đọc tận mắt; PO duyệt thêm 10/11/2026, PR #23).
 895f80d2ff8558c4ff8527515e4092921a63c319:.github/workflows/ci.yml:generic-api-key:183
+# Báo nhầm (PR #38, 11/11/2026): dòng import `{ lifecycleAccess, lifecycleBlockedMessage }` — chữ "access" + dấu phẩy +
+# tên hàm entropy 3.52 khớp luật generic-api-key; là tên hàm, không phải bí mật (đã đọc tận mắt).
+651912af2255ac4a97bdca721dcb725f5103e3af:src/modules/organization/use-cases/assert-organization-lifecycle.ts:generic-api-key:3
