@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto"
+
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { POST as logIn } from "@/app/api/v1/auth/login/route"
@@ -44,14 +46,19 @@ describe("kiểm Origin cho lệnh ghi", () => {
     expect(await count()).toBe(3)
   })
 
-  it("đăng nhập từ origin lạ → 403, không mở phiên (login CSRF)", async () => {
+  it("đăng nhập từ origin lạ → 403 trước khi xét mật khẩu, không mở phiên (login CSRF)", async () => {
     const sessionsBefore = await prisma.sessions.count()
-    const res = await logIn(new Request(`${BASE}/auth/login`, {
+    // Mật khẩu sinh lúc chạy (không viết cứng): qua được bộ kiểm thì sẽ là 401 sai mật khẩu, nên 403 chứng minh
+    // request bị chặn ở bước kiểm Origin
+    const login = (origin: string) => logIn(new Request(`${BASE}/auth/login`, {
       method: "POST",
-      headers: { "content-type": "application/json", origin: "https://evil.example" },
-      body: JSON.stringify({ email: "origin@vi-du.test", password: "mat-khau-du-dai" }),
+      headers: { "content-type": "application/json", origin },
+      body: JSON.stringify({ email: "origin@vi-du.test", password: randomUUID() }),
     }))
+    expect((await login("http://localhost")).status).toBe(401)
+    const res = await login("https://evil.example")
     expect(res.status).toBe(403)
+    expect((await res.json()).error.code).toBe("CROSS_ORIGIN_REJECTED")
     expect(res.headers.getSetCookie()).toEqual([])
     expect(await prisma.sessions.count()).toBe(sessionsBefore)
   })
