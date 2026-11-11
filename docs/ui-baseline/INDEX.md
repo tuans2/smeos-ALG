@@ -1,11 +1,305 @@
 # Kho ảnh màn hình — chỉ mục (sinh tự động)
 
-Dev local, dữ liệu mẫu, desktop 1440 và mobile 390. Cột "Mã" chỉ là gợi ý theo route, cần PO rà.
+Dev local, dữ liệu mẫu, desktop 1440 và mobile 390. Cột "Mã" chỉ là gợi ý theo route, cần PO rà. Ảnh hộp thoại chụp full-page nên lớp phủ chỉ phủ vùng nhìn thấy.
 
-Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
+Tổng: 1159 ảnh ({'shots': 416, 'shots2': 469, 'shots-p1-empty': 274})
 
 | Vai | Màn / route | Thiết bị | Loại | Mã chức năng | Tệp |
 |---|---|---|---|---|---|
+| chuoi | audit | desktop | dữ liệu | 1.17 | `shots/chuoi/desktop/audit.png` |
+| chuoi | audit | desktop | tab/hộp thoại/route động | 1.17 | `shots2/chuoi/desktop/audit__tab1-Thao-tác-trong-tổ-chức.png` |
+| chuoi | audit | desktop | tab/hộp thoại/route động | 1.17 | `shots2/chuoi/desktop/audit__tab2-Truy-cập-của-nền-tảng.png` |
+| chuoi | audit | mobile | dữ liệu | 1.17 | `shots/chuoi/mobile/audit.png` |
+| chuoi | audit | mobile | tab/hộp thoại/route động | 1.17 | `shots2/chuoi/mobile/audit__tab1-Thao-tác-trong-tổ-chức.png` |
+| chuoi | audit | mobile | tab/hộp thoại/route động | 1.17 | `shots2/chuoi/mobile/audit__tab2-Truy-cập-của-nền-tảng.png` |
+| chuoi | bang-gia | desktop | dữ liệu | 3.1,3.4 | `shots/chuoi/desktop/bang-gia.png` |
+| chuoi | bang-gia | mobile | dữ liệu | 3.1,3.4 | `shots/chuoi/mobile/bang-gia.png` |
+| chuoi | bao-cao | desktop | dữ liệu | 6.1-6.8 | `shots/chuoi/desktop/bao-cao.png` |
+| chuoi | bao-cao | desktop | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/desktop/bao-cao__tab1-Đơn-hàng.png` |
+| chuoi | bao-cao | desktop | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/desktop/bao-cao__tab2-Doanh-thu.png` |
+| chuoi | bao-cao | desktop | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/desktop/bao-cao__tab3-Sản-phẩm.png` |
+| chuoi | bao-cao | desktop | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/desktop/bao-cao__tab4-Hiệu-suất.png` |
+| chuoi | bao-cao | desktop | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/desktop/bao-cao__tab5-Dòng-tiền.png` |
+| chuoi | bao-cao | mobile | dữ liệu | 6.1-6.8 | `shots/chuoi/mobile/bao-cao.png` |
+| chuoi | bao-cao | mobile | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/mobile/bao-cao__tab1-Đơn-hàng.png` |
+| chuoi | bao-cao | mobile | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/mobile/bao-cao__tab2-Doanh-thu.png` |
+| chuoi | bao-cao | mobile | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/mobile/bao-cao__tab3-Sản-phẩm.png` |
+| chuoi | bao-cao | mobile | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/mobile/bao-cao__tab4-Hiệu-suất.png` |
+| chuoi | bao-cao | mobile | tab/hộp thoại/route động | 6.1-6.8 | `shots2/chuoi/mobile/bao-cao__tab5-Dòng-tiền.png` |
+| chuoi | bao-gia | desktop | dữ liệu | 3.8-3.12 | `shots/chuoi/desktop/bao-gia.png` |
+| chuoi | bao-gia | mobile | dữ liệu | 3.8-3.12 | `shots/chuoi/mobile/bao-gia.png` |
+| chuoi | bo-may | desktop | dữ liệu |  | `shots/chuoi/desktop/bo-may.png` |
+| chuoi | bo-may | mobile | dữ liệu |  | `shots/chuoi/mobile/bo-may.png` |
+| chuoi | cai-dat | desktop | dữ liệu | 1.5,1.7,1.8,1.9,3.2,3.6,4.21,5.8,9.2,10.8 | `shots/chuoi/desktop/cai-dat.png` |
+| chuoi | cai-dat | mobile | dữ liệu | 1.5,1.7,1.8,1.9,3.2,3.6,4.21,5.8,9.2,10.8 | `shots/chuoi/mobile/cai-dat.png` |
+| chuoi | cai-dat-ai | desktop | dữ liệu |  | `shots/chuoi/desktop/cai-dat-ai.png` |
+| chuoi | cai-dat-ai | mobile | dữ liệu |  | `shots/chuoi/mobile/cai-dat-ai.png` |
+| chuoi | cai-dat_ma-tran-camket | desktop | dữ liệu |  | `shots/chuoi/desktop/cai-dat_ma-tran-camket.png` |
+| chuoi | cai-dat_ma-tran-camket | mobile | dữ liệu |  | `shots/chuoi/mobile/cai-dat_ma-tran-camket.png` |
+| chuoi | cai-dat_ma-tran-chinhsach | desktop | dữ liệu |  | `shots/chuoi/desktop/cai-dat_ma-tran-chinhsach.png` |
+| chuoi | cai-dat_ma-tran-chinhsach | mobile | dữ liệu |  | `shots/chuoi/mobile/cai-dat_ma-tran-chinhsach.png` |
+| chuoi | cai-dat_ma-tran-phigiacong | desktop | dữ liệu |  | `shots/chuoi/desktop/cai-dat_ma-tran-phigiacong.png` |
+| chuoi | cai-dat_ma-tran-phigiacong | mobile | dữ liệu |  | `shots/chuoi/mobile/cai-dat_ma-tran-phigiacong.png` |
+| chuoi | cai-dat_ma-tran-thanhtoan-datco | desktop | dữ liệu |  | `shots/chuoi/desktop/cai-dat_ma-tran-thanhtoan-datco.png` |
+| chuoi | cai-dat_ma-tran-thanhtoan-datco | mobile | dữ liệu |  | `shots/chuoi/mobile/cai-dat_ma-tran-thanhtoan-datco.png` |
+| chuoi | cai-dat_ma-tran-uudai | desktop | dữ liệu |  | `shots/chuoi/desktop/cai-dat_ma-tran-uudai.png` |
+| chuoi | cai-dat_ma-tran-uudai | mobile | dữ liệu |  | `shots/chuoi/mobile/cai-dat_ma-tran-uudai.png` |
+| chuoi | cai-dat_thanh-vien | desktop | dữ liệu | 1.10,1.11,1.13 | `shots/chuoi/desktop/cai-dat_thanh-vien.png` |
+| chuoi | cai-dat_thanh-vien | mobile | dữ liệu | 1.10,1.11,1.13 | `shots/chuoi/mobile/cai-dat_thanh-vien.png` |
+| chuoi | cai-dat_thanh-vien_vai-tro | desktop | dữ liệu | 1.12,1.13,1.16 | `shots/chuoi/desktop/cai-dat_thanh-vien_vai-tro.png` |
+| chuoi | cai-dat_thanh-vien_vai-tro | mobile | dữ liệu | 1.12,1.13,1.16 | `shots/chuoi/mobile/cai-dat_thanh-vien_vai-tro.png` |
+| chuoi | cai-dat_thong-bao | desktop | dữ liệu |  | `shots/chuoi/desktop/cai-dat_thong-bao.png` |
+| chuoi | cai-dat_thong-bao | mobile | dữ liệu |  | `shots/chuoi/mobile/cai-dat_thong-bao.png` |
+| chuoi | catalog | desktop | dữ liệu | 8.1 | `shots/chuoi/desktop/catalog.png` |
+| chuoi | catalog | mobile | dữ liệu | 8.1 | `shots/chuoi/mobile/catalog.png` |
+| chuoi | cham-soc | desktop | dữ liệu |  | `shots/chuoi/desktop/cham-soc.png` |
+| chuoi | cham-soc | mobile | dữ liệu |  | `shots/chuoi/mobile/cham-soc.png` |
+| chuoi | chat | desktop | dữ liệu | 9.1 | `shots/chuoi/desktop/chat.png` |
+| chuoi | chat | mobile | dữ liệu | 9.1 | `shots/chuoi/mobile/chat.png` |
+| chuoi | cong-cu | desktop | dữ liệu |  | `shots/chuoi/desktop/cong-cu.png` |
+| chuoi | cong-cu | mobile | dữ liệu |  | `shots/chuoi/mobile/cong-cu.png` |
+| chuoi | cong-cu_anh-san-pham | desktop | dữ liệu |  | `shots/chuoi/desktop/cong-cu_anh-san-pham.png` |
+| chuoi | cong-cu_anh-san-pham | mobile | dữ liệu |  | `shots/chuoi/mobile/cong-cu_anh-san-pham.png` |
+| chuoi | cong-cu_bo-anh-san-pham | desktop | dữ liệu |  | `shots/chuoi/desktop/cong-cu_bo-anh-san-pham.png` |
+| chuoi | cong-cu_bo-anh-san-pham | mobile | dữ liệu |  | `shots/chuoi/mobile/cong-cu_bo-anh-san-pham.png` |
+| chuoi | cong-cu_poster-banner | desktop | dữ liệu |  | `shots/chuoi/desktop/cong-cu_poster-banner.png` |
+| chuoi | cong-cu_poster-banner | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/cong-cu_poster-banner__tab1-Tất-cả-kích-thước-5-.png` |
+| chuoi | cong-cu_poster-banner | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/cong-cu_poster-banner__tab2-Vuông-1-1.png` |
+| chuoi | cong-cu_poster-banner | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/cong-cu_poster-banner__tab3-Dọc-4-5.png` |
+| chuoi | cong-cu_poster-banner | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/cong-cu_poster-banner__tab4-Story-9-16.png` |
+| chuoi | cong-cu_poster-banner | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/cong-cu_poster-banner__tab5-Banner-16-9.png` |
+| chuoi | cong-cu_poster-banner | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/cong-cu_poster-banner__tab6-Poster-in-A4.png` |
+| chuoi | cong-cu_poster-banner | mobile | dữ liệu |  | `shots/chuoi/mobile/cong-cu_poster-banner.png` |
+| chuoi | cong-cu_poster-banner | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/cong-cu_poster-banner__tab1-Tất-cả-kích-thước-5-.png` |
+| chuoi | cong-cu_poster-banner | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/cong-cu_poster-banner__tab2-Vuông-1-1.png` |
+| chuoi | cong-cu_poster-banner | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/cong-cu_poster-banner__tab3-Dọc-4-5.png` |
+| chuoi | cong-cu_poster-banner | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/cong-cu_poster-banner__tab4-Story-9-16.png` |
+| chuoi | cong-cu_poster-banner | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/cong-cu_poster-banner__tab5-Banner-16-9.png` |
+| chuoi | cong-cu_poster-banner | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/cong-cu_poster-banner__tab6-Poster-in-A4.png` |
+| chuoi | creative-studio | desktop | dữ liệu |  | `shots/chuoi/desktop/creative-studio.png` |
+| chuoi | creative-studio | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/creative-studio__tab1-Phân-tích-ảnh-sản-phẩm.png` |
+| chuoi | creative-studio | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/creative-studio__tab2-Viết-nội-dung-Copywriting-.png` |
+| chuoi | creative-studio | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/creative-studio__tab3-Sản-xuất-âm-thanh-_-Giọng-đọc.png` |
+| chuoi | creative-studio | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/creative-studio__tab4-Biến-thể-marketing-_-Bối-cảnh.png` |
+| chuoi | creative-studio | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/creative-studio__tab5-Dựng-video-đa-kênh.png` |
+| chuoi | creative-studio | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/creative-studio__tab6-Gói-chiến-dịch-_-Duyệt.png` |
+| chuoi | creative-studio | mobile | dữ liệu |  | `shots/chuoi/mobile/creative-studio.png` |
+| chuoi | creative-studio | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/creative-studio__tab1-Phân-tích-ảnh-sản-phẩm.png` |
+| chuoi | creative-studio | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/creative-studio__tab2-Viết-nội-dung-Copywriting-.png` |
+| chuoi | creative-studio | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/creative-studio__tab3-Sản-xuất-âm-thanh-_-Giọng-đọc.png` |
+| chuoi | creative-studio | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/creative-studio__tab4-Biến-thể-marketing-_-Bối-cảnh.png` |
+| chuoi | creative-studio | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/creative-studio__tab5-Dựng-video-đa-kênh.png` |
+| chuoi | creative-studio | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/creative-studio__tab6-Gói-chiến-dịch-_-Duyệt.png` |
+| chuoi | cua-hang | desktop | dữ liệu |  | `shots/chuoi/desktop/cua-hang.png` |
+| chuoi | cua-hang | mobile | dữ liệu |  | `shots/chuoi/mobile/cua-hang.png` |
+| chuoi | dieu-phoi | desktop | dữ liệu |  | `shots/chuoi/desktop/dieu-phoi.png` |
+| chuoi | dieu-phoi | mobile | dữ liệu |  | `shots/chuoi/mobile/dieu-phoi.png` |
+| chuoi | dieu-phoi_doi-tac | desktop | dữ liệu |  | `shots/chuoi/desktop/dieu-phoi_doi-tac.png` |
+| chuoi | dieu-phoi_doi-tac | mobile | dữ liệu |  | `shots/chuoi/mobile/dieu-phoi_doi-tac.png` |
+| chuoi | don-hang | desktop | dữ liệu | 4.1,4.3-4.11,4.14,4.15 | `shots/chuoi/desktop/don-hang.png` |
+| chuoi | don-hang | mobile | dữ liệu | 4.1,4.3-4.11,4.14,4.15 | `shots/chuoi/mobile/don-hang.png` |
+| chuoi | du-lieu | desktop | dữ liệu |  | `shots/chuoi/desktop/du-lieu.png` |
+| chuoi | du-lieu | mobile | dữ liệu |  | `shots/chuoi/mobile/du-lieu.png` |
+| chuoi | duyet | desktop | dữ liệu |  | `shots/chuoi/desktop/duyet.png` |
+| chuoi | duyet | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/duyet__tab1-Phân-tích-ảnh.png` |
+| chuoi | duyet | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/duyet__tab2-Ảnh-tối-ưu.png` |
+| chuoi | duyet | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/duyet__tab3-Dữ-liệu-bán-hàng.png` |
+| chuoi | duyet | mobile | dữ liệu |  | `shots/chuoi/mobile/duyet.png` |
+| chuoi | duyet | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/duyet__tab1-Phân-tích-ảnh.png` |
+| chuoi | duyet | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/duyet__tab2-Ảnh-tối-ưu.png` |
+| chuoi | duyet | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/duyet__tab3-Dữ-liệu-bán-hàng.png` |
+| chuoi | gia | desktop | dữ liệu | 3.1 | `shots/chuoi/desktop/gia.png` |
+| chuoi | gia | mobile | dữ liệu | 3.1 | `shots/chuoi/mobile/gia.png` |
+| chuoi | ho-so | desktop | dữ liệu | 1.5,9.2,9.3 | `shots/chuoi/desktop/ho-so.png` |
+| chuoi | ho-so | mobile | dữ liệu | 1.5,9.2,9.3 | `shots/chuoi/mobile/ho-so.png` |
+| chuoi | ho-so_danh-thiep | desktop | dữ liệu |  | `shots/chuoi/desktop/ho-so_danh-thiep.png` |
+| chuoi | ho-so_danh-thiep | mobile | dữ liệu |  | `shots/chuoi/mobile/ho-so_danh-thiep.png` |
+| chuoi | ho-so_thu-vien-thuong-hieu | desktop | dữ liệu |  | `shots/chuoi/desktop/ho-so_thu-vien-thuong-hieu.png` |
+| chuoi | ho-so_thu-vien-thuong-hieu | mobile | dữ liệu |  | `shots/chuoi/mobile/ho-so_thu-vien-thuong-hieu.png` |
+| chuoi | hoi-thoai | desktop | dữ liệu | 9.1 | `shots/chuoi/desktop/hoi-thoai.png` |
+| chuoi | hoi-thoai | mobile | dữ liệu | 9.1 | `shots/chuoi/mobile/hoi-thoai.png` |
+| chuoi | hoi-thoai_kenh-tich-hop | desktop | dữ liệu |  | `shots/chuoi/desktop/hoi-thoai_kenh-tich-hop.png` |
+| chuoi | hoi-thoai_kenh-tich-hop | mobile | dữ liệu |  | `shots/chuoi/mobile/hoi-thoai_kenh-tich-hop.png` |
+| chuoi | in-an | desktop | dữ liệu | 4.9 | `shots/chuoi/desktop/in-an.png` |
+| chuoi | in-an | mobile | dữ liệu | 4.9 | `shots/chuoi/mobile/in-an.png` |
+| chuoi | job | desktop | dữ liệu | 9.6 | `shots/chuoi/desktop/job.png` |
+| chuoi | job | mobile | dữ liệu | 9.6 | `shots/chuoi/mobile/job.png` |
+| chuoi | ket-noi | desktop | dữ liệu |  | `shots/chuoi/desktop/ket-noi.png` |
+| chuoi | ket-noi | mobile | dữ liệu |  | `shots/chuoi/mobile/ket-noi.png` |
+| chuoi | khach-hang | desktop | dữ liệu | 4.11 | `shots/chuoi/desktop/khach-hang.png` |
+| chuoi | khach-hang | mobile | dữ liệu | 4.11 | `shots/chuoi/mobile/khach-hang.png` |
+| chuoi | kho-du-lieu | desktop | dữ liệu | 9.4 | `shots/chuoi/desktop/kho-du-lieu.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab1-Ảnh-gốc.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab10-Kịch-bản-tư-vấn.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab11-Thùng-rác-30-ngày-.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab2-Ảnh-đã-duyệt.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab3-Ảnh-AI.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab4-Video.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab5-Âm-thanh.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab6-Nội-dung.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab7-Catalog.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab8-Bộ-sưu-tập-riêng.png` |
+| chuoi | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/desktop/kho-du-lieu__tab9-Landing-page.png` |
+| chuoi | kho-du-lieu | mobile | dữ liệu | 9.4 | `shots/chuoi/mobile/kho-du-lieu.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab1-Ảnh-gốc.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab10-Kịch-bản-tư-vấn.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab11-Thùng-rác-30-ngày-.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab2-Ảnh-đã-duyệt.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab3-Ảnh-AI.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab4-Video.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab5-Âm-thanh.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab6-Nội-dung.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab7-Catalog.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab8-Bộ-sưu-tập-riêng.png` |
+| chuoi | kho-du-lieu | mobile | tab/hộp thoại/route động | 9.4 | `shots2/chuoi/mobile/kho-du-lieu__tab9-Landing-page.png` |
+| chuoi | kho-templates | desktop | dữ liệu |  | `shots/chuoi/desktop/kho-templates.png` |
+| chuoi | kho-templates | mobile | dữ liệu |  | `shots/chuoi/mobile/kho-templates.png` |
+| chuoi | landing-page | desktop | dữ liệu | 8.1 | `shots/chuoi/desktop/landing-page.png` |
+| chuoi | landing-page | mobile | dữ liệu | 8.1 | `shots/chuoi/mobile/landing-page.png` |
+| chuoi | lich-dang | desktop | dữ liệu |  | `shots/chuoi/desktop/lich-dang.png` |
+| chuoi | lich-dang | mobile | dữ liệu |  | `shots/chuoi/mobile/lich-dang.png` |
+| chuoi | market-intelligence | desktop | dữ liệu |  | `shots/chuoi/desktop/market-intelligence.png` |
+| chuoi | market-intelligence | mobile | dữ liệu |  | `shots/chuoi/mobile/market-intelligence.png` |
+| chuoi | muc-dung | desktop | dữ liệu | 6.9,10.1-10.5 | `shots/chuoi/desktop/muc-dung.png` |
+| chuoi | muc-dung | mobile | dữ liệu | 6.9,10.1-10.5 | `shots/chuoi/mobile/muc-dung.png` |
+| chuoi | noi-bo_ket-noi | desktop | dữ liệu |  | `shots/chuoi/desktop/noi-bo_ket-noi.png` |
+| chuoi | noi-bo_ket-noi | mobile | dữ liệu |  | `shots/chuoi/mobile/noi-bo_ket-noi.png` |
+| chuoi | noi-dung | desktop | dữ liệu |  | `shots/chuoi/desktop/noi-dung.png` |
+| chuoi | noi-dung | mobile | dữ liệu |  | `shots/chuoi/mobile/noi-dung.png` |
+| chuoi | quang-ba_chien-dich | desktop | dữ liệu |  | `shots/chuoi/desktop/quang-ba_chien-dich.png` |
+| chuoi | quang-ba_chien-dich | mobile | dữ liệu |  | `shots/chuoi/mobile/quang-ba_chien-dich.png` |
+| chuoi | root | desktop | dữ liệu |  | `shots/chuoi/desktop/root.png` |
+| chuoi | root | mobile | dữ liệu |  | `shots/chuoi/mobile/root.png` |
+| chuoi | san-pham | desktop | dữ liệu | 2.1-2.3,7.2 | `shots/chuoi/desktop/san-pham.png` |
+| chuoi | san-pham | mobile | dữ liệu | 2.1-2.3,7.2 | `shots/chuoi/mobile/san-pham.png` |
+| chuoi | san-pham_kha-dung | desktop | dữ liệu | 2.1-2.3,7.2 | `shots/chuoi/desktop/san-pham_kha-dung.png` |
+| chuoi | san-pham_kha-dung | mobile | dữ liệu | 2.1-2.3,7.2 | `shots/chuoi/mobile/san-pham_kha-dung.png` |
+| chuoi | san-pham_nhap-hang-loat | desktop | dữ liệu | 2.1-2.3,7.2 | `shots/chuoi/desktop/san-pham_nhap-hang-loat.png` |
+| chuoi | san-pham_nhap-hang-loat | mobile | dữ liệu | 2.1-2.3,7.2 | `shots/chuoi/mobile/san-pham_nhap-hang-loat.png` |
+| chuoi | san-pham_tao-moi | desktop | dữ liệu | 2.1-2.3,7.2 | `shots/chuoi/desktop/san-pham_tao-moi.png` |
+| chuoi | san-pham_tao-moi | mobile | dữ liệu | 2.1-2.3,7.2 | `shots/chuoi/mobile/san-pham_tao-moi.png` |
+| chuoi | so-lieu | desktop | dữ liệu |  | `shots/chuoi/desktop/so-lieu.png` |
+| chuoi | so-lieu | mobile | dữ liệu |  | `shots/chuoi/mobile/so-lieu.png` |
+| chuoi | tai-anh | desktop | dữ liệu | 7.1,7.3 | `shots/chuoi/desktop/tai-anh.png` |
+| chuoi | tai-anh | desktop | tab/hộp thoại/route động | 7.1,7.3 | `shots2/chuoi/desktop/tai-anh__tab1-Nhận-diện-ảnh.png` |
+| chuoi | tai-anh | desktop | tab/hộp thoại/route động | 7.1,7.3 | `shots2/chuoi/desktop/tai-anh__tab2-Bài-giới-thiệu.png` |
+| chuoi | tai-anh | desktop | tab/hộp thoại/route động | 7.1,7.3 | `shots2/chuoi/desktop/tai-anh__tab3-Tư-vấn-khách.png` |
+| chuoi | tai-anh | desktop | tab/hộp thoại/route động | 7.1,7.3 | `shots2/chuoi/desktop/tai-anh__tab4-Kho-ảnh-_-nội-dung.png` |
+| chuoi | tai-anh | mobile | dữ liệu | 7.1,7.3 | `shots/chuoi/mobile/tai-anh.png` |
+| chuoi | tai-anh | mobile | tab/hộp thoại/route động | 7.1,7.3 | `shots2/chuoi/mobile/tai-anh__tab1-Nhận-diện-ảnh.png` |
+| chuoi | tai-anh | mobile | tab/hộp thoại/route động | 7.1,7.3 | `shots2/chuoi/mobile/tai-anh__tab2-Bài-giới-thiệu.png` |
+| chuoi | tai-anh | mobile | tab/hộp thoại/route động | 7.1,7.3 | `shots2/chuoi/mobile/tai-anh__tab3-Tư-vấn-khách.png` |
+| chuoi | tai-anh | mobile | tab/hộp thoại/route động | 7.1,7.3 | `shots2/chuoi/mobile/tai-anh__tab4-Kho-ảnh-_-nội-dung.png` |
+| chuoi | the-chao | desktop | dữ liệu | 4.12-4.28,5.1-5.8,6.4 | `shots/chuoi/desktop/the-chao.png` |
+| chuoi | the-chao | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/desktop/the-chao__tab1-Gửi-nhanh.png` |
+| chuoi | the-chao | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/desktop/the-chao__tab2-Quản-lý.png` |
+| chuoi | the-chao | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/desktop/the-chao__tab3-Bộ-sưu-tập.png` |
+| chuoi | the-chao | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/desktop/the-chao__tab4-Theo-dõi-đơn.png` |
+| chuoi | the-chao | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/desktop/the-chao__tab5-Bán-hàng.png` |
+| chuoi | the-chao | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/desktop/the-chao__tab6-Điều-hành.png` |
+| chuoi | the-chao | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/desktop/the-chao__tab7-Điều-phối.png` |
+| chuoi | the-chao | mobile | dữ liệu | 4.12-4.28,5.1-5.8,6.4 | `shots/chuoi/mobile/the-chao.png` |
+| chuoi | the-chao | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/mobile/the-chao__tab1-Gửi-nhanh.png` |
+| chuoi | the-chao | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/mobile/the-chao__tab2-Quản-lý.png` |
+| chuoi | the-chao | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/mobile/the-chao__tab3-Bộ-sưu-tập.png` |
+| chuoi | the-chao | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/mobile/the-chao__tab4-Theo-dõi-đơn.png` |
+| chuoi | the-chao | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/mobile/the-chao__tab5-Bán-hàng.png` |
+| chuoi | the-chao | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/mobile/the-chao__tab6-Điều-hành.png` |
+| chuoi | the-chao | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4 | `shots2/chuoi/mobile/the-chao__tab7-Điều-phối.png` |
+| chuoi | them | desktop | dữ liệu |  | `shots/chuoi/desktop/them.png` |
+| chuoi | them | mobile | dữ liệu |  | `shots/chuoi/mobile/them.png` |
+| chuoi | thu-hut-khach | desktop | dữ liệu |  | `shots/chuoi/desktop/thu-hut-khach.png` |
+| chuoi | thu-hut-khach | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/thu-hut-khach__tab1-Mã-QR-và-link.png` |
+| chuoi | thu-hut-khach | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/thu-hut-khach__tab2-Khách-để-lại-thông-tin.png` |
+| chuoi | thu-hut-khach | mobile | dữ liệu |  | `shots/chuoi/mobile/thu-hut-khach.png` |
+| chuoi | thu-hut-khach | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/thu-hut-khach__tab1-Mã-QR-và-link.png` |
+| chuoi | thu-hut-khach | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/thu-hut-khach__tab2-Khách-để-lại-thông-tin.png` |
+| chuoi | tich-hop | desktop | dữ liệu | 9.5 | `shots/chuoi/desktop/tich-hop.png` |
+| chuoi | tich-hop | mobile | dữ liệu | 9.5 | `shots/chuoi/mobile/tich-hop.png` |
+| chuoi | tin-nhan | desktop | dữ liệu |  | `shots/chuoi/desktop/tin-nhan.png` |
+| chuoi | tin-nhan | mobile | dữ liệu |  | `shots/chuoi/mobile/tin-nhan.png` |
+| chuoi | tinh-gia | desktop | dữ liệu | 2.5,3.3 | `shots/chuoi/desktop/tinh-gia.png` |
+| chuoi | tinh-gia | desktop | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/desktop/tinh-gia__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia | desktop | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/desktop/tinh-gia__tab2-Công-thức.png` |
+| chuoi | tinh-gia | desktop | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/desktop/tinh-gia__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia | desktop | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/desktop/tinh-gia__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia | desktop | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/desktop/tinh-gia__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia | mobile | dữ liệu | 2.5,3.3 | `shots/chuoi/mobile/tinh-gia.png` |
+| chuoi | tinh-gia | mobile | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/mobile/tinh-gia__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia | mobile | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/mobile/tinh-gia__tab2-Công-thức.png` |
+| chuoi | tinh-gia | mobile | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/mobile/tinh-gia__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia | mobile | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/mobile/tinh-gia__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia | mobile | tab/hộp thoại/route động | 2.5,3.3 | `shots2/chuoi/mobile/tinh-gia__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_cong-thuc | desktop | dữ liệu |  | `shots/chuoi/desktop/tinh-gia_cong-thuc.png` |
+| chuoi | tinh-gia_cong-thuc | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_cong-thuc__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_cong-thuc | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_cong-thuc__tab2-Công-thức.png` |
+| chuoi | tinh-gia_cong-thuc | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_cong-thuc__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_cong-thuc | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_cong-thuc__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_cong-thuc | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_cong-thuc__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_cong-thuc | mobile | dữ liệu |  | `shots/chuoi/mobile/tinh-gia_cong-thuc.png` |
+| chuoi | tinh-gia_cong-thuc | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_cong-thuc__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_cong-thuc | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_cong-thuc__tab2-Công-thức.png` |
+| chuoi | tinh-gia_cong-thuc | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_cong-thuc__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_cong-thuc | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_cong-thuc__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_cong-thuc | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_cong-thuc__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_du-toan | desktop | dữ liệu |  | `shots/chuoi/desktop/tinh-gia_du-toan.png` |
+| chuoi | tinh-gia_du-toan | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_du-toan__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_du-toan | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_du-toan__tab2-Công-thức.png` |
+| chuoi | tinh-gia_du-toan | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_du-toan__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_du-toan | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_du-toan__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_du-toan | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_du-toan__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_du-toan | mobile | dữ liệu |  | `shots/chuoi/mobile/tinh-gia_du-toan.png` |
+| chuoi | tinh-gia_du-toan | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_du-toan__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_du-toan | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_du-toan__tab2-Công-thức.png` |
+| chuoi | tinh-gia_du-toan | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_du-toan__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_du-toan | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_du-toan__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_du-toan | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_du-toan__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_gia-ban | desktop | dữ liệu |  | `shots/chuoi/desktop/tinh-gia_gia-ban.png` |
+| chuoi | tinh-gia_gia-ban | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-ban__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_gia-ban | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-ban__tab2-Công-thức.png` |
+| chuoi | tinh-gia_gia-ban | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-ban__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_gia-ban | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-ban__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_gia-ban | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-ban__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_gia-ban | mobile | dữ liệu |  | `shots/chuoi/mobile/tinh-gia_gia-ban.png` |
+| chuoi | tinh-gia_gia-ban | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-ban__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_gia-ban | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-ban__tab2-Công-thức.png` |
+| chuoi | tinh-gia_gia-ban | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-ban__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_gia-ban | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-ban__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_gia-ban | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-ban__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_gia-von | desktop | dữ liệu |  | `shots/chuoi/desktop/tinh-gia_gia-von.png` |
+| chuoi | tinh-gia_gia-von | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-von__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_gia-von | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-von__tab2-Công-thức.png` |
+| chuoi | tinh-gia_gia-von | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-von__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_gia-von | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-von__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_gia-von | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_gia-von__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_gia-von | mobile | dữ liệu |  | `shots/chuoi/mobile/tinh-gia_gia-von.png` |
+| chuoi | tinh-gia_gia-von | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-von__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_gia-von | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-von__tab2-Công-thức.png` |
+| chuoi | tinh-gia_gia-von | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-von__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_gia-von | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-von__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_gia-von | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_gia-von__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_nguyen-lieu | desktop | dữ liệu |  | `shots/chuoi/desktop/tinh-gia_nguyen-lieu.png` |
+| chuoi | tinh-gia_nguyen-lieu | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_nguyen-lieu__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_nguyen-lieu | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_nguyen-lieu__tab2-Công-thức.png` |
+| chuoi | tinh-gia_nguyen-lieu | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_nguyen-lieu__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_nguyen-lieu | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_nguyen-lieu__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_nguyen-lieu | desktop | tab/hộp thoại/route động |  | `shots2/chuoi/desktop/tinh-gia_nguyen-lieu__tab5-Dự-toán-mua.png` |
+| chuoi | tinh-gia_nguyen-lieu | mobile | dữ liệu |  | `shots/chuoi/mobile/tinh-gia_nguyen-lieu.png` |
+| chuoi | tinh-gia_nguyen-lieu | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_nguyen-lieu__tab1-Nguyên-liệu-_-đơn-giá.png` |
+| chuoi | tinh-gia_nguyen-lieu | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_nguyen-lieu__tab2-Công-thức.png` |
+| chuoi | tinh-gia_nguyen-lieu | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_nguyen-lieu__tab3-Giá-vốn.png` |
+| chuoi | tinh-gia_nguyen-lieu | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_nguyen-lieu__tab4-Giá-bán-_-lợi-nhuận.png` |
+| chuoi | tinh-gia_nguyen-lieu | mobile | tab/hộp thoại/route động |  | `shots2/chuoi/mobile/tinh-gia_nguyen-lieu__tab5-Dự-toán-mua.png` |
+| chuoi | tri-thuc | desktop | dữ liệu |  | `shots/chuoi/desktop/tri-thuc.png` |
+| chuoi | tri-thuc | mobile | dữ liệu |  | `shots/chuoi/mobile/tri-thuc.png` |
+| chuoi | uu-dai | desktop | dữ liệu | 3.5 | `shots/chuoi/desktop/uu-dai.png` |
+| chuoi | uu-dai | mobile | dữ liệu | 3.5 | `shots/chuoi/mobile/uu-dai.png` |
+| chuoi | uu-dai_ma-giam-gia | desktop | dữ liệu |  | `shots/chuoi/desktop/uu-dai_ma-giam-gia.png` |
+| chuoi | uu-dai_ma-giam-gia | mobile | dữ liệu |  | `shots/chuoi/mobile/uu-dai_ma-giam-gia.png` |
+| chuoi | vai-tro | desktop | dữ liệu |  | `shots/chuoi/desktop/vai-tro.png` |
+| chuoi | vai-tro | mobile | dữ liệu |  | `shots/chuoi/mobile/vai-tro.png` |
+| chuoi | video | desktop | dữ liệu |  | `shots/chuoi/desktop/video.png` |
+| chuoi | video | mobile | dữ liệu |  | `shots/chuoi/mobile/video.png` |
 | dieu_hanh | audit | desktop | dữ liệu | 1.17 | `shots/dieu_hanh/desktop/audit.png` |
 | dieu_hanh | audit | desktop | tab/hộp thoại/route động | 1.17 | `shots2/dieu_hanh/desktop/audit__tab1-Thao-tác-trong-tổ-chức.png` |
 | dieu_hanh | audit | desktop | tab/hộp thoại/route động | 1.17 | `shots2/dieu_hanh/desktop/audit__tab2-Truy-cập-của-nền-tảng.png` |
@@ -14,10 +308,14 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | dieu_hanh | audit | mobile | tab/hộp thoại/route động | 1.17 | `shots2/dieu_hanh/mobile/audit__tab1-Thao-tác-trong-tổ-chức.png` |
 | dieu_hanh | audit | mobile | tab/hộp thoại/route động | 1.17 | `shots2/dieu_hanh/mobile/audit__tab2-Truy-cập-của-nền-tảng.png` |
 | dieu_hanh | audit | mobile | trạng thái trống | 1.17 | `shots-p1-empty/dieu_hanh/mobile/audit.png` |
-| dieu_hanh | bang-gia | desktop | dữ liệu |  | `shots/dieu_hanh/desktop/bang-gia.png` |
-| dieu_hanh | bang-gia | desktop | trạng thái trống |  | `shots-p1-empty/dieu_hanh/desktop/bang-gia.png` |
-| dieu_hanh | bang-gia | mobile | dữ liệu |  | `shots/dieu_hanh/mobile/bang-gia.png` |
-| dieu_hanh | bang-gia | mobile | trạng thái trống |  | `shots-p1-empty/dieu_hanh/mobile/bang-gia.png` |
+| dieu_hanh | bang-gia | desktop | dữ liệu | 3.1,3.4 | `shots/dieu_hanh/desktop/bang-gia.png` |
+| dieu_hanh | bang-gia | desktop | tab/hộp thoại/route động | 3.1,3.4 | `shots2/dieu_hanh/desktop/bang-gia__click1-Tạo-bảng-giá.png` |
+| dieu_hanh | bang-gia | desktop | trạng thái trống | 3.1,3.4 | `shots-p1-empty/dieu_hanh/desktop/bang-gia.png` |
+| dieu_hanh | bang-gia | mobile | dữ liệu | 3.1,3.4 | `shots/dieu_hanh/mobile/bang-gia.png` |
+| dieu_hanh | bang-gia | mobile | tab/hộp thoại/route động | 3.1,3.4 | `shots2/dieu_hanh/mobile/bang-gia__click1-Tạo-bảng-giá.png` |
+| dieu_hanh | bang-gia | mobile | trạng thái trống | 3.1,3.4 | `shots-p1-empty/dieu_hanh/mobile/bang-gia.png` |
+| dieu_hanh | bang-gia_74d06878-87c0-41c0-ba04-6212be082270 | desktop | tab/hộp thoại/route động | 3.1,3.4 | `shots2/dieu_hanh/desktop/bang-gia_74d06878-87c0-41c0-ba04-6212be082270.png` |
+| dieu_hanh | bang-gia_74d06878-87c0-41c0-ba04-6212be082270 | mobile | tab/hộp thoại/route động | 3.1,3.4 | `shots2/dieu_hanh/mobile/bang-gia_74d06878-87c0-41c0-ba04-6212be082270.png` |
 | dieu_hanh | bao-cao | desktop | dữ liệu | 6.1-6.8 | `shots/dieu_hanh/desktop/bao-cao.png` |
 | dieu_hanh | bao-cao | desktop | tab/hộp thoại/route động | 6.1-6.8 | `shots2/dieu_hanh/desktop/bao-cao__tab1-Đơn-hàng.png` |
 | dieu_hanh | bao-cao | desktop | tab/hộp thoại/route động | 6.1-6.8 | `shots2/dieu_hanh/desktop/bao-cao__tab2-Doanh-thu.png` |
@@ -94,12 +392,20 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | dieu_hanh | cai-dat_ma-tran-uudai | desktop | trạng thái trống |  | `shots-p1-empty/dieu_hanh/desktop/cai-dat_ma-tran-uudai.png` |
 | dieu_hanh | cai-dat_ma-tran-uudai | mobile | dữ liệu |  | `shots/dieu_hanh/mobile/cai-dat_ma-tran-uudai.png` |
 | dieu_hanh | cai-dat_ma-tran-uudai | mobile | trạng thái trống |  | `shots-p1-empty/dieu_hanh/mobile/cai-dat_ma-tran-uudai.png` |
-| dieu_hanh | cai-dat_thanh-vien | desktop | dữ liệu | 1.10,1.11 | `shots/dieu_hanh/desktop/cai-dat_thanh-vien.png` |
-| dieu_hanh | cai-dat_thanh-vien | desktop | tab/hộp thoại/route động | 1.10,1.11 | `shots2/dieu_hanh/desktop/cai-dat_thanh-vien__click2-Vai-trò.png` |
-| dieu_hanh | cai-dat_thanh-vien | desktop | trạng thái trống | 1.10,1.11 | `shots-p1-empty/dieu_hanh/desktop/cai-dat_thanh-vien.png` |
-| dieu_hanh | cai-dat_thanh-vien | mobile | dữ liệu | 1.10,1.11 | `shots/dieu_hanh/mobile/cai-dat_thanh-vien.png` |
-| dieu_hanh | cai-dat_thanh-vien | mobile | tab/hộp thoại/route động | 1.10,1.11 | `shots2/dieu_hanh/mobile/cai-dat_thanh-vien__click2-Vai-trò.png` |
-| dieu_hanh | cai-dat_thanh-vien | mobile | trạng thái trống | 1.10,1.11 | `shots-p1-empty/dieu_hanh/mobile/cai-dat_thanh-vien.png` |
+| dieu_hanh | cai-dat_thanh-vien | desktop | dữ liệu | 1.10,1.11,1.13 | `shots/dieu_hanh/desktop/cai-dat_thanh-vien.png` |
+| dieu_hanh | cai-dat_thanh-vien | desktop | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/desktop/cai-dat_thanh-vien__click1-Thêm-thành-viên.png` |
+| dieu_hanh | cai-dat_thanh-vien | desktop | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/desktop/cai-dat_thanh-vien__click2-Mời-người-đã-có-tài-khoản.png` |
+| dieu_hanh | cai-dat_thanh-vien | desktop | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/desktop/cai-dat_thanh-vien__click2-Vai-trò.png` |
+| dieu_hanh | cai-dat_thanh-vien | desktop | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/desktop/cai-dat_thanh-vien__click3-Phân-vai.png` |
+| dieu_hanh | cai-dat_thanh-vien | desktop | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/desktop/cai-dat_thanh-vien__click4-Đặt-lại-mật-khẩu.png` |
+| dieu_hanh | cai-dat_thanh-vien | desktop | trạng thái trống | 1.10,1.11,1.13 | `shots-p1-empty/dieu_hanh/desktop/cai-dat_thanh-vien.png` |
+| dieu_hanh | cai-dat_thanh-vien | mobile | dữ liệu | 1.10,1.11,1.13 | `shots/dieu_hanh/mobile/cai-dat_thanh-vien.png` |
+| dieu_hanh | cai-dat_thanh-vien | mobile | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/mobile/cai-dat_thanh-vien__click1-Thêm-thành-viên.png` |
+| dieu_hanh | cai-dat_thanh-vien | mobile | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/mobile/cai-dat_thanh-vien__click2-Mời-người-đã-có-tài-khoản.png` |
+| dieu_hanh | cai-dat_thanh-vien | mobile | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/mobile/cai-dat_thanh-vien__click2-Vai-trò.png` |
+| dieu_hanh | cai-dat_thanh-vien | mobile | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/mobile/cai-dat_thanh-vien__click3-Phân-vai.png` |
+| dieu_hanh | cai-dat_thanh-vien | mobile | tab/hộp thoại/route động | 1.10,1.11,1.13 | `shots2/dieu_hanh/mobile/cai-dat_thanh-vien__click4-Đặt-lại-mật-khẩu.png` |
+| dieu_hanh | cai-dat_thanh-vien | mobile | trạng thái trống | 1.10,1.11,1.13 | `shots-p1-empty/dieu_hanh/mobile/cai-dat_thanh-vien.png` |
 | dieu_hanh | cai-dat_thanh-vien_vai-tro | desktop | dữ liệu | 1.12,1.13,1.16 | `shots/dieu_hanh/desktop/cai-dat_thanh-vien_vai-tro.png` |
 | dieu_hanh | cai-dat_thanh-vien_vai-tro | desktop | trạng thái trống | 1.12,1.13,1.16 | `shots-p1-empty/dieu_hanh/desktop/cai-dat_thanh-vien_vai-tro.png` |
 | dieu_hanh | cai-dat_thanh-vien_vai-tro | mobile | dữ liệu | 1.12,1.13,1.16 | `shots/dieu_hanh/mobile/cai-dat_thanh-vien_vai-tro.png` |
@@ -210,15 +516,17 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | dieu_hanh | gia | desktop | trạng thái trống | 3.1 | `shots-p1-empty/dieu_hanh/desktop/gia.png` |
 | dieu_hanh | gia | mobile | dữ liệu | 3.1 | `shots/dieu_hanh/mobile/gia.png` |
 | dieu_hanh | gia | mobile | trạng thái trống | 3.1 | `shots-p1-empty/dieu_hanh/mobile/gia.png` |
-| dieu_hanh | ho-so | desktop | dữ liệu |  | `shots/dieu_hanh/desktop/ho-so.png` |
-| dieu_hanh | ho-so | desktop | tab/hộp thoại/route động |  | `shots2/dieu_hanh/desktop/ho-so__click1-Thương-hiệu.png` |
-| dieu_hanh | ho-so | desktop | trạng thái trống |  | `shots-p1-empty/dieu_hanh/desktop/ho-so.png` |
-| dieu_hanh | ho-so | mobile | dữ liệu |  | `shots/dieu_hanh/mobile/ho-so.png` |
-| dieu_hanh | ho-so | mobile | tab/hộp thoại/route động |  | `shots2/dieu_hanh/mobile/ho-so__click1-Thương-hiệu.png` |
-| dieu_hanh | ho-so | mobile | trạng thái trống |  | `shots-p1-empty/dieu_hanh/mobile/ho-so.png` |
+| dieu_hanh | ho-so | desktop | dữ liệu | 1.5,9.2,9.3 | `shots/dieu_hanh/desktop/ho-so.png` |
+| dieu_hanh | ho-so | desktop | tab/hộp thoại/route động | 1.5,9.2,9.3 | `shots2/dieu_hanh/desktop/ho-so__click1-Thương-hiệu.png` |
+| dieu_hanh | ho-so | desktop | trạng thái trống | 1.5,9.2,9.3 | `shots-p1-empty/dieu_hanh/desktop/ho-so.png` |
+| dieu_hanh | ho-so | mobile | dữ liệu | 1.5,9.2,9.3 | `shots/dieu_hanh/mobile/ho-so.png` |
+| dieu_hanh | ho-so | mobile | tab/hộp thoại/route động | 1.5,9.2,9.3 | `shots2/dieu_hanh/mobile/ho-so__click1-Thương-hiệu.png` |
+| dieu_hanh | ho-so | mobile | trạng thái trống | 1.5,9.2,9.3 | `shots-p1-empty/dieu_hanh/mobile/ho-so.png` |
 | dieu_hanh | ho-so_danh-thiep | desktop | dữ liệu |  | `shots/dieu_hanh/desktop/ho-so_danh-thiep.png` |
+| dieu_hanh | ho-so_danh-thiep | desktop | tab/hộp thoại/route động |  | `shots2/dieu_hanh/desktop/ho-so_danh-thiep.png` |
 | dieu_hanh | ho-so_danh-thiep | desktop | trạng thái trống |  | `shots-p1-empty/dieu_hanh/desktop/ho-so_danh-thiep.png` |
 | dieu_hanh | ho-so_danh-thiep | mobile | dữ liệu |  | `shots/dieu_hanh/mobile/ho-so_danh-thiep.png` |
+| dieu_hanh | ho-so_danh-thiep | mobile | tab/hộp thoại/route động |  | `shots2/dieu_hanh/mobile/ho-so_danh-thiep.png` |
 | dieu_hanh | ho-so_danh-thiep | mobile | trạng thái trống |  | `shots-p1-empty/dieu_hanh/mobile/ho-so_danh-thiep.png` |
 | dieu_hanh | ho-so_thu-vien-thuong-hieu | desktop | dữ liệu |  | `shots/dieu_hanh/desktop/ho-so_thu-vien-thuong-hieu.png` |
 | dieu_hanh | ho-so_thu-vien-thuong-hieu | desktop | trạng thái trống |  | `shots-p1-empty/dieu_hanh/desktop/ho-so_thu-vien-thuong-hieu.png` |
@@ -248,12 +556,14 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | dieu_hanh | ket-noi | desktop | trạng thái trống |  | `shots-p1-empty/dieu_hanh/desktop/ket-noi.png` |
 | dieu_hanh | ket-noi | mobile | dữ liệu |  | `shots/dieu_hanh/mobile/ket-noi.png` |
 | dieu_hanh | ket-noi | mobile | trạng thái trống |  | `shots-p1-empty/dieu_hanh/mobile/ket-noi.png` |
-| dieu_hanh | khach-hang | desktop | dữ liệu |  | `shots/dieu_hanh/desktop/khach-hang.png` |
-| dieu_hanh | khach-hang | desktop | tab/hộp thoại/route động |  | `shots2/dieu_hanh/desktop/khach-hang__click1-Thêm-Tạo.png` |
-| dieu_hanh | khach-hang | desktop | trạng thái trống |  | `shots-p1-empty/dieu_hanh/desktop/khach-hang.png` |
-| dieu_hanh | khach-hang | mobile | dữ liệu |  | `shots/dieu_hanh/mobile/khach-hang.png` |
-| dieu_hanh | khach-hang | mobile | tab/hộp thoại/route động |  | `shots2/dieu_hanh/mobile/khach-hang__click1-Thêm-Tạo.png` |
-| dieu_hanh | khach-hang | mobile | trạng thái trống |  | `shots-p1-empty/dieu_hanh/mobile/khach-hang.png` |
+| dieu_hanh | khach-hang | desktop | dữ liệu | 4.11 | `shots/dieu_hanh/desktop/khach-hang.png` |
+| dieu_hanh | khach-hang | desktop | tab/hộp thoại/route động | 4.11 | `shots2/dieu_hanh/desktop/khach-hang.png` |
+| dieu_hanh | khach-hang | desktop | tab/hộp thoại/route động | 4.11 | `shots2/dieu_hanh/desktop/khach-hang__click1-Thêm-Tạo.png` |
+| dieu_hanh | khach-hang | desktop | trạng thái trống | 4.11 | `shots-p1-empty/dieu_hanh/desktop/khach-hang.png` |
+| dieu_hanh | khach-hang | mobile | dữ liệu | 4.11 | `shots/dieu_hanh/mobile/khach-hang.png` |
+| dieu_hanh | khach-hang | mobile | tab/hộp thoại/route động | 4.11 | `shots2/dieu_hanh/mobile/khach-hang.png` |
+| dieu_hanh | khach-hang | mobile | tab/hộp thoại/route động | 4.11 | `shots2/dieu_hanh/mobile/khach-hang__click1-Thêm-Tạo.png` |
+| dieu_hanh | khach-hang | mobile | trạng thái trống | 4.11 | `shots-p1-empty/dieu_hanh/mobile/khach-hang.png` |
 | dieu_hanh | kho-du-lieu | desktop | dữ liệu | 9.4 | `shots/dieu_hanh/desktop/kho-du-lieu.png` |
 | dieu_hanh | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/dieu_hanh/desktop/kho-du-lieu__tab1-Ảnh-gốc.png` |
 | dieu_hanh | kho-du-lieu | desktop | tab/hộp thoại/route động | 9.4 | `shots2/dieu_hanh/desktop/kho-du-lieu__tab10-Kịch-bản-tư-vấn.png` |
@@ -313,13 +623,21 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | dieu_hanh | quang-ba_chien-dich | mobile | dữ liệu |  | `shots/dieu_hanh/mobile/quang-ba_chien-dich.png` |
 | dieu_hanh | quang-ba_chien-dich | mobile | trạng thái trống |  | `shots-p1-empty/dieu_hanh/mobile/quang-ba_chien-dich.png` |
 | dieu_hanh | root | desktop | dữ liệu |  | `shots/dieu_hanh/desktop/root.png` |
+| dieu_hanh | root | desktop | tab/hộp thoại/route động |  | `shots2/dieu_hanh/desktop/root.png` |
 | dieu_hanh | root | desktop | trạng thái trống |  | `shots-p1-empty/dieu_hanh/desktop/root.png` |
 | dieu_hanh | root | mobile | dữ liệu |  | `shots/dieu_hanh/mobile/root.png` |
+| dieu_hanh | root | mobile | tab/hộp thoại/route động |  | `shots2/dieu_hanh/mobile/root.png` |
 | dieu_hanh | root | mobile | trạng thái trống |  | `shots-p1-empty/dieu_hanh/mobile/root.png` |
 | dieu_hanh | san-pham | desktop | dữ liệu | 2.1-2.3,7.2 | `shots/dieu_hanh/desktop/san-pham.png` |
+| dieu_hanh | san-pham | desktop | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/desktop/san-pham__click1-Thêm-sản-phẩm.png` |
 | dieu_hanh | san-pham | desktop | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/desktop/san-pham__click2-Bộ-nội-dung.png` |
+| dieu_hanh | san-pham | desktop | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/desktop/san-pham__click2-Nhập-từ-Excel.png` |
+| dieu_hanh | san-pham | desktop | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/desktop/san-pham__click3-Quét-ảnh-hoa.png` |
+| dieu_hanh | san-pham | desktop | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/desktop/san-pham__click4-Xem-dạng-bảng.png` |
 | dieu_hanh | san-pham | desktop | trạng thái trống | 2.1-2.3,7.2 | `shots-p1-empty/dieu_hanh/desktop/san-pham.png` |
 | dieu_hanh | san-pham | mobile | dữ liệu | 2.1-2.3,7.2 | `shots/dieu_hanh/mobile/san-pham.png` |
+| dieu_hanh | san-pham | mobile | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/mobile/san-pham__click1-Thêm-sản-phẩm.png` |
+| dieu_hanh | san-pham | mobile | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/mobile/san-pham__click4-Xem-dạng-bảng.png` |
 | dieu_hanh | san-pham | mobile | trạng thái trống | 2.1-2.3,7.2 | `shots-p1-empty/dieu_hanh/mobile/san-pham.png` |
 | dieu_hanh | san-pham_dev-moclan-prd-0000-0000-000000000001 | desktop | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/desktop/san-pham_dev-moclan-prd-0000-0000-000000000001.png` |
 | dieu_hanh | san-pham_dev-moclan-prd-0000-0000-000000000001 | mobile | tab/hộp thoại/route động | 2.1-2.3,7.2 | `shots2/dieu_hanh/mobile/san-pham_dev-moclan-prd-0000-0000-000000000001.png` |
@@ -741,8 +1059,12 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | product_manager | tai-anh | mobile | tab/hộp thoại/route động | 7.1,7.3 | `shots2/product_manager/mobile/tai-anh__tab3-Tư-vấn-khách.png` |
 | product_manager | tai-anh | mobile | tab/hộp thoại/route động | 7.1,7.3 | `shots2/product_manager/mobile/tai-anh__tab4-Kho-ảnh-_-nội-dung.png` |
 | product_manager | tai-anh | mobile | trạng thái trống | 7.1,7.3 | `shots-p1-empty/product_manager/mobile/tai-anh.png` |
-| public | b_T01-NKM44ECM | desktop | tab/hộp thoại/route động | 5.9-5.11 | `shots2/public/desktop/b_T01-NKM44ECM.png` |
-| public | b_T01-NKM44ECM | mobile | tab/hộp thoại/route động | 5.9-5.11 | `shots2/public/mobile/b_T01-NKM44ECM.png` |
+| public | b_T01-3FZV23AA | desktop | tab/hộp thoại/route động | 4.2,4.29,5.9-5.15 | `shots2/public/desktop/b_T01-3FZV23AA.png` |
+| public | b_T01-3FZV23AA | mobile | tab/hộp thoại/route động | 4.2,4.29,5.9-5.15 | `shots2/public/mobile/b_T01-3FZV23AA.png` |
+| public | b_T01-B2MYYW0W | desktop | tab/hộp thoại/route động | 4.2,4.29,5.9-5.15 | `shots2/public/desktop/b_T01-B2MYYW0W.png` |
+| public | b_T01-B2MYYW0W | mobile | tab/hộp thoại/route động | 4.2,4.29,5.9-5.15 | `shots2/public/mobile/b_T01-B2MYYW0W.png` |
+| public | b_T01-NKM44ECM | desktop | tab/hộp thoại/route động | 4.2,4.29,5.9-5.15 | `shots2/public/desktop/b_T01-NKM44ECM.png` |
+| public | b_T01-NKM44ECM | mobile | tab/hộp thoại/route động | 4.2,4.29,5.9-5.15 | `shots2/public/mobile/b_T01-NKM44ECM.png` |
 | public | bg_BHxOs2TE98dtMEka4h9bD642gMNG7sV117A42TxWtFQ | desktop | tab/hộp thoại/route động | 3.11 | `shots2/public/desktop/bg_BHxOs2TE98dtMEka4h9bD642gMNG7sV117A42TxWtFQ.png` |
 | public | bg_BHxOs2TE98dtMEka4h9bD642gMNG7sV117A42TxWtFQ | mobile | tab/hộp thoại/route động | 3.11 | `shots2/public/mobile/bg_BHxOs2TE98dtMEka4h9bD642gMNG7sV117A42TxWtFQ.png` |
 | public | bg_seF-AfWprWMpKyJggG8StNil1TQ3yHYvHU3zqogiCiw | desktop | tab/hộp thoại/route động | 3.11 | `shots2/public/desktop/bg_seF-AfWprWMpKyJggG8StNil1TQ3yHYvHU3zqogiCiw.png` |
@@ -753,6 +1075,8 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | public | c_hoa-demo | mobile | tab/hộp thoại/route động | 5.9-5.11 | `shots2/public/mobile/c_hoa-demo.png` |
 | public | ch_siin-store-ja261 | desktop | tab/hộp thoại/route động | 1.5 | `shots2/public/desktop/ch_siin-store-ja261.png` |
 | public | ch_siin-store-ja261 | mobile | tab/hộp thoại/route động | 1.5 | `shots2/public/mobile/ch_siin-store-ja261.png` |
+| public | chia-se_cho-doi-tac_fAX2IioQlzAiTj0gCiLsoX7u5jiRoLuW4WUxEtgXBxk | desktop | tab/hộp thoại/route động | 4.19 | `shots2/public/desktop/chia-se_cho-doi-tac_fAX2IioQlzAiTj0gCiLsoX7u5jiRoLuW4WUxEtgXBxk.png` |
+| public | chia-se_cho-doi-tac_fAX2IioQlzAiTj0gCiLsoX7u5jiRoLuW4WUxEtgXBxk | mobile | tab/hộp thoại/route động | 4.19 | `shots2/public/mobile/chia-se_cho-doi-tac_fAX2IioQlzAiTj0gCiLsoX7u5jiRoLuW4WUxEtgXBxk.png` |
 | public | chinh-sach-bao-mat | desktop | dữ liệu |  | `shots/public/desktop/chinh-sach-bao-mat.png` |
 | public | chinh-sach-bao-mat | desktop | trạng thái trống |  | `shots-p1-empty/public/desktop/chinh-sach-bao-mat.png` |
 | public | chinh-sach-bao-mat | mobile | dữ liệu |  | `shots/public/mobile/chinh-sach-bao-mat.png` |
@@ -769,6 +1093,8 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | public | g_3f38b846-472c-40ae-8a04-ee608ebaf633 | mobile | tab/hộp thoại/route động | 4.29,5.12-5.15 | `shots2/public/mobile/g_3f38b846-472c-40ae-8a04-ee608ebaf633.png` |
 | public | s_EQWHPCKGNW | desktop | tab/hộp thoại/route động | 5.9 | `shots2/public/desktop/s_EQWHPCKGNW.png` |
 | public | s_EQWHPCKGNW | mobile | tab/hộp thoại/route động | 5.9 | `shots2/public/mobile/s_EQWHPCKGNW.png` |
+| public | subcontract_DH-DEMO-GIACONG_branch_demo-branch-q3_t_dev-moclan-org-0000-0000-000000000001- | desktop | tab/hộp thoại/route động | 4.19 | `shots2/public/desktop/subcontract_DH-DEMO-GIACONG_branch_demo-branch-q3_t_dev-moclan-org-0000-0000-000000000001-.png` |
+| public | subcontract_DH-DEMO-GIACONG_branch_demo-branch-q3_t_dev-moclan-org-0000-0000-000000000001- | mobile | tab/hộp thoại/route động | 4.19 | `shots2/public/mobile/subcontract_DH-DEMO-GIACONG_branch_demo-branch-q3_t_dev-moclan-org-0000-0000-000000000001-.png` |
 | public | xem-truoc-trang | desktop | dữ liệu |  | `shots/public/desktop/xem-truoc-trang.png` |
 | public | xem-truoc-trang | desktop | trạng thái trống |  | `shots-p1-empty/public/desktop/xem-truoc-trang.png` |
 | public | xem-truoc-trang | mobile | dữ liệu |  | `shots/public/mobile/xem-truoc-trang.png` |
@@ -789,10 +1115,10 @@ Tổng: 833 ảnh ({'shots': 274, 'shots2': 285, 'shots-p1-empty': 274})
 | sale | don-hang | desktop | trạng thái trống | 4.1,4.3-4.11,4.14,4.15 | `shots-p1-empty/sale/desktop/don-hang.png` |
 | sale | don-hang | mobile | dữ liệu | 4.1,4.3-4.11,4.14,4.15 | `shots/sale/mobile/don-hang.png` |
 | sale | don-hang | mobile | trạng thái trống | 4.1,4.3-4.11,4.14,4.15 | `shots-p1-empty/sale/mobile/don-hang.png` |
-| sale | khach-hang | desktop | dữ liệu |  | `shots/sale/desktop/khach-hang.png` |
-| sale | khach-hang | desktop | trạng thái trống |  | `shots-p1-empty/sale/desktop/khach-hang.png` |
-| sale | khach-hang | mobile | dữ liệu |  | `shots/sale/mobile/khach-hang.png` |
-| sale | khach-hang | mobile | trạng thái trống |  | `shots-p1-empty/sale/mobile/khach-hang.png` |
+| sale | khach-hang | desktop | dữ liệu | 4.11 | `shots/sale/desktop/khach-hang.png` |
+| sale | khach-hang | desktop | trạng thái trống | 4.11 | `shots-p1-empty/sale/desktop/khach-hang.png` |
+| sale | khach-hang | mobile | dữ liệu | 4.11 | `shots/sale/mobile/khach-hang.png` |
+| sale | khach-hang | mobile | trạng thái trống | 4.11 | `shots-p1-empty/sale/mobile/khach-hang.png` |
 | sale | root | desktop | dữ liệu |  | `shots/sale/desktop/root.png` |
 | sale | root | desktop | trạng thái trống |  | `shots-p1-empty/sale/desktop/root.png` |
 | sale | root | mobile | dữ liệu |  | `shots/sale/mobile/root.png` |
