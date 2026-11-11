@@ -99,7 +99,16 @@ const schema = z.object({
     .default(true),
 })
 
-const parsed = schema.safeParse(process.env)
+/**
+ * Biến để trống (`KHOA=` trong `.env`, hoặc nền tảng đặt "") nghĩa là chưa đặt — đúng như `.env.example` mô tả.
+ * Không có bước này thì `cp .env.example .env` làm app dừng vì các biến tuỳ chọn có ràng buộc độ dài/giá trị.
+ * Biến bắt buộc để trống vẫn báo thiếu.
+ */
+export function parseEnv(source: Record<string, string | undefined>) {
+  return schema.safeParse(Object.fromEntries(Object.entries(source).map(([key, value]) => [key, value === "" ? undefined : value])))
+}
+
+const parsed = parseEnv(process.env)
 
 if (!parsed.success) {
   const thieu = parsed.error.issues.map((i) => i.path.join(".")).join(", ")

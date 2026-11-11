@@ -28,6 +28,12 @@ export class PlatformOperatorRepository {
 
   /** Dùng bởi `scripts/gan-van-hanh-nen-tang.ts` — chạy tay, không qua API. */
   async grant(userId: string, capabilityCodes: string[], grantedBy: string | null): Promise<string> {
+    // Người vận hành đầu tiên của bản cài mới tự đăng ký nên còn chờ duyệt, mà chỉ người vận hành mới duyệt
+    // được. Gán quyền (công cụ chạy tay, cần quyền CSDL) duyệt luôn tài khoản đó; tài khoản bị từ chối giữ nguyên.
+    await prisma.users.updateMany({
+      where: { id: userId, approval_status: "PENDING" },
+      data: { approval_status: "APPROVED", approval_decided_at: new Date(), approval_decided_by: grantedBy },
+    })
     const operator = await prisma.platform_operators.upsert({
       where: { user_id: userId },
       update: { revoked_at: null },
