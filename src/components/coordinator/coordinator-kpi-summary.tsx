@@ -48,7 +48,7 @@ export function CoordinatorKpiSummary({
           </div>
           <div>
             <div className="text-caption font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
-              <span>SỔ TAY ĐIỀU PHỐI • MANTRA CỐT LÕI</span>
+              <span>SỔ TAY ĐIỀU PHỐI • NGUYÊN TẮC CỐT LÕI</span>
             </div>
             <div className="text-body-sm font-black text-text mt-0.5">
               “Nhận đúng — Hiểu đúng — Chọn đúng — Làm đúng — Kiểm tra đúng — Giao đúng — Đóng đúng”

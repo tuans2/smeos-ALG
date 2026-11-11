@@ -85,12 +85,12 @@ function CopyButton({ value, label }: { value: string; label?: string }) {
 
 function OrgTypeBadge({ type }: { type: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    CHAIN: { label: "Chuỗi", cls: "bg-primary-subtle text-primary border-primary/20" },
-    STORE: { label: "Cửa hàng", cls: "bg-primary-subtle text-primary border-primary/20" },
-    PLATFORM: { label: "SaaS Platform", cls: "bg-surface-muted text-text border-border" },
-    SINGLE: { label: "Tiệm độc lập", cls: "bg-warning-subtle text-warning-text border-warning/20" },
+    CHAIN: { label: "Chuỗi", cls: "bg-primary-muted text-primary border-primary-border" },
+    STORE: { label: "Cửa hàng", cls: "bg-primary-muted text-primary border-primary-border" },
+    PLATFORM: { label: "SaaS Platform", cls: "bg-surface-alt text-text border-border" },
+    SINGLE: { label: "Tiệm độc lập", cls: "bg-warning-bg text-warning-text border-warning-border" },
   }
-  const { label, cls } = map[type] ?? { label: type, cls: "bg-surface-muted text-text-muted border-border" }
+  const { label, cls } = map[type] ?? { label: type, cls: "bg-surface-alt text-text-muted border-border" }
   return (
     <span className={`text-caption font-semibold px-2.5 py-0.5 rounded-full border ${cls}`}>
       {label}
