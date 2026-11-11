@@ -4,6 +4,14 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 
 ---
 
+## [1.3.4] - 2026-11-11
+
+### Lint R24: lớp màu dùng token không tồn tại
+
+#### Đã thêm
+- Luật `R24` (`scripts/ux-lint/rules-tokens.ts`, có test): báo lớp `bg-/text-/border-…` thuộc họ màu hệ thống (`primary`, `secondary`, `accent`, `warning`, `danger`, `success`, `info`, `surface`) mà tên không có `--color-<tên>` trong `src/styles/tokens/*.css` hoặc `src/app/globals.css`. Tailwind không sinh CSS cho các lớp này nên phần tử không có màu (vd. `bg-surface-muted`, `bg-primary-subtle`).
+- Baseline ratchet tăng từ 28 lên 366: 338 vi phạm R24 có sẵn (nhiều nhất ở `components/greeting-card`, 209) được khoá lại, chỉ chặn lớp mới. Phương án xử lý nợ cũ chờ PO (`docs/ui-baseline/PHAN_TICH_LOP_MAU_KHONG_CO_TOKEN.md`).
+
 ## [1.3.3] - 2026-11-07
 
 ### Density một nguồn; mở rộng R16
