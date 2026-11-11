@@ -132,6 +132,9 @@ export const organizationPatchBody = z.object({
   public_chat_limits_decision: z.enum(["approve", "reject"]).optional(),
   /** Bật/tắt phạm vi chi nhánh đợt 1 (khách hàng) — D-59, ADR-012 T-5 */
   branch_scope_wave1: z.boolean().optional(),
+  /** Vòng đời tổ chức — tạm ngưng / mở lại / rời nền tảng (ADR-016 D-S5); `offboarding_until` bắt buộc khi OFFBOARDING */
+  lifecycle_status: z.enum(["ACTIVE", "SUSPENDED", "OFFBOARDING"]).optional(),
+  offboarding_until: z.iso.datetime().optional(),
 })
 
 // organizations/[id]/subscription/route.ts

@@ -41,6 +41,15 @@ enum workspace_kind {
   PRODUCTION
 }
 
+/// ADR-016 D-S5 (S-3): vòng đời tổ chức. SUSPENDED: chặn mọi truy cập của thành viên, giữ dữ liệu. OFFBOARDING: chỉ xem
+/// (xuất bàn giao), xoá sau `offboarding_until`. DELETED: đã xoá theo sổ bảng-thuộc-tenant (S-3b).
+enum organization_lifecycle_status {
+  ACTIVE
+  SUSPENDED
+  OFFBOARDING
+  DELETED
+}
+
 enum membership_status {
   INVITED
   ACTIVE
@@ -144,22 +153,27 @@ model sessions {
 }
 
 model organizations {
-  id               String            @id @default(uuid())
-  name             String
-  slug             String            @unique
-  type             organization_type @default(SINGLE)
-  credit_balance   Int               @default(0)
-  credit_plan      String?
-  settings         Json? // bảng công tắc cấp tổ chức, gồm cho_phep_tu_duyet
-  data_region      String?           @default("vn") // ADR-006: Vùng dữ liệu tenant
+  id                   String                        @id @default(uuid())
+  name                 String
+  slug                 String                        @unique
+  type                 organization_type             @default(SINGLE)
+  credit_balance       Int                           @default(0)
+  credit_plan          String?
+  settings             Json? // bảng công tắc cấp tổ chức, gồm cho_phep_tu_duyet
+  data_region          String?                       @default("vn") // ADR-006: Vùng dữ liệu tenant
   // SDAGF D-04 — legal hold cấp tổ chức: còn hạn thì không xoá vĩnh viễn dữ
   // liệu nào của tổ chức (asset, sản phẩm trong thùng rác, dọn bàn giao).
-  legal_hold_until DateTime?         @db.Timestamptz(3)
+  legal_hold_until     DateTime?                     @db.Timestamptz(3)
   /// ADR-012 D-T6 (T-6a): ngành của tổ chức → `industries.key`. Thay `settings.industry`; tới T-6c trigger
   /// `organizations_sync_industry_key` giữ cột này khớp `settings.industry` mỗi lần ghi settings.
-  industry_key     String?
-  created_at       DateTime          @default(now()) @db.Timestamptz(3)
-  updated_at       DateTime          @updatedAt @db.Timestamptz(3)
+  industry_key         String?
+  /// ADR-016 D-S5 (S-3): vòng đời tổ chức — Admin SaaS đổi (N2), kiểm ở `requireTenantContext`.
+  lifecycle_status     organization_lifecycle_status @default(ACTIVE)
+  lifecycle_changed_at DateTime?                     @db.Timestamptz(3)
+  /// Hạn giữ dữ liệu khi rời nền tảng (theo hợp đồng); quá hạn thì xoá (S-3b) trừ khi có legal hold.
+  offboarding_until    DateTime?                     @db.Timestamptz(3)
+  created_at           DateTime                      @default(now()) @db.Timestamptz(3)
+  updated_at           DateTime                      @updatedAt @db.Timestamptz(3)
 
   industry industries? @relation(fields: [industry_key], references: [key], onUpdate: Cascade, onDelete: Restrict)
 

@@ -11,6 +11,7 @@ export type ErrorCode =
   | "ENTITLEMENT_REQUIRED"
   | "PASSWORD_CHANGE_REQUIRED"
   | "SUBSCRIPTION_OVERDUE"
+  | "ORGANIZATION_INACTIVE"
   | "NOT_FOUND"
   | "CONFLICT"
   | "PAYLOAD_TOO_LARGE"
@@ -28,6 +29,8 @@ const HTTP_STATUS: Record<ErrorCode, number> = {
   PASSWORD_CHANGE_REQUIRED: 403,
   // Gói thuê bao quá hạn thanh toán → chỉ xem (checklist ALG 10.7, PO Q9)
   SUBSCRIPTION_OVERDUE: 402,
+  // Tổ chức tạm ngưng / đang rời nền tảng / đã đóng (ADR-016 D-S5)
+  ORGANIZATION_INACTIVE: 403,
   NOT_FOUND: 404,
   CONFLICT: 409,
   // Thân JSON vượt trần của `handle()` (audit API-17, PO 07/11/2026: 2 MB)
