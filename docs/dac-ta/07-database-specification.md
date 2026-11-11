@@ -4165,6 +4165,63 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 53. Vòng đời tổ chức — `organizations.lifecycle_status` (11/11/2026)
+
+ADR-016 D-S5, bước S-3a (PO duyệt 11/11/2026). Migration `20261111120000_organization_lifecycle` (expand, một giao dịch):
+thêm kiểu `organization_lifecycle_status` và ba cột của `organizations`; cột bắt buộc có `DEFAULT 'ACTIVE'` nên mọi tổ chức
+cũ đang hoạt động, không đổi dữ liệu nào khác.
+
+```prisma
+enum organization_lifecycle_status {
+  ACTIVE
+  SUSPENDED
+  OFFBOARDING
+  DELETED
+}
+
+model organizations {
+  // …
+  lifecycle_status     organization_lifecycle_status @default(ACTIVE)
+  lifecycle_changed_at DateTime?                     @db.Timestamptz(3)
+  offboarding_until    DateTime?                     @db.Timestamptz(3) // hạn giữ dữ liệu khi rời nền tảng
+}
+```
+
+| Trạng thái | Thành viên, khoá tích hợp | Ai đặt |
+|---|---|---|
+| `ACTIVE` | Bình thường | Admin SaaS (mở lại) |
+| `SUSPENDED` | Không đăng nhập, không xem, không ghi (403 `ORGANIZATION_INACTIVE`); dữ liệu giữ nguyên | Admin SaaS |
+| `OFFBOARDING` | Chỉ xem để xuất bàn giao; ghi → 403; `offboarding_until` (theo hợp đồng) bắt buộc, ở tương lai | Admin SaaS |
+| `DELETED` | Không ai vào được | Chỉ đường xoá tenant (S-3b), không qua Console |
+
+- Luật: `src/modules/organization/domain/organization-lifecycle.ts`. Kiểm ở `requireTenantContext`,
+  `requireIntegrationContext` và đăng nhập (`assert-organization-lifecycle.ts`).
+- Đổi trạng thái: `PATCH /platform/organizations/:id` với `lifecycle_status` (+ `offboarding_until`), mã `N2`; ghi
+  `platform_audit_logs` và `audit_logs` của tổ chức (`platform.organization_lifecycle_changed`).
+- Chưa làm: trang công khai của tổ chức tạm ngưng; nút đổi trạng thái trên Console.
+
+**S-3b — xoá hẳn tổ chức (PO 11/11/2026).** `npm run tenant:purge -- --org <id> --operator <email>` (chỉ đọc: số dòng
+sẽ xoá từng bảng; thêm `--confirm` để xoá). Điều kiện: `OFFBOARDING`, đã qua `offboarding_until`, không còn legal hold;
+người vận hành có `N2`; ghi `platform_audit_logs` (`platform.organization_purged`). Một giao dịch,
+`app.purge_reason = tenant_offboarding`, duyệt sổ `TABLES_CHILD_FIRST` (con trước cha):
+
+- Giữ (ADR-014 D-P4): đơn đã thu tiền (`paid_vnd > 0`) kèm `order_items`, `order_payments`, `order_recipients`; khách
+  được các đơn đó tham chiếu; `credit_transactions`, `usage`, `subscriptions`, `subscription_invoices`,
+  `provider_cost_entries`, `reconciliation_findings`, `audit_logs`, `platform_access_logs`, `tenant_data_keys` (đọc lại hoá
+  đơn VAT đã mã hoá), `storage_outbox`, `workspaces` (`usage.workspace_id` bắt buộc), dòng `organizations` (→ `DELETED`,
+  `settings` = `{}`).
+- Ẩn danh trên phần giữ: khách (`Khách đã xoá`, SĐT `ERASED`, bỏ email/địa chỉ/ghi chú), lời chúc và ghi chú nội bộ của
+  đơn, `delivery_address`; người nhận (tên, SĐT, địa chỉ) — **giữ** thông tin hoá đơn VAT; ghi chú và ảnh bằng chứng của
+  phiếu thu.
+- Xoá mọi dòng còn lại của tổ chức ở các bảng có `organization_id`, cùng `organization_links` và `governance_decisions`
+  (`scope = org:<id>`). Tệp của `assets` vào `storage_outbox` (cron xoá trên kho); tệp khác dưới `org/<id>/` do đối soát
+  kho xử lý.
+- Hai script dọn dữ liệu thử trước bàn giao (`scripts/handover-clean-tenant.ts` và script dọn đơn trong `prisma/seed`)
+  giữ nguyên — mục đích khác (PO 11/11/2026).
+
+Ca thử: `tests/tenant/organization-lifecycle.test.ts`, `tests/tenant/tenant-purge.test.ts` (không đủ điều kiện → không
+xoá gì; giữ chứng từ + nhật ký, ẩn danh, giữ VAT; tổ chức khác nguyên vẹn).
+
 ## 52. Chống bấm đúp khi tạo đơn — `orders.idempotency_key` (07/11/2026)
 
 Audit API-11, PO duyệt 07/11/2026. Migration `20261107230000_orders_idempotency_key` (expand, một giao dịch): thêm cột

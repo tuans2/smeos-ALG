@@ -65,6 +65,9 @@ describe("hợp đồng — Console Vận hành Nền tảng: tổ chức, thu p
     await expectContract(await patch({ clear_pending_language_unlock: true }), 200, R.organizationPatchResponse, "organization-patch")
     await expectContract(await patch({ unlocked_locales: ["vi", "en"] }), 200, R.organizationPatchResponse, "organization-patch")
     await expectContract(await patch({ branch_scope_wave1: true }), 200, R.organizationPatchResponse, "organization-patch")
+    const until = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    await expectContract(await patch({ lifecycle_status: "OFFBOARDING", offboarding_until: until }), 200, R.organizationPatchResponse, "organization-patch")
+    await expectContract(await patch({ lifecycle_status: "ACTIVE" }), 200, R.organizationPatchResponse, "organization-patch")
     await expectContract(await patch({ target_type: "CHAIN" }), 200, R.organizationPatchResponse, "organization-patch")
     await expectContract(await patch({}), 200, R.organizationPatchResponse, "organization-patch")
     const created = await expectContract(
