@@ -25,7 +25,7 @@ const input = (over: Partial<CreateCoordinatorOrderInput> = {}): CreateCoordinat
   productId: "p-1",
   customerName: "Nguyễn Văn An",
   recipientName: "Trần Thị Bình",
-  recipientPhone: "0901234567",
+  recipientPhone: "0901 234 567",
   deliveryAddress: { street: "12 Lê Lợi" },
   deliveryTargetTime: "17:00",
   deliveryTargetAt: new Date(Date.now() + 6 * 3600_000).toISOString(),

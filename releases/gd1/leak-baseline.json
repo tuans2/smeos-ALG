@@ -107,7 +107,6 @@
   "số điện thoại|src/modules/catalog-studio/use-cases/__tests__/resolve-catalog-brief.test.ts": 2,
   "số điện thoại|src/modules/chat-assistant/domain/__tests__/chat-order-extractor.test.ts": 8,
   "số điện thoại|src/modules/chat-assistant/domain/chat-order-extractor.ts": 2,
-  "số điện thoại|src/modules/chat-assistant/use-cases/convert-chat-to-draft-order.ts": 1,
   "số điện thoại|src/modules/coordinator/contracts/order-view.ts": 2,
   "số điện thoại|src/modules/coordinator/contracts/step-01-intake.ts": 2,
   "số điện thoại|src/modules/coordinator/contracts/step-03-assign-partner.ts": 1,

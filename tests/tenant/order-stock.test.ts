@@ -60,7 +60,7 @@ describe("tồn kho theo số lượng", () => {
       method: "POST",
       body: JSON.stringify({
         branchId,
-        deliveryAddress: { recipientName: "Trần Thị Bình", phone: "0901234567", street: "12 Lê Lợi" },
+        deliveryAddress: { recipientName: "Trần Thị Bình", phone: "0901 234 567", street: "12 Lê Lợi" },
         items: [{ description: "Phí gói quà", quantity: 1, unitPriceVnd: 20_000, metadata: { note: "giấy kraft", stock: { inventoryId: inv.id, quantity: 500 } } }],
       }),
     }))
@@ -77,7 +77,7 @@ describe("tồn kho theo số lượng", () => {
   it("audit BL-20: tạo đơn ở Điều phối trừ tồn; thiếu hàng → 409; huỷ ở Điều phối → hoàn", async () => {
     await prisma.product_inventory.create({ data: { organization_id: a.organizationId, product_id: productId, branch_id: branchId, quantity_available: 1 } })
     const body = {
-      productId, customerName: "Nguyễn Văn An", recipientName: "Trần Thị Bình", recipientPhone: "0901234567",
+      productId, customerName: "Nguyễn Văn An", recipientName: "Trần Thị Bình", recipientPhone: "0901 234 567",
       deliveryAddress: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" }, deliveryTargetTime: "17:00",
       deliveryTargetAt: new Date(Date.now() + 6 * 3600_000).toISOString(), productTitle: "Bình gốm", unitPriceVnd: 300_000, flowers: [],
     }
