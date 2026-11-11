@@ -99,18 +99,25 @@ function missingKeys(result: unknown, out: Set<string>, depth = 0): void {
 }
 
 /**
+ * Bảo đảm khoá của mọi bản mã trong `result` đã ở bộ nhớ — thiếu thì nạp mọi khoá bằng quyền hệ thống (một lần mỗi lần
+ * thiếu). Mã nào giải mã bản mã lồng bằng tay (vd. query extension của `orders`) phải gọi hàm này trước khi giải mã.
+ */
+export async function ensurePiiKeys(base: unknown, result: unknown): Promise<void> {
+  const missing = new Set<string>()
+  missingKeys(result, missing)
+  if (missing.size === 0) return
+  const master = piiMasterKey()
+  if (!master) return // đọc trường sẽ báo `PiiKeyRequiredError`
+  // Bảng khoá thuộc từng tổ chức (RLS): nạp toàn bộ bằng quyền hệ thống — khoá chỉ vào bộ nhớ tiến trình
+  await asSystemDb("pii:load-keys", () => loadAllDataKeys(base as Parameters<typeof loadAllDataKeys>[0], master))
+}
+
+/**
  * Chạy lệnh Prisma rồi bảo đảm khoá của mọi bản mã trong kết quả đã ở bộ nhớ — Prisma tính trường giải mã khi mã đọc
- * tới (sau khi lệnh trả về), nên khoá phải có trước. Thiếu → nạp mọi khoá bằng quyền hệ thống (một lần mỗi lần thiếu).
+ * tới (sau khi lệnh trả về), nên khoá phải có trước.
  */
 export async function readWithPiiKeys<T>(base: unknown, run: () => Promise<T>): Promise<T> {
   const result = await run()
-  const missing = new Set<string>()
-  missingKeys(result, missing)
-  if (missing.size > 0) {
-    const master = piiMasterKey()
-    if (!master) return result // đọc trường sẽ báo `PiiKeyRequiredError`
-    // Bảng khoá thuộc từng tổ chức (RLS): nạp toàn bộ bằng quyền hệ thống — khoá chỉ vào bộ nhớ tiến trình
-    await asSystemDb("pii:load-keys", () => loadAllDataKeys(base as Parameters<typeof loadAllDataKeys>[0], master))
-  }
+  await ensurePiiKeys(base, result)
   return result
 }
