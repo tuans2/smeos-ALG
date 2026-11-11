@@ -34,6 +34,11 @@ describe("danh mục năng lực — đặc tả 02", () => {
     expect(capability("R20").defaultRoles).toEqual(["dieu_hanh", "ke_toan"])
   })
 
+  it("Quản lý sản phẩm tải ảnh, chạy nhận diện, tạo nội dung bán hàng; duyệt (H3) vẫn chỉ Điều hành (GD1 Bước 6, PO 11/11/2026)", () => {
+    for (const code of ["G2", "H1", "H5"]) expect(capability(code).defaultRoles).toContain("product_manager")
+    expect(capability("H3").hardCap).toEqual(["dieu_hanh"])
+  })
+
   it("D18 cấu hình trường dữ liệu của cửa hàng — chỉ Điều hành, trần cứng (checklist ALG 1.9)", () => {
     expect(capability("D18").name).toBe("config.custom_field.manage")
     expect(capability("D18").defaultRoles).toEqual(["dieu_hanh"])
