@@ -26,7 +26,6 @@ Test mới: `src/components/greeting-card/customer/__tests__/shop-logo.test.tsx`
 - Lỗi `color-contrast` ở `/dieu-phoi` trong lần đo cuối là **trạng thái lỗi tạm thời** ("Lỗi tải đơn điều phối") do khoá giải mã dữ liệu cá nhân chưa nạp sau khi khởi động lại server; việc điều tra đã tạo riêng.
 - "(T01)…(T06)" trong tiêu đề các bước điều phối (`modules/coordinator/contracts/step-*.ts`) vẫn hiện trên giao diện. Chúng nằm trong hợp đồng sinh JSON schema; đổi tiêu đề phải sinh lại schema (`check:schemas:coordinator`), nên chưa làm.
 - Nút chữ cao 15–20px và 11 thanh trượt: vẫn chờ quyết định (xem `BAO_CAO_DOT2.md`).
-- 11 màn Điều hành/Console có lỗi đo được trước đây nhưng chưa nằm trong danh sách này (button-name/label đã sửa ở Đợt 2).
 
 ## 4. Phát hiện mới: lớp màu dùng token không tồn tại
 
