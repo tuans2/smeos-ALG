@@ -8,12 +8,11 @@ Nguồn danh mục: `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`. �
 
 | Trạng thái | Số chức năng |
 |---|---:|
-| Có ảnh | 94 |
-| Một phần | 14 |
+| Có ảnh | 95 |
+| Một phần | 15 |
 | Không có màn hình riêng (đề xuất, chờ PO) | 7 |
 | Có ảnh (đại diện, cần PO xác nhận) | 3 |
 | Có ảnh (trong chi tiết sản phẩm, chưa xác nhận khối) | 3 |
-| Chưa chụp | 2 |
 | **Tổng** | **123** |
 
 Giải thích: **Có ảnh** = có ít nhất 1 ảnh gán; **Một phần** = có ảnh nhưng thiếu trạng thái/luồng quan trọng; **Không có màn hình riêng** = chức năng là quy tắc nền hoặc tự động (đề xuất, cần PO xác nhận); **Chưa chụp** = có màn nhưng chưa có ảnh.
@@ -28,7 +27,7 @@ Giải thích: **Có ảnh** = có ít nhất 1 ảnh gán; **Một phần** = c
 | 1.1 | Truy cập theo tổ chức (Multi-tenant) | Không có màn hình riêng (đề xuất, chờ PO) | — | Quy tắc nền; có thể dùng ảnh tiêu đề tổ chức ở menu làm đại diện |
 | 1.2 | Đăng nhập & thu hồi phiên cũ | Có ảnh | `shots/public/desktop/dang-nhap.png` | — |
 | 1.3 | Đăng xuất & vô hiệu hóa phiên tức thì | Có ảnh | `shots/public/desktop/dang-nhap.png` | — |
-| 1.4 | Bắt buộc đổi mật khẩu tạm lần đầu | Chưa chụp | — | Hộp đổi mật khẩu bắt buộc chỉ hiện ở lần đăng nhập đầu bằng mật khẩu tạm; tài khoản mẫu đã bỏ cờ này. Chụp được nếu tạo nhân viên mới |
+| 1.4 | Bắt buộc đổi mật khẩu tạm lần đầu | Có ảnh | `shots2/nhan_vien_moi/desktop/root.png` | Hộp đổi mật khẩu bắt buộc, chụp bằng nhân viên mới tạo (mật khẩu tạm) |
 | 1.5 | Quản lý thông tin cửa hàng & logo an toàn | Có ảnh | `shots/dieu_hanh/desktop/cai-dat.png`<br>`shots/dieu_hanh/desktop/ho-so.png`<br>`shots2/dieu_hanh/desktop/cai-dat__click1--s-1-s.png` | — |
 | 1.6 | Khai báo chi nhánh & tọa độ quận/huyện | Có ảnh | `shots2/dieu_hanh/desktop/nhap-hang-loat__anh.png` | — |
 | 1.7 | Khai báo dịp tặng hoa ngành chuẩn | Có ảnh | `shots/dieu_hanh/desktop/cai-dat.png`<br>`shots2/dieu_hanh/desktop/cai-dat__click1--s-1-s.png`<br>`shots2/dieu_hanh/desktop/cai-dat__click10--s-10-s.png` | — |
@@ -69,7 +68,7 @@ Giải thích: **Có ảnh** = có ít nhất 1 ảnh gán; **Một phần** = c
 | 3.4 | Kiểm soát cảnh báo & chặn giá dưới sàn | Có ảnh | `shots/dieu_hanh/desktop/bang-gia.png`<br>`shots2/dieu_hanh/desktop/bang-gia_74d06878-87c0-41c0-ba04-6212be082270.png`<br>`shots2/dieu_hanh/desktop/bang-gia__click1-Tạo-bảng-giá.png` | — |
 | 3.5 | Quản lý ưu đãi, mã giảm giá, miễn phí ship | Có ảnh | `shots/dieu_hanh/desktop/uu-dai.png` | — |
 | 3.6 | Phụ phí 6 kiểu dáng, hệ số ngày lễ 1.3x & VAT | Có ảnh | `shots/dieu_hanh/desktop/cai-dat.png`<br>`shots2/dieu_hanh/desktop/cai-dat__click1--s-1-s.png`<br>`shots2/dieu_hanh/desktop/cai-dat__click10--s-10-s.png` | — |
-| 3.7 | Đề xuất & duyệt giảm giá sâu trình Điều hành | Chưa chụp | — | Nằm trong khung trao đổi của đơn (chế độ "Xin giảm giá"); đã có ảnh khung trao đổi nhưng chưa bấm vào chế độ này |
+| 3.7 | Đề xuất & duyệt giảm giá sâu trình Điều hành | Một phần | `shots2/dieu_hanh/desktop/the-chao__don-xin-giam-gia.png`<br>`shots2/dieu_hanh/desktop/the-chao__don-that-chat.png` | Đã chụp form Sale xin giảm giá; chưa chụp phía Điều hành duyệt/từ chối |
 | 3.8 | Soạn & xem trước báo giá chuyên nghiệp | Có ảnh | `shots/dieu_hanh/desktop/bao-gia.png`<br>`shots2/dieu_hanh/desktop/bao-gia__click1-Tạo-Soạn.png` | — |
 | 3.9 | Lưu & quản lý báo giá theo mã | Có ảnh | `shots/dieu_hanh/desktop/bao-gia.png`<br>`shots2/dieu_hanh/desktop/bao-gia__click1-Tạo-Soạn.png` | — |
 | 3.10 | Điều chỉnh báo giá & lưu vết phiên bản | Có ảnh | `shots/dieu_hanh/desktop/bao-gia.png`<br>`shots2/dieu_hanh/desktop/bao-gia__click1-Tạo-Soạn.png` | — |

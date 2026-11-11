@@ -2,7 +2,7 @@
 
 Dev local, dữ liệu mẫu, desktop 1440 và mobile 390. Cột "Mã" chỉ là gợi ý theo route, cần PO rà. Ảnh hộp thoại chụp full-page nên lớp phủ chỉ phủ vùng nhìn thấy.
 
-Tổng: 1245 ảnh ({'shots': 416, 'shots2': 555, 'shots-p1-empty': 274})
+Tổng: 1263 ảnh ({'shots': 416, 'shots2': 573, 'shots-p1-empty': 274})
 
 | Vai | Màn / route | Thiết bị | Loại | Mã chức năng | Tệp |
 |---|---|---|---|---|---|
@@ -735,12 +735,26 @@ Tổng: 1245 ảnh ({'shots': 416, 'shots2': 555, 'shots-p1-empty': 274})
 | dieu_hanh | the-chao__don-da-xac-nhan-dieu-hanh | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__don-da-xac-nhan-dieu-hanh.png` |
 | dieu_hanh | the-chao__don-lich-su | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__don-lich-su.png` |
 | dieu_hanh | the-chao__don-lich-su | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__don-lich-su.png` |
+| dieu_hanh | the-chao__don-that-chat | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__don-that-chat.png` |
+| dieu_hanh | the-chao__don-that-chat | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__don-that-chat.png` |
+| dieu_hanh | the-chao__don-that-chi-tiet | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__don-that-chi-tiet.png` |
+| dieu_hanh | the-chao__don-that-chi-tiet | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__don-that-chi-tiet.png` |
+| dieu_hanh | the-chao__don-that-dieuhanh-mo | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__don-that-dieuhanh-mo.png` |
+| dieu_hanh | the-chao__don-that-dieuhanh-mo | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__don-that-dieuhanh-mo.png` |
+| dieu_hanh | the-chao__don-that-mo-tu-hop-viec | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__don-that-mo-tu-hop-viec.png` |
+| dieu_hanh | the-chao__don-that-mo-tu-hop-viec | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__don-that-mo-tu-hop-viec.png` |
 | dieu_hanh | the-chao__don-the-khach | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__don-the-khach.png` |
 | dieu_hanh | the-chao__don-the-khach | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__don-the-khach.png` |
+| dieu_hanh | the-chao__don-xin-giam-gia | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__don-xin-giam-gia.png` |
+| dieu_hanh | the-chao__don-xin-giam-gia | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__don-xin-giam-gia.png` |
 | dieu_hanh | the-chao__header-hop-viec | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__header-hop-viec.png` |
 | dieu_hanh | the-chao__header-hop-viec | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__header-hop-viec.png` |
 | dieu_hanh | the-chao__header-huong-dan | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__header-huong-dan.png` |
 | dieu_hanh | the-chao__header-huong-dan | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__header-huong-dan.png` |
+| dieu_hanh | the-chao__hop-viec-cap-nhat | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__hop-viec-cap-nhat.png` |
+| dieu_hanh | the-chao__hop-viec-cap-nhat | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__hop-viec-cap-nhat.png` |
+| dieu_hanh | the-chao__hop-viec-cap-nhat-nhan-tin | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__hop-viec-cap-nhat-nhan-tin.png` |
+| dieu_hanh | the-chao__hop-viec-cap-nhat-nhan-tin | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__hop-viec-cap-nhat-nhan-tin.png` |
 | dieu_hanh | the-chao__tab1-Gửi-nhanh | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__tab1-Gửi-nhanh.png` |
 | dieu_hanh | the-chao__tab1-Gửi-nhanh | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/mobile/the-chao__tab1-Gửi-nhanh.png` |
 | dieu_hanh | the-chao__tab2-Quản-lý | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/dieu_hanh/desktop/the-chao__tab2-Quản-lý.png` |
@@ -1003,6 +1017,10 @@ Tổng: 1245 ảnh ({'shots': 416, 'shots2': 555, 'shots-p1-empty': 274})
 | marketing | uu-dai | desktop | trạng thái trống | 3.5 | `shots-p1-empty/marketing/desktop/uu-dai.png` |
 | marketing | uu-dai | mobile | dữ liệu | 3.5 | `shots/marketing/mobile/uu-dai.png` |
 | marketing | uu-dai | mobile | trạng thái trống | 3.5 | `shots-p1-empty/marketing/mobile/uu-dai.png` |
+| nhan_vien_moi | root | desktop | tab/hộp thoại/route động |  | `shots2/nhan_vien_moi/desktop/root.png` |
+| nhan_vien_moi | root | mobile | tab/hộp thoại/route động |  | `shots2/nhan_vien_moi/mobile/root.png` |
+| nhan_vien_moi | the-chao | desktop | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/nhan_vien_moi/desktop/the-chao.png` |
+| nhan_vien_moi | the-chao | mobile | tab/hộp thoại/route động | 4.12-4.28,5.1-5.8,6.4,9.1 | `shots2/nhan_vien_moi/mobile/the-chao.png` |
 | platform | van-hanh | desktop | dữ liệu | 9.8 | `shots/platform/desktop/van-hanh.png` |
 | platform | van-hanh | desktop | trạng thái trống | 9.8 | `shots-p1-empty/platform/desktop/van-hanh.png` |
 | platform | van-hanh | mobile | dữ liệu | 9.8 | `shots/platform/mobile/van-hanh.png` |
