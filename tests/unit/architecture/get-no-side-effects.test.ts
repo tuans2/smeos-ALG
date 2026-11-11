@@ -10,7 +10,8 @@ import { describe, expect, it } from "vitest"
  * đổi dữ liệu nghiệp vụ) và luồng SSE; thêm ngoại lệ phải ghi lý do.
  */
 const WRITE_CALL = /\b([A-Za-z_]\w*)\s*\(/g
-const WRITE_NAME = /^(create|update|delete|remove|upsert|increment|save|mark|enqueueJob|revoke|claim|consume|approve|reject|publish|assign|confirm|cancel|set)[A-Z_]|\.(create|update|delete|upsert)$/
+// Tên lời gọi lấy từ `WRITE_CALL` (chỉ ký tự chữ/số/_), nên chỉ cần khớp tiền tố động từ ghi + chữ hoa tiếp theo
+const WRITE_NAME = /^(?:create|update|delete|remove|upsert|increment|save|mark|enqueueJob|revoke|claim|consume|approve|reject|publish|assign|confirm|cancel|set)[A-Z_]/
 
 const ALLOWED: Readonly<Record<string, string>> = {
   recordDataExport: "nhật ký xuất dữ liệu (audit đọc), không đổi dữ liệu nghiệp vụ",
