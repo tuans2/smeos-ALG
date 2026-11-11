@@ -1138,6 +1138,7 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | PATCH | `/notification/inbox/:id/read` | — (của chính mình) | Đánh dấu đã đọc; tin của người/tổ chức khác → không đổi |
 | POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |
 | GET | `/notification/stream` | — (của chính mình) | SSE tin mới; ping 25 giây. Hub trong bộ nhớ tiến trình (AUD-007) |
+| GET · POST · DELETE | `/notification/push-subscriptions` | — (của chính mình) | Nhận Web Push trên trình duyệt này (checklist 4.30): `GET` trả khoá công khai VAPID khi tầng Mẹ đã bật kênh + số thiết bị của tôi (`?endpoint=` để biết trình duyệt này đã đăng ký chưa); `POST { endpoint, keys: { p256dh, auth } }` chỉ nhận endpoint https của dịch vụ đẩy thật (khác → 422), trần 30 lần / 10 phút / người; `DELETE { endpoint }` chỉ xoá thiết bị của chính mình |
 | GET · PATCH | `/notification/preferences` | — (của chính mình) | Tuỳ chọn theo sự kiện × kênh; sự kiện bị khoá cứng trong phạm vi của tổ chức → 403 |
 | GET · PATCH | `/notification/org-policy` | `F1` · `F2` | Chính sách tổ chức theo sự kiện × kênh × vai (`roleKey`, `*` = mọi vai) |
 | GET · PATCH | `/notification/store-defaults` | `F1` · `F2` | Mặc định cửa hàng theo vai, có khung giờ |
@@ -1146,7 +1147,7 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | GET | `/platform/notification/events` | phiên nền tảng | Toàn bộ danh mục sự kiện |
 | GET · PATCH | `/platform/notification/channels` | đọc: phiên nền tảng · ghi: `N2` | Bật/tắt kênh toàn sàn |
 | GET · PUT | `/platform/notification/providers` | `N2` · `N2` | Sổ nhà cung cấp kênh SMS / Zalo / Web Push (checklist 4.30): đăng ký một lần cho cả hệ thống, lưu niêm phong trong `platform_secrets`; khoá bí mật không trả lại (`secretsSet`), ô bí mật để trống giữ khoá cũ, `provider: null` gỡ. Bật/tắt dùng kênh vẫn qua `/platform/notification/channels` |
-| POST | `/platform/notification/providers/test` | `N2` | Gửi một tin thử tới số điện thoại nhập vào; trả `{ success, error? }` (`NOT_CONFIGURED` khi chưa đăng ký) |
+| POST | `/platform/notification/providers/test` | `N2` | Gửi một tin thử: SMS / Zalo tới số điện thoại nhập vào; Web Push tới thiết bị chính người vận hành đã bật nhận tin; trả `{ success, error? }` (`NOT_CONFIGURED` khi chưa đăng ký) |
 | GET · PATCH | `/platform/notification/visibility` | đọc: phiên nền tảng · ghi: `N2` | Ma trận hiển thị sự kiện theo tầng |
 | GET · POST · DELETE | `/platform/notification/hard-locks` | đọc: phiên nền tảng · ghi: `N2` | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
 | PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |

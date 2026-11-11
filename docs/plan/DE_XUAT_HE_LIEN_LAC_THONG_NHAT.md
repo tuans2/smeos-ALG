@@ -58,15 +58,16 @@ Mọi nghiệp vụ (A, B, C, D) ──► một cổng gửi chung ──► ad
 | Zalo ZNS | Zalo | theo bảng giá Zalo | khách và nhân viên | **sẵn sàng, chờ khoá** |
 | SMS | eSMS.vn | theo bảng giá eSMS | dự phòng | **sẵn sàng, chờ khoá** |
 
-## 4. Web Push — phần còn thiếu
+## 4. Web Push — đã làm 11/11/2026
 
-Web Push miễn phí, hợp nhất cho nhắc nhân viên, nhưng cần:
+Chủ dự án yêu cầu làm Web Push (11/11/2026). Đã làm:
 
-1. Bảng lưu thiết bị đã bật nhận tin `push_subscriptions` (`organization_id`, `user_id`, `endpoint`, `p256dh`, `auth`, `created_at`, `@@index([organization_id])`) — **đổi lược đồ, cần duyệt**.
-2. Mã hoá nội dung (RFC 8291) và ký VAPID: dùng thư viện `web-push` (**phụ thuộc mới, cần duyệt**) hoặc tự viết bằng `node:crypto` (~150 dòng, không thêm phụ thuộc, nhiều rủi ro hơn). Đề xuất: thư viện `web-push`.
-3. Service worker và nút "Bật thông báo trên thiết bị này" ở trang hồ sơ; API `POST/DELETE /api/v1/notification/push-subscriptions` (của chính mình, cách ly tổ chức).
+1. Bảng `push_subscriptions` (migration `20261111053241_push_subscriptions`, có `organization_id`, chỉ thêm bảng).
+2. Mã hoá RFC 8291 và ký VAPID **tự viết bằng `node:crypto`**, không thêm thư viện: `web-push` 4.0.0 mới phát hành 5 ngày và dùng giấy phép MPL-2.0 (cần pháp lý xem khi giao ALG). Đúng từng byte với ví dụ chuẩn RFC 8291 Phụ lục A (`web-push-protocol.test.ts`).
+3. Tầng Mẹ chỉ nhập liên hệ (mailto:) → hệ thống tự tạo cặp khoá VAPID; bật kênh "Thông báo trên trình duyệt" ở Console.
+4. Nhân viên bật "Thông báo trên thiết bị này" ở menu tài khoản (service worker `/push-sw.js`); chỉ nhận endpoint của dịch vụ đẩy thật (Google, Mozilla, Apple, Microsoft) để chặn SSRF; tối đa 10 thiết bị mỗi người; thiết bị đã huỷ (404/410) tự xoá; đăng xuất thì tắt nhận tin trên trình duyệt đó; bảng có RLS theo tổ chức.
 
-Ước lượng: 1,5–2 ngày gồm test cách ly.
+Chưa kiểm: gửi thật tới dịch vụ đẩy (môi trường làm việc chặn mạng ra ngoài) — cần thử trên staging/production sau khi bật kênh.
 
 ## 5. 4.32 — đẩy tin nhắc giao trước 60 / 30 phút
 
@@ -84,6 +85,6 @@ Hiện mốc M1/M2 chỉ hiện ở thanh nhắc `/dieu-phoi`; người dùng ph
 1. Nhà cung cấp chính thức: eSMS cho SMS và Zalo ZNS (đã nối sẵn) — hay nhà cung cấp khác (thêm một mục vào sổ, ~0,5 ngày mỗi nhà cung cấp).
 2. Báo khách dùng khoá chung của tầng Mẹ, cho tổ chức ghi đè — đồng ý?
 3. Đơn giá trừ hạn mức cho mỗi tin SMS / ZNS khi dùng khoá chung.
-4. Web Push: duyệt bảng `push_subscriptions` và thư viện `web-push`.
+4. Web Push: đã làm (bảng `push_subscriptions`, không thêm thư viện).
 5. 4.32: đã làm theo mặc định ở mục 5 — đổi người nhận / kênh mặc định nếu muốn.
 6. Thứ tự chuyển đường B, C, D sang cổng chung (đề xuất D → B → C, rủi ro tăng dần).

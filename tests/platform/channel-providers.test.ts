@@ -61,10 +61,30 @@ describe("sổ nhà cung cấp kênh liên lạc — Console tầng Mẹ", () =>
     expect(wrongProvider.status).toBe(400)
   })
 
-  it("Web Push chưa gửi được: tin thử trả NOT_CONFIGURED, không báo thành công", async () => {
-    const res = await testProvider(withSession(`${URL}/test`, op.token, { method: "POST", body: JSON.stringify({ channel: "PUSH", phone: "0900 000 000" }) }))
+  it("Web Push chưa kết nối: tin thử trả NOT_CONFIGURED, không báo thành công", async () => {
+    const res = await testProvider(withSession(`${URL}/test`, op.token, { method: "POST", body: JSON.stringify({ channel: "PUSH" }) }))
     const data = (await expectContract(res, 200, R.channelProviderTestResponse, "provider-test")).data
     expect(data).toMatchObject({ channel: "PUSH", success: false, error: "NOT_CONFIGURED" })
+  })
+
+  it("Web Push: chỉ nhập liên hệ → hệ thống tự tạo cặp khoá VAPID; khoá riêng không trả lại; cặp lệch → 400", async () => {
+    const res = await put(op, { channel: "PUSH", provider: "vapid", values: { subject: "mailto:van-hanh@example.com" } })
+    const saved = (await expectContract(res, 200, R.channelProviderSavedResponse, "provider-saved")).data as { configured: boolean; values: Record<string, string>; secretsSet: Record<string, boolean> }
+    expect(saved.configured).toBe(true)
+    expect(saved.values.publicKey).toMatch(/^[A-Za-z0-9_-]{80,}$/)
+    expect(saved.secretsSet.privateKey).toBe(true)
+    expect(Object.keys(saved.values)).not.toContain("privateKey")
+
+    const again = await put(op, { channel: "PUSH", provider: "vapid", values: { subject: "mailto:khac@example.com" } })
+    expect(((await again.json()) as { data: { values: Record<string, string> } }).data.values.publicKey).toBe(saved.values.publicKey)
+
+    const mismatch = await put(op, { channel: "PUSH", provider: "vapid", values: { subject: "mailto:van-hanh@example.com", publicKey: "BAAA", privateKey: "khoa-gia" } })
+    expect(mismatch.status).toBe(400)
+  })
+
+  it("SMS / Zalo gửi thử thiếu số điện thoại → 400", async () => {
+    const res = await testProvider(withSession(`${URL}/test`, op.token, { method: "POST", body: JSON.stringify({ channel: "SMS" }) }))
+    expect(res.status).toBe(400)
   })
 
   it("gỡ nhà cung cấp → kênh quay về chưa cấu hình", async () => {

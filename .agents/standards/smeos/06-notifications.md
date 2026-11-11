@@ -23,7 +23,7 @@
 | Escape nội dung kênh | ✅ | `channel-adapters-escaping.test.ts` |
 | Gửi thật: In-app, Email (`core/notifications/email-service.ts`), Telegram | ✅ | — |
 | SMS (eSMS), Zalo ZNS | ✅ gửi thật **khi tầng Mẹ đã đăng ký nhà cung cấp** (`/platform/notification/providers`, checklist 4.30); chưa đăng ký → `NOT_CONFIGURED` | `stub-adapters-not-configured.test.ts`, `tests/platform/channel-providers.test.ts` |
-| Web Push | 🟡 **stub** — thiếu bảng đăng ký thiết bị (đổi lược đồ, chờ PO) | — |
+| Web Push | ✅ gửi thật khi tầng Mẹ đã có khoá VAPID (tự tạo ở Console) và bật kênh; người dùng bật nhận tin ở menu tài khoản (`push_subscriptions`). Mã hoá RFC 8291 + VAPID tự viết bằng `node:crypto` (`adapters/web-push-protocol.ts`), không thư viện ngoài | `web-push-protocol.test.ts` (ví dụ chuẩn RFC 8291), `web-push-adapter.test.ts`, `tests/tenant/push-subscriptions-isolation.test.ts` |
 | Sự kiện đang gửi: đơn mới, xác nhận, chế tác xong, đã giao, huỷ, giao việc chế tác, nhắc lịch giao M1/M2 (cron, 4.32) | ✅ | `notify-organization.test.ts`, `tests/tenant/delivery-reminder-push.test.ts` |
 | Sự kiện chuỗi / nền tảng / khách hàng | 🟡 chưa nối | nợ #185 (b) |
 | SSE nhiều instance | 🟡 trong bộ nhớ một tiến trình | nợ #185 (b) |

@@ -58,9 +58,12 @@ export const CHANNEL_PROVIDERS: readonly ProviderDefinition[] = [
     key: "vapid",
     channel: "PUSH",
     label: "Web Push (VAPID)",
-    fields: [field("publicKey", "Khoá công khai VAPID", false), field("privateKey", "Khoá riêng VAPID", true), field("subject", "Liên hệ (mailto: hoặc https:)", false)],
-    ready: false,
-    pending: "Chưa gửi được: hệ thống chưa có phần lưu thiết bị đã đồng ý nhận tin",
+    fields: [
+      field("subject", "Liên hệ của hệ thống (mailto: hoặc https:)", false),
+      field("publicKey", "Khoá công khai VAPID — để trống, hệ thống tự tạo", false),
+      field("privateKey", "Khoá riêng VAPID — để trống, hệ thống tự tạo", true),
+    ],
+    ready: true,
   },
 ]
 

@@ -83,7 +83,8 @@ export const channelProviderSaveBody = z.object({
 })
 
 // notification/providers/test/route.ts
-export const channelProviderTestBody = z.object({ channel: PROVIDER_CHANNEL, phone: z.string().min(8).max(20) })
+// `phone` bắt buộc với SMS / Zalo (kiểm ở use-case); Web Push gửi tới thiết bị của chính người vận hành
+export const channelProviderTestBody = z.object({ channel: PROVIDER_CHANNEL, phone: z.string().min(8).max(20).optional() })
 
 // notification/hard-locks/route.ts
 const NOTIFY_CHANNEL = z.enum(["APP_INBOX", "EMAIL", "PUSH", "TELEGRAM", "ZALO", "SMS", "WHATSAPP", "MESSENGER"])

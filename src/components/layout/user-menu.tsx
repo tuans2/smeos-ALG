@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils"
 import { ChangePasswordDialog } from "./change-password-dialog"
 import { MyOrganizationsDialog } from "./my-organizations-dialog"
 import { useUiStudioAvailable } from "./ui-studio-availability"
+import { PushOptInItem } from "@/components/notification/push-opt-in-item"
+import { disablePush } from "@/components/notification/push-subscription-client"
 
 export interface UserMenuProps {
   initials: string
@@ -49,6 +51,8 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
 
   async function handleLogout() {
     setDangXuat(true)
+    // Máy dùng chung không nhận tiếp tin của người vừa đăng xuất (Web Push, 4.30) — lỗi thì vẫn đăng xuất
+    await disablePush().catch(() => undefined)
     try {
       await fetch("/api/v1/auth/logout", { method: "POST" })
     } catch {
@@ -167,6 +171,8 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                 </span>
               </Button>
             )}
+
+            <PushOptInItem />
 
             {/* Chuyển cửa hàng + nhận lời mời vào cửa hàng khác (audit hành trình UJ-14) */}
             <Button variant="ghost"

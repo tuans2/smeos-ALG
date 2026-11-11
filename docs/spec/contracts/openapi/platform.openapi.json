@@ -6256,8 +6256,7 @@
                   }
                 },
                 "required": [
-                  "channel",
-                  "phone"
+                  "channel"
                 ]
               }
             }
