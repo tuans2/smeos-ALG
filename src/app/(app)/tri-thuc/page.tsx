@@ -94,7 +94,7 @@ export default function KnowledgeBasePage() {
       </header>
 
       {/* 2. Main Content */}
-      <main className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
+      <div className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
         {/* Banner Hướng Dẫn Chuẩn FeatureGuidanceCard (K1: đúng 1 card duy nhất) */}
         <FeatureGuidanceCard
           badgeLabel="CẨM NANG VẬN HÀNH THƯƠNG MẠI SSOT"
@@ -172,7 +172,7 @@ export default function KnowledgeBasePage() {
             ))
           )}
         </div>
-      </main>
+      </div>
     </div>
   )
 }

@@ -137,7 +137,7 @@ export function CrmWorkspace() {
       />
 
       {/* Main Body */}
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
         {/* K1: Tối đa 1 Feature Guidance Card */}
         <FeatureGuidanceCard
           id="crm_workspace_guidance"
@@ -334,7 +334,7 @@ export function CrmWorkspace() {
 
         {/* Khối P2: Lối tắt bộ công cụ CRM */}
         <CrmToolkitGrid />
-      </main>
+      </div>
     </div>
   )
 }

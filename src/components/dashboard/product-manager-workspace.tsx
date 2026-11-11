@@ -100,7 +100,7 @@ export function ProductManagerWorkspace() {
       />
 
       {/* Main Body */}
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
         {/* K1: 1 Feature Guidance Card */}
         <FeatureGuidanceCard
           id="product_manager_workspace_guidance"
@@ -290,7 +290,7 @@ export function ProductManagerWorkspace() {
             </div>
           </Card>
         )}
-      </main>
+      </div>
     </div>
   )
 }
