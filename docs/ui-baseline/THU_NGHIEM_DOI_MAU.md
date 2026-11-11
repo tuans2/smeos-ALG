@@ -6,7 +6,7 @@ Dành cho PO quyết câu 3 trong `CAU_HOI_CHO_PO.md`. Làm trên **nhánh cục
 
 | Tên không có token | → Token sẵn có | Giá trị | Số chỗ đổi |
 |---|---|---|---:|
-| `surface-muted` | `surface-alt` | #F5ECE4 | 236 |
+| `surface-muted` | `surface-alt` | #F5ECE4 | 240 |
 | `primary-subtle`, `primary-bg` | `primary-muted` | #F5E6EA | 47 |
 | `surface-raised`, `surface-elevated` | `surface` | #FFFFFF | 25 |
 | `primary-hover` | `primary-dark` | #57202F | 7 |
