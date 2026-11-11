@@ -6,6 +6,7 @@ import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
 import type { DbClient } from "./db-client"
 import { JobEventRepository } from "./job-event-repository"
+import { listRefundableJobs } from "./refundable-jobs-query"
 import type { IGenerationJobRepository } from "../domain/repositories/generation-job-repository.interface"
 
 // Re-export interface cho các module cần import từ một nơi
@@ -368,27 +369,9 @@ export class GenerationJobRepository implements IGenerationJobRepository {
    * dòng trả về mang theo `organization_id` của chính nó, và use-case hoàn
    * credit dựng ngữ cảnh từ đúng giá trị đó chứ không từ tham số nào khác.
    */
-  /**
-   * Job thuộc diện hoàn credit, mọi `feature`. Ba diện ở
-   * `usage/domain/refund-policy.ts`; câu `where` dưới đây phải nói cùng một
-   * điều với `lyDoHoanCredit` — nó là bản dịch sang SQL của đúng luật đó,
-   * để tiến trình quét không phải kéo cả bảng job về rồi lọc trong bộ nhớ.
-   *
-   * Chạy toàn hệ thống, không theo một tổ chức — cùng lý do với
-   * `markStuckAsFailed`, nên không dùng `scopedWhere`.
-   */
+  /** Job còn credit phải hoàn, mọi tổ chức — `refundable-jobs-query.ts` (audit BL-32). */
   listRefundable(limit: number): Promise<generation_jobs[]> {
-    return this.db.generation_jobs.findMany({
-      where: {
-        OR: [
-          { status: "COMPLETED", result: "REJECTED" },
-          { status: "CANCELLED" },
-          { status: "FAILED" },
-        ],
-      },
-      orderBy: { created_at: "asc" },
-      take: limit,
-    })
+    return listRefundableJobs(this.db, limit)
   }
 
   /**

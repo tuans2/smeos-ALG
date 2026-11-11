@@ -8,7 +8,7 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 |---|---:|---:|
 | Trang | 90 | 26 |
 | API | 478 | 61 |
-| Tệp trong `src/` | 3524 | 662 |
+| Tệp trong `src/` | 3527 | 662 |
 
 ## Code trong phạm vi chạm vùng không giao
 
@@ -53,7 +53,7 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `greeting-card` | 281/285 |
 | `integration` | 20/23 |
 | `integration-hub` | 34/35 |
-| `jobs` | 18/19 |
+| `jobs` | 19/20 |
 | `journey` | 6/17 |
 | `landing-page` | 4/7 |
 | `market-intelligence` | 16/30 |

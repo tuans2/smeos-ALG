@@ -9,7 +9,7 @@
 |---|---|
 | Đối chiếu lại | 18 phát hiện đợt 1 — đọc mã hiện tại, không tin dấu "đã làm" trong kế hoạch |
 | Rà mới | Tồn kho theo số lượng (mới thêm 07/11), tạo đơn Điều phối, khoản thu chờ duyệt, tự huỷ đơn chưa thu, đặt hàng công khai catalog/landing, đơn từ chat, báo giá ↔ đơn, giao trước thu sau, VAT đơn chuẩn, thuê bao (hoá đơn, gia hạn, credit tặng, SePay), credit AI, hạng khách + bộ quét, báo cáo doanh thu, phí gia công đối tác chuỗi, màn quyết toán đối tác, màn số liệu |
-| Chưa rà sâu | Logic nội dung/AI (`creative-production`, `content-engine`, `media`, `video-studio`), `field-platform`, `integration-hub` (chỉ xem đường tạo đơn), `market-intelligence` |
+| Chưa rà sâu | Chất lượng nội dung AI (`creative-production`, `content-engine`, `media`, `video-studio` — đã rà phần trừ/hoàn credit, mục F), `field-platform`, `integration-hub` (chỉ xem đường tạo đơn), `market-intelligence` (chỉ phần credit) |
 | Phương pháp | Đọc mã tĩnh, lần mọi đường ghi vào cùng một cột/khái niệm; chạy thử hàm thuần bằng `tsx` cho các phép tính nghi sai (mục 3, ghi "Đã chạy thử") |
 | Giới hạn | Không có CSDL `_test` → **không chạy** `test:tenant`/`test:platform`; kịch bản cần CSDL suy từ mã. `npm test`: xem mục 7 |
 
@@ -44,6 +44,10 @@ Năm việc nên làm trước:
 | BL-26 | **Đã sửa phần không cần PO** — đơn không gắn chi nhánh trừ tồn ở chi nhánh còn nhiều hàng nhất (mặc định, không chặn khách); hoàn tồn khi huỷ ở Điều phối trong cùng giao dịch. Còn lại (PO): thời gian giữ tồn của đơn công khai chưa thu. Huỷ ở sổ đơn (đơn chưa vào Điều phối) vẫn hoàn tồn ngay sau giao dịch huỷ | `orders/infra/order-stock.ts`, `coordinator/use-cases/operations.ts` | `tests/tenant/order-stock.test.ts`, `tests/unit/orders/order-item-stock-mark.test.ts` |
 | BL-27 | **Đã sửa phần bộ quét** — quét theo trang, con trỏ `(current_period_end, id)`, trần 25 trang. Còn lại (PO): đổi gói, tiền dư, ngày neo kỳ | `subscription/infra/subscription-sweep-query.ts`, `use-cases/sweep-subscriptions.ts` | `src/modules/subscription/use-cases/sweep-subscriptions.test.ts` |
 | BL-31 | **Đã sửa** — `orders/domain/payment-progress.ts` dùng chung cho 6 nơi; giai đoạn vòng đời khách dùng hạng (theo ngưỡng ngành); gửi báo giá lỗi báo rõ, chỉ sao chép báo giá đã lưu (tổng của máy chủ); form tạo đơn nhận 0 ₫ (nháp chờ báo giá) như API, chữ trung tính ngành; bộ quét chỉ số khách dùng con trỏ `(updated_at, id)` | `orders/domain/payment-progress.ts`, `crm/domain/crm-rules.ts`, `components/sales/quotation/*`, `components/orders/create-order-modal.tsx`, `crm/infra/customer-metrics-repository.ts` | `tests/unit/orders/payment-progress.test.ts`, `tests/unit/sales/quotation-send.test.ts`, `tests/unit/crm/crm-rules.test.ts`, `src/modules/crm/use-cases/__tests__/customer-metrics-sweep.test.ts` |
+| BL-32 | **Đã sửa** — `listRefundable` chỉ lấy job lượt hiện tại còn giữ credit (`jobs/infra/refundable-jobs-query.ts`); `refundDueJobs` chạy sau mỗi lượt quét job treo (`scanStuckJobs`, cron 5 phút sẵn có — không đổi `render.yaml`) | `usage/use-cases/refund-due-jobs.ts`, `jobs/use-cases/scan-stuck-jobs.ts`, `jobs/infra/generation-job-repository.ts` | `tests/tenant/refund-due-jobs.test.ts`, `tests/unit/usage/refund-due-jobs.test.ts` |
+| BL-33 | **Đã sửa** — 5 lối lỗi AI trả câu tiếng Việt cố định, chỉ nói "đã hoàn credit" khi hoàn thật; lỗi gốc vẫn ở `generation_jobs.error` | `usage/domain/ai-failure-message.ts` + 5 use-case | `tests/unit/usage/refund-due-jobs.test.ts` |
+| BL-34 | **Đã sửa phần không cần PO** — lượt nhập kẹt `IN_PROGRESS` quá 15 phút được nhận lại; còn/hết hàng lên sàn xét cả số tồn đang theo dõi. Còn lại (PO): thêm tiền đã thanh toán vào hợp đồng đơn sàn, cách xử lý SĐT bị che — trước khi nối sàn thật | `integration-hub/infra/sales-channel-repository.ts`, `use-cases/sales-channel.ts`, `domain/sales-order-mapping.ts` | `src/modules/integration-hub/use-cases/__tests__/sales-channel.test.ts`, `tests/tenant/integration-sales-channel.test.ts` |
+| BL-35 | Chưa sửa — cần PO chốt có duyệt hai bước cho cấu hình trường hay xoá bộ máy | — | — |
 
 Hai thành phần dữ liệu mẫu (`partner-settlement-modal.tsx`, `ad-performance-modal.tsx`) vẫn còn trong mã nhưng không màn nào
 gắn; guard kiến trúc chặn gắn lại. Xoá hẳn hay dựng lại trên dữ liệu thật là quyết định của PO.
@@ -209,6 +213,53 @@ gắn; guard kiến trúc chặn gắn lại. Xoá hẳn hay dựng lại trên 
 | FE tạo đơn bắt giá > 0, BE cho 0 (nháp chờ báo giá); chữ "giao hoa / tên hoa" cho mọi ngành | `create-order-modal.tsx:161` vs `requests-orders.ts:23` | thống nhất theo `order-input-rules.ts`, nhãn trung tính |
 | Bộ quét chỉ số khách: con trỏ `updated_at ≥` kẹt khi > 200 đơn cùng mốc thời gian | `customer-metrics-sweep.ts:43-46` | con trỏ `(updated_at, id)` như BL-09 |
 
+### F. Credit AI (rà bổ sung 11/11/2026)
+
+#### BL-32 · Cao — Credit của job AI hỏng không tự hoàn trên môi trường chạy thật
+- Luật hoàn (`usage/domain/refund-policy.ts`: bị huỷ, lỗi kỹ thuật, Guard từ chối) đúng; nợ #40 (`TECHNICAL_DEBT.md`)
+  chốt "hoàn sau một khoảng, ở lần chạy `npm run hoan-credit` kế tiếp". Nhưng **không lịch chạy nào gọi lệnh đó**: cron
+  duy nhất trên Render (`render.yaml:310-324`) gọi `chain-dispatch-sweep` (quét job treo → `FAILED`, `route.ts:313`), `health`,
+  `integrations-sweep`; `src/instrumentation.ts` không có bộ hoàn; `cron-job-entry.txt` chỉ là dòng crontab máy cá nhân.
+- Hoàn chỉ xảy ra khi người dùng **mở lại** đúng màn job của tính năng có gọi `refundJob` lúc đọc (vd. `get-video-job.ts:48`,
+  `get-optimization.ts:76`). Job bị quét treo thành `FAILED` hay bị huỷ mà không ai mở lại → credit mất hẳn.
+- Các lối hoàn ngay khi lỗi nuốt lỗi hoàn (`refundJob(...).catch(() => undefined)` — 8 chỗ) mà vẫn báo "đã hoàn credit"
+  (`generate-content.ts:389-390`, `revise-assets.ts:78-79`, `generate-scene-plan.ts:166-167`, `analyze-product-vision.ts:153-154`).
+- Kể cả chạy tay `npm run hoan-credit`: `listRefundable` lấy 200 job **cũ nhất** khớp diện hoàn
+  (`generation-job-repository.ts:380-391`), không loại job đã hoàn → khi đã có > 200 job như vậy, job mới không bao giờ tới
+  lượt (cùng lớp lỗi BL-09).
+- **Khắc phục (không cần PO, không đổi `render.yaml`):** `listRefundable` loại job đã có dòng `usage` `REFUNDED` của lượt hiện
+  tại (hoặc con trỏ `(created_at, id)`); gọi `listRefundable` + `refundJob` (có trần mỗi lượt) trong
+  `chain-dispatch-sweep` ngay sau `scanStuckJobs`; câu "đã hoàn credit" chỉ hiện khi `refundJob` trả `refunded: true`.
+
+#### BL-33 · Thấp — Lỗi AI trả nguyên văn lỗi nhà cung cấp và tên kỹ thuật cho người dùng
+- `AppError("INTERNAL", …${message})` được `errorResponse` trả nguyên `message` (`core/http/response.ts:114-125`) → người dùng
+  thấy lỗi thô của nhà cung cấp và chữ "Content Engine", "[analyzeProductVision]", "Vision AI" — trái luật 6 `CLAUDE.md`.
+- **Khắc phục:** ghi lỗi gốc vào log, trả câu tiếng Việt cố định ("AI chưa viết được bài, vui lòng thử lại").
+
+### G. Kênh bán ngoài và nền tảng trường (rà bổ sung 11/11/2026)
+
+#### BL-34 · Trung bình — Nhập đơn từ kênh bán: đơn có thể mất lặng lẽ; còn/hết hàng bỏ qua số tồn
+- **Mất đơn khi lượt nhập dừng giữa chừng:** `claimOrderSystem` ghi dòng `FAILED` + `error_code = IN_PROGRESS` rồi mới nhập
+  (`integration-hub/infra/sales-channel-repository.ts:65-81`). Tiến trình chết/hết giờ trước `finishOrderSystem` → dòng kẹt
+  `IN_PROGRESS`; lượt sau `updateMany … NOT IN_PROGRESS` trả 0 → `importChannelOrder` trả `null` như "đã nhận"
+  (`use-cases/sales-channel.ts:138`) → sự kiện được đánh `DONE` (`process-due-events.ts:40-45`) → đơn sàn không bao giờ vào sổ.
+- **Còn/hết hàng:** `syncAvailability` đẩy `inStock = status === "ACTIVE"` (`sales-channel.ts:121`), bỏ qua
+  `quantity_available` đã theo dõi từ Q9 (07/11) — sản phẩm hết số lượng vẫn báo "còn hàng" lên sàn → bán vượt. Comment
+  "chưa có số tồn — nợ #95" đã lỗi thời.
+- **Hợp đồng đơn sàn thiếu tiền:** `ChannelOrder` không có số đã thanh toán/hình thức (`core/ports/sales-channel-order-provider.ts:15-21`)
+  → đơn sàn đã trả tiền vào sổ như đơn chưa thu (`paid_vnd = 0`). Hiện chỉ có đầu nối thử (`test-shop-connector.ts`) nên chưa
+  gây hại; phải chốt trước khi nối sàn thật. Cũng cần kiểm: sàn che SĐT người nhận → `createOrder` từ chối SĐT không phải số
+  Việt Nam (Q12) → đơn nhập lỗi tới `DEAD`.
+- **Khắc phục:** nhận lại dòng `IN_PROGRESS` quá N phút (theo `updated_at`); `inStock` = `ACTIVE` và (không theo dõi số lượng
+  hoặc tổng `quantity_available > 0`); thêm trường thanh toán vào `ChannelOrder` và ghi khoản thu khi nhập (cần PO chọn cách ghi).
+
+#### BL-35 · Thấp — Bộ máy duyệt thay đổi cấu hình (§6.4) không được dùng
+- `field-platform/domain/config-change-lifecycle.ts` (Nháp → Kiểm → Xem tác động → Duyệt → Phát hành → Quay lui) chỉ có test
+  gọi; cấu hình trường đổi thẳng qua `update-field-config.ts`/`set-org-override.ts` (có nhật ký nền tảng, không duyệt hai
+  người). Trong bản thân bộ máy: duyệt theo vai `OWNER`/`MANAGER` thay vì mã năng lực (trái luật 3 `CLAUDE.md`), không chặn
+  người tạo tự duyệt.
+- **Khắc phục:** PO chốt có cần duyệt hai bước cho cấu hình không; không cần thì xoá bộ máy để khỏi hiểu nhầm là đã có.
+
 ## 4. Điểm làm tốt (giữ khi sửa)
 
 - Mọi đường thu tiền thường đã dùng chung `planPayment`/`planRefund` + khoá lạc quan; CSDL có CHECK tiền.
@@ -244,6 +295,8 @@ gắn; guard kiến trúc chặn gắn lại. Xoá hẳn hay dựng lại trên 
 5. Đơn đặt công khai chưa thu giữ tồn tối đa bao lâu? Có bật tự huỷ mặc định khi tiệm theo dõi tồn?
 6. Đơn chưa gắn khách có được "giao trước, thu sau" theo lối hoả tốc không? Nhắc nợ quá hạn lặp mấy lần, khi nào báo Điều hành?
 7. "Giá trị đơn" trên màn số liệu có tính đơn Nháp không?
+8. Đơn nhập từ sàn đã thanh toán trên sàn: ghi thành khoản thu xác nhận ngay, hay khoản chờ Điều hành xác nhận? Sàn che SĐT người nhận thì nhập đơn với SĐT trống + yêu cầu bổ sung?
+9. Cấu hình trường có cần duyệt hai bước (người tạo ≠ người duyệt) không? Không cần thì xoá bộ máy `config-change-lifecycle.ts`.
 
 ## 6. Test cần viết (đi cùng bản sửa)
 

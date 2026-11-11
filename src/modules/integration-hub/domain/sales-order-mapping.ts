@@ -53,3 +53,11 @@ export function chunk<T>(items: readonly T[], size: number): T[][] {
   for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size))
   return out
 }
+
+/**
+ * Còn hàng trên kênh bán: sản phẩm đang mở bán, và nếu theo dõi tồn theo số lượng (`trackedQuantity` có giá trị) thì còn
+ * ít nhất 1 — trước đây chỉ xét trạng thái mở bán nên hết số lượng vẫn báo "còn" lên sàn (audit BL-34). Thuần.
+ */
+export function channelInStock(productStatus: string, trackedQuantity: number | undefined): boolean {
+  return productStatus === "ACTIVE" && (trackedQuantity === undefined || trackedQuantity > 0)
+}

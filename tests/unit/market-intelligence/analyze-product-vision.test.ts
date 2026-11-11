@@ -115,7 +115,8 @@ describe("analyzeProductVision — Chặng 02 thu credit", () => {
   it("mọi nhà cung cấp hỏng: job FAILED + hoàn credit + lỗi rõ — không bịa dữ liệu", async () => {
     vi.mocked(enqueueJob).mockResolvedValue({ job, deduped: false, usage: { costCredit: 1, balanceAfter: 9 } } as never)
     vi.mocked(callCapability).mockResolvedValue({ kind: "khong_chay_duoc", reason: "HET_DUONG_DU_PHONG", attempts: [] } as never)
-    await expect(analyzeProductVision(ctx, { assetId: "asset-1" })).rejects.toThrow("[analyzeProductVision]")
+    // Audit BL-33: không còn tên hàm kỹ thuật hay lỗi thô của nhà cung cấp trong câu báo
+    await expect(analyzeProductVision(ctx, { assetId: "asset-1" })).rejects.toThrow("AI chưa nhận diện được ảnh — đã hoàn credit, vui lòng thử lại.")
     expect(finishInline).toHaveBeenCalledWith(ctx, "job-1", expect.objectContaining({ ok: false }))
     expect(refundJob).toHaveBeenCalledWith(ctx, "job-1")
   })
