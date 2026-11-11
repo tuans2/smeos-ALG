@@ -44,3 +44,11 @@ cd workers && python -m pytest tests -q
 ```
 
 `npm run test:tenant` và `npm run test:platform` xoá sạch dữ liệu và chỉ chạy trên cơ sở dữ liệu có tên kết thúc bằng `_test`.
+
+## CI và triển khai
+
+- `.github/workflows/ci.yml`: typecheck, ESLint, đối chiếu tài liệu đặc tả với mã, kiểm kiến trúc và giao diện, unit test, chuẩn đa ngành, test cách ly tổ chức và nền tảng, build, worker, E2E, quét bí mật, `npm audit`.
+- `render.yaml`: Render Blueprint gồm web, worker `media_ai`, worker `vision`, cron 5 phút, Redis và Postgres. Render chỉ deploy commit trên `main` khi CI xanh.
+- Không đặt `NEXT_PUBLIC_APP_ENV=production`: biến này bật khoá "Sắp ra mắt" dành cho bản đầy đủ.
+- Khoá `PII_ENCRYPTION_KEY` tự tạo và sao lưu trước khi nhận dữ liệu khách thật (sổ tay vận hành §14).
+- Thêm `.github/CODEOWNERS` với tài khoản GitHub của người duyệt cho các vùng hệ thống thiết kế (`src/styles/tokens/`, `src/components/ui/`, `src/components/layout/`, `docs/design-system/`).

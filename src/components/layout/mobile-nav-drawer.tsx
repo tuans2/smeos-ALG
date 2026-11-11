@@ -10,7 +10,7 @@ import { Menu } from "@/components/ui/icon-set/menu"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { DesktopNav } from "./desktop-nav"
-import { MobileNavContext } from "./mobile-nav-context"
+import { MobileNavContext, OPEN_MOBILE_NAV_EVENT } from "./mobile-nav-context"
 
 export function MobileNavDrawer({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -30,6 +30,13 @@ export function MobileNavDrawer({ children }: { children: React.ReactNode }) {
     () => ({ openMenu: () => setOpenedAt(pathname), open, registerOwnHeader }),
     [pathname, open, registerOwnHeader]
   )
+
+  // Thanh dưới (nằm ngoài ngăn menu) xin mở menu
+  useEffect(() => {
+    const onRequest = () => setOpenedAt(pathname)
+    window.addEventListener(OPEN_MOBILE_NAV_EVENT, onRequest)
+    return () => window.removeEventListener(OPEN_MOBILE_NAV_EVENT, onRequest)
+  }, [pathname])
 
   // Khóa cuộn nền + phím Esc để đóng
   useEffect(() => {

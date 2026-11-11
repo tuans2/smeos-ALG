@@ -12,7 +12,9 @@ import { GET as listDomains, POST as addDomain } from "@/app/api/v1/custom-domai
 import { DELETE as removeReview, PATCH as patchReview } from "@/app/api/v1/shop-reviews/[id]/route"
 import { GET as listReviews, POST as createReview } from "@/app/api/v1/shop-reviews/route"
 import { PATCH as patchShortLink } from "@/app/api/v1/short-links/[id]/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as shortLinkStats } from "@/app/api/v1/short-links/[id]/stats/route"
+// @release-strip-end
 import { GET as listShortLinks, POST as createShortLink } from "@/app/api/v1/short-links/route"
 import { POST as revokeShare } from "@/app/api/v1/store-share-link/revoke/route"
 import { GET as getShare, POST as createShare } from "@/app/api/v1/store-share-link/route"
@@ -47,7 +49,7 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
   it("hồ sơ doanh nghiệp, hồ sơ thương hiệu, dữ liệu mẫu theo ngành, minh bạch thu thập", async () => {
     await expectContract(await getBusiness(get("/business-profile")), 200, R.businessProfileResponse, "business-get-empty")
     await expectContract(
-      await putBusiness(send("/business-profile", "PUT", { display_name: "Tiệm hoa Mộc Lan", phone: "0901234567", address: "12 Lê Lợi", target_customers: ["Văn phòng"], operating_hours: { mon: "08:00-20:00" } })),
+      await putBusiness(send("/business-profile", "PUT", { display_name: "Tiệm hoa Hoa Mẫu", phone: "0901234567", address: "12 Lê Lợi", target_customers: ["Văn phòng"], operating_hours: { mon: "08:00-20:00" } })),
       200, R.businessProfileResponse, "business-put"
     )
     await expectContract(await getBusiness(get("/business-profile")), 200, R.businessProfileResponse, "business-get")
@@ -81,7 +83,7 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
   })
 
   it("tên miền riêng: gắn, danh sách, xác minh, gỡ", async () => {
-    const created = await expectContract(await addDomain(send("/custom-domains", "POST", { hostname: "hoa-moclan.vn" })), 201, R.domainResponse, "domain-add")
+    const created = await expectContract(await addDomain(send("/custom-domains", "POST", { hostname: "hoa-hoamau.vn" })), 201, R.domainResponse, "domain-add")
     const id = String((created.data as { id: string }).id)
     await expectContract(await listDomains(get("/custom-domains")), 200, R.domainsResponse, "domains")
     const verify = await verifyDomain(send(`/custom-domains/${id}/verify`, "POST"), ps(id))
@@ -90,10 +92,12 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
   })
 
   it("link/QR động: tạo, danh sách, sửa, thống kê", async () => {
-    const created = await expectContract(await createShortLink(send("/short-links", "POST", { kind: "QR", name: "QR quầy", targetPath: "/c/moc-lan", placementLabel: "Quầy thu ngân" })), 201, R.shortLinkResponse, "short-create")
+    const created = await expectContract(await createShortLink(send("/short-links", "POST", { kind: "QR", name: "QR quầy", targetPath: "/c/hoa-mau", placementLabel: "Quầy thu ngân" })), 201, R.shortLinkResponse, "short-create")
     const id = String(created.id ?? (created.data as { id?: string } | undefined)?.id)
     await expectContract(await listShortLinks(get("/short-links?limit=10")), 200, R.shortLinksResponse, "short-list")
     await expectContract(await patchShortLink(send(`/short-links/${id}`, "PATCH", { name: "QR quầy chính", isActive: false }), ps(id)), 200, R.shortLinkResponse, "short-patch")
+    // @release-strip
     await expectContract(await shortLinkStats(get(`/short-links/${id}/stats?days=7`), ps(id)), 200, R.shortLinkStatsResponse, "short-stats")
+    // @release-strip-end
   })
 })

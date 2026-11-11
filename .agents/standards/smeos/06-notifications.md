@@ -22,7 +22,8 @@
 | Deep link trỏ trang có thật | ✅ | `events-deeplinks.test.ts` |
 | Escape nội dung kênh | ✅ | `channel-adapters-escaping.test.ts` |
 | Gửi thật: In-app, Email (`core/notifications/email-service.ts`), Telegram | ✅ | — |
-| SMS, Web Push, Zalo ZNS | 🟡 **stub** — chỉ ghi log | — |
+| SMS (eSMS), Zalo ZNS | ✅ gửi thật **khi tầng Mẹ đã đăng ký nhà cung cấp** (`/platform/notification/providers`, checklist 4.30); chưa đăng ký → `NOT_CONFIGURED` | `stub-adapters-not-configured.test.ts`, `tests/platform/channel-providers.test.ts` |
+| Web Push | 🟡 **stub** — thiếu bảng đăng ký thiết bị (đổi lược đồ, chờ PO) | — |
 | Sự kiện đang gửi: đơn mới, xác nhận, chế tác xong, đã giao, huỷ, giao việc chế tác | ✅ | `notify-organization.test.ts` |
 | Sự kiện chuỗi / nền tảng / khách hàng | 🟡 chưa nối | nợ #185 (b) |
 | SSE nhiều instance | 🟡 trong bộ nhớ một tiến trình | nợ #185 (b) |

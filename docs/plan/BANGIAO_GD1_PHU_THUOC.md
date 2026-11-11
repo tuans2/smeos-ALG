@@ -7,38 +7,31 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 | Mục | Giữ | Bị chặn hoặc bỏ |
 |---|---:|---:|
 | Trang | 90 | 26 |
-| API | 475 | 61 |
-| Tệp trong `src/` | 3503 | 656 |
+| API | 475 | 63 |
+| Tệp trong `src/` | 3506 | 660 |
 
 ## Code trong phạm vi chạm vùng không giao
 
 | Từ | Tới | Trạng thái |
 |---|---|---|
 | `src/app/api/v1/_contracts/requests-tools.ts` | `/api/v1/proxy/[...path]` | Đã ghi nhận, xử lý ở Bước 4 |
-| `src/components/dashboard/marketing-workspace.tsx` | `/api/v1/proxy/[...path]` | Đã ghi nhận, xử lý ở Bước 4 |
 
 ## Liên kết tới trang không giao
 
-Đường dẫn viết cứng trong mã được giao; bật chế độ giai đoạn hoặc trong bản cắt, người dùng bấm vào sẽ gặp trang 404. Xử lý ở Bước 4.
+Đường dẫn viết cứng trong mã được giao. Nút hoặc khối dẫn tới đó phải ẩn khi trang không thuộc giai đoạn (`isHrefInPhase`), nếu không người dùng bấm vào sẽ gặp trang 404 khi bật chế độ giai đoạn hoặc trong bản cắt.
 
-| Từ | Tới |
-|---|---|
-| `src/app/(app)/duyet/page.tsx` | `/creative-studio` |
-| `src/app/(app)/tai-anh/page.tsx` | `/creative-studio` |
-| `src/components/catalog/share-catalog-modal.tsx` | `/noi-dung` |
-| `src/components/dashboard/crm-toolkit-grid.tsx` | `/hoi-thoai` |
-| `src/components/dashboard/crm-workspace.tsx` | `/hoi-thoai` |
-| `src/components/dashboard/customer-service-workspace.tsx` | `/hoi-thoai` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/creative-studio` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/lich-dang` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/market-intelligence` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/noi-dung` |
-| `src/components/dashboard/marketing-workspace.tsx` | `/video` |
-| `src/components/dashboard/store-growth-center.tsx` | `/creative-studio` |
-| `src/components/dashboard/store-growth-center.tsx` | `/market-intelligence` |
-| `src/components/layout/bottom-nav.tsx` | `/them` |
-| `src/components/organization/ai-channels-settings-tab.tsx` | `/ket-noi` |
-| `src/components/products/one-image-kit-dialog.tsx` | `/in-an` |
+| Từ | Tới | Trạng thái |
+|---|---|---|
+| `src/app/(app)/duyet/page.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
+| `src/app/(app)/tai-anh/page.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
+| `src/components/catalog/share-catalog-modal.tsx` | `/noi-dung` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/crm-toolkit-grid.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/crm-workspace.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/customer-service-workspace.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/store-growth-center.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
+| `src/components/dashboard/store-growth-center.tsx` | `/market-intelligence` | Ẩn khi không thuộc giai đoạn |
+| `src/components/organization/ai-channels-settings-tab.tsx` | `/ket-noi` | Ẩn khi không thuộc giai đoạn |
+| `src/components/products/one-image-kit-dialog.tsx` | `/in-an` | Ẩn khi không thuộc giai đoạn |
 
 ## Mô-đun bị cắt giữa chừng
 
@@ -65,7 +58,7 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `landing-page` | 4/7 |
 | `market-intelligence` | 16/30 |
 | `media` | 11/21 |
-| `notification` | 37/38 |
+| `notification` | 40/42 |
 | `organization` | 91/95 |
 | `platform` | 54/61 |
 | `print` | 6/8 |
@@ -126,6 +119,8 @@ Có route nhưng không trang, API hay tác vụ nào trong phạm vi gọi tớ
 - `/api/v1/platform/marketplace/stores/bulk-delete`
 - `/api/v1/platform/marketplace/sync`
 - `/api/v1/platform/marketplace/sync-photos`
+- `/api/v1/platform/notification/providers`
+- `/api/v1/platform/notification/providers/test`
 - `/api/v1/platform/notification/visibility`
 - `/api/v1/platform/orgs-data/[orgId]`
 - `/api/v1/platform/orgs-data/[orgId]/assets/[assetId]/legal-hold`

@@ -15,6 +15,15 @@ type MobileNavApi = {
 
 export const MobileNavContext = createContext<MobileNavApi | null>(null)
 
+/**
+ * Mở ngăn menu từ chỗ nằm ngoài `MobileNavDrawer` (thanh dưới `BottomNav`): ngăn menu nghe sự kiện này trên `window`.
+ */
+export const OPEN_MOBILE_NAV_EVENT = "smeos:mo-menu-dien-thoai"
+
+export function requestOpenMobileNav(): void {
+  window.dispatchEvent(new Event(OPEN_MOBILE_NAV_EVENT))
+}
+
 /** Nút ☰ đặt trong thanh tiêu đề riêng của trang (chỉ hiện trên điện thoại). */
 export function MobileMenuButton() {
   const api = useContext(MobileNavContext)

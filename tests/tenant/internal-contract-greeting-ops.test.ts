@@ -21,7 +21,9 @@ import { PUT as putNotify } from "@/app/api/v1/greeting-card/integrations/notifi
 import { DELETE as disableWebhook, POST as rotateWebhook } from "@/app/api/v1/greeting-card/integrations/payment-webhook/route"
 import { GET as integrations } from "@/app/api/v1/greeting-card/integrations/route"
 import { GET as getStaffNotify, PUT as putStaffNotify } from "@/app/api/v1/greeting-card/integrations/staff-notifications/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { PUT as saasPolicy } from "@/app/api/v1/greeting-card/integrations/staff-notifications/saas-policy/route"
+// @release-strip-end
 import { GET as telegram } from "@/app/api/v1/greeting-card/integrations/telegram-dispatch/route"
 import { GET as zalo } from "@/app/api/v1/greeting-card/integrations/zalo-dispatch/route"
 import { POST as markRead } from "@/app/api/v1/greeting-card/messages/read/route"
@@ -177,7 +179,9 @@ describe("hợp đồng — Thẻ chào: vận hành", () => {
     const policy = withSession(`${BASE}/integrations/staff-notifications/saas-policy`, operator.token, {
       method: "PUT", body: JSON.stringify({ targetOrganizationId: t.organizationId, allowedChannels: ["APP_INBOX", "TELEGRAM"] }),
     })
+    // @release-strip
     await expectContract(await saasPolicy(policy), 200, O.staffNotifySavedResponse, "gc-saas-policy")
+    // @release-strip-end
     await expectContract(await telegram(get("/integrations/telegram-dispatch")), 200, O.telegramDispatchResponse, "gc-telegram")
     await expectContract(await zalo(get("/integrations/zalo-dispatch")), 200, O.zaloDispatchResponse, "gc-zalo")
     await expectContract(await getVisibility(get("/sale-visibility")), 200, O.saleVisibilityResponse, "gc-visibility")

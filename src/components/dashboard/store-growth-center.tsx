@@ -23,6 +23,7 @@ import { StoreManagerActionItemsCard, type DraftOrder } from "./store-manager-ac
 import { PageHeader } from "@/components/ui/page-header"
 import { fetchPendingApprovalCount } from "./pending-approval-count"
 import { jobStageLabel } from "@/modules/jobs/domain/job-stage-labels"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 type Job = {
   id: string
@@ -170,7 +171,7 @@ export function StoreGrowthCenter() {
         description={roleUx?.primaryQuestion ?? "Hôm nay tôi cần làm gì để cửa hàng phát triển?"}
         actions={
           <>
-            <Button
+            {isHrefInPhase("/market-intelligence") && <Button
               type="button"
               variant="outline"
               size="sm"
@@ -179,7 +180,7 @@ export function StoreGrowthCenter() {
             >
               <TrendingUp className="h-4 w-4 text-primary" />
               <span className="text-caption sm:text-body-sm">Xu hướng thị trường</span>
-            </Button>
+            </Button>}
             <UserMenu initials={userInitials || "CH"} />
           </>
         }
@@ -199,11 +200,11 @@ export function StoreGrowthCenter() {
             onScrollToJobs={() => {}}
           />
 
-          {/* Khối Lối tắt Tăng trưởng nhanh */}
-          <Card className="p-5">
+          {/* Khối Lối tắt Tăng trưởng nhanh — chỉ hiện công cụ thuộc giai đoạn bàn giao */}
+          {(isHrefInPhase("/market-intelligence") || isHrefInPhase("/creative-studio")) && <Card className="p-5">
             <h2 className="mb-4 text-title-sm font-bold text-text">Đòn bẩy Tăng trưởng Doanh số</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Button variant="outline"
+              {isHrefInPhase("/market-intelligence") && <Button variant="outline"
                 type="button"
                 onClick={() => router.push("/market-intelligence" as never)}
                 className="text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer hover:bg-surface-alt"
@@ -217,9 +218,9 @@ export function StoreGrowthCenter() {
                     Bắt trend hoa hot, cơ hội nội dung & mẫu video tuần này
                   </div>
                 </div>
-              </Button>
+              </Button>}
 
-              <Button variant="outline"
+              {isHrefInPhase("/creative-studio") && <Button variant="outline"
                 type="button"
                 onClick={() => router.push("/creative-studio" as never)}
                 className="text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer hover:bg-surface-alt"
@@ -233,9 +234,9 @@ export function StoreGrowthCenter() {
                     Biến ảnh thô thành bộ ảnh marketing & video triệu view
                   </div>
                 </div>
-              </Button>
+              </Button>}
             </div>
-          </Card>
+          </Card>}
 
           {/* Tiến độ Job nền */}
           {runningJobs.length > 0 && (

@@ -3,7 +3,7 @@ name: Bản giao GD1
 # Kế hoạch bàn giao GD1, Bước 2.6 (docs/plan/BANGIAO_GD1_123_CHUC_NANG.md): cắt thử bản giao từ commit đang kiểm
 # rồi chạy cổng trên chính bản cắt. Workflow riêng, KHÔNG chạy khi push lên `main`: Render deploy theo check
 # của commit trên `main` (`autoDeployTrigger: checksPass`, xem cuối ci.yml) — job này không được chặn production.
-# Test tenant/platform trên bản cắt chạy theo lịch hằng đêm.
+# Test tenant/platform và E2E trên bản cắt chạy theo lịch hằng đêm.
 on:
   pull_request:
     branches: ["main"]
@@ -47,7 +47,10 @@ jobs:
     steps:
       - name: Thư mục bản cắt (ngoài repo)
         run: echo "CUT=$RUNNER_TEMP/gd1-cut" >> "$GITHUB_ENV"
+      # Đủ lịch sử: công cụ cắt đọc dòng bị báo nhầm ở commit cũ để mang `.gitleaksignore` sang bản cắt
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "22.x"
@@ -60,6 +63,16 @@ jobs:
         run: npm run release:cut -- gd1 HEAD "$CUT"
       - name: Kiểm rò rỉ trên bản cắt
         run: node scripts/handover-check.mjs --dir "$CUT" --recipient ALG --baseline releases/gd1/leak-baseline.json
+      # Cùng lệnh với job `security` trong CI của bản giao (lớp phủ): bản cắt có lịch sử git riêng một commit
+      - name: Quét bí mật trên bản cắt (gitleaks)
+        env:
+          GITLEAKS_VERSION: "8.21.2"
+          GITLEAKS_SHA256: "5bc41815076e6ed6ef8fbecc9d9b75bcae31f39029ceb55da08086315316e3ba"
+        run: |
+          curl -sSL -o "$RUNNER_TEMP/gitleaks.tgz" "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/gitleaks.tgz" | sha256sum -c -
+          tar xzf "$RUNNER_TEMP/gitleaks.tgz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git "$CUT" --no-banner --redact --exit-code 1
       # Như job `web` của ci.yml (O-7): Postgres của job là container dùng một lần — bỏ ghi đĩa đồng bộ để
       # `resetDatabase()` của test tenant/platform hằng đêm nhanh hơn. Không đổi ngữ nghĩa giao dịch.
       - name: Postgres CI dùng một lần — tắt ghi đĩa đồng bộ
@@ -88,6 +101,9 @@ jobs:
       - name: Unit test bản cắt
         working-directory: ${{ env.CUT }}
         run: npm test
+      - name: Tài liệu đặc tả, SSOT hệ mẫu, chuẩn đa ngành trên bản cắt (cổng CI của bản giao)
+        working-directory: ${{ env.CUT }}
+        run: npm run check:docs && npm run check:template-ssot && npm run check:industry
       - name: Test cách ly tổ chức và nền tảng trên bản cắt (hằng đêm)
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         working-directory: ${{ env.CUT }}
@@ -95,6 +111,13 @@ jobs:
       - name: Build bản cắt
         working-directory: ${{ env.CUT }}
         run: npm run build
+      - name: E2E giao diện trên bản cắt (hằng đêm)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        working-directory: ${{ env.CUT }}
+        run: |
+          export PII_ENCRYPTION_KEY="$(openssl rand -base64 32)"
+          npx playwright install chromium --with-deps
+          E2E_WEB_COMMAND="npm run start" npx playwright test tests/e2e/ux
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

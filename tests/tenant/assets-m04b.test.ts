@@ -2,7 +2,9 @@ import { randomUUID } from "node:crypto"
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { GET as listAssetsRoute } from "@/app/api/v1/assets/route"
+// @release-strip — route không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { POST as approveAssetRoute } from "@/app/api/v1/assets/[id]/approve/route"
+// @release-strip-end
 import type { TenantContext } from "@/core/tenancy"
 import { AssetRepository } from "@/modules/assets/infra/asset-repository"
 
@@ -84,6 +86,7 @@ describe("cách ly tenant — Assets & M04b Creative Marketing", () => {
     })
   })
 
+  // @release-strip — route không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
   describe("POST /api/v1/assets/:id/approve", () => {
     it("duyệt asset thành công, cập nhật approved_by, approved_at và ghi audit_logs", async () => {
       const assetId = await seedAsset(a.ctx, { kind: "MARKETING", approvalState: "PENDING" })
@@ -136,4 +139,5 @@ describe("cách ly tenant — Assets & M04b Creative Marketing", () => {
       expect(data.asset.approval_state).toBe("APPROVED")
     })
   })
+  // @release-strip-end
 })

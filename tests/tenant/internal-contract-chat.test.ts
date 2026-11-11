@@ -12,8 +12,10 @@ import { GET as listMessages, POST as sendMessage } from "@/app/api/v1/chat/conv
 import { GET as listConversations, POST as createConversation } from "@/app/api/v1/chat/conversations/route"
 import { GET as getLimits, POST as requestLimits } from "@/app/api/v1/chat/public-limits/route"
 import { POST as widget } from "@/app/api/v1/chat/public/widget/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as fbVerify, POST as fbHook } from "@/app/api/v1/chat/webhooks/facebook/route"
 import { POST as zaloHook } from "@/app/api/v1/chat/webhooks/zalo/route"
+// @release-strip-end
 import { GET as listInternalMessages, POST as sendInternal } from "@/app/api/v1/internal-chat/conversations/[id]/messages/route"
 import { GET as listInternal, POST as createInternal } from "@/app/api/v1/internal-chat/conversations/route"
 import { POST as cardAction } from "@/app/api/v1/internal-chat/messages/[id]/action/route"
@@ -92,12 +94,14 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
     expect([bad.status, typeof (await readJson(bad)).error]).toEqual([400, "string"])
   })
 
+  // @release-strip
   it("webhook kênh chat từ chối khi không xác minh được", async () => {
     expect((await fbVerify(new Request(`${BASE}/chat/webhooks/facebook?hub.mode=subscribe&hub.verify_token=sai&hub.challenge=1`) as never)).status).toBe(403)
     expect((await fbHook(raw("/chat/webhooks/facebook", JSON.stringify({ object: "page", entry: [] }), { "x-hub-signature-256": "sha256=00" }) as never)).status).toBe(401)
     expect((await zaloHook(raw("/chat/webhooks/zalo", "{không phải json") as never)).status).toBe(400)
     expect((await zaloHook(raw("/chat/webhooks/zalo", JSON.stringify({ oa_id: "oa-la", event_name: "user_send_text" })) as never)).status).toBe(401)
   })
+  // @release-strip-end
 
   it("chat nội bộ: mở phòng đối tác, danh sách, gửi tin, tin nhắn, bấm nút trên thẻ đơn", async () => {
     // Luồng thật (kế hoạch chat nội bộ GĐ1–3): chuỗi liên kết cửa hàng đối tác; client không tự tạo phòng

@@ -74,6 +74,17 @@ export const channelActivationBody = z.object({
   activated: z.boolean(),
 })
 
+// notification/providers/route.ts — sổ nhà cung cấp kênh (checklist 4.30). `provider: null` = gỡ; ô bí mật trống = giữ khoá cũ
+const PROVIDER_CHANNEL = z.enum(["SMS", "ZALO", "PUSH"])
+export const channelProviderSaveBody = z.object({
+  channel: PROVIDER_CHANNEL,
+  provider: z.string().min(1).max(64).nullable(),
+  values: z.record(z.string().max(64), z.string().max(4000)).default({}),
+})
+
+// notification/providers/test/route.ts
+export const channelProviderTestBody = z.object({ channel: PROVIDER_CHANNEL, phone: z.string().min(8).max(20) })
+
 // notification/hard-locks/route.ts
 const NOTIFY_CHANNEL = z.enum(["APP_INBOX", "EMAIL", "PUSH", "TELEGRAM", "ZALO", "SMS", "WHATSAPP", "MESSENGER"])
 export const setHardLockBody = z.object({

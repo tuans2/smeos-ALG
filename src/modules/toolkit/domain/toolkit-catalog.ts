@@ -196,7 +196,7 @@ const GROUP_4_TOOLS: readonly ToolDefinition[] = [
     id: 22, name: "Tạo chiến dịch thu hút khách hàng",
     description: "Bộ chiến dịch: nội dung, thiết kế, trang đích, form, lịch đăng",
     icon: "Megaphone", label: "STORE", status: "IN_PROGRESS", progress: 40,
-    href: "/lich-dang", statusNote: "Lịch đăng + SocialFlow có, thiếu trang đích + form lead",
+    href: "/lich-dang", statusNote: "Lịch đăng có, thiếu trang đích + form lead",
   },
   {
     id: 23, name: "Tạo chương trình giới thiệu khách hàng",

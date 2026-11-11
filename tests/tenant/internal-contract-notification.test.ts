@@ -3,8 +3,10 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import * as R from "@/app/api/v1/_contracts/responses-notification"
 import { GET as listChannels } from "@/app/api/v1/notification/channels/route"
 import { GET as listEvents } from "@/app/api/v1/notification/events/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { PATCH as readOne } from "@/app/api/v1/notification/inbox/[id]/read/route"
 import { POST as readAll } from "@/app/api/v1/notification/inbox/mark-all-read/route"
+// @release-strip-end
 import { GET as listInbox } from "@/app/api/v1/notification/inbox/route"
 import { DELETE as orgUnlock, GET as orgLocks, POST as orgLock } from "@/app/api/v1/notification/org-hard-locks/route"
 import { GET as orgPolicy, PATCH as patchOrgPolicy } from "@/app/api/v1/notification/org-policy/route"
@@ -52,9 +54,13 @@ describe("hợp đồng — thông báo", () => {
     await repo.createInboxItem({ userId: t.userId, organizationId: t.organizationId, eventKey, title: "Đơn mới 2", message: "Có đơn mới" })
     const inbox = await expectContract(await listInbox(get("/inbox?page=1&limit=10")), 200, R.inboxResponse, "notif-inbox")
     expect((inbox.data as unknown[]).length).toBe(2)
+    // @release-strip
     await expectContract(await readOne(send(`/inbox/${item.id}/read`, "PATCH"), ps(item.id)), 200, R.inboxReadResponse, "notif-read")
+    // @release-strip-end
     await expectContract(await listInbox(get("/inbox?unreadOnly=true")), 200, R.inboxResponse, "notif-inbox-unread")
+    // @release-strip
     await expectContract(await readAll(send("/inbox/mark-all-read", "POST")), 200, R.inboxReadAllResponse, "notif-read-all")
+    // @release-strip-end
   })
 
   it("luồng SSE mở được và gửi sự kiện connected", async () => {

@@ -12,7 +12,9 @@ import { GET as getNav, PUT as putNav } from "@/app/api/v1/platform/nav-matrix/r
 import { GET as getChannels, PATCH as patchChannel } from "@/app/api/v1/platform/notification/channels/route"
 import { GET as events } from "@/app/api/v1/platform/notification/events/route"
 import { DELETE as removeLock, GET as getLocks, POST as setLock } from "@/app/api/v1/platform/notification/hard-locks/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as getVisibility, PATCH as patchVisibility } from "@/app/api/v1/platform/notification/visibility/route"
+// @release-strip-end
 import { PUT as fieldOverrides } from "@/app/api/v1/platform/organizations/[id]/field-overrides/route"
 import { GET as fieldPreview } from "@/app/api/v1/platform/organizations/[id]/field-preview/route"
 import { GET as getFlags, PUT as putFlags } from "@/app/api/v1/platform/ux-rollout-flags/route"
@@ -102,8 +104,10 @@ describe("hợp đồng — Console Vận hành Nền tảng: cấu hình", () =
     await expectContract(await events(get("/notification/events")), 200, R.notificationEventsResponse, "notification-events")
     await expectContract(await patchChannel(send("/notification/channels", "PATCH", { channel: "EMAIL", activated: true })), 200, R.channelActivationSavedResponse, "channel-saved")
     await expectContract(await getChannels(get("/notification/channels")), 200, R.channelActivationsResponse, "channels")
+    // @release-strip
     await expectContract(await patchVisibility(send("/notification/visibility", "PATCH", { eventKey: "ORDER_RECEIVED", tier: "STORE", visible: true })), 200, R.eventVisibilitySavedResponse, "visibility-saved")
     await expectContract(await getVisibility(get("/notification/visibility")), 200, R.eventVisibilityResponse, "visibility")
+    // @release-strip-end
     await expectContract(await setLock(send("/notification/hard-locks", "POST", { eventKey: "ORDER_RECEIVED", channel: "EMAIL", enabled: true, reason: "Bắt buộc" })), 200, R.hardLockSetResponse, "hard-lock-set")
     await expectContract(await getLocks(get("/notification/hard-locks")), 200, R.hardLocksResponse, "hard-locks")
     await expectContract(await removeLock(send("/notification/hard-locks", "DELETE", { eventKey: "ORDER_RECEIVED", channel: "EMAIL" })), 200, R.hardLockRemovedResponse, "hard-lock-removed")

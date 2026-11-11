@@ -69,14 +69,17 @@ Hiện trạng đã đo:
 
 **Xong khi:** bản cắt thử qua typecheck, test, build; bật chế độ `gd1` thì menu chỉ còn phạm vi và URL ngoài phạm vi trả 404.
 
-**Trạng thái 10/11/2026 — mã Bước 2 xong, chờ CI:**
+**Trạng thái 10/11/2026 — Bước 2 xong, bản cắt sẵn sàng cắt thử theo mốc:**
 
-- 2.1–2.2: `src/lib/delivery/delivery-phase.ts`, `route-match.ts`; danh sách route sinh vào `gd1.routes.json` bằng `npm run release:routes` (test giữ khớp mã). `src/proxy.ts` trả 404 cho trang/API ngoài phạm vi; menu (`nav-phase.ts`), lưới công cụ, hành trình lọc theo phạm vi; tầng SaaS Ngành không có menu. Không đặt biến thì không đổi gì (có test).
-- 2.3: `npm run release:cut -- gd1 <mốc> <thư mục>` (`scripts/release/`). Khối chỉ thuộc smeOS đánh dấu `@release-strip` trong mã (seed cửa hàng riêng, trang chủ tầng Ngành). Lớp phủ `releases/gd1/overlay/` mới có README; `.env.example`, `render.yaml`, CI riêng cho ALG chưa làm.
-- 2.4: `node scripts/handover-check.mjs --dir <bản cắt> --recipient ALG --baseline releases/gd1/leak-baseline.json`. Baseline hiện có 337 mục (số điện thoại, email, tên bên khác, mật khẩu viết cứng, đường dẫn máy) — dọn ở Bước 4, chỉ được giảm.
-- 2.5: [báo cáo phụ thuộc](BANGIAO_GD1_PHU_THUOC.md): 1 lời gọi proxy SocialFlow, 28 liên kết tới trang không giao, các mô-đun bị cắt giữa chừng. Worker `media_ai` chỉ nhận tác vụ âm thanh/video khi bản cài có mô-đun đó.
-- 2.6: `.github/workflows/release-gd1.yml` — workflow riêng chứ không thêm vào `ci.yml`, để không chạy trên `main` và không chặn deploy của Render. Test tenant/platform trên bản cắt chạy hằng đêm; E2E trên bản cắt chưa có.
-- Đo tại máy (mốc trước khi đẩy): bản cắt còn 90/116 trang, 454/530 API; typecheck 0 lỗi, `npm test` xanh, build xanh, pytest worker xanh. 116 test bị bỏ khỏi bản cắt, 65 trong đó chạm code được giao — danh sách trong báo cáo cắt, cần người xem lại ở điểm duyệt Bước 5.
+- 2.1–2.2: `src/lib/delivery/delivery-phase.ts`, `route-match.ts`; danh sách route sinh vào `gd1.routes.json` bằng `npm run release:routes` (test giữ khớp mã). `src/proxy.ts` trả 404 cho trang/API ngoài phạm vi; menu (`nav-phase.ts`), lưới công cụ, hành trình lọc theo phạm vi; tầng SaaS Ngành không có menu. Không đặt biến thì không đổi gì (có test). Bản cắt ghi `builtIn: true` và danh sách trang đã cắt vào `gd1.routes.json`: chế độ luôn bật mà không cần biến, nên menu, lưới công cụ, hành trình của bản cắt không còn trỏ tới trang đã cắt.
+- 2.3: `npm run release:cut -- gd1 <mốc> <thư mục>` (`scripts/release/`). Khối chỉ thuộc smeOS đánh dấu `@release-strip` trong mã (seed cửa hàng riêng, trang chủ tầng Ngành). Lớp phủ `releases/gd1/overlay/`: README, `.env.example` (chỉ biến bản cắt đọc), `render.yaml` (web, worker `media_ai`, worker `vision`, cron, Redis, Postgres; không có worker video; không đặt `NEXT_PUBLIC_APP_ENV` để khoá "Sắp ra mắt" không khoá nhầm chức năng giao), `.github/workflows/ci.yml` riêng cho ALG. Bản cắt bỏ `release-gd1.yml`, `ui-weekly.yml`, `CODEOWNERS` của smeOS; script được giữ tính theo CI của lớp phủ.
+- 2.4: `node scripts/handover-check.mjs --dir <bản cắt> --recipient ALG --baseline releases/gd1/leak-baseline.json`. Baseline có 346 mục (số điện thoại, email, tên bên khác, mật khẩu viết cứng, đường dẫn máy) — dọn ở Bước 4, chỉ được giảm. Chủ dự án chốt 11/11/2026: giữ 9 mục thêm ngày 11/11/2026 là số điện thoại giả trong test hợp đồng/cách ly vừa được giữ lại trong bản cắt (bộ kiểm của app đòi số di động hợp lệ nên không thay bằng số trung tính được); tên bên khác trong các test đó đã thay. Workflow quét thêm gitleaks trên bản cắt, đúng lệnh CI của ALG.
+- 2.5: [báo cáo phụ thuộc](BANGIAO_GD1_PHU_THUOC.md): các mô-đun bị cắt giữa chừng. 16 liên kết viết cứng tới trang không giao đã xử lý ngày 10/11/2026: nút hoặc khối dẫn tới trang đó ẩn khi trang không thuộc giai đoạn (`isHrefInPhase`); mục "Thêm" ở thanh dưới điện thoại mở ngăn menu ☰ thay vì sang `/them` (thanh dưới giữ đủ 5 mục, ảnh mốc giao diện không đổi); vai Tiếp thị dùng trang chủ cửa hàng và trang Tiếp thị (kèm lời gọi proxy SocialFlow) bị bỏ khỏi bản cắt. Danh sách ghi ở `gatedLinks` của manifest; `npm run release:routes -- --check` đỏ khi có liên kết mới chưa ẩn. smeOS không bật giai đoạn thì giao diện giữ nguyên. Worker `media_ai` chỉ nhận tác vụ âm thanh/video khi bản cài có mô-đun đó.
+- 2.6: `.github/workflows/release-gd1.yml` — workflow riêng chứ không thêm vào `ci.yml`, để không chạy trên `main` và không chặn deploy của Render. Test tenant/platform và E2E (`tests/e2e/ux/delivery-phase.spec.ts`: menu chỉ còn phạm vi, URL ngoài phạm vi trả 404) trên bản cắt chạy hằng đêm.
+- CI của ALG có đủ các cổng của smeOS (11/11/2026). Công cụ cắt căn tài liệu theo mã bản cắt (`scripts/release/cut-docs.ts`): bỏ dòng đặc tả 06 của endpoint không có trong bản cắt, đánh dấu "(ngoài SSOT)" cho tệp mẫu không giao; phần kiểm tài liệu cho agent của `check:docs` bị bỏ khỏi bản cắt (`@release-strip`). 4 bảng Creative Studio mà bản giao chỉ đọc (`music_tracks`, `voice_clones`, `campaign_packages`, `content_drafts`) có ca thử cách ly riêng (`tests/tenant/studio-tables-read-isolation.test.ts`). `check:industry` cần `NODE_OPTIONS=--max-old-space-size=4096` như CI.
+- Bản cắt gắn sẵn chế độ giai đoạn; `NEXT_PUBLIC_DELIVERY_PHASE=off` tắt hẳn (unit test đặt mặc định `off` trong `tests/setup.ts` để mô tả danh mục đầy đủ; `nav-href-exists` lọc theo giai đoạn gắn sẵn nên vẫn chạy trên bản cắt). Lớp phủ có test `render.yaml` riêng; khối kiểm `CODEOWNERS` bỏ qua trong bản cắt.
+- Báo nhầm gitleaks đã duyệt được mang sang bản cắt theo nội dung dòng (`scripts/release/cut-gitleaks.ts`), ghi `.gitleaksignore` ở commit thứ hai của bản cắt. Công cụ cắt cần đủ lịch sử git (từ chối chạy trên bản clone nông).
+- Đo tại máy ngày 10/11/2026 (mốc `1edea663`): bản cắt 90/116 trang, 475/536 API, 5.126 tệp; kiểm rò rỉ sạch (337 mục baseline); typecheck, ESLint ratchet, `check:layers`, `check:tokens-doc`, `check:screen-contracts`, `lint:ux`, `check:migrations`, `audit:industry:check` xanh; `npm test` 698 tệp, 4.315 đạt, 2 bỏ qua; build xanh; E2E `delivery-phase`, `navigation`, `a11y-done-tools` 9/9. Trên CI cùng ngày: gitleaks trên bản cắt sạch (20 báo nhầm mang sang). Test tenant/platform, toàn bộ E2E và pytest worker trên bản cắt: xem lượt chạy `release-gd1` mới nhất. Test chạm code được giao mà bản cắt phải bỏ: 54 (11/11/2026, từ 77) — 22 tệp test cách ly tổ chức, nền tảng và hợp đồng API chỉ bọc riêng phần dùng route không giao bằng `@release-strip`, phần còn lại chạy trên bản cắt; test cách ly thông báo tách riêng phần đánh dấu đã đọc. Danh sách còn lại trong báo cáo cắt, cần người xem lại ở điểm duyệt Bước 5.
 
 ## Bước 3 — Audit trên môi trường chỉ bật 123 chức năng
 
@@ -86,13 +89,20 @@ Hiện trạng đã đo:
 - Đo các chỉ số ở bảng tiêu chuẩn.
 - Kết quả: báo cáo và danh sách việc theo mức ưu tiên.
 
+**Đã làm 11/11/2026 — hiệu năng (đo lab trên bản cắt `6936e7f5`, build production, CSDL thử):** `scripts/measure-web-vitals.ts`, mỗi màn 3 lần, điện thoại (CPU chậm 4×, 4G chậm) và máy tính; số liệu ở `docs/audit/gd1-buoc3/web-vitals-ban-cat-2026-11-11.json`. Trung vị trên điện thoại: `/` LCP 1.524 ms, `/san-pham` 1.544 ms, `/dieu-phoi` 1.148 ms, `/so-lieu` 1.540 ms (CLS 0,015), `/van-hanh` 1.488 ms; INP 16–24 ms; CLS ≤ 0,022 ở mọi màn — đạt ngưỡng LCP ≤ 2,5 s, CLS ≤ 0,1, INP ≤ 200 ms. Chưa đo: `/b/[sendCode]` (CSDL thử không có phiên gửi đang mở), INP trên máy tính (lượt nhấp không ghi được tương tác), số đo thực địa, kiểm tải.
+
 **Điểm duyệt:** bạn chốt danh sách việc bước 4, mục tiêu UX lint, phạm vi của các chức năng còn lửng. Công và thời gian bước 4 chỉ ước lượng được sau bước này.
 
 ## Bước 4 — Hoàn thiện đến khi đạt tiêu chuẩn
 
-- Đã biết: mở 13 chức năng đang khoá; xử lý 5 chức năng làm một phần (4.30, 4.32, 8.1, 9.1, 9.14); sửa lỗi audit thuộc phạm vi (ví dụ L-05 nút Lưu ở `/dieu-phoi/doi-tac`).
+- Trạng thái 11/11/2026 của các việc đã biết:
+  - 13 chức năng đang khoá, 8.1 và 9.1: chỉ khoá vì `NEXT_PUBLIC_APP_ENV=production` (khoá "Sắp ra mắt" của smeOS). Bản giao không đặt biến này (`releases/gd1/overlay/render.yaml`, `.env.example`), nên chúng mở; nghiệm thu trên bản cắt sẽ xác nhận.
+  - 9.14: theo hướng đăng bài ngay trong smeOS (bên dưới).
+  - 4.30 — "đầu chờ" nhà cung cấp xong 11/11/2026: tầng Mẹ đăng ký nhà cung cấp SMS (eSMS) / Zalo (ZNS) một lần qua `PUT /api/v1/platform/notification/providers` (`N2`, khoá niêm phong, không trả lại), gửi thử qua `/providers/test`, bật/tắt qua `/platform/notification/channels`; thiếu cấu hình vẫn trả `NOT_CONFIGURED`. Còn lại: nhập khoá thật (chủ dự án), màn hình Console, Web Push (cần duyệt bảng thiết bị + thư viện). Đề xuất hệ liên lạc thống nhất: `docs/plan/DE_XUAT_HE_LIEN_LAC_THONG_NHAT.md`.
+  - 4.32 (mốc nhắc M1/M2 chỉ hiện ở thanh nhắc, không đẩy tin): chủ dự án đồng ý đẩy tin (11/11/2026); thiết kế ở mục 5 của `docs/plan/DE_XUAT_HE_LIEN_LAC_THONG_NHAT.md` (sự kiện `DELIVERY_REMINDER_DUE`, gắn vào cron 5 phút sẵn có, chống trùng bằng `idempotency_keys`, không đổi lược đồ) — chờ chốt người nhận và kênh rồi làm.
+- Việc gốc: mở 13 chức năng đang khoá; xử lý 5 chức năng làm một phần (4.30, 4.32, 8.1, 9.1, 9.14); sửa lỗi audit thuộc phạm vi (L-05 nút Lưu ở `/dieu-phoi/doi-tac` — xong 11/11/2026: hộp thoại gọi đúng `PATCH /api/v1/coordinator/partners/:id/tools`, test `src/components/organization/__tests__/partner-tools-api.test.ts`).
 - 9.14: đăng bài đã chạy ngay trong smeOS (D-46), không còn ứng dụng liên kết. Nghiệm thu mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên 15 phút kiểm bằng test. Cần báo ALG đổi câu chữ bước I-09.
-- Gỡ phần còn gọi SocialFlow/LocalBudd khỏi bản giao: khối bài đăng ở trang chủ (`marketing-workspace.tsx`), route proxy, biến `SOCIALFLOW_URL`, `LOCALBUDD_URL`, chữ "SocialFlow" trên màn hình.
+- Gỡ phần còn gọi SocialFlow/LocalBudd khỏi bản giao — xong 11/11/2026: khối bài đăng ở trang chủ (`marketing-workspace.tsx`) và route proxy ra khỏi bản cắt; biến `SOCIALFLOW_URL`, `LOCALBUDD_URL` bỏ khỏi `src/lib/env.ts` của bản cắt (`@release-strip`); chữ trên màn hình đổi theo chức năng ("Ứng dụng đăng bài", "Ứng dụng quảng bá địa phương") ở cả smeOS. Test trong `tests/unit/release/trace-phase.test.ts` chặn tên cũ quay lại giao diện được giao. Giá trị enum `integration_client` (`SOCIALFLOW`, `LOCALBUDD`) trong lược đồ giữ nguyên — đổi cần duyệt lược đồ.
 - Mỗi đầu việc: code + test + tài liệu trong một commit; Thẻ chào và Catalog phải có test khoá hành vi trước khi sửa.
 - Việc có ảnh do người dùng tải lên đi theo quyết định Q12 trong `KE_HOACH_HOAN_THIEN_54_CHUC_NANG.md`; phát sinh khác thì hỏi bạn.
 
@@ -101,7 +111,7 @@ Hiện trạng đã đo:
 - Gắn tag `gd1-rc-<ngày>` trên nhánh. Sau tag chỉ nhận sửa lỗi phát hiện ở bước 6.
 - Chạy lệnh cắt ra thư mục ngoài repo. Quyết định lúc này: giữ đủ 154 bảng hay bỏ 13 bảng không dùng.
 
-**Điểm duyệt:** bạn xem báo cáo cắt (bỏ gì, giữ gì, phần chức năng chưa giao còn sót).
+**Điểm duyệt:** bạn xem báo cáo cắt (bỏ gì, giữ gì, phần chức năng chưa giao còn sót) — cách xem từng phần, duyệt 54 test "[xem lại]", kiểm rò rỉ và mẫu trả lời: `docs/plan/HUONG_DAN_DIEM_DUYET_BUOC5.md`. Bước 3 (141 bước nghiệm thu) do chủ dự án tự chạy (11/11/2026).
 
 ## Bước 6 — Kiểm trên bản cắt và giao
 

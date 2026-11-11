@@ -21,3 +21,14 @@ export function safeHttpLink(raw: string | undefined | null): string | null {
     return null
   }
 }
+
+function stripDiacritics(text: string): string {
+  return text.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D")
+}
+
+/** Nội dung SMS: không dấu (eSMS gửi `IsUnicode: 0`), tiêu đề + nội dung + link, tối đa 2 tin ghép (306 ký tự). */
+export function smsPlainText(input: { title: string; message: string; link?: string | null }): string {
+  const link = input.link ? ` ${input.link}` : ""
+  const body = stripDiacritics(`${input.title}: ${input.message}`).replace(/\s+/g, " ").trim()
+  return `${body.slice(0, Math.max(0, 306 - link.length))}${link}`
+}

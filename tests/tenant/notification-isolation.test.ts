@@ -1,7 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { GET as listInbox } from "@/app/api/v1/notification/inbox/route"
-import { PATCH as readInbox } from "@/app/api/v1/notification/inbox/[id]/read/route"
 import { GET as getPrefs, PATCH as patchPrefs } from "@/app/api/v1/notification/preferences/route"
 import { GET as getOrgPolicy, PATCH as patchOrgPolicy } from "@/app/api/v1/notification/org-policy/route"
 import { GET as getStoreDefaults, PATCH as patchStoreDefaults } from "@/app/api/v1/notification/store-defaults/route"
@@ -14,6 +13,7 @@ import { createTenant, readJson, withSession, type Tenant } from "../helpers/fix
  * Cách ly tenant cho 4 bảng thông báo có `organization_id` (đặc tả 07 mục 33):
  * notification_inbox, notification_user_preferences, notification_org_policies,
  * notification_store_defaults. Kèm AUD-015: khoá cứng của tổ chức khác không chặn tổ chức này.
+ * Đánh dấu đã đọc: `notification-inbox-read-isolation.test.ts` (route đó không có trong bản giao GD1).
  */
 describe("cách ly tenant — thông báo đa tầng", () => {
   let a: Tenant
@@ -32,18 +32,14 @@ describe("cách ly tenant — thông báo đa tầng", () => {
     await disconnectDatabase()
   })
 
-  it("notification_inbox: không đọc và không đánh dấu được tin của tổ chức khác", async () => {
-    const item = await prisma.notification_inbox.create({
+  it("notification_inbox: không đọc được tin của tổ chức khác", async () => {
+    await prisma.notification_inbox.create({
       data: { user_id: a.userId, organization_id: a.organizationId, event_key: "ORDER_RECEIVED", title: "Đơn mới", message: "x" },
     })
     const listA = await readJson(await listInbox(withSession(url("inbox"), a.token)))
     expect((listA.data as unknown[]).length).toBe(1)
     const listB = await readJson(await listInbox(withSession(url("inbox"), b.token)))
     expect(listB.data).toEqual([])
-
-    await readInbox(send(b, `inbox/${item.id}/read`, "PATCH", {}), { params: Promise.resolve({ id: item.id }) })
-    const after = await prisma.notification_inbox.findUniqueOrThrow({ where: { id: item.id } })
-    expect(after.is_read).toBe(false)
   })
 
   it("notification_user_preferences / org_policies / store_defaults: ghi của A không lộ sang B", async () => {

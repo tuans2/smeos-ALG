@@ -8,7 +8,9 @@ import {
 } from "@/app/api/v1/vision/analyses/[id]/route"
 import { POST as approveAnalysisRoute } from "@/app/api/v1/vision/analyses/[id]/approve/route"
 import { POST as createAnalysisRoute } from "@/app/api/v1/vision/analyses/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as getEngineRoute, PUT as putEngineRoute } from "@/app/api/v1/vision/engine/route"
+// @release-strip-end
 import type { TenantContext } from "@/core/tenancy"
 import { AssetRepository } from "@/modules/assets/infra/asset-repository"
 import { ProductAnalysisRepository } from "@/modules/products/infra/product-analysis-repository"
@@ -211,6 +213,7 @@ describe("cách ly tenant — M01 phân tích ảnh (P5)", () => {
     expect(response.status).toBe(404)
   })
 
+  // @release-strip — chọn bộ máy phân tích (route /vision/engine) không có trong bản giao GD1
   describe("bộ máy phân tích — Điều hành chọn cho cả tổ chức (H4)", () => {
     it("chưa chọn gì thì chạy bộ mặc định (openai_structured), và liệt kê đủ ba bộ", async () => {
       const body = await readJson(await getEngineRoute(withSession(`${BASE}/vision/engine`, a.token)))
@@ -326,4 +329,5 @@ describe("cách ly tenant — M01 phân tích ảnh (P5)", () => {
       expect((job!.payload as Record<string, unknown>).engine).toBe("openai_direct")
     })
   })
+  // @release-strip-end
 })

@@ -12,7 +12,7 @@ import { formatDateTime } from "./integration-labels"
 type TokenRow = { id: string; client: string; created_at: string; expires_at: string; revoked_at: string | null; expired?: boolean }
 type Issued = { client: string; token: string }
 
-const CLIENT_LABEL: Record<string, string> = { SOCIALFLOW: "SocialFlow — đăng bài", LOCALBUDD: "LocalBudd — quảng bá địa phương" }
+const CLIENT_LABEL: Record<string, string> = { SOCIALFLOW: "Ứng dụng đăng bài", LOCALBUDD: "Ứng dụng quảng bá địa phương" }
 
 async function call<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, { ...init, headers: { "Content-Type": "application/json" } })
@@ -101,7 +101,7 @@ export function ApiTokensPanel() {
       {rows === null ? (
         <SkeletonBlock lines={2} label="Đang tải danh sách khoá" />
       ) : rows.length === 0 ? (
-        <EmptyState title="Chưa cấp khoá nào" reason="Cấp khoá khi bạn muốn nối SocialFlow hoặc LocalBudd với cửa hàng." />
+        <EmptyState title="Chưa cấp khoá nào" reason="Cấp khoá khi bạn muốn nối ứng dụng đăng bài hoặc quảng bá địa phương với cửa hàng." />
       ) : (
         <ul className="divide-y divide-border rounded-xl border border-border">
           {rows.map((row) => {

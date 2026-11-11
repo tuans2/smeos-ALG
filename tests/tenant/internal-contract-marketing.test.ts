@@ -5,10 +5,14 @@ import { GET as getCampaign, PATCH as patchCampaign } from "@/app/api/v1/campaig
 import { GET as listCampaigns, POST as createCampaign } from "@/app/api/v1/campaigns/route"
 import { POST as createOrder } from "@/app/api/v1/coordinator/orders/route"
 import { GET as listInteractions } from "@/app/api/v1/customer-interactions/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as segmentCustomers } from "@/app/api/v1/customer-segments/[id]/customers/route"
+// @release-strip-end
 import { DELETE as removeSegment, GET as getSegment, PATCH as patchSegment } from "@/app/api/v1/customer-segments/[id]/route"
 import { GET as listSegments, POST as createSegment } from "@/app/api/v1/customer-segments/route"
+// @release-strip
 import { GET as customerInteractions, POST as recordInteraction } from "@/app/api/v1/customers/[id]/interactions/route"
+// @release-strip-end
 import { POST as reportRun } from "@/app/api/v1/delivery/my-runs/[id]/route"
 import { GET as myRuns } from "@/app/api/v1/delivery/my-runs/route"
 import { PATCH as patchLead } from "@/app/api/v1/leads/[id]/route"
@@ -72,11 +76,15 @@ describe("hợp đồng — khách hàng & marketing", () => {
     await expectContract(await listSegments(get("/customer-segments")), 200, R.segmentsResponse, "segments")
     await expectContract(await getSegment(get(`/customer-segments/${id}`), ps(id)), 200, R.segmentResponse, "segment-get")
     await expectContract(await patchSegment(send(`/customer-segments/${id}`, "PATCH", { description: "Khách hạng VIP" }), ps(id)), 200, R.segmentResponse, "segment-patch")
+    // @release-strip
     await expectContract(await segmentCustomers(get(`/customer-segments/${id}/customers`), ps(id)), 200, R.segmentCustomersResponse, "segment-customers")
+    // @release-strip-end
     expect((await getSegment(get(`/customer-segments/${id}`, other), ps(id))).status).toBe(404)
 
+    // @release-strip
     await expectContract(await recordInteraction(send(`/customers/${customerId}/interactions`, "POST", { channel: "ZALO", summary: "Gửi mẫu hoa 20/10", outcome: "Khách hẹn trả lời" }), ps(customerId)), 201, R.interactionResponse, "interaction-create")
     await expectContract(await customerInteractions(get(`/customers/${customerId}/interactions`), ps(customerId)), 200, R.interactionsResponse, "customer-interactions")
+    // @release-strip-end
     await expectContract(await listInteractions(get(`/customer-interactions?customer_id=${customerId}`)), 200, R.interactionsResponse, "interactions")
     await expectContract(await removeSegment(send(`/customer-segments/${id}`, "DELETE"), ps(id)), 200, R.successResponse, "segment-remove")
   })
@@ -112,7 +120,9 @@ describe("hợp đồng — khách hàng & marketing", () => {
     expect(await st(listCampaigns(get("/campaigns?status=LA")))).toBe(400)
     expect(await st(listSegments(get("/customer-segments?limit=abc")))).toBe(400)
     expect(await st(listInteractions(get("/customer-interactions?channel=FAX")))).toBe(400)
+    // @release-strip
     expect(await st(recordInteraction(send(`/customers/${customerId}/interactions`, "POST", { channel: "ZALO", summary: "x" }, other), ps(customerId)))).toBe(404)
+    // @release-strip-end
     await createOccasion(send("/occasions", "POST", { code: "TRUNG_MA", name: "Trùng mã" }))
     expect(await st(createOccasion(send("/occasions", "POST", { code: "TRUNG_MA", name: "Trùng mã" })))).toBe(409)
     expect(await st(reportRun(send(`/delivery/my-runs/${customerId}`, "POST", { event: "BAY" }), ps(customerId)))).toBe(400)

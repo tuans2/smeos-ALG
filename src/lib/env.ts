@@ -53,12 +53,14 @@ const schema = z.object({
   // bên đó bị bỏ qua trong chuỗi lùi, không làm hỏng khởi động.
   ANTHROPIC_API_KEY: z.string().optional(),
   GEMINI_API_KEY: z.string().optional(),
+  // @release-strip — proxy sang ứng dụng ngoài, không có trong bản giao GD1 (route /api/v1/proxy bị loại)
   // Proxy sang engine ngoài (P15+). Ba app ba cổng theo bảng cổng cục bộ đã chốt
   // 2026-09-10 (core 3100 / LocalBudd 3000 / SocialFlow 8000). Dashboard core
   // gọi sibling qua proxy server-side để tránh rào cản CORS trình duyệt — xem
   // `src/modules/proxy/`. Trống khi không chạy engine ngoài (vd. test đơn lẻ).
   SOCIALFLOW_URL: optionalUrl,
   LOCALBUDD_URL: optionalUrl,
+  // @release-strip-end
   STORAGE_ENDPOINT: z.string().optional(),
   STORAGE_BUCKET: z.string().optional(),
   STORAGE_ACCESS_KEY: z.string().optional(),

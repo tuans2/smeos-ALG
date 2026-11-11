@@ -7,6 +7,7 @@ import { Cpu } from "@/components/ui/icon-set/cpu"
 import { Share2 } from "@/components/ui/icon-set/share2"
 import { DispatchReminderPolicyCard } from "@/components/coordinator/dispatch-reminder-policy-card"
 import { useSession } from "@/lib/session"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 /**
  * Tab 9: Cài đặt tích hợp AI, kênh mạng xã hội và nhắc việc điều phối
@@ -34,7 +35,7 @@ export function AiChannelsSettingsTab() {
         </Link>
       </div>
 
-      <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between">
+      {isHrefInPhase("/ket-noi") && <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between">
         <div>
           <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
             <Share2 size={18} />
@@ -50,7 +51,7 @@ export function AiChannelsSettingsTab() {
         >
           Kết Nối Kênh
         </Link>
-      </div>
+      </div>}
 
       <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between sm:col-span-2">
         <DispatchReminderPolicyCard canEdit={can("R12")} />

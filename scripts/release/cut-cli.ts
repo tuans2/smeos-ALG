@@ -28,6 +28,9 @@ const out = path.resolve(outArg)
 if (out === repo || out.startsWith(`${repo}${path.sep}`)) fail("Thư mục đích phải nằm ngoài repo")
 if (existsSync(out) && readdirSync(out).length > 0) fail(`Thư mục đích ${out} không trống`)
 const sha = execFileSync("git", ["rev-parse", "--verify", `${ref}^{commit}`], { cwd: repo }).toString().trim()
+if (execFileSync("git", ["rev-parse", "--is-shallow-repository"], { cwd: repo }).toString().trim() === "true") {
+  fail("Repo đang là bản clone nông (shallow): cần đủ lịch sử để mang báo nhầm gitleaks sang bản cắt — chạy `git fetch --unshallow`")
+}
 
 mkdirSync(out, { recursive: true })
 execFileSync("sh", ["-c", 'git archive --format=tar "$1" | tar -x -C "$2"', "sh", sha, out], { cwd: repo, stdio: "inherit" })

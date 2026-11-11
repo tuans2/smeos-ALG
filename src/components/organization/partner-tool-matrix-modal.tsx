@@ -7,6 +7,7 @@ import { Check } from "@/components/ui/icon-set/check"
 import { STORE_NAV_ENTRIES } from "@/components/layout/nav/nav-store"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { savePartnerUnlockedTools } from "./partner-tools-api"
 
 interface PartnerToolMatrixModalProps {
   partnerId: string
@@ -65,17 +66,9 @@ export function PartnerToolMatrixModal({
     setSaving(true)
     setErrorMsg("")
     try {
-      const res = await fetch(`/api/v1/network/partners/${partnerId}/unlocked-tools`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          unlockedTools: Array.from(selectedKeys),
-        }),
-      })
-
-      const json = await res.json()
-      if (!res.ok) {
-        setErrorMsg(json.message || "Không thể lưu cấu hình công cụ")
+      const result = await savePartnerUnlockedTools(partnerId, Array.from(selectedKeys))
+      if (!result.ok) {
+        setErrorMsg(result.message)
         return
       }
 

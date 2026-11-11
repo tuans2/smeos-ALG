@@ -15,6 +15,8 @@ import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { mobileSecondSlot, NAV_ENTRIES, type NavEntry } from "./nav-model"
 import { NAV_ICONS as ICONS } from "./nav-icons"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
+import { requestOpenMobileNav } from "./mobile-nav-context"
 
 export function BottomNav() {
   const pathname = usePathname()
@@ -146,12 +148,23 @@ export function BottomNav() {
         })()
       )}
 
-      {/* 5. Thêm */}
+      {/* 5. Thêm — trang /them không thuộc giai đoạn bàn giao thì mở menu ☰ thay vì sang trang không có */}
       {(() => {
-        const isThemActive = pathname === "/them" || pathname.startsWith("/them/")
+        const themInPhase = isHrefInPhase("/them")
+        const isThemActive = themInPhase && (pathname === "/them" || pathname.startsWith("/them/"))
         return (
           <Link
-            href={"/them" as never}
+            href={(themInPhase ? "/them" : pathname) as never}
+            {...(themInPhase
+              ? {}
+              : {
+                  role: "button",
+                  "aria-haspopup": "dialog" as const,
+                  onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+                    e.preventDefault()
+                    requestOpenMobileNav()
+                  },
+                })}
             aria-current={isThemActive ? "page" : undefined}
             className={cn(
               "relative flex flex-1 flex-col items-center justify-center gap-1 text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors",
