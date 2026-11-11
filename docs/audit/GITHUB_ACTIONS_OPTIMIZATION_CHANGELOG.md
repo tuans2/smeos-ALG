@@ -26,6 +26,10 @@
 ### `.github/workflows/ui-weekly.yml`
 - **O-2** `timeout-minutes: 60`; `concurrency: { group: ui-weekly, cancel-in-progress: false }`.
 
+### `.github/workflows/release-gd1.yml` (11/11/2026, sau khi merge `main` mang workflow này vào)
+- **O-8** `concurrency` (nhóm `release-gd1-…`, chỉ huỷ trên PR); `timeout-minutes: 90`; bước "Postgres CI dùng một lần — tắt ghi đĩa
+  đồng bộ" trước bước dựng CSDL của bản cắt. Trigger và mọi bước kiểm giữ nguyên.
+
 ### Tài liệu
 - Thêm `docs/audit/GITHUB_ACTIONS_OPTIMIZATION_REPORT.md` và tệp này.
 

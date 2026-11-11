@@ -13,9 +13,17 @@ on:
     - cron: "17 19 * * *"
   workflow_dispatch:
 
+# O-8 (docs/audit/GITHUB_ACTIONS_OPTIMIZATION_REPORT.md): push mới vào cùng PR huỷ lần cắt thử cũ của PR đó. Lịch đêm,
+# chạy tay và push nhánh bàn giao nhóm theo sự kiện + SHA nên không bị huỷ.
+concurrency:
+  group: release-gd1-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   cut:
     runs-on: ubuntu-latest
+    # PR đo được 9,6–14,3 phút (10/11/2026); lịch đêm chạy thêm tenant + platform (~34 phút trên CI). Mặc định 360 phút.
+    timeout-minutes: 90
     services:
       postgres:
         image: postgres:16
@@ -52,6 +60,17 @@ jobs:
         run: npm run release:cut -- gd1 HEAD "$CUT"
       - name: Kiểm rò rỉ trên bản cắt
         run: node scripts/handover-check.mjs --dir "$CUT" --recipient ALG --baseline releases/gd1/leak-baseline.json
+      # Như job `web` của ci.yml (O-7): Postgres của job là container dùng một lần — bỏ ghi đĩa đồng bộ để
+      # `resetDatabase()` của test tenant/platform hằng đêm nhanh hơn. Không đổi ngữ nghĩa giao dịch.
+      - name: Postgres CI dùng một lần — tắt ghi đĩa đồng bộ
+        env:
+          PGPASSWORD: floraos
+        run: |
+          psql -h localhost -U floraos -d postgres -v ON_ERROR_STOP=1 \
+            -c "ALTER SYSTEM SET fsync = off" \
+            -c "ALTER SYSTEM SET full_page_writes = off" \
+            -c "ALTER SYSTEM SET synchronous_commit = off" \
+            -c "SELECT pg_reload_conf()"
       - name: Cài và dựng CSDL cho bản cắt
         working-directory: ${{ env.CUT }}
         env:

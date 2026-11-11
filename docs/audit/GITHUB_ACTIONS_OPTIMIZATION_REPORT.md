@@ -12,7 +12,7 @@
 - Một sự kiện (push vào PR hoặc lên `main`) tốn **~86 phút tính phí** (mỗi job làm tròn lên phút): CI ~71 + CodeQL ~15. Riêng bước
   `test:tenant` chiếm **31,5–32 phút** (~45 % toàn bộ).
 - Đã làm 7 thay đổi (O-1…O-7), không bỏ cổng nào, không đổi tên job (Render và ruleset đọc tên check). Ước tính **−29 % đến −35 %/sự kiện PR** (gồm huỷ run thừa),
-  **−10 % đến −16 %/push `main`**. **Mục tiêu 50–70 % KHÔNG đạt được chỉ bằng sửa workflow** mà giữ nguyên cổng — xem §7 cho các bước còn lại
+  **−10 % đến −16 %/push `main`**. O-3 đo thật rẻ hơn ước tính (+1,8 thay vì +3,5 phút) ⇒ cận trên tốt hơn ~1,7 phút/sự kiện. **Mục tiêu 50–70 % KHÔNG đạt được chỉ bằng sửa workflow** mà giữ nguyên cổng — xem §7 cho các bước còn lại
   (cần sửa test helper/ESLint cache, phải PO duyệt).
 - Số đo trên runner thật sau thay đổi **chưa có** (nhánh chưa có PR nên CI chưa chạy cấu hình mới) — xem §6.
 
@@ -25,7 +25,9 @@
 | `ui-weekly.yml` | lịch thứ Hai 03:00 UTC + `workflow_dispatch` | `ui-enterprise-audit` | Không chạy trên PR |
 
 Không có Windows/macOS runner, không có `concurrency`, không có `timeout-minutes` (mặc định 360 phút/job), không có job deploy (Render tự deploy).
-Một workflow thứ tư, `release-gd1.yml` ("Bản giao GD1"), chỉ tồn tại trên nhánh PR `claude/compassionate-newton-nmd5sr` — không thuộc `main`, không sửa ở đây.
+Workflow thứ tư, `release-gd1.yml` ("Bản giao GD1", job `cut`), vào `main` qua PR #21 (10/11/2026) sau lần audit đầu: chạy trên mọi PR, push nhánh
+`Bangiao_GD1_123chunang`, lịch đêm 19:17 UTC (có thêm tenant + platform trên bản cắt) và chạy tay. Không nằm trong cổng deploy của Render.
+PR đo được 9,6–14,3 phút; cũng không có `concurrency`/`timeout-minutes` — xử lý ở O-8.
 
 ### 1.1 Số đo gốc (API Actions, 10/11/2026)
 
@@ -80,6 +82,7 @@ action bên thứ ba (chỉ `actions/*`, `github/codeql-action`).
 | O-5 | `ci.yml` | `worker` trên PR: bỏ qua cài đặt + pytest nếu PR không đổi `workers/` hay `ci.yml`; job vẫn xanh; push `main` luôn chạy đủ; không đọc được diff ⇒ chạy đủ | Tên check `worker` giữ nguyên; commit được deploy luôn có pytest |
 | O-6 | `codeql.yml` | CodeQL **Python** trên PR: bỏ qua nếu PR không đổi `*.py`, `workers/`, `codeql.yml`, `scripts/codeql-*`; JS/TS luôn chạy; `main` + lịch tuần luôn chạy đủ | Gate baseline vẫn chạy khi có mã Python mới |
 | O-7 | `ci.yml` | `web`: tắt `fsync`/`full_page_writes`/`synchronous_commit` của Postgres CI (ALTER SYSTEM + reload) trước khi dựng CSDL; `worker`: `setup-python` cache pip | Không đổi ngữ nghĩa giao dịch/khoá/cô lập; chỉ mất độ bền khi mất điện — container bị huỷ sau job |
+| O-8 | `release-gd1.yml` | `concurrency` như O-1 (chỉ huỷ trên PR), `timeout-minutes: 90`, tắt ghi đĩa đồng bộ của Postgres như O-7 (lợi chủ yếu cho test tenant/platform lịch đêm) | Trigger, bước cắt, kiểm rò rỉ, typecheck/test/build trên bản cắt giữ nguyên |
 
 ## 4. Ước tính phút tiết kiệm
 
@@ -89,7 +92,7 @@ action bên thứ ba (chỉ `actions/*`, `github/codeql-action`).
 |---|---|---|---|
 | `web` — bỏ build (O-3) | 50 | −5,2 đến −6,9 | số đo §1.1 |
 | `web` — Postgres không fsync (O-7) | (tenant 32 + platform 1,9) | −7 đến −10 | §6: 20 tệp tenant 130 s → 95 s (−27 %); TRUNCATE 3,9× nhanh hơn. **Chưa đo trên runner** |
-| `e2e-ux` — build có kiểm kiểu (O-3) | 11,5 | +3,5 | ≈ chênh lệch build có/không kiểm kiểu (6,9 − 1,8 ⇒ ~3,5–5) |
+| `e2e-ux` — build có kiểm kiểu (O-3) | 11,5 | +1,8 | **Đo trên runner** (PR #24): build 1,8 → 3,6 phút (ước ban đầu +3,5) |
 | `industry-terms` (O-4) | 1,5 | 1 | 62 s → ~4 s |
 | `worker` PR thường (O-5) | 3–9 | 1 | chỉ checkout + diff |
 | CodeQL Python PR thường (O-6) | 5 | 1 | như trên |
@@ -145,7 +148,22 @@ cùng lưu lượng. Đây là ngoại suy từ 48 giờ, không phải số đo
   (Chạy đủ bộ với fsync on tại máy không làm — theo tỉ lệ mẫu 20 tệp, ước ~35 phút; trên runner CI cũ đo 31,5–32,1 phút.)
 - `industry-terms`: `npm exec tsx@4.23.15` trên worktree **không có `node_modules`**: 3,5 s, đầu ra `diff` giống hệt `npm run audit:industry:check`.
 
-### 6.3 Chưa kiểm chứng (phải làm sau khi có PR)
+### 6.3 Lần chạy đầu trên runner — PR #24, run `42855169978` (head `e079881`, base `main` `0ceda77`)
+
+| Job | Kết quả | Thời lượng | So với §1.1 |
+|---|---|---|---|
+| `industry-terms` | xanh | **11 s** | 60–74 s (O-4 xác nhận) |
+| `e2e-ux` | xanh | 8,6 phút; build có kiểm kiểu **3,6 phút**, E2E 3,2 phút | build 1,8 phút khi bỏ kiểm kiểu ⇒ O-3 tốn +1,8 phút ở đây |
+| `worker` | xanh | 3,8 phút | chạy đủ — đúng, vì PR đổi `ci.yml` |
+| `security` | xanh | 0,7 phút | 1,3 phút |
+| CodeQL python | xanh | **0,95 phút** (bỏ qua, có notice) | 4,9 phút (O-6 xác nhận) |
+| CodeQL JS/TS | xanh | 3,8 phút | 9,8 phút (không do thay đổi này — chưa rõ nguyên nhân) |
+| `web` | **đỏ** ở `npm test` sau 8 phút | bước Postgres mới: 0 s, xanh | 3 tệp test OpenAPI/route sinh tự động (`internal-openapi`, `delivery-phase`, `trace-phase`) — **đỏ sẵn trên `main` `0ceda77`** (run `42844828846`), `main` sửa ở PR #25; đã merge `main` vào nhánh |
+
+Sau khi merge `main` (`2af3f82`) vào nhánh: `npm test` tại máy 785 tệp / 4841 ca xanh, `check:docs` xanh; YAML của `release-gd1.yml` đọc được.
+`test:tenant` trên runner chưa đo được ở lần này (bị skip sau `npm test` đỏ) — xem lần chạy sau merge `main`.
+
+### 6.4 Chưa kiểm chứng
 - Thời lượng thật trên runner của `web` (đặc biệt `test:tenant`) và `e2e-ux` (build có kiểm kiểu).
 - Render nhận check của commit `main` đầu tiên sau merge và deploy bình thường.
 - Đo lại sau 1–2 tuần: tổng thời lượng job/sự kiện so với bảng §1.1.
