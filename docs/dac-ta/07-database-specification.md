@@ -4198,10 +4198,29 @@ model organizations {
   `requireIntegrationContext` và đăng nhập (`assert-organization-lifecycle.ts`).
 - Đổi trạng thái: `PATCH /platform/organizations/:id` với `lifecycle_status` (+ `offboarding_until`), mã `N2`; ghi
   `platform_audit_logs` và `audit_logs` của tổ chức (`platform.organization_lifecycle_changed`).
-- Chưa làm (S-3b): xoá theo sổ bảng-thuộc-tenant bằng `smeos_system` + `app.purge_reason`, thay hai script dọn tay
-  (ADR-016 D-S5); trang công khai của tổ chức tạm ngưng; nút đổi trạng thái trên Console.
+- Chưa làm: trang công khai của tổ chức tạm ngưng; nút đổi trạng thái trên Console.
 
-Ca thử: `tests/tenant/organization-lifecycle.test.ts`.
+**S-3b — xoá hẳn tổ chức (PO 11/11/2026).** `npm run tenant:purge -- --org <id> --operator <email>` (chỉ đọc: số dòng
+sẽ xoá từng bảng; thêm `--confirm` để xoá). Điều kiện: `OFFBOARDING`, đã qua `offboarding_until`, không còn legal hold;
+người vận hành có `N2`; ghi `platform_audit_logs` (`platform.organization_purged`). Một giao dịch,
+`app.purge_reason = tenant_offboarding`, duyệt sổ `TABLES_CHILD_FIRST` (con trước cha):
+
+- Giữ (ADR-014 D-P4): đơn đã thu tiền (`paid_vnd > 0`) kèm `order_items`, `order_payments`, `order_recipients`; khách
+  được các đơn đó tham chiếu; `credit_transactions`, `usage`, `subscriptions`, `subscription_invoices`,
+  `provider_cost_entries`, `reconciliation_findings`, `audit_logs`, `platform_access_logs`, `tenant_data_keys` (đọc lại hoá
+  đơn VAT đã mã hoá), `storage_outbox`, `workspaces` (`usage.workspace_id` bắt buộc), dòng `organizations` (→ `DELETED`,
+  `settings` = `{}`).
+- Ẩn danh trên phần giữ: khách (`Khách đã xoá`, SĐT `ERASED`, bỏ email/địa chỉ/ghi chú), lời chúc và ghi chú nội bộ của
+  đơn, `delivery_address`; người nhận (tên, SĐT, địa chỉ) — **giữ** thông tin hoá đơn VAT; ghi chú và ảnh bằng chứng của
+  phiếu thu.
+- Xoá mọi dòng còn lại của tổ chức ở các bảng có `organization_id`, cùng `organization_links` và `governance_decisions`
+  (`scope = org:<id>`). Tệp của `assets` vào `storage_outbox` (cron xoá trên kho); tệp khác dưới `org/<id>/` do đối soát
+  kho xử lý.
+- Hai script dọn dữ liệu thử trước bàn giao (`scripts/handover-clean-tenant.ts` và script dọn đơn trong `prisma/seed`)
+  giữ nguyên — mục đích khác (PO 11/11/2026).
+
+Ca thử: `tests/tenant/organization-lifecycle.test.ts`, `tests/tenant/tenant-purge.test.ts` (không đủ điều kiện → không
+xoá gì; giữ chứng từ + nhật ký, ẩn danh, giữ VAT; tổ chức khác nguyên vẹn).
 
 ## 52. Chống bấm đúp khi tạo đơn — `orders.idempotency_key` (07/11/2026)
 

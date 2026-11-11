@@ -250,3 +250,16 @@ Migration tự kiểm lại; còn thì dừng, không đổi gì, bản cũ vẫ
 `npx prisma migrate resolve --rolled-back 20261109090000_pii_encryption_cleanup` rồi deploy lại. Sau P-5d-2 chỉ quay lại
 được bản P-5d-1 (bản P-5c còn đọc `*_enc`).
 
+
+## 15. Vòng đời tổ chức — tạm ngưng, rời nền tảng, xoá (ADR-016 D-S5, 11/11/2026)
+
+`organizations.lifecycle_status` (đặc tả 07 §53). Admin SaaS (`N2`) đổi qua `PATCH /api/v1/platform/organizations/:id`:
+
+- `SUSPENDED` — thành viên và khoá tích hợp không vào được (403 `ORGANIZATION_INACTIVE`), dữ liệu giữ nguyên. Mở lại:
+  `ACTIVE`.
+- `OFFBOARDING` (kèm `offboarding_until` theo hợp đồng) — chỉ xem, để khách xuất dữ liệu bàn giao.
+- Quá `offboarding_until`, không còn legal hold → xoá hẳn trên Render shell của `smeos-web`:
+  1. Sao lưu CSDL.
+  2. `npm run tenant:purge -- --org <id> --operator <email>` — chỉ đọc, in số dòng sẽ xoá theo từng bảng.
+  3. Thêm `--confirm` để xoá. Giữ chứng từ ghi sổ và nhật ký, ẩn danh khách trên chứng từ; tổ chức chuyển `DELETED`; tệp
+     ảnh vào hàng đợi xoá kho; một dòng `platform_audit_logs`.
