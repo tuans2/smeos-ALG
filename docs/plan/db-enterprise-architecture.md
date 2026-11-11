@@ -148,7 +148,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 
 | ☐ | Mục | Gate thêm |
 |---|---|---|
-| [ ] | I-6 [SCHEMA] Bật RLS chặn thật trên production (mốc theo câu trả lời ADR-013 §6) | Test "bỏ `scopedWhere` → 0 dòng" chạy trên CSDL thật |
+| [ ] | I-6 [SCHEMA] Bật RLS chặn thật trên production (mốc theo câu trả lời ADR-013 §6). **Chuẩn bị 11/11/2026:** vá fail-open (audit DB-01) — truy vấn ngoài mọi ngữ cảnh trong tiến trình web không còn quyền hệ thống; trang/route server mở ngữ cảnh, gác bằng `db-context-entrypoints.test.ts`; điều kiện bật thêm 14 ngày không có log `kind=unclassified` (runbook §12) | Test "bỏ `scopedWhere` → 0 dòng" chạy trên CSDL thật |
 | [ ] | O-9 [VẬN HÀNH] Thử tải quy mô mục tiêu trên CSDL khôi phục PITR | Biên bản p95 đạt SLO |
 | [ ] | O-10 Dọn `generation_jobs` cũ; bản sao đọc / phân vùng nếu chạm ngưỡng | Theo ngưỡng ADR-015 D-O6 |
 | [x] | P3-03 ERD theo miền sinh từ schema (`npm run gen:erd` → `docs/kien-truc/ERD_THEO_MIEN.md`, 10 miền), kiểm trong CI qua `npm test` | `tests/unit/architecture/erd.test.ts`: tệp sinh khớp schema, mỗi model đúng một miền |

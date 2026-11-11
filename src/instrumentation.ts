@@ -18,7 +18,9 @@ export async function register(): Promise<void> {
     setErrorTracker(initSentryErrorTracker(dsn))
   }
   // Bộ quét nền đi qua mọi tổ chức → quyền hệ thống; hẹn giờ giữ ngữ cảnh lúc tạo (RLS, checklist ALG 1.18)
-  const { asSystemDb } = await import("@/core/tenancy/db-context")
+  const { asSystemDb, markWebProcess } = await import("@/core/tenancy/db-context")
+  // Truy vấn ngoài mọi ngữ cảnh trong tiến trình web không được quyền hệ thống (audit DB-01, chuẩn bị I-6)
+  markWebProcess()
   const { startBackgroundSweep } = await import("@/modules/greeting-card/use-cases/background-sweep-scheduler")
   asSystemDb("sweep:greeting-card", startBackgroundSweep)
   // Đơn quá hạn thanh toán → lead cứu đơn (Đơn hàng đa nguồn, PO 31/10/2026) — chỉ đọc sự kiện huỷ.

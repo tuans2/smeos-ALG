@@ -156,7 +156,14 @@ và worker (`workers/shared/rls.py`) đặt `app.org_id` theo tổ chức của 
 | `audit` (mặc định của blueprint) | Chính sách cho qua mọi dòng | Đặt ngữ cảnh; ghi log `db.rls.unscoped_query` khi request chưa gắn tổ chức chạm bảng thuộc tổ chức (`kind=pending`) hoặc truy vấn chạy ngoài request (`kind=unclassified`), kèm bảng và đường dẫn |
 | `enforce` | Truy vấn sai tổ chức trả 0 dòng; ghi sai tổ chức bị từ chối | Như `audit` |
 
-**Chuyển sang `enforce`:** khi 14 ngày liền không có log `db.rls.unscoped_query` `kind=pending` trên production. Đặt
+**Truy vấn ngoài mọi ngữ cảnh (11/11/2026, audit DB-01):** trong tiến trình web, truy vấn không nằm trong request (`handle()`),
+`withRequestDb` (trang server có phiên), `asSystemDb` (trang công khai, bộ quét nền) hay `withTenantDb` **không có quyền hệ
+thống** — ở `enforce` thấy 0 dòng bảng thuộc tổ chức (fail-closed). Script và công cụ ngoài web vẫn chạy như hệ thống (dùng
+`smeos_system` khi có I-1). Test `tests/unit/architecture/db-context-entrypoints.test.ts` đỏ nếu trang/route mới chạm CSDL mà
+không mở ngữ cảnh. Log `kind=unclassified` của `smeos-web` là chỗ còn sót (vd. callback nhận tin Redis) — sửa trước khi bật.
+
+**Chuyển sang `enforce`:** khi 14 ngày liền không có log `db.rls.unscoped_query` `kind=pending` hay `kind=unclassified` của
+`smeos-web` trên production. Đặt
 `DB_RLS_MODE=enforce` ở `smeos-web` và 3 worker cùng lúc (Render → Environment), deploy lại. Theo dõi lỗi 404/rỗng dữ liệu 24 giờ đầu.
 
 **Tắt khẩn cấp:** đặt lại `audit` (hoặc `off`) và deploy — không cần migration, có hiệu lực ngay khi tiến trình khởi động lại.

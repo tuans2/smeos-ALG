@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { NextRequest, NextResponse } from "next/server"
 import { claimIdempotencyKey } from "@/core/idempotency/infra/idempotency-repository"
 import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-channel-repository"
@@ -22,7 +23,12 @@ export async function GET(req: NextRequest) {
 }
 
 // 2. Tiếp nhận sự kiện tin nhắn từ Facebook Messenger
-export async function POST(req: NextRequest) {
+/** Webhook / widget công khai ngoài `handle()`: chạy quyền hệ thống (tổ chức suy từ kênh), như nhóm đường dẫn của `handle()`. */
+export function POST(req: NextRequest) {
+  return asSystemDb("route:/api/v1/chat/webhooks/facebook", () => postUnscoped(req))
+}
+
+async function postUnscoped(req: NextRequest) {
   // AUD-028: chỉ nhận sự kiện có chữ ký X-Hub-Signature-256 hợp lệ (HMAC thân gốc với App Secret)
   const rawBody = await req.text()
   if (!verifyFacebookSignature(rawBody, req.headers.get("x-hub-signature-256"), process.env.FB_APP_SECRET)) {

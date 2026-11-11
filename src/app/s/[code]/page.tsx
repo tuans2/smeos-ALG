@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { getDictionary, translate } from "@/lib/i18n/server"
 import type { Metadata } from "next"
 import { linkPreviewText } from "@/modules/greeting-card/domain/link-preview-text"
@@ -12,10 +13,11 @@ interface PageProps {
 
 /** Ảnh và tiêu đề xem trước khi dán link vào Zalo/Facebook — giống link bộ sưu tập gốc. */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const preview = await shareLinkPreview((await params).code.toUpperCase())
+  const shareCode = (await params).code.toUpperCase()
+  const preview = await asSystemDb("page:/s", () => shareLinkPreview(shareCode))
   if (!preview) return { title: "Bộ Sưu Tập Sản Phẩm" }
   // Cùng tiêu đề/mô tả với link /b/: tên bộ sưu tập · tên tiệm, số mẫu và giá thấp nhất
-  const data = await getPublicGreetingCatalog(preview.catalogId)
+  const data = await asSystemDb("page:/s", () => getPublicGreetingCatalog(preview.catalogId))
   const active = data.status === "ACTIVE" ? data : null
   const { title, description } = linkPreviewText({
     catalogName: preview.name,
@@ -47,7 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ShareLinkPage({ params }: PageProps) {
   const dict = getDictionary("vi")
   const code = (await params).code.toUpperCase()
-  const preview = await shareLinkPreview(code)
+  const preview = await asSystemDb("page:/s", () => shareLinkPreview(code))
   if (!preview) {
     return (
       <LinkUnavailable
