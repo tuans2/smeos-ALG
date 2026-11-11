@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { NextResponse } from "next/server"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { openShareLink } from "@/modules/greeting-card/use-cases/share-links"
@@ -31,7 +32,8 @@ export async function GET(request: Request, context: { params: Promise<{ code: s
   }
   const cookieName = `${COOKIE_PREFIX}${code}`
   const known = request.headers.get("cookie")?.split(/;\s*/).find((c) => c.startsWith(`${cookieName}=`))?.slice(cookieName.length + 1) ?? null
-  const opened = await openShareLink(code, known ? decodeURIComponent(known) : null)
+  // Route công khai ngoài `handle()`: tra theo mã chia sẻ bằng quyền hệ thống, như /api/v1/public/
+  const opened = await asSystemDb("route:/s/mo", () => openShareLink(code, known ? decodeURIComponent(known) : null))
   if (!opened) return gone()
 
   // Location TƯƠNG ĐỐI: sau proxy của Render, `request.url` là địa chỉ nội bộ (localhost:3100) —
@@ -39,7 +41,7 @@ export async function GET(request: Request, context: { params: Promise<{ code: s
   const res = new NextResponse(null, { status: 302, headers: { location: `/b/${encodeURIComponent(opened.sendCode)}?${FRESH_SESSION_PARAM}=1` } })
   const https = (request.headers.get("x-forwarded-proto") ?? url.protocol.replace(":", "")).split(",")[0]?.trim() === "https"
   res.cookies.set(cookieName, opened.sendCode, { httpOnly: true, sameSite: "lax", secure: https, maxAge: COOKIE_MAX_AGE, path: "/" })
-  const owner = await grantBrochureOwner({ id: opened.sessionId, organization_id: opened.organizationId, send_code: opened.sendCode }, "share-link")
+  const owner = await asSystemDb("route:/s/mo", () => grantBrochureOwner({ id: opened.sessionId, organization_id: opened.organizationId, send_code: opened.sendCode }, "share-link"))
   res.headers.append("set-cookie", serializeOwnerCookie(owner, https))
   return res
 }

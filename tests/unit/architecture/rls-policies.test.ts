@@ -22,7 +22,9 @@ describe("RLS theo tổ chức", () => {
     expect(rlsSettingsFor({ kind: "tenant", organizationId: "org-a" }, "enforce")).toEqual({ orgId: "org-a", system: "", mode: "enforce" })
     expect(rlsSettingsFor({ kind: "system", label: "x" }, "enforce")).toEqual({ orgId: "", system: "on", mode: "enforce" })
     expect(rlsSettingsFor({ kind: "pending" }, "enforce")).toEqual({ orgId: "", system: "", mode: "enforce" })
-    expect(rlsSettingsFor(undefined, "audit").system).toBe("on")
+    // Ngoài mọi ngữ cảnh: script / test vẫn như hệ thống; tiến trình web (markWebProcess) thì không (audit DB-01)
+    expect(rlsSettingsFor(undefined, "audit", false).system).toBe("on")
+    expect(rlsSettingsFor(undefined, "enforce", true)).toEqual({ orgId: "", system: "", mode: "enforce" })
   })
 
   it("nhận ra bảng thuộc tổ chức trong SQL của Prisma và SQL thô", () => {

@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
 import { PublicChatSlot } from "@/components/chat/public-chat-slot"
@@ -10,7 +11,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const data = await getPublicCatalog(slug)
+  const data = await asSystemDb("page:/c", () => getPublicCatalog(slug))
 
   if (data.status !== "ACTIVE") {
     return {
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PublicCatalogPage({ params }: PageProps) {
   const dict = getDictionary("vi")
   const { slug } = await params
-  const data = await getPublicCatalog(slug)
+  const data = await asSystemDb("page:/c", () => getPublicCatalog(slug))
 
   // Landing page (Công cụ 08) và Catalog (09) dùng chung trang /c — phân biệt theo gói chiến dịch
   const surface = data.status === "ACTIVE" && (data.campaignConfig?.archetype || data.campaignConfig?.generatedPackage)

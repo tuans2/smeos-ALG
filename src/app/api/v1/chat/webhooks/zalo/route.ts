@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { NextRequest, NextResponse } from "next/server"
 import { claimIdempotencyKey } from "@/core/idempotency/infra/idempotency-repository"
 import { ChatChannelRepository } from "@/modules/chat-assistant/infra/chat-channel-repository"
@@ -6,7 +7,12 @@ import { isFreshEvent, verifyZaloSignature } from "@/modules/greeting-card/use-c
 import { recordManagedWebhook } from "@/modules/integration-hub/use-cases/record-managed-webhook"
 import { isOwnConnectionAllowed } from "@/modules/integration-hub/use-cases/governance-mode"
 
+/** Webhook / widget công khai ngoài `handle()`: chạy quyền hệ thống (tổ chức suy từ kênh), như nhóm đường dẫn của `handle()`. */
 export async function POST(req: NextRequest) {
+  return asSystemDb("route:/api/v1/chat/webhooks/zalo", () => postUnscoped(req))
+}
+
+async function postUnscoped(req: NextRequest) {
   const rawBody = await req.text()
   let body
   try {

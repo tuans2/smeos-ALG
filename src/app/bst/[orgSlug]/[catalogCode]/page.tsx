@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
 import { PublicChatSlot } from "@/components/chat/public-chat-slot"
@@ -13,7 +14,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { orgSlug, catalogCode } = await params
-  const data = await getPublicGreetingCatalogBySlug(orgSlug, catalogCode)
+  const data = await asSystemDb("page:/bst", () => getPublicGreetingCatalogBySlug(orgSlug, catalogCode))
   if (data.status !== "ACTIVE") {
     return { title: "Bộ Sưu Tập Sản Phẩm" }
   }
@@ -40,11 +41,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PublicGreetingCatalogSlugPage({ params }: PageProps) {
   const dict = getDictionary("vi")
   const { orgSlug, catalogCode } = await params
-  const data = await getPublicGreetingCatalogBySlug(orgSlug, catalogCode)
+  const data = await asSystemDb("page:/bst", () => getPublicGreetingCatalogBySlug(orgSlug, catalogCode))
 
   if (data.status === "NOT_FOUND") {
     // Đúng cửa hàng nhưng bộ sưu tập đã ngừng/sai mã: hiện liên hệ tiệm thay vì 404 chung
-    const shop = await getShopContactBySlug(orgSlug)
+    const shop = await asSystemDb("page:/bst", () => getShopContactBySlug(orgSlug))
     if (shop) return <LinkUnavailable shop={shop} />
     return (
       <LinkUnavailable

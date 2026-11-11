@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
 import { getPublicGreetingCatalog } from "@/modules/greeting-card/use-cases/get-public-greeting-catalog"
@@ -11,7 +12,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  const data = await getPublicGreetingCatalog(id)
+  const data = await asSystemDb("page:/g", () => getPublicGreetingCatalog(id))
   if (data.status !== "ACTIVE") {
     return { title: "Bộ Sưu Tập Sản Phẩm" }
   }
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function PublicGreetingCatalogPage({ params }: PageProps) {
   const dict = getDictionary("vi")
   const { id } = await params
-  const data = await getPublicGreetingCatalog(id)
+  const data = await asSystemDb("page:/g", () => getPublicGreetingCatalog(id))
 
   if (data.status === "NOT_FOUND") {
     return (

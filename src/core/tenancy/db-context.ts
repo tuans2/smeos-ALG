@@ -8,7 +8,8 @@ import { AsyncLocalStorage } from "node:async_hooks"
  * - `system`: luồng hợp lệ không thuộc một tổ chức (trang công khai tra theo mã, xác thực phiên,
  *   Console nền tảng, webhook, bộ quét nền). Chỉ khai bằng `asSystemDb` hoặc theo nhóm đường dẫn.
  * - `pending`: request chưa gắn tổ chức — truy vấn bảng thuộc tổ chức lúc này là truy vấn bị chặn.
- * Ngoài mọi ngữ cảnh (trang server, script) = chưa phân loại: chạy như cũ, chế độ ghi nhận ghi log.
+ * Ngoài mọi ngữ cảnh = chưa phân loại: trong tiến trình web (`markWebProcess`) không có quyền hệ thống; script và
+ * test chạy như cũ. Chế độ ghi nhận ghi log `kind=unclassified`.
  */
 export type DbContextKind = "tenant" | "system" | "pending"
 
@@ -48,6 +49,27 @@ export function bindTenantDb(organizationId: string): void {
   if (!ctx || ctx.kind === "system") return
   ctx.kind = "tenant"
   ctx.organizationId = organizationId
+}
+
+/**
+ * Trang / layout server có phiên đăng nhập (ngoài `handle()`): mở ngữ cảnh "chờ gắn tổ chức" cho phần tải dữ liệu;
+ * `requireTenantContext` bên trong gắn tổ chức của phiên. Tải dữ liệu nằm ngoài khối này là truy vấn thiếu ngữ cảnh.
+ */
+export function withRequestDb<T>(route: string, fn: () => T): T {
+  return store.run({ kind: "pending", route }, () => settleInside(fn))
+}
+
+/**
+ * Tiến trình web (gọi một lần ở `instrumentation.ts`): truy vấn ngoài mọi ngữ cảnh KHÔNG được quyền hệ thống — ở
+ * chế độ `enforce` chúng thấy 0 dòng bảng thuộc tổ chức (audit DB-01/DB-09). Script, test, công cụ ngoài web không
+ * gọi hàm này: chúng chạy bằng `asSystemDb` hoặc tài khoản `smeos_system` (ADR-013 D-I1).
+ */
+const FAIL_CLOSED = Symbol.for("smeos.db.failClosedOutsideContext")
+export function markWebProcess(): void {
+  ;(globalThis as Record<symbol, unknown>)[FAIL_CLOSED] = true
+}
+export function failsClosedOutsideContext(): boolean {
+  return (globalThis as Record<symbol, unknown>)[FAIL_CLOSED] === true
 }
 
 /** Chạy `fn` với tổ chức `organizationId` (job nền của một tổ chức, test). */

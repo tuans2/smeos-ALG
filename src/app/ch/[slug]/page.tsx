@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import type { Metadata } from "next"
 import { PublicChatSlot } from "@/components/chat/public-chat-slot"
 import { notFound } from "next/navigation"
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function StoreSharePage({ params }: PageProps) {
   const { slug } = await params
-  const result = await getPublicStoreProfile(slug)
+  const result = await asSystemDb("page:/ch", () => getPublicStoreProfile(slug))
   if (result.status === "NOT_FOUND") notFound()
   if (result.status === "REVOKED") {
     return (
@@ -37,7 +38,7 @@ export default async function StoreSharePage({ params }: PageProps) {
       </main>
     )
   }
-  await recordStoreProfileView(slug)
+  await asSystemDb("page:/ch", () => recordStoreProfileView(slug))
   return (
     <>
       <PublicStoreProfileView profile={result.profile} />
