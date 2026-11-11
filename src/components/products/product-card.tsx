@@ -98,9 +98,11 @@ export interface ProductCardProps {
   onImageClick?: (product: ProductItem) => void
   /** Thẻ nằm trong khung nhìn đầu tiên: ảnh tải ưu tiên. */
   priority?: boolean | undefined
+  /** Nhãn tiếng Việt của danh mục (thay cho mã trong dữ liệu) */
+  categoryLabel?: string | null | undefined
 }
 
-export function ProductCard({ product, isExecutive, onTrash, onImageClick, priority = false }: ProductCardProps) {
+export function ProductCard({ product, isExecutive, onTrash, onImageClick, priority = false, categoryLabel }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-surface shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
       {/* Vùng ảnh sản phẩm: Bấm để mở Bảng thông số sản phẩm & Phân tích AI */}
@@ -134,7 +136,7 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick, prior
         </div>
         <div className="flex items-center justify-between gap-2 mt-1">
           <span className="truncate text-caption text-text-muted">
-            {product.category ?? "Chưa phân loại"}
+            {categoryLabel ?? product.category ?? "Chưa phân loại"}
           </span>
           <PriceLabel price={product.price_vnd} attributes={product.attributes} />
         </div>
