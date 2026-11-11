@@ -239,6 +239,7 @@
   "số điện thoại|tests/tenant/payment-confirmation.test.ts": 2,
   "số điện thoại|tests/tenant/pii-cleanup.test.ts": 2,
   "số điện thoại|tests/tenant/pii-encryption.test.ts": 27,
+  "số điện thoại|tests/tenant/pii-read-cold-cache.test.ts": 4,
   "số điện thoại|tests/tenant/pii-read.test.ts": 17,
   "số điện thoại|tests/tenant/product-size-stems.test.ts": 2,
   "số điện thoại|tests/tenant/public-catalog-order.test.ts": 2,
