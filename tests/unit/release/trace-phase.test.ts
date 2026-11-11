@@ -87,6 +87,20 @@ describe("phạm vi gd1 dò từ code hiện tại", () => {
     expect(routes.blockedApis).toEqual(cutApis)
   })
 
+  it("giao diện được giao không còn nhắc ứng dụng liên kết cũ (SocialFlow, LocalBudd) ngoài chú thích", () => {
+    const comment = /^\s*(\/\/|\*|\/\*|\{\/\*)/
+    const hits = trace.files
+      .filter((file) => /\.tsx$/.test(file) || /\/(domain|i18n)\/.*\.ts$/.test(file))
+      .flatMap((file) =>
+        readFileSync(path.join(root, file), "utf8")
+          .split("\n")
+          .map((line, i) => ({ line, at: `${file}:${i + 1}` }))
+          .filter(({ line }) => /SocialFlow|LocalBudd/.test(line) && !comment.test(line)),
+      )
+      .map(({ at }) => at)
+    expect(hits).toEqual([])
+  })
+
   it("không có phụ thuộc mới vào vùng không giao", () => {
     const accepted = acceptedViolations(manifest)
     expect(trace.violations.map((v) => `${v.from} → ${v.to}`).filter((key) => !accepted.has(key))).toEqual([])

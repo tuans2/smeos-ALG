@@ -155,7 +155,7 @@ export const CONNECTOR_CATALOG: readonly ConnectorManifest[] = [
   {
     key: "api_tokens",
     category: "API_WEBHOOK",
-    label: "Ứng dụng SocialFlow và LocalBudd",
+    label: "Ứng dụng đăng bài và quảng bá địa phương",
     description: "Cấp khoá để ứng dụng đăng bài và quảng bá địa phương đọc sản phẩm, ảnh và số liệu của cửa hàng.",
     capabilities: [],
     auth: "INTERNAL",

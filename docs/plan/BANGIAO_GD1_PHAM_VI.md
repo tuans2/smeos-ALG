@@ -20,8 +20,8 @@ Bản xem của `src/lib/delivery/gd1.manifest.json`. Chủ dự án chốt ph�
 Mô-đun `src/modules/social-publishing` gọi thẳng API của Meta, TikTok, Zalo. Việc còn lại trong bản giao:
 
 - `src/components/dashboard/marketing-workspace.tsx` ở trang chủ gọi bài đăng qua proxy SocialFlow: đã bỏ khỏi bản cắt (10/11/2026), vai Tiếp thị dùng trang chủ cửa hàng.
-- Bỏ route `/api/v1/proxy/[...path]`, biến `SOCIALFLOW_URL`, `LOCALBUDD_URL`.
-- Bỏ chữ "SocialFlow" trên màn hình (`api-tokens-panel.tsx`, `post-status-report-card.tsx`, `connector-catalog.ts`).
+- Đã bỏ khỏi bản cắt: route `/api/v1/proxy/[...path]`, biến `SOCIALFLOW_URL`, `LOCALBUDD_URL` (11/11/2026).
+- Đã đổi chữ "SocialFlow"/"LocalBudd" trên màn hình sang tên theo chức năng (`api-tokens-panel.tsx`, `connector-catalog.ts`); `post-status-report-card.tsx` không có trong bản cắt.
 - Đăng thật lên Meta, TikTok, Zalo cần ALG có ứng dụng được các nền tảng này duyệt.
 
 ## 3. Ngoài 123 nhưng giao
