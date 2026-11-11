@@ -123,6 +123,22 @@ Hiện trạng đã đo:
 3. Chạy lại kịch bản nghiệm thu trên bản cắt, ghi người chạy và ngày.
 4. Quét rò rỉ lần cuối, có người đọc lại danh sách file.
 
+**Đã làm 11/11/2026 — chạy tại máy trên bản cắt của tag `gd1-rc-2026-11-11` (mốc `21411f4f`):**
+
+- **6.1 Dựng từ môi trường trắng, chỉ theo README của bản giao:** `npm ci` → `npx prisma generate` → `npm run db:deploy` (155 bảng từ CSDL rỗng) → `npm run db:seed` → `npm run seed:field-registry`. Người vận hành đầu tiên: đăng ký qua `POST /api/v1/auth/signup`, gán vai bằng `npm run gan-van-hanh-nen-tang` (đủ `N1`–`N20`), rồi duyệt tài khoản; sau đó đăng nhập 200, `/van-hanh`, `/van-hanh/dang-ky` và `GET /api/v1/platform/notification/channels` đều 200.
+- **6.2 Cổng trên bản cắt:** typecheck, `lint:ratchet`, `check:docs`, `check:layers`, `check:tokens-doc`, `check:migrations`, `check:screen-contracts`, `lint:ux`, `check:template-ssot`, `check:industry`, `audit:industry:check`, `check:openapi`, `check:schemas:*`, `check:field-registry`, `lint:decisions`, `lint:manifests` — xanh. `npm test` 695/695 tệp (4.181 đạt, 2 bỏ qua). `test:platform` 18/18 tệp, 57 test. Worker `pytest` 433 test xanh. `npm run build` xanh. E2E trên bản build production (`E2E_WEB_COMMAND="npm run start"`, 11 tệp `tests/e2e/ux` trừ hai tệp `visual*`): 22/22 đạt. `npm audit --omit=dev --audit-level=high` xanh (còn 5 mức trung bình). Chưa chạy: `test:tenant` tại máy (xem lượt `release-gd1` trên CI), hai tệp `visual*` (ảnh mốc chụp trên runner CI, nợ #172).
+- **6.4 Quét rò rỉ lần cuối:** `handover-check` sạch (346 mục baseline; 2 mục có thể hạ vì bản cắt không còn chứa chúng); gitleaks 8.21.2 đúng lệnh CI của ALG: không có rò rỉ. Người đọc lại danh sách file: chưa làm — việc của chủ dự án ở điểm duyệt.
+- **6.3 Chạy lại 141 bước nghiệm thu trên bản cắt: chưa làm** — làm tay, chủ dự án chạy.
+
+**Bốn lỗi phát hiện ở Bước 6, đã sửa trên nhánh `claude/youthful-bardeen-rni9ck`:**
+
+1. `.env.example` của lớp phủ khai `STORAGE_SIGNING_SECRET=` và `STORAGE_DELETE_PAYLOADS=` rỗng. Hai biến là tuỳ chọn trong `src/lib/env.ts`, nhưng chuỗi rỗng trượt `min(16)` và `enum`, nên làm đúng README thì `npm run db:seed` và cả app không khởi động. Đã chuyển thành dòng ghi chú; test `tests/unit/release/overlay-env-example.test.ts` khoá lại.
+2. `tests/unit/core/public-url.test.ts` chỉ chặn 2 trong 5 biến `publicAppUrl()` đọc → `npm test` đỏ 2 ca ở máy có `.env` copy từ mẫu, CI vẫn xanh vì CI không có `.env`. Ca thử giờ tự dọn môi trường.
+3. README bản giao thiếu `npm run seed:field-registry`, nên cài mới theo tài liệu thì `check:field-registry` báo thiếu 39 trường lõi.
+4. Người vận hành đầu tiên bế tắc: `signup` tạo tài khoản ở `PENDING` (chốt 22/10/2026), `gan-van-hanh-nen-tang` cấp vai nhưng đăng nhập vẫn `403 ACCOUNT_PENDING`, mà người duyệt duy nhất là superadmin trong Console — chưa ai vào được. Không script/tài liệu nào trong bản giao duyệt tài khoản đầu tiên. Đã ghi §15 `docs/handover/OPERATIONS_RUNBOOK.md` (duyệt một lần bằng SQL). **Cần chủ dự án quyết** nếu muốn gọn hơn: cho `gan-van-hanh-nen-tang` tự duyệt tài khoản nó cấp vai, hoặc thêm script `duyet-tai-khoan` — cả hai đụng chính sách duyệt tài khoản nên không tự làm.
+
+Lỗi 1–3 chỉ nằm ở lớp phủ và test, không đổi mã chạy của bản giao; vẫn cần cắt lại bản giao từ mốc mới để bản cắt mang các bản sửa này.
+
 **Điểm duyệt:** bạn xác nhận mới tạo repo và giao cho ALG (hành động ra bên ngoài, không tự làm).
 
 ## Quyết định mặc định (bạn có thể đổi khi duyệt)
