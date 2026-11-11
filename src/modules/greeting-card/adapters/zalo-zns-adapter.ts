@@ -58,7 +58,7 @@ async function sendOnce(
 }
 
 export async function sendZnsMessage(
-  input: { creds: ZnsCredentials; templateId: string; phone: string; params: NotifyParams; trackingId: string },
+  input: { creds: ZnsCredentials; templateId: string; phone: string; params: NotifyParams | Readonly<Record<string, string>>; trackingId: string },
   fetchImpl: FetchLike = fetch
 ): Promise<{ messageId: string | null; updatedCredentials: ZnsCredentials | null }> {
   return withCircuitBreaker("zalo-zns", async (signal) => {

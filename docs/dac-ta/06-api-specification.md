@@ -1145,6 +1145,8 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | GET · POST · DELETE | `/notification/store-hard-locks` | `F1` · `F2` | Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên |
 | GET | `/platform/notification/events` | phiên nền tảng | Toàn bộ danh mục sự kiện |
 | GET · PATCH | `/platform/notification/channels` | đọc: phiên nền tảng · ghi: `N2` | Bật/tắt kênh toàn sàn |
+| GET · PUT | `/platform/notification/providers` | `N2` · `N2` | Sổ nhà cung cấp kênh SMS / Zalo / Web Push (checklist 4.30): đăng ký một lần cho cả hệ thống, lưu niêm phong trong `platform_secrets`; khoá bí mật không trả lại (`secretsSet`), ô bí mật để trống giữ khoá cũ, `provider: null` gỡ. Bật/tắt dùng kênh vẫn qua `/platform/notification/channels` |
+| POST | `/platform/notification/providers/test` | `N2` | Gửi một tin thử tới số điện thoại nhập vào; trả `{ success, error? }` (`NOT_CONFIGURED` khi chưa đăng ký) |
 | GET · PATCH | `/platform/notification/visibility` | đọc: phiên nền tảng · ghi: `N2` | Ma trận hiển thị sự kiện theo tầng |
 | GET · POST · DELETE | `/platform/notification/hard-locks` | đọc: phiên nền tảng · ghi: `N2` | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
 | PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |
