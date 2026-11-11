@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs"
+import { readFileSync, readdirSync, writeFileSync, type Dirent } from "node:fs"
 import path from "node:path"
 
 /**
@@ -12,6 +12,25 @@ export const API_SPEC = "docs/dac-ta/06-api-specification.md"
 export const TEMPLATE_SSOT = "docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md"
 const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 
+/** Đọc thẳng, thiếu tệp/thư mục thì trả null — không kiểm tồn tại trước rồi mới đọc (tránh tranh chấp tệp). */
+function readOrNull(file: string): string | null {
+  try {
+    return readFileSync(file, "utf8")
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null
+    throw error
+  }
+}
+
+function entriesOf(dir: string): Dirent[] {
+  try {
+    return readdirSync(dir, { withFileTypes: true })
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return []
+    throw error
+  }
+}
+
 /** Khoá so khớp giống `scripts/check-docs.mjs`: `GET /orders/{}`. */
 export function endpointKey(method: string, specPath: string): string {
   return `${method} ${specPath.replace(/`/g, "").replace("/api/v1", "").trim().replace(/:\w+/g, "{}").replace(/\/$/, "")}`
@@ -22,12 +41,13 @@ export function codeEndpoints(root: string): Set<string> {
   const out = new Set<string>()
   const base = path.join(root, "src/app/api/v1")
   const dive = (dir: string) => {
-    for (const entry of readdirSync(dir)) {
-      const full = path.join(dir, entry)
-      if (statSync(full).isDirectory()) dive(full)
-      else if (entry === "route.ts") {
+    for (const entry of entriesOf(dir)) {
+      const full = path.join(dir, entry.name)
+      if (entry.isDirectory()) dive(full)
+      else if (entry.name === "route.ts") {
         const rel = `/${path.relative(base, dir).split(path.sep).join("/")}`.replace(/\[\.\.\.(\w+)\]/g, ":$1").replace(/\[(\w+)\]/g, ":$1")
-        const src = readFileSync(full, "utf8")
+        const src = readOrNull(full)
+        if (src === null) continue
         const found = [
           ...[...src.matchAll(/export\s+(?:async\s+)?(?:function|const)\s+(GET|POST|PUT|PATCH|DELETE)\b/g)].map((m) => m[1]!),
           ...[...src.matchAll(/export\s*\{([^}]*)\}/g)].flatMap((m) => [...m[1]!.matchAll(/\bas\s+(GET|POST|PUT|PATCH|DELETE)\b/g)].map((n) => n[1]!)),
@@ -36,7 +56,7 @@ export function codeEndpoints(root: string): Set<string> {
       }
     }
   }
-  if (existsSync(base)) dive(base)
+  dive(base)
   return out
 }
 
@@ -82,11 +102,9 @@ export function alignTemplateSsot(text: string, templateFiles: ReadonlySet<strin
 
 function tsxNames(dir: string): Set<string> {
   const out = new Set<string>()
-  if (!existsSync(dir)) return out
-  for (const entry of readdirSync(dir)) {
-    const full = path.join(dir, entry)
-    if (statSync(full).isDirectory()) for (const name of tsxNames(full)) out.add(name)
-    else if (entry.endsWith(".tsx")) out.add(entry)
+  for (const entry of entriesOf(dir)) {
+    if (entry.isDirectory()) for (const name of tsxNames(path.join(dir, entry.name))) out.add(name)
+    else if (entry.name.endsWith(".tsx")) out.add(entry.name)
   }
   return out
 }
@@ -95,14 +113,16 @@ function tsxNames(dir: string): Set<string> {
 export function alignDocs(root: string): string[] {
   const report: string[] = []
   const spec = path.join(root, API_SPEC)
-  if (existsSync(spec)) {
-    const result = alignApiSpec(readFileSync(spec, "utf8"), codeEndpoints(root))
+  const specText = readOrNull(spec)
+  if (specText !== null) {
+    const result = alignApiSpec(specText, codeEndpoints(root))
     writeFileSync(spec, result.text)
     report.push(`\`${API_SPEC}\`: bỏ ${result.removedRows} dòng, rút method ở ${result.trimmedRows} dòng (endpoint không có trong bản cắt)`)
   }
   const ssot = path.join(root, TEMPLATE_SSOT)
-  if (existsSync(ssot)) {
-    const result = alignTemplateSsot(readFileSync(ssot, "utf8"), tsxNames(path.join(root, "src/components/templates")))
+  const ssotText = readOrNull(ssot)
+  if (ssotText !== null) {
+    const result = alignTemplateSsot(ssotText, tsxNames(path.join(root, "src/components/templates")))
     writeFileSync(ssot, result.text)
     report.push(`\`${TEMPLATE_SSOT}\`: đánh dấu ${result.markedLines} dòng nhắc tệp mẫu không có trong bản cắt`)
   }
