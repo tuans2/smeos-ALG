@@ -93,7 +93,7 @@ Hiện trạng đã đo:
 
 ## Bước 4 — Hoàn thiện đến khi đạt tiêu chuẩn
 
-- Đã biết: mở 13 chức năng đang khoá; xử lý 5 chức năng làm một phần (4.30, 4.32, 8.1, 9.1, 9.14); sửa lỗi audit thuộc phạm vi (ví dụ L-05 nút Lưu ở `/dieu-phoi/doi-tac`).
+- Đã biết: mở 13 chức năng đang khoá; xử lý 5 chức năng làm một phần (4.30, 4.32, 8.1, 9.1, 9.14); sửa lỗi audit thuộc phạm vi (L-05 nút Lưu ở `/dieu-phoi/doi-tac` — xong 11/11/2026: hộp thoại gọi đúng `PATCH /api/v1/coordinator/partners/:id/tools`, test `src/components/organization/__tests__/partner-tools-api.test.ts`).
 - 9.14: đăng bài đã chạy ngay trong smeOS (D-46), không còn ứng dụng liên kết. Nghiệm thu mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên 15 phút kiểm bằng test. Cần báo ALG đổi câu chữ bước I-09.
 - Gỡ phần còn gọi SocialFlow/LocalBudd khỏi bản giao — xong 11/11/2026: khối bài đăng ở trang chủ (`marketing-workspace.tsx`) và route proxy ra khỏi bản cắt; biến `SOCIALFLOW_URL`, `LOCALBUDD_URL` bỏ khỏi `src/lib/env.ts` của bản cắt (`@release-strip`); chữ trên màn hình đổi theo chức năng ("Ứng dụng đăng bài", "Ứng dụng quảng bá địa phương") ở cả smeOS. Test trong `tests/unit/release/trace-phase.test.ts` chặn tên cũ quay lại giao diện được giao. Giá trị enum `integration_client` (`SOCIALFLOW`, `LOCALBUDD`) trong lược đồ giữ nguyên — đổi cần duyệt lược đồ.
 - Mỗi đầu việc: code + test + tài liệu trong một commit; Thẻ chào và Catalog phải có test khoá hành vi trước khi sửa.
