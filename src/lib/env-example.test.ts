@@ -22,10 +22,17 @@ function parseEnvFile(file: string): Record<string, string> {
 // Giá trị giả cho các ô README bảo điền — không phải khoá thật
 const FILLED = { SESSION_SECRET: "x".repeat(32), INTEGRATION_TOKEN_SECRET: "y".repeat(32), SSO_SESSION_SECRET: "z".repeat(32) }
 
+// `./env` kiểm `process.env` ngay lúc nạp module: máy không có `.env` (bản cắt mới dựng) cần sẵn các ô bắt buộc
+const REQUIRED = { DATABASE_URL: "postgresql://u:p@localhost:5432/db", ...FILLED }
+for (const [k, v] of Object.entries(REQUIRED)) process.env[k] ||= v
+
 describe(".env.example nạp được sau khi điền khoá theo README", () => {
-  for (const rel of [".env.example", "releases/gd1/overlay/.env.example"]) {
+  const files = [".env.example"]
+  // @release-strip — bản cắt không có `releases/`; `.env.example` ở gốc bản cắt chính là tệp của lớp phủ
+  files.push("releases/gd1/overlay/.env.example")
+  // @release-strip-end
+  for (const rel of files) {
     it(rel, async () => {
-      process.env.DATABASE_URL ??= "postgresql://u:p@localhost:5432/db"
       const { envSchema } = await import("./env")
       const result = envSchema.safeParse({ ...parseEnvFile(path.join(ROOT, rel)), ...FILLED })
       expect(result.success ? [] : result.error.issues.map((i) => i.path.join("."))).toEqual([])
@@ -34,7 +41,7 @@ describe(".env.example nạp được sau khi điền khoá theo README", () => 
 
   it("ô chọn-một để trống coi như chưa đặt", async () => {
     const { envSchema } = await import("./env")
-    const parsed = envSchema.parse({ DATABASE_URL: "postgresql://u:p@localhost:5432/db", ...FILLED, STORAGE_DELETE_PAYLOADS: "", ALLOW_LOCAL_STORAGE: "", DB_RLS_MODE: "", STORAGE_SIGNING_SECRET: "" })
+    const parsed = envSchema.parse({ ...REQUIRED, STORAGE_DELETE_PAYLOADS: "", ALLOW_LOCAL_STORAGE: "", DB_RLS_MODE: "", STORAGE_SIGNING_SECRET: "" })
     expect(parsed.STORAGE_DELETE_PAYLOADS).toBeUndefined()
     expect(parsed.ALLOW_LOCAL_STORAGE).toBeUndefined()
     expect(parsed.DB_RLS_MODE).toBe("off")
