@@ -59,6 +59,8 @@ jobs:
       # Ratchet: đỏ khi (tệp, luật) nào tăng lỗi ESLint so với scripts/eslint-baseline.json
       - name: ESLint (ratchet — không thêm lỗi mới)
         run: npm run lint:ratchet
+      - name: Đối chiếu tài liệu đặc tả với mã (API, bảng, cách ly tổ chức)
+        run: npm run check:docs
       - name: Ranh giới tầng kiến trúc
         run: npm run check:layers
       - name: Đồng bộ đặc tả Design Tokens
@@ -67,6 +69,10 @@ jobs:
         run: npm run check:screen-contracts -- --check
       - run: npm run lint:ux -- --check
       - run: npm test
+      - name: Đối chiếu SSOT hệ mẫu với mã
+        run: npm run check:template-ssot
+      - name: Chuẩn đa ngành (danh mục ngành, hợp đồng, thuật ngữ, prompt)
+        run: npm run check:industry
       # Cổng bắt buộc — không được bỏ qua hay đặt continue-on-error
       - name: Test cách ly tổ chức
         run: npm run test:tenant

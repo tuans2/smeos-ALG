@@ -82,6 +82,9 @@ jobs:
       - name: Unit test bản cắt
         working-directory: ${{ env.CUT }}
         run: npm test
+      - name: Tài liệu đặc tả, SSOT hệ mẫu, chuẩn đa ngành trên bản cắt (cổng CI của bản giao)
+        working-directory: ${{ env.CUT }}
+        run: npm run check:docs && npm run check:template-ssot && npm run check:industry
       - name: Test cách ly tổ chức và nền tảng trên bản cắt (hằng đêm)
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         working-directory: ${{ env.CUT }}

@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, symlinkSync, unlinkSync, readFileSync, readdirSy
 import path from "node:path"
 
 import { rebuildBaselines } from "./cut-baselines"
+import { alignDocs } from "./cut-docs"
 import { carryIgnores, parseGitleaksIgnore, renderGitleaksIgnore, type CarriedIgnores } from "./cut-gitleaks"
 import type { CutManifest, CutPlan } from "./cut-plan"
 import { renderCutRoutes, routesFile } from "./gen-phase-routes"
@@ -90,6 +91,9 @@ export function applyCut(root: string, phase: string, manifest: CutManifest, pla
     writeFileSync(target, content)
   }
 
+  // Tài liệu đặc tả theo đúng mã bản cắt (sau lớp phủ, trước commit)
+  const docs = alignDocs(root)
+
   const commit = (message: string) => {
     execFileSync("git", ["add", "-A"], { cwd: root })
     execFileSync("git", ["-c", "user.name=smeOS release", "-c", "user.email=release@invalid", "commit", "-q", "-m", message], { cwd: root })
@@ -106,7 +110,7 @@ export function applyCut(root: string, phase: string, manifest: CutManifest, pla
 
   const files = listFiles(root).sort()
   const sums = files.map((file) => `${createHash("sha256").update(readFileSync(path.join(root, file))).digest("hex")}  ${file}`)
-  return renderCutReport({ phase, ref, plan, baselines, regenerated, overlay: overlayFiles, gitleaks, files: files.length, sums })
+  return renderCutReport({ phase, ref, plan, baselines, regenerated, overlay: overlayFiles, gitleaks, docs, files: files.length, sums })
 }
 
 interface ReportInput {
@@ -117,11 +121,12 @@ interface ReportInput {
   regenerated: string[]
   overlay: string[]
   gitleaks: CarriedIgnores
+  docs: string[]
   files: number
   sums: string[]
 }
 
-function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, gitleaks, files, sums }: ReportInput): string {
+function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, gitleaks, docs, files, sums }: ReportInput): string {
   const byReason = new Map<string, number>()
   for (const removal of plan.removals) byReason.set(removal.reason, (byReason.get(removal.reason) ?? 0) + 1)
   const review = plan.droppedTests.filter((test) => test.touchesDelivered)
@@ -161,6 +166,10 @@ function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, gi
     "## Lớp phủ",
     "",
     ...(overlay.length ? overlay.map((file) => `- \`${file}\``) : ["Không có."]),
+    "",
+    "## Tài liệu căn theo bản cắt",
+    "",
+    ...(docs.length ? docs.map((line) => `- ${line}`) : ["Không có."]),
     "",
     "## Báo nhầm gitleaks mang sang",
     "",
