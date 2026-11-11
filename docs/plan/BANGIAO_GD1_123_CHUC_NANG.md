@@ -125,6 +125,8 @@ Hiện trạng đã đo:
 3. Chạy lại kịch bản nghiệm thu trên bản cắt, ghi người chạy và ngày.
 4. Quét rò rỉ lần cuối, có người đọc lại danh sách file.
 
+**Đã làm 11/11/2026 trên `gd1-rc-2026-11-11-2`:** dựng từ môi trường trắng, chạy cổng và 84/141 bước kịch bản — 55 Đạt, 17 Không đạt, 12 chờ môi trường thật, 57 chưa chạy. Dựng theo README không qua được nếu không sửa tay: người vận hành đầu tiên không tạo được, `.env.example` làm app và worker không khởi động, thiếu bước nạp danh mục trường. Báo cáo, checklist đã điền và ảnh: [`docs/audit/gd1-buoc6/`](../audit/gd1-buoc6/README.md).
+
 **Điểm duyệt:** bạn xác nhận mới tạo repo và giao cho ALG (hành động ra bên ngoài, không tự làm).
 
 ## Quyết định mặc định (bạn có thể đổi khi duyệt)
