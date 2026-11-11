@@ -123,6 +123,21 @@ SELECT conrelid::regclass, conname FROM pg_constraint WHERE NOT convalidated;
 Với từng khoá: tìm dòng sai bằng câu `IF EXISTS (…)` cùng tên trong migration, sửa hoặc xoá
 (sao lưu trước), rồi `ALTER TABLE "<bảng>" VALIDATE CONSTRAINT "<khoá>";`.
 
+**Dọn (11/11/2026).** Migration `20261111090000_validate_not_valid_constraints` thử `VALIDATE` lại mọi khoá
+còn `NOT VALID` (khoá ngoại và `CHECK` ở schema `public`). Khoá đã sạch thì được kiểm; khoá còn dòng sai, hoặc bảng
+bận quá `lock_timeout`, giữ nguyên `NOT VALID` và log deploy có `NOTICE: Khoá … còn NOT VALID`. Migration không
+sửa, không xoá dòng nào. `VALIDATE CONSTRAINT` chỉ giữ khoá `SHARE UPDATE EXCLUSIVE`, đọc/ghi dòng vẫn chạy.
+
+Sau deploy, trên Render shell của `smeos-web`:
+
+- `npm run db:not-valid` — chỉ đọc: in từng khoá còn `NOT VALID` và số dòng vi phạm (không in dữ liệu dòng).
+  Khoá ngoại đếm theo `MATCH SIMPLE` (một cột `NULL` thì không kiểm), `CHECK` theo đúng biểu thức của khoá.
+- Dọn dòng sai (sao lưu trước; quyết định sửa hay xoá theo từng khoá với PO), rồi
+  `npm run db:not-valid -- --validate` — `VALIDATE` các khoá đã về 0 dòng vi phạm và in phần còn lại.
+- Xong khi lệnh in `không còn khoá NOT VALID`.
+
+Ca thử: `tests/tenant/not-valid-constraints.test.ts`.
+
 `20261105170000_timestamptz` viết lại 277 cột thời gian (đọc giá trị cũ là UTC). Chạy ngoài giờ
 cao điểm; có `lock_timeout = 30s` nên bảng đang bận làm migration dừng, không treo.
 
