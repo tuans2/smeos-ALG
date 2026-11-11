@@ -34,4 +34,11 @@ describe("Selection Controls (Checkbox, Switch, RadioGroup)", () => {
     expect(html).toContain('aria-checked="true"')
     expect(html).toContain("bg-primary")
   })
+
+  it("Checkbox mở rộng vùng bấm lên ≥ 24px và 44px trên màn cảm ứng mà không đổi kích thước hiển thị", () => {
+    const html = renderToStaticMarkup(<Checkbox aria-label="Chọn" />)
+    expect(html).toContain("h-5 w-5")
+    expect(html).toContain("after:-inset-0.5")
+    expect(html).toContain("[@media(pointer:coarse)]:after:-inset-3")
+  })
 })

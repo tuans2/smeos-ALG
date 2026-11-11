@@ -181,6 +181,7 @@ export default function MucDungPage() {
               className="w-48 sm:w-64"
             />
             <NativeSelect
+              aria-label="Lọc theo tính năng"
               value={selectedFeature}
               onChange={(e) => setSelectedFeature(e.target.value)}
               className="w-auto"

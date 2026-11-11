@@ -11,7 +11,7 @@ export const buttonVariants = cva(
         secondary: "bg-surface text-primary border border-border hover:border-primary active:bg-surface-alt",
         outline: "border border-border bg-transparent text-text hover:bg-surface-alt active:bg-border/30",
         ghost: "text-text hover:bg-surface-alt active:bg-border/30",
-        warning: "bg-warning text-white hover:opacity-90 active:opacity-80",
+        warning: "bg-warning text-text hover:opacity-90 active:opacity-80",
         danger: "bg-danger text-white hover:opacity-90 active:opacity-80",
         subtle: "bg-surface-alt text-text hover:bg-border/70 border border-transparent active:bg-border",
       },

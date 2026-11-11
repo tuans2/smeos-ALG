@@ -81,4 +81,11 @@ describe("Button component", () => {
     expect(html).toContain("bg-transparent")
     expect(html).toContain("Liên kết điều hướng")
   })
+
+  it("biến thể warning dùng chữ tối trên nền hổ phách (trắng chỉ đạt 3,33:1, dưới AA)", () => {
+    const html = renderToStaticMarkup(<Button variant="warning">Cảnh báo</Button>)
+    expect(html).toContain("bg-warning")
+    expect(html).toContain("text-text")
+    expect(html).not.toContain("text-white")
+  })
 })

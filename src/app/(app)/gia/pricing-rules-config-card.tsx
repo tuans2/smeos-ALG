@@ -100,6 +100,7 @@ export function PricingRulesConfigCard({
             />
             <Input
               type="number"
+              aria-label={`Phần trăm của hạng ${row.name || idx + 1}`}
               disabled={!canEdit}
               value={row.percent}
               onChange={(e) =>

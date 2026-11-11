@@ -431,7 +431,7 @@ export default function ChatAssistantPage() {
                 />
                 <Button
                   type="submit"
-                  size="sm"
+                  size="sm" aria-label="Gửi câu hỏi"
                   disabled={!inputQuery.trim() || sending}
                 >
                   {sending ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" /> : <Send className="h-4 w-4" />}
