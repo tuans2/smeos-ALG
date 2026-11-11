@@ -67,7 +67,7 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
         </div>
 
         {showFields && (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <div role="region" tabIndex={0} aria-label={`Bảng tra cứu: ${module.title}`} className="overflow-x-auto rounded-xl border border-border bg-surface">
             <table className="w-full text-left text-caption">
               <thead className="bg-surface-alt border-b border-border text-caption font-bold text-text-muted uppercase">
                 <tr>

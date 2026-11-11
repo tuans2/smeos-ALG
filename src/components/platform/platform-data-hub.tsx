@@ -124,7 +124,7 @@ function OrgCard({
 
   const typeLabel: Record<string, string> = {
     TRIAL: "Dùng thử",
-    STORE: "Cửa hàng",
+    STORE: "Cửa hàng", SINGLE: "Cửa hàng",
     CHAIN: "Chuỗi",
     ENTERPRISE: "Doanh nghiệp",
   }
@@ -136,7 +136,7 @@ function OrgCard({
     <Button variant="outline"
       type="button"
       onClick={() => onOpen(org)}
-      className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary hover:bg-surface"
+      className="text-[length:inherit] h-auto flex-col items-stretch justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary hover:bg-surface"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -205,7 +205,7 @@ function OrgCard({
       </div>
 
       {/* Profile status */}
-      <div className="flex items-center gap-3 pt-1 border-t border-border/60 text-caption">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 border-t border-border/60 text-caption">
         <span className={`flex items-center gap-1 ${org.hasBusinessProfile ? "text-success" : "text-text-muted"}`}>
           {org.hasBusinessProfile ? <CheckCircle2 size={11} /> : <AlertCircle size={11} />}
           Hồ sơ pháp lý

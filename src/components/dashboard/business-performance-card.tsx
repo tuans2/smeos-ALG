@@ -186,9 +186,9 @@ function BusinessPerformanceBody({ range, aiCreditUsed = 0, shopName }: Business
                 {report.topProducts.map((item, idx) => (
                   <div
                     key={item.productId ?? item.name}
-                    className="flex items-center justify-between p-2.5 rounded-lg border border-border/70 bg-surface-raised transition hover:border-primary/40"
+                    className="flex items-center justify-between gap-2 p-2.5 rounded-lg border border-border/70 bg-surface-raised transition hover:border-primary/40"
                   >
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex min-w-0 items-center gap-2.5">
                       <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-caption font-bold flex items-center justify-center shrink-0">
                         {idx + 1}
                       </span>
@@ -197,7 +197,7 @@ function BusinessPerformanceBody({ range, aiCreditUsed = 0, shopName }: Business
                         <div className="text-caption text-text-muted">Đã bán {item.quantity}</div>
                       </div>
                     </div>
-                    <span className="font-extrabold text-caption sm:text-body-sm text-text">{formatCurrency(item.valueVnd)}</span>
+                    <span className="shrink-0 font-extrabold text-caption sm:text-body-sm text-text">{formatCurrency(item.valueVnd)}</span>
                   </div>
                 ))}
               </div>

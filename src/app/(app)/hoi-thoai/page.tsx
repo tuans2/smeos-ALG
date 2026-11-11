@@ -160,7 +160,7 @@ export default function ChatAssistantPage() {
         </div></div>
 
         {/* Top-Right Action Header */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             size="sm"
             onClick={handleCreateNewConv}

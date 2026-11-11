@@ -69,7 +69,7 @@ export default function KnowledgeBasePage() {
         </div></div>
 
         {/* Top-Right Action Toolbar (K2: 1 primary + 1 secondary) */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link href={"/hoi-thoai/kenh-tich-hop" as Route}>
             <Button
               variant="outline"
