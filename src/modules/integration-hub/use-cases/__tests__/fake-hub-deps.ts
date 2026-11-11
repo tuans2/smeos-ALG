@@ -162,6 +162,7 @@ export function makeFakeDeps(
     notify: vi.fn(async () => 1),
     isProduction: false,
     isRouteLocked: (href) => lockedRoutes.includes(href),
+    isRouteOutOfPhase: () => false,
     now: () => NOW,
   }
   return { deps, connections, events }
