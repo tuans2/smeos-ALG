@@ -47,7 +47,7 @@ export const NOTIFICATION_OPERATIONS: OpenApiOperation[] = [
     description: OWN, ok: [200, { description: "Tuỳ chọn", schema: res.preferencesResponse }] }),
   op(PREF, { method: "patch", path: "/notification/preferences", operationId: "updateNotificationPreference", summary: "Bật/tắt một sự kiện × kênh cho tôi", cap: null,
     body: req.patchPreferenceSchema,
-    description: `${OWN} Sự kiện × kênh bị khoá cứng ở tầng trên cửa hàng (vd. khoá tầng chuỗi của chính tổ chức) → 403 với thân \`{ error: "chuỗi", reason }\` (ngoại lệ envelope). Khoá tầng cửa hàng hiện KHÔNG chặn ở đây (lỗi đã ghi nhận, audit API §15). ${LEGACY}`,
+    description: `${OWN} Sự kiện × kênh bị khoá cứng (tầng Mẹ, ngành, chuỗi hoặc chính cửa hàng) → 403 với thân \`{ error: "chuỗi", reason }\` (ngoại lệ envelope). ${LEGACY}`,
     ok: [200, { description: "Thân đã gửi", schema: res.updatedResponse }], errors: [...BODY_ERRORS, 403] }),
   op(PREF, { method: "get", path: "/notification/org-policy", operationId: "getOrgNotificationPolicy", summary: "Chính sách thông báo của tổ chức", cap: "F1",
     ok: [200, { description: "Chính sách", schema: res.preferencesResponse }] }),

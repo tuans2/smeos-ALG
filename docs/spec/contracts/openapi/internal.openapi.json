@@ -11081,7 +11081,7 @@
       "put": {
         "operationId": "putBrandProfile",
         "summary": "Lưu hồ sơ thương hiệu",
-        "description": "`slogan` không gửi thì giữ giá trị đang lưu. `logo_asset_id` không được kiểm: mã lạ hoặc ảnh của tổ chức khác vẫn lưu (khi đó `logo_url` = `null`, không lộ ảnh) và hồ sơ bị tính là đã có logo (audit API §24).",
+        "description": "`slogan` không gửi thì giữ giá trị đang lưu. `logo_asset_id` mới (khác giá trị đang lưu, không phải đường dẫn) phải là ảnh trong kho của tổ chức — mã lạ hoặc ảnh của tổ chức khác → 404, không lưu.",
         "tags": [
           "Hồ sơ cửa hàng"
         ],
@@ -11452,6 +11452,9 @@
           },
           "403": {
             "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
           },
           "409": {
             "$ref": "#/components/responses/Error409"
@@ -14221,7 +14224,7 @@
       "put": {
         "operationId": "publishChainCollectionProfile",
         "summary": "Phát hành phiên bản hồ sơ thu thập mới",
-        "description": "Mỗi lần phát hành là một phiên bản mới, không sửa bản cũ. Quy tắc sai luật (trường S3, mức sàn vượt trần, thiếu mục đích cho trường S2, vượt trần thoả thuận chia sẻ dữ liệu) hiện cũng trả 500 (use-case ném `Error` trần) — gọi `/preview` trước để thấy lỗi trong `validation.issues`. Thiếu `rules` hoặc không phải mảng hiện trả 500 thay vì 400 (lỗi đã ghi nhận, audit API §17).",
+        "description": "Mỗi lần phát hành là một phiên bản mới, không sửa bản cũ. Quy tắc sai luật (trường S3, mức sàn vượt trần, thiếu mục đích cho trường S2, vượt trần thoả thuận chia sẻ dữ liệu) → 422 kèm `details.issues` (cùng dạng `validation.issues` của `/preview`). Thiếu `rules` hoặc không phải mảng → 400 `details.rules`.",
         "tags": [
           "Chuỗi — dữ liệu cửa hàng"
         ],
@@ -14544,8 +14547,8 @@
           "413": {
             "$ref": "#/components/responses/Error413"
           },
-          "500": {
-            "$ref": "#/components/responses/Error500"
+          "422": {
+            "$ref": "#/components/responses/Error422"
           }
         },
         "x-capability": "F2"
@@ -14555,7 +14558,7 @@
       "post": {
         "operationId": "previewChainCollectionProfile",
         "summary": "Xem trước tác động của hồ sơ thu thập",
-        "description": "Không lưu. Quy tắc sai luật trả trong `validation.issues` (vẫn 200). Thiếu `rules` hoặc không phải mảng hiện trả 500 thay vì 400 (lỗi đã ghi nhận, audit API §17).",
+        "description": "Không lưu. Quy tắc sai luật trả trong `validation.issues` (vẫn 200). Thiếu `rules` hoặc không phải mảng → 400 `details.rules`.",
         "tags": [
           "Chuỗi — dữ liệu cửa hàng"
         ],
@@ -14819,9 +14822,6 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "F1"
@@ -15278,7 +15278,7 @@
       "post": {
         "operationId": "registerPartnerStore",
         "summary": "Đăng ký cửa hàng đối tác (pháp nhân riêng) kèm thoả thuận chia sẻ dữ liệu",
-        "description": "Mã cửa hàng đã có trong tổ chức hiện trả 500 thay vì 409 (lỗi đã ghi nhận, audit API §17).",
+        "description": "Mã cửa hàng đã có trong tổ chức → 409.",
         "tags": [
           "Chuỗi — dữ liệu cửa hàng"
         ],
@@ -15456,9 +15456,6 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "F2"
@@ -70155,6 +70152,12 @@
                               "null"
                             ]
                           },
+                          "idempotency_body_hash": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "owner_sale_id": {
                             "type": [
                               "string",
@@ -70703,6 +70706,7 @@
                           "source",
                           "source_session_id",
                           "idempotency_key",
+                          "idempotency_body_hash",
                           "owner_sale_id",
                           "lead_id",
                           "workflow",
@@ -74683,6 +74687,12 @@
                               "null"
                             ]
                           },
+                          "idempotency_body_hash": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "owner_sale_id": {
                             "type": [
                               "string",
@@ -75069,6 +75079,7 @@
                           "source",
                           "source_session_id",
                           "idempotency_key",
+                          "idempotency_body_hash",
                           "owner_sale_id",
                           "lead_id",
                           "workflow",
@@ -85358,7 +85369,7 @@
       "post": {
         "operationId": "rotateIntegrationToken",
         "summary": "Xoay token — cấp token mới, giữ token cũ",
-        "description": "Hai token cùng hiệu lực trong thời gian xoay; thu hồi token cũ bằng `DELETE`. Token của tổ chức khác → 404.",
+        "description": "Hai token cùng hiệu lực trong thời gian xoay; thu hồi token cũ bằng `DELETE`. Token mới giữ đúng thời hạn (số ngày) của token đang xoay. Token của tổ chức khác → 404.",
         "tags": [
           "Token tích hợp & SSO"
         ],
@@ -99570,7 +99581,7 @@
       "patch": {
         "operationId": "updateNotificationPreference",
         "summary": "Bật/tắt một sự kiện × kênh cho tôi",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng ở tầng trên cửa hàng (vd. khoá tầng chuỗi của chính tổ chức) → 403 với thân `{ error: \"chuỗi\", reason }` (ngoại lệ envelope). Khoá tầng cửa hàng hiện KHÔNG chặn ở đây (lỗi đã ghi nhận, audit API §15). Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng (tầng Mẹ, ngành, chuỗi hoặc chính cửa hàng) → 403 với thân `{ error: \"chuỗi\", reason }` (ngoại lệ envelope). Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101570,7 +101581,7 @@
       "post": {
         "operationId": "createOrder",
         "summary": "Tạo đơn hàng",
-        "description": "Header `Idempotency-Key` tuỳ chọn: gửi lại cùng khoá trả đúng đơn đã tạo (201, header `Idempotent-Replayed: true`). Khách/chi nhánh/sản phẩm của tổ chức khác → 404.",
+        "description": "Header `Idempotency-Key` tuỳ chọn: gửi lại cùng khoá với cùng thân trả đúng đơn đã tạo (201, header `Idempotent-Replayed: true`); cùng khoá mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED` (`details.order_id`), không tạo đơn. Khách/chi nhánh/sản phẩm của tổ chức khác → 404.",
         "tags": [
           "Đơn hàng"
         ],
@@ -113900,7 +113911,7 @@
       "get": {
         "operationId": "getProductIntelligenceReport",
         "summary": "Tra lại một lượt phân tích sản phẩm đã lưu",
-        "description": "`id` là lượt chạy (`product_analysis_runs`); không thấy thì thử bản phân tích ảnh (`product_analyses`) và dựng báo cáo dự phòng từ dữ liệu gốc. `imageUrl` ký mới mỗi lần đọc. Của tổ chức khác hoặc mã lạ → 404.",
+        "description": "`id` là lượt chạy (`product_analysis_runs`); không thấy thì thử bản phân tích ảnh (`product_analyses`) và dựng báo cáo dự phòng từ dữ liệu gốc (`productName` = tên sản phẩm đã gắn, chưa gắn thì \"Sản phẩm chưa đặt tên\"). `imageUrl` ký mới mỗi lần đọc. Của tổ chức khác hoặc mã lạ → 404.",
         "tags": [
           "Phân tích sản phẩm"
         ],

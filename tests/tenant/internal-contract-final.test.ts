@@ -59,6 +59,8 @@ describe("hợp đồng — link catalog, kết quả phân tích sản phẩm, 
       },
     })
     const fromAnalysis = await expectContract(await productIntelligence(get(`/product-intelligence/${analysis.id}`), ps({ id: analysis.id })), 200, R.productIntelligenceResponse, "pi-from-analysis")
+    // Chưa gắn sản phẩm → tên chung, không phải mã ảnh (audit API §32)
+    expect((fromAnalysis.report as { productName: string }).productName).toBe("Sản phẩm chưa đặt tên")
     const run = await prisma.product_analysis_runs.create({ data: { organization_id: t.organizationId, asset_id: assetId, product_name: "Bó hồng", trend_fit_score: 0.7, audience_fit_score: 0.6, content_fit_score: 0.8, overall_fit: "GOOD", report: fromAnalysis.report as object } })
     await expectContract(await productIntelligence(get(`/product-intelligence/${run.id}`), ps({ id: run.id })), 200, R.productIntelligenceResponse, "pi-run")
     expect((await productIntelligence(get(`/product-intelligence/${run.id}`, other), ps({ id: run.id }))).status).toBe(404)

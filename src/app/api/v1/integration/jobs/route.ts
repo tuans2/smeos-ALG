@@ -6,6 +6,7 @@ import {
 } from "@/modules/integration/use-cases/resolve-integration-context"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { createJobBody } from "@/modules/integration/contracts/http-requests"
+import { integrationKeyReuseMode } from "@/modules/integration/domain/integration-key-reuse"
 
 /**
  * `POST /integration/jobs` (đặc tả 06 mục 11): "Tạo job thay mặt tổ chức".
@@ -29,8 +30,8 @@ export const POST = handle(async (request) => {
     payload: parsed.data.payload,
     productId: parsed.data.product_id ?? null,
     idempotencyKey: parsed.data.idempotency_key,
-    // Bên thứ ba: chưa chặn 422 khi cùng khoá khác thân — cần báo trước ≥ 90 ngày (đặc tả 06, audit API-11); chờ PO chốt ngày.
-    keyReuse: "legacy",
+    // Bên thứ ba: cùng khoá khác thân → 422 từ 09/02/2027 (báo trước 90 ngày, PO 11/11/2026); trước đó trả job cũ.
+    keyReuse: integrationKeyReuseMode(new Date()),
   })
 
   return jsonResponse(result, { status: result.deduped ? 200 : 201 })

@@ -24,7 +24,7 @@ export const FINAL_OPERATIONS: OpenApiOperation[] = [
     description: `Đã thu hồi rồi → 400. ${NF}`, ok: [200, { description: "Đã thu hồi", schema: res.catalogLinkRevokedResponse }], errors: [400, 404] }),
 
   op(PI, { method: "get", path: "/product-intelligence/{id}", operationId: "getProductIntelligenceReport", summary: "Tra lại một lượt phân tích sản phẩm đã lưu", cap: "V2",
-    description: `\`id\` là lượt chạy (\`product_analysis_runs\`); không thấy thì thử bản phân tích ảnh (\`product_analyses\`) và dựng báo cáo dự phòng từ dữ liệu gốc. \`imageUrl\` ký mới mỗi lần đọc. ${NF}`,
+    description: `\`id\` là lượt chạy (\`product_analysis_runs\`); không thấy thì thử bản phân tích ảnh (\`product_analyses\`) và dựng báo cáo dự phòng từ dữ liệu gốc (\`productName\` = tên sản phẩm đã gắn, chưa gắn thì \"Sản phẩm chưa đặt tên\"). \`imageUrl\` ký mới mỗi lần đọc. ${NF}`,
     ok: [200, { description: "Báo cáo", schema: res.productIntelligenceResponse }], errors: [404] }),
 
   op(CRON, { method: "get", path: "/internal/health", operationId: "getInternalHealth", summary: "Sức khoẻ chi tiết: CSDL, Redis, job tồn đọng, worker", cap: null, auth: "public",

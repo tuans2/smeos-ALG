@@ -2,6 +2,7 @@
  * SMEOS Inputs Architecture v2.1 — Publish Chain Collection Profile Use-Case (§9.5.8)
  */
 
+import { unprocessable } from "@/core/http/errors"
 import {
   validateCollectionProfile,
   type ChainCollectionProfile,
@@ -27,8 +28,9 @@ export async function publishChainCollectionProfile(
   const validation = validateCollectionProfile(rules, STANDARD_G1_CORE_FIELDS, dsas)
 
   if (!validation.isValid) {
+    // Vi phạm luật nghiệp vụ → 422 kèm từng lỗi (audit API §17 — trước đây `Error` trần → 500)
     const errorDetails = validation.issues.map((i) => i.message).join("; ")
-    throw new Error(`Cấu hình thu thập không hợp lệ: ${errorDetails}`)
+    throw unprocessable(`Cấu hình thu thập không hợp lệ: ${errorDetails}`, { issues: validation.issues })
   }
 
   // 2. Fetch existing profile to increment immutable version

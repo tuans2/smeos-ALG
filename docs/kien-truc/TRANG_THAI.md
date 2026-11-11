@@ -1032,7 +1032,7 @@ Ba quyết định dưới đây chặn go-live, không chặn việc dựng lư
 
 ## 6. Việc kế tiếp
 
-**Kiến trúc API chuẩn — lộ trình 4 đợt XONG, chờ PO 3 việc (11/11/2026, `docs/audit/api-architecture-audit/01_API_ARCHITECTURE_AUDIT.md` §37).** 17 phát hiện API-01→17 đã xử lý; OpenAPI 3.1 phủ mọi route `/api/v1` (693 operation, 4 tệp). Còn chờ PO: 422 khoá trùng cho `/integration/jobs` (ngày báo trước), `POST /orders` (đổi schema), `check:openapi` vào CI. 501 route cũ chưa dùng `defineRoute` — chuyển dần, không bắt buộc.
+**Kiến trúc API chuẩn — XONG theo kế hoạch (11/11/2026, `docs/audit/api-architecture-audit/01_API_ARCHITECTURE_AUDIT.md` §37–§38).** 17 phát hiện API-01→17 đã xử lý; OpenAPI 3.1 phủ mọi route `/api/v1` (693 operation, 4 tệp). PO chốt 11/11: `/integration/jobs` áp 422 khoá trùng từ **09/02/2027** (báo trước 90 ngày); `POST /orders` lưu băm thân (migration `20261111120000_orders_idempotency_body_hash` — triển khai chạy `npm run db:deploy`); `check:openapi` giữ trong `npm test`. Còn lại không chặn: 501 route cũ chưa dùng `defineRoute` (chuyển dần), các lỗi P3 cần báo trước 30 ngày hoặc cần PO (§38).
 
 **Trao đổi nội bộ — GĐ1–GĐ9 XONG mã, chờ PR + PO nghiệm thu (09/11/2026).** Tiến độ từng giai đoạn: `docs/plan/hoan-thien-chat-noi-bo.md` §10. Khi triển khai: `npm run db:deploy` rồi `npm run chat:backfill-rooms` (chạy thử, rồi `npm run chat:backfill-rooms -- --apply`); PO chạy kịch bản §8 rồi mở khoá `/tin-nhan` trên production.
 

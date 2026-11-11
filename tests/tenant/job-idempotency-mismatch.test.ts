@@ -25,7 +25,7 @@ describe("enqueueJob — cùng khoá, khác thân", () => {
   beforeAll(async () => {
     await resetDatabase()
     a = await createTenant("khoa-trung")
-    token = (await readJson(await issueToken(withSession(`${BASE}/integration-tokens`, a.token, { method: "POST", body: JSON.stringify({ client: "LOCALBUDD" }) })))).token as string
+    token = (await readJson(await issueToken(withSession(`${BASE}/integration-tokens`, a.token, { method: "POST", body: JSON.stringify({ client: "LOCALBUDD", ttl_days: 365 }) })))).token as string
   })
 
   afterAll(async () => {
@@ -34,6 +34,8 @@ describe("enqueueJob — cùng khoá, khác thân", () => {
   })
 
   it("Integration API: thân giống hệt (khoá xáo trộn) → job cũ, không cảnh báo; thân khác → vẫn job cũ (báo trước), có cảnh báo", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] })
+    vi.setSystemTime(new Date("2026-11-11T10:00:00Z"))
     const warn = vi.spyOn(log, "warn")
     const first = await send({ feature: "landing.create", payload: { page: "trang-chu", theme: { a: 1, b: 2 } }, idempotency_key: "khoa-1" })
     expect(first.status).toBe(201)
@@ -53,6 +55,24 @@ describe("enqueueJob — cùng khoá, khác thân", () => {
     expect(JSON.stringify(warn.mock.calls)).not.toContain("gioi-thieu")
 
     expect(await prisma.generation_jobs.count({ where: { organization_id: a.organizationId } })).toBe(1)
+    vi.useRealTimers()
+  })
+
+  it("Integration API từ ngày hiệu lực (09/02/2027, báo trước 90 ngày): cùng khoá khác thân → 422, không tạo job", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] })
+    try {
+      vi.setSystemTime(new Date("2027-02-09T00:00:00Z"))
+      const first = await send({ feature: "landing.create", payload: { page: "a" }, idempotency_key: "khoa-hieu-luc" })
+      expect(first.status).toBe(201)
+      const jobId = ((await readJson(first)).job as { id: string }).id
+      expect((await send({ feature: "landing.create", payload: { page: "a" }, idempotency_key: "khoa-hieu-luc" })).status).toBe(200)
+      const reused = await send({ feature: "landing.create", payload: { page: "b" }, idempotency_key: "khoa-hieu-luc" })
+      expect(reused.status).toBe(422)
+      expect((await readJson(reused)).error).toMatchObject({ code: "IDEMPOTENCY_KEY_REUSED", details: { job_id: jobId } })
+      expect(await prisma.generation_jobs.count({ where: { organization_id: a.organizationId, idempotency_key: "khoa-hieu-luc" } })).toBe(1)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it("đường nội bộ: cùng khoá khác thân → 422 IDEMPOTENCY_KEY_REUSED, không tạo job thứ hai", async () => {

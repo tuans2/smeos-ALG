@@ -3,6 +3,7 @@
  * Tuân thủ Clean Architecture — Phụ thuộc Domain, kiểm tra Tenant Isolation.
  */
 
+import { log } from "@/core/observability/log";
 import { AppError, notFound } from "@/core/http/errors";
 import type { TenantContext } from "@/core/tenancy";
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory";
@@ -151,7 +152,9 @@ export async function analyzeProductVision(
     const message = error instanceof Error ? error.message : "Lỗi không xác định";
     await jobRepo.finishInline(ctx, enq.job.id, { ok: false, error: message, now: new Date() });
     await refundJob(ctx, enq.job.id).catch(() => undefined);
-    throw new AppError("INTERNAL", `[analyzeProductVision] Vision AI chưa bóc tách được ảnh (đã hoàn credit): ${message}`);
+    // Chi tiết (vd. khoá kho `org/<id>/…` khi thiếu tệp) chỉ vào log, không trả ra client (audit API §22)
+    log.error("market_intel.vision_extract_failed", { job_id: enq.job.id, reason: message });
+    throw new AppError("INTERNAL", "Vision AI chưa bóc tách được ảnh (đã hoàn credit) — vui lòng thử lại sau.");
   }
 }
 

@@ -8,6 +8,7 @@
  */
 
 import { requireCapability } from "@/core/rbac/capabilities"
+import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"
@@ -19,10 +20,9 @@ export const POST = handle(async (request) => {
   requireCapability(ctx, "F1")
   const repo = new ChainCollectionProfileRepository()
 
-  const body = (await request.json()) as { rules?: CollectionRule[] }
-  if (!body.rules || !Array.isArray(body.rules)) {
-    throw new Error("Danh sách quy tắc (rules) là bắt buộc.")
-  }
+  const body = (await request.json()) as { rules?: CollectionRule[] } | null
+  // Thiếu hoặc sai dạng → 400 (audit API §17 — trước đây `Error` trần → 500)
+  if (!body || !Array.isArray(body.rules)) throw validationFailed({ rules: "Danh sách quy tắc (rules) là bắt buộc." })
 
   const result = await previewChainCollectionProfile(ctx.organizationId, body.rules, repo)
   return jsonResponse({ data: result })

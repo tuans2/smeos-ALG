@@ -3,7 +3,7 @@ import type { TenantContext } from "@/core/tenancy"
 import type { IIntegrationTokenRepository } from "../domain/repositories/integration-repository.interface"
 import { getIntegrationTokenRepository } from "../infra/integration-token-repository"
 import { hashIntegrationToken, newIntegrationToken } from "@/modules/integration/infra/token-crypto"
-import { resolveExpiry } from "@/modules/integration/domain/token-rules"
+import { resolveExpiry, ttlDaysOf } from "@/modules/integration/domain/token-rules"
 
 export type RotateIntegrationTokenResult = {
   id: string
@@ -28,7 +28,8 @@ export async function rotateIntegrationToken(
   if (!current) throw notFound()
 
   const raw = newIntegrationToken()
-  const expiresAt = resolveExpiry(new Date(), undefined)
+  // Giữ thời hạn đã chọn lúc cấp token đang xoay (audit API §19)
+  const expiresAt = resolveExpiry(new Date(), ttlDaysOf(current))
 
   const row = await repo.create(ctx, {
     client: current.client,

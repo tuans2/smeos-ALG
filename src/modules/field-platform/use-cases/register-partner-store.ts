@@ -5,6 +5,7 @@
  * bound by a Data Sharing Agreement (DSA).
  */
 
+import { conflict } from "@/core/http/errors"
 import { ChainCollectionProfileRepository, getChainCollectionProfileRepository, type IChainCollectionProfileRepository } from "../infra/chain-collection-repository"
 import type { DataSharingAgreement } from "../domain/chain-collection-profile"
 import type { PropagationTarget } from "../domain/field-registry-v2"
@@ -42,14 +43,14 @@ export async function registerPartnerStore(
     status: "ACTIVE",
   }
 
-  // Create branch entry and persist DSA in repo
-  const branch = await repo.createPartnerBranch({
-    organizationId,
-    name,
-    code,
-    address: address ?? null,
-    dsa,
-  })
+  // Create branch entry and persist DSA in repo. Mã trùng trong tổ chức vỡ khoá duy nhất → 409 như `POST /branches`
+  // (audit API §17 — trước đây 500).
+  const branch = await repo
+    .createPartnerBranch({ organizationId, name, code, address: address ?? null, dsa })
+    .catch((error: unknown) => {
+      if ((error as { code?: unknown } | null)?.code === "P2002") throw conflict(`Mã cửa hàng ${code} đã tồn tại`)
+      throw error
+    })
 
   return {
     storeId: branch.id,

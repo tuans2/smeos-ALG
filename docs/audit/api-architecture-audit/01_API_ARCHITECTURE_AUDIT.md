@@ -654,9 +654,39 @@ Rủi ro đã cân nhắc: vai tự tạo có `R2` mà bị tắt `R1` sẽ khô
 
 | Việc | Lý do chờ |
 |---|---|
-| 422 `IDEMPOTENCY_KEY_REUSED` cho `/integration/jobs` | Thay đổi phá vỡ với bên thứ ba — cần PO chốt ngày báo trước ≥ 90 ngày |
-| Phát hiện "cùng khoá, thân khác" ở `POST /orders` | Cần cột lưu băm thân — đổi `prisma/schema.prisma` |
-| Gate `check:openapi` trong CI | Đổi CI — PO đã chọn gác bằng `npm test`, giữ nguyên trừ khi PO đổi |
+| ~~422 `IDEMPOTENCY_KEY_REUSED` cho `/integration/jobs`~~ | Đã chốt và làm ở §38: áp từ 09/02/2027 |
+| ~~Phát hiện "cùng khoá, thân khác" ở `POST /orders`~~ | Đã làm ở §38 |
+| Gate `check:openapi` trong CI | PO chốt lại 11/11/2026: giữ gác bằng `npm test`, không sửa CI |
 | Chuyển 501 route cũ sang `defineRoute` | Ngoài phạm vi chuẩn (chuẩn chỉ bắt buộc cho route mới/đang sửa); làm theo nhóm nếu PO đặt mục tiêu |
 | Lỗi P3 còn lại ở §14–§32 (vd. `video/jobs/:id/render` 422→409, `creative-production/package` `z.any()`, khoá tầng cửa hàng ở `PATCH /notification/preferences`, `GET /ai-requests` bỏ qua tham số sai, `created_by` ở `catalog-links/{slug}` vùng đóng băng) | Chưa được duyệt sửa |
+
+## 38. Nhật ký sửa — ba quyết định PO và lỗi P3 còn tồn (11/11/2026)
+
+PO chốt 11/11/2026: (1) `/integration/jobs` báo trước 90 ngày rồi tự áp 422; (2) duyệt thêm cột băm thân cho `POST /orders`; (3) giữ `check:openapi` gác qua `npm test`, không sửa CI; (4) sửa các lỗi P3 còn tồn, chưa chuyển route cũ sang `defineRoute`.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-11 Integration | `src/modules/integration/domain/integration-key-reuse.ts`: báo 11/11/2026, **áp 422 `IDEMPOTENCY_KEY_REUSED` từ 09/02/2027 00:00 UTC** cho `POST /integration/jobs` (trước ngày đó giữ hành vi cũ). Test đỏ nếu khoảng báo trước dưới `NOTICE_DAYS.external`. Đặc tả 06 + OpenAPI tích hợp ghi ngày | `integration-key-reuse.test.ts`, `tests/tenant/job-idempotency-mismatch.test.ts` (giả lập ngày hiệu lực) |
+| API-11 Đơn hàng | Cột `orders.idempotency_body_hash` (migration `20261111120000_orders_idempotency_body_hash`, chỉ THÊM, cho phép NULL). `ingestOrderOnce` lưu SHA-256 dạng chuẩn của thân đã kiểm; cùng khoá mà băm khác → 422 `IDEMPOTENCY_KEY_REUSED` (`details.order_id`); đơn cũ chưa có băm vẫn trả lại như trước. Form tạo đơn đổi khoá khi nội dung đơn đổi (dùng lại `requestKey`) và hiện đúng câu lỗi của máy chủ (trước đọc nhầm `data.message`) | `ingest-order-once.test.ts`, `tests/tenant/order-idempotency.test.ts` |
+| §17 | `PUT /chain/collection-profile`, `POST …/preview`: thiếu `rules` → 400; quy tắc sai luật → 422 kèm `details.issues` (trước 500). `POST /chain/partner-stores` trùng mã → 409 (trước 500) | `chain-collection-profile.use-case.test.ts` (sẵn có), OpenAPI |
+| §19 | `POST /integration-tokens/:id/rotate` giữ thời hạn (số ngày) của token đang xoay (`ttlDaysOf`) — trước luôn ra 90 ngày | `integration-use-cases.test.ts` |
+| §22 | `POST /market-intelligence/product-intelligence` thiếu đầu vào Chặng 03 → 400 `details.<trường>` (trước 500); `GET /market-intelligence/opportunities?limit=` sai → 400; `POST /market-intelligence/vision-extract` lỗi không còn trả khoá kho nội bộ (chi tiết chỉ vào log `market_intel.vision_extract_failed`) | `analyze-product-vision.test.ts`, `product-pipeline-handshake.test.ts` |
+| §24 | `PUT /brand-profile`: `logo_asset_id` mới phải là ảnh trong kho của tổ chức → khác thì 404, không lưu; đường dẫn và giá trị không đổi không kiểm lại | `profiles-use-cases.test.ts` |
+| §15 | `PATCH /notification/preferences` áp cả khoá cứng tầng cửa hàng (`getLockForUserPreference`) — trước tuỳ chọn lưu được nhưng không có hiệu lực | `cascading-policy.test.ts`, `tests/tenant/internal-contract-notification.test.ts` |
+| §26 | `PATCH /campaigns/{id}` dùng `CAMPAIGN_OBJECTIVES`/`CAMPAIGN_STATUSES` (cùng giá trị, không đổi hành vi) | `internal-request-parity.test.ts` |
+| §32 | `GET /product-intelligence/{id}` nhánh dự phòng: `productName` = tên sản phẩm đã gắn, chưa gắn thì "Sản phẩm chưa đặt tên" (trước là mã ảnh) | `tests/tenant/internal-contract-final.test.ts` |
+| §19 | Chú thích `sso/refresh` dùng tên cookie hiện hành `smeos_session`/`smeos_sso` | — |
+
+**Chưa sửa, có lý do:**
+
+| Việc | Lý do |
+|---|---|
+| Siết tham số đang bị bỏ qua thành 400: `GET /ai-requests` (`from`/`to`/`limit`), `/availability/board?month=`, `/reports/*?from=`, `/field-config?entity=`, `/notification/events?tier=`, `min_score` của `opportunities` | Siết validation là thay đổi phá vỡ (đặc tả 06 "Version và gỡ endpoint") — cần báo trước 30 ngày cho API nội bộ |
+| `POST /video/jobs/:id/render` sai trạng thái 422 → 409 | Đổi mã HTTP client đang thấy — cùng lý do |
+| `POST /roles`, `/field-config` trùng tên → 409 | Đổi hành vi nghiệp vụ (đang tự thêm hậu tố) — cần PO |
+| `creative-production/package` `z.any()`; `targetPlatform` của AUTHENTIC | Hợp đồng chặng Creative Studio — cần PO (tính năng tải ảnh, 14 chặng) |
+| `get-store-folder-data` giá dự phòng 250.000đ | Đổi số hiển thị trên giao diện — cần PO |
+| `_count` ở link/QR động, envelope trộn của `/pricing-rules`, `/price-lists/*`, `product-copies`, hồ sơ | Đổi hình dạng phản hồi — chuyển dần theo ratchet |
+| `GET /product-photo`, `/product-image-set` không cần phiên và trả `promptDirective`; `/chat/channels`, `/chat/public-limits` chưa gác (RS-8) | Quyết định của PO |
+| `GET /catalog-links/{slug}` trả `created_by`; `revoke` lần hai → 400; Điều phối "Nhận đơn" 409 sau ghi cọc | Vùng đóng băng Catalog / Thẻ chào |
 
