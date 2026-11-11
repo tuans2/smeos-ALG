@@ -80,7 +80,7 @@ acceptance:
 
 ## 10. Dữ liệu và quyền
 - Nguồn sự thật: Bảng `business_profiles`.
-- Quyền: `F2` (sửa hồ sơ) hoặc `H4` (điều hành). Trường dữ liệu: `D18` (trần cứng Điều hành); trường riêng lưu ở `field_definitions.owner_organization_id`, ghi đè trường hệ thống ở `field_config_overrides`; không hạ được mức sàn của hệ thống. Tên miền riêng: `D19` (trần cứng Điều hành), bảng `custom_domains`; tên miền của tổ chức khác → 404.
+- Quyền: `F2` (sửa hồ sơ) hoặc `H4` (điều hành). Trang và mục menu "Cài đặt tiệm" mở cho `F2` hoặc `R5` (Điều phối — tab nhắc việc điều phối); "Hồ sơ cửa hàng" cho `F2`. Người chỉ có `F1` (Sale, Kế toán) mở thẳng đường dẫn thấy trạng thái không quyền (PO 11/11/2026). Trường dữ liệu: `D18` (trần cứng Điều hành); trường riêng lưu ở `field_definitions.owner_organization_id`, ghi đè trường hệ thống ở `field_config_overrides`; không hạ được mức sàn của hệ thống. Tên miền riêng: `D19` (trần cứng Điều hành), bảng `custom_domains`; tên miền của tổ chức khác → 404.
 
 ## 11. Component
 - Dùng lại: `Button`, `SkeletonBlock`, `FeatureGuidanceCard`.
