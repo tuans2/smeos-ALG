@@ -154,9 +154,9 @@ export function CatalogProductListView({
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-caption font-mono font-bold text-text-muted">{p.code}</span>
-                    <h4 className={`text-caption font-bold truncate ${fontDisplay}`} style={textPrimaryStyle}>
+                    <h2 className={`text-caption font-bold truncate ${fontDisplay}`} style={textPrimaryStyle}>
                       {p.name}
-                    </h4>
+                    </h2>
                   </div>
                   <div className="text-caption mt-0.5 truncate" style={textSecondaryStyle}>
                     {p.category || "Sản phẩm chọn lọc"}

@@ -62,9 +62,9 @@ export function ScreenCard({ screen, onCopyRoute, isCopied }: ScreenCardProps) {
 
         {/* Title & Screen ID */}
         <div>
-          <h3 className="text-body font-bold text-text group-hover:text-primary transition-colors line-clamp-1" title={screen.title}>
+          <h2 className="text-body font-bold text-text group-hover:text-primary transition-colors line-clamp-1" title={screen.title}>
             {screen.title}
-          </h3>
+          </h2>
           <p className="text-caption font-mono text-text-muted mt-0.5">
             {screen.screenId}
           </p>

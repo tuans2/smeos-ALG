@@ -102,7 +102,7 @@ export function IndustrySelectSection({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-body-sm font-bold text-text">Lĩnh vực hoạt động / Ngành nghề</h3>
+              <h2 className="text-body-sm font-bold text-text">Lĩnh vực hoạt động / Ngành nghề</h2>
               <span className="text-caption font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                 {currentIndDef.name}
               </span>
