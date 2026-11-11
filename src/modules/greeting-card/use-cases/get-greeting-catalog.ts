@@ -20,6 +20,7 @@ import { parsePaymentPolicy, resolveTrackingTriggerPolicy, type TrackingTriggerP
 import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
 import type { EntryActions } from "@/modules/orders/domain/entry-actions"
 import { brochureEntryActions } from "../domain/brochure-entry-actions"
+import { isHiddenFromCustomer } from "../domain/product-availability"
 
 export type CustomerBrochureView = {
   status: "ACTIVE"
@@ -67,11 +68,13 @@ export async function getGreetingCatalogForCustomer(
   // Trình duyệt thật của khách gọi `markBrochureOpened` sau khi trang chạy (máy quét không chạy JS).
   const status = session.status as GreetingSessionStatus
 
-  const urls = await repo.getAssetsStorageMap(session.organization_id, collectImageAssetIds(session.catalog.items))
+  // Mẫu Tạm ngưng / Lưu trữ không hiện cho khách (2.3); mẫu tạm hết hàng vẫn hiện, đánh dấu không đặt được
+  const items = session.catalog.items.filter((item) => !isHiddenFromCustomer(item.product))
+  const urls = await repo.getAssetsStorageMap(session.organization_id, collectImageAssetIds(items))
   // Mẫu tạm hết hàng vẫn hiện (đánh dấu `available: false`) để khách xem mẫu tương tự / hỏi tiệm;
   // chọn và đặt mẫu hết hàng bị chặn ở máy chủ (`resolveOrderableProduct`).
   const visibility = readPriceVisibility(session.organization?.settings)
-  const products = session.catalog.items.map((item) => applyPriceVisibility(toCatalogProduct(item, urls), visibility))
+  const products = items.map((item) => applyPriceVisibility(toCatalogProduct(item, urls), visibility))
   const shop = await repo.getShopProfile(session.organization_id)
   const contact = (await getShopContact(session.organization_id)) ?? {
     name: shop.name, phone: shop.phone, zaloUrl: null, address: null, logoUrl: null,

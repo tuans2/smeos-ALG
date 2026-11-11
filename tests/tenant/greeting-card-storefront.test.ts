@@ -126,6 +126,16 @@ describe("greeting-card: trang khách thương mại", () => {
     expect(() => rejectBotSubmission({ website: "" })).not.toThrow()
   })
 
+  it("mẫu Tạm ngưng / Lưu trữ không hiện trên link riêng của khách (2.3); mẫu đang bán vẫn hiện", async () => {
+    const product = await new ProductRepository().create(a.ctx, { code: "HOA-BAN", name: "Bó bán", attributes: { price: 500_000 } })
+    const paused = await new ProductRepository().create(a.ctx, { code: "HOA-NGUNG", name: "Bó ngưng", attributes: { price: 400_000 }, status: "PAUSED" })
+    const archived = await new ProductRepository().create(a.ctx, { code: "HOA-CU", name: "Bó cũ", attributes: { price: 300_000 }, status: "ARCHIVED" })
+    const catalog = await new GreetingCardRepository().createCatalog(a.ctx, { code: "ngung", name: "Bộ", productIds: [product.id, paused.id, archived.id], createdBy: a.userId })
+    const link = await createSendLink(owner, { catalogId: catalog.id })
+    const view = await getGreetingCatalogForCustomer(link.sendCode)
+    expect(view.status === "ACTIVE" && view.products.map((p) => p.id)).toEqual([product.id])
+  })
+
   it("mẫu hết hàng ở chi nhánh của sản phẩm: ẩn khỏi trang khách và không đặt được", async () => {
     const { product, catalog } = await catalogWith(500_000)
     const branch = await prisma.branches.create({ data: { id: randomUUID(), organization_id: a.organizationId, name: "CN1", code: "CN1" } })
