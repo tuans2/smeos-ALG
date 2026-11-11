@@ -31,6 +31,7 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Trường cửa hàng tự tạo (checklist ALG 1.9) nằm trong `field_definitions` với `owner_organization_id` = tổ chức sở hữu: chỉ tổ chức đó đọc/ghi, Console nền tảng không liệt kê, hạn mức 50 trường/thực thể tính riêng từng tổ chức. Xem mục 22b |
 | `governance_decisions` | Một bảng quyết định theo tầng (ADR-012 D-T10, 06/11/2026) — nơi lưu duy nhất của ma trận quản trị, khoá/hiển thị thông báo, khoá tích hợp (T-7c đã bỏ `integration_governance`, `notification_hard_locks`, `notification_event_visibility`); phạm vi ở cột `scope` dạng D-T5 (`platform`, `industry:<key>`, `org:<id>`), không phải dữ liệu riêng của một tổ chức nên không có `organization_id`. Xem mục 45 |
+| `retention_policies` | Hạn lưu theo loại dữ liệu (ADR-014 D-P4, 11/11/2026) — một dòng mỗi loại dữ liệu, áp cho MỌI tổ chức; job hằng đêm của nền tảng đọc. Không phải dữ liệu của một tổ chức nên không có `organization_id`. Xem mục 54 |
 
 | `platform_settings` | Cấu hình cấp nền tảng, một dòng mỗi khoá, chỉ Console vận hành ghi (mã `N12`) — vd ma trận điều hướng theo ngành áp cho MỌI tổ chức cùng ngành. Xem mục 31 |
 Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên là lỗi chặn ở review.
@@ -4164,6 +4165,54 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
   phạm vi T-5b.
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
+
+## 54. Hạn lưu theo loại dữ liệu — `retention_policies` (11/11/2026)
+
+ADR-014 D-P4, bước P-6a (PO duyệt 11/11/2026). Migration `20261111150000_retention_policies` (expand, một giao dịch): thêm
+kiểu `retention_action`, bảng nền tảng `retention_policies` (CHECK `retention_months` 1–600) và 3 dòng mốc PO đã chốt
+(D-50), tất cả `enforce = false`.
+
+```prisma
+enum retention_action {
+  DELETE
+  ANONYMIZE
+}
+
+model retention_policies {
+  category         String           @id // technical_logs · delivery_info · audit_logs
+  retention_months Int
+  action           retention_action
+  enforce          Boolean          @default(false) // false = job chỉ đếm
+  last_run_at      DateTime?        @db.Timestamptz(3)
+  last_run_rows    Int?             // số dòng quá hạn (đếm) hoặc đã xử lý (thực thi) lần chạy cuối
+  updated_by       String?
+  updated_at       DateTime         @default(now()) @updatedAt @db.Timestamptz(3)
+  created_at       DateTime         @default(now()) @db.Timestamptz(3)
+}
+```
+
+| `category` | Hạn | Hành động | Bảng | Quá hạn khi |
+|---|---|---|---|---|
+| `technical_logs` | 3 tháng | Xoá | `job_events`, `notification_inbox`, `link_events`, `greeting_catalog_events` | `created_at` trước mốc |
+| `delivery_info` | 12 tháng | Ẩn danh | `order_recipients` (tên, SĐT, địa chỉ — **giữ** hoá đơn VAT), `orders.delivery_address` | đơn `COMPLETED`/`CANCELLED` và `orders.updated_at` trước mốc |
+| `audit_logs` | 60 tháng | Xoá | `audit_logs`, `platform_access_logs`, `platform_audit_logs` | `created_at` trước mốc |
+
+- Luật (loại mã biết xử lý, hành động duy nhất của từng loại, mốc cắt theo tháng lịch, giờ chạy):
+  `src/modules/organization/domain/retention-policy.ts`. Dòng có loại lạ hoặc hành động khác bảng trên → bỏ qua, log
+  `retention.policy_skipped`. Bảng và điều kiện: `src/modules/organization/infra/retention-sweep.ts`.
+- Job: `retention-scheduler.ts`, khởi trong `src/instrumentation.ts` bằng `asSystemDb`; kiểm mỗi giờ, chạy trong khung
+  1–5 giờ sáng giờ Việt Nam, mỗi đêm một lần (`last_run_at`), một tiến trình trong cụm (`runExclusive`). Tắt bằng
+  `RETENTION_SWEEP=off`.
+- Thực thi theo lô 5.000 dòng, tối đa 200 lô mỗi bảng mỗi đêm; mỗi lô một giao dịch đặt
+  `app.purge_reason = retention_policy` (nhật ký bất biến, mục 46). Bỏ qua dòng của tổ chức đang legal hold
+  (`organizations.legal_hold_until`); `platform_audit_logs` về một tổ chức đang legal hold cũng giữ.
+- Chạy tay: `npm run retention:sweep` (chỉ đếm, không ghi), `-- --category <loại>`, `-- --run` (như job đêm).
+- Chưa làm (P-6b): hội thoại khách, lead không thành đơn, phiên Thẻ chào không đặt (3 tháng, ẩn danh); hồ sơ khách 24
+  tháng không giao dịch; báo giá và đơn huỷ chưa thu (5 năm); chứng từ ghi sổ (10 năm từ cuối năm tài chính).
+
+Ca thử: `src/modules/organization/domain/retention-policy.test.ts`, `tests/tenant/retention-sweep.test.ts` (mặc định chỉ
+đếm, không đổi dữ liệu; bật thực thi → xoá/ẩn danh đúng dòng quá hạn, giữ VAT, đơn chưa xong và dòng còn hạn giữ
+nguyên; legal hold giữ nguyên; chạy thử không ghi; loại chưa hỗ trợ bị bỏ qua).
 
 ## 53. Vòng đời tổ chức — `organizations.lifecycle_status` (11/11/2026)
 

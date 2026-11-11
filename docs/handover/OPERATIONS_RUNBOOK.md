@@ -263,3 +263,18 @@ Migration tự kiểm lại; còn thì dừng, không đổi gì, bản cũ vẫ
   2. `npm run tenant:purge -- --org <id> --operator <email>` — chỉ đọc, in số dòng sẽ xoá theo từng bảng.
   3. Thêm `--confirm` để xoá. Giữ chứng từ ghi sổ và nhật ký, ẩn danh khách trên chứng từ; tổ chức chuyển `DELETED`; tệp
      ảnh vào hàng đợi xoá kho; một dòng `platform_audit_logs`.
+
+## 16. Hạn lưu dữ liệu — `retention_policies` (ADR-014 D-P4, 11/11/2026)
+
+Job hằng đêm (1–5 giờ sáng giờ Việt Nam) trong `smeos-web`, đặc tả 07 §54. Mặc định **chỉ đếm** số dòng quá hạn — log
+`retention.policy_ran` (`enforced: false`, `rows`) và cột `last_run_rows`; chưa xoá gì.
+
+1. Xem số dòng quá hạn trên Render shell của `smeos-web`: `npm run retention:sweep` (chỉ đọc, in số dòng theo bảng).
+2. Bật thực thi một loại (sau khi kế toán/pháp lý của khách xác nhận mốc, và đã sao lưu):
+   `UPDATE retention_policies SET enforce = true, updated_by = '<email người vận hành>' WHERE category = '<loại>';`
+   Đổi mốc: sửa `retention_months` (1–600). Đêm sau job xoá / ẩn danh thật; muốn chạy ngay:
+   `npm run retention:sweep -- --run`.
+3. Tổ chức đang legal hold (`organizations.legal_hold_until` ở tương lai) không bị xoá / ẩn danh gì.
+4. Tắt job khẩn cấp: biến môi trường `RETENTION_SWEEP=off` rồi khởi động lại dịch vụ; hoặc đặt `enforce = false`.
+5. Dữ liệu đã xoá vẫn còn trong bản sao lưu tới hết hạn giữ bản sao lưu (ADR-015); khôi phục từ bản cũ thì chạy lại
+   job.
