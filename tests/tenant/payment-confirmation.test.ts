@@ -3,6 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { POST as createOrder } from "@/app/api/v1/coordinator/orders/route"
 import { GET as listPayments, POST as recordPayment } from "@/app/api/v1/coordinator/orders/[id]/payments/route"
 import { POST as decidePayment } from "@/app/api/v1/coordinator/orders/[id]/payments/[paymentId]/decision/route"
+import { POST as cancelOrder } from "@/app/api/v1/coordinator/orders/[id]/cancel/route"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { addStaffWithSession, createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
@@ -81,5 +82,26 @@ describe("ghi thu chờ Điều hành xác nhận", () => {
     expect((await record(a.token, 300_000)).status).toBe(201)
     expect((await payments(a.token))[0]!.status).toBe("CONFIRMED")
     expect(await paid()).toBe(300_000)
+  })
+
+  it("audit BL-21: huỷ đơn → khoản đang chờ thành Đã từ chối, không duyệt vào đơn đã huỷ được", async () => {
+    await record(sale.token, 300_000)
+    const [row] = await payments(a.token)
+    const cancel = await cancelOrder(withSession(`${BASE}/orders/${orderId}/cancel`, a.token, {
+      method: "POST", body: JSON.stringify({ reason: "Khách đổi ý" }),
+    }), { params: Promise.resolve({ id: orderId }) })
+    expect(cancel.status).toBe(200)
+    expect((await payments(a.token))[0]!.status).toBe("REJECTED")
+    expect((await decide(a.token, row!.id, { approve: true })).status).toBe(404)
+    expect(await paid()).toBe(0)
+  })
+
+  it("audit BL-21: khoản chờ còn sót trên đơn đã huỷ (dữ liệu cũ) → duyệt bị chặn 422", async () => {
+    await record(sale.token, 300_000)
+    const [row] = await payments(a.token)
+    await prisma.orders.update({ where: { id: orderId }, data: { status: "CANCELLED" } })
+    expect((await decide(a.token, row!.id, { approve: true })).status).toBe(422)
+    expect((await payments(a.token))[0]!.status).toBe("PENDING")
+    expect(await paid()).toBe(0)
   })
 })

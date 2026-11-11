@@ -9,6 +9,7 @@ import type { CoordinatorStage, CoordinationRiskLevel } from "../domain/coordina
 import type { MappedOrderAxes } from "../domain/state-mapper"
 import type { DbClient } from "./transaction"
 import { storedDeliveryAddress, upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
+import { takeStock } from "@/modules/orders/infra/order-stock"
 
 export const ORDER_INCLUDE = {
   coordination: { include: { partner: true } },
@@ -83,15 +84,17 @@ export async function executeCreateOrder(
   await upsertOrderRecipient(db, ctx.organizationId, order.id, { deliveryAddress: data.deliveryAddress })
 
   if (data.items.length > 0) {
+    // Trừ tồn cùng giao dịch như cổng chung (PO Q9; audit BL-20) — thiếu hàng → 409, không tạo đơn
+    const stock = await takeStock(db, ctx.organizationId, branchScopeOf(ctx), data.items)
     await db.order_items.createMany({
-      data: data.items.map((it) =>
+      data: data.items.map((it, i) =>
         scopedData(ctx, {
           order_id: order.id,
           product_id: it.productId ?? null,
           description: it.description,
           quantity: it.quantity,
           unit_price_vnd: 0,
-          metadata: it.metadata as Prisma.InputJsonValue,
+          metadata: (stock[i] ? { ...it.metadata, stock: stock[i] } : it.metadata) as Prisma.InputJsonValue,
         })
       ),
     })

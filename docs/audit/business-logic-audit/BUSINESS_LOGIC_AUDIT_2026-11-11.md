@@ -30,6 +30,19 @@ Năm việc nên làm trước:
 4. Gỡ hoặc dán nhãn "dữ liệu minh hoạ" cho màn quyết toán đối tác và báo cáo quảng cáo (BL-22, BL-23).
 5. Không trừ phí gia công "giao trễ" khi đơn không có giờ hẹn rõ (BL-24).
 
+### Trạng thái sửa (cập nhật 11/11/2026)
+
+| # | Trạng thái | Sửa ở | Test |
+|---|---|---|---|
+| BL-19 | **Đã sửa** — bỏ khoá `stock` khỏi metadata client; hoàn/trừ lại tồn chỉ khi dấu khớp sản phẩm + số lượng dòng và dòng tồn của đúng sản phẩm (chặn cả dấu giả đã lưu trước bản sửa) | `orders/domain/order-item-metadata.ts`, `orders/infra/order-repository.ts`, `orders/infra/order-stock.ts` | `tests/unit/orders/order-item-stock-mark.test.ts`, `tests/tenant/order-stock.test.ts` |
+| BL-20 | **Đã sửa** — sàn/trần qua `assertWithinPriceBounds` (có sản phẩm, giá > 0); trừ tồn cùng giao dịch tạo đơn | `coordinator/use-cases/create-coordinator-order.ts`, `coordinator/infra/coordinator-query-helper.ts` | `tests/unit/coordinator/create-coordinator-order-price-bounds.test.ts`, `tests/tenant/order-stock.test.ts` |
+| BL-21 | **Đã sửa phần P0** — huỷ đơn chuyển khoản `PENDING` thành `REJECTED` trong giao dịch huỷ; duyệt khoản chờ dùng `planPayment`. Còn lại (P1): ghi khoản chờ so với tổng khoản đang chờ | `coordinator/use-cases/operations.ts`, `decide-pending-payment.ts`, `infra/pending-payment-repository.ts` | `tests/tenant/payment-confirmation.test.ts` |
+| BL-22 | **Đã gỡ lối vào** "Sổ đối soát" khỏi danh bạ đối tác. Còn lại (P2, PO): sổ quyết toán một nguồn | `components/coordinator/partner-management-modal.tsx` | `tests/unit/architecture/no-sample-data-screens.test.ts` |
+| BL-23 | **Đã gỡ** nút "Hiệu quả quảng cáo" trên `/so-lieu` | `app/(app)/so-lieu/page.tsx`, Screen Contract `so-lieu.md` | như trên |
+
+Hai thành phần dữ liệu mẫu (`partner-settlement-modal.tsx`, `ad-performance-modal.tsx`) vẫn còn trong mã nhưng không màn nào
+gắn; guard kiến trúc chặn gắn lại. Xoá hẳn hay dựng lại trên dữ liệu thật là quyết định của PO.
+
 ## 2. Đối chiếu 18 phát hiện đợt 1
 
 | # | Hiện trạng | Bằng chứng |

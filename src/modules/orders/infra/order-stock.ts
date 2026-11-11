@@ -1,6 +1,7 @@
 import { conflict } from "@/core/http/errors"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
+import { stockMarkMatchesItem } from "../domain/order-item-metadata"
 
 /** Dấu "đơn đã trừ tồn" lưu trong `order_items.metadata.stock` — để hoàn đúng dòng tồn, đúng một lần. */
 export interface StockMark {
@@ -51,15 +52,21 @@ export async function takeStock(
   return marks
 }
 
-type MarkedItem = { id: string; meta: Record<string, unknown>; mark: StockMark; raw: Prisma.JsonValue }
+type MarkedItem = { id: string; meta: Record<string, unknown>; mark: StockMark; raw: Prisma.JsonValue; productId: string }
 
 async function markedItems(tx: Tx, organizationId: string, orderId: string): Promise<MarkedItem[]> {
-  const items = await tx.order_items.findMany({ where: { organization_id: organizationId, order_id: orderId }, select: { id: true, metadata: true } })
+  const items = await tx.order_items.findMany({
+    where: { organization_id: organizationId, order_id: orderId },
+    select: { id: true, metadata: true, product_id: true, quantity: true },
+  })
   const out: MarkedItem[] = []
   for (const item of items) {
     const meta = item.metadata && typeof item.metadata === "object" ? (item.metadata as Record<string, unknown>) : null
     const mark = meta?.stock as StockMark | undefined
-    if (meta && mark?.inventoryId && mark.quantity > 0) out.push({ id: item.id, meta, mark, raw: item.metadata })
+    // Dấu phải khớp chính dòng (sản phẩm, số lượng) và dòng tồn phải của đúng sản phẩm đó (audit BL-19)
+    if (meta && mark && stockMarkMatchesItem(mark, { productId: item.product_id, quantity: item.quantity })) {
+      out.push({ id: item.id, meta, mark, raw: item.metadata, productId: item.product_id! })
+    }
   }
   return out
 }
@@ -70,10 +77,10 @@ async function markedItems(tx: Tx, organizationId: string, orderId: string): Pro
  */
 export async function retakeStock(tx: Tx, organizationId: string, orderId: string): Promise<number> {
   let taken = 0
-  for (const { id, meta, mark, raw } of await markedItems(tx, organizationId, orderId)) {
+  for (const { id, meta, mark, raw, productId } of await markedItems(tx, organizationId, orderId)) {
     if (!mark.returned) continue
     const moved = await tx.product_inventory.updateMany({
-      where: { id: mark.inventoryId, organization_id: organizationId, quantity_available: { gte: mark.quantity } },
+      where: { id: mark.inventoryId, organization_id: organizationId, product_id: productId, quantity_available: { gte: mark.quantity } },
       data: { quantity_available: { decrement: mark.quantity } },
     })
     if (moved.count === 0) throw conflict("Sản phẩm của đơn không còn đủ tồn để khôi phục — nhập thêm tồn rồi thử lại.")
@@ -99,7 +106,7 @@ export async function returnStock(organizationId: string, orderId: string, db?: 
 
 async function returnStockIn(tx: Tx, organizationId: string, orderId: string): Promise<number> {
   let returned = 0
-  for (const { id, meta, mark, raw } of await markedItems(tx, organizationId, orderId)) {
+  for (const { id, meta, mark, raw, productId } of await markedItems(tx, organizationId, orderId)) {
     if (mark.returned) continue
     // Đánh dấu trước (có điều kiện theo phiên bản đọc được) rồi mới cộng tồn — hai lượt huỷ đồng thời chỉ một lượt cộng
     const claimed = await tx.order_items.updateMany({
@@ -108,7 +115,7 @@ async function returnStockIn(tx: Tx, organizationId: string, orderId: string): P
     })
     if (claimed.count === 0) continue
     await tx.product_inventory.updateMany({
-      where: { id: mark.inventoryId, organization_id: organizationId, quantity_available: { not: null } },
+      where: { id: mark.inventoryId, organization_id: organizationId, product_id: productId, quantity_available: { not: null } },
       data: { quantity_available: { increment: mark.quantity } },
     })
     returned += 1
