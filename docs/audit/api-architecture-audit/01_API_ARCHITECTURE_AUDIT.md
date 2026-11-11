@@ -715,3 +715,18 @@ PO duyệt kế hoạch "đợt CSRF" theo đề xuất (D-25: kiểm `Origin`; 
 
 **Việc của PO sau khi triển khai:** theo dõi log `security.cross_origin_request` trên Render 1 tuần; không có request hợp lệ bị đánh dấu → đặt biến môi trường `ORIGIN_CHECK_MODE=enforce` cho dịch vụ web. A6 (CSP chặn thật) chờ 2 tuần log `csp.violation`.
 
+## 41. Nhật ký — tài liệu API cho đối tác và gỡ trường nội bộ (ARC-024 phần B, 11/11/2026)
+
+PO duyệt kế hoạch phần B theo đề xuất: Q1 xem sau đăng nhập, Q2 trang tự dựng (không thêm thư viện), Q3 báo trước 90 ngày rồi gỡ tại chỗ; duyệt danh sách trường gỡ 11/11/2026.
+
+| Bước | Đã làm | Test |
+|---|---|---|
+| B1 | Rà 13 phản hồi Integration API; danh sách trường nội bộ (khoá kho, mô hình/câu lệnh AI, chi phí USD, mã người dùng nội bộ, trường thùng rác) PO duyệt; tên camelCase cũ giữ tới `/v2` | — |
+| B2 | `src/modules/integration/domain/integration-field-sunset.ts` (`SUNSET_FIELDS`, `withoutSunsetFields`): từ 09/02/2027 00:00 UTC máy chủ bỏ các trường đó ở `assets`, `jobs`, `usage`, `master-image`, `catalog-links*` (cùng ngày lịch 422 khoá trùng). Lược đồ phản hồi đánh dấu đúng các trường `deprecated` + tuỳ chọn | `integration-field-sunset.test.ts`, `tests/unit/integration/integration-field-sunset-schema.test.ts`, `tests/tenant/integration-contract.test.ts` (giả lập ngày hiệu lực) |
+| B3 | Hướng dẫn tiếng Việt (`src/components/integrations/api-docs/partner-guide.ts`): bắt đầu nhanh, xác thực, giới hạn, chống trùng, lỗi, phân trang, thay đổi & gỡ bỏ; con số lấy từ hằng số trong mã | `partner-api-docs.test.tsx` |
+| B4 | Tham chiếu sinh từ OpenAPI tích hợp (`partnerApiReference`) — không viết tay endpoint/trường; chỉ `/integration/*` | `partner-api-reference.test.ts` |
+| B5 | Trang `/tich-hop/tai-lieu-api` (Screen Contract `SCR-STORE-tich-hop-tai-lieu-api`), quyền `F9`, lối vào "Xem tài liệu API" ở khối Khoá ứng dụng. Trang không thuộc bản giao GD1: liên kết ẩn khi bật giai đoạn (`gatedLinks`), phạm vi GD1 giữ 90 trang | `tests/e2e/ux/partner-api-docs.spec.ts` (390/1280, axe, cuộn ngang, vai không quyền), `check:screen-contracts` |
+| B7 | ARC-024 còn 67 mục envelope nội bộ (ratchet); `TRANG_THAI.md` cập nhật | `check:docs` |
+
+**Việc của PO (B6):** gửi thông báo cho LocalBudd, SocialFlow và đối tác về hai thay đổi có hiệu lực 09/02/2027 (gỡ trường, 422 khoá trùng) kèm đường dẫn trang tài liệu. Muốn giao trang tài liệu cho khách GD1 thì thêm `/tich-hop/tai-lieu-api` vào mục 9.5 của `src/lib/delivery/gd1.manifest.json` (đổi phạm vi bàn giao — PO quyết).
+

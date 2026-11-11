@@ -30,7 +30,7 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 | ARC-021 | J | P2 | C | T | V | 2 | 74% tệp TSX chưa dùng i18n | 24 |
 | ARC-022 | F | P2 — **đang đóng dần** | T | C | V | 3 | ~~Không kiểm Origin~~ (mã xong 11/11/2026, production chạy `log` 1 tuần rồi `enforce`); CSP vẫn Report-Only — chờ 2 tuần log `csp.violation` (D-25) | 18 |
 | ARC-023 | N | P2 | C | TB | V | 2 | Sentry tuỳ chọn, không khai ở `render.yaml`; không metrics; 62 `console.*`, 59 `print()` | 21 |
-| ARC-024 | D/O | P2 — **mở một phần** | TB | TB | V | 3 | ~~Không OpenAPI~~ (xong 11/11/2026: 4 bề mặt, 693 operation); **còn**: chưa có tài liệu API công bố cho đối tác/khách; phản hồi Integration API trả bản ghi nội bộ; 67 mục envelope lệch (ratchet) | 23 |
+| ARC-024 | D/O | P3 — **gần đóng** | TB | TB | V | 4 | ~~Không OpenAPI~~ · ~~không tài liệu cho đối tác~~ (trang `/tich-hop/tai-lieu-api` sau đăng nhập, 11/11/2026) · trường nội bộ Integration API đã báo gỡ, **tự gỡ 09/02/2027**; còn 67 mục envelope lệch nội bộ (ratchet) | 23 |
 | ARC-025 | G/D | ~~P2~~ ĐÃ ĐÓNG 07/11/2026 | T | TB | V | 4 | ~~`content-engine/rewrite` chưa gác mã năng lực~~ — gác `F2`/`L2`/`L3` + trừ credit | — |
 | ARC-026 | B/N | P3 | T | T | V | 3 | `vercel.json`, `cron-job-entry.txt` lỗi thời; `dify-chat-provider.ts` chết | 28 |
 | ARC-027 | C/O | P2 | C | T | V | 2 | Không có ERD | 26 |
@@ -157,6 +157,7 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 - **Khuyến nghị:** Sinh OpenAPI từ schema zod cho `/api/v1/integration/*` (bề mặt bên thứ ba) trước.
 - **Phần OpenAPI xong 11/11/2026:** `docs/spec/contracts/openapi/{integration,public,platform,internal}.openapi.json` sinh từ zod (đăng ký `DOC-03-OPENAPI-*`), `npm run check:openapi` gác qua `npm test`; route mới bắt buộc `defineRoute`, envelope lệch bị ratchet chặn (`docs/audit/api-architecture-audit/01_API_ARCHITECTURE_AUDIT.md` §8–§38).
 - **Còn mở (đính chính 11/11/2026 — trước đó ghi nhầm "đã đóng" cả mục):** (1) chưa có tài liệu API công bố cho đối tác/khách — tệp OpenAPI mới nằm trong repo; (2) phản hồi `/integration/*` trả nguyên bản ghi nội bộ (vd. `usage.user_id`, `generation_jobs.payload`) — thu gọn cần `/v2` hoặc báo trước 90 ngày; (3) 501 route cũ chưa theo chuẩn v1.1, 67 mục envelope lệch. Cần PO duyệt trước khi mở API thương mại cho bên thứ ba.
+- **Cập nhật 11/11/2026 (phần B, PO duyệt):** (1) tài liệu cho đối tác: trang `/tich-hop/tai-lieu-api`, xem sau đăng nhập với quyền quản lý khoá ứng dụng, hướng dẫn + tham chiếu sinh từ OpenAPI; (2) trường nội bộ Integration API đánh dấu `deprecated`, máy chủ tự bỏ từ 09/02/2027 (`integration-field-sunset.ts`). Còn: thông báo tới LocalBudd/SocialFlow/đối tác (việc của PO); 67 mục envelope nội bộ theo ratchet.
 
 ### ARC-025 — Route thiếu mã năng lực (P2)
 - **Bằng chứng:** `NO_CAPABILITY_GUARD["content-engine/rewrite"] = DEBT_170`.

@@ -1,6 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
+import Link from "next/link"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { InlineError } from "@/components/ui/inline-error"
@@ -97,6 +99,13 @@ export function ApiTokensPanel() {
             Cấp khoá cho {label.split(" — ")[0]}
           </Button>
         ))}
+        {/* Trang tài liệu chưa thuộc bản giao GD1 — ẩn khi bật giai đoạn (gatedLinks) */}
+        {isHrefInPhase("/tich-hop/tai-lieu-api") && <Link
+          href="/tich-hop/tai-lieu-api"
+          className="inline-flex min-h-8 items-center px-2 text-body-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Xem tài liệu API
+        </Link>}
       </div>
       {rows === null ? (
         <SkeletonBlock lines={2} label="Đang tải danh sách khoá" />
