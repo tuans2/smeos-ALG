@@ -34,6 +34,12 @@ describe("sổ nhà cung cấp kênh (4.30)", () => {
     expect(isProviderConfigured("SMS", null)).toBe(false)
   })
 
+  it("kênh chưa chọn nhà cung cấp vẫn báo đúng khả năng gửi (Zalo gửi được khi kết nối; Web Push chưa)", () => {
+    expect(maskProviderConfig("ZALO", null)).toMatchObject({ configured: false, ready: true, pending: null })
+    expect(maskProviderConfig("PUSH", null)).toMatchObject({ configured: false, ready: false })
+    expect(maskProviderConfig("PUSH", null).pending).toBeTruthy()
+  })
+
   it("nội dung SMS không dấu, giữ trọn link, tối đa 306 ký tự", () => {
     const text = smsPlainText({ title: "Đơn sắp giao", message: "Giao lúc 9 giờ ".repeat(40), link: "https://vd.vn/don/1" })
     expect(text.length).toBeLessThanOrEqual(306)

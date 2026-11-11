@@ -31,5 +31,14 @@ acceptance:
 | Trạng thái lỗi | có |
 | Chặn quyền / không tìm thấy trong mã trang (layout và API có thể chặn thêm) | **chưa thấy trong mã** |
 
+## Khối "Kênh liên lạc" (11/11/2026, checklist 4.30)
+
+Dưới thẻ hướng dẫn, trên bộ lọc ma trận: mỗi kênh SMS / Zalo / Thông báo trên trình duyệt một thẻ.
+- L0 luôn thấy: tên kênh, trạng thái bằng lời (Chưa kết nối · Đã kết nối, đang tắt · Đang dùng · Đã lưu khoá, chưa gửi được), công tắc "Dùng cho cả hệ thống". Công tắc khoá khi chưa kết nối hoặc kênh chưa gửi được, kèm câu nói rõ điều kiện (UX-017).
+- `Disclosure` "Thông số <nhà cung cấp>": ô theo sổ nhà cung cấp; ô khoá kiểu mật khẩu, không bao giờ hiện giá trị đã lưu ("Đã lưu, bỏ trống để giữ"); "Lưu thông số"; "Gỡ kết nối" qua `ConfirmDialog` (R3); "Gửi thử" tới số nhập vào khi kênh đã kết nối.
+- Tải: khung xương; lỗi: `InlineError` có thử lại; không quyền `N2`: API trả 403, khối hiện lỗi.
+- API: `GET/PUT /api/v1/platform/notification/providers`, `POST /api/v1/platform/notification/providers/test`, `PATCH /api/v1/platform/notification/channels`.
+- Audit: `scripts/ux-audit/scenarios/van-hanh-thong-bao.mjs`, 390/1280px, axe sạch (`docs/design-system/audit-log.md`, KLL-01…04).
+
 ## Chưa kiểm
-- Ảnh mốc 390×844 và 1280×800, quét axe, bàn phím, đọc màn hình: chưa có ca trong `tests/e2e/ux` cho tuyến này.
+- Ảnh mốc 390×844 và 1280×800 trong `tests/e2e/ux`: chưa có ca cho tuyến này (khối Kênh liên lạc đã chụp và quét axe bằng `ux:audit`). Bàn phím, đọc màn hình: chưa kiểm.

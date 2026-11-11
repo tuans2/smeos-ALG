@@ -60,7 +60,7 @@ export const CHANNEL_PROVIDERS: readonly ProviderDefinition[] = [
     label: "Web Push (VAPID)",
     fields: [field("publicKey", "Khoá công khai VAPID", false), field("privateKey", "Khoá riêng VAPID", true), field("subject", "Liên hệ (mailto: hoặc https:)", false)],
     ready: false,
-    pending: "Cần bảng lưu đăng ký thiết bị nhận tin (đổi lược đồ — chờ chủ dự án duyệt)",
+    pending: "Chưa gửi được: hệ thống chưa có phần lưu thiết bị đã đồng ý nhận tin",
   },
 ]
 
@@ -111,6 +111,8 @@ export interface MaskedProviderConfig {
 
 export function maskProviderConfig(channel: ProviderChannel, config: ProviderConfig | null): MaskedProviderConfig {
   const def = config ? providerDefinition(channel, config.provider) : null
+  // Chưa chọn nhà cung cấp: khả năng gửi của kênh lấy theo nhà cung cấp đầu tiên trong sổ
+  const shown = def ?? CHANNEL_PROVIDERS.find((p) => p.channel === channel) ?? null
   const values: Record<string, string> = {}
   const secretsSet: Record<string, boolean> = {}
   for (const f of def?.fields ?? []) {
@@ -119,7 +121,7 @@ export function maskProviderConfig(channel: ProviderChannel, config: ProviderCon
     else if (v) values[f.name] = v
   }
   const configured = Boolean(def && def.fields.every((f) => !f.required || config?.values[f.name]))
-  return { channel, provider: def?.key ?? null, values, secretsSet, configured, ready: Boolean(def?.ready), pending: def?.pending ?? null }
+  return { channel, provider: def?.key ?? null, values, secretsSet, configured, ready: Boolean(shown?.ready), pending: shown?.pending ?? null }
 }
 
 /** Đủ ô bắt buộc của nhà cung cấp đang chọn. */
