@@ -69,7 +69,7 @@ export function OrderParallelStagesCard({
             ? `Cửa hàng đã nhận ${paidVnd.toLocaleString("vi-VN")} đ tiền cọc. Phần còn lại ${(totalVnd - paidVnd).toLocaleString("vi-VN")} đ thanh toán sau khi duyệt thành phẩm.`
             : hasMoney
             ? "Cửa hàng đã nhận đủ tiền chuyển khoản thành công."
-            : "Thời gian xác nhận trong vòng 15’ (tối đa). Hệ thống tự động duyệt sau 15’ khi có ảnh bill."}
+            : "Cửa hàng đang đối soát chuyển khoản và sẽ xác nhận sớm."}
         </p>
       </div>
 

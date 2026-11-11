@@ -312,7 +312,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
             requirePaymentProof={
               (catalog.filters as Record<string, unknown> | null | undefined)?.requirePaymentProof !== false
             }
-            triggerPolicy={initialData.trackingTriggerPolicy}
+            triggerPolicy={initialData.trackingTriggerPolicy} autoApproveMinutes={initialData.autoApprovePaymentMinutes ?? null}
             onGoToTracking={() => {
               setTrackingUnlocked(true)
               setStep("TRACKING")

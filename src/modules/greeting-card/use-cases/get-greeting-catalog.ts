@@ -36,6 +36,8 @@ export type CustomerBrochureView = {
   payment: BrochurePaymentInstructions | null
   /** Cơ chế kích hoạt bước tiếp theo (PAYMENT_ONLY hoặc PAYMENT_OR_COORDINATOR). */
   trackingTriggerPolicy?: TrackingTriggerPolicy
+  /** Số phút tự duyệt chuyển khoản có ảnh bill khi tiệm bật; null = chỉ Điều hành duyệt */
+  autoApprovePaymentMinutes?: number | null
   /** Nút "Đặt hàng" / "Liên hệ" chủ cửa hàng bật cho Bộ sưu tập riêng */
   entryActions: EntryActions
 }
@@ -116,6 +118,7 @@ export async function getGreetingCatalogForCustomer(
     order,
     payment,
     trackingTriggerPolicy,
+    autoApprovePaymentMinutes: paymentPolicy.autoApprovePaymentWithProof ? (paymentPolicy.autoApprovePaymentWithProofMinutes ?? 15) : null,
     entryActions: brochureEntryActions(session.organization?.settings),
   }
 }

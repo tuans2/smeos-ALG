@@ -48,6 +48,7 @@ interface BrochurePaymentViewProps {
   requirePaymentProof?: boolean | undefined
   /** Cơ chế kích hoạt bước tiếp theo (PAYMENT_ONLY hoặc PAYMENT_OR_COORDINATOR). */
   triggerPolicy?: TrackingTriggerPolicy | undefined
+  /** Số phút tự duyệt khi có ảnh bill — chỉ khi tiệm bật (`auto_approve_payment_with_proof`); null = không tự duyệt */ autoApproveMinutes?: number | null | undefined
 }
 
 export function BrochurePaymentView({
@@ -63,7 +64,7 @@ export function BrochurePaymentView({
   onPaymentFailed,
   failedCta,
   requirePaymentProof = true,
-  triggerPolicy,
+  triggerPolicy, autoApproveMinutes = null,
 }: BrochurePaymentViewProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null)
   const [hasReported, setHasReported] = useState(alreadyReported)
@@ -286,9 +287,8 @@ export function BrochurePaymentView({
             <p className="text-caption text-text-muted">
               {isOrderAccepted
                 ? "Xưởng đã tiếp nhận đơn! Đang chờ Điều hành đối soát chuyển khoản để kích hoạt màn hình theo dõi tiến độ..."
-                : triggerPolicy === "PAYMENT_ONLY"
-                ? "Đang chờ Điều hành đối soát chuyển khoản (hệ thống tự động duyệt sau 15’ khi có ảnh bill hợp lệ)..."
-                : "Đang chờ Điều hành đối soát chuyển khoản (hệ thống tự động duyệt sau 15’ khi có ảnh bill hợp lệ) hoặc Điều phối xác nhận tiếp nhận đơn..."}
+                : `Đang chờ Điều hành đối soát chuyển khoản${autoApproveMinutes ? ` (hệ thống tự động duyệt sau ${autoApproveMinutes}’ khi có ảnh bill hợp lệ)` : ""}${
+                  triggerPolicy === "PAYMENT_ONLY" ? "" : " hoặc Điều phối xác nhận tiếp nhận đơn"}...`}
             </p>
           </div>
           <p className="text-caption text-text-muted text-center">

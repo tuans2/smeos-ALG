@@ -136,6 +136,15 @@ describe("greeting-card: trang khách thương mại", () => {
     expect(view.status === "ACTIVE" && view.products.map((p) => p.id)).toEqual([product.id])
   })
 
+  it("trang khách chỉ hứa tự duyệt chuyển khoản khi tiệm bật tự duyệt (mặc định tắt)", async () => {
+    const { catalog } = await catalogWith(500_000)
+    const off = await getGreetingCatalogForCustomer((await createSendLink(owner, { catalogId: catalog.id })).sendCode)
+    expect(off.status === "ACTIVE" && off.autoApprovePaymentMinutes).toBeNull()
+    await prisma.organizations.update({ where: { id: a.organizationId }, data: { settings: { brochure_policy: { auto_approve_payment_with_proof: true, auto_approve_payment_with_proof_minutes: 20 } } } })
+    const on = await getGreetingCatalogForCustomer((await createSendLink(owner, { catalogId: catalog.id })).sendCode)
+    expect(on.status === "ACTIVE" && on.autoApprovePaymentMinutes).toBe(20)
+  })
+
   it("mẫu hết hàng ở chi nhánh của sản phẩm: ẩn khỏi trang khách và không đặt được", async () => {
     const { product, catalog } = await catalogWith(500_000)
     const branch = await prisma.branches.create({ data: { id: randomUUID(), organization_id: a.organizationId, name: "CN1", code: "CN1" } })
