@@ -78,7 +78,7 @@ export function CoordinatorCardActions({
               disabled={!!blocker}
               title={blocker ?? undefined}
               onClick={() => onOpen({ type: v.modal, orderId: order.id, orderCode: order.code })}
-              className={`w-full text-caption gap-1.5 h-8 ${action === "dispatch-shipping" && isWaitingSecondPayment ? "border-warning/50 text-warning bg-warning-bg/30" : ""}`}
+              className={`w-full text-caption gap-1.5 h-8 ${action === "dispatch-shipping" && isWaitingSecondPayment ? "border-warning/50 text-warning-text bg-warning-bg/30" : ""}`}
             >
               <Icon size={13} />
               {label(action)}

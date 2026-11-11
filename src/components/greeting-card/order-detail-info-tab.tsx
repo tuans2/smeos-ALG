@@ -150,7 +150,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
         <div className="mt-1 flex items-center gap-1.5">
           <span
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-caption font-bold ${
-              isPaid ? "bg-success/15 text-success" : isDeposit ? "bg-warning/15 text-warning" : "bg-danger-bg text-danger"
+              isPaid ? "bg-success/15 text-success" : isDeposit ? "bg-warning/15 text-warning-text" : "bg-danger-bg text-danger"
             }`}
           >
             <CheckCircle2 size={12} />

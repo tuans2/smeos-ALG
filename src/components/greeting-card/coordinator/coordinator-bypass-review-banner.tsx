@@ -89,7 +89,7 @@ export function CoordinatorBypassReviewBanner({
   return (
     <div className="w-full flex flex-col gap-2 p-3.5 rounded-xl bg-warning-bg border-2 border-warning-border text-text">
       <div className="flex items-center gap-2 text-warning-text font-bold text-body-sm">
-        <ShieldAlert size={18} className="text-warning animate-pulse motion-reduce:animate-none shrink-0" />
+        <ShieldAlert size={18} className="text-warning-text animate-pulse motion-reduce:animate-none shrink-0" />
         <span>Yêu Cầu Bỏ Qua Bằng Chứng Cần Phê Duyệt</span>
       </div>
 

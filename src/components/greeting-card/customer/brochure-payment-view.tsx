@@ -332,7 +332,7 @@ export function BrochurePaymentView({
             <span>{loading ? "Đang xử lý..." : "TÔI ĐÃ CHUYỂN KHOẢN THANH TOÁN"}</span>
           </Button>
           {!canSubmit && (
-            <p className="text-caption text-warning font-medium text-center">
+            <p className="text-caption text-warning-text font-medium text-center">
               Vui lòng tải ảnh chuyển khoản để xác nhận
             </p>
           )}

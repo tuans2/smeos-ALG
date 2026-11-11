@@ -101,7 +101,7 @@ export function ModelChangeCard() {
       {/* Hiển thị nếu đang có yêu cầu chờ duyệt */}
       {pendingModelChange ? (
         <div className="rounded-xl border border-warning/30 bg-warning-bg p-3.5 flex items-start gap-3">
-          <Clock className="text-warning shrink-0 mt-0.5" size={18} />
+          <Clock className="text-warning-text shrink-0 mt-0.5" size={18} />
           <div className="text-body-sm space-y-1">
             <div className="font-bold text-text">
               Đang có yêu cầu chuyển sang {pendingModelChange.requested_type === "CHAIN" ? "Chuỗi cửa hàng" : "1 Cửa hàng độc lập"}

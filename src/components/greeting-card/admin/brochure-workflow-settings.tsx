@@ -100,7 +100,7 @@ export function BrochureWorkflowSettings() {
   }
 
   const PRESETS: Array<{ id: WorkflowPreset; title: string; subtitle: string; desc: string; icon: React.ReactNode }> = [
-    { id: "LEAN", title: "Tinh Gọn (Tốc Độ)", subtitle: "Tiệm 1–3 người", desc: "3 chạm là giao. Bỏ chặn duyệt cọc, tự động nhận đơn sản xuất, ảnh tùy chọn, giao trước thu COD sau.", icon: <Zap size={18} className="text-warning" /> },
+    { id: "LEAN", title: "Tinh Gọn (Tốc Độ)", subtitle: "Tiệm 1–3 người", desc: "3 chạm là giao. Bỏ chặn duyệt cọc, tự động nhận đơn sản xuất, ảnh tùy chọn, giao trước thu COD sau.", icon: <Zap size={18} className="text-warning-text" /> },
     { id: "STANDARD", title: "Tiêu Chuẩn", subtitle: "Tiệm vừa 4–10 người", desc: "Mặc định 1 cửa hàng. Điều hành duyệt cọc & tự động nhận đơn, ảnh thành phẩm đếm ngược 10p, thu đủ trước khi giao.", icon: <ShieldCheck size={18} className="text-primary" /> },
     { id: "STRICT", title: "Nghiêm Ngặt", subtitle: "Chuỗi lớn & Cao cấp", desc: "Kiểm soát tuyệt đối. Bắt buộc Điều hành duyệt tiền, Điều phối liên hệ chuỗi nhận đơn, bắt buộc 2 lần ảnh.", icon: <Building2 size={18} className="text-text" /> },
   ]
@@ -163,7 +163,7 @@ export function BrochureWorkflowSettings() {
           <span className="flex items-center gap-2">
             <span>Tùy biến nâng cao từng chốt chặn</span>
             {policy.preset === "CUSTOM" && (
-              <span className="text-caption font-extrabold text-warning bg-warning-bg px-2 py-0.5 rounded-md">
+              <span className="text-caption font-extrabold text-warning-text bg-warning-bg px-2 py-0.5 rounded-md">
                 (Đã ghi đè)
               </span>
             )}

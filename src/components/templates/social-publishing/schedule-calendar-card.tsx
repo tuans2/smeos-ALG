@@ -186,7 +186,7 @@ export function ScheduleCalendarCard({
                       <span>·</span>
                       <span>ID #{item.id}</span>
                       {item.is_mock_media && (
-                        <span className="text-caption font-bold px-1.5 py-0.2 rounded bg-warning-bg text-warning border border-warning/30">
+                        <span className="text-caption font-bold px-1.5 py-0.2 rounded bg-warning-bg text-warning-text border border-warning/30">
                           Ảnh mẫu (Mock)
                         </span>
                       )}

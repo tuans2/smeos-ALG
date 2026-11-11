@@ -83,7 +83,7 @@ export function ResultCard({
       dot: "bg-secondary",
     },
     warning: {
-      badge: "bg-warning-bg text-warning",
+      badge: "bg-warning-bg text-warning-text",
       label: "Cảnh báo",
       dot: "bg-warning",
     },
@@ -293,8 +293,8 @@ export function WarningBanner({
   return (
     <div className="flex flex-col gap-3 rounded-xl border-[1.5px] border-warning bg-warning-bg p-4">
       <div className="flex items-start gap-2">
-        <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning" />
-        <div className="flex-1 text-meta leading-relaxed text-warning">{message}</div>
+        <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning-text" />
+        <div className="flex-1 text-meta leading-relaxed text-warning-text">{message}</div>
       </div>
       <div className="flex items-center justify-end gap-2">
         {onCancel && (

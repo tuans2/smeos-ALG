@@ -31,7 +31,7 @@ export function DashboardView({ qs }: { qs: string }) {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Đang theo dõi" value={`${d.orders} đơn · ${d.links} link`} />
             <Stat label="Quá thời gian chuẩn" value={d.overdue} tone={d.overdue > 0 ? "text-danger" : ""} />
-            <Stat label="Sắp quá hạn" value={d.dueSoon} tone={d.dueSoon > 0 ? "text-warning" : ""} />
+            <Stat label="Sắp quá hạn" value={d.dueSoon} tone={d.dueSoon > 0 ? "text-warning-text" : ""} />
             <Stat label="Còn phải thu" value={vnd(d.outstandingVnd)} />
           </div>
           <p className="text-body-sm text-text-muted">Đã thu tiền trở đi: {d.progress.paidOrBeyondRate}% đơn · Hoàn tất: {d.progress.completedRate}% đơn</p>

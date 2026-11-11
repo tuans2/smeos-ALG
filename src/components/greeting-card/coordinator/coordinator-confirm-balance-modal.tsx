@@ -54,7 +54,7 @@ export function CoordinatorConfirmBalanceModal({
 
   return (
     <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
-      title={<span className="flex items-center gap-2"><Banknote size={20} className="text-warning shrink-0" /> Xác nhận Nhận Đủ Tiền Lần 2 — #{orderCode}</span>}>
+      title={<span className="flex items-center gap-2"><Banknote size={20} className="text-warning-text shrink-0" /> Xác nhận Nhận Đủ Tiền Lần 2 — #{orderCode}</span>}>
       <form onSubmit={handleConfirm} className="flex flex-col gap-4">
 
         <p className="text-body-sm text-text-muted">
@@ -82,7 +82,7 @@ export function CoordinatorConfirmBalanceModal({
         )}
 
         {!proofUrl && (
-          <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 text-caption text-warning">
+          <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 text-caption text-warning-text">
             Khách chưa tải ảnh bill lần 2. Hãy đối soát tài khoản ngân hàng trực tiếp trước khi xác nhận.
           </div>
         )}

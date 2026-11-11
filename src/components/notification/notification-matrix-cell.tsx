@@ -105,7 +105,7 @@ export function NotificationMatrixCell({
           className="flex items-center"
           title={`🔒 Khóa cứng bởi ${TIER_LABELS[cell.hardLockedBy]}${cell.hardLockReason ? `: ${cell.hardLockReason}` : ""}`}
         >
-          <Lock size={11} className="text-warning" />
+          <Lock size={11} className="text-warning-text" />
         </div>
       )}
 
@@ -117,7 +117,7 @@ export function NotificationMatrixCell({
             variant="ghost"
             size="sm"
             onClick={() => setShowLockMenu(!showLockMenu)}
-            className={`h-6 w-6 p-0 ${isOwnLocked ? "text-warning" : "text-text-muted hover:text-text"}`}
+            className={`h-6 w-6 p-0 ${isOwnLocked ? "text-warning-text" : "text-text-muted hover:text-text"}`}
             title={isOwnLocked ? "Đã khóa cứng — bấm để quản lý" : "Đặt khóa cứng"}
           >
             {isOwnLocked ? <Lock size={11} /> : <Unlock size={11} />}

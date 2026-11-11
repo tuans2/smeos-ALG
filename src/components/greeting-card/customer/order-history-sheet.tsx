@@ -61,7 +61,7 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
                         {m.order?.deliveryDate ? ` · Giao ${dateVi(m.order.deliveryDate)}` : ""}
                         {m.order && m.order.totalVnd > 0 ? ` · ${vnd(m.order.totalVnd)}` : ""}
                       </div>
-                      {!m.available && <div className="text-caption text-warning">Link đã hết hạn</div>}
+                      {!m.available && <div className="text-caption text-warning-text">Link đã hết hạn</div>}
                     </div>
                     {!current && m.available && <ChevronRight size={18} className="shrink-0 text-text-muted" aria-hidden="true" />}
                   </>

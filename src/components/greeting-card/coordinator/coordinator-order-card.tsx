@@ -252,7 +252,7 @@ export function CoordinatorOrderCard({
           </div>
         )}
         {lastFailure && (
-          <div role="status" className="rounded-lg bg-warning-bg px-2 py-1.5 text-caption text-warning">
+          <div role="status" className="rounded-lg bg-warning-bg px-2 py-1.5 text-caption text-warning-text">
             <span className="font-bold">Giao lần {failures.length} chưa thành công:</span> {lastFailure.reasonLabel}
             {lastFailure.note ? ` — ${lastFailure.note}` : ""}. Hẹn lại với khách rồi bấm &ldquo;Giao lại&rdquo;.
           </div>
@@ -269,7 +269,7 @@ export function CoordinatorOrderCard({
 
       {/* Payment status */}
       <div className="flex items-center justify-between text-caption">
-        <span className={isPaid ? "text-success font-bold" : isDeposit ? "text-warning font-bold" : "text-warning font-bold"}>
+        <span className={isPaid ? "text-success font-bold" : isDeposit ? "text-warning-text font-bold" : "text-warning-text font-bold"}>
           {awaitingQuote ? "● Chờ báo giá" : isPaid ? "● Đã thanh toán đủ" : isDeposit ? "● Đã cọc (Chờ TT lần 2)" : depositPending ? `● ${DEPOSIT_PENDING_APPROVAL_NOTE}` : "● Chưa thu tiền"}
         </span>
         {isDelivered && (

@@ -95,7 +95,7 @@ export function VideoConfigCard({
                     <Clock size={11} /> ~{s.targetDurationSeconds}s
                   </span>
                   <span
-                    className="font-semibold text-warning flex items-center gap-0.5"
+                    className="font-semibold text-warning-text flex items-center gap-0.5"
                     title="Credit ghép khi bấm Dựng video — cộng giá clip nhà cung cấp mỗi cảnh"
                   >
                     <Coins size={11} /> từ {renderCredit} cr

@@ -105,7 +105,7 @@ export function OrderNoteField({
         <p
           id={`${id}-count`}
           aria-live="polite"
-          className={`mt-1 text-right text-caption ${value.length >= max ? "text-warning font-bold" : "text-text-muted"}`}
+          className={`mt-1 text-right text-caption ${value.length >= max ? "text-warning-text font-bold" : "text-text-muted"}`}
         >
           {value.length}/{max} ký tự
         </p>

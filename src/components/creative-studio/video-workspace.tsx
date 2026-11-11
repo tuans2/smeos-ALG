@@ -264,7 +264,7 @@ export function VideoWorkspace() {
               {scenePlan.scenes.map((sc) => sc.beat).join(" → ")}.
             </span>
           )}
-          {storyboardNote && <span className="text-warning">{storyboardNote}</span>}
+          {storyboardNote && <span className="text-warning-text">{storyboardNote}</span>}
           {scenes.length > 0 && (
             <span>
               <Button

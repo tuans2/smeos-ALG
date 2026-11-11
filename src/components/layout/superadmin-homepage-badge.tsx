@@ -30,7 +30,7 @@ const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
   },
   TOOLKIT_HOME: {
     label: "🧰 Toolkit Hub",
-    color: "bg-warning-bg text-warning border-warning-border",
+    color: "bg-warning-bg text-warning-text border-warning-border",
   },
   NETWORK_JOURNEY_HOME: {
     label: "Network Home",
@@ -62,7 +62,7 @@ const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
   },
   SALES_WORKSPACE: {
     label: "Sales Workspace",
-    color: "bg-warning-bg text-warning border-warning-border",
+    color: "bg-warning-bg text-warning-text border-warning-border",
   },
   PRODUCT_WORKSPACE: {
     label: "Product Workspace",

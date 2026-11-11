@@ -164,7 +164,7 @@ function BusinessPerformanceBody({ range, aiCreditUsed = 0, shopName }: Business
           </div>
 
           <div className="flex items-center gap-2 text-caption text-text-muted">
-            <Sparkles size={13} className="text-warning shrink-0" />
+            <Sparkles size={13} className="text-warning-text shrink-0" />
             <span>Credit AI đã dùng: <strong className="text-text">{report.aiCreditUsed}</strong> (sinh ảnh, video &amp; trợ lý)</span>
           </div>
 

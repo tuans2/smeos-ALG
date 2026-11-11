@@ -88,7 +88,7 @@ export function ScreenCard({ screen, onCopyRoute, isCopied }: ScreenCardProps) {
         </div>
 
         {screen.isDynamic && (
-          <p className="text-caption text-warning flex items-center gap-1">
+          <p className="text-caption text-warning-text flex items-center gap-1">
             <span>⚠️ Tuyến động có tham số (URL mẫu: {screen.sampleUrl})</span>
           </p>
         )}

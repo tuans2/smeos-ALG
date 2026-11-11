@@ -82,7 +82,7 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
                   <tr key={idx} className="hover:bg-surface-alt/60 transition-colors">
                     <td className="px-3 py-2.5 font-bold text-text whitespace-nowrap">
                       {field.name}
-                      {field.required && <span className="text-warning ml-1 font-bold">*</span>}
+                      {field.required && <span className="text-warning-text ml-1 font-bold">*</span>}
                     </td>
                     <td className="px-3 py-2.5">
                       <Badge className="bg-secondary/20 text-secondary-foreground text-caption font-mono px-1.5 py-0.5">
@@ -114,11 +114,11 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
         </div>
 
         <div className="rounded-xl border border-warning/30 bg-warning-bg p-3.5 space-y-1.5">
-          <div className="flex items-center gap-1.5 text-caption font-bold text-warning">
-            <XCircle className="h-4 w-4 text-warning" />
+          <div className="flex items-center gap-1.5 text-caption font-bold text-warning-text">
+            <XCircle className="h-4 w-4 text-warning-text" />
             <span>Sai lầm cần tránh (Anti-pattern)</span>
           </div>
-          <p className="text-caption leading-relaxed text-warning line-through decoration-warning/60">
+          <p className="text-caption leading-relaxed text-warning-text line-through decoration-warning/60">
             {module.badPractice}
           </p>
         </div>

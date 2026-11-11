@@ -61,7 +61,7 @@ export function BookingDetailModal({
           <span>{isManualBlock ? "Khóa phòng bảo trì" : "Chi tiết đặt phòng"}</span>
           <span
             className={`inline-flex items-center px-2 py-0.5 rounded-full text-caption font-bold ${
-              isManualBlock ? "bg-warning/20 text-warning" : "bg-primary/20 text-primary"
+              isManualBlock ? "bg-warning/20 text-warning-text" : "bg-primary/20 text-primary"
             }`}
           >
             {isManualBlock ? "Nội bộ / Khóa lịch" : "Khách đặt tự động"}

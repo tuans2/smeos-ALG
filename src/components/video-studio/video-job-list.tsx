@@ -119,7 +119,7 @@ export function VideoJobList({
                 <span className="flex items-center gap-1">
                   <Clock size={13} /> {job.duration_seconds}s
                 </span>
-                <span className="font-medium text-warning">
+                <span className="font-medium text-warning-text">
                   {job.cost_credits} credits
                 </span>
               </div>

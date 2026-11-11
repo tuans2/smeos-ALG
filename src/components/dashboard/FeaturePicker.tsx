@@ -243,7 +243,7 @@ export function FeaturePicker({
                   <span className={cn(
                     "font-bold",
                     costWarning === "danger" && "text-danger",
-                    costWarning === "warning" && "text-warning",
+                    costWarning === "warning" && "text-warning-text",
                     costWarning === "safe" && "text-secondary-text"
                   )}>
                     {costWarning === "danger" && "⚠ Hết credit — "}
@@ -341,7 +341,7 @@ function CreditEstimateBadge({
   const bgClass = warning === "danger" ? "bg-danger-bg" : 
                   warning === "warning" ? "bg-warning-bg" : "bg-success-bg";
   const textClass = warning === "danger" ? "text-danger" : 
-                    warning === "warning" ? "text-warning" : "text-primary";
+                    warning === "warning" ? "text-warning-text" : "text-primary";
 
   return (
     <Button variant="ghost"
@@ -636,7 +636,7 @@ function FeatureCard({
                   </Badge>
                   <Badge tone="neutral" className={cn("text-caption h-4 px-1.5", 
                     feature.privacyFloor === "SENSITIVE" && "border-danger/30 text-danger",
-                    feature.privacyFloor === "SHOP" && "border-warning/30 text-warning",
+                    feature.privacyFloor === "SHOP" && "border-warning/30 text-warning-text",
                     feature.privacyFloor === "PUBLIC" && "border-success/30 text-success"
                   )}>
                     {feature.privacyFloor}
@@ -656,7 +656,7 @@ function FeatureCard({
             </div>
 
             {!enabled && depCheck.reason && (
-              <div className="absolute bottom-full left-0 right-0 mb-1.5 px-2.5 py-1.5 rounded-lg bg-warning-bg text-caption text-warning text-center">
+              <div className="absolute bottom-full left-0 right-0 mb-1.5 px-2.5 py-1.5 rounded-lg bg-warning-bg text-caption text-warning-text text-center">
                 {depCheck.reason}
               </div>
             )}

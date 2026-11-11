@@ -191,7 +191,7 @@ export function OccasionCarePanel({
               </span>
             )}
             {urgentCount > 0 && (
-              <span className="ml-2 font-bold text-warning">
+              <span className="ml-2 font-bold text-warning-text">
                 · {urgentCount} dịp trong 3 ngày tới
               </span>
             )}

@@ -22,13 +22,13 @@ export function HumanTakeoverBanner({
   onDismiss,
 }: HumanTakeoverBannerProps) {
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-xl border border-warning/30 bg-warning-bg p-4 text-warning shadow-sm">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-xl border border-warning/30 bg-warning-bg p-4 text-warning-text shadow-sm">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning/20 text-warning">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-warning/20 text-warning-text">
           <AlertCircle size={20} />
         </div>
         <div>
-          <div className="text-caption font-bold uppercase tracking-wider text-warning">
+          <div className="text-caption font-bold uppercase tracking-wider text-warning-text">
             Yêu cầu nhân viên can thiệp: {customerName}
           </div>
           <div className="text-caption text-warning/90 mt-0.5">{reason}</div>
@@ -37,7 +37,7 @@ export function HumanTakeoverBanner({
 
       <div className="flex items-center gap-2 shrink-0">
         {onDismiss && (
-          <Button variant="ghost" size="sm" onClick={onDismiss} className="text-warning hover:text-warning/70 text-caption">
+          <Button variant="ghost" size="sm" onClick={onDismiss} className="text-warning-text hover:text-warning/70 text-caption">
             Bỏ qua
           </Button>
         )}

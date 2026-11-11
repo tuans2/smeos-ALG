@@ -90,7 +90,7 @@ export function BranchPartnerList() {
                       <Phone size={11} /> {b.phone}
                     </span>
                   )}
-                  <span className={`inline-flex items-center gap-1 ${b.telegramLinked ? "text-success" : "text-warning"}`}>
+                  <span className={`inline-flex items-center gap-1 ${b.telegramLinked ? "text-success" : "text-warning-text"}`}>
                     <Bot size={11} />
                     {b.telegramLinked ? "Telegram đã liên kết" : b.telegramChatId ? "Telegram chưa liên kết" : "Chưa có Telegram"}
                   </span>

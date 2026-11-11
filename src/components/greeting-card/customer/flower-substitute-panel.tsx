@@ -63,7 +63,7 @@ export function FlowerSubstitutePanel({ orderCode, proof, flower, onChanged }: {
 
   return (
     <section aria-labelledby="flower-substitute-title" className="rounded-2xl border border-warning/30 bg-warning-bg p-4 flex flex-col gap-3">
-      <h3 id="flower-substitute-title" className="text-body font-extrabold text-warning flex items-center gap-2">
+      <h3 id="flower-substitute-title" className="text-body font-extrabold text-warning-text flex items-center gap-2">
         <Shuffle size={18} aria-hidden="true" /> Tiệm xin phép đổi một thành phần
       </h3>
       <p className="text-body-sm text-text">

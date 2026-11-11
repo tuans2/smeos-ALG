@@ -26,7 +26,7 @@ export function PaymentCheckPanel({ order }: { order: AdminOrder }) {
           </div>
           <div className="flex gap-1">
             <dt className="text-text-muted">Giá chốt:</dt>
-            <dd className={`font-extrabold ${differs ? "text-warning" : "text-text"}`}>{vnd(c.agreedTotalVnd)}</dd>
+            <dd className={`font-extrabold ${differs ? "text-warning-text" : "text-text"}`}>{vnd(c.agreedTotalVnd)}</dd>
           </div>
         </div>
         {c.promotion && (

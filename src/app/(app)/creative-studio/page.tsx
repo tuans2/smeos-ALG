@@ -413,8 +413,8 @@ export default function CreativeStudioPage() {
 
         <div className="flex flex-1 flex-col overflow-y-auto p-4 md:p-6 gap-6">
           {(imageLoadError || reportLoadError) && (
-            <div className="w-full max-w-3xl mx-auto rounded-xl border border-warning/30 bg-warning/10 p-3 flex items-start gap-2 text-meta text-warning">
-              <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
+            <div className="w-full max-w-3xl mx-auto rounded-xl border border-warning/30 bg-warning/10 p-3 flex items-start gap-2 text-meta text-warning-text">
+              <AlertTriangle size={16} className="text-warning-text shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 {imageLoadError && <p>{imageLoadError}</p>}
                 {reportLoadError && <p>{reportLoadError}</p>}
@@ -446,7 +446,7 @@ export default function CreativeStudioPage() {
               {activeScope !== "in" && (
                 <div
                   className={`w-full max-w-3xl mx-auto rounded-xl border p-3 text-meta ${
-                    activeScope === "out" ? "border-border bg-surface-alt text-text" : "border-warning/30 bg-warning/10 text-warning"
+                    activeScope === "out" ? "border-border bg-surface-alt text-text" : "border-warning/30 bg-warning/10 text-warning-text"
                   }`}
                 >
                   {activeScope === "out"

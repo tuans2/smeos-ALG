@@ -36,7 +36,7 @@ type MoTaBoMay = {
 
 const NHAN_TRANG_THAI: Record<TrangThai, { chu: string; lop: string }> = {
   san_xuat: { chu: "Đã chạy thật", lop: "bg-success-bg text-primary" },
-  thu_nghiem: { chu: "Chưa đo độ chính xác", lop: "bg-warning-bg text-warning" },
+  thu_nghiem: { chu: "Chưa đo độ chính xác", lop: "bg-warning-bg text-warning-text" },
   chua_san_sang: { chu: "Chưa sẵn sàng", lop: "bg-surface-alt text-text-muted" },
 }
 
@@ -119,7 +119,7 @@ export default function BoMayPage() {
         </div>
 
         {loi && (
-          <div className="rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-caption font-medium text-warning">
+          <div className="rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-caption font-medium text-warning-text">
             {loi}
           </div>
         )}
@@ -198,8 +198,8 @@ export default function BoMayPage() {
 
         {danhSach && (
           <div className="flex items-start gap-2 rounded-xl bg-warning-bg p-3.5">
-            <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning" />
-            <div className="text-caption leading-relaxed text-warning">
+            <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning-text" />
+            <div className="text-caption leading-relaxed text-warning-text">
               Chỉ bộ &quot;Đầy đủ&quot; đã chạy trên ảnh thật. Hai bộ còn lại chưa được chấm điểm trên
               bộ ảnh chuẩn, nên chưa có căn cứ nói bộ nào đếm đúng hơn. Đổi bộ máy được ghi vào nhật ký
               kiểm toán để về sau đối chiếu được kết quả của từng giai đoạn.
@@ -274,7 +274,7 @@ export default function BoMayPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 flex flex-col gap-1.5 text-warning">
+          <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 flex flex-col gap-1.5 text-warning-text">
             <div className="font-bold flex items-center gap-1.5">
               <AlertTriangle size={14} /> Lưu ý trước khi đổi:
             </div>

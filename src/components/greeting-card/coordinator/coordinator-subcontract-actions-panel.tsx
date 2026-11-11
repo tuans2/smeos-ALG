@@ -55,7 +55,7 @@ function NodeBadge({ done, label }: { done: boolean; label: string }) {
       className={`inline-flex items-center gap-1 text-caption font-bold px-2 py-0.5 rounded-full ${
         done
           ? "bg-success/15 text-success border border-success/30"
-          : "bg-warning/15 text-warning border border-warning/30"
+          : "bg-warning/15 text-warning-text border border-warning/30"
       }`}
     >
       {done ? <CheckCircle2 size={10} /> : <Clock size={10} />}
@@ -251,7 +251,7 @@ function M3SetShipperAction({
         variant="outline"
         size="sm"
         onClick={() => setOpen(!open)}
-        className="h-8 text-caption gap-1.5 border-warning-border text-warning hover:bg-warning-bg"
+        className="h-8 text-caption gap-1.5 border-warning-border text-warning-text hover:bg-warning-bg"
       >
         <Truck size={13} />
         Nhập thông tin Shipper (Điều phối)
@@ -393,7 +393,7 @@ function M4ConfirmDeliveryAction({
           size="sm"
           disabled={state === "loading"}
           onClick={() => setMode(mode === "no_photo" ? "idle" : "no_photo")}
-          className="h-8 text-caption gap-1.5 border-warning/40 text-warning hover:bg-warning/5"
+          className="h-8 text-caption gap-1.5 border-warning/40 text-warning-text hover:bg-warning/5"
         >
           <AlertTriangle size={13} />
           Xác nhận không ảnh
@@ -402,7 +402,7 @@ function M4ConfirmDeliveryAction({
 
       {mode === "no_photo" && (
         <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-warning/30 bg-warning/5">
-          <p className="text-caption text-warning font-bold">
+          <p className="text-caption text-warning-text font-bold">
             ⚠️ Xác nhận giao hàng không có ảnh giao hàng. Vui lòng ghi rõ lý do:
           </p>
           <Textarea
@@ -418,7 +418,7 @@ function M4ConfirmDeliveryAction({
             variant="outline"
             disabled={state === "loading"}
             onClick={confirmWithoutPhoto}
-            className="h-8 text-caption gap-1.5 border-warning/40 text-warning"
+            className="h-8 text-caption gap-1.5 border-warning/40 text-warning-text"
           >
             {state === "loading" ? "Đang xác nhận…" : "✓ Xác nhận không ảnh"}
           </Button>
@@ -485,7 +485,7 @@ export function CoordinatorSubcontractActionsPanel({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <span className="text-caption font-bold text-text flex items-center gap-1.5">
-            <Truck size={13} className="text-warning" />
+            <Truck size={13} className="text-warning-text" />
             Bước 3 — Thông tin shipper
           </span>
           <NodeBadge done={m3Done} label="Chờ shipper" />

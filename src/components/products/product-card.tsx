@@ -33,7 +33,7 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
   }
   if (status === "PAUSED") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold text-warning">
+      <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold text-warning-text">
         <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
         Tạm ngưng
       </span>
@@ -41,7 +41,7 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
   }
   if (status === "ARCHIVED") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-warning-bg px-2 py-0.5 text-caption font-bold text-warning">
+      <span className="inline-flex items-center gap-1 rounded-full bg-warning-bg px-2 py-0.5 text-caption font-bold text-warning-text">
         <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
         Đã lưu trữ
       </span>
@@ -67,7 +67,7 @@ export function ProposalBadge({ attributes }: { attributes?: Record<string, unkn
   const label = status ? PROPOSAL_LABEL[status] : undefined
   if (!label) return null
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-caption font-bold ${status === "pending" ? "bg-warning-bg text-warning" : "bg-danger-bg text-danger"}`}>
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-caption font-bold ${status === "pending" ? "bg-warning-bg text-warning-text" : "bg-danger-bg text-danger"}`}>
       {label}
     </span>
   )

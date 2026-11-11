@@ -243,7 +243,7 @@ function SaleKanbanCard({
                 Quá hạn
               </span>
             ) : tier === "URGENT" ? (
-              <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse motion-reduce:animate-none">
+              <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning-text shrink-0 animate-pulse motion-reduce:animate-none">
                 Sắp đến hạn
               </span>
             ) : null}
@@ -262,7 +262,7 @@ function SaleKanbanCard({
               tier === "OVERDUE"
                 ? "bg-danger-bg text-danger border border-danger/30"
                 : tier === "URGENT"
-                ? "bg-warning-bg text-warning border border-warning/40"
+                ? "bg-warning-bg text-warning-text border border-warning/40"
                 : "bg-primary/10 text-primary border border-primary/20"
             }`}
           >
@@ -300,7 +300,7 @@ function SaleKanbanCard({
         <p
           role={mine ? "alert" : undefined}
           className={`flex items-start gap-1.5 rounded-lg p-2 text-caption font-semibold ${
-            mine ? "bg-danger-bg text-danger" : "bg-warning-bg text-warning"
+            mine ? "bg-danger-bg text-danger" : "bg-warning-bg text-warning-text"
           }`}
         >
           <AlertTriangle size={13} className="mt-0.5 shrink-0" aria-hidden="true" />

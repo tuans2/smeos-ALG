@@ -298,7 +298,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
           {/* Rào chắn từ cấm */}
           <div className="pt-2 border-t border-border">
             <div className="flex items-center gap-1.5 mb-2">
-              <ShieldAlert size={16} className="text-warning" />
+              <ShieldAlert size={16} className="text-warning-text" />
               <label className="text-body-sm font-bold text-text">
                 Rào chắn từ ngữ cấm kỵ (AI Guardrails)
               </label>

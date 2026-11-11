@@ -212,7 +212,7 @@ export function MediaExportModal({
           </p>
 
           {validation.warning && (
-            <div className="text-caption font-semibold text-warning bg-warning-bg p-2 rounded-lg border border-warning/30">
+            <div className="text-caption font-semibold text-warning-text bg-warning-bg p-2 rounded-lg border border-warning/30">
               ⚠️ {validation.warning}
             </div>
           )}

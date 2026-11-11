@@ -31,7 +31,7 @@ export function JourneyActionCards({
       {hasNoCatalog && (
         <div className="bg-warning-bg/50 border border-warning/30 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-warning/15 text-warning flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-10 h-10 rounded-xl bg-warning/15 text-warning-text flex items-center justify-center shrink-0 mt-0.5">
               <BookOpen size={20} />
             </div>
             <div>

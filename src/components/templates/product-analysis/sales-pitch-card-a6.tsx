@@ -235,7 +235,7 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
 
           {/* Custom note if present */}
           {activePitch.customNote && (
-            <div className="text-caption rounded-lg bg-warning-bg border border-warning/25 p-2 text-warning">
+            <div className="text-caption rounded-lg bg-warning-bg border border-warning/25 p-2 text-warning-text">
               <strong>Ưu đãi riêng:</strong> {activePitch.customNote}
             </div>
           )}

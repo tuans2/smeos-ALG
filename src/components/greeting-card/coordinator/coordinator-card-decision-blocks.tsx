@@ -96,7 +96,7 @@ export function CoordinatorCardDecisionBlocks({
       {/* 1 Cửa hàng: Đơn chờ Điều hành xác nhận đơn (Gate 1b) */}
       {!isChain && order.status === "CONFIRMED" && (order.production_status === "WAITING" || !order.production_status) && (
         <div className="flex flex-col gap-2 p-3 rounded-xl border-2 border-dashed border-warning/40 bg-warning-bg">
-          <p className="text-body-sm font-bold text-warning text-center flex items-center justify-center gap-1.5">
+          <p className="text-body-sm font-bold text-warning-text text-center flex items-center justify-center gap-1.5">
             <ShieldCheck size={16} />
             Đơn hàng chờ Điều hành xác nhận đơn
           </p>
@@ -172,7 +172,7 @@ export function CoordinatorCardDecisionBlocks({
           requireFullBeforeDispatch chỉ ảnh hưởng đến việc có chặn dispatch hay không — không ẩn xác nhận. */}
       {isDepositOrder && isReadyForDispatch && hasBalanceReported && (
         <div className="flex flex-col gap-2 p-3 rounded-xl border-2 border-dashed border-warning/50 bg-warning-bg/40">
-          <p className="text-body-sm font-bold text-warning text-center flex items-center justify-center gap-1.5">
+          <p className="text-body-sm font-bold text-warning-text text-center flex items-center justify-center gap-1.5">
             <Banknote size={16} />
             Khách đã báo chuyển khoản Lần 2 — Chờ Xác nhận
           </p>
@@ -183,7 +183,7 @@ export function CoordinatorCardDecisionBlocks({
             )}
           </p>
           {balanceConfirmBlocker ? (
-            <p role="note" className="text-caption font-semibold text-warning text-center">Chờ Điều hành xác nhận — tiệm chỉ cho Điều hành xác nhận thanh toán lần 2</p>
+            <p role="note" className="text-caption font-semibold text-warning-text text-center">Chờ Điều hành xác nhận — tiệm chỉ cho Điều hành xác nhận thanh toán lần 2</p>
           ) : (
           <Button
             type="button"
@@ -209,7 +209,7 @@ export function CoordinatorCardDecisionBlocks({
       {isDepositOrder && isReadyForDispatch && !hasBalanceReported && (
         <div className="flex flex-col gap-2 p-2.5 rounded-xl border border-warning/40 bg-warning-bg/30">
           <div className="flex items-center justify-between text-caption">
-            <span className="font-bold text-warning flex items-center gap-1">
+            <span className="font-bold text-warning-text flex items-center gap-1">
               <Banknote size={14} /> Chờ thanh toán Lần 2:
             </span>
             <span className="font-extrabold text-text">{balanceVnd.toLocaleString("vi-VN")}đ</span>
@@ -236,7 +236,7 @@ export function CoordinatorCardDecisionBlocks({
                   })
                 }
               }}
-              className="h-8 text-caption font-bold gap-1 border-warning/40 text-warning hover:bg-warning/10 w-full"
+              className="h-8 text-caption font-bold gap-1 border-warning/40 text-warning-text hover:bg-warning/10 w-full"
             >
               {copied ? <Check size={13} className="text-success" /> : <Copy size={13} />}
               <span>{copied ? "Đã chép Zalo" : "Chép tin nhắc lần 2"}</span>

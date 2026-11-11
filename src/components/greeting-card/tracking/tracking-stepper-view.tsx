@@ -26,7 +26,7 @@ interface TrackingStepperViewProps {
 }
 
 /** Cùng một quy trình ở mọi tab: mỗi bước ghi rõ phần việc của ai (Sale · Điều hành · Điều phối). */
-const OWNER_TEXT: Record<StepOwner, string> = { SALE: "text-info", ADMIN: "text-warning", COORDINATOR: "text-success" }
+const OWNER_TEXT: Record<StepOwner, string> = { SALE: "text-info", ADMIN: "text-warning-text", COORDINATOR: "text-success" }
 const ownerOf = (id: TrackingPipelineStepId): StepOwner | null => STEP_SLA_RULES.find((r) => r.stepId === id)?.owner ?? null
 
 function getStepIcon(stepId: TrackingPipelineStepId, size = 14) {

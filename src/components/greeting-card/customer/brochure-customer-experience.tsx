@@ -223,7 +223,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       }
     />
     {preview && (
-      <p className="bg-warning-bg px-4 py-2 text-center text-body-sm text-warning">
+      <p className="bg-warning-bg px-4 py-2 text-center text-body-sm text-warning-text">
         Bạn đang xem trước link của khách — thao tác ở đây không được lưu cho khách.
       </p>
     )}

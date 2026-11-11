@@ -39,8 +39,8 @@ export function AutoApprovePanel({ autoApprove, onToggle }: AutoApprovePanelProp
       {autoApprove && (
         <div className="rounded-xl bg-warning-bg border border-warning/40 p-4">
           <div className="flex items-start gap-2.5">
-            <AlertTriangle size={18} className="mt-0.5 flex-shrink-0 text-warning" />
-            <div className="text-meta leading-relaxed text-warning">
+            <AlertTriangle size={18} className="mt-0.5 flex-shrink-0 text-warning-text" />
+            <div className="text-meta leading-relaxed text-warning-text">
               Bài chờ quá 24 giờ sẽ tự đăng. Đổi giá, khuyến mại, hoặc thông tin có tính pháp lý/y tế
               không bao giờ tự đăng dù bật công tắc này (tuân thủ luật an toàn Aegis & Cẩm nang hệ thống).
             </div>

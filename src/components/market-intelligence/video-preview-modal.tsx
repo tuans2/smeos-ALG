@@ -114,7 +114,7 @@ export function VideoPreviewModal({ isOpen, onClose, data }: VideoPreviewModalPr
             )}
             {data.metrics && (
               <span>
-                Chỉ số: <span className="text-warning font-semibold">{data.metrics}</span>
+                Chỉ số: <span className="text-warning-text font-semibold">{data.metrics}</span>
               </span>
             )}
           </div>

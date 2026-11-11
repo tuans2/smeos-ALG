@@ -29,7 +29,7 @@ export function SubcontractRecipientContact({
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface border border-border">
               {isPhoneMasked ? (
                 <>
-                  <Lock size={12} className="text-warning" />
+                  <Lock size={12} className="text-warning-text" />
                   <span className="font-mono text-caption font-bold text-text tracking-wider">
                     {recipientPhone}
                   </span>

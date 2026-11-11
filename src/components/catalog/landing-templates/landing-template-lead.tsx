@@ -170,7 +170,7 @@ export function LandingTemplateLead({
       {/* 3 điểm dịch vụ trung tính — không cam kết khi tiệm chưa khai */}
       <div className={`pt-3 border-t border-border/50 grid grid-cols-3 gap-2 text-caption text-text-muted text-center ${isLuxury ? "font-display" : ""}`}>
         <div className="flex flex-col items-center gap-1">
-          <Camera size={14} className={isFestive ? "text-primary" : "text-warning"} />
+          <Camera size={14} className={isFestive ? "text-primary" : "text-warning-text"} />
           <span className="font-medium">Xem mẫu thật</span>
         </div>
         <div className="flex flex-col items-center gap-1">

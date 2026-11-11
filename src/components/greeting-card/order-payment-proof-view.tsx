@@ -63,7 +63,7 @@ function ProofVerificationCard({
               </span>
             )}
             {analysis?.status === "AMOUNT_MISMATCH" && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-warning-bg text-warning border border-warning/40">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-warning-bg text-warning-text border border-warning/40">
                 <AlertTriangle size={11} />
                 <span>Lệch số tiền</span>
               </span>
@@ -94,9 +94,9 @@ function ProofVerificationCard({
           {analysis?.status === "UNREADABLE" && (
             // Không đối chiếu tự động được (AI không đọc được ảnh, hoặc không chạy vì ảnh chứa dữ liệu cá nhân)
             <div className="flex items-start gap-1.5 p-2 rounded-lg bg-warning-bg border border-warning/30">
-              <AlertTriangle size={12} className="text-warning shrink-0 mt-0.5" />
+              <AlertTriangle size={12} className="text-warning-text shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
-                <span className="text-caption font-bold text-warning">Chưa đối chiếu tự động</span>
+                <span className="text-caption font-bold text-warning-text">Chưa đối chiếu tự động</span>
                 <span className="text-caption text-text-muted leading-relaxed">
                   Hệ thống chưa đọc được số liệu trên ảnh này. Vui lòng xem ảnh và đối chiếu với sao kê ngân hàng trước khi xác nhận.
                 </span>

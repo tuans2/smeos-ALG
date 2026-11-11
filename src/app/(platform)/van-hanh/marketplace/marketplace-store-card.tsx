@@ -91,7 +91,7 @@ export function MarketplaceStoreCard({ store, onQuickView, selection }: Marketpl
             )}
             {scoreAndTier.totalScore && (
               <span className="flex items-center gap-1 rounded-full border border-border bg-surface px-2 py-0.5 text-caption font-bold text-text">
-                <Sparkles className="h-3 w-3 text-warning" />
+                <Sparkles className="h-3 w-3 text-warning-text" />
                 {scoreAndTier.totalScore}
               </span>
             )}

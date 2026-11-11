@@ -129,7 +129,7 @@ export default function AuditLogsPage() {
 
       {/* Thông báo lỗi */}
       {tab === "org" && error && (
-        <div className="flex items-center gap-2 p-3 text-caption bg-warning-bg text-warning border border-warning/30 rounded-xl">
+        <div className="flex items-center gap-2 p-3 text-caption bg-warning-bg text-warning-text border border-warning/30 rounded-xl">
           <AlertCircle size={15} />
           <span>{error}</span>
         </div>

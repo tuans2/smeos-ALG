@@ -139,7 +139,7 @@ export function VideoCreateModal({
                     <span className="flex items-center gap-1">
                       <Clock size={11} /> ~{spec.targetDurationSeconds}s
                     </span>
-                    <span className="font-semibold text-warning flex items-center gap-0.5">
+                    <span className="font-semibold text-warning-text flex items-center gap-0.5">
                       <Coins size={11} /> {spec.defaultCreditCost} credits
                     </span>
                   </div>
@@ -243,7 +243,7 @@ export function VideoCreateModal({
               {format === "SLIDESHOW" ? "Slideshow cục bộ chi phí $0 API" : "Bao gồm chi phí AI Dựng hình & Giọng đọc"}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-body-sm font-extrabold text-warning">
+          <div className="flex items-center gap-1.5 text-body-sm font-extrabold text-warning-text">
             <Coins size={15} />
             {currentSpec?.defaultCreditCost} Credits
           </div>

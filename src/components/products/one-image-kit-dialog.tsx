@@ -119,7 +119,7 @@ export function OneImageKitDialog({ open, onOpenChange }: { open: boolean; onOpe
         )}
         {phase === "result" && result && out && (
           <div className="flex flex-col gap-2">
-            <p role="status" className={result.status === "READY" ? "font-semibold text-success" : "font-semibold text-warning"}>
+            <p role="status" className={result.status === "READY" ? "font-semibold text-success" : "font-semibold text-warning-text"}>
               {result.status === "READY" ? "Đã tạo đủ 5 đầu ra" : `Đã tạo ${kitOutputCount(out)}/5 — dừng ở bước ${KIT_STEP_LABEL[result.failedStep]}`}
             </p>
             {result.error && <p className="text-caption text-text-muted">{result.error}</p>}

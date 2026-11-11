@@ -127,7 +127,7 @@ export function TrackingPaymentCard({
                 </p>
               )}
               {!reported && !canReport && (
-                <p className="text-caption text-warning font-medium text-center">
+                <p className="text-caption text-warning-text font-medium text-center">
                   Vui lòng tải ảnh chuyển khoản để xác nhận
                 </p>
               )}

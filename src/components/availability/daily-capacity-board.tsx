@@ -161,7 +161,7 @@ export function DailyCapacityBoard({
                   percentFilled >= 100
                     ? "bg-danger/15 text-danger"
                     : percentFilled >= 75
-                    ? "bg-warning/15 text-warning"
+                    ? "bg-warning/15 text-warning-text"
                     : "bg-success/15 text-success"
                 }`}
               >

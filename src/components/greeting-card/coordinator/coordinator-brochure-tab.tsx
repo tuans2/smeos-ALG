@@ -226,7 +226,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
         </div>
       )}
       {board.data?.truncated && (
-        <p role="status" className="text-center text-caption text-warning">Có quá nhiều đơn — chọn một ngày giao để xem đủ.</p>
+        <p role="status" className="text-center text-caption text-warning-text">Có quá nhiều đơn — chọn một ngày giao để xem đủ.</p>
       )}
       {board.error && <p role="alert" className="text-center text-caption text-danger">{board.error.message}</p>}
 

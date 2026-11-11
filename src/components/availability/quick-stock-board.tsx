@@ -71,7 +71,7 @@ export function QuickStockBoard({ products }: QuickStockBoardProps) {
                 let label = "Còn hàng"
 
                 if (status === "LOW_STOCK") {
-                  badgeColor = "bg-warning/15 text-warning"
+                  badgeColor = "bg-warning/15 text-warning-text"
                   Icon = AlertTriangle
                   label = "Sắp hết hàng"
                 } else if (status === "OUT_OF_STOCK") {

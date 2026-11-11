@@ -1478,7 +1478,7 @@ export default function TaiAnhPage() {
                 <M01bGuidanceCard />
 
                 {!canH5 && (
-                  <div className="max-w-xl mx-auto w-full rounded-xl border border-warning/30 bg-warning-bg p-3 text-body-sm text-warning">
+                  <div className="max-w-xl mx-auto w-full rounded-xl border border-warning/30 bg-warning-bg p-3 text-body-sm text-warning-text">
                     Tài khoản của bạn chưa có quyền H5 (sinh dữ liệu bán hàng). Vui lòng liên hệ quản trị viên.
                   </div>
                 )}

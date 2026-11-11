@@ -131,7 +131,7 @@ export default function SucKhoeHeThongPage() {
 
       <Card className="p-4 rounded-2xl shadow-xs">
         <p className="mb-3 flex items-center gap-2 text-body-sm font-semibold">
-          <AlertTriangle className="h-4 w-4 text-warning" /> Tác vụ tồn đọng (chỉ đọc)
+          <AlertTriangle className="h-4 w-4 text-warning-text" /> Tác vụ tồn đọng (chỉ đọc)
         </p>
         <div className="flex flex-col divide-y divide-border">
           {health.stuckJobs.map((job) => (

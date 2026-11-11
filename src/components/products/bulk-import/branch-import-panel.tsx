@@ -172,9 +172,9 @@ export function BranchImportPanel() {
 
       {/* Lưu ý quan trọng về Telegram DM */}
       <div className="p-4 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-3">
-        <Bot size={18} className="text-warning shrink-0 mt-0.5" />
+        <Bot size={18} className="text-warning-text shrink-0 mt-0.5" />
         <div className="text-caption text-text leading-relaxed">
-          <strong className="block text-body-sm font-bold mb-1 text-warning">
+          <strong className="block text-body-sm font-bold mb-1 text-warning-text">
             📱 Về cột "Telegram ID riêng / Nhóm"
           </strong>
           <ul className="space-y-1 text-text-muted">

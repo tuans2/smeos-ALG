@@ -200,7 +200,7 @@ export function PlatformFeedPreview({
           </span>
           <div className="flex items-center gap-1.5">
             {post.is_mock_media && (
-              <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-warning-bg text-warning border border-warning/30 flex items-center gap-1">
+              <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-warning-bg text-warning-text border border-warning/30 flex items-center gap-1">
                 <span>🖼️</span> Ảnh mẫu (Mock Media)
               </span>
             )}

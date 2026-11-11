@@ -124,7 +124,7 @@ export function StepCatalog(props: StepCatalogProps) {
                   <span
                     className={cn(
                       "mt-2 inline-flex rounded-full px-2 py-0.5 text-caption font-semibold",
-                      cat.itemCount > 0 ? "bg-success-bg text-success" : "bg-warning-bg text-warning",
+                      cat.itemCount > 0 ? "bg-success-bg text-success" : "bg-warning-bg text-warning-text",
                     )}
                   >
                     {cat.itemCount > 0

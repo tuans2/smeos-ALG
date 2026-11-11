@@ -336,7 +336,7 @@ export function MarketingWorkspace() {
               onClick={() => router.push("/video" as Route)}
               className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-bg text-warning">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-bg text-warning-text">
                 <Video size={20} aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">

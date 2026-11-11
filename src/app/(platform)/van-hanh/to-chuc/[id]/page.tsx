@@ -130,7 +130,7 @@ export default function ChiTietToChucPage() {
       {/* Khối cảnh báo yêu cầu chuyển đổi mô hình đang chờ duyệt */}
       {org.pendingModelChange && (
         <Card className="p-4 border-2 border-warning/40 bg-warning-bg rounded-2xl space-y-3">
-          <div className="flex items-center gap-2 text-warning font-bold text-body-sm">
+          <div className="flex items-center gap-2 text-warning-text font-bold text-body-sm">
             <Clock size={16} />
             <span>Yêu cầu chuyển đổi mô hình cần duyệt</span>
           </div>

@@ -168,7 +168,7 @@ export function NotificationMatrixPage({
             </span>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-alt border border-border">
-            <Shield size={12} className="text-warning" />
+            <Shield size={12} className="text-warning-text" />
             <span className="text-caption font-bold text-text">
               {hardLockCount} khóa cứng
             </span>
@@ -233,7 +233,7 @@ export function NotificationMatrixPage({
         {/* Hard Lock Legend */}
         {canManageHardLocks && (
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-warning-bg border border-warning-border">
-            <Lock size={12} className="text-warning" />
+            <Lock size={12} className="text-warning-text" />
             <span className="text-caption text-warning-text">
               Bạn có quyền khóa cứng
             </span>

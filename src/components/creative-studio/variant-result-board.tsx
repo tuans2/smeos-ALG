@@ -123,7 +123,7 @@ export function VariantResultBoard({
       )}
 
       {judgmentB === "warning" && variantIntegrity && (
-        <div className="w-full rounded-xl border-2 border-warning bg-warning-bg px-4 py-3 text-body-sm text-warning">
+        <div className="w-full rounded-xl border-2 border-warning bg-warning-bg px-4 py-3 text-body-sm text-warning-text">
           Lõi chủ thể lệch nhẹ so với Master Image ({(variantIntegrity.subject_pixel_identity * 100).toFixed(2)}%). Xem kỹ ảnh trước khi duyệt.
         </div>
       )}

@@ -364,7 +364,7 @@ export default function VideoStudioPage() {
                 </div>
                 <div className="text-right">
                   <span className="text-caption text-text-muted block">Hạn mức dự toán</span>
-                  <span className="text-body-sm font-extrabold text-warning">{activeJob.cost_credits} credits</span>
+                  <span className="text-body-sm font-extrabold text-warning-text">{activeJob.cost_credits} credits</span>
                 </div>
               </Card>
 

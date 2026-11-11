@@ -41,7 +41,7 @@ export default function DangKyThanhCongPage() {
           <div className="space-y-3 text-left">
             <div className="flex items-start gap-3 p-3 rounded-xl bg-warning-bg border border-warning-border">
               <div className="mt-0.5 shrink-0">
-                <Clock size={16} className="text-warning" />
+                <Clock size={16} className="text-warning-text" />
               </div>
               <div>
                 <p className="text-caption font-semibold text-warning-text">Chờ xét duyệt</p>

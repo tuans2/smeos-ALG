@@ -40,10 +40,10 @@ export function ImportPreview({ rows, stats, isImporting, progressPhase, driveTh
               <span className="text-primary font-bold">☁️ Đã gắn Google Drive: <b>{stats.driveSynced}</b></span>
             )}
             {stats.noImage > 0 && (
-              <span className="text-warning">🟡 Chưa có ảnh: <b>{stats.noImage}</b></span>
+              <span className="text-warning-text">🟡 Chưa có ảnh: <b>{stats.noImage}</b></span>
             )}
             {stats.notDriveLinks > 0 && (
-              <span className="text-warning" title="Cột ảnh Drive đang chứa link trang web, không lấy được ảnh. Hãy kéo thư mục ảnh vào hoặc thay bằng link thư mục Google Drive.">
+              <span className="text-warning-text" title="Cột ảnh Drive đang chứa link trang web, không lấy được ảnh. Hãy kéo thư mục ảnh vào hoặc thay bằng link thư mục Google Drive.">
                 ⚠️ Link không phải Google Drive: <b>{stats.notDriveLinks}</b>
               </span>
             )}
@@ -125,7 +125,7 @@ export function ImportPreview({ rows, stats, isImporting, progressPhase, driveTh
                             target="_blank"
                             rel="noopener noreferrer"
                             className={unavailable
-                              ? "flex h-12 w-12 flex-col items-center justify-center rounded-lg border border-warning/40 bg-warning/5 text-warning hover:bg-warning/10 transition-colors"
+                              ? "flex h-12 w-12 flex-col items-center justify-center rounded-lg border border-warning/40 bg-warning/5 text-warning-text hover:bg-warning/10 transition-colors"
                               : "flex h-12 w-12 flex-col items-center justify-center rounded-lg border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"}
                             title={unavailable
                               ? "Không xem được ảnh: link Drive không đúng dạng thư mục/tệp, thư mục trống hoặc chưa chia sẻ công khai (Nhấp để mở)"
@@ -178,7 +178,7 @@ export function ImportPreview({ rows, stats, isImporting, progressPhase, driveTh
                         </span>
                       )}
                       {row.status === "NO_IMAGE" && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-warning-bg px-2 py-0.5 text-caption font-bold text-warning">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-warning-bg px-2 py-0.5 text-caption font-bold text-warning-text">
                           Chưa có ảnh
                         </span>
                       )}

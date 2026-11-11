@@ -300,7 +300,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       {order.verified === false && <TrackingVerifyForm orderCode={orderCode} onVerified={setLast4} />}
       {order.deliveryFailure && (
         <div role="status" className="rounded-2xl border border-warning/30 bg-warning-bg p-4 flex flex-col gap-1 text-body-sm">
-          <p className="font-extrabold text-warning">Lần giao {order.deliveryFailure.attempts > 1 ? `thứ ${order.deliveryFailure.attempts} ` : ""}chưa thành công: {order.deliveryFailure.reasonLabel}</p>
+          <p className="font-extrabold text-warning-text">Lần giao {order.deliveryFailure.attempts > 1 ? `thứ ${order.deliveryFailure.attempts} ` : ""}chưa thành công: {order.deliveryFailure.reasonLabel}</p>
           {order.deliveryFailure.note && <p className="text-text">Shipper ghi: {order.deliveryFailure.note}</p>}
           {order.deliveryFailure.feeVnd > 0 && <p className="text-text">Phí giao lại: {order.deliveryFailure.feeVnd.toLocaleString("vi-VN")}đ (đã cộng vào đơn).</p>}
           <p className="text-text-muted">
@@ -329,7 +329,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
         </div>
         <div className="flex justify-between">
           <span>Thanh toán:</span>
-          <span className={`font-bold ${isPaid || order.paidVnd > 0 ? "text-success" : "text-warning"}`}>
+          <span className={`font-bold ${isPaid || order.paidVnd > 0 ? "text-success" : "text-warning-text"}`}>
             {awaitingQuote ? "Chờ cửa hàng báo giá" : isPaid ? "Đã thanh toán đủ" : order.paidVnd > 0 ? (order.payment?.balanceDue ? "Đã nhận cọc · Chờ thanh toán lần 2" : "Đã nhận tiền cọc") : "Chờ xác nhận chuyển khoản"}
           </span>
         </div>

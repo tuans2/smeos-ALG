@@ -119,7 +119,7 @@ function OrgCard({
     org.readinessScore >= 80
       ? "text-success"
       : org.readinessScore >= 50
-      ? "text-warning"
+      ? "text-warning-text"
       : "text-danger"
 
   const typeLabel: Record<string, string> = {

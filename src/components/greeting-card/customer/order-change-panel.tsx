@@ -75,7 +75,7 @@ export function OrderChangePanel({
       <h3 id="order-change-title" className="text-body font-extrabold text-text">Thay đổi thông tin đơn</h3>
 
       {decided && (
-        <div role="status" className={`rounded-xl border p-3 flex gap-2 text-body-sm ${decided.status === "APPROVED" ? "border-success/30 bg-success-bg text-success" : "border-warning/30 bg-warning-bg text-warning"}`}>
+        <div role="status" className={`rounded-xl border p-3 flex gap-2 text-body-sm ${decided.status === "APPROVED" ? "border-success/30 bg-success-bg text-success" : "border-warning/30 bg-warning-bg text-warning-text"}`}>
           <BellRing size={18} className="shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <p className="font-bold">
@@ -125,7 +125,7 @@ export function OrderChangePanel({
             {change.history.filter((h) => h.status !== "PENDING").map((h) => (
               <li key={h.id} className="border-l-2 border-border pl-3">
                 <p className="text-caption text-text-muted">
-                  Gửi {when(h.createdAt)} · <span className={h.status === "APPROVED" ? "text-success font-bold" : "text-warning font-bold"}>{STATUS_LABEL[h.status]}</span>
+                  Gửi {when(h.createdAt)} · <span className={h.status === "APPROVED" ? "text-success font-bold" : "text-warning-text font-bold"}>{STATUS_LABEL[h.status]}</span>
                   {h.decidedAt ? ` ${when(h.decidedAt)}` : ""}
                 </p>
                 <ChangeList changes={h.changes} />

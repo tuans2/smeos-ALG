@@ -142,7 +142,7 @@ export default function MucDungPage() {
       {metrics.topConsumers.length > 0 && (
         <Card className="p-4 rounded-xl border border-warning/30 bg-warning-bg/50 shadow-xs">
           <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle className="h-4 w-4 text-warning" />
+            <AlertTriangle className="h-4 w-4 text-warning-text" />
             <h3 className="text-body-sm font-bold text-text">Theo dõi tiêu thụ Credit cao nhất</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

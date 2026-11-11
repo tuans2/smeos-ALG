@@ -85,7 +85,7 @@ export function CoordinatorKpiSummary({
         <Card className="rounded-2xl border border-warning/30 bg-warning/5 p-4 flex flex-col justify-between shadow-xs">
           <div className="flex items-center justify-between text-warning-text text-caption font-bold">
             <span>Có Rủi Ro (At-Risk)</span>
-            <AlertTriangle size={16} className="text-warning" />
+            <AlertTriangle size={16} className="text-warning-text" />
           </div>
           <div className="text-title-lg font-black text-warning-text mt-2">{atRisk}</div>
         </Card>

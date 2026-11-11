@@ -106,7 +106,7 @@ export function OrderDetailFooter({
 
         {needsBalanceConfirmation && (
           <div className="flex flex-col gap-2 p-3 rounded-xl border-2 border-dashed border-warning/50 bg-warning-bg/40 mb-1">
-            <p className="text-body-sm font-bold text-warning text-center flex items-center justify-center gap-1.5">
+            <p className="text-body-sm font-bold text-warning-text text-center flex items-center justify-center gap-1.5">
               <Banknote size={16} />
               Khách đã chuyển khoản Lần 2 — Chờ Xác nhận để mở Giao Ship
             </p>

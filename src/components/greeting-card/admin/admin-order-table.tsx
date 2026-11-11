@@ -18,7 +18,7 @@ import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 const STATUS_BADGE: Record<string, { label: string; className: string }> = {
-  DRAFT: { label: "Chờ thanh toán", className: "bg-warning-bg text-warning" },
+  DRAFT: { label: "Chờ thanh toán", className: "bg-warning-bg text-warning-text" },
   CONFIRMED: { label: "Đã xác nhận", className: "bg-info-bg text-info" },
   PROCESSING: { label: "Đang xử lý", className: "bg-info-bg text-info" },
   DELIVERED: { label: "Đã giao", className: "bg-success-bg text-success" },
@@ -142,7 +142,7 @@ export function AdminOrderTable({
                   <div className="text-caption text-text-muted">{o.customer?.phone ?? ""}</div>
                 </td>
                 <td className="px-4 py-3 text-right font-extrabold">
-                  {awaitingQuote ? <span className="text-warning">Chờ báo giá</span> : vnd(o.total_vnd)}
+                  {awaitingQuote ? <span className="text-warning-text">Chờ báo giá</span> : vnd(o.total_vnd)}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <AdminPaymentPlanCell order={o} shopDepositPercent={shopDepositPercent} />
@@ -150,7 +150,7 @@ export function AdminOrderTable({
                 <td className="px-4 py-3">
                   <span className={`px-2.5 py-0.5 rounded-full text-caption font-bold ${badge.className}`}>{badge.label}</span>
                   {canAdminConfirmOrder && (
-                    <div className="mt-1 text-caption font-bold text-warning bg-warning-bg px-2 py-0.5 rounded-md border border-warning/30 inline-flex items-center gap-1">
+                    <div className="mt-1 text-caption font-bold text-warning-text bg-warning-bg px-2 py-0.5 rounded-md border border-warning/30 inline-flex items-center gap-1">
                       📋 Chờ xác nhận đơn
                     </div>
                   )}
@@ -237,7 +237,7 @@ export function AdminOrderTable({
                     {!collectButton && isDepositOrder && isDepositPaid && balance > 0 && o.status !== "CANCELLED" && !awaitingQuote && (
                       requireFull ? (
                         isReady ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-semibold bg-warning-bg text-warning border border-warning/30" title="Chờ khách duyệt ảnh sản phẩm hoặc hết 10 phút đếm ngược">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-semibold bg-warning-bg text-warning-text border border-warning/30" title="Chờ khách duyệt ảnh sản phẩm hoặc hết 10 phút đếm ngược">
                             ⏳ {coordinatorPayment ? "Đ/P đã duyệt cọc" : "Đã cọc"} · Chờ duyệt ảnh
                           </span>
                         ) : (
@@ -253,7 +253,7 @@ export function AdminOrderTable({
                     )}
 
                     {o.pending_refund_vnd != null ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-semibold bg-warning-bg text-warning border border-warning/30" title="Khoản hoàn của đề xuất huỷ đã duyệt — đánh dấu đã hoàn ở Hộp việc, mục Cần hoàn tiền">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-caption font-semibold bg-warning-bg text-warning-text border border-warning/30" title="Khoản hoàn của đề xuất huỷ đã duyệt — đánh dấu đã hoàn ở Hộp việc, mục Cần hoàn tiền">
                         <RotateCcw size={12} aria-hidden="true" /> Chờ hoàn {vnd(o.pending_refund_vnd)} · xử lý ở Hộp việc
                       </span>
                     ) : o.paid_vnd > 0 && (
@@ -296,7 +296,7 @@ function ProductCell({ order }: { order: AdminOrder }) {
         <div className="truncate font-semibold text-text">{c.productName}</div>
         <div className="text-caption text-text-muted">
           {c.listedPriceVnd !== null ? `Công bố ${vnd(c.listedPriceVnd)}` : "Chưa niêm yết giá"}
-          {c.reasons.length > 0 && <span className="text-warning"> · {c.reasons.length} điều chỉnh</span>}
+          {c.reasons.length > 0 && <span className="text-warning-text"> · {c.reasons.length} điều chỉnh</span>}
         </div>
       </div>
     </div>

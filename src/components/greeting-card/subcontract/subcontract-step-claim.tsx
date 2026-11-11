@@ -159,7 +159,7 @@ export function SubcontractStepClaim({
               <CheckCircle2 size={12} /> Đã chốt sản xuất
             </span>
           ) : dispatchStatus === "CLAIMED_GRACE" ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning-text text-caption font-bold">
               <Clock size={12} /> Kiểm tra kho: {formatGraceCountdown(graceSeconds)}
             </span>
           ) : (
@@ -200,10 +200,10 @@ export function SubcontractStepClaim({
         {dispatchStatus === "CLAIMED_GRACE" && isMyClaim && (
           <div className="p-4 rounded-xl bg-warning-bg border border-warning/30 flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-body-sm font-bold text-warning flex items-center gap-1.5">
+              <span className="text-body-sm font-bold text-warning-text flex items-center gap-1.5">
                 <Clock size={16} /> Thời gian kiểm tra kho hoa & nguyên liệu:
               </span>
-              <span className="font-mono text-title font-black text-warning">
+              <span className="font-mono text-title font-black text-warning-text">
                 {formatGraceCountdown(graceSeconds)}
               </span>
             </div>
@@ -305,7 +305,7 @@ export function SubcontractStepClaim({
 
           {specialNotes && (
             <div className="p-2.5 rounded-lg bg-warning-bg/50 border border-warning/20 text-caption">
-              <span className="font-bold text-warning block mb-0.5">Ghi chú đặc biệt:</span>
+              <span className="font-bold text-warning-text block mb-0.5">Ghi chú đặc biệt:</span>
               <span className="text-text">{specialNotes}</span>
             </div>
           )}

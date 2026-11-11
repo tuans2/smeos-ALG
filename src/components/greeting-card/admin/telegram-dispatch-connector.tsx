@@ -183,7 +183,7 @@ export function TelegramDispatchConnector() {
         </div>
       ) : isConfigured || isLoading ? null : (
         <div className="p-4 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-3">
-          <AlertCircle size={20} className="text-warning shrink-0 mt-0.5" />
+          <AlertCircle size={20} className="text-warning-text shrink-0 mt-0.5" />
           <div className="text-caption text-text leading-relaxed">
             <strong className="block text-body-sm font-bold mb-1">Chưa cấu hình Telegram Bot Token</strong>
             Vui lòng khai báo <code className="font-mono font-bold text-text">TELEGRAM_DISPATCH_BOT_TOKEN</code> trong file biến môi trường <code className="font-mono font-bold text-text">.env</code> để kích hoạt tính năng điều phối tự động.
@@ -193,7 +193,7 @@ export function TelegramDispatchConnector() {
 
       {respData?.error && (
         <div className="p-3 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-2 text-caption text-text">
-          <AlertCircle size={16} className="text-warning shrink-0 mt-0.5" />
+          <AlertCircle size={16} className="text-warning-text shrink-0 mt-0.5" />
           <span>
             <strong>Không quét được nhóm mới:</strong> {respData.error}. Vui lòng liên hệ bộ phận hỗ trợ.
           </span>

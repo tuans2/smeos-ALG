@@ -197,7 +197,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                     <div className="font-bold text-text">Thời gian &amp; Trạng thái</div>
                     <div className="text-text-muted text-caption">Hẹn giao: <span className="font-semibold text-text">{order.deliveryWindow?.date} ({order.deliveryWindow?.timeSlot})</span></div>
                     <div className="text-text-muted text-caption">Sản xuất: <span className="font-semibold text-info">{PRODUCTION_STATUS_LABELS[order.productionStatus]}</span></div>
-                    <div className="text-text-muted text-caption">Vận chuyển: <span className="font-semibold text-warning">{DELIVERY_STATUS_LABELS[order.deliveryStatus]}</span></div>
+                    <div className="text-text-muted text-caption">Vận chuyển: <span className="font-semibold text-warning-text">{DELIVERY_STATUS_LABELS[order.deliveryStatus]}</span></div>
                   </div>
                 </div>
 
@@ -221,7 +221,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                 </div>
 
                 {order.cardMessage && (
-                  <div className="rounded-lg border border-warning/30 bg-warning-bg/70 p-3 text-caption text-warning">
+                  <div className="rounded-lg border border-warning/30 bg-warning-bg/70 p-3 text-caption text-warning-text">
                     <span className="font-bold">💌 Lời nhắn thiệp: </span>{order.cardMessage}
                   </div>
                 )}
@@ -266,7 +266,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
 
             {activeTab === "delivery" && (
               <div className="space-y-4">
-                <div className="rounded-lg bg-warning-bg/70 border border-warning/30 p-3 text-caption text-warning">
+                <div className="rounded-lg bg-warning-bg/70 border border-warning/30 p-3 text-caption text-warning-text">
                   ℹ️ <strong>Phiếu giao vận A6:</strong> Chuẩn hóa thông tin người nhận, lời nhắn thiệp và số tiền COD.
                 </div>
                 <DeliveryReceiptCard

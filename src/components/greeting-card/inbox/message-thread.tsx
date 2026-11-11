@@ -92,7 +92,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
                   </div>
                 ) : (
                   <span className={`rounded-full px-2 text-caption font-bold ${
-                    m.discount.status === "APPROVED" ? "bg-success-bg text-success" : m.discount.status === "REJECTED" ? "bg-danger-bg text-danger" : "bg-warning-bg text-warning"
+                    m.discount.status === "APPROVED" ? "bg-success-bg text-success" : m.discount.status === "REJECTED" ? "bg-danger-bg text-danger" : "bg-warning-bg text-warning-text"
                   }`}>
                     {m.discount.status === "APPROVED" ? "Đã duyệt" : m.discount.status === "REJECTED" ? "Không duyệt" : "Chờ Điều hành duyệt"}
                   </span>
@@ -119,7 +119,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
                           ? "bg-success-bg text-success"
                           : m.cancellation.status === "REJECTED"
                           ? "bg-danger-bg text-danger"
-                          : "bg-warning-bg text-warning"
+                          : "bg-warning-bg text-warning-text"
                       }`}>
                         {m.cancellation.status === "APPROVED"
                           ? "Đã duyệt hủy/hoàn"

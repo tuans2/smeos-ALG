@@ -90,7 +90,7 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
                   : `Lần trước: ${info.latest.choice ? SUBSTITUTE_CHOICE_LABEL[info.latest.choice] : "đã trả lời"}${info.latest.customerNote ? ` — "${info.latest.customerNote}"` : ""}.`}
               </p>
             )}
-            {info.lockedReason && <p role="alert" className="text-warning text-caption">{info.lockedReason}</p>}
+            {info.lockedReason && <p role="alert" className="text-warning-text text-caption">{info.lockedReason}</p>}
 
             {info.options.length === 0 ? (
               <p className="text-body-sm text-text-muted">Bộ sưu tập không còn mẫu nào khác đang bán. Hãy liên hệ khách hoặc đề xuất huỷ đơn.</p>

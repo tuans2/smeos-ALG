@@ -275,7 +275,7 @@ export function ChainPartnerCreateModal({
           ) : (
             <>
               <div className="p-3 bg-warning-subtle rounded-xl text-caption text-warning-text border border-warning/20 flex items-start gap-2">
-                <Sparkles className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+                <Sparkles className="w-4 h-4 text-warning-text shrink-0 mt-0.5" />
                 <span>
                   Dành cho cửa hàng đã có tài khoản trên hệ thống smeOS. Dữ liệu sản phẩm và cài đặt của tiệm sẽ được giữ nguyên hoàn toàn.
                 </span>

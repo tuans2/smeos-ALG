@@ -53,9 +53,9 @@ export function PaymentProofBadge({
     return (
       <span
         title={`Lệch tiền: Khách chuyển ${extracted.amountVnd.toLocaleString("vi-VN")} đ (${isUnder ? "Thiếu" : "Thừa"} ${Math.abs(amountDifferenceVnd).toLocaleString("vi-VN")} đ)`}
-        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-warning-bg text-warning border border-warning/40 ${className}`}
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-warning-bg text-warning-text border border-warning/40 ${className}`}
       >
-        <AlertTriangle size={12} className="text-warning" aria-hidden="true" />
+        <AlertTriangle size={12} className="text-warning-text" aria-hidden="true" />
         <span>
           {isUnder ? `Thiếu ${Math.abs(amountDifferenceVnd).toLocaleString("vi-VN")} đ` : `Thừa ${amountDifferenceVnd.toLocaleString("vi-VN")} đ`}
         </span>

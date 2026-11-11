@@ -32,7 +32,7 @@ const DOMAIN_META: Record<
   catalog: { label: "Danh mục sản phẩm", icon: Package, color: "text-success" },
   orders: { label: "Đơn hàng", icon: ShoppingCart, color: "text-info" },
   members: { label: "Thành viên", icon: Users, color: "text-accent" },
-  branches: { label: "Chi nhánh", icon: Building2, color: "text-warning" },
+  branches: { label: "Chi nhánh", icon: Building2, color: "text-warning-text" },
   customers: { label: "Khách hàng", icon: UserCircle, color: "text-danger" },
   jobs: { label: "AI Jobs", icon: Cpu, color: "text-primary" },
   spreadsheets: { label: "File Excel / Bảng tính gốc", icon: FileSpreadsheet, color: "text-success" },
@@ -40,7 +40,7 @@ const DOMAIN_META: Record<
 
 const STATUS_COLOR: Record<string, string> = {
   ACTIVE: "bg-success/15 text-success",
-  DRAFT: "bg-warning/15 text-warning",
+  DRAFT: "bg-warning/15 text-warning-text",
   ARCHIVED: "bg-danger/15 text-danger",
   COMPLETED: "bg-success/15 text-success",
   PROCESSING: "bg-blue-100 text-blue-700",
@@ -55,7 +55,7 @@ const STATUS_COLOR: Record<string, string> = {
   MANUAL: "bg-surface-alt text-text-muted",
   BROCHURE: "bg-violet-100 text-violet-700",
   CHAT: "bg-blue-100 text-blue-700",
-  WAITING: "bg-warning/15 text-warning",
+  WAITING: "bg-warning/15 text-warning-text",
   DONE: "bg-success/15 text-success",
 }
 

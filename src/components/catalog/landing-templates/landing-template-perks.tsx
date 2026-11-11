@@ -22,7 +22,7 @@ export function LandingTemplatePerks({
       case "camera":
         return <Camera size={18} className="text-primary" />
       case "clock":
-        return <Clock size={18} className="text-warning" />
+        return <Clock size={18} className="text-warning-text" />
       case "shield":
         return <ShieldCheck size={18} className="text-success" />
       case "gift":

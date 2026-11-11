@@ -167,7 +167,7 @@ export function SubcontractStepShipper({
             countdown ? (
               <StepCountdownBadge countdown={countdown} labelPrefix="Giao trước" />
             ) : (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning-text text-caption font-bold">
                 <Clock size={12} /> Chờ thông tin
               </span>
             )

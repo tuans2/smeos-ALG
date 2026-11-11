@@ -461,7 +461,7 @@ function ZaloOAPreview({
           </div>
 
           {post.cta && (
-            <div className="text-caption font-bold text-warning bg-warning-bg p-2.5 rounded-lg border border-warning-border/60">
+            <div className="text-caption font-bold text-warning-text bg-warning-bg p-2.5 rounded-lg border border-warning-border/60">
               💬 {post.cta}
             </div>
           )}

@@ -15,7 +15,7 @@ type Report = NonNullable<CampaignPackageDto["qa_report"]>
 
 const VERDICT_STYLE: Record<Report["verdict"], { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
   PASS: { label: "Đạt", cls: "text-success-text bg-success-bg border-success-border", Icon: CheckCircle2 },
-  NEEDS_REVIEW: { label: "Cần xem lại", cls: "text-warning bg-warning-bg border-warning-border", Icon: AlertCircle },
+  NEEDS_REVIEW: { label: "Cần xem lại", cls: "text-warning-text bg-warning-bg border-warning-border", Icon: AlertCircle },
   REJECTED: { label: "Từ chối", cls: "text-primary bg-primary-muted border-primary-border", Icon: XCircle },
 }
 

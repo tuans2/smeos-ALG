@@ -171,7 +171,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
 
               {/* 5. TỰ ĐỘNG HỦY & HOÀN TIỀN KHI ĐIỀU PHỐI TỪ CHỐI */}
               <PolicyRow
-                icon={<AlertTriangle size={17} className="text-warning" />}
+                icon={<AlertTriangle size={17} className="text-warning-text" />}
                 title="Tự động hủy & hoàn tiền khi Điều phối từ chối"
                 description="Khi xưởng hết nguyên liệu/quá tải, Điều phối báo từ chối. Quá thời gian quy định sẽ tự hủy & tạo lệnh hoàn tiền."
                 isOn={Boolean(policy.cancellationApprovalTimeoutMinutes && policy.cancellationApprovalTimeoutMinutes <= 120)}

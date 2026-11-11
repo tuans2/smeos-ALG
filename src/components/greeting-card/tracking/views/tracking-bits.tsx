@@ -22,7 +22,7 @@ import { Clock, AlertCircle, CheckCircle2 } from "@/components/ui/icons"
 
 const SLA_STYLE: Record<SlaInfo["state"], { label: string; cls: string }> = {
   OVERDUE: { label: "Quá hạn", cls: "bg-danger-bg text-danger font-bold" },
-  DUE_SOON: { label: "Sắp quá hạn", cls: "bg-warning-bg text-warning font-bold" },
+  DUE_SOON: { label: "Sắp quá hạn", cls: "bg-warning-bg text-warning-text font-bold" },
   ON_TRACK: { label: "Đúng tiến độ", cls: "bg-success-bg text-success font-medium" },
   NONE: { label: "Đã ở bước này", cls: "bg-surface-muted text-text-muted font-medium" },
 }

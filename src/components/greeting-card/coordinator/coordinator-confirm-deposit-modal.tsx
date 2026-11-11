@@ -88,7 +88,7 @@ export function CoordinatorConfirmDepositModal({
         )}
 
         {!proofUrl && (
-          <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 text-caption text-warning">
+          <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 text-caption text-warning-text">
             Khách chưa tải ảnh bill. Hãy đối soát tài khoản ngân hàng trực tiếp trước khi xác nhận.
           </div>
         )}

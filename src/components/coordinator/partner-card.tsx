@@ -58,7 +58,7 @@ export function PartnerCard({ partner, onToggleStatus, onOpenSettlement }: Partn
               {[partner.district, partner.province].filter(Boolean).join(", ") || "Chưa rõ khu vực"}
             </span>
             <span className="flex items-center gap-1">
-              <Star size={12} className="text-warning fill-warning" />
+              <Star size={12} className="text-warning-text fill-warning" />
               {Number(partner.rating || 5.0).toFixed(1)}
             </span>
             <span>

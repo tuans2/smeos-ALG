@@ -205,10 +205,10 @@ export function AdminOrderActionDialog({
         )}
 
         {isBlocked && blockReason && (
-          <div role="alert" className="p-3.5 rounded-xl bg-warning-bg border border-warning/40 text-warning text-body-sm flex items-start gap-2.5">
-            <AlertTriangle size={18} className="shrink-0 mt-0.5 text-warning" aria-hidden="true" />
+          <div role="alert" className="p-3.5 rounded-xl bg-warning-bg border border-warning/40 text-warning-text text-body-sm flex items-start gap-2.5">
+            <AlertTriangle size={18} className="shrink-0 mt-0.5 text-warning-text" aria-hidden="true" />
             <div className="flex flex-col gap-0.5">
-              <span className="font-bold text-caption text-warning">Chưa đủ điều kiện thu tiền đợt 2</span>
+              <span className="font-bold text-caption text-warning-text">Chưa đủ điều kiện thu tiền đợt 2</span>
               <p className="text-body-sm text-text/80 leading-relaxed">{blockReason}</p>
             </div>
           </div>

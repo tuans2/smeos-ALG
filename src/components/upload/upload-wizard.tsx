@@ -621,7 +621,7 @@ function UploadStep({
         </Button>
 
         {note && (
-          <div className="flex items-start gap-1.5 rounded-lg bg-warning-bg px-2.5 py-2 text-caption text-warning">
+          <div className="flex items-start gap-1.5 rounded-lg bg-warning-bg px-2.5 py-2 text-caption text-warning-text">
             <Info size={13} strokeWidth={1.8} className="mt-0.5 flex-shrink-0" />
             <div>{note}</div>
           </div>
@@ -821,8 +821,8 @@ function RunningStep({
 
       {choLau && (
         <div className="flex items-start gap-2.5 rounded-xl bg-warning-bg p-3.5">
-          <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning" />
-          <div className="text-caption leading-relaxed text-warning">
+          <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning-text" />
+          <div className="text-caption leading-relaxed text-warning-text">
             Lượt chạy đã xếp hàng hơn hai phút mà chưa có tiến trình nào nhận. Thường là tiến trình
             phân tích ảnh chưa được bật. Báo người vận hành, hoặc huỷ lượt này rồi chạy lại sau.
           </div>
@@ -1004,7 +1004,7 @@ function ResultStep({
                 <span
                   className={cn(
                     "rounded-full px-2.5 py-1 text-caption font-bold",
-                    overallConfidence < 70 ? "bg-warning-bg text-warning" : "bg-surface-alt text-text-muted"
+                    overallConfidence < 70 ? "bg-warning-bg text-warning-text" : "bg-surface-alt text-text-muted"
                   )}
                 >
                   Tin cậy {overallConfidence}%
@@ -1013,7 +1013,7 @@ function ResultStep({
             </div>
           </div>
           {job?.result === "LOW_CONFIDENCE" && (
-            <div className="flex items-start gap-1.5 rounded-lg bg-warning-bg px-2.5 py-2 text-caption text-warning">
+            <div className="flex items-start gap-1.5 rounded-lg bg-warning-bg px-2.5 py-2 text-caption text-warning-text">
               <AlertTriangle size={13} strokeWidth={1.8} className="mt-0.5 flex-shrink-0" />
               <div>Lượt phân tích này có ảnh nhận diện với độ tin cậy thấp — nên kiểm lại trước khi duyệt.</div>
             </div>
@@ -1059,7 +1059,7 @@ function ResultStep({
                           </div>
                         )}
                         {confidence != null && confidence < 70 && (
-                          <span className="mt-0.5 inline-flex items-center rounded-full border-[1.3px] border-warning px-1.5 py-0.5 text-caption font-bold text-warning">
+                          <span className="mt-0.5 inline-flex items-center rounded-full border-[1.3px] border-warning px-1.5 py-0.5 text-caption font-bold text-warning-text">
                             Chưa chắc — nên kiểm lại
                           </span>
                         )}

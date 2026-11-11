@@ -87,7 +87,7 @@ export function FlowerSubstituteForm({ orderId, onClose, onDone }: { orderId: st
               {pending ? "Đang chờ khách trả lời đề xuất trước." : `Lần trước: ${info.latest.choice ? FLOWER_CHOICE_LABEL[info.latest.choice] : "đã trả lời"}.`}
             </p>
           )}
-          {info.lockedReason && <p role="alert" className="text-warning text-caption">{info.lockedReason}</p>}
+          {info.lockedReason && <p role="alert" className="text-warning-text text-caption">{info.lockedReason}</p>}
           {info.lines.length === 0 ? (
             <p className="text-body-sm text-text-muted">Công thức của đơn chưa có hoa phụ nào. Hãy đề xuất đổi cả mẫu hoặc liên hệ khách.</p>
           ) : (

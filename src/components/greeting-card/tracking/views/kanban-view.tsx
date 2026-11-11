@@ -110,7 +110,7 @@ export function KanbanView({ qs, onOpen, canDecide = false, onDismiss }: KanbanV
                   {c.count > 0 ? `TB ${formatMinutes(c.avgAgeMinutes)} · lâu nhất ${formatMinutes(c.maxAgeMinutes)}` : "Trống"}
                   {/* Đếm trên cả cột (máy chủ tính), không chỉ phần thẻ đang hiện */}
                   {c.tierOverdue > 0 && <span className="ml-1 font-semibold text-danger">· {c.tierOverdue} quá hạn</span>}
-                  {c.tierUrgent > 0 && <span className="ml-1 font-semibold text-warning">· {c.tierUrgent} sắp hạn</span>}
+                  {c.tierUrgent > 0 && <span className="ml-1 font-semibold text-warning-text">· {c.tierUrgent} sắp hạn</span>}
                 </p>
               </header>
 

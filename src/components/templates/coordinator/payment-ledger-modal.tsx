@@ -204,7 +204,7 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
                       {p.note ? ` · ${p.note}` : ""}
                     </span>
                     {p.status === "PENDING" && (
-                      <span className="flex flex-wrap items-center gap-2 text-caption text-warning">
+                      <span className="flex flex-wrap items-center gap-2 text-caption text-warning-text">
                         Chờ Điều hành xác nhận
                         {canConfirm && (
                           <>

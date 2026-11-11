@@ -43,7 +43,7 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
 
   return (
     <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
-      title={<span className="flex items-center gap-2"><PackageX size={18} className="text-warning" aria-hidden="true" /> Giao không thành công — #{orderCode}</span>}>
+      title={<span className="flex items-center gap-2"><PackageX size={18} className="text-warning-text" aria-hidden="true" /> Giao không thành công — #{orderCode}</span>}>
       <div className="flex flex-col gap-4">
         <p className="text-body-sm text-text-muted">Đơn chuyển sang <strong>chờ giao lại</strong>. Khách được báo và có thể đổi giờ hoặc địa chỉ giao trên trang theo dõi.</p>
 

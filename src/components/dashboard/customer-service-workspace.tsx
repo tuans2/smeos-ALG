@@ -154,7 +154,7 @@ export function CustomerServiceWorkspace() {
               <div className="text-caption text-text-muted text-center">Hội thoại đang chờ</div>
             </Card>
             <Card className="flex flex-col items-center gap-1 p-3">
-              <Clock size={18} className="text-warning" />
+              <Clock size={18} className="text-warning-text" />
               <div className="text-title font-extrabold text-text">
                 {!daTai ? "—" : todayReminders.length}
               </div>
@@ -246,13 +246,13 @@ export function CustomerServiceWorkspace() {
         {daTai && !loi && todayReminders.length > 0 && (
           <section>
             <div className="mb-2 flex items-center gap-2">
-              <AlertCircle size={16} className="text-warning" />
+              <AlertCircle size={16} className="text-warning-text" />
               <h2 className="text-body font-semibold text-text">Cần liên hệ hôm nay</h2>
             </div>
             <div className="flex flex-col gap-2">
               {todayReminders.slice(0, 3).map((r) => (
                 <Card key={r.customerId + r.targetDate} className="flex items-center gap-3 p-3 border-warning/30 bg-warning-bg/30">
-                  <PhoneCall size={16} className="flex-shrink-0 text-warning" />
+                  <PhoneCall size={16} className="flex-shrink-0 text-warning-text" />
                   <div className="min-w-0 flex-1">
                     <div className="text-body-sm font-semibold text-text">{r.customerName}</div>
                     <div className="text-caption text-text-muted">{r.occasionName} · {r.daysLeft === 0 ? "Hôm nay" : "Ngày mai"}</div>
