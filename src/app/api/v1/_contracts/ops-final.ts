@@ -28,11 +28,11 @@ export const FINAL_OPERATIONS: OpenApiOperation[] = [
     ok: [200, { description: "Báo cáo", schema: res.productIntelligenceResponse }], errors: [404] }),
 
   op(CRON, { method: "get", path: "/internal/health", operationId: "getInternalHealth", summary: "Sức khoẻ chi tiết: CSDL, Redis, job tồn đọng, worker", cap: null, auth: "public",
-    description: `${CRON_AUTH} 401 trả thân cũ \`{ error: "Unauthorized" }\`. Không khoẻ → 503 cùng thân (cron \`curl -f\` thất bại để báo động).`,
+    description: `${CRON_AUTH} Không khoẻ → 503 cùng thân (cron \`curl -f\` thất bại để báo động).`,
     ok: [200, { description: "Khoẻ", schema: res.healthResponse }], errors: [401, 503] }),
   op(CRON, { method: "post", path: "/internal/integrations-sweep", operationId: "runIntegrationsSweep", summary: "Xử lý sự kiện tích hợp đến hạn, kiểm kết nối, kéo đơn kênh bán, đăng bài mạng xã hội đến hạn", cap: null, auth: "public",
     description: `${CRON_AUTH} Mỗi lượt có giới hạn (100 sự kiện, 50 lượt kiểm, 20 kết nối kênh bán, 20 bài đăng).`, ok: [200, { description: "Kết quả", schema: res.integrationsSweepResponse }], errors: [401] }),
   op(CRON, { method: "post", path: "/internal/chain-dispatch-sweep", operationId: "runChainDispatchSweep", summary: "Quét nhắc mốc đơn gia công và các tác vụ dọn định kỳ", cap: null, auth: "public",
-    description: `${CRON_AUTH} 401 trả thân cũ. Nhắc mốc M1–M4, chuyển vòng điều phối, job kẹt, thùng rác, khoá idempotent, mã hoá dữ liệu cá nhân cũ, báo giá hết hạn, gói thuê bao. Tác vụ con hỏng → trường đó \`null\`, lượt vẫn 200. Có ngân sách thời gian; \`complete: false\` → lượt sau đi tiếp.`,
+    description: `${CRON_AUTH} Nhắc mốc M1–M4, chuyển vòng điều phối, job kẹt, thùng rác, khoá idempotent, mã hoá dữ liệu cá nhân cũ, báo giá hết hạn, gói thuê bao. Tác vụ con hỏng → trường đó \`null\`, lượt vẫn 200. Có ngân sách thời gian; \`complete: false\` → lượt sau đi tiếp.`,
     ok: [200, { description: "Kết quả", schema: res.dispatchSweepResponse }], errors: [401] }),
 ]

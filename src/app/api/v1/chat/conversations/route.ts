@@ -4,6 +4,7 @@
  * T2: Tạo hội thoại mới
  */
 
+import { MAX_PAGE_LIMIT, parseIntParam } from "@/core/http/pagination"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -17,7 +18,7 @@ export const GET = handle(async (request) => {
 
   const url = new URL(request.url)
   const status = url.searchParams.get("status") || "ACTIVE"
-  const limit = url.searchParams.get("limit") ? Number(url.searchParams.get("limit")) : 50
+  const limit = parseIntParam(url.searchParams.get("limit"), { field: "limit", fallback: 50, min: 1, max: MAX_PAGE_LIMIT })
 
   const items = await listConversations(ctx, status, limit)
   return jsonResponse({ items, count: items.length })

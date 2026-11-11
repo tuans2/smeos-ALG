@@ -1,6 +1,6 @@
 # Audit Kiến trúc API — `/api/v1` (06/11/2026)
 
-> Trạng thái: **DRAFT — chờ PO duyệt**. Không thay thế đặc tả 06 (`docs/dac-ta/06-api-specification.md`, SSOT API).
+> Trạng thái: **ĐÃ DUYỆT — đang thực thi** (PO duyệt từng đợt 06–11/11/2026; lộ trình §4 xong, việc còn lại ở §37). Không thay thế đặc tả 06 (`docs/dac-ta/06-api-specification.md`, SSOT API).
 > Bổ sung và đào sâu ARC-022/024/025 của `docs/audit/architecture-audit/08_ARCHITECTURE_RISK_REGISTER.md`.
 > Đề xuất chuẩn hoá: `02_API_CONTRACT_STANDARD_AND_OPENAPI.md` (cùng thư mục).
 
@@ -327,7 +327,7 @@ Phủ thêm 3 nhóm vào `internal.openapi.json`: `/notification/*` (11 route, 1
 
 Phát hiện khi viết hợp đồng — hai lỗi P1 đã sửa ở §16; còn lại chưa sửa:
 
-- `GET /notification/inbox` và `GET /chat/conversations`: `page`/`limit` không phải số → 500 (`parseInt`/`Number` → `NaN` vào Prisma). Hộp thư kẹp `limit` 1–100 nhưng `pagination.limit` báo lại số đã gửi; `chat/conversations` không có trần `limit`.
+- ~~`GET /notification/inbox` và `GET /chat/conversations`: `page`/`limit` không phải số → 500~~ (đã sửa ở §37) (`parseInt`/`Number` → `NaN` vào Prisma). Hộp thư kẹp `limit` 1–100 nhưng `pagination.limit` báo lại số đã gửi; `chat/conversations` không có trần `limit`.
 - `PATCH /notification/preferences` chỉ xét khoá cứng của tầng TRÊN `STORE`, nên khoá tầng cửa hàng (`/notification/store-hard-locks`) không chặn người dùng bật lại; luật gửi (`resolveCascade`) vẫn áp khoá đó nên tuỳ chọn được lưu nhưng không có hiệu lực. Lỗi 403 ở đây trả envelope cũ `{ error: "chuỗi", reason }`.
 - `GET /notification/events?tier=` không kiểm giá trị; `GET /chat/channels` và `GET /chat/public-limits` chưa gác mã năng lực (đã ghi RS-8).
 
@@ -537,7 +537,7 @@ Phát hiện, chưa sửa (không có P1):
 | Mức | Lỗi | Tái hiện |
 |---|---|---|
 | **P2** | **Điều hành tự khoá quyền quản lý vai trò.** `PATCH /roles/{id}/capabilities` cho bỏ `F5` khỏi chính vai `dieu_hanh` (200); từ phiên đó gọi lại để bật `F5` → 403 vì phiên đã mất `F5`. Tổ chức chỉ có tài khoản Điều hành mất hẳn quyền chỉnh vai cho đến khi nền tảng can thiệp. Chưa có sàn "không bỏ được `F1`/`F5` khỏi vai Điều hành" | Đã sửa ở §30 |
-| P3 | `GET /ai-requests/review?limit=abc` → 500 (`take: NaN` xuống Prisma); `/ai-requests` cùng tham số thì bỏ qua | — |
+| P3 | `GET /ai-requests/review?limit=abc` → 500 (`take: NaN` xuống Prisma); `/ai-requests` cùng tham số thì bỏ qua | Đã sửa ở §37 (riêng `/review`) |
 | P3 | `POST /roles` trùng tên tạo vai mới với `key` thêm hậu tố, không báo trùng | — |
 | P3 | `GET /ai-requests`: `from`/`to`/`limit` sai dạng bị bỏ qua thay vì 400 | — |
 
@@ -569,8 +569,8 @@ Phát hiện, chưa sửa (không có P1 trong phạm vi core):
 | **P2** | **`/proxy/{path}` chuyển tiếp cả khi chưa đăng nhập.** Core chỉ đòi phiên cho lệnh ghi `api/accounts` của SocialFlow (`J5`); mọi đường dẫn khác trong danh sách trắng — gồm `api/v1/worker/cron` của LocalBudd — được chuyển tiếp với danh tính `none`, an toàn hoàn toàn dựa vào hệ thống đích tự kiểm. Core thành điểm chuyển tiếp công khai vào mạng nội bộ của SocialFlow/LocalBudd | Đã sửa ở §33 |
 | P2 | `/proxy`: hệ thống đích không gọi được → 500 với thông báo chứa địa chỉ nội bộ của hệ thống đích | Đã sửa ở §33 |
 | P2 | `generateBannerCopyUseCase` gọi LLM trực tiếp qua `createContentLLM` (`core/ai/adapters/multi-llm-provider.ts`), không qua `callCapability` — trái quy tắc AI bắt buộc (CLAUDE.md mục 5): bỏ qua trần mô hình, sàn quyền riêng tư, sổ `ai_requests` | Đã sửa ở §33 |
-| P3 | `GET /noi-bo/identity` không đòi mã năng lực: mọi vai (kể cả Shipper) thấy tên và email của mọi thành viên | Phiên Shipper → 200 kèm `members` |
-| P3 | `GET /field-config/catalogs` chỉ kiểm phiên, không kiểm `R1` như đặc tả 06 và chú thích use-case ghi | Đọc mã |
+| P3 | `GET /noi-bo/identity` không đòi mã năng lực: mọi vai (kể cả Shipper) thấy tên và email của mọi thành viên | Đã sửa ở §37 |
+| P3 | `GET /field-config/catalogs` chỉ kiểm phiên, không kiểm `R1` như đặc tả 06 và chú thích use-case ghi | Đã sửa ở §37 |
 | P3 | `GET /field-config?entity=` lạ → 200 rỗng thay vì 400; tạo trường trùng nhãn → khoá thêm hậu tố, không báo trùng | — |
 
 ## 32. Nhật ký sửa — OpenAPI nội bộ, đợt cuối (09/11/2026)
@@ -590,7 +590,7 @@ Phát hiện, chưa sửa (không có P1):
 |---|---|
 | P3 | `GET /catalog-links/{slug}` (công khai) trả `created_by` — mã người dùng nội bộ lộ cho khách quét QR. Vùng đóng băng: cần PO mở băng để sửa |
 | P3 | `GET /product-intelligence/{id}` nhánh dự phòng (bản phân tích ảnh) đặt `productName` = mã ảnh (UUID) thay vì tên sản phẩm |
-| P3 | `/internal/health` và `/internal/chain-dispatch-sweep` trả 401 bằng thân cũ `{ error: "Unauthorized" }` (không theo envelope lỗi chung); `/internal/integrations-sweep` thì theo envelope |
+| P3 | ~~`/internal/health` và `/internal/chain-dispatch-sweep` trả 401 bằng thân cũ `{ error: "Unauthorized" }`~~ — đã sửa ở §37 |
 | P3 | `POST /catalog-links/{slug}/revoke` lần hai → 400 (nên là 409 hoặc 200 không đổi) |
 
 ## 33. Nhật ký sửa — ba lỗi P2 phát hiện ở §31 (09/11/2026)
@@ -635,4 +635,28 @@ PO yêu cầu làm ba mục đang hoãn. Không đổi `prisma/schema.prisma`, C
 | API-16 | `POST /jobs/batch` trả **202** (đặc tả 06 luật 4), thân giữ nguyên `{ job_id, status, usage }`; `FeaturePicker` kiểm `res.ok` nên không phải sửa | `tests/unit/jobs/batch-route.test.ts`, `internal-contract-ai-studio.test.ts` |
 
 Rủi ro đã cân nhắc: đổi hình dạng `GET /orders` và mã `jobs/batch` là thay đổi tại chỗ trên API chỉ giao diện SMEOS gọi; giao diện đổi cùng commit nên bản triển khai mới nhất quán — tab trình duyệt mở từ bản cũ cần tải lại trang (đặc tả 06 yêu cầu báo trước 30 ngày cho loại API này; PO yêu cầu làm ngay).
+
+## 37. Nhật ký sửa — đợt dọn tài liệu và lỗi P2/P3 còn tồn (11/11/2026)
+
+PO duyệt hai đợt sau bản rà tiến độ 11/11/2026: (1) dọn trạng thái tài liệu, (2) sửa lỗi `limit`, envelope 401 của cron, gác `noi-bo/identity` và `field-config/catalogs`. Không đổi `prisma/schema.prisma`, CI, dependency.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-01/10 | `parseIntParam` (`src/core/http/pagination.ts`) cho route cũ chưa dùng `defineRoute`: bỏ trống → mặc định, không phải số nguyên hoặc ngoài khoảng → 400 `details.<tham số>`. Áp cho `GET /notification/inbox` (`page` ≥ 1, `limit` 1–100, mặc định 20 — trước kẹp im lặng và báo lại số đã gửi), `GET /chat/conversations` (`limit` 1–100, mặc định 50 — trước không trần), `GET /ai-requests/review` (`limit` 1–5.000, giữ trần sẵn có của repository) | `tests/unit/api-limits/legacy-list-limit-routes.test.ts`, `tests/unit/core/http/pagination.test.ts` (đỏ trên mã cũ) |
+| API-06 | `/internal/health`, `/internal/chain-dispatch-sweep`: sai/thiếu `x-cron-secret` → 401 theo envelope chung `UNAUTHENTICATED` (cùng cách `/internal/integrations-sweep`); mã trạng thái không đổi nên `curl -f` của cron không bị ảnh hưởng. Gỡ 2 dòng `string-error` khỏi `api-envelope-legacy.txt` | `tests/unit/health/internal-health-route.test.ts` |
+| API-12 | `GET /noi-bo/identity` gác `F1` (cùng mã với `GET /members`, vì phản hồi có tên + email thành viên); `GET /field-config/catalogs` gác `R1` như cột năng lực đặc tả 06. Mọi vai có `R2` (tạo đơn — form nhập đơn đọc danh mục) mặc định đều có `R1`. Gỡ hai mục khỏi `NO_CAPABILITY_GUARD` | `tests/unit/organization/noi-bo-identity-route.test.ts`, `tests/unit/api-limits/field-catalogs-capability.test.ts` |
+| API-15 | Mô tả 6 operation trong OpenAPI nội bộ bỏ ghi chú "hiện trả 500"/"không kiểm `R1`", khai 400 thật; `x-capability` của hai route vừa gác; `internal.openapi.json` sinh lại. Đặc tả 06 cập nhật 6 dòng | `npm run check:openapi`, `npm run check:docs` |
+| Tài liệu | Trạng thái tài liệu 01/02 đổi từ DRAFT; sổ rủi ro ARC-024/025 đóng; `TRANG_THAI.md` thêm quyết định và trạng thái chương trình | — |
+
+Rủi ro đã cân nhắc: vai tự tạo có `R2` mà bị tắt `R1` sẽ không tải được danh mục ở form nhập đơn (form báo lỗi, vẫn gửi được đơn với giá trị mặc định); trang Kết nối (`/noi-bo/ket-noi`, đang khoá trong GĐ1) với vai không có `F1` nay báo "Tài khoản của bạn chưa được xem thông tin thành viên của tổ chức." thay vì hiện câu lỗi có mã năng lực.
+
+**Còn lại sau §37 (cần PO):**
+
+| Việc | Lý do chờ |
+|---|---|
+| 422 `IDEMPOTENCY_KEY_REUSED` cho `/integration/jobs` | Thay đổi phá vỡ với bên thứ ba — cần PO chốt ngày báo trước ≥ 90 ngày |
+| Phát hiện "cùng khoá, thân khác" ở `POST /orders` | Cần cột lưu băm thân — đổi `prisma/schema.prisma` |
+| Gate `check:openapi` trong CI | Đổi CI — PO đã chọn gác bằng `npm test`, giữ nguyên trừ khi PO đổi |
+| Chuyển 501 route cũ sang `defineRoute` | Ngoài phạm vi chuẩn (chuẩn chỉ bắt buộc cho route mới/đang sửa); làm theo nhóm nếu PO đặt mục tiêu |
+| Lỗi P3 còn lại ở §14–§32 (vd. `video/jobs/:id/render` 422→409, `creative-production/package` `z.any()`, khoá tầng cửa hàng ở `PATCH /notification/preferences`, `GET /ai-requests` bỏ qua tham số sai, `created_by` ở `catalog-links/{slug}` vùng đóng băng) | Chưa được duyệt sửa |
 

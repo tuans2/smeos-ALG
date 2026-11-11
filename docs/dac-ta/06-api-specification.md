@@ -676,7 +676,7 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/custom-domains` | `D19` | `{ hostname }` — chuẩn hoá (chữ thường, punycode); từ chối IP, tên miền một nhãn, tên miền của hệ thống (400); tối đa 3 tên miền/tổ chức, tên miền đã có người gắn (409, không nêu tổ chức). 201, trạng thái chờ xác minh |
 | POST | `/custom-domains/:id/verify` | `D19` | Kiểm bản ghi TXT (giới hạn 20 lần/phút/tổ chức). Đúng → `VERIFIED`, gửi Render gắn tên miền và cấp chứng chỉ HTTPS (`certificateStatus` `REQUESTED`; chưa cấu hình khoá Render → `MANUAL`); chưa đúng → `verified: false`. Tên miền đang khoá → 409; của tổ chức khác → 404 |
 | DELETE | `/custom-domains/:id` | `D19` | Gỡ tên miền (gỡ khỏi Render nếu đã xác minh), ngừng phục vụ ngay. Đang khoá → 409; của tổ chức khác → 404 |
-| GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi đăng nhập tổ chức, không có thao tác ghi |
+| GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi `R1` của tổ chức (gác từ 11/11/2026, trước đó chỉ kiểm phiên), không có thao tác ghi |
 
 ## 16. Số liệu và hồ sơ phong cách — M11
 
@@ -701,7 +701,7 @@ Mỗi chỉ số trả kèm `nguon` và `den_ngay`. Dữ liệu kế thừa từ
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/chat/conversations` | `T1` · `T2` | |
+| GET | `/chat/conversations` | `T1` · `T2` | `limit` 1–100, mặc định 50; sai → 400 |
 | POST | `/chat/conversations` | `T2` | |
 | GET | `/chat/conversations/:id/messages` | `T1` · `T2` | Thay cho `GET /conversations/:id` của bản cũ |
 | POST | `/chat/conversations/:id/messages` | `T2` | |
@@ -726,7 +726,7 @@ Tin do trợ lý tự trả lời mang cờ `tu_dong: true` trong chính bản g
 | GET | `/ai-requests` | `U3` | Sổ chi phí và chất lượng từng lời gọi, lọc theo năng lực và khoảng thời gian |
 | GET | `/ai-requests/summary` | `U3` | Tổng hợp theo năng lực và theo mô hình: chi phí, độ trễ, điểm, tỷ lệ phải leo thác |
 | GET | `/ai-evaluations/:entity_type/:entity_id` | **CHƯA XÂY** `U4` | Điểm chấm của một đầu ra và lý do nó vào hàng chờ soát. Bảng `ai_evaluations` đã có; endpoint thì chưa |
-| GET · POST | `/ai-requests/review` | `U3` | Hàng chờ soát đầu ra AI — **có trong mã, thiếu trong bản đặc tả cũ** |
+| GET · POST | `/ai-requests/review` | `U3` | Hàng chờ soát đầu ra AI — **có trong mã, thiếu trong bản đặc tả cũ**. GET `limit` 1–5.000, mặc định 100; sai → 400 |
 
 ```http
 PUT /api/v1/ai-policy
@@ -1110,7 +1110,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | POST | `/coordinator/orders/:id/craft-fee-complaint` | `R3` | Điều phối ghi nhận khiếu nại `{ reason }` (5–500 ký tự) vào `craft_fee_complaints`; trừ `complaintDeductionPercent`% phí gia công một lần (mặc định 0% → chỉ ghi nhận). Đơn chưa có chi nhánh nhận → 409; đơn tổ chức khác → 404. Trả `{ deducted, payableVnd }` |
 | POST | `/public/zalo-oa/webhook` | — *(chữ ký `X-ZEvent-Signature` = sha256(appId + thân + timestamp + OA secret key))* | Sự kiện Zalo OA chung. Tin `user_send_text` chứa mã liên kết → gắn `channels.zaloUserId` cho chi nhánh có mã (tổ chức suy từ mã). Sai chữ ký, sai `app_id` hoặc sự kiện lệch > 10 phút → 401. Lời mời gia công gửi qua OA khi chi nhánh không có Telegram; token OA niêm phong trong `platform_secrets`, làm mới dưới khoá dòng. 600 lần/phút/IP |
 | POST | `/internal/chain-dispatch-sweep` | — *(cron, header `x-cron-secret`)* | Quét nhắc mốc M1–M4. Chỉ lấy phiên điều phối `OPEN`/`CLAIMED_GRACE`/`COMMITTED` của đơn chưa huỷ, chưa hoàn tất, chưa giao xong (lọc trong DB), duyệt hết theo trang 50 dòng (keyset theo `id`, tối đa 200 trang, ngân sách 90 giây — dưới `--max-time 120` của cron); lượt chồng lượt đang chạy bị bỏ qua nhờ khoá `pg_try_advisory_xact_lock` (phản hồi `skipped`). Phản hồi có `pages`, `complete`, `errorCount`; đơn còn `OPEN` đã hết hạn vòng nhận → mời vòng sau (không mời lại chi nhánh đã mời/đã từ chối) hoặc chuyển `ESCALATED` và báo `coordinator_channel.telegramChatId` khi hết vòng/hết ứng viên, do Render cron `smeos-cron-dispatch-sweep` gọi 5 phút/lần qua mạng nội bộ. Link trong tin nhắc dựng từ `NEXT_PUBLIC_APP_URL`. Production thiếu `CRON_SECRET` → luôn 401. `?forceStep=` chỉ có hiệu lực ngoài production. Phiên `CLAIMED_GRACE` đã hết `graceExpiresAt` mà chi nhánh không huỷ → hệ thống chốt `COMMITTED` dưới khoá dòng (cùng use-case với nút Chốt của chi nhánh, `commit-subcontract-claim.ts`), gửi tin bắt đầu làm một lần; phản hồi có `graceCommitted` (PO 22/10/2026). Giờ giao để tính mốc = cuối khung giờ (`parseDeliveryTimestampMs`, cùng hàm với thẻ chi nhánh). Cuối lượt (UJ-11, 07/11/2026): báo giá nháp/đã gửi quá ngày hiệu lực → `EXPIRED` (tối đa 500/lượt, phản hồi `quotationsExpired`); xét vòng đời gói cho tổ chức quá hạn/tới cửa sổ gia hạn/chưa nhận credit tháng (tối đa 200/lượt, cùng luật `checkSubscription`, phản hồi `subscriptions: { checked, failed }`); job video treo cũng giải phóng video kẹt `RENDERING` (UJ-03). `GET /quotations/:id` không còn ghi trạng thái hết hạn — chỉ hiển thị |
-| GET | `/internal/health` | — *(cron, header `x-cron-secret`)* | Sức khoẻ chi tiết: độ trễ CSDL, Redis, job `PENDING`/`PROCESSING` quá 15 phút. `200` khi ổn, `503` khi `degraded`/`down` kèm `issues`. Cron `smeos-cron-dispatch-sweep` gọi sau mỗi lượt quét để Render báo lỗi. Không trả dữ liệu tenant |
+| GET | `/internal/health` | — *(cron, header `x-cron-secret`)* | Sức khoẻ chi tiết: độ trễ CSDL, Redis, job `PENDING`/`PROCESSING` quá 15 phút. `200` khi ổn, `503` khi `degraded`/`down` kèm `issues`. Cron `smeos-cron-dispatch-sweep` gọi sau mỗi lượt quét để Render báo lỗi. Không trả dữ liệu tenant. Sai/thiếu `x-cron-secret` → 401 theo envelope lỗi chung |
 
 ### 26.4 Console Vận hành Nền tảng
 
@@ -1134,7 +1134,7 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | GET | `/notification/events` | — (phiên tenant) | Danh mục sự kiện hiển thị cho tầng `?tier=` (mặc định `STORE`), đã áp ma trận hiển thị của SaaS Mother |
 | GET | `/notification/channels` | — (phiên tenant) | Trạng thái bật/tắt kênh toàn sàn (chỉ đọc) |
 | GET | `/ux-rollout-flags` | — (phiên tenant) | Khoá các cờ rollout giao diện đang bật cho tổ chức của phiên `{ enabled: string[] }` — không trả danh sách tổ chức |
-| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page`, `limit` (≤ 100), `unreadOnly` |
+| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page` (≥ 1), `limit` (1–100, mặc định 20), `unreadOnly`; không phải số nguyên hoặc ngoài khoảng → 400 |
 | PATCH | `/notification/inbox/:id/read` | — (của chính mình) | Đánh dấu đã đọc; tin của người/tổ chức khác → không đổi |
 | POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |
 | GET | `/notification/stream` | — (của chính mình) | SSE tin mới; ping 25 giây. Hub trong bộ nhớ tiến trình (AUD-007) |
@@ -1181,7 +1181,7 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | GET | `/internal-chat/stats` | `S1` | `{ data: { days: 30, invites_in_chat, partner_claims, partner_stores } }` — 30 ngày của tổ chức người xem (chuỗi): lời mời đơn đăng vào Trao đổi nội bộ, đơn cửa hàng đối tác đã nhận, số cửa hàng đối tác trong vòng bắn đơn; không có cửa hàng đối tác → 0. Danh sách phòng (`GET /internal-chat/conversations`) phía chuỗi kèm `activeOrderCount` cho phòng cửa hàng đối tác |
 | GET | `/internal-chat/unread` | `S1` | `{ data: { unread_count } }` — tổng tin chưa đọc của người xem trong tối đa 100 phòng gần nhất (số đếm cạnh mục menu "Trao đổi nội bộ") |
 | POST | `/internal-chat/messages/:id/action` | `S1` + `S2` | Nhận / từ chối thẻ đơn (`rejectedReason` ≤ 500). Chỉ tổ chức `assignedPartnerOrgId`, không phải người gửi, thẻ còn `PENDING_ACCEPT`; sai quyền → 404, đã xử lý → 409. Gộp trạng thái vào thẻ, giữ mã đơn / giá / ảnh |
-| GET | `/noi-bo/identity` | *(phiên)* | Danh tính nội bộ của phiên; lỗi không trả chi tiết/stack · Lỗi theo envelope chung: chưa đăng nhập/phiên bị thay → 401, không có tổ chức → 404 (trước 06/11/2026 mọi lỗi ra 500 `IDENTITY_ERROR` — audit API-04) |
+| GET | `/noi-bo/identity` | `F1` | Danh tính nội bộ của phiên, kèm tên + email thành viên (gác `F1` như `GET /members` từ 11/11/2026, trước đó mọi vai đọc được); lỗi không trả chi tiết/stack · Lỗi theo envelope chung: chưa đăng nhập/phiên bị thay → 401, không có tổ chức → 404 (trước 06/11/2026 mọi lỗi ra 500 `IDENTITY_ERROR` — audit API-04) |
 | POST | `/organizations/current/language-unlock-request` | `F2` | Xin mở thêm ngôn ngữ |
 | GET | `/platform/orgs-data` | `N1` | Trung tâm dữ liệu xuyên tổ chức |
 | GET | `/platform/orgs-data/:id` | `N1` | |

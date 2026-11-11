@@ -21,8 +21,8 @@ export const NOTIFICATION_OPERATIONS: OpenApiOperation[] = [
     ok: [200, { description: "Kênh → bật", schema: res.channelsResponse }] }),
 
   op(INBOX, { method: "get", path: "/notification/inbox", operationId: "listInbox", summary: "Hộp thư thông báo", cap: null, query: req.inboxQuery,
-    description: `${OWN} Phân trang theo trang: \`page\` (mặc định 1), \`limit\` (mặc định 20, máy chủ kẹp 1–100 nhưng \`pagination.limit\` báo lại số đã gửi). \`page\`/\`limit\` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §15).`,
-    ok: [200, { description: "Tin và đếm", schema: res.inboxResponse }], errors: [500] }),
+    description: `${OWN} Phân trang theo trang: \`page\` (mặc định 1), \`limit\` 1–100 (mặc định 20). Không phải số nguyên hoặc ngoài khoảng → 400.`,
+    ok: [200, { description: "Tin và đếm", schema: res.inboxResponse }], errors: [400] }),
   op(INBOX, { method: "patch", path: "/notification/inbox/{id}/read", operationId: "markInboxRead", summary: "Đánh dấu một tin đã đọc", cap: null,
     description: `${OWN} Tin của người/tổ chức khác → 200 \`success: false\`, không đổi gì. ${LEGACY}`,
     ok: [200, { description: "Kết quả", schema: res.inboxReadResponse }] }),

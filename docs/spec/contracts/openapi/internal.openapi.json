@@ -1354,7 +1354,7 @@
       "get": {
         "operationId": "listAiReviewQueue",
         "summary": "Hàng chờ soát đầu ra AI",
-        "description": "Lời gọi `NEEDS_REVIEW`/`ESCALATED`, mặc định 100, tối đa 5.000. `limit` không phải số → 500 (audit API §29).",
+        "description": "Lời gọi `NEEDS_REVIEW`/`ESCALATED`. `limit` 1–5.000, mặc định 100; không phải số nguyên hoặc ngoài khoảng → 400.",
         "tags": [
           "Quản trị AI"
         ],
@@ -1494,6 +1494,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -16280,7 +16283,7 @@
       "get": {
         "operationId": "listChatConversations",
         "summary": "Hội thoại tư vấn",
-        "description": "`status` mặc định `ACTIVE`; `limit` mặc định 50, chưa có trần; `limit` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §15).",
+        "description": "`status` mặc định `ACTIVE`; `limit` 1–100, mặc định 50; không phải số nguyên hoặc ngoài khoảng → 400.",
         "tags": [
           "Trợ lý AI — hội thoại"
         ],
@@ -16391,6 +16394,9 @@
               }
             }
           },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
           "401": {
             "$ref": "#/components/responses/Error401"
           },
@@ -16399,9 +16405,6 @@
           },
           "409": {
             "$ref": "#/components/responses/Error409"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "T1"
@@ -67043,7 +67046,7 @@
       "get": {
         "operationId": "listFieldCatalogs",
         "summary": "Danh mục cho form nhập liệu",
-        "description": "Chỉ giá trị đang bật; `keys` cách dấu phẩy, bỏ trống trả hết. Route chỉ kiểm phiên của tổ chức, không kiểm `R1` như đặc tả 06 ghi (audit API §31).",
+        "description": "Chỉ giá trị đang bật; `keys` cách dấu phẩy, bỏ trống trả hết.",
         "tags": [
           "Trường dữ liệu"
         ],
@@ -67168,9 +67171,15 @@
           },
           "401": {
             "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "phiên đăng nhập"
+        "x-capability": "R1"
       }
     },
     "/field-config/settings": {
@@ -89442,7 +89451,7 @@
       "post": {
         "operationId": "runChainDispatchSweep",
         "summary": "Quét nhắc mốc đơn gia công và các tác vụ dọn định kỳ",
-        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. 401 trả thân cũ. Nhắc mốc M1–M4, chuyển vòng điều phối, job kẹt, thùng rác, khoá idempotent, mã hoá dữ liệu cá nhân cũ, báo giá hết hạn, gói thuê bao. Tác vụ con hỏng → trường đó `null`, lượt vẫn 200. Có ngân sách thời gian; `complete: false` → lượt sau đi tiếp.",
+        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. Nhắc mốc M1–M4, chuyển vòng điều phối, job kẹt, thùng rác, khoá idempotent, mã hoá dữ liệu cá nhân cũ, báo giá hết hạn, gói thuê bao. Tác vụ con hỏng → trường đó `null`, lượt vẫn 200. Có ngân sách thời gian; `complete: false` → lượt sau đi tiếp.",
         "tags": [
           "Tác vụ định kỳ (cron)"
         ],
@@ -89615,7 +89624,7 @@
       "get": {
         "operationId": "getInternalHealth",
         "summary": "Sức khoẻ chi tiết: CSDL, Redis, job tồn đọng, worker",
-        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. 401 trả thân cũ `{ error: \"Unauthorized\" }`. Không khoẻ → 503 cùng thân (cron `curl -f` thất bại để báo động).",
+        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. Không khoẻ → 503 cùng thân (cron `curl -f` thất bại để báo động).",
         "tags": [
           "Tác vụ định kỳ (cron)"
         ],
@@ -98110,7 +98119,7 @@
       "get": {
         "operationId": "getOrganizationIdentity",
         "summary": "Định danh tổ chức của phiên, liên kết chuỗi, thành viên",
-        "description": "Chỉ cần phiên của tổ chức — mọi vai (kể cả Shipper) thấy tên và email của tối đa 100 thành viên đang hoạt động (audit API §31). Envelope cũ `{ success, data }`.",
+        "description": "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`. Envelope cũ `{ success, data }`.",
         "tags": [
           "Định danh tổ chức"
         ],
@@ -98344,11 +98353,17 @@
           "401": {
             "$ref": "#/components/responses/Error401"
           },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
           "404": {
             "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "phiên đăng nhập"
+        "x-capability": "F1"
       }
     },
     "/notification/channels": {
@@ -98602,7 +98617,7 @@
       "get": {
         "operationId": "listInbox",
         "summary": "Hộp thư thông báo",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Phân trang theo trang: `page` (mặc định 1), `limit` (mặc định 20, máy chủ kẹp 1–100 nhưng `pagination.limit` báo lại số đã gửi). `page`/`limit` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §15).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Phân trang theo trang: `page` (mặc định 1), `limit` 1–100 (mặc định 20). Không phải số nguyên hoặc ngoài khoảng → 400.",
         "tags": [
           "Thông báo — hộp thư"
         ],
@@ -98763,6 +98778,9 @@
               }
             }
           },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
           "401": {
             "$ref": "#/components/responses/Error401"
           },
@@ -98771,9 +98789,6 @@
           },
           "409": {
             "$ref": "#/components/responses/Error409"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "phiên đăng nhập"

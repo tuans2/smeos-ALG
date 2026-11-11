@@ -30,8 +30,8 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 | ARC-021 | J | P2 | C | T | V | 2 | 74% tệp TSX chưa dùng i18n | 24 |
 | ARC-022 | F | P2 | T | C | V | 3 | CSP Report-Only; không CSRF token/kiểm Origin | 18 |
 | ARC-023 | N | P2 | C | TB | V | 2 | Sentry tuỳ chọn, không khai ở `render.yaml`; không metrics; 62 `console.*`, 59 `print()` | 21 |
-| ARC-024 | D/O | P2 | TB | TB | V | 3 | Không OpenAPI; không tài liệu API cho khách; 6 route bỏ envelope | 23 |
-| ARC-025 | G/D | P2 | T | TB | V | 3 | `content-engine/rewrite` chưa gác mã năng lực (nợ #170) | 25 |
+| ARC-024 | D/O | ~~P2~~ ĐÃ ĐÓNG 11/11/2026 | TB | TB | V | 4 | ~~Không OpenAPI~~ — OpenAPI 3.1 cho 4 bề mặt (693 operation), ratchet envelope; còn 67 mục miễn trừ chỉ được co lại | — |
+| ARC-025 | G/D | ~~P2~~ ĐÃ ĐÓNG 07/11/2026 | T | TB | V | 4 | ~~`content-engine/rewrite` chưa gác mã năng lực~~ — gác `F2`/`L2`/`L3` + trừ credit | — |
 | ARC-026 | B/N | P3 | T | T | V | 3 | `vercel.json`, `cron-job-entry.txt` lỗi thời; `dify-chat-provider.ts` chết | 28 |
 | ARC-027 | C/O | P2 | C | T | V | 2 | Không có ERD | 26 |
 | ARC-028 | O | P1 | C | C | V | 2 | Gói bàn giao khách thiếu SLA, hướng dẫn quản trị/người dùng, quyền truy cập | 8 |
@@ -153,10 +153,12 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 ### ARC-024 — Hợp đồng API (P2)
 - **Bằng chứng:** không có tệp OpenAPI; 6 route dùng `NextResponse.json` trực tiếp (gồm webhook, dev).
 - **Khuyến nghị:** Sinh OpenAPI từ schema zod cho `/api/v1/integration/*` (bề mặt bên thứ ba) trước.
+- **Đã đóng 11/11/2026:** `docs/spec/contracts/openapi/{integration,public,platform,internal}.openapi.json` sinh từ zod, `npm run check:openapi` gác qua `npm test`; route mới bắt buộc `defineRoute`, envelope lệch bị ratchet chặn (`docs/audit/api-architecture-audit/01_API_ARCHITECTURE_AUDIT.md` §8–§37).
 
 ### ARC-025 — Route thiếu mã năng lực (P2)
 - **Bằng chứng:** `NO_CAPABILITY_GUARD["content-engine/rewrite"] = DEBT_170`.
 - **Khuyến nghị:** PO chốt mã, gác, xoá khỏi danh sách.
+- **Đã đóng 07/11/2026:** gác một trong `F2`/`L2`/`L3`, trừ credit `content.rewrite`, gỡ khỏi `NO_CAPABILITY_GUARD` (`01_API_ARCHITECTURE_AUDIT.md` §13).
 
 ### ARC-026 — Tàn dư cấu hình/mã (P3)
 - **Bằng chứng:** `vercel.json`, `cron-job-entry.txt`, `src/modules/chat-assistant/adapters/dify-chat-provider.ts` (không được import).
