@@ -71,7 +71,7 @@ cần test khoá hành vi trước.
 | [x] | O-5 Script CI kiểm expand/contract trên `migration.sql` mới | 015 | — | Ca thử: `DROP COLUMN` không chú thích → đỏ — PR #135 |
 | [ ] | O-6 [VẬN HÀNH] Export đêm ra kho ngoài nhà cung cấp, giữ 35 ngày + 12 tháng | 015 | — | 7 bản liên tiếp |
 | [ ] | O-7 [VẬN HÀNH] Diễn tập PITR lần đầu + biên bản | 015 | P1-02 | RTO đo được ≤ 1 giờ |
-| [ ] | Dọn khoá `NOT VALID` còn sót của PR #127 (`VAN_HANH_CAP_NHAT_CSDL.md` §7) | 015 | — | 0 dòng `NOT convalidated` |
+| [ ] | Dọn khoá `NOT VALID` còn sót của PR #127 (`VAN_HANH_CAP_NHAT_CSDL.md` §7) — **11/11/2026:** migration `20261111090000_validate_not_valid_constraints` tự `VALIDATE` khoá đã sạch; `npm run db:not-valid` đếm dòng sai, `-- --validate` sau khi dọn. Còn: chạy trên production, dọn dòng sai (PO duyệt theo từng khoá) | 015 | — | 0 dòng `NOT convalidated` (`npm run db:not-valid` in "không còn khoá NOT VALID") |
 | [x] | S-1 Sổ bảng-thuộc-tenant sinh từ schema; `TENANT_TABLES` đọc sổ | 016 | — | `check:docs` + test sổ khớp schema — PR #135 |
 | [x] | P-1 Nhãn `@pii` + `pii-registry` + test CI | 014 | — | Cột cá nhân không nhãn → đỏ |
 | [x] | T-1 `resolveTierChain` trên bảng hiện tại; thay 4 bản tra chuỗi cha (CRUD quan hệ, kiểm liên kết, danh sách đối tác chuyển ở T-3) | 012 | P2-A2 (phần hàm) | Tenant test khoá công cụ, ma trận, thông báo — PR #135 |
