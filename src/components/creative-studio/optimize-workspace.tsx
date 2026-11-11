@@ -294,7 +294,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
                   >
                     <Sparkles size={18} strokeWidth={2} className="mr-2" />
                     {optimizationEngine === "local_studio"
-                      ? "Tiến hành tối ưu ảnh M04a (Thuật toán Studio Cục bộ)"
+                      ? "Tiến hành tối ưu ảnh (Studio cục bộ)"
                       : `Nâng cấp qua Cloud AI (${ENHANCER_PROVIDERS.find((p) => p.id === selectedEnhancerProvider)?.name || "Provider"})`}
                   </Button>
 

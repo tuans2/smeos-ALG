@@ -66,7 +66,7 @@ export function OrderAdvancedFilters({ value, onChange }: { value: OrderAdvanced
       </label>
       {members.length > 0 && (
         <Select value={value.saleId || ALL} onValueChange={(v: string) => onChange({ ...value, saleId: v === ALL ? "" : v })}>
-          <SelectTrigger className="h-9 w-48" aria-label="Nhân viên bán"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="h-9 w-48" aria-label="Nhân viên bán"><SelectValue>{(v: string) => (v === ALL ? "Mọi nhân viên" : (members.find((m) => m.id === v)?.label ?? v))}</SelectValue></SelectTrigger>
           <SelectContent>
             <SelectItem value={ALL}>Mọi nhân viên</SelectItem>
             {members.map((m) => <SelectItem key={m.id} value={m.id}>{m.label}</SelectItem>)}
@@ -75,7 +75,7 @@ export function OrderAdvancedFilters({ value, onChange }: { value: OrderAdvanced
       )}
       {branches.length > 1 && (
         <Select value={value.branchId || ALL} onValueChange={(v: string) => onChange({ ...value, branchId: v === ALL ? "" : v })}>
-          <SelectTrigger className="h-9 w-44" aria-label="Chi nhánh"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="h-9 w-44" aria-label="Chi nhánh"><SelectValue>{(v: string) => (v === ALL ? "Mọi chi nhánh" : (branches.find((x) => x.id === v)?.label ?? v))}</SelectValue></SelectTrigger>
           <SelectContent>
             <SelectItem value={ALL}>Mọi chi nhánh</SelectItem>
             {branches.map((b) => <SelectItem key={b.id} value={b.id}>{b.label}</SelectItem>)}

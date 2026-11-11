@@ -338,11 +338,8 @@ export default function KhoTemplatesPage() {
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-body font-bold text-text">{cat.title}</h2>
-                        <span className="rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold tracking-wide text-text-muted uppercase">
-                          {cat.code}
-                        </span>
                         <span className="rounded-full bg-surface-alt px-2 py-0.5 text-caption font-semibold text-text-muted">
-                          {cat.files.length} template
+                          {cat.files.length} mẫu
                         </span>
                       </div>
                       <p className="mt-1 max-w-2xl text-meta leading-relaxed text-text-muted">
