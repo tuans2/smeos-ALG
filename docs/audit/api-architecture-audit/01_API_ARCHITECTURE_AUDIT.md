@@ -701,3 +701,17 @@ PO duyệt sau khi rà "SSOT / production / commercial ready".
 
 **Đánh giá sẵn sàng (11/11/2026):** API nội bộ đạt mức production cho giao diện SMEOS. Chưa đạt mức thương mại cho bên thứ ba: còn ARC-024 (phần trên), ARC-022 (không CSRF/kiểm `Origin`, CSP chỉ báo cáo), ARC-023 (chưa metrics), chưa kiểm thử tải/pentest, chưa SLA (ARC-028).
 
+## 40. Nhật ký — chống CSRF bằng kiểm Origin (ARC-022, 11/11/2026)
+
+PO duyệt kế hoạch "đợt CSRF" theo đề xuất (D-25: kiểm `Origin`; Q4: production chạy chế độ chỉ ghi log 1 tuần trước khi chặn; Q5: làm A1–A5 trước).
+
+| Bước | Đã làm | Test |
+|---|---|---|
+| A1 | `src/core/http/origin-guard.ts`, gọi trong `handle()` (phủ cả `defineRoute`): `POST/PUT/PATCH/DELETE` có cookie phiên (`smeos_session`, `smeos_sso`, `floraos_sso`) và `auth/login`, `auth/signup`, `auth/instant-trial` (kể cả chưa có cookie — login CSRF). `Origin` phải trùng host của request (`x-forwarded-host`/`host`, gồm tên miền riêng của tiệm) hoặc `PUBLIC_APP_URL`/`NEXT_PUBLIC_APP_URL`; không có `Origin` thì xét `Sec-Fetch-Site` (`same-origin`/`none` qua); thiếu cả hai là máy gọi máy → qua. Sai → 403 `CROSS_ORIGIN_REJECTED` (câu tiếng Việt), log `security.cross_origin_request`. `ORIGIN_CHECK_MODE`: `enforce`/`log`; trống = `log` trên production, `enforce` nơi khác | `tests/unit/core/http/origin-guard.test.ts`, `tests/tenant/origin-guard.test.ts` (đỏ khi gỡ dòng gắn vào `handle()`) |
+| A2 | Miễn trừ (đường dẫn sau `/api/v1/`, chỉ co lại, có lý do): `public/`, `integration/`, `internal/`, `storage/`, `chat/webhooks/`, `billing/sepay`. Ghi TƯƠNG ĐỐI vì bộ dò phạm vi bàn giao đọc chuỗi `/api/...` như liên kết route (lần đầu viết đủ đường dẫn đã kéo nhầm 2 webhook chat vào GD1) | cùng tệp unit |
+| A3 | Rà mọi route `GET`: chỉ ghi nhật ký truy cập/xuất dữ liệu (`recordDataExport`, `recordPlatformAccess`, `recordPlatformAuditLog`) và luồng SSE — không đổi dữ liệu nghiệp vụ. Khoá bằng test kiến trúc | `tests/unit/architecture/get-no-side-effects.test.ts` |
+| A4 | Mã lỗi `CROSS_ORIGIN_REJECTED` (403) trong `core/http/errors.ts`, OpenAPI 4 tệp sinh lại; đặc tả 06 §2, `.agents/standards/smeos/05-security-authz.md`, `.env.example` | `check:openapi`, `check:docs` |
+| A5 | E2E giao diện chạy với `ORIGIN_CHECK_MODE=enforce` trên bản build production (CI chạy E2E ở chế độ `log` mặc định của production nên không thử được chặn) | `tests/e2e/ux` |
+
+**Việc của PO sau khi triển khai:** theo dõi log `security.cross_origin_request` trên Render 1 tuần; không có request hợp lệ bị đánh dấu → đặt biến môi trường `ORIGIN_CHECK_MODE=enforce` cho dịch vụ web. A6 (CSP chặn thật) chờ 2 tuần log `csp.violation`.
+

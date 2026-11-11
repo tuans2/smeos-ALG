@@ -8,6 +8,7 @@ import { currentRequestMeta, requestIdOf, runWithRequestMeta } from "@/core/obse
 import { AppError, payloadTooLarge, validationFailed } from "./errors"
 import { withUnreadBodyCacheHeader } from "./ack-routes"
 import { withDeprecationHeaders } from "./deprecation"
+import { guardCrossOrigin } from "./origin-guard"
 import { clientIp } from "./rate-limit"
 import { auditDenied, auditMutation, userAgentOf } from "./request-audit"
 
@@ -163,6 +164,8 @@ export function handle<Args extends unknown[]>(
     return runWithRequestMeta(meta, () => runWithDbContext(dbContext, async () => {
       try {
         guardJsonBody(request)
+        // Lệnh ghi có cookie phiên từ origin khác → 403 (ARC-022); chế độ `log` chỉ ghi lại (`origin-guard.ts`)
+        guardCrossOrigin(request, pathname, (event) => log.warn("security.cross_origin_request", event))
         const response = await fn(request, ...args)
         await auditMutation(request, response)
         return finish(withRateLimitHeaders(response))

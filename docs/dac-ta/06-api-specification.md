@@ -36,6 +36,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | 400 | `VALIDATION_FAILED` | Thân yêu cầu sai lược đồ zod (`details.issues`), hoặc thân không phải JSON hợp lệ (`details.body`). `handle()` tự đổi `ZodError` và lỗi đọc JSON của thân thành mã này — trước 06/11/2026 hai lỗi đó ra 500 (audit API-01) |
 | 401 | `UNAUTHENTICATED` | Không có phiên hợp lệ |
 | 403 | `CAPABILITY_DENIED` | Thiếu mã năng lực. Thân lỗi nêu mã còn thiếu |
+| 403 | `CROSS_ORIGIN_REJECTED` | Lệnh ghi (`POST/PUT/PATCH/DELETE`) có cookie phiên, hoặc đăng nhập/đăng ký/dùng thử, gửi từ origin khác host của request và `PUBLIC_APP_URL` (`Origin`, hoặc `Sec-Fetch-Site` khi không có `Origin`). Miễn (đường dẫn sau `/api/v1/`): `public/`, `integration/`, `internal/`, `storage/`, webhook chat và SePay. Chế độ `ORIGIN_CHECK_MODE` (`log` mặc định trên production trong tuần theo dõi đầu, rồi `enforce`) — `src/core/http/origin-guard.ts` (ARC-022, PO D-25, 11/11/2026). Route `GET` không được đổi trạng thái (`tests/unit/architecture/get-no-side-effects.test.ts`) |
 | 404 | `NOT_FOUND` | Không tìm thấy, **hoặc thuộc tổ chức khác** |
 | 409 | `CONFLICT` | Xung đột trạng thái, ví dụ duyệt một bản ghi đã duyệt |
 | 413 | `PAYLOAD_TOO_LARGE` | Thân JSON vượt 2 MB (`details.max_bytes`); `handle()` chặn theo `content-length` hoặc khi đọc luồng vượt trần — tải tệp đi `formData`/URL ký, không qua trần này (07/11/2026, audit API-17) |

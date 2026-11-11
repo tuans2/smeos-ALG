@@ -28,7 +28,7 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 | ARC-019 | C | P2 | TB | TB | V | 3 | Cột trạng thái kiểu `String`; bảng con không `organization_id`; DB test dựng bằng `db push` | 19 |
 | ARC-020 | I | P2 | C | TB | V | 2 | Screen Contract phủ ~40% trang; tuân thủ tự khai | 17 |
 | ARC-021 | J | P2 | C | T | V | 2 | 74% tệp TSX chưa dùng i18n | 24 |
-| ARC-022 | F | P2 | T | C | V | 3 | CSP Report-Only; không CSRF token/kiểm Origin | 18 |
+| ARC-022 | F | P2 — **đang đóng dần** | T | C | V | 3 | ~~Không kiểm Origin~~ (mã xong 11/11/2026, production chạy `log` 1 tuần rồi `enforce`); CSP vẫn Report-Only — chờ 2 tuần log `csp.violation` (D-25) | 18 |
 | ARC-023 | N | P2 | C | TB | V | 2 | Sentry tuỳ chọn, không khai ở `render.yaml`; không metrics; 62 `console.*`, 59 `print()` | 21 |
 | ARC-024 | D/O | P2 — **mở một phần** | TB | TB | V | 3 | ~~Không OpenAPI~~ (xong 11/11/2026: 4 bề mặt, 693 operation); **còn**: chưa có tài liệu API công bố cho đối tác/khách; phản hồi Integration API trả bản ghi nội bộ; 67 mục envelope lệch (ratchet) | 23 |
 | ARC-025 | G/D | ~~P2~~ ĐÃ ĐÓNG 07/11/2026 | T | TB | V | 4 | ~~`content-engine/rewrite` chưa gác mã năng lực~~ — gác `F2`/`L2`/`L3` + trừ credit | — |
@@ -145,6 +145,8 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 - **Khuyến nghị:** Ratchet số chuỗi hardcode; ưu tiên thông báo lỗi, trạng thái rỗng, email/thông báo khách.
 
 ### ARC-022 — CSP/CSRF (P2) — xem `05` §1.
+- **Kiểm Origin (11/11/2026, D-25):** `src/core/http/origin-guard.ts` gọi trong `handle()` — lệnh ghi có cookie phiên và đăng nhập/đăng ký từ origin khác → 403 `CROSS_ORIGIN_REJECTED`; route `GET` không đổi trạng thái (test kiến trúc). `ORIGIN_CHECK_MODE`: production mặc định `log` — sau 1 tuần không có `security.cross_origin_request` hợp lệ trong log Render, đặt `ORIGIN_CHECK_MODE=enforce` (việc của PO trên Render, không sửa `render.yaml`).
+- **Còn mở:** CSP chuyển sang chặn sau 2 tuần log `csp.violation` sạch (A6, PR riêng).
 
 ### ARC-023 — Quan trắc (P2)
 - **Bằng chứng:** `src/instrumentation.ts` (Sentry chỉ khi `SENTRY_DSN`); `render.yaml` không khai `SENTRY_DSN`; runbook §10 "chưa có công cụ metrics".
