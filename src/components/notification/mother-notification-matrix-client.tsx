@@ -3,12 +3,13 @@
  *
  * Admin nền tảng (SaaS Mother) quản lý:
  * - Toàn bộ events của tất cả 4 tầng
- * - Channel activation (bật/tắt kênh gửi toàn hệ thống)
+ * - Kênh liên lạc: đăng ký nhà cung cấp một lần + bật/tắt kênh toàn hệ thống (4.30)
  * - Hard Lock cấp cao nhất — không tầng nào ghi đè được
  * - Visibility: event nào hiện ở tầng nào
  */
 "use client"
 
+import { ChannelProvidersPanel } from "@/components/notification/channel-providers-panel"
 import { NotificationMatrixPage } from "@/components/notification/notification-matrix-page"
 import { useNotificationMatrix } from "@/components/notification/use-notification-matrix"
 import { useI18n } from "@/lib/i18n"
@@ -40,6 +41,7 @@ export function MotherNotificationMatrixClient() {
       onToggleHardLock={toggleHardLock}
       onRemoveHardLock={removeHardLock}
       loading={loading}
+      beforeMatrix={<ChannelProvidersPanel />}
     />
   )
 }

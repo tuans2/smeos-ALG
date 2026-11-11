@@ -297,3 +297,18 @@ tràn ngang ở 390px và 1280px. So với bản trước (audit `/audit` ở co
 
 Thư viện giao diện của Console chưa audit lại (cần phiên người vận hành nền tảng). **Ngoài phạm vi, chưa sửa:** ô "Loại thao tác" hiện giá trị `ALL` thay vì nhãn "Tất cả" khi chưa chọn (có từ trước).
 Chưa kiểm thủ công: bàn phím (chuyển tab bằng phím mũi tên), zoom 200%, trình đọc màn hình.
+
+## `/van-hanh/thong-bao` — khối "Kênh liên lạc" (11/11/2026, checklist 4.30)
+
+Kịch bản `scripts/ux-audit/scenarios/van-hanh-thong-bao.mjs` (người vận hành có `N2`, CSDL `*_test`): chưa kết nối
+kênh nào, mở thông số SMS, đã kết nối SMS (khoá giả). Sau sửa: 6/6 trạng thái axe sạch, không tràn ngang ở 390px và
+1280px.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| KLL-01 | P1 | Zalo chưa kết nối mà báo "Kênh này chưa gửi được" — khả năng gửi lấy theo nhà cung cấp đã lưu, kênh chưa lưu thì luôn "không" | Kênh chưa chọn nhà cung cấp lấy khả năng gửi theo sổ (`maskProviderConfig`), có test |
+| KLL-02 | P2 | Lưới 3 cột ở 1280px làm ô nhập hẹp, chữ gợi ý ô khoá bị cắt, nhãn số điện thoại xuống dòng | Mỗi kênh một hàng; ô nhập 2 cột trong thông số; chữ gợi ý ngắn lại |
+| KLL-03 | P2 | Lý do Web Push chưa gửi được dùng chữ kỹ thuật ("đổi lược đồ") | Đổi thành câu thường |
+| KLL-04 | — | Cảnh báo nội dung "cam kết / đánh giá" | Báo nhầm: tên nhóm/sự kiện của ma trận có từ trước (ví dụ "Ma trận cam kết"), không phải nội dung bịa |
+
+Chưa kiểm thủ công: bàn phím, zoom 200%, trình đọc màn hình; gửi thử thật (chưa có khoá nhà cung cấp).
