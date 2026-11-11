@@ -13,6 +13,7 @@ import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { getRoleRepository } from "@/modules/organization/infra/role-repository"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
 import { getUserRepository } from "@/modules/organization/infra/user-repository"
+import { OccasionRepository } from "@/modules/organization/infra/occasion-repository"
 import { getWorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 import { markInvoicePaid, upsertSubscription } from "@/modules/subscription/infra/subscription-repository"
@@ -60,7 +61,9 @@ export async function createOrganizationFromConsole(pctx: PlatformContext, input
     }
     if (!slug) throw conflict("Không sinh được định danh cho tên cửa hàng này")
     const organization = await organizations.create({ name, slug, type: "SINGLE", credit_balance: 0, settings: { industry, industry_locked: true } })
-    await getWorkspaceRepository(tx).createForNewOrganization({ organizationId: organization.id, name, kind: "PRODUCTION", trial_limit: null, trial_status: null })
+    const workspace = await getWorkspaceRepository(tx).createForNewOrganization({ organizationId: organization.id, name, kind: "PRODUCTION", trial_limit: null, trial_status: null })
+    // Danh mục dịp mặc định như cửa hàng tự đăng ký (checklist ALG 1.7)
+    await new OccasionRepository(tx).seedDefault({ organizationId: organization.id, workspaceId: workspace.id, userId: user.id, branchId: null, capabilities: new Set<string>() })
     const founderRole = await getRoleRepository(tx).findSystemRoleByKey(FOUNDER_ROLE_KEY)
     if (!founderRole) throw new Error(`Thiếu vai hệ thống ${FOUNDER_ROLE_KEY}. Chạy \`npm run db:seed\`.`)
     await getMembershipRepository(tx).createForNewOrganization({ organizationId: organization.id, userId: user.id, roleId: founderRole.id, status: "ACTIVE", joinedAt: now })
