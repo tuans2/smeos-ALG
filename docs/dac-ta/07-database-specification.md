@@ -3188,6 +3188,28 @@ model notification_inbox {
 }
 ```
 
+`push_subscriptions` (11/11/2026, checklist 4.30, migration `20261111053241_push_subscriptions`, chủ dự án duyệt làm Web Push): thiết bị (trình duyệt) đã đồng ý nhận Web Push của một người trong một tổ chức. Ghi/xoá qua `/api/v1/notification/push-subscriptions`, chỉ thiết bị của chính người gọi, `organization_id` từ phiên; `endpoint` chỉ nhận dịch vụ đẩy thật (chặn SSRF); tối đa 10 thiết bị mỗi người. `(organization_id, endpoint)` duy nhất — cùng trình duyệt đăng nhập người khác của tổ chức thì dòng chuyển sang người đó; đăng xuất thì giao diện tắt nhận tin trên trình duyệt. Có chính sách RLS `tenant_isolation`. `p256dh`/`auth` là khoá công khai và bí mật xác thực của trình duyệt (RFC 8291), dùng để mã hoá tin gửi tới chính nó; khoá VAPID của máy chủ nằm niêm phong ở `platform_secrets`. Dịch vụ đẩy trả 404/410 → dòng bị xoá.
+
+```prisma
+model push_subscriptions {
+  id              String    @id @default(uuid())
+  organization_id String
+  user_id         String
+  endpoint        String
+  p256dh          String
+  auth            String
+  user_agent      String?
+  created_at      DateTime  @default(now())
+  last_success_at DateTime?
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, endpoint])
+  @@index([organization_id])
+  @@index([organization_id, user_id])
+}
+```
+
 
 ## 34. Đối tác chuỗi và chat nội bộ (26/10/2026)
 

@@ -25,6 +25,7 @@
   "email|src/modules/greeting-card/domain/__tests__/delivery-note.test.ts": 1,
   "email|src/modules/greeting-card/use-cases/__tests__/notify-staff.test.ts": 3,
   "email|src/modules/integration-hub/domain/__tests__/integration-hub-domain.test.ts": 1,
+  "email|src/modules/notification/domain/web-push-rules.test.ts": 1,
   "email|src/modules/organization/domain/credentials.test.ts": 1,
   "email|src/modules/organization/use-cases/staff-accounts.ts": 1,
   "email|src/modules/platform/adapters/google-workspace-client.test.ts": 1,

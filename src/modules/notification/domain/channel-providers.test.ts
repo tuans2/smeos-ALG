@@ -6,11 +6,9 @@ import { smsPlainText } from "./notification-text"
 const esms = providerDefinition("SMS", "esms")!
 
 describe("sổ nhà cung cấp kênh (4.30)", () => {
-  it("mỗi nhà cung cấp thuộc đúng một kênh; Web Push ghi rõ còn chờ gì", () => {
+  it("mỗi nhà cung cấp thuộc đúng một kênh; cả ba kênh đều gửi được khi đủ cấu hình", () => {
     expect(providerDefinition("ZALO", "esms")).toBeNull()
-    const vapid = CHANNEL_PROVIDERS.find((p) => p.key === "vapid")!
-    expect(vapid.ready).toBe(false)
-    expect(vapid.pending).toBeTruthy()
+    expect(CHANNEL_PROVIDERS.every((p) => p.ready && !p.pending)).toBe(true)
   })
 
   it("ô bí mật để trống giữ khoá đã lưu; ô thường để trống bị xoá", () => {
@@ -34,10 +32,9 @@ describe("sổ nhà cung cấp kênh (4.30)", () => {
     expect(isProviderConfigured("SMS", null)).toBe(false)
   })
 
-  it("kênh chưa chọn nhà cung cấp vẫn báo đúng khả năng gửi (Zalo gửi được khi kết nối; Web Push chưa)", () => {
+  it("kênh chưa chọn nhà cung cấp vẫn báo đúng khả năng gửi theo sổ", () => {
     expect(maskProviderConfig("ZALO", null)).toMatchObject({ configured: false, ready: true, pending: null })
-    expect(maskProviderConfig("PUSH", null)).toMatchObject({ configured: false, ready: false })
-    expect(maskProviderConfig("PUSH", null).pending).toBeTruthy()
+    expect(maskProviderConfig("PUSH", null)).toMatchObject({ configured: false, ready: true, pending: null })
   })
 
   it("nội dung SMS không dấu, giữ trọn link, tối đa 306 ký tự", () => {

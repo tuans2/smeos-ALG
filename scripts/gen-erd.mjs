@@ -48,7 +48,7 @@ export const DOMAINS = [
   ]],
   ["Thông báo và trò chuyện", [
     "notification_channel_activations", "notification_inbox", "notification_org_policies", "notification_store_defaults",
-    "notification_user_preferences", "chat_channel_integrations", "chat_conversations", "chat_messages",
+    "notification_user_preferences", "push_subscriptions", "chat_channel_integrations", "chat_conversations", "chat_messages",
     "internal_chat_conversations", "internal_chat_messages", "internal_chat_participants",
   ]],
   ["Tích hợp và kênh bán", [

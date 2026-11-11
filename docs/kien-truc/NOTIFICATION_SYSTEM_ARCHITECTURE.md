@@ -391,6 +391,7 @@ GET/POST/DELETE /api/v1/notification/store-hard-locks     ← Store Hard Lock
 
 # User
 GET/PATCH  /api/v1/notification/preferences
+GET/POST/DELETE /api/v1/notification/push-subscriptions  ← Bật/tắt Web Push trên trình duyệt này (4.30)
 
 # Inbox
 GET        /api/v1/notification/inbox?page=1&limit=20
