@@ -242,5 +242,6 @@ Năm việc nên làm trước:
 
 ## 7. Gate đã chạy trong đợt audit
 
-- `npm test` (biến môi trường giả, không CSDL): xem báo cáo kèm theo của phiên — đợt audit **không đổi mã nguồn**.
+- `npm test` (biến môi trường giả, không CSDL), tại `50b9c1e6` = `main`: **4865/4897 test đạt; 32 test / 10 tệp đỏ**, đều do môi trường: các test gọi Prisma thật mà không có CSDL (`Can't reach database`, `Invalid this.db.organizations.find…`) và test cần khoá bí mật thật. Đợt audit **không đổi mã nguồn** nên không có lỗi mới so với `main`.
+- `npm run check:docs`: đạt.
 - `test:tenant`, `test:platform`: **không chạy** — môi trường không có CSDL `_test`. Các kịch bản tenant ở mục 6 chưa được chứng minh.
