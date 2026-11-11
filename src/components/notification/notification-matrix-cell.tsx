@@ -90,7 +90,7 @@ export function NotificationMatrixCell({
           onCheckedChange={() => void handleToggle()}
           disabled={isDisabled}
           aria-label={`${cell.enabled ? "Tắt" : "Bật"} thông báo`}
-          className="relative h-5 w-9 after:absolute after:-inset-x-1 after:-inset-y-[3px] [@media(pointer:coarse)]:after:-inset-3"
+          className="relative h-5 w-9 after:absolute after:-inset-x-[6px] after:-inset-y-[5px] [@media(pointer:coarse)]:after:-inset-[14px]"
         />
         {toggling && (
           <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
