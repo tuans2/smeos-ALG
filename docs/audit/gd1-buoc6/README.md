@@ -5,7 +5,7 @@ Thực hiện Bước 6 của [kế hoạch bàn giao](../../plan/BANGIAO_GD1_12
 ## 1. Kết luận
 
 - Bản cắt **dựng và chạy được** từ môi trường trắng: build production, migrate 0 lỗi, web + worker `vision` + worker `media_ai` chạy; 5.087/5.132 tệp giống hệt mã smeOS cùng mốc.
-- Bản cắt **chưa đạt để giao**: 141 bước — **55 Đạt, 17 Không đạt**, 12 chờ môi trường thật (khoá AI, Zalo ZNS/SMS, SePay), **57 chưa chạy** (Luồng F, G, H, I phần lớn, J-07/09/11–14, S-01/02/04/06–10, B-11, B-15, D-17, E-13).
+- Bản cắt **chưa đạt để giao**: 141 bước — **58 Đạt, 14 Không đạt**, 12 chờ môi trường thật (khoá AI, Zalo ZNS/SMS, SePay), **57 chưa chạy** (Luồng F, G, H, I phần lớn, J-07/09/11–14, S-01/02/04/06–10, B-11, B-15, D-17, E-13).
 - Ba lỗi chặn việc dựng máy theo tài liệu giao: không tạo được người vận hành đầu tiên, `.env.example` làm app và worker không khởi động, README thiếu bước nạp danh mục trường (mục 4, lỗi 1–4).
 
 ## 2. Môi trường
@@ -48,13 +48,15 @@ Thực hiện Bước 6 của [kế hoạch bàn giao](../../plan/BANGIAO_GD1_12
 | 11 | Hoàn credit tác vụ AI lỗi không chạy tự động: `render.yaml` không lên lịch `hoan-credit`; chỉ hoàn khi chạy tay | `render.yaml`, `scripts/hoan-credit.ts` | J-08 |
 | 12 | Trang khách báo "hệ thống tự động duyệt sau 15' khi có ảnh bill" trong khi tự duyệt mặc định tắt | `src/components/greeting-card/customer/brochure-payment-view.tsx:290`, `order-parallel-stages-card.tsx:72` | E-01 |
 | 13 | Mẫu Tạm ngưng vẫn hiện trên link Thẻ Chào kèm giá (khi đặt thì bị chặn) | Trang `/b/[sendCode]` | D-05 |
-| 14 | Báo giá Thẻ Chào thiếu khu vực giao và phí giao theo khu vực, phụ phí ngày lễ, phí chế tác ngày lễ; mã trong lô mã giảm giá không áp | Trang `/b/[sendCode]`, API `quote` | D-09, C-10 |
-| 15 | Giới hạn số đơn ngày lễ không áp: ngày khai tối đa 2 đơn nhận 4 đơn | Đặt đơn Thẻ Chào | D-12 |
+| 14 | Ô Mã ưu đãi luôn hiện trên trang đặt hàng, nhưng khi cửa hàng chưa bật nhận mã giảm giá (cài đặt phí giao) thì mã khách nhập bị bỏ qua, không có thông báo | `src/modules/greeting-card/use-cases/brochure-quote.ts:158` | D-09 |
+| 15 | Kịch bản A-17/D-09 không nêu hai công tắc bắt buộc để báo giá có phụ phí lễ và mã giảm giá: "Áp dụng phụ phí ngày lễ" của bộ sưu tập và "Nhận mã giảm giá" ở cài đặt phí giao | `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx` | A-17, D-09 |
 | 16 | Đề xuất thay hoa luôn rỗng với đơn Thẻ Chào: mã đọc `metadata.flowers[].flowerName`, ảnh chụp mẫu chỉ có `flowersSummary`, form sản phẩm lưu `bom.flowers[].name` | `src/modules/greeting-card/domain/flower-substitute.ts:52` | E-11, E-12 |
 | 17 | Phiếu xưởng A6 thiếu ảnh mẫu, phiên bản, số cành, công thức có ô đánh dấu; in cả ghi chú đối soát tiền | `/in-phieu/[id]` | E-07 |
 | 18 | Sale không đổi được giờ giao (thiếu `R3`); lịch sử đơn chỉ ghi đổi trạng thái, không giữ giá trị cũ/mới của giờ giao | `PATCH /api/v1/orders/:id` | E-14 |
 | 19 | Thiết bị bị thay phiên không có câu báo lý do; trang duyệt ảnh của khách không có nút góp ý; tab Nhận thanh toán không hiện mã VietQR mẫu | — | A-02, E-10, A-15 |
 | 20 | Giao diện: thanh tab Cài đặt tiệm bị ép trong cột hẹp; nhiều ô ở Hồ sơ cửa hàng không có tên truy cập (Hotline, Email, Địa chỉ, Website, Fanpage); nhãn tiêu chí đè dòng dưới ở danh sách sẵn sàng; vai "Experience User" tên tiếng Anh; `/san-pham` có hai vùng `main` | — | A-03, B-08 |
+
+Ba bước D-09, D-12, C-10 chạy lại sau khi khai cài đặt đúng định dạng của các form (khu vực giao `fee_vnd`, ngày lễ `max_orders`/`surcharge_vnd`, kiểu dáng theo mã của ngành) — lượt đầu ghi cài đặt sai định dạng nên kết quả lượt đầu không dùng.
 
 Chưa kết luận, cần kiểm tiếp: mẫu khai giá theo phiên bản (Nhỏ/Vừa/Lớn) hiện "Liên hệ" trên link khách khi bảng giá ghi qua API; đơn Thẻ Chào chưa có đường vào danh sách "Đơn cần giao" của Shipper (danh sách đọc `order_coordinations`).
 
@@ -109,7 +111,7 @@ Console: đăng ký và duyệt cửa hàng, tạo tổ chức kèm gói và m�
 | C-07 | 3.11 | Đạt | Link /bg/… mở trên điện thoại 200; có Bó hồng, Lớn, 1.440.000, 30.000; lộ giá vốn/ghi chú nội bộ: false; tải: bao-gia-BG-0003.png, bao-gia-BG-0003.pdf |
 | C-08 | 3.12 | Đạt | Chốt báo giá BG-0003 rồi Tạo đơn → đơn DH261111-0001, nguồn QUOTATION, tổng 1.440.000đ = tiền hàng 1.460.000 − ưu đãi 50.000 + phí giao 30.000, khớp báo giá |
 | C-09 | 3.5 | Đạt | Tạo lô 5 mã giảm 10%, hạn 7 ngày → 201; mã: NT-2RSQCD8V, NT-FN65FUTU, NT-GJWJHR5C, NT-JBJ3BWU8, NT-NNXDWYWQ |
-| C-10 | 3.6 | Không đạt | Đơn giá kiểu dáng BOUQUET 100.000đ và hệ số ngày lễ 1,5 lưu được; nhưng báo giá ngày lễ (D-09, cả API quote của máy chủ) không cộng phí chế tác ngày lễ (kỳ vọng +50.000đ) |
+| C-10 | 3.6 | Đạt | Đơn giá kiểu dáng Bó hoa cầm tay 100.000đ, hệ số ngày lễ 1,5; mẫu gắn kiểu dáng: báo giá ngày lễ cộng phí chế tác 100.000 × 0,5 = 50.000đ (đơn giá 400.000 → 450.000đ) |
 | C-11 | 3.7 | Đạt | Giảm tối đa 15%/đơn lưu được; áp dụng: yêu cầu giảm 20% → 400 Dữ liệu gửi lên không hợp lệ |
 | D-01 | 5.1 | Đạt | Sale tạo bộ sưu tập Tiêu chuẩn mã "thu-nghiem" với 6 mẫu (1 mẫu Tạm ngưng) → 201; bộ sưu tập có 6 mẫu |
 | D-02 | 5.5, 5.15 | Đạt | Bật Giá tiền, Thông tin giảm giá, Mã cảm ơn 10% → 200; đọc lại: {"required":["code","name"],"fields":[{"key":"flowers","label":"Thành phần hoa"},{"key":"color","label":"Màu chủ đạo"},{"key":"style","label":"Phong cách"},{"key":"dimensions","label":"Kích thước"},{" |
@@ -119,10 +121,10 @@ Console: đăng ký và duyệt cửa hàng, tạo tổ chức kèm gói và m�
 | D-06 | 5.6 | Đạt | Ngay sau khi khách mở link, bảng theo dõi (kanban) của Sale 1 có dòng Chị Lan ở bước STEP_1_OPENED (Đã mở), tên Sale Một |
 | D-07 | 5.11 | Đạt | Khách Chị Hoa gửi "Mẫu này có màu tím không ạ?" cho Mẫu nhập 6 → 201; cửa hàng nhận khách tiềm năng có nội dung "Mẫu: Mẫu nhập 6 (NT-105) — Khách: Chị Hoa · 0909222333 — câu hỏi" |
 | D-08 | 2.8 | Đạt | Mẫu B01, chọn ngày giao 2026-11-12 (đã khoá ở B-12) → báo "Mẫu này không nhận đơn giao ngày đã chọn — vui lòng chọn ngày khác hoặc mẫu khác" |
-| D-09 | 3.13, 3.2, 3.5, 3.6, 1.8 | Không đạt | Mẫu nhập 6 (400.000đ, gắn kiểu dáng có phí chế tác), ngày lễ 13/11 (phụ phí 50.000, tối đa 2 đơn), ưu đãi Giảm 10%. Bảng xem lại: Tạm tính 400.000, Ưu đãi −40.000, Tổng 360.000, Cọc 30% 108.000, Còn lại 252.000. THIẾU: phí giao khu vực (form không có chọn khu vực Nội/Ngoại thành, ghi "Cửa hàng báo sau"), phụ phí ngày lễ, phí chế tác ngày lễ; mã giảm giá lô C-09 nhập vào ô Mã ưu đãi không thấy được áp |
+| D-09 | 3.13, 3.2, 3.5, 3.6, 1.8 | Đạt | Ngày lễ 16/11 (phụ phí 50.000, bộ sưu tập bật áp dụng phụ phí lễ), khu vực Nội thành, mã NT-GJWJHR5C (cửa hàng bật nhận mã): tiền hàng 450.000 (gồm phí chế tác ngày lễ +50.000), phí giao 30.000, phụ phí lễ +50.000, giảm 10% −45.000, tổng 485.000, cọc 30% |
 | D-10 | 5.10, 4.2, 4.23 | Đạt | Điền người đặt, người nhận, địa chỉ, lời thiệp, đồng ý 7 thỏa thuận → Xác nhận đặt hoa: đặt thành công, mã đơn DH261111-J933NYSG; hiện VietQR (img.vietqr.io) đúng ngân hàng 970436, STK, số tiền 108.000đ = cọc 30%, nội dung chuyển khoản = mã đơn |
 | D-11 | 4.2, 5.2 | Đạt | Đơn DH261111-J933NYSG (360.000đ, nguồn BROCHURE_QUOTE) hiện trong Thẻ chào → Theo dõi đơn của Sale 1 và của Điều hành; phiên gửi gắn Sale 1 (sale1.a), trạng thái ORDER_SUBMITTED |
-| D-12 | 4.21 | Không đạt | Ngày lễ 13/11 khai tối đa 2 đơn. Ba khách khác nhau đặt cùng ngày: đơn 1 DH261111-J933NYSG, đơn 2 DH261111-MSWQYFJ1, đơn 3 DH261111-7SJ8X4DH (và một lượt chạy lại tạo DH261111-PW0JEGTX) — tất cả được nhận; trang đặt vẫn báo "Sản phẩm khả dụng" cho ngày lễ đã đủ đơn |
+| D-12 | 4.21 | Đạt | Ngày lễ 16/11 khai tối đa 2 đơn: đơn 1 DH261111-6QEPNXR7, đơn 2 DH261111-32KCP7V6 nhận; đơn thứ 3 bị từ chối: "Ngày Lễ thử nghiệm cửa hàng đã nhận đủ đơn. Vui lòng chọn ngày giao khác hoặc liên hệ cửa hàng" |
 | D-13 | 5.5 | Đạt một phần (chờ môi trường thật) | Tắt Giá tiền; khách mở link mới: không thấy số tiền, hiện "Liên hệ báo giá". Đặt được và đơn ở "Chờ báo giá": chưa kiểm |
 | D-14 | 5.3 | Đạt | Thu hồi link của Chị Ngọc → 200; khách mở lại: "Tiệm hoa A Nghiệm Thu / Mã QR / Zalo / Bộ sưu tập này không còn mở / Link có thể đã hết hạn hoặc cửa hàng đã cập nhật mẫu mới. Liên hệ Tiệm hoa A Nghiệm Thu để " |
 | D-15 | 5.3 | Đạt | Đặt thời hạn link 1 giờ → link mới có hạn đúng 1 giờ sau khi tạo; lùi hạn về quá khứ (đồng hồ thử) → khách mở: "Tiệm hoa A Nghiệm Thu / Mã QR / Zalo / Link đã hết hạn / Link xem bộ sưu tập này đã hết thời gian sử dụng. Vui lòng liên hệ Tiệm hoa A Nghiệm Thu để n" |
