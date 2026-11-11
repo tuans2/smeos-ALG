@@ -14,6 +14,9 @@ import { createTenant, readJson, withSession, type Tenant } from "../helpers/fix
 const BASE = "http://localhost/api/v1"
 const pctx = { userId: "platform-admin", capabilities: new Set(["N2"]) }
 const DAY = 24 * 60 * 60 * 1000
+/** Mật khẩu của tài khoản thử do `createTenant` tạo (không phải bí mật thật). */
+const TENANT_PASSWORD = "mat-khau-du-dai"
+const credentialsOf = (label: string) => ({ email: `${label}@vi-du.test`, password: TENANT_PASSWORD })
 
 describe("vòng đời tổ chức", () => {
   let a: Tenant
@@ -41,7 +44,7 @@ describe("vòng đời tổ chức", () => {
     expect(read.status).toBe(403)
     expect((await readJson(read)).error).toMatchObject({ code: "ORGANIZATION_INACTIVE" })
     expect((await create(a, "SP-2")).status).toBe(403)
-    await expect(logIn({ email: "vong-doi-a@vi-du.test", password: "mat-khau-du-dai" })).rejects.toMatchObject({ code: "ORGANIZATION_INACTIVE" })
+    await expect(logIn(credentialsOf("vong-doi-a"))).rejects.toMatchObject({ code: "ORGANIZATION_INACTIVE" })
     expect(await prisma.products.count({ where: { organization_id: a.organizationId } })).toBe(1)
 
     expect((await list(b)).status).toBe(200)
@@ -59,7 +62,7 @@ describe("vòng đời tổ chức", () => {
 
     expect((await list(a)).status).toBe(200)
     expect((await create(a, "SP-3")).status).toBe(403)
-    const login = await logIn({ email: "vong-doi-a@vi-du.test", password: "mat-khau-du-dai" })
+    const login = await logIn(credentialsOf("vong-doi-a"))
     expect(login.organizationId).toBe(a.organizationId)
   })
 

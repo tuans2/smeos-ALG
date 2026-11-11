@@ -4198,9 +4198,8 @@ model organizations {
   `requireIntegrationContext` và đăng nhập (`assert-organization-lifecycle.ts`).
 - Đổi trạng thái: `PATCH /platform/organizations/:id` với `lifecycle_status` (+ `offboarding_until`), mã `N2`; ghi
   `platform_audit_logs` và `audit_logs` của tổ chức (`platform.organization_lifecycle_changed`).
-- Chưa làm (S-3b): xoá theo sổ bảng-thuộc-tenant bằng `smeos_system` + `app.purge_reason`, thay
-  `scripts/handover-clean-tenant.ts` và `prisma/seed/clean-siin-store-orders.ts`; trang công khai của tổ chức tạm ngưng;
-  nút đổi trạng thái trên Console.
+- Chưa làm (S-3b): xoá theo sổ bảng-thuộc-tenant bằng `smeos_system` + `app.purge_reason`, thay hai script dọn tay
+  (ADR-016 D-S5); trang công khai của tổ chức tạm ngưng; nút đổi trạng thái trên Console.
 
 Ca thử: `tests/tenant/organization-lifecycle.test.ts`.
 
