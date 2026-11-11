@@ -89,6 +89,8 @@ Hiện trạng đã đo:
 - Đo các chỉ số ở bảng tiêu chuẩn.
 - Kết quả: báo cáo và danh sách việc theo mức ưu tiên.
 
+**Đã làm 11/11/2026 — hiệu năng (đo lab trên bản cắt `6936e7f5`, build production, CSDL thử):** `scripts/measure-web-vitals.ts`, mỗi màn 3 lần, điện thoại (CPU chậm 4×, 4G chậm) và máy tính; số liệu ở `docs/audit/gd1-buoc3/web-vitals-ban-cat-2026-11-11.json`. Trung vị trên điện thoại: `/` LCP 1.524 ms, `/san-pham` 1.544 ms, `/dieu-phoi` 1.148 ms, `/so-lieu` 1.540 ms (CLS 0,015), `/van-hanh` 1.488 ms; INP 16–24 ms; CLS ≤ 0,022 ở mọi màn — đạt ngưỡng LCP ≤ 2,5 s, CLS ≤ 0,1, INP ≤ 200 ms. Chưa đo: `/b/[sendCode]` (CSDL thử không có phiên gửi đang mở), INP trên máy tính (lượt nhấp không ghi được tương tác), số đo thực địa, kiểm tải.
+
 **Điểm duyệt:** bạn chốt danh sách việc bước 4, mục tiêu UX lint, phạm vi của các chức năng còn lửng. Công và thời gian bước 4 chỉ ước lượng được sau bước này.
 
 ## Bước 4 — Hoàn thiện đến khi đạt tiêu chuẩn
