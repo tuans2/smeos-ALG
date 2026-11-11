@@ -3,7 +3,8 @@
 // (docs/audit/ui-architecture-audit/12_PERFORMANCE_REPORT.md §2). Bộ lọc, tìm kiếm, tải thêm
 // vẫn đi qua `GET /api/v1/products` ở client.
 
-import { cookies, headers } from "next/headers"
+import { headers } from "next/headers"
+import { requestCookieHeader } from "@/lib/request-cookie-header"
 
 import { log } from "@/core/observability/log"
 import { hasCapability } from "@/core/rbac/capabilities"
@@ -22,10 +23,7 @@ const INITIAL_LIMIT = Number(new URL(INITIAL_PRODUCT_LIST_URL, "http://localhost
  * bắt lỗi đó làm trang bị dựng tĩnh với `initialPage: null`.
  */
 async function loadInitialPage(): Promise<ProductListPage<ProductItem> | null> {
-  const cookieHeader = (await cookies())
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ")
+  const cookieHeader = await requestCookieHeader()
   const host = (await headers()).get("host") ?? "localhost"
   try {
     const request = new Request(`http://${host}${INITIAL_PRODUCT_LIST_URL}`, { headers: { cookie: cookieHeader } })
