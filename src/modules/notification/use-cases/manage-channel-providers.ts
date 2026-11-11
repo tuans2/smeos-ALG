@@ -16,8 +16,11 @@ import {
   providerDefinition,
   type MaskedProviderConfig,
   type ProviderChannel,
+  type ProviderConfig,
   type ProviderDefinition,
 } from "../domain/channel-providers"
+import { generateVapidKeys, vapidKeysValid } from "../adapters/web-push-protocol"
+import { PushSubscriptionRepository } from "../infra/push-subscription-repository"
 import type { ChannelSendResult } from "../domain/notification-payload"
 import { ChannelProviderStore, type IChannelProviderStore } from "../infra/channel-provider-store"
 import { getChannelAdapter } from "../infra/channel-adapters"
@@ -53,7 +56,7 @@ export async function saveChannelProvider(
     const def = providerDefinition(input.channel, input.provider)
     if (!def) throw validationFailed({ provider: "Nhà cung cấp không thuộc kênh này" })
     const merged = await store.withLock(input.channel, async (current, save) => {
-      const result = mergeProviderConfig(def, input.values, current)
+      const result = mergeProviderConfig(def, input.channel === "PUSH" ? withVapidKeys(input.values, current) : input.values, current)
       if ("config" in result) await save(result.config)
       return result
     })
@@ -64,17 +67,37 @@ export async function saveChannelProvider(
   return after
 }
 
-/** Gửi một tin thử tới số điện thoại người vận hành nhập — kiểm khoá trước khi bật kênh cho cả hệ thống. */
+/**
+ * Web Push: để trống cả hai khoá và chưa có khoá đã lưu → hệ thống tự tạo cặp khoá (đăng ký một lần, không phải
+ * dùng công cụ ngoài). Nhập khoá tay thì cặp khoá phải khớp, nếu không mọi lần gửi đều bị dịch vụ đẩy từ chối.
+ */
+function withVapidKeys(values: Record<string, string>, current: ProviderConfig | null): Record<string, string> {
+  const publicKey = (values.publicKey ?? "").trim()
+  const privateKey = (values.privateKey ?? "").trim()
+  const stored = current?.provider === "vapid" ? current.values : {}
+  if (!publicKey && !privateKey) return stored.publicKey && stored.privateKey ? { ...values, publicKey: stored.publicKey } : { ...values, ...generateVapidKeys() }
+  const pair = { publicKey: publicKey || stored.publicKey || "", privateKey: privateKey || stored.privateKey || "" }
+  if (!vapidKeysValid(pair.publicKey, pair.privateKey)) throw validationFailed({ publicKey: "Cặp khoá VAPID không khớp nhau" })
+  return values
+}
+
+/**
+ * Gửi một tin thử — kiểm khoá trước khi bật kênh cho cả hệ thống. SMS / Zalo: tới số điện thoại người vận hành nhập.
+ * Web Push: tới thiết bị chính người vận hành đã bật nhận tin (trong tổ chức họ là thành viên).
+ */
 export async function testChannelProvider(
   pctx: PlatformContext,
-  input: { channel: ProviderChannel; phone: string },
+  input: { channel: ProviderChannel; phone?: string | undefined },
+  devices: Pick<PushSubscriptionRepository, "organizationWithDeviceOf"> = new PushSubscriptionRepository(),
 ): Promise<ChannelSendResult> {
   requirePlatformCapability(pctx, "N2")
   const adapter = getChannelAdapter(input.channel)
   if (!adapter) throw unprocessable("Kênh chưa có bộ gửi")
+  if (input.channel !== "PUSH" && !input.phone) throw validationFailed({ phone: "Cần số điện thoại nhận tin thử" })
+  const organizationId = input.channel === "PUSH" ? (await devices.organizationWithDeviceOf(pctx.userId)) ?? "" : ""
   const result = await adapter.send({
     eventKey: "platform.notification_provider.test",
-    recipient: { userId: pctx.userId, roleKey: "platform", organizationId: "", phone: input.phone },
+    recipient: { userId: pctx.userId, roleKey: "platform", organizationId, phone: input.phone },
     title: "Tin thử",
     message: "Kênh liên lạc đã kết nối thành công.",
   })

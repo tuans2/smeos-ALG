@@ -366,6 +366,7 @@
     "/api/v1/notification/org-hard-locks",
     "/api/v1/notification/org-policy",
     "/api/v1/notification/preferences",
+    "/api/v1/notification/push-subscriptions",
     "/api/v1/notification/store-defaults",
     "/api/v1/notification/store-hard-locks",
     "/api/v1/notification/stream",

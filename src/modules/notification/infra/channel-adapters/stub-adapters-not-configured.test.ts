@@ -35,7 +35,7 @@ function memoryStore(initial: Partial<Record<ProviderChannel, ProviderConfig>> =
 
 describe("Kênh chưa đăng ký nhà cung cấp không báo gửi thành công", () => {
   const { store } = memoryStore()
-  for (const adapter of [new SmsNotificationAdapter(store), new ZaloNotificationAdapter(store), new WebPushNotificationAdapter()]) {
+  for (const adapter of [new SmsNotificationAdapter(store), new ZaloNotificationAdapter(store), new WebPushNotificationAdapter(store, { listForRecipient: async () => [], removeExpired: async () => undefined, markSuccess: async () => undefined })]) {
     it(`${adapter.channel} trả NOT_CONFIGURED`, async () => {
       const res = await adapter.send(payload)
       expect(res.success).toBe(false)

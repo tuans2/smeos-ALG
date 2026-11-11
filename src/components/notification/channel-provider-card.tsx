@@ -43,6 +43,8 @@ export function ChannelProviderCard({ state, definition, onChanged }: ChannelPro
   const [error, setError] = React.useState<string | null>(null)
   const [notice, setNotice] = React.useState<string | null>(null)
   const [testPhone, setTestPhone] = React.useState("")
+  // Web Push gửi thử tới thiết bị chính người vận hành đã bật nhận tin (menu tài khoản), không cần số điện thoại
+  const isPush = state.channel === "PUSH"
   const [confirm, confirmElement] = useConfirmDialog()
 
   async function run(kind: NonNullable<typeof busy>, action: () => Promise<string | null>) {
@@ -76,8 +78,9 @@ export function ChannelProviderCard({ state, definition, onChanged }: ChannelPro
 
   const sendTest = () =>
     run("test", async () => {
-      const res = await apiSend<{ data: { success: boolean; error?: string } }>(PROVIDER_TEST_URL, "POST", { channel: state.channel, phone: testPhone })
-      if (res.data.success) return `Đã gửi tin thử tới ${testPhone}`
+      const body = isPush ? { channel: state.channel } : { channel: state.channel, phone: testPhone }
+      const res = await apiSend<{ data: { success: boolean; error?: string } }>(PROVIDER_TEST_URL, "POST", body)
+      if (res.data.success) return isPush ? "Đã gửi tin thử tới thiết bị của bạn" : `Đã gửi tin thử tới ${testPhone}`
       throw new Error(res.data.error === "NOT_CONFIGURED" ? "Kênh chưa kết nối đủ thông số" : `Gửi thử thất bại: ${res.data.error ?? "không rõ lý do"}`)
     })
 
@@ -160,11 +163,15 @@ export function ChannelProviderCard({ state, definition, onChanged }: ChannelPro
           </form>
           {state.configured && state.ready && (
             <div className="flex flex-col gap-3 border-t border-border p-4 sm:flex-row sm:items-end">
-              <FormField className="flex-1 sm:max-w-xs">
-                <FormLabel>Số điện thoại nhận tin thử</FormLabel>
-                <Input type="tel" inputMode="tel" value={testPhone} onChange={(e) => setTestPhone(e.target.value)} />
-              </FormField>
-              <Button type="button" variant="outline" size="sm" disabled={busy !== null || testPhone.trim().length < 8} onClick={() => void sendTest()}>
+              {isPush ? (
+                <p className="flex-1 text-body-sm text-text-muted">Tin thử gửi tới thiết bị bạn đã bật nhận tin ở menu tài khoản.</p>
+              ) : (
+                <FormField className="flex-1 sm:max-w-xs">
+                  <FormLabel>Số điện thoại nhận tin thử</FormLabel>
+                  <Input type="tel" inputMode="tel" value={testPhone} onChange={(e) => setTestPhone(e.target.value)} />
+                </FormField>
+              )}
+              <Button type="button" variant="outline" size="sm" disabled={busy !== null || (!isPush && testPhone.trim().length < 8)} onClick={() => void sendTest()}>
                 {busy === "test" ? "Đang gửi…" : "Gửi thử"}
               </Button>
             </div>

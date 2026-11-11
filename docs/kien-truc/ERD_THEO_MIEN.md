@@ -5,7 +5,7 @@ Sinh từ `prisma/schema.prisma` bởi `scripts/gen-erd.mjs` (kế hoạch DB, b
 (PK, FK, `organization_id`) và khoá ngoại tới bảng cha; bảng của miền khác chỉ hiện tên. Cột đầy đủ, ý nghĩa và quy tắc
 ở đặc tả `docs/dac-ta/07-database-specification.md`. `tests/unit/architecture/erd.test.ts` đỏ khi tệp này lệch schema.
 
-Tổng: 154 bảng, 10 miền.
+Tổng: 155 bảng, 10 miền.
 
 ## Tổ chức, người dùng, phân quyền
 
@@ -165,6 +165,7 @@ erDiagram
   product_variants
   products
   provider_cost_entries
+  push_subscriptions
   quotation_items
   quotation_revisions
   quotations
@@ -300,6 +301,7 @@ erDiagram
   organizations ||--o{ product_variants : "organization_id"
   organizations ||--o{ products : "organization_id"
   organizations ||--o{ provider_cost_entries : "organization_id"
+  organizations ||--o{ push_subscriptions : "organization_id"
   organizations ||--o{ quotation_items : "organization_id"
   organizations ||--o{ quotation_revisions : "organization_id"
   organizations ||--o{ quotations : "organization_id"
@@ -1214,7 +1216,7 @@ erDiagram
 
 ## Thông báo và trò chuyện
 
-Bảng: `notification_channel_activations`, `notification_inbox`, `notification_org_policies`, `notification_store_defaults`, `notification_user_preferences`, `chat_channel_integrations`, `chat_conversations`, `chat_messages`, `internal_chat_conversations`, `internal_chat_messages`, `internal_chat_participants`.
+Bảng: `notification_channel_activations`, `notification_inbox`, `notification_org_policies`, `notification_store_defaults`, `notification_user_preferences`, `push_subscriptions`, `chat_channel_integrations`, `chat_conversations`, `chat_messages`, `internal_chat_conversations`, `internal_chat_messages`, `internal_chat_participants`.
 
 ```mermaid
 erDiagram
@@ -1234,6 +1236,10 @@ erDiagram
     String organization_id FK
   }
   notification_user_preferences {
+    String id PK
+    String organization_id FK
+  }
+  push_subscriptions {
     String id PK
     String organization_id FK
   }
@@ -1292,6 +1298,7 @@ erDiagram
   organizations ||--o{ notification_org_policies : "organization_id"
   organizations ||--o{ notification_store_defaults : "organization_id"
   organizations ||--o{ notification_user_preferences : "organization_id"
+  organizations ||--o{ push_subscriptions : "organization_id"
   users ||--o{ internal_chat_messages : "sender_user_id"
   users ||--o{ internal_chat_participants : "user_id"
 ```
