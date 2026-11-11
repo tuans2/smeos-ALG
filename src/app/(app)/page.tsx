@@ -18,7 +18,7 @@
 // tài khoản tự đăng ký (`POST /auth/signup`) luôn có workspace `EXPERIENCE`.
 
 import { getDictionary, translate } from "@/lib/i18n/server"
-import { cookies } from "next/headers"
+import { requestCookieHeader } from "@/lib/request-cookie-header"
 
 import { ExperienceGrid } from "@/components/dashboard/experience-grid"
 import { SalesWorkspace } from "@/components/dashboard/sales-workspace"
@@ -43,11 +43,7 @@ import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-
 
 export default async function DashboardPage() {
   const dict = getDictionary("vi")
-  const cookieStore = await cookies()
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ")
+  const cookieHeader = await requestCookieHeader()
 
   const session = await resolveAppSession(cookieHeader)
   // Không có phiên hợp lệ: layout bọc ngoài (`(app)/layout.tsx`) đã chuyển
