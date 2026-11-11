@@ -243,3 +243,22 @@ Migration tự kiểm lại; còn thì dừng, không đổi gì, bản cũ vẫ
 `npx prisma migrate resolve --rolled-back 20261109090000_pii_encryption_cleanup` rồi deploy lại. Sau P-5d-2 chỉ quay lại
 được bản P-5d-1 (bản P-5c còn đọc `*_enc`).
 
+
+## 15. Người vận hành đầu tiên trên một bản cài mới
+
+Phát hiện khi chạy Bước 6 bàn giao GD1 (11/11/2026) trên bản cài trắng. Ba việc dưới đây phải làm **đúng thứ tự**,
+và việc thứ ba hiện chưa có công cụ trong bản giao:
+
+1. Đăng ký một tài khoản như người dùng thường (`/dang-ky`, hoặc `POST /api/v1/auth/signup`). Theo chốt của chủ dự án
+   ngày 22/10/2026, mọi tài khoản tự đăng ký bắt đầu ở `PENDING` và **chưa đăng nhập được**.
+2. Gán vai vận hành nền tảng cho chính tài khoản đó:
+   `npm run gan-van-hanh-nen-tang -- --email=<email>` (mặc định gán đủ `N1`–`N20`).
+3. Duyệt tài khoản đó. Người duyệt bình thường là superadmin nền tảng (`N13`) ở Console `/van-hanh/dang-ky` — nhưng
+   trên bản cài mới chưa có ai đăng nhập được, nên **lần đầu tiên phải duyệt thẳng trong cơ sở dữ liệu**:
+
+```sql
+UPDATE users SET approval_status = 'APPROVED', approval_decided_at = now() WHERE email = '<email>';
+```
+
+Bỏ bước 3 thì đăng nhập trả `403 ACCOUNT_PENDING` dù vai vận hành đã gán xong — không phải lỗi cấu hình.
+Từ người vận hành thứ hai trở đi không cần SQL: người đầu tiên duyệt họ ở `/van-hanh/dang-ky`.
