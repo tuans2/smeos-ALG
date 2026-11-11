@@ -33,7 +33,8 @@ export function PublicStickyActions({ shopName, phone, topic, style, entry, prod
   const secondaryStyle = { borderColor: style.tokens.border, color: style.tokens.textPrimary }
 
   return (
-    <div
+    <nav
+      aria-label="Thao tác nhanh"
       className="fixed inset-x-0 bottom-0 z-40 border-t backdrop-blur-md md:hidden"
       style={{ backgroundColor: style.tokens.surface, borderColor: style.tokens.border }}
     >
@@ -62,6 +63,6 @@ export function PublicStickyActions({ shopName, phone, topic, style, entry, prod
           </a>
         )}
       </div>
-    </div>
+    </nav>
   )
 }

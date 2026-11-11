@@ -19,9 +19,8 @@ export function ShopLogo({ shop, size = "h-9 w-9" }: { shop: ShopContact; size?:
     // eslint-disable-next-line @next/next/no-img-element
     <img src={shop.logoUrl} alt="" className={`${size} shrink-0 rounded-full border border-border object-cover`} />
   ) : (
-    <span aria-hidden="true" className={`${size} flex shrink-0 items-center justify-center rounded-full bg-primary/10 text-body font-bold text-primary`}>
-      {shop.name.trim().charAt(0).toUpperCase()}
-    </span>
+    // Chữ cái đầu vẽ bằng ::before để không lẫn vào chữ hiển thị của nút chứa nó (nhãn truy cập phải chứa chữ nhìn thấy)
+    <span aria-hidden="true" data-initial={shop.name.trim().charAt(0).toUpperCase()} className={`${size} flex shrink-0 items-center justify-center rounded-full bg-primary/10 text-body font-bold text-primary before:content-[attr(data-initial)]`} />
   )
 }
 
