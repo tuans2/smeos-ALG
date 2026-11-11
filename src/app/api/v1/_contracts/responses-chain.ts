@@ -37,6 +37,8 @@ const branch = z.strictObject({
   bypass_count: z.number(),
   cancellation_history: z.unknown().nullable(),
   bypass_history: z.unknown().nullable(),
+  /** Chi nhánh là cửa hàng đối tác đã liên kết (ứng viên bắn đơn `DT-<mã>`, chat nội bộ GĐ3); null = chi nhánh của chuỗi */
+  partner_org_id: z.string().nullable(),
   created_at: timestamp,
   updated_at: timestamp,
 })

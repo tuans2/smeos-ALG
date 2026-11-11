@@ -29,13 +29,7 @@ import type {
   ProductGalleryImage,
   StockStatus,
 } from "../domain/product-master-index"
-import {
-  readDimensions,
-  readOccasions,
-  readPrimaryColor,
-  readStyle,
-  readWrapStyle,
-} from "../domain/master-index-fields"
+import { readAssemblySteps, readDimensions, readOccasions, readPrimaryColor, readStyle, readWrapStyle } from "../domain/master-index-fields"
 import { toneChuDao } from "@/modules/product-copies/domain/analysis-projection"
 
 /** Hình dạng lỏng lẻo của một dòng `bom.flowers`/`bom.foliage` theo hợp đồng Vision — chỉ khai những khoá hàm này thật sự đọc. */
@@ -352,6 +346,10 @@ export class ProductMasterIndexRepository {
     // ghi riêng — xem TECHNICAL_DEBT.md, phát hiện lúc thêm trường này).
     const dimensions = readDimensions(source) ?? undefined
 
+    // Các bước cắm tham khảo — chỉ đọc khi quản lý mẫu đã nhập tay ở
+    // `products.attributes.assemblySteps`, KHÔNG bịa quy trình (cùng kỷ luật với `dimensions`).
+    const assemblySteps = readAssemblySteps(source) ?? undefined
+
     // Chính sách thay thế hoa tương đương — cờ + ghi chú tuỳ chọn ở `products.attributes.substitutionPolicy`.
     const rawSubstitution = attrs.substitutionPolicy as Record<string, unknown> | undefined
     const substitutionPolicy =
@@ -433,6 +431,7 @@ export class ProductMasterIndexRepository {
       ...(freshnessGuaranteeDays !== undefined ? { freshnessGuaranteeDays } : {}),
       warningTags,
       ...(dimensions !== undefined ? { dimensions } : {}),
+      ...(assemblySteps !== undefined ? { assemblySteps } : {}),
       ...(substitutionPolicy !== undefined ? { substitutionPolicy } : {}),
     }
   }

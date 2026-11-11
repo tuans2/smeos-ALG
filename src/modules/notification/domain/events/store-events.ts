@@ -11,6 +11,7 @@
 import type { TierEventContract } from "./_contract"
 import { STORE_ORDER_EVENTS } from "./store-order-events"
 import { STORE_OPERATION_EVENTS } from "./store-operation-events"
+import { INTERNAL_CHAT_EVENTS } from "./internal-chat-events"
 import { INTEGRATION_EVENTS } from "./integration-events"
 
 export const STORE_EVENT_CONTRACT: TierEventContract = {
@@ -19,6 +20,7 @@ export const STORE_EVENT_CONTRACT: TierEventContract = {
   events: [
     ...STORE_ORDER_EVENTS,
     ...STORE_OPERATION_EVENTS,
+    ...INTERNAL_CHAT_EVENTS,
     ...INTEGRATION_EVENTS,
   ],
 }

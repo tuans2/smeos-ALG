@@ -24,9 +24,9 @@ const STAFF_LOGIN_CODES = ["A1", "A2"]
 const HARVESTED_CODES = MOI_MA.filter((ma) => /^[A-E]\d+$/.test(ma))
 
 describe("danh mục năng lực — đặc tả 02", () => {
-  it("154 mã: 76 thu hoạch (A–E) cộng 78 mã mới (F–L, U1–U4, H5–H6, R1–R13, Q1–Q9, T1–T4, I4–I5, P3–P4, V1–V3) — ĐP-4a thêm R9/R10 (sổ thu), PO 08/10 thêm R11, PO 14/10 thêm R12 (cấu hình nhắc việc Điều phối), R13 (xuất dữ liệu), PO 30/10 thêm J7 (nội dung AI landing/catalog), PO 31/10 thêm R15 (báo giá) + R16 (duyệt giao trước thu sau), PO 01/11 thêm M1/M2/M3 (marketing usage + campaign), M4 (nhóm khách & chăm sóc), M5 (in ấn), PO Q7 04/11 thêm R17/R18/R19 (Thợ cắm, Shipper, Kế toán), PO 05/11 thêm D18 (trường dữ liệu của cửa hàng), R20 (báo cáo theo kỳ), PO 06/11 thêm D19 (tên miền riêng)", () => {
+  it("154 mã: 76 thu hoạch (A–E) cộng 78 mã mới (F–L, U1–U4, H5–H6, R1–R13, Q1–Q9, T1–T4, I4–I5, P3–P4, V1–V3) — ĐP-4a thêm R9/R10 (sổ thu), PO 08/10 thêm R11, PO 14/10 thêm R12 (cấu hình nhắc việc Điều phối), R13 (xuất dữ liệu), PO 30/10 thêm J7 (nội dung AI landing/catalog), PO 31/10 thêm R15 (báo giá) + R16 (duyệt giao trước thu sau), PO 01/11 thêm M1/M2/M3 (marketing usage + campaign), M4 (nhóm khách & chăm sóc), M5 (in ấn), PO Q7 04/11 thêm R17/R18/R19 (Thợ cắm, Shipper, Kế toán), PO 05/11 thêm D18 (trường dữ liệu của cửa hàng), R20 (báo cáo theo kỳ), PO 06/11 thêm D19 (tên miền riêng), PO 09/11 thêm S1/S2 (trao đổi nội bộ)", () => {
     expect(HARVESTED_CODES.length).toBe(76)
-    expect(ALL_CAPABILITY_CODES.length).toBe(174)
+    expect(ALL_CAPABILITY_CODES.length).toBe(176)
   })
 
   it("R20 xem báo cáo theo kỳ — Điều hành và Kế toán (Đợt 5, PO Q7)", () => {
@@ -96,10 +96,11 @@ describe("danh mục năng lực — đặc tả 02", () => {
   })
 
   it("ba vai PO Q7: Thợ cắm chỉ việc được giao, Shipper chỉ đơn được giao, Kế toán xem và đối soát nhưng không xác nhận tiền", () => {
-    expect(defaultCodesForSystemRole("tho_cam").sort()).toEqual(["A1", "A2", "G1", "G2", "R17"])
-    expect(defaultCodesForSystemRole("shipper").sort()).toEqual(["A1", "A2", "G2", "R18"])
+    // S1 (trao đổi nội bộ, mọi vai) và S2 (thực hiện đơn gia công, có Thợ cắm) — PO duyệt D2 ngày 09/11/2026
+    expect(defaultCodesForSystemRole("tho_cam").sort()).toEqual(["A1", "A2", "G1", "G2", "R17", "S1", "S2"])
+    expect(defaultCodesForSystemRole("shipper").sort()).toEqual(["A1", "A2", "G2", "R18", "S1"])
     const keToan = defaultCodesForSystemRole("ke_toan")
-    expect(keToan.sort()).toEqual(["A1", "A2", "F1", "G8", "Q1", "R1", "R13", "R19", "R20"])
+    expect(keToan.sort()).toEqual(["A1", "A2", "F1", "G8", "Q1", "R1", "R13", "R19", "R20", "S1"])
     for (const confirm of ["R9", "R10", "R11", "R16"]) expect(keToan).not.toContain(confirm)
   })
 

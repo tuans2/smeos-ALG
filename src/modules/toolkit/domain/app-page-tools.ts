@@ -31,7 +31,7 @@ export const APP_PAGE_TOOLS: readonly ToolDefinition[] = [
   appPage(53, "Quản lý sản phẩm và hình ảnh", "Danh sách sản phẩm, ảnh và nhập hàng loạt từ Excel", "Package", "/san-pham"),
   appPage(54, "Kết nối kênh bán hàng", "Kết nối trang mạng xã hội và kênh nhắn tin của cửa hàng", "Link", "/ket-noi"),
   appPage(55, "Quản lý khách hàng", "Thông tin, ghi chú và lịch sử của từng khách", "Users", "/khach-hang"),
-  appPage(56, "Hộp thư khách hàng", "Đọc và trả lời tin nhắn của khách ở một nơi", "Inbox", "/tin-nhan"),
+  appPage(56, "Trao đổi nội bộ", "Nhắn tin với chuỗi, chi nhánh và cửa hàng đối tác; nhận đơn gia công", "Inbox", "/tin-nhan"),
   appPage(57, "Trợ lý tư vấn bán hàng AI", "Trợ lý gợi ý câu trả lời và tư vấn sản phẩm cho khách", "Bot", "/hoi-thoai"),
   {
     ...appPage(58, "Báo giá nhanh", "Lập báo giá từ sản phẩm có sẵn và gửi cho khách", "FileText", "/bao-gia"),

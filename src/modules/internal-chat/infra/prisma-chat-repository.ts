@@ -1,9 +1,11 @@
 import type { Prisma, PrismaClient } from "@/generated/prisma/client"
 import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
+import { ACTIVE_CHAIN_LINK } from "@/modules/organization/infra/organization-links"
 import type {
   IInternalChatRepository,
   CreateConversationParams,
   ListConversationsFilter,
+  MessagePage,
   SendMessageParams,
 } from "../domain/repositories/chat-repository.interface"
 import type {
@@ -11,12 +13,19 @@ import type {
   InternalChatMessage,
   InternalChatParticipant,
   ConversationType,
-  InternalChatMessageKind,
   ParticipantRoleInChat,
 } from "../domain/chat-entities"
+import type { MessageCursor } from "../domain/message-cursor"
+import { PrismaChatMessageStore } from "./prisma-chat-message-repository"
+import { getChatEventHub } from "./chat-event-hub"
 
 export class PrismaInternalChatRepository implements IInternalChatRepository {
-  constructor(private readonly prisma: PrismaClient = defaultPrisma) {}
+  private readonly messageStore: PrismaChatMessageStore
+
+  constructor(private readonly prisma: PrismaClient = defaultPrisma) {
+    // Mỗi tin mới báo cho trình duyệt đang mở phòng (SSE); lỗi phát không làm hỏng việc gửi tin
+    this.messageStore = new PrismaChatMessageStore(prisma, (event) => void getChatEventHub().publish(event).catch(() => undefined))
+  }
 
   async createConversation(params: CreateConversationParams): Promise<InternalChatConversation> {
     const row = await this.prisma.internal_chat_conversations.create({
@@ -26,6 +35,9 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
         title: params.title ?? null,
         order_id: params.orderId ?? null,
         metadata: (params.metadata ?? {}) as never,
+        counterpart_org_id: params.counterpartOrgId ?? null,
+        branch_id: params.branchId ?? null,
+        room_key: params.roomKey ?? null,
         created_by: params.createdBy,
         participants: {
           create: params.participantUserIds.map((p) => ({
@@ -47,21 +59,59 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     return row ? this.mapConversation(row) : null
   }
 
-  async findConversationByOrderId(orderId: string): Promise<InternalChatConversation | null> {
+  async findConversationByOrderId(organizationId: string, orderId: string): Promise<InternalChatConversation | null> {
     const row = await this.prisma.internal_chat_conversations.findFirst({
-      where: { order_id: orderId },
+      where: { organization_id: organizationId, order_id: orderId },
       orderBy: { created_at: "desc" },
     })
     return row ? this.mapConversation(row) : null
   }
 
-  async listConversations(filter: ListConversationsFilter): Promise<{ items: InternalChatConversation[]; total: number }> {
-    const where: Prisma.internal_chat_conversationsWhereInput = {
-      participants: {
-        some: {
-          user_id: filter.userId,
-        },
+  async findConversationByRoomKey(organizationId: string, roomKey: string): Promise<InternalChatConversation | null> {
+    const row = await this.prisma.internal_chat_conversations.findFirst({ where: { organization_id: organizationId, room_key: roomKey } })
+    return row ? this.mapConversation(row) : null
+  }
+
+  async findDirectConversation(
+    organizationId: string,
+    conversationType: ConversationType,
+    userIds: [string, string]
+  ): Promise<InternalChatConversation | null> {
+    const row = await this.prisma.internal_chat_conversations.findFirst({
+      where: {
+        organization_id: organizationId,
+        conversation_type: conversationType,
+        order_id: null,
+        AND: userIds.map((userId) => ({ participants: { some: { user_id: userId } } })),
       },
+      orderBy: { created_at: "asc" },
+    })
+    return row ? this.mapConversation(row) : null
+  }
+
+  async listConversations(filter: ListConversationsFilter): Promise<{ items: InternalChatConversation[]; total: number }> {
+    const org = filter.organizationId
+    const ownRooms: Prisma.internal_chat_conversationsWhereInput = filter.branchId
+      ? { organization_id: org, OR: [{ branch_id: null }, { branch_id: filter.branchId }] }
+      : { organization_id: org }
+    const where: Prisma.internal_chat_conversationsWhereInput = {
+      OR: [
+        ownRooms,
+        // Phòng chuỗi mà tổ chức này là bên kia: liên kết còn ACTIVE hoặc tạm dừng (chỉ đọc — D7)
+        {
+          counterpart_org_id: org,
+          organization: { organization_links_as_parent: { some: { child_org_id: org, status: { in: ["ACTIVE", "SUSPENDED"] }, link_type: ACTIVE_CHAIN_LINK.link_type } } },
+        },
+        // Phòng cũ (chưa có bên kia): người xem là thành viên và liên kết ACTIVE (chiều nào cũng được)
+        {
+          counterpart_org_id: null,
+          participants: { some: { user_id: filter.userId, organization_id: org } },
+          OR: [
+            { organization: { organization_links_as_parent: { some: { child_org_id: org, ...ACTIVE_CHAIN_LINK } } } },
+            { organization: { organization_links_as_child: { some: { parent_org_id: org, ...ACTIVE_CHAIN_LINK } } } },
+          ],
+        },
+      ],
     }
 
     if (filter.conversationType) {
@@ -79,27 +129,36 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
         skip: filter.offset ?? 0,
         include: {
           messages: {
+            where: { deleted_at: null },
             orderBy: { created_at: "desc" },
             take: 1,
           },
           participants: {
             where: { user_id: filter.userId },
           },
+          organization: { select: { name: true } },
+          counterpart_org: { select: { name: true } },
         },
       }),
       this.prisma.internal_chat_conversations.count({ where }),
     ])
 
+    // Chưa mở phòng lần nào (vào theo tổ chức, chưa có dòng thành viên) → mọi tin của người khác đều chưa đọc
+    const lastRead = new Map<string, Date>()
+    for (const r of rows) lastRead.set(r.id, r.participants[0]?.last_read_at ?? new Date(0))
+    const unread = await this.messageStore.countUnread(filter.userId, lastRead)
+
     const items = rows.map((r) => {
       const conv = this.mapConversation(r)
       const lastMsg = r.messages[0]
       if (lastMsg) {
-        conv.lastMessageSnippet = lastMsg.message_type === "TEXT" ? lastMsg.content : `[${lastMsg.message_type}]`
+        conv.lastMessageSnippet = snippetOf(lastMsg.message_type, lastMsg.content)
       }
-      const participant = r.participants[0]
-      if (participant) {
-        conv.unreadCount = r.last_message_at > participant.last_read_at ? 1 : 0
-      }
+      conv.unreadCount = unread.get(r.id) ?? 0
+      conv.isMuted = r.participants[0]?.is_muted ?? false
+      // Tên bên kia theo phía người xem
+      const otherName = r.organization_id === org ? r.counterpart_org?.name : r.organization?.name
+      if (otherName) conv.counterpartName = otherName
       return conv
     })
 
@@ -163,105 +222,40 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
     })
   }
 
-  async sendMessage(params: SendMessageParams): Promise<InternalChatMessage> {
-    const now = new Date()
-    // organization_id sao từ hội thoại cha — khoá ghép giữ tin nhắn cùng tổ chức với hội thoại.
-    const conversation = await this.prisma.internal_chat_conversations.findUniqueOrThrow({
-      where: { id: params.conversationId },
-      select: { organization_id: true },
-    })
-    const [msgRow] = await this.prisma.$transaction([
-      this.prisma.internal_chat_messages.create({
-        data: {
-          conversation_id: params.conversationId,
-          organization_id: conversation.organization_id,
-          sender_user_id: params.senderUserId,
-          sender_role: params.senderRole,
-          message_type: params.messageType ?? "TEXT",
-          content: params.content,
-          attachments: (params.attachments ?? []) as never,
-          action_payload: (params.actionPayload ?? {}) as never,
-          created_at: now,
-        },
-        include: {
-          sender: {
-            select: { name: true },
-          },
-        },
-      }),
-      this.prisma.internal_chat_conversations.update({
-        where: { id: params.conversationId },
-        data: {
-          last_message_at: now,
-        },
-      }),
-      this.prisma.internal_chat_participants.updateMany({
-        where: {
-          conversation_id: params.conversationId,
-          user_id: params.senderUserId,
-        },
-        data: {
-          last_read_at: now,
-        },
-      }),
-    ])
-
-    return this.mapMessage(msgRow)
+  sendMessage(params: SendMessageParams): Promise<InternalChatMessage> {
+    return this.messageStore.send(params)
   }
 
-  async listMessages(conversationId: string, limit = 50, before?: Date | undefined): Promise<InternalChatMessage[]> {
-    const where: Prisma.internal_chat_messagesWhereInput = {
-      conversation_id: conversationId,
-      deleted_at: null,
-    }
-    if (before) {
-      where.created_at = { lt: before }
-    }
-
-    const rows = await this.prisma.internal_chat_messages.findMany({
-      where,
-      orderBy: { created_at: "asc" },
-      take: Math.min(limit, 100),
-      include: {
-        sender: {
-          select: { name: true },
-        },
-      },
-    })
-
-    return rows.map((r) => this.mapMessage(r))
+  findMessageById(messageId: string): Promise<InternalChatMessage | null> {
+    return this.messageStore.findById(messageId)
   }
 
-  async markRead(conversationId: string, userId: string): Promise<void> {
-    await this.prisma.internal_chat_participants.updateMany({
-      where: {
-        conversation_id: conversationId,
-        user_id: userId,
-      },
-      data: {
-        last_read_at: new Date(),
-      },
-    })
+  listMessages(conversationId: string, limit?: number | undefined, before?: MessageCursor | undefined): Promise<MessagePage> {
+    return this.messageStore.listPage(conversationId, limit, before)
   }
 
-  async findMessageById(messageId: string): Promise<InternalChatMessage | null> {
-    const row = await this.prisma.internal_chat_messages.findUnique({ where: { id: messageId }, include: { sender: { select: { name: true } } } })
-    return row ? this.mapMessage(row) : null
+  setMuted(conversationId: string, userId: string, organizationId: string, muted: boolean): Promise<void> {
+    return this.messageStore.setMuted(conversationId, userId, organizationId, muted)
   }
 
-  async updateActionPayload(messageId: string, newPayload: Record<string, unknown>): Promise<InternalChatMessage> {
-    const row = await this.prisma.internal_chat_messages.update({
-      where: { id: messageId },
-      data: {
-        action_payload: newPayload as Prisma.InputJsonValue,
-      },
-      include: {
-        sender: {
-          select: { name: true },
-        },
-      },
-    })
-    return this.mapMessage(row)
+  mutedUserIds(conversationId: string): Promise<string[]> {
+    return this.messageStore.mutedUserIds(conversationId)
+  }
+
+  markRead(conversationId: string, userId: string, organizationId: string): Promise<void> {
+    return this.messageStore.markRead(conversationId, userId, organizationId)
+  }
+
+  editMessage(messageId: string, content: string, editedAt: Date): Promise<InternalChatMessage | null> {
+    return this.messageStore.editMessage(messageId, content, editedAt)
+  }
+
+  deleteMessage(messageId: string, deletedAt: Date, purge: { ownerOrgId: string; keys: string[] }): Promise<boolean> {
+    return this.messageStore.deleteMessage(messageId, deletedAt, purge)
+  }
+
+  updateCardIfStatus(messageId: string, expectedStatus: string, patch: Record<string, unknown>): Promise<InternalChatMessage | null> {
+    return this.messageStore.updateCardIfStatus(messageId, expectedStatus, patch)
   }
 
   private mapConversation(row: Prisma.internal_chat_conversationsGetPayload<object>): InternalChatConversation {
@@ -272,28 +266,21 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
       title: row.title,
       orderId: row.order_id,
       metadata: (row.metadata as Record<string, unknown>) ?? {},
+      counterpartOrgId: row.counterpart_org_id,
+      branchId: row.branch_id,
       createdBy: row.created_by,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       lastMessageAt: row.last_message_at,
     }
   }
+}
 
-  private mapMessage(row: Prisma.internal_chat_messagesGetPayload<object> & { sender?: { name: string | null } | null }): InternalChatMessage {
-    return {
-      id: row.id,
-      conversationId: row.conversation_id,
-      senderUserId: row.sender_user_id,
-      senderRole: row.sender_role,
-      senderName: row.sender?.name ?? undefined,
-      messageType: row.message_type as InternalChatMessageKind,
-      content: row.content,
-      attachments: (row.attachments as string[]) ?? [],
-      actionPayload: (row.action_payload as Record<string, unknown> | null) ?? {},
-      isDeleted: row.deleted_at !== null,
-      createdAt: row.created_at,
-    }
-  }
+/** Dòng xem trước trong danh sách phòng — chữ tiếng Việt, không lộ mã loại tin. */
+function snippetOf(messageType: string, content: string): string {
+  if (messageType === "TEXT" || messageType === "SYSTEM_NOTICE") return content.split("\n")[0] ?? ""
+  if (messageType === "IMAGE") return "Ảnh"
+  return "Thẻ đơn gia công"
 }
 
 let defaultRepo: IInternalChatRepository | null = null

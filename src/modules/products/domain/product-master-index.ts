@@ -219,6 +219,8 @@ export interface ProductMasterIndex {
   warningTags: string[]
   /** Kích thước vật lý ước tính (cao × rộng). `undefined` khi chưa đo — không bịa số. */
   dimensions?: { heightCm: number; widthCm: number } | undefined
+  /** Các bước cắm/lắp ráp tham khảo cho thợ, theo thứ tự. `undefined` khi chưa ai nhập — không bịa quy trình. */
+  assemblySteps?: string[] | undefined
   /** Chính sách thay thế hoa tương đương khi hết nguyên liệu đúng loài trong BOM. */
   substitutionPolicy?: { allowed: boolean; note?: string | undefined } | undefined
   /** MI-3 (ĐP-2.1, 26/09/2026): `products.updated_at` — làm phiên bản cho snapshot (Hợp đồng MI §5). */
@@ -373,6 +375,7 @@ export interface CoordinatorProductSnapshot {
   tierCount?: number | undefined
   substitutionPolicy?: { allowed: boolean; note?: string | undefined } | undefined
   dimensions?: { heightCm: number; widthCm: number } | undefined
+  assemblySteps?: string[] | undefined
   warningTags: string[]
   quotePriceVnd: number | null
   /** Phiên bản Master Index tại thời điểm chụp (MI-3 `product.updatedAt`). */
@@ -402,6 +405,7 @@ export function projectCoordinatorSnapshot(product: ProductMasterIndex, now: Dat
     tierCount: product.bom.tierCount,
     substitutionPolicy: product.substitutionPolicy,
     dimensions: product.dimensions,
+    assemblySteps: product.assemblySteps,
     warningTags: product.warningTags,
     quotePriceVnd: product.pricing.quotePriceVnd,
     masterUpdatedAt: product.updatedAt,

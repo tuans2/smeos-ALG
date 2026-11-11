@@ -26,6 +26,7 @@ export const CAPABILITY_GROUP_LABEL: Record<CapabilityGroup, string> = {
   integration: "Tích hợp",
   marketing_usage: "Marketing",
   print: "In ấn",
+  internal_chat: "Trao đổi nội bộ",
 }
 
 export interface EditableCapability {

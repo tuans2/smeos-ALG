@@ -21,6 +21,27 @@ import { getStaffChannelProvider } from "../adapters/staff-channels"
 import { listLinkedTelegramChatIds } from "./telegram-linked-chats"
 import { ZaloOaPlatformClient } from "../adapters/staff-channels/zalo-oa-platform"
 import { ZaloOaTokenVault } from "./platform-secret-repository"
+import { CLAIM_BUTTON_TEXT } from "../use-cases/invite-cards"
+import { publicAppUrl } from "@/lib/public-url"
+
+/** Cửa hàng đối tác có tài khoản smeOS: đăng tin vào phòng Trao đổi nội bộ (nạp động — không vòng phụ thuộc module). */
+async function postToPartnerRoom(ctx: TenantContext, target: DispatchNotificationTarget, partnerOrgId: string, isInvite: boolean): Promise<boolean> {
+  try {
+    const { postSubcontractMessageToChat } = await import("@/modules/internal-chat/infra/subcontract-chat-channel")
+    return await postSubcontractMessageToChat({
+      chainOrgId: ctx.organizationId,
+      partnerOrgId,
+      orderCode: target.orderCode,
+      branchCode: target.branch.branchId,
+      title: target.title ?? `Đơn gia công #${target.orderCode}`,
+      messageText: target.messageText,
+      isInvite,
+    })
+  } catch (err) {
+    log.warn("dispatch_notify.chat_err", { organizationId: ctx.organizationId, orderCode: target.orderCode, error: err instanceof Error ? err.name : "unknown" })
+    return false
+  }
+}
 
 export class MultiChannelDispatchNotifier implements IDispatchNotifier {
   constructor(
@@ -74,10 +95,20 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
     const existingCard =
       target.existingTelegramCard && linked.has(target.existingTelegramCard.chatId) ? target.existingTelegramCard : null
 
-    const actions =
+    const baseActions =
       target.actions && target.actions.length > 0
         ? target.actions
         : [{ text: "👉 Nhận đơn ngay", url: target.claimUrl }]
+
+    // Cửa hàng đối tác (PO P2: giữ Telegram/Zalo, khuyến khích Trao đổi nội bộ — D11): tin mới cũng vào phòng chung với
+    // chuỗi (lời mời thành thẻ đơn, tin khác thành tin hệ thống) và tin Telegram/Zalo có thêm nút mở thẳng phòng đó.
+    // Bản sửa thẻ Telegram cũ (existingTelegramCard) không đăng lại: thẻ trong phòng tự phản chiếu trạng thái.
+    const partnerOrgId = branch.partnerOrgId ?? null
+    const isInvite = baseActions.some((a) => a.text === CLAIM_BUTTON_TEXT)
+    const chatSent = partnerOrgId && !target.existingTelegramCard ? await postToPartnerRoom(ctx, target, partnerOrgId, isInvite) : false
+    const actions = partnerOrgId
+      ? [...baseActions, { text: "💬 Mở trong smeOS", url: `${publicAppUrl()}/tin-nhan?chuoi=${ctx.organizationId}` }]
+      : baseActions
 
     const fullText = `<b>${target.title ?? `🌸 [ĐƠN GIA CÔNG #${target.orderCode}]`}</b>\n\n${target.messageText}`
 
@@ -164,6 +195,9 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
       if (res.sent) return { sent: true }
       log.warn("dispatch_notify.zalo_err", { branchId: branch.branchId, error: res.error })
     }
+
+    // Cửa hàng đối tác chỉ dùng Trao đổi nội bộ (không Telegram / Zalo) — vẫn tính là đã gửi
+    if (chatSent) return { sent: true }
 
     // Không kênh nào gửi được (chưa cấu hình hoặc đều lỗi) — báo đúng là CHƯA gửi, để mốc nhắc
     // không bị đánh dấu đã gửi và được thử lại ở lượt quét sau (rà soát M4)

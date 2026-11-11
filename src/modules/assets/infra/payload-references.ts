@@ -34,6 +34,8 @@ export async function countPayloadReferences(ctx: TenantContext, key: string): P
     }),
     // Ảnh chợ đối tác: bảng cấp nền tảng, khoá `platform/…` — không trùng khoá `org/…`
     prisma.partner_marketplace_stores.count({ where: { photo_keys: { has: key } } }),
+    // Ảnh trong tin nhắn trao đổi nội bộ: khoá nằm dưới tổ chức chủ phòng
+    prisma.internal_chat_messages.count({ where: scopedWhere(ctx, { attachments: { has: key } }) }),
   ])
   return counts.reduce((sum, n) => sum + n, 0)
 }

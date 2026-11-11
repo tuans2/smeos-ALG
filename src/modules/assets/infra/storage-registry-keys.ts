@@ -40,6 +40,7 @@ export const STORAGE_REFERENCE_SOURCES = [
   "order_coordinations.metadata.qc_photos",
   "order_coordinations.metadata.pod_photos",
   "partner_marketplace_stores.photo_keys",
+  "internal_chat_messages.attachments",
 ] as const
 
 function stringsAt(json: unknown, field: string): string[] {
@@ -83,6 +84,11 @@ export async function loadRegistryKeys(): Promise<{ registry: Set<string>; pendi
     prisma.partner_marketplace_stores.findMany({ ...pageArgs(c), select: { id: true, photo_keys: true } })
   )
   partners.forEach((r) => r.photo_keys.forEach(add))
+  // Ảnh trong tin nhắn trao đổi nội bộ (kế hoạch chat nội bộ GĐ8) — khoá `org/<tổ chức chủ phòng>/chat-<phòng>/…`
+  const chatImages = await paged((c) =>
+    prisma.internal_chat_messages.findMany({ ...pageArgs(c), where: { message_type: "IMAGE" }, select: { id: true, attachments: true } })
+  )
+  chatImages.forEach((r) => r.attachments.forEach(add))
   const pending = await prisma.storage_outbox.findMany({ where: { done_at: null }, select: { storage_key: true } })
   return { registry, pendingDeletes: new Set(pending.map((r) => r.storage_key)) }
 }

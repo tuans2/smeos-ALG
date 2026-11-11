@@ -48,7 +48,7 @@ describe("renderBannerSingleCallUseCase", () => {
     productImageUrl: "https://example.com/dress.jpg",
     brandInfo: {
       shopName: "Xinh Boutique",
-      hotline: "0901234567",
+      hotline: "0123456789",
       address: "Hà Nội",
     },
     stylePresetId: "VIBRANT_SALE",

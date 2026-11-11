@@ -90,6 +90,7 @@ export const coordinatorOrder = z.strictObject({
     tierCount: z.number().optional(),
     substitutionPolicy: z.strictObject({ allowed: z.boolean(), note: z.string().optional() }).optional(),
     dimensions: z.strictObject({ heightCm: z.number(), widthCm: z.number() }).optional(),
+    assemblySteps: z.array(z.string()).optional(),
     warningTags: z.array(z.string()),
     quotePriceVnd: z.number().nullable(),
     masterUpdatedAt: z.string(),

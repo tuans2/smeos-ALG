@@ -1,6 +1,8 @@
 "use client"
 
 import React, { useState } from "react"
+import { useI18n } from "@/lib/i18n"
+import { formatCurrency } from "@/lib/i18n/formatters"
 import type { ActionCardOrderPayload } from "@/modules/internal-chat/domain/chat-entities"
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { XCircle } from "@/components/ui/icon-set/x-circle"
@@ -25,6 +27,7 @@ export function ActionCardOrder({
   isSender,
   onActionComplete,
 }: ActionCardOrderProps) {
+  const { t } = useI18n()
   const [loading, setLoading] = useState(false)
   const [rejecting, setRejecting] = useState(false)
   const [rejectReason, setRejectReason] = useState("")
@@ -59,7 +62,7 @@ export function ActionCardOrder({
     <Card className="p-4 max-w-sm text-text" variant="default">
       <div className="flex items-center justify-between border-b border-border pb-2 mb-3">
         <span className="text-caption font-semibold text-primary bg-primary-subtle px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-primary/20">
-          <Package className="w-3.5 h-3.5" /> Lệnh gia công #{payload.orderCode}
+          <Package className="w-3.5 h-3.5" /> {t("chat.card.legacyTitle", { code: payload.orderCode })}
         </span>
         <span
           className={`text-caption font-medium px-2 py-0.5 rounded-full ${
@@ -70,7 +73,7 @@ export function ActionCardOrder({
               : "bg-surface-muted text-text-muted"
           }`}
         >
-          {isPending ? "Chờ phản hồi" : isAccepted ? "Đã nhận đơn" : "Đã từ chối"}
+          {t(isPending ? "chat.card.legacyPending" : isAccepted ? "chat.card.legacyAccepted" : "chat.card.legacyRejected")}
         </span>
       </div>
 
@@ -83,7 +86,7 @@ export function ActionCardOrder({
           />
         ) : (
           <div className="w-16 h-16 bg-surface-muted rounded-lg flex items-center justify-center text-text-muted text-caption shrink-0">
-            Không ảnh
+            {t("chat.card.legacyNoImage")}
           </div>
         )}
         <div className="text-caption space-y-1 overflow-hidden">
@@ -102,7 +105,7 @@ export function ActionCardOrder({
           {payload.priceVnd !== undefined && (
             <div className="flex items-center gap-1.5 font-semibold text-primary">
               <DollarSign className="w-3.5 h-3.5 shrink-0" />
-              <span>{payload.priceVnd.toLocaleString("vi-VN")} đ</span>
+              <span>{formatCurrency(payload.priceVnd)}</span>
             </div>
           )}
         </div>
@@ -119,7 +122,7 @@ export function ActionCardOrder({
                 size="sm"
                 className="flex-1"
               >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Nhận đơn
+                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> {t("chat.card.legacyAccept")}
               </Button>
               <Button
                 type="button"
@@ -128,14 +131,14 @@ export function ActionCardOrder({
                 onClick={() => setRejecting(true)}
                 disabled={loading}
               >
-                Từ chối
+                {t("chat.card.legacyReject")}
               </Button>
             </div>
           ) : (
             <div className="space-y-2">
               <Input
                 type="text"
-                placeholder="Lý do từ chối (bận việc, quá tải...)"
+                placeholder={t("chat.card.legacyReasonPlaceholder")}
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 inputSize="sm"
@@ -149,7 +152,7 @@ export function ActionCardOrder({
                   disabled={loading}
                   className="flex-1"
                 >
-                  Xác nhận từ chối
+                  {t("chat.card.legacyConfirmReject")}
                 </Button>
                 <Button
                   type="button"
@@ -157,7 +160,7 @@ export function ActionCardOrder({
                   size="sm"
                   onClick={() => setRejecting(false)}
                 >
-                  Hủy
+                  {t("chat.card.legacyCancel")}
                 </Button>
               </div>
             </div>
@@ -167,14 +170,14 @@ export function ActionCardOrder({
 
       {isAccepted && (
         <div className="pt-2 border-t border-border text-caption text-success flex items-center gap-1 font-medium">
-          <CheckCircle2 className="w-3.5 h-3.5" /> Đã tiếp nhận đơn hàng, đối tác đang xử lý
+          <CheckCircle2 className="w-3.5 h-3.5" /> {t("chat.card.legacyAcceptedNote")}
         </div>
       )}
 
       {isRejected && (
         <div className="pt-2 border-t border-border text-caption text-text-muted flex items-center gap-1">
           <XCircle className="w-3.5 h-3.5 shrink-0" />
-          <span>Đơn đã từ chối: {payload.rejectedReason || "Không nhận việc"}</span>
+          <span>{t("chat.card.legacyRejectedNote", { reason: payload.rejectedReason || t("chat.card.legacyDefaultReason") })}</span>
         </div>
       )}
     </Card>

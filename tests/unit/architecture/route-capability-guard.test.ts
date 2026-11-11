@@ -54,9 +54,6 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "notification/events": "chỉ đọc danh mục sự kiện tĩnh",
   "notification/channels": "chỉ đọc trạng thái bật kênh toàn sàn",
   "ux-rollout-flags": "chỉ đọc cờ giao diện đang bật cho chính tổ chức của phiên (03c E9)",
-  "internal-chat/conversations/[id]/messages": "chỉ thành viên cuộc hội thoại (isParticipant trong use-case)",
-  "internal-chat/conversations": "chat nội bộ cho mọi nhân viên; danh sách lọc theo người tham gia",
-  "internal-chat/messages/[id]/action": "chỉ thành viên cuộc hội thoại (use-case kiểm người tham gia)",
   "noi-bo/identity": "truy vấn thông tin nội bộ hệ thống",
 }
 

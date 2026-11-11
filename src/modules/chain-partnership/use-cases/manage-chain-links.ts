@@ -11,6 +11,7 @@ import {
 } from "../domain/partnership-lifecycle"
 import { ChainInvitationRepository, type StoreSideLink } from "../infra/chain-invitation-repository"
 import { getChainPartnershipRepository } from "../infra/prisma-partnership-repository"
+import { applyPartnerLinkEffects } from "./partner-link-effects"
 
 /**
  * Hai phía của liên kết Chuỗi ↔ cửa hàng (audit hành trình C1/C2, gói UJ-10 — UQ2).
@@ -22,6 +23,8 @@ export interface ChainLinksDeps {
   notify: typeof notifyOrganization
   audit: typeof recordAuditLog
   now: () => Date
+  /** Phòng trao đổi (và ứng viên bắn đơn) theo trạng thái liên kết — thay được trong test */
+  linkEffects?: typeof applyPartnerLinkEffects | undefined
 }
 
 const defaults = (): ChainLinksDeps => ({ repo: new ChainInvitationRepository(), notify: notifyOrganization, audit: recordAuditLog, now: () => new Date() })
@@ -71,6 +74,13 @@ export async function respondToChainLink(
     before: { status: link.status },
     after: { status: to, reason: reason?.trim() || null },
   })
+  await (deps.linkEffects ?? applyPartnerLinkEffects)({
+    chainOrgId: link.chainOrgId,
+    partnerOrgId: ctx.organizationId,
+    status: to,
+    actorUserId: ctx.userId,
+    roomTitle: `Trao đổi với chuỗi (${link.partnerCode})`,
+  })
   void deps.notify({
     organizationId: link.chainOrgId,
     eventKey: "CHAIN_PARTNER_RESPONDED",
@@ -86,7 +96,7 @@ export async function changePartnershipStatus(
   partnershipId: string,
   to: PartnershipStatus,
   reason: string,
-  deps: Pick<ChainLinksDeps, "notify" | "audit"> & { partnerships?: ReturnType<typeof getChainPartnershipRepository> } = {
+  deps: Pick<ChainLinksDeps, "notify" | "audit" | "linkEffects"> & { partnerships?: ReturnType<typeof getChainPartnershipRepository> } = {
     notify: notifyOrganization,
     audit: recordAuditLog,
   },
@@ -98,6 +108,13 @@ export async function changePartnershipStatus(
   if (reason.trim().length < 3) throw validationFailed({ reason: "Nêu lý do đổi trạng thái liên kết" })
   ensure(partnership.status, to, "CHAIN")
   const updated = await repo.updateStatus(partnershipId, to)
+  await (deps.linkEffects ?? applyPartnerLinkEffects)({
+    chainOrgId: ctx.organizationId,
+    partnerOrgId: partnership.partnerOrgId,
+    status: to,
+    actorUserId: ctx.userId,
+    roomTitle: `Trao đổi: ${partnership.partnerOrgName ?? partnership.partnerCode} (${partnership.partnerCode})`,
+  })
   await deps.audit(ctx, {
     action: "chain_link.chain_status",
     entityType: "organization_links",

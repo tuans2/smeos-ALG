@@ -8,12 +8,12 @@ vi.mock("@/core/ai/gateway", () => ({
 }))
 
 import { POST as widget } from "@/app/api/v1/chat/public/widget/route"
-import { POST as sendInternal } from "@/app/api/v1/internal-chat/conversations/[id]/messages/route"
-import { POST as createInternal } from "@/app/api/v1/internal-chat/conversations/route"
+import { POST as dispatchToChat } from "@/app/api/v1/coordinator/orders/[id]/dispatch-to-chat/route"
+import { POST as createOrder } from "@/app/api/v1/orders/route"
 import { POST as cardAction } from "@/app/api/v1/internal-chat/messages/[id]/action/route"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, linkPartner, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
  * Hai lỗi P1 phát hiện khi viết OpenAPI nội bộ (audit API §15, 08/11/2026):
@@ -26,35 +26,42 @@ const ps = (id: string) => ({ params: Promise.resolve({ id }) })
 describe("chat — cách ly thẻ hành động và sổ credit kênh ngoài", () => {
   let a: Tenant
   let b: Tenant
+  let partner: Tenant
   const send = (who: Tenant, path: string, body: unknown) => withSession(`${BASE}${path}`, who.token, { method: "POST", body: JSON.stringify(body) })
 
   beforeAll(async () => {
     await resetDatabase()
     a = await createTenant("p1-chat-a")
     b = await createTenant("p1-chat-b")
+    partner = await createTenant("p1-chat-doi-tac")
+    await makeChainOrganization(a)
+    await linkPartner(a, partner, { code: "P1-01" })
   })
   afterAll(async () => {
     await disconnectDatabase()
   })
 
-  async function orderCard(who: Tenant) {
-    const conv = await readJson(await createInternal(send(who, "/internal-chat/conversations", { conversationType: "PLATFORM_TENANT", title: "Đơn cần đối tác" })))
-    const convId = String((conv.data as { id: string }).id)
-    const card = await readJson(
-      await sendInternal(send(who, `/internal-chat/conversations/${convId}/messages`, {
-        content: "Đơn mới", messageType: "ACTION_CARD_ORDER", actionPayload: { orderId: "o-1", orderCode: "DH-001", status: "PENDING_ACCEPT" },
-      }), ps(convId))
-    )
-    return { convId, cardId: String((card.data as { id: string }).id) }
+  /**
+   * Thẻ đơn thật: chuỗi `a` liên kết cửa hàng đối tác `partner`, Điều phối giao đơn vào chat (kế hoạch chat nội bộ GĐ1 —
+   * client không tự tạo phòng PLATFORM_TENANT hay gửi thẻ). `b` là tổ chức thứ ba.
+   */
+  async function orderCard() {
+    const order = await readJson(await createOrder(send(a, "/orders", { items: [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 300000 }] })))
+    const orderId = String((order as { order: { id: string } }).order.id)
+    const res = await dispatchToChat(send(a, `/coordinator/orders/${orderId}/dispatch-to-chat`, { targetPartnerOrgId: partner.organizationId, targetPartnerUserId: partner.userId }), ps(orderId))
+    expect(res.status).toBe(200)
+    const data = ((await readJson(res)) as { data: { conversationId: string; message: { id: string; actionPayload: Record<string, unknown> } } }).data
+    return { convId: data.conversationId, cardId: data.message.id, payload: data.message.actionPayload }
   }
 
   it("tổ chức khác bấm nút trên thẻ đơn → 404, thẻ và hội thoại không đổi", async () => {
-    const { convId, cardId } = await orderCard(a)
+    const { convId, cardId, payload } = await orderCard()
+    const before = await prisma.internal_chat_messages.count({ where: { conversation_id: convId } })
     const res = await cardAction(send(b, `/internal-chat/messages/${cardId}/action`, { action: "REJECT_ORDER", rejectedReason: "thử" }), ps(cardId))
     expect(res.status).toBe(404)
     const row = await prisma.internal_chat_messages.findUniqueOrThrow({ where: { id: cardId } })
-    expect(row.action_payload).toEqual({ orderId: "o-1", orderCode: "DH-001", status: "PENDING_ACCEPT" })
-    expect(await prisma.internal_chat_messages.count({ where: { conversation_id: convId } })).toBe(1)
+    expect(row.action_payload).toEqual(payload)
+    expect(await prisma.internal_chat_messages.count({ where: { conversation_id: convId } })).toBe(before)
   })
 
   it("mã tin không tồn tại → 404 (trước đây 500)", async () => {
@@ -62,12 +69,12 @@ describe("chat — cách ly thẻ hành động và sổ credit kênh ngoài", (
     expect((await cardAction(send(a, `/internal-chat/messages/${id}/action`, { action: "ACCEPT_ORDER" }), ps(id))).status).toBe(404)
   })
 
-  it("người tham gia bấm nhận đơn: đổi trạng thái, giữ mã đơn", async () => {
-    const { cardId } = await orderCard(a)
-    const res = await cardAction(send(a, `/internal-chat/messages/${cardId}/action`, { action: "ACCEPT_ORDER" }), ps(cardId))
+  it("cửa hàng được giao bấm nhận đơn: đổi trạng thái, giữ mã đơn", async () => {
+    const { cardId, payload } = await orderCard()
+    const res = await cardAction(send(partner, `/internal-chat/messages/${cardId}/action`, { action: "ACCEPT_ORDER" }), ps(cardId))
     expect(res.status).toBe(200)
-    const payload = ((await readJson(res)).data as { actionPayload: Record<string, unknown> }).actionPayload
-    expect(payload).toMatchObject({ orderId: "o-1", orderCode: "DH-001", status: "ACCEPTED", assignedPartnerOrgId: a.organizationId })
+    const after = ((await readJson(res)).data as { actionPayload: Record<string, unknown> }).actionPayload
+    expect(after).toMatchObject({ orderId: payload.orderId, orderCode: payload.orderCode, status: "ACCEPTED", assignedPartnerOrgId: partner.organizationId })
   })
 
   it("khung chat công khai của tiệm còn credit: trả lời, trừ 1 credit, ghi sổ usage vào workspace của tiệm", async () => {

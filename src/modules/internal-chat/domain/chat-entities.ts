@@ -1,4 +1,6 @@
-export type ConversationType = "PLATFORM_TENANT" | "CHAIN_PARTNER" | "ORDER_THREAD"
+import type { SubcontractCardView } from "./subcontract-card"
+
+export type ConversationType = "PLATFORM_TENANT" | "CHAIN_PARTNER" | "CHAIN_BRANCH" | "ORDER_THREAD"
 
 export type ParticipantRoleInChat = "OWNER" | "ADMIN" | "MEMBER" | "GUEST_PARTNER"
 
@@ -7,6 +9,8 @@ export type InternalChatMessageKind =
   | "IMAGE"
   | "ACTION_CARD_ORDER"
   | "ACTION_CARD_QC"
+  /** Thẻ đơn gia công phản chiếu trạng thái thật (GĐ4) — `actionPayload` là `SubcontractCardPayload` */
+  | "ACTION_CARD_SUBCONTRACT"
   | "SYSTEM_NOTICE"
 
 export interface ActionCardOrderPayload {
@@ -41,12 +45,22 @@ export interface InternalChatConversation {
   title: string | null
   orderId: string | null
   metadata: Record<string, unknown>
+  /** Bên kia của phòng liên tổ chức (cửa hàng đối tác); null = phòng trong một tổ chức */
+  counterpartOrgId?: string | null | undefined
+  /** Phòng chi nhánh nội bộ (`CHAIN_BRANCH`) */
+  branchId?: string | null | undefined
   createdBy: string
   createdAt: Date
   updatedAt: Date
   lastMessageAt: Date
   unreadCount?: number | undefined
   lastMessageSnippet?: string | undefined
+  /** Tên bên kia theo phía người xem (chuỗi thấy tên cửa hàng, cửa hàng thấy tên chuỗi) */
+  counterpartName?: string | undefined
+  /** Người xem đã tắt tiếng phòng */
+  isMuted?: boolean | undefined
+  /** Phía chuỗi: số đơn gia công cửa hàng đối tác của phòng đang giữ (đã nhận / đang làm) */
+  activeOrderCount?: number | undefined
 }
 
 export interface InternalChatParticipant {
@@ -74,4 +88,10 @@ export interface InternalChatMessage {
   actionPayload: ActionPayload
   isDeleted: boolean
   createdAt: Date
+  /** Người đang xem là người gửi và còn trong 24 giờ — được sửa / thu hồi (tính lúc đọc) */
+  canChange?: boolean | undefined
+  /** Tin chữ / ảnh đã được người gửi sửa — thời điểm sửa gần nhất (ISO) */
+  editedAt?: string | undefined
+  /** Chỉ thẻ `ACTION_CARD_SUBCONTRACT`: trạng thái tính lúc đọc theo góc nhìn người xem */
+  subcontractView?: SubcontractCardView | undefined
 }

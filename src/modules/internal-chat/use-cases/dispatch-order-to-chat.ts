@@ -23,7 +23,7 @@ export class DispatchOrderToChatUseCase {
   constructor(private readonly chatRepo: IInternalChatRepository) {}
 
   async execute(input: DispatchOrderToChatInput): Promise<{ conversationId: string; message: InternalChatMessage }> {
-    let conv = await this.chatRepo.findConversationByOrderId(input.orderId)
+    let conv = await this.chatRepo.findConversationByOrderId(input.coordinatorOrgId, input.orderId)
 
     if (!conv) {
       const participants = [

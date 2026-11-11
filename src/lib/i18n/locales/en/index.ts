@@ -14,6 +14,7 @@ import { storageEn } from "./storage"
 import { profileEn } from "./profile"
 import { settingsEn } from "./settings"
 import { notificationsEn } from "./notifications"
+import { chatEn } from "./chat"
 
 export const enDictionary = {
   common: commonEn,
@@ -28,4 +29,5 @@ export const enDictionary = {
   profile: profileEn,
   settings: settingsEn,
   notifications: notificationsEn,
+  chat: chatEn,
 } as const

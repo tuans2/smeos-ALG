@@ -16,6 +16,7 @@ describe("seed tài khoản mẫu không chạy trên production", () => {
     expect(devSeedEnabled({ NODE_ENV: "production", SEED_DEV_DATA: "true" })).toBe(true)
   })
 
+  // @release-strip — khối seed của cửa hàng riêng không có trong bản giao (scripts/release/cut-strip.ts)
   it("seed.ts chỉ gọi syncSiinStoreAccount bên trong nhánh devSeedEnabled", () => {
     // Tài khoản Siin Store mang mật khẩu viết cứng — gọi nó ngoài nhánh này là C3 quay lại.
     const source = readFileSync(path.resolve(__dirname, "../../../prisma/seed.ts"), "utf-8")
@@ -24,4 +25,5 @@ describe("seed tài khoản mẫu không chạy trên production", () => {
     expect(guard).toBeGreaterThan(-1)
     expect(call).toBeGreaterThan(guard)
   })
+  // @release-strip-end
 })

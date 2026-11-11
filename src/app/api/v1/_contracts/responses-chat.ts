@@ -132,16 +132,23 @@ export const publicChatWidgetResponse = z.strictObject({
 const internalConversation = z.strictObject({
   id: z.string(),
   organizationId: z.string(),
-  conversationType: z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "ORDER_THREAD"]),
+  conversationType: z.enum(["PLATFORM_TENANT", "CHAIN_PARTNER", "CHAIN_BRANCH", "ORDER_THREAD"]),
   title: z.string().nullable(),
   orderId: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()),
+  /** Bên kia của phòng liên tổ chức (cửa hàng đối tác); null = phòng trong một tổ chức */
+  counterpartOrgId: z.string().nullable().optional(),
+  /** Phòng chi nhánh nội bộ (`CHAIN_BRANCH`) */
+  branchId: z.string().nullable().optional(),
   createdBy: z.string(),
   createdAt: timestamp,
   updatedAt: timestamp,
   lastMessageAt: timestamp,
   unreadCount: z.number().optional(),
   lastMessageSnippet: z.string().optional(),
+  counterpartName: z.string().optional(),
+  isMuted: z.boolean().optional(),
+  activeOrderCount: z.number().optional(),
 })
 const internalMessage = z.strictObject({
   id: z.string(),
@@ -149,18 +156,44 @@ const internalMessage = z.strictObject({
   senderUserId: z.string(),
   senderRole: z.string(),
   senderName: z.string().optional(),
-  messageType: z.enum(["TEXT", "IMAGE", "ACTION_CARD_ORDER", "ACTION_CARD_QC", "SYSTEM_NOTICE"]),
+  messageType: z.enum(["TEXT", "IMAGE", "ACTION_CARD_ORDER", "ACTION_CARD_QC", "ACTION_CARD_SUBCONTRACT", "SYSTEM_NOTICE"]),
   content: z.string(),
   attachments: z.array(z.string()),
   actionPayload: z.record(z.string(), z.unknown()),
   isDeleted: z.boolean(),
   createdAt: timestamp,
+  /** Người xem là người gửi và còn trong 24 giờ — được sửa / thu hồi */
+  canChange: z.boolean().optional(),
+  /** Thời điểm sửa gần nhất (ISO) */
+  editedAt: z.string().optional(),
+  /** Chỉ thẻ `ACTION_CARD_SUBCONTRACT`: trạng thái tính lúc đọc theo góc nhìn người xem */
+  subcontractView: z.strictObject({
+    stage: z.string(),
+    closedReason: z.string().nullable(),
+    deadlineAt: z.string().nullable(),
+    productionStatus: z.string().nullable(),
+    deliveryStatus: z.string().nullable(),
+    actionUrl: z.string().nullable(),
+  }).optional(),
 })
 const legacy = <T extends z.ZodType>(schema: T) => z.strictObject({ success: z.literal(true), data: schema })
 export const internalConversationsResponse = z.strictObject({ success: z.literal(true), data: z.array(internalConversation), total: z.number() })
 export const internalConversationResponse = legacy(internalConversation)
-export const internalMessagesResponse = legacy(z.array(internalMessage))
+export const internalMessagesResponse = z.strictObject({
+  success: z.literal(true),
+  data: z.array(internalMessage),
+  /** Con trỏ trang cũ hơn (`?before=`); null = hết */
+  nextCursor: z.string().nullable(),
+})
 export const internalMessageResponse = legacy(internalMessage)
+/** Route `defineRoute` mới (GĐ7–8, sửa / thu hồi) trả envelope chuẩn `{ data }`. */
+export const internalMessageDataResponse = z.strictObject({ data: internalMessage })
+export const internalMessageDeletedResponse = z.strictObject({ data: z.strictObject({ id: z.string(), deleted: z.literal(true) }) })
+export const internalMuteResponse = z.strictObject({ data: z.strictObject({ muted: z.boolean() }) })
+export const internalUnreadResponse = z.strictObject({ data: z.strictObject({ unread_count: z.number() }) })
+export const internalChatStatsResponse = z.strictObject({
+  data: z.strictObject({ days: z.number(), invites_in_chat: z.number(), partner_claims: z.number(), partner_stores: z.number() }),
+})
 
 /** Webhook trả cho nhà cung cấp — không phải envelope `{ data }`. */
 export const facebookWebhookResponse = z.strictObject({ status: z.enum(["EVENT_RECEIVED", "ignored", "ok"]) })

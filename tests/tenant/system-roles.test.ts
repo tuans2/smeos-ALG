@@ -32,9 +32,10 @@ describe("ba vai hệ thống Thợ cắm hoa, Shipper, Kế toán", () => {
       const rows = await prisma.role_capabilities.findMany({ where: { role_id: role!.id } })
       return rows.map((r) => r.capability_code).sort()
     }
-    expect(await codes("tho_cam")).toEqual(["A1", "A2", "G1", "G2", "R17"])
-    expect(await codes("shipper")).toEqual(["A1", "A2", "G2", "R18"])
-    expect(await codes("ke_toan")).toEqual(["A1", "A2", "F1", "G8", "Q1", "R1", "R13", "R19", "R20"])
+    // S1 (trao đổi nội bộ, mọi vai) và S2 (thực hiện đơn gia công, có Thợ cắm) — PO duyệt D2 ngày 09/11/2026
+    expect(await codes("tho_cam")).toEqual(["A1", "A2", "G1", "G2", "R17", "S1", "S2"])
+    expect(await codes("shipper")).toEqual(["A1", "A2", "G2", "R18", "S1"])
+    expect(await codes("ke_toan")).toEqual(["A1", "A2", "F1", "G8", "Q1", "R1", "R13", "R19", "R20", "S1"])
   })
 
   it("Thợ cắm và Shipper không xem được danh sách đơn; Kế toán xem được đơn và đối soát ngân hàng", async () => {

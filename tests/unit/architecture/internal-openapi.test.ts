@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "node:fs"
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
 
 import { describe, expect, it } from "vitest"
@@ -16,6 +16,8 @@ const ROOT = path.resolve(__dirname, "../../..")
 const API = path.join(ROOT, "src/app/api/v1")
 
 function routeFiles(dir: string): string[] {
+  // Bản cắt bàn giao (kế hoạch GD1) bỏ cả nhóm route ngoài phạm vi; operation của chúng cũng đã bị lọc bỏ
+  if (!existsSync(dir)) return []
   return readdirSync(dir).flatMap((entry) => {
     const full = path.join(dir, entry)
     if (statSync(full).isDirectory()) return entry.startsWith("_") ? [] : routeFiles(full)

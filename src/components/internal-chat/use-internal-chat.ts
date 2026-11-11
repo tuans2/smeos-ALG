@@ -1,0 +1,223 @@
+"use client"
+
+import { useCallback, useEffect, useRef, useState } from "react"
+import { useI18n } from "@/lib/i18n"
+import type { InternalChatConversation, InternalChatMessage } from "@/modules/internal-chat/domain/chat-entities"
+
+export type LoadState = "loading" | "ready" | "error" | "forbidden"
+
+// Không có luồng đẩy (SSE): hỏi lại dày; có luồng đẩy: hỏi lại thưa — chỉ để cập nhật trạng thái thẻ đơn gia công
+const LIST_POLL_MS = { push: 60_000, poll: 15_000 }
+const THREAD_POLL_MS = { push: 30_000, poll: 5_000 }
+const API = "/api/v1/internal-chat/conversations"
+
+/** Đường dẫn mở thẳng phòng: ?doi-tac= (chuỗi) · ?chuoi= (cửa hàng) · ?chi-nhanh= — tạo lần đầu nếu chưa có. */
+function requestedRoomTarget(): Record<string, string> | null {
+  const q = new URLSearchParams(window.location.search)
+  const pick = (k: string) => q.get(k)
+  if (pick("doi-tac")) return { partnerOrgId: pick("doi-tac")! }
+  if (pick("chuoi")) return { chainOrgId: pick("chuoi")! }
+  if (pick("chi-nhanh")) return { branchId: pick("chi-nhanh")! }
+  return null
+}
+
+/**
+ * Dữ liệu màn Trao đổi nội bộ: danh sách phòng, phòng đang mở, tin của phòng. Hỏi lại theo chu kỳ chỉ khi tab đang
+ * hiển thị (đọc tin = đánh dấu đã đọc, không đánh dấu khi người dùng không nhìn). Theo dõi mất mạng để báo đúng.
+ */
+export function useInternalChat() {
+  const { t } = useI18n()
+  const [conversations, setConversations] = useState<InternalChatConversation[]>([])
+  const [listState, setListState] = useState<LoadState>("loading")
+  const [activeConv, setActiveConv] = useState<InternalChatConversation | null>(null)
+  const [messages, setMessages] = useState<InternalChatMessage[]>([])
+  const [threadState, setThreadState] = useState<LoadState>("loading")
+  const [online, setOnline] = useState(true)
+  const [sendError, setSendError] = useState<string | null>(null)
+  const [live, setLive] = useState(false)
+  const activeId = useRef<string | null>(null)
+
+  const fetchConversations = useCallback(async () => {
+    if (document.visibilityState === "hidden") return
+    try {
+      const res = await fetch(API)
+      if (res.status === 403) return setListState("forbidden")
+      const json = await res.json()
+      if (!json.success || !Array.isArray(json.data)) return setListState("error")
+      const list = json.data as InternalChatConversation[]
+      setConversations(list)
+      setListState("ready")
+      const wanted = new URLSearchParams(window.location.search).get("phong")
+      // Phòng mở qua đường dẫn (POST) chưa có tên bên kia / trạng thái theo người xem → lấy bản trong danh sách
+      setActiveConv((prev) => {
+        if (!prev) return list.find((c) => c.id === wanted) ?? null
+        const fresh = list.find((c) => c.id === prev.id)
+        return fresh && (fresh.counterpartName !== prev.counterpartName || fresh.isMuted !== prev.isMuted) ? { ...prev, ...fresh } : prev
+      })
+    } catch {
+      setListState((s) => (s === "ready" ? s : "error"))
+    }
+  }, [])
+
+  const fetchMessages = useCallback(async (convId: string) => {
+    if (document.visibilityState === "hidden") return
+    try {
+      const res = await fetch(`${API}/${convId}/messages`)
+      if (activeId.current !== convId) return
+      if (res.status === 404 || res.status === 403) return setThreadState("forbidden")
+      const json = await res.json()
+      if (!json.success || !Array.isArray(json.data)) return setThreadState("error")
+      // Giữ nguyên tin ảnh đã tải: URL ký đổi mỗi lần đọc, thay vào sẽ làm ảnh tải lại 5 giây/lần
+      const incoming = json.data as InternalChatMessage[]
+      setMessages((prev) => {
+        const known = new Map(prev.filter((m) => m.messageType === "IMAGE").map((m) => [m.id, m]))
+        return incoming.map((m) => {
+          const old = known.get(m.id)
+          const unchanged = old && old.isDeleted === m.isDeleted && old.editedAt === m.editedAt && old.canChange === m.canChange
+          return unchanged ? old : m
+        })
+      })
+      setThreadState("ready")
+    } catch {
+      setThreadState((s) => (s === "ready" ? s : "error"))
+    }
+  }, [])
+
+  useEffect(() => {
+    const openRequested = async () => {
+      const target = requestedRoomTarget()
+      if (!target) return
+      try {
+        const res = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(target) })
+        const json = await res.json()
+        if (json.success && json.data) setActiveConv(json.data)
+      } catch {
+        // Không mở được phòng: vẫn hiện danh sách
+      }
+    }
+    void Promise.resolve().then(openRequested).then(fetchConversations)
+    const onOnline = () => setOnline(true)
+    const onOffline = () => setOnline(false)
+    window.addEventListener("online", onOnline)
+    window.addEventListener("offline", onOffline)
+    // Luồng đẩy: chỉ báo mã phòng vừa có tin → đọc lại qua API đã kiểm quyền. EventSource tự nối lại khi rớt.
+    const source = typeof EventSource === "undefined" ? null : new EventSource("/api/v1/internal-chat/stream")
+    source?.addEventListener("connected", () => setLive(true))
+    source?.addEventListener("error", () => setLive(false))
+    source?.addEventListener("room", (e) => {
+      let id: string | undefined
+      try {
+        id = (JSON.parse((e as MessageEvent<string>).data) as { conversationId?: string }).conversationId
+      } catch {
+        id = undefined
+      }
+      void fetchConversations()
+      if (id && id === activeId.current) void fetchMessages(id)
+    })
+    return () => {
+      source?.close()
+      window.removeEventListener("online", onOnline)
+      window.removeEventListener("offline", onOffline)
+    }
+  }, [fetchConversations, fetchMessages])
+
+  useEffect(() => {
+    const timer = setInterval(fetchConversations, live ? LIST_POLL_MS.push : LIST_POLL_MS.poll)
+    return () => clearInterval(timer)
+  }, [fetchConversations, live])
+
+  // Theo MÃ phòng, không theo đối tượng: cập nhật tên / tắt tiếng của phòng không được làm tải lại tin
+  const activeConvId = activeConv?.id ?? null
+  useEffect(() => {
+    activeId.current = activeConvId
+    if (!activeConvId) return
+    void Promise.resolve().then(() => {
+      setMessages([])
+      setThreadState("loading")
+      return fetchMessages(activeConvId)
+    })
+  }, [activeConvId, fetchMessages])
+
+  useEffect(() => {
+    if (!activeConvId) return
+    const timer = setInterval(() => fetchMessages(activeConvId), live ? THREAD_POLL_MS.push : THREAD_POLL_MS.poll)
+    return () => clearInterval(timer)
+  }, [activeConvId, fetchMessages, live])
+
+  const sendMessage = useCallback(async (text: string): Promise<boolean> => {
+    if (!activeConv) return false
+    setSendError(null)
+    try {
+      const res = await fetch(`${API}/${activeConv.id}/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: text }),
+      })
+      const json = await res.json()
+      if (json.success && json.data) {
+        setMessages((prev) => [...prev, json.data])
+        return true
+      }
+      setSendError(t(res.status === 404 ? "chat.errors.readOnly" : "chat.errors.sendFailed"))
+    } catch {
+      setSendError(t("chat.errors.offlineSend"))
+    }
+    return false
+  }, [activeConv, t])
+
+  /** Gửi ảnh (≤ 5, kèm chú thích) — xong thì đọc lại phòng để có URL ký. */
+  const sendImages = useCallback(async (files: File[], caption: string): Promise<boolean> => {
+    if (!activeConv || files.length === 0) return false
+    setSendError(null)
+    const form = new FormData()
+    files.forEach((f) => form.append("files", f))
+    form.append("caption", caption)
+    try {
+      const res = await fetch(`${API}/${activeConv.id}/images`, { method: "POST", body: form })
+      if (res.ok) {
+        await fetchMessages(activeConv.id)
+        return true
+      }
+      const json = await res.json().catch(() => null)
+      setSendError(res.status === 413 ? t("chat.errors.imageTooLarge") : json?.error?.message ?? t("chat.errors.imageFailed"))
+    } catch {
+      setSendError(t("chat.errors.offlineImage"))
+    }
+    return false
+  }, [activeConv, fetchMessages, t])
+
+  /** Sửa (`content`) hoặc thu hồi (`content` = null) tin của chính mình — xong thì đọc lại phòng. */
+  const changeMessage = useCallback(async (messageId: string, content: string | null): Promise<boolean> => {
+    setSendError(null)
+    try {
+      const res = await fetch(`/api/v1/internal-chat/messages/${messageId}`, content === null
+        ? { method: "DELETE" }
+        : { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content }) })
+      if (activeConv) await fetchMessages(activeConv.id)
+      if (res.ok) return true
+      setSendError(t(res.status === 409 ? "chat.errors.changeTooLate" : res.status === 404 ? "chat.errors.readOnly" : "chat.errors.changeFailed"))
+    } catch {
+      setSendError(t("chat.errors.offlineSend"))
+    }
+    return false
+  }, [activeConv, fetchMessages, t])
+
+  /** Tắt / bật thông báo tin nhắn của phòng đang mở cho chính mình. */
+  const toggleMute = useCallback(async () => {
+    if (!activeConv) return
+    const muted = !activeConv.isMuted
+    try {
+      const res = await fetch(`${API}/${activeConv.id}/mute`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ muted }) })
+      if (!res.ok) return setSendError(t("chat.errors.muteFailed"))
+      setActiveConv((c) => (c && c.id === activeConv.id ? { ...c, isMuted: muted } : c))
+      setConversations((list) => list.map((c) => (c.id === activeConv.id ? { ...c, isMuted: muted } : c)))
+    } catch {
+      setSendError(t("chat.errors.offlineMute"))
+    }
+  }, [activeConv, t])
+
+  return {
+    conversations, listState, activeConv, setActiveConv, messages, threadState, online, sendError, sendMessage, sendImages, toggleMute, changeMessage,
+    reload: () => (activeConv ? fetchMessages(activeConv.id) : fetchConversations()),
+  }
+}

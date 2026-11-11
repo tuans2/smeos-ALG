@@ -4,6 +4,7 @@ import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import React, { useEffect, useRef, useState } from "react"
 import { Upload, X, CheckCircle2, AlertCircle, Play, ImagePlus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { LocalImagePreview } from "@/components/upload/local-image-preview"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { MEDIA_LIMITS, mediaKindOf, mediaSelectionError } from "@/modules/greeting-card/domain/media-limits"
 
@@ -18,7 +19,8 @@ interface CoordinatorImageUploadProps {
 }
 
 type UploadState = "idle" | "uploading" | "success" | "error"
-type Picked = { file: File; url: string; kind: "image" | "video"; duration: number | null }
+/** `url` chỉ có với video (thẻ `<video>` cần URL); ảnh xem trước vẽ lên canvas, không qua URL. */
+type Picked = { id: number; file: File; url: string | null; kind: "image" | "video"; duration: number | null }
 
 /** Thời lượng video (giây) đo bằng trình duyệt — máy chủ không đọc được. */
 function videoDuration(url: string): Promise<number | null> {
@@ -60,9 +62,10 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
   const [picked, setPicked] = useState<Picked[]>([])
   const [state, setState] = useState<UploadState>("idle")
   const [errorMsg, setErrorMsg] = useState("")
+  const nextId = useRef(0)
 
   // Giải phóng URL xem trước khi đóng
-  useEffect(() => () => picked.forEach((p) => URL.revokeObjectURL(p.url)), [picked])
+  useEffect(() => () => picked.forEach((p) => p.url && URL.revokeObjectURL(p.url)), [picked])
 
   async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? [])
@@ -74,14 +77,14 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
         setErrorMsg("Chỉ nhận ảnh JPG, PNG, WEBP và video MP4, MOV, WEBM")
         continue
       }
-      const url = URL.createObjectURL(file)
-      added.push({ file, url, kind, duration: kind === "video" ? await videoDuration(url) : null })
+      const url = kind === "video" ? URL.createObjectURL(file) : null
+      added.push({ id: nextId.current++, file, url, kind, duration: url ? await videoDuration(url) : null })
     }
     const next = [...picked, ...added]
     const error = mediaSelectionError(next.map((p) => ({ mimeType: p.file.type, sizeBytes: p.file.size, durationSeconds: p.duration })))
     // Thiếu ảnh chỉ báo khi lưu; các lỗi khác báo ngay và không nhận tệp vừa chọn
     if (error && error !== "Cần ít nhất 1 ảnh") {
-      added.forEach((p) => URL.revokeObjectURL(p.url))
+      added.forEach((p) => p.url && URL.revokeObjectURL(p.url))
       setErrorMsg(error)
       return
     }
@@ -137,8 +140,8 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
 
       <ul className="grid grid-cols-3 gap-2" aria-label="Tệp đã chọn">
         {picked.map((p, i) => (
-          <li key={p.url} className="relative aspect-square overflow-hidden rounded-xl border border-border bg-surface-muted">
-            {p.kind === "video" ? (
+          <li key={p.id} className="relative aspect-square overflow-hidden rounded-xl border border-border bg-surface-muted">
+            {p.url ? (
               <>
                 <video src={p.url} muted preload="metadata" className="h-full w-full object-cover" />
                 <span className="absolute bottom-1 left-1 inline-flex items-center gap-0.5 rounded bg-text/70 px-1 text-caption text-surface">
@@ -147,8 +150,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
                 </span>
               </>
             ) : (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={p.url} alt={`Ảnh ${i + 1}`} className="h-full w-full object-cover" />
+              <LocalImagePreview file={p.file} label={`Ảnh ${i + 1}`} width={256} height={256} className="h-full w-full" />
             )}
             <Button variant="ghost"
               type="button"

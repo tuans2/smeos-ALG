@@ -74,7 +74,7 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   integration_events: { scope: "TENANT", parents: ["integration_connections", "organizations"] },
   integration_sync_cursors: { scope: "TENANT", parents: ["integration_connections", "organizations"] },
   integration_tokens: { scope: "TENANT", parents: ["organizations"] },
-  internal_chat_conversations: { scope: "TENANT", parents: ["orders", "organizations"] },
+  internal_chat_conversations: { scope: "TENANT", parents: ["branches", "orders", "organizations"] },
   internal_chat_messages: { scope: "TENANT", parents: ["internal_chat_conversations", "organizations", "users"] },
   internal_chat_participants: { scope: "TENANT", parents: ["internal_chat_conversations", "organizations", "users"] },
   job_events: { scope: "TENANT", parents: ["generation_jobs", "organizations"] },

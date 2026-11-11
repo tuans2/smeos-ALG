@@ -48,4 +48,20 @@ test.describe("Visual Regression (T7.1 / 03a UX-007)", () => {
       animations: "disabled",
     })
   })
+
+  test("chụp màn Trao đổi nội bộ /tin-nhan khi chưa có phòng (desktop & mobile)", async ({ page }) => {
+    await createTestUserAndLogin(page)
+
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto("/tin-nhan")
+    await expect(page.getByRole("heading", { name: "Trao đổi nội bộ" })).toBeVisible()
+    await expect(page.getByText("Chưa có phòng trao đổi")).toBeVisible()
+    await expect(page).toHaveScreenshot("tin-nhan-mobile.png", { maxDiffPixelRatio: 0.05, animations: "disabled" })
+
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.goto("/tin-nhan")
+    await expect(page.getByText("Chọn một phòng để bắt đầu")).toBeVisible()
+    await expect(page).toHaveScreenshot("tin-nhan-desktop.png", { maxDiffPixelRatio: 0.05, animations: "disabled" })
+  })
 })
+

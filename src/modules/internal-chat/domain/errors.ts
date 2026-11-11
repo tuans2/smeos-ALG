@@ -28,3 +28,23 @@ export class InvalidMessageContentError extends ChatDomainError {
     super(reason, "VALIDATION_FAILED", "INVALID_MESSAGE_CONTENT")
   }
 }
+
+/** Thẻ đã được xử lý (nhận / từ chối) hoặc vừa bị người khác xử lý trước — 409. */
+export class CardActionConflictError extends ChatDomainError {
+  constructor(reason = "Thẻ này đã được xử lý") {
+    super(reason, "CONFLICT", "CARD_ALREADY_HANDLED")
+  }
+}
+
+export class ChatImageTooLargeError extends ChatDomainError {
+  constructor(reason = "Mỗi ảnh tối đa 10 MB") {
+    super(reason, "PAYLOAD_TOO_LARGE", "CHAT_IMAGE_TOO_LARGE")
+  }
+}
+
+/** Tin không đổi được nữa (quá 24 giờ, đã thu hồi, thẻ / tin hệ thống) — 409. */
+export class MessageChangeNotAllowedError extends ChatDomainError {
+  constructor(reason = "Tin này không sửa hoặc thu hồi được nữa") {
+    super(reason, "CONFLICT", "MESSAGE_CHANGE_NOT_ALLOWED")
+  }
+}

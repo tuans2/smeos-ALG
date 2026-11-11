@@ -60,7 +60,6 @@ export function SubcontractStepProof({
   onBypassRequested,
 }: SubcontractStepProofProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [note, setNote] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -91,16 +90,10 @@ export function SubcontractStepProof({
 
     setErrorMsg(null)
     setSelectedFile(file)
-    const objectUrl = URL.createObjectURL(file)
-    setPreviewUrl(objectUrl)
   }
 
   function handleCancelPreview() {
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-    }
     setSelectedFile(null)
-    setPreviewUrl(null)
   }
 
   async function handleSubmitProof() {
@@ -263,9 +256,9 @@ export function SubcontractStepProof({
               </div>
             )}
 
-            {previewUrl ? (
+            {selectedFile ? (
               <SubcontractPodPreview
-                previewUrl={previewUrl}
+                file={selectedFile}
                 submitting={submitting}
                 onCancel={handleCancelPreview}
               />

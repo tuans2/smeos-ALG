@@ -78,6 +78,14 @@ export function readDimensions(src: MasterIndexSource): { heightCm: number; widt
   return typeof d.heightCm === "number" && typeof d.widthCm === "number" ? { heightCm: d.heightCm, widthCm: d.widthCm } : null
 }
 
+/** Các bước cắm/lắp ráp tham khảo cho thợ — chỉ khi người quản lý mẫu đã nhập tay, không bịa quy trình. */
+export function readAssemblySteps(src: MasterIndexSource): string[] | null {
+  const steps = asArray<unknown>(parts(src).attrs.assemblySteps)
+    .filter((s): s is string => typeof s === "string" && s.trim().length > 0)
+    .map((s) => s.trim())
+  return steps.length > 0 ? steps : null
+}
+
 export function readDescription(src: MasterIndexSource): string | null {
   const v = parts(src).attrs.description
   return typeof v === "string" && v.trim() ? v.trim() : null
