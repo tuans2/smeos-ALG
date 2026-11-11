@@ -48,6 +48,8 @@ Năm việc nên làm trước:
 | BL-33 | **Đã sửa** — 5 lối lỗi AI trả câu tiếng Việt cố định, chỉ nói "đã hoàn credit" khi hoàn thật; lỗi gốc vẫn ở `generation_jobs.error` | `usage/domain/ai-failure-message.ts` + 5 use-case | `tests/unit/usage/refund-due-jobs.test.ts` |
 | BL-34 | **Đã sửa phần không cần PO** — lượt nhập kẹt `IN_PROGRESS` quá 15 phút được nhận lại; còn/hết hàng lên sàn xét cả số tồn đang theo dõi. Còn lại (PO): thêm tiền đã thanh toán vào hợp đồng đơn sàn, cách xử lý SĐT bị che — trước khi nối sàn thật | `integration-hub/infra/sales-channel-repository.ts`, `use-cases/sales-channel.ts`, `domain/sales-order-mapping.ts` | `src/modules/integration-hub/use-cases/__tests__/sales-channel.test.ts`, `tests/tenant/integration-sales-channel.test.ts` |
 | BL-35 | Chưa sửa — cần PO chốt có duyệt hai bước cho cấu hình trường hay xoá bộ máy | — | — |
+| BL-36 | **Đã sửa cho đơn mới** — dòng hàng đơn Điều phối mang đơn giá thật. Đơn cũ: câu SQL chữa ở mục G, chờ PO duyệt chạy | `coordinator/infra/coordinator-query-helper.ts`, `use-cases/create-coordinator-order.ts` | `tests/tenant/order-stock.test.ts` |
+| BL-37 | **Đã sửa** — phiếu in không bịa lời thiệp/địa chỉ; băng rôn không in câu thay thế | `orders/use-cases/get-order-printout.ts`, `components/orders/print/*` | `tests/unit/orders/order-printout.test.ts` |
 
 Hai thành phần dữ liệu mẫu (`partner-settlement-modal.tsx`, `ad-performance-modal.tsx`) vẫn còn trong mã nhưng không màn nào
 gắn; guard kiến trúc chặn gắn lại. Xoá hẳn hay dựng lại trên dữ liệu thật là quyết định của PO.
@@ -259,6 +261,24 @@ gắn; guard kiến trúc chặn gắn lại. Xoá hẳn hay dựng lại trên 
   người). Trong bản thân bộ máy: duyệt theo vai `OWNER`/`MANAGER` thay vì mã năng lực (trái luật 3 `CLAUDE.md`), không chặn
   người tạo tự duyệt.
 - **Khắc phục:** PO chốt có cần duyệt hai bước cho cấu hình không; không cần thì xoá bộ máy để khỏi hiểu nhầm là đã có.
+
+#### BL-36 · Trung bình — Đơn tạo ở Điều phối ghi đơn giá dòng hàng 0 ₫
+- `executeCreateOrder` ghi `order_items.unit_price_vnd: 0` cho đơn `FLR-…` dù `orders.total_vnd` đúng
+  (`coordinator/infra/coordinator-query-helper.ts:96` trước bản sửa). Mọi nơi tính theo dòng hàng ra 0: phiếu in
+  (`get-order-printout.ts:72`), file xuất đơn "Đơn giá / Thành tiền" (`export-orders.ts:149-150`), báo cáo sản phẩm theo giá
+  trị (`product-performance-report.ts:37`), doanh thu sản phẩm của gói chiến dịch (`campaign-package-repository.ts:156`).
+- **Đã sửa** cho đơn mới: dòng hàng mang đơn giá đã nhập. **Đơn cũ (cần PO duyệt chạy, không tự chạy):** đơn Điều phối có
+  đúng một dòng hàng 0 ₫ thì đơn giá = tổng đơn trước VAT —
+  `UPDATE order_items i SET unit_price_vnd = o.total_vnd - o.vat_amount_vnd FROM orders o WHERE i.order_id = o.id AND o.code LIKE 'FLR-%' AND i.unit_price_vnd = 0 AND (SELECT count(*) FROM order_items x WHERE x.order_id = o.id) = 1;`
+  (chạy thử trên bản sao, đếm số dòng trước khi chạy thật).
+
+#### BL-37 · Trung bình — Phiếu in đơn bịa dữ liệu; băng rôn in "Không có lời nhắn thiệp"
+- `getOrderPrintout` thay chỗ trống bằng câu mặc định: lời thiệp → "Không có lời nhắn thiệp", địa chỉ → "Nhận tại cửa hàng"
+  (`orders/use-cases/get-order-printout.ts:64-66` trước bản sửa). Băng rôn (`components/orders/print/ribbon-banner-print.tsx`)
+  in mỗi dòng lời thiệp thành một dải chữ to → đơn chưa có lời chúc in ra dải "KHÔNG CÓ LỜI NHẮN THIỆP" để cắt dán lên kệ.
+  "Nhận tại cửa hàng" cho đơn thiếu địa chỉ khiến người giao hiểu nhầm là khách tự lấy. Cùng lớp lỗi BL-25.
+- **Đã sửa:** máy chủ trả lời thiệp rỗng, địa chỉ "Chưa có địa chỉ giao"; băng rôn báo "chưa có lời chúc" thay vì in;
+  phiếu xưởng vẫn ghi "Không có lời nhắn thiệp" như nhãn trên màn.
 
 ## 4. Điểm làm tốt (giữ khi sửa)
 

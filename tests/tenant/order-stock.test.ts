@@ -89,6 +89,8 @@ describe("tồn kho theo số lượng", () => {
     expect(await stock()).toBe(0)
 
     const id = ((await readJson(first)).order as { id: string }).id
+    // Audit BL-36: dòng hàng mang đơn giá thật (trước ghi 0 ₫ — phiếu in, xuất đơn, báo cáo sản phẩm sai)
+    expect(Number((await prisma.order_items.findFirstOrThrow({ where: { order_id: id } })).unit_price_vnd)).toBe(300_000)
     const cancel = await postCoordinatorCancel(
       withSession(`${BASE}/coordinator/orders/${id}/cancel`, a.token, { method: "POST", body: JSON.stringify({ reason: "Khách đổi ý" }) }),
       { params: Promise.resolve({ id }) },

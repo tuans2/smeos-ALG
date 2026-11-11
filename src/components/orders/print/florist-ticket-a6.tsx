@@ -35,7 +35,7 @@ export function FloristTicketA6({ data }: { data: OrderPrintData }) {
       ))}
       <section>
         <p className="font-bold">Lời thiệp</p>
-        <p className="whitespace-pre-line">{data.cardMessage}</p>
+        <p className="whitespace-pre-line">{data.cardMessage || "Không có lời nhắn thiệp"}</p>
       </section>
       {data.floristNote && <p>Ghi chú xưởng: {data.floristNote}</p>}
     </article>

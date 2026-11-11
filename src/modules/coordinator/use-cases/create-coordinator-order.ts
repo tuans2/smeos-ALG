@@ -226,6 +226,7 @@ export async function createCoordinatorOrder(
               productId: input.productId ?? null,
               description: input.productTitle,
               quantity: 1,
+              unitPriceVnd: input.unitPriceVnd,
               metadata: {
                 flowers: input.flowers,
                 sampleImageUrl: input.sampleImageUrl ?? null,

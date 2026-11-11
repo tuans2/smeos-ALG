@@ -38,7 +38,7 @@ export interface CreateCoordinatorOrderData {
   deliveryAddress: Record<string, unknown>
   estimatedDeliveryAt: Date | null
   sampleAssetId: string | null
-  items: Array<{ productId?: string | null; description: string; quantity: number; metadata: Record<string, unknown> }>
+  items: Array<{ productId?: string | null; description: string; quantity: number; unitPriceVnd: number; metadata: Record<string, unknown> }>
   metadata: Record<string, unknown>
   customFields: Record<string, unknown>
   source: string
@@ -93,7 +93,8 @@ export async function executeCreateOrder(
           product_id: it.productId ?? null,
           description: it.description,
           quantity: it.quantity,
-          unit_price_vnd: 0,
+          // Đơn giá thật của dòng — trước đây ghi 0 nên phiếu in, xuất đơn, báo cáo sản phẩm tính 0 ₫ (audit BL-36)
+          unit_price_vnd: it.unitPriceVnd,
           metadata: (stock[i] ? { ...it.metadata, stock: stock[i] } : it.metadata) as Prisma.InputJsonValue,
         })
       ),
