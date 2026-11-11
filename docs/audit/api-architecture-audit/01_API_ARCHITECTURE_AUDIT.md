@@ -646,7 +646,7 @@ PO duyệt hai đợt sau bản rà tiến độ 11/11/2026: (1) dọn trạng t
 | API-06 | `/internal/health`, `/internal/chain-dispatch-sweep`: sai/thiếu `x-cron-secret` → 401 theo envelope chung `UNAUTHENTICATED` (cùng cách `/internal/integrations-sweep`); mã trạng thái không đổi nên `curl -f` của cron không bị ảnh hưởng. Gỡ 2 dòng `string-error` khỏi `api-envelope-legacy.txt` | `tests/unit/health/internal-health-route.test.ts` |
 | API-12 | `GET /noi-bo/identity` gác `F1` (cùng mã với `GET /members`, vì phản hồi có tên + email thành viên); `GET /field-config/catalogs` gác `R1` như cột năng lực đặc tả 06. Mọi vai có `R2` (tạo đơn — form nhập đơn đọc danh mục) mặc định đều có `R1`. Gỡ hai mục khỏi `NO_CAPABILITY_GUARD` | `tests/unit/organization/noi-bo-identity-route.test.ts`, `tests/unit/api-limits/field-catalogs-capability.test.ts` |
 | API-15 | Mô tả 6 operation trong OpenAPI nội bộ bỏ ghi chú "hiện trả 500"/"không kiểm `R1`", khai 400 thật; `x-capability` của hai route vừa gác; `internal.openapi.json` sinh lại. Đặc tả 06 cập nhật 6 dòng | `npm run check:openapi`, `npm run check:docs` |
-| Tài liệu | Trạng thái tài liệu 01/02 đổi từ DRAFT; sổ rủi ro ARC-024/025 đóng; `TRANG_THAI.md` thêm quyết định và trạng thái chương trình | — |
+| Tài liệu | Trạng thái tài liệu 01/02 đổi từ DRAFT; sổ rủi ro ARC-025 đóng, ARC-024 chỉ xong phần OpenAPI (đính chính ở §39); `TRANG_THAI.md` thêm quyết định và trạng thái chương trình | — |
 
 Rủi ro đã cân nhắc: vai tự tạo có `R2` mà bị tắt `R1` sẽ không tải được danh mục ở form nhập đơn (form báo lỗi, vẫn gửi được đơn với giá trị mặc định); trang Kết nối (`/noi-bo/ket-noi`, đang khoá trong GĐ1) với vai không có `F1` nay báo "Tài khoản của bạn chưa được xem thông tin thành viên của tổ chức." thay vì hiện câu lỗi có mã năng lực.
 
@@ -689,4 +689,15 @@ PO chốt 11/11/2026: (1) `/integration/jobs` báo trước 90 ngày rồi tự 
 | `_count` ở link/QR động, envelope trộn của `/pricing-rules`, `/price-lists/*`, `product-copies`, hồ sơ | Đổi hình dạng phản hồi — chuyển dần theo ratchet |
 | `GET /product-photo`, `/product-image-set` không cần phiên và trả `promptDirective`; `/chat/channels`, `/chat/public-limits` chưa gác (RS-8) | Quyết định của PO |
 | `GET /catalog-links/{slug}` trả `created_by`; `revoke` lần hai → 400; Điều phối "Nhận đơn" 409 sau ghi cọc | Vùng đóng băng Catalog / Thẻ chào |
+
+## 39. Nhật ký — SSOT của OpenAPI và đính chính ARC-024 (11/11/2026)
+
+PO duyệt sau khi rà "SSOT / production / commercial ready".
+
+| Việc | Đã làm |
+|---|---|
+| SSOT | 4 tệp OpenAPI đăng ký trong `docs/00-DOCUMENTATION-REGISTRY.yaml` (`DOC-03-OPENAPI-INTEGRATION/PUBLIC/PLATFORM/INTERNAL`, phái sinh, `canonical: false`). Đặc tả 06 §2 ghi thứ tự ưu tiên: đặc tả 06 thắng về đường dẫn, phương thức, mã năng lực, luật nghiệp vụ; hình dạng thân/phản hồi lấy theo lược đồ trong mã. `total_documents` cập nhật theo số mục thật (105) |
+| ARC-024 | Đính chính: §37 ghi đóng cả mục là quá tay. Chỉ phần OpenAPI xong; còn mở: tài liệu API công bố cho đối tác, thu gọn phản hồi Integration API, 501 route cũ / 67 mục envelope lệch |
+
+**Đánh giá sẵn sàng (11/11/2026):** API nội bộ đạt mức production cho giao diện SMEOS. Chưa đạt mức thương mại cho bên thứ ba: còn ARC-024 (phần trên), ARC-022 (không CSRF/kiểm `Origin`, CSP chỉ báo cáo), ARC-023 (chưa metrics), chưa kiểm thử tải/pentest, chưa SLA (ARC-028).
 

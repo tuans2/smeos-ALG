@@ -2,7 +2,7 @@ version: "1.0"
 governance:
   constitution: "docs/00-DOCUMENTATION-CONSTITUTION.md"
   updated_at: "2026-11-04T06:00:00+07:00"
-  total_documents: 92
+  total_documents: 105
 
 documents:
   # =========================================================================
@@ -337,6 +337,62 @@ documents:
     ssot: true
     owner: "Backend Lead"
     dependencies: ["docs/dac-ta/02-function-catalog.md", "docs/dac-ta/07-database-specification.md"]
+    supersedes: []
+
+  - id: "DOC-03-OPENAPI-INTEGRATION"
+    path: "docs/spec/contracts/openapi/integration.openapi.json"
+    title: "OpenAPI 3.1 — integration"
+    domain: "API"
+    layer: "Level 3"
+    purpose: "Bản máy đọc được (sinh tự động, `npm run gen:openapi`) của Integration API (`/api/v1/integration/*`, LocalBudd/SocialFlow/đối tác), dựng từ lược đồ zod ở `src/modules/integration/contracts/integration-openapi.ts`. KHÔNG sửa tay. Phái sinh của DOC-03-API-SPEC: đặc tả 06 thắng khi lệch về nghiệp vụ/mã năng lực; lược đồ thân/phản hồi lấy theo mã. Lệch bị chặn bởi `npm run check:openapi` và test OpenAPI trong `npm test`"
+    status: "CANONICAL"
+    authority: "Level 3"
+    canonical: false
+    ssot: false
+    owner: "Backend Lead"
+    dependencies: ["docs/dac-ta/06-api-specification.md"]
+    supersedes: []
+
+  - id: "DOC-03-OPENAPI-PUBLIC"
+    path: "docs/spec/contracts/openapi/public.openapi.json"
+    title: "OpenAPI 3.1 — public"
+    domain: "API"
+    layer: "Level 3"
+    purpose: "Bản máy đọc được (sinh tự động, `npm run gen:openapi`) của API công khai (`/api/v1/public/*`, trang khách, webhook), dựng từ lược đồ zod ở `src/app/api/v1/public/_contracts/`. KHÔNG sửa tay. Phái sinh của DOC-03-API-SPEC: đặc tả 06 thắng khi lệch về nghiệp vụ/mã năng lực; lược đồ thân/phản hồi lấy theo mã. Lệch bị chặn bởi `npm run check:openapi` và test OpenAPI trong `npm test`"
+    status: "CANONICAL"
+    authority: "Level 3"
+    canonical: false
+    ssot: false
+    owner: "Backend Lead"
+    dependencies: ["docs/dac-ta/06-api-specification.md"]
+    supersedes: []
+
+  - id: "DOC-03-OPENAPI-PLATFORM"
+    path: "docs/spec/contracts/openapi/platform.openapi.json"
+    title: "OpenAPI 3.1 — platform"
+    domain: "API"
+    layer: "Level 3"
+    purpose: "Bản máy đọc được (sinh tự động, `npm run gen:openapi`) của API Console Vận hành Nền tảng (`/api/v1/platform/*`), dựng từ lược đồ zod ở `src/app/api/v1/platform/_contracts/`. KHÔNG sửa tay. Phái sinh của DOC-03-API-SPEC: đặc tả 06 thắng khi lệch về nghiệp vụ/mã năng lực; lược đồ thân/phản hồi lấy theo mã. Lệch bị chặn bởi `npm run check:openapi` và test OpenAPI trong `npm test`"
+    status: "CANONICAL"
+    authority: "Level 3"
+    canonical: false
+    ssot: false
+    owner: "Backend Lead"
+    dependencies: ["docs/dac-ta/06-api-specification.md"]
+    supersedes: []
+
+  - id: "DOC-03-OPENAPI-INTERNAL"
+    path: "docs/spec/contracts/openapi/internal.openapi.json"
+    title: "OpenAPI 3.1 — internal"
+    domain: "API"
+    layer: "Level 3"
+    purpose: "Bản máy đọc được (sinh tự động, `npm run gen:openapi`) của API nội bộ do giao diện SMEOS gọi (mọi thư mục còn lại dưới `/api/v1`), dựng từ lược đồ zod ở `src/app/api/v1/_contracts/`. KHÔNG sửa tay. Phái sinh của DOC-03-API-SPEC: đặc tả 06 thắng khi lệch về nghiệp vụ/mã năng lực; lược đồ thân/phản hồi lấy theo mã. Lệch bị chặn bởi `npm run check:openapi` và test OpenAPI trong `npm test`"
+    status: "CANONICAL"
+    authority: "Level 3"
+    canonical: false
+    ssot: false
+    owner: "Backend Lead"
+    dependencies: ["docs/dac-ta/06-api-specification.md"]
     supersedes: []
 
   - id: "DOC-03-DB-SPEC"
