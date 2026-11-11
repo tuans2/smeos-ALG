@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { Upload, X, CheckCircle2, AlertCircle, Play, ImagePlus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { LocalImagePreview } from "@/components/upload/local-image-preview"
+import { createPickedMediaUrls } from "./picked-media-urls"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { MEDIA_LIMITS, mediaKindOf, mediaSelectionError } from "@/modules/greeting-card/domain/media-limits"
 
@@ -64,8 +65,16 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
   const [errorMsg, setErrorMsg] = useState("")
   const nextId = useRef(0)
 
-  // Giải phóng URL xem trước khi đóng
-  useEffect(() => () => picked.forEach((p) => p.url && URL.revokeObjectURL(p.url)), [picked])
+  // URL video: bỏ tệp nào thu hồi đúng tệp đó, đóng màn thu hồi phần còn lại (picked-media-urls.ts)
+  const mediaUrls = useRef(createPickedMediaUrls())
+  useEffect(() => {
+    const urls = mediaUrls.current
+    return () => urls.releaseAll()
+  }, [])
+  const removePicked = (target: Picked) => {
+    mediaUrls.current.release(target.url)
+    setPicked((list) => list.filter((x) => x !== target))
+  }
 
   async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? [])
@@ -77,14 +86,14 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
         setErrorMsg("Chỉ nhận ảnh JPG, PNG, WEBP và video MP4, MOV, WEBM")
         continue
       }
-      const url = kind === "video" ? URL.createObjectURL(file) : null
+      const url = kind === "video" ? mediaUrls.current.create(file) : null
       added.push({ id: nextId.current++, file, url, kind, duration: url ? await videoDuration(url) : null })
     }
     const next = [...picked, ...added]
     const error = mediaSelectionError(next.map((p) => ({ mimeType: p.file.type, sizeBytes: p.file.size, durationSeconds: p.duration })))
     // Thiếu ảnh chỉ báo khi lưu; các lỗi khác báo ngay và không nhận tệp vừa chọn
     if (error && error !== "Cần ít nhất 1 ảnh") {
-      added.forEach((p) => p.url && URL.revokeObjectURL(p.url))
+      added.forEach((p) => mediaUrls.current.release(p.url))
       setErrorMsg(error)
       return
     }
@@ -155,7 +164,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
             <Button variant="ghost"
               type="button"
               aria-label={`Bỏ tệp ${i + 1}`}
-              onClick={() => setPicked((list) => list.filter((x) => x !== p))}
+              onClick={() => removePicked(p)}
               disabled={state === "uploading"}
               className="text-[length:inherit] h-auto font-[inherit] gap-0 absolute right-1 top-1 rounded-full bg-text/70 p-1 text-surface hover:bg-text/70"
             >
