@@ -77,7 +77,7 @@ Hiện mốc M1/M2 chỉ hiện ở thanh nhắc `/dieu-phoi`; người dùng ph
 3. Chống gửi trùng: khoá `reminder:<mã đơn>:<M1|M2>` trong bảng `idempotency_keys` sẵn có (đã có dọn định kỳ) — không đổi lược đồ.
 4. Gửi qua `notifyOrganization` (best-effort, không chặn cron). Đơn đã xác nhận mốc ở thanh nhắc thì không gửi.
 
-Làm được ngay khi chủ dự án đồng ý (khoảng 1 ngày, gồm test cách ly tổ chức). Trước khi có Web Push, tin đi qua Trong ứng dụng và kênh ngoài đã bật.
+**Đã làm 11/11/2026** theo đúng thiết kế trên (người nhận mặc định: điều phối + quản lý cửa hàng; kênh mặc định Trong ứng dụng, Telegram, Web Push, thêm Zalo cho điều phối — kênh ngoài chỉ đi khi tầng Mẹ bật). Chỉ đẩy mốc vừa tới trong 30 phút để lần đầu bật không dội tin. Trước khi có Web Push, tin đi qua Trong ứng dụng và kênh ngoài đã bật.
 
 ## 6. Cần chủ dự án quyết
 
@@ -85,5 +85,5 @@ Làm được ngay khi chủ dự án đồng ý (khoảng 1 ngày, gồm test c
 2. Báo khách dùng khoá chung của tầng Mẹ, cho tổ chức ghi đè — đồng ý?
 3. Đơn giá trừ hạn mức cho mỗi tin SMS / ZNS khi dùng khoá chung.
 4. Web Push: duyệt bảng `push_subscriptions` và thư viện `web-push`.
-5. 4.32: đồng ý sự kiện, người nhận, lịch quét ở mục 5.
+5. 4.32: đã làm theo mặc định ở mục 5 — đổi người nhận / kênh mặc định nếu muốn.
 6. Thứ tự chuyển đường B, C, D sang cổng chung (đề xuất D → B → C, rủi ro tăng dần).

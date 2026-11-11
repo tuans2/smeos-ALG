@@ -89544,6 +89544,26 @@
                         "type": "number"
                       }
                     },
+                    "deliveryReminders": {
+                      "type": "object",
+                      "properties": {
+                        "organizations": {
+                          "type": "number"
+                        },
+                        "pushed": {
+                          "type": "number"
+                        },
+                        "failedOrganizations": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "organizations",
+                        "pushed",
+                        "failedOrganizations"
+                      ],
+                      "additionalProperties": false
+                    },
                     "sentDetails": {
                       "type": "array",
                       "items": {}
@@ -89575,6 +89595,7 @@
                     "quotationsExpired",
                     "subscriptions",
                     "complete",
+                    "deliveryReminders",
                     "errorCount",
                     "sweepAt"
                   ],

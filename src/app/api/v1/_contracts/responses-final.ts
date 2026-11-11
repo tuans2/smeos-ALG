@@ -72,6 +72,8 @@ export const dispatchSweepResponse = z.strictObject({
   subscriptions: z.record(z.string(), z.number()),
   complete: z.boolean(),
   productProposals: z.record(z.string(), z.number()).optional(),
+  /** Tin nhắc giao M1/M2 đã đẩy lượt này (checklist 4.32). */
+  deliveryReminders: z.strictObject({ organizations: z.number(), pushed: z.number(), failedOrganizations: z.number() }),
   sentDetails: z.array(z.unknown()).optional(),
   errorCount: z.number(),
   errors: z.array(z.unknown()).optional(),
