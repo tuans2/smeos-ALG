@@ -2,7 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
 import * as R from "@/app/api/v1/_contracts/responses-crm"
 import { POST as consent } from "@/app/api/v1/crm/customers/[id]/consent/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as masterIndex } from "@/app/api/v1/crm/customers/[id]/master-index/route"
+// @release-strip-end
 import { POST as addOccasion } from "@/app/api/v1/crm/customers/[id]/occasions/route"
 import { GET as customerOrders } from "@/app/api/v1/crm/customers/[id]/orders/route"
 import { DELETE as deleteCustomer, GET as getCustomer, PATCH as patchCustomer } from "@/app/api/v1/crm/customers/[id]/route"
@@ -54,7 +56,9 @@ describe("hợp đồng — khách hàng", () => {
     await expectContract(await listCustomers(get("/crm/customers?limit=10")), 200, R.customersResponse, "customers")
     await expectContract(await getCustomer(get(`/crm/customers/${id}`), ps({ id })), 200, R.customerResponse, "customer")
     await expectContract(await patchCustomer(send(`/crm/customers/${id}`, "PATCH", { notes: "Thích giao sáng", address: "12 Lê Lợi" }), ps({ id })), 200, R.customerResponse, "customer")
+    // @release-strip
     await expectContract(await masterIndex(get(`/crm/customers/${id}/master-index`), ps({ id })), 200, R.customerMasterIndexResponse, "customer-master-index")
+    // @release-strip-end
 
     await ingestOrder(t.ctx, { source: "MANUAL", customerId: id, items: [{ description: "Bó cúc", quantity: 1, unitPriceVnd: 300_000 }] })
     const orders = await expectContract(await customerOrders(get(`/crm/customers/${id}/orders`), ps({ id })), 200, R.customerOrdersResponse, "customer-orders")

@@ -5,14 +5,18 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import * as R from "@/app/api/v1/_contracts/responses-media"
 import { POST as backgroundRemoval } from "@/app/api/v1/media/background-removal/route"
 import { POST as approveOptimization } from "@/app/api/v1/media/optimizations/[id]/approve/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as downloadOptimization } from "@/app/api/v1/media/optimizations/[id]/download/route"
+// @release-strip-end
 import { GET as getOptimization } from "@/app/api/v1/media/optimizations/[id]/route"
 import { GET as listOptimizations, POST as createOptimization } from "@/app/api/v1/media/optimizations/route"
 import { POST as promote } from "@/app/api/v1/media/promote-to-master/route"
+// @release-strip
 import { POST as approveVariant } from "@/app/api/v1/media/variants/[id]/approve/route"
 import { GET as downloadVariant } from "@/app/api/v1/media/variants/[id]/download/route"
 import { GET as getVariant } from "@/app/api/v1/media/variants/[id]/route"
 import { POST as createBatch } from "@/app/api/v1/media/variants/batch/route"
+// @release-strip-end
 import { GET as listVariants, POST as createVariants } from "@/app/api/v1/media/variants/route"
 import { AssetRepository } from "@/modules/assets/infra/asset-repository"
 import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
@@ -77,7 +81,9 @@ describe("hợp đồng — ảnh (tối ưu & biến thể)", () => {
     const queue = await expectContract(await listOptimizations(get("/optimizations?limit=10")), 200, R.pendingOptimizationsResponse, "media-opt-list")
     expect(queue.data).toHaveLength(1)
     await expectContract(await approveOptimization(post(`/optimizations/${jobId}/approve`, {}), ps(jobId)), 200, R.optimizationResponse, "media-opt-approve")
+    // @release-strip
     await expectContract(await downloadOptimization(get(`/optimizations/${jobId}/download`), ps(jobId)), 200, R.downloadResponse, "media-opt-download")
+    // @release-strip-end
 
     await expectContract(await promote(post("/promote-to-master", { asset_id: await asset("ORIGINAL") })), 201, R.promoteToMasterResponse, "media-promote")
     await expectContract(await getOptimization(get(`/optimizations/${randomUUID()}`), ps(randomUUID())), 404, null)
@@ -90,12 +96,14 @@ describe("hợp đồng — ảnh (tối ưu & biến thể)", () => {
     const one = { master_asset_id: master, engine: "local_studio", preset: "studio_white", ratio: "4:5" }
     await expectContract(await createVariants(post("/variants", one, true)), 201, R.mediaVariantResultSchema, "media-var-create")
     await expectContract(await createVariants(post("/variants", { ...one, variant_count: 2 }, true)), 201, R.mediaVariantResultSchema, "media-var-create-group")
+    // @release-strip
     await expectContract(
       await createBatch(post("/variants/batch", { master_asset_id: master, presets: ["studio_white"], ratios: ["1:1", "4:5"] }, true)),
       201,
       R.variantBatchResponse,
       "media-var-batch"
     )
+    // @release-strip-end
 
     const payload = { master_asset_id: master, preset: "studio_white", ratio: "4:5", watermark: true }
     const jobId = await completedJob(MEDIA_VARIANT_FEATURE, payload, "SAFE")
@@ -107,12 +115,16 @@ describe("hợp đồng — ảnh (tối ưu & biến thể)", () => {
       metadata: { job_id: jobId, variant_key: "styled", title: "Biến thể", background: "Studio trắng", ratio: "4:5", watermark: false, source_master_asset_id: master, subject_pixel_identity: 1 },
     })
 
+    // @release-strip
     await expectContract(await getVariant(get(`/variants/${jobId}`), ps(jobId)), 200, R.variantJobResponse, "media-var-get")
+    // @release-strip-end
     const queue = await expectContract(await listVariants(get("/variants")), 200, R.pendingVariantsResponse, "media-var-list")
     expect(queue.data).toHaveLength(1)
+    // @release-strip
     await expectContract(await approveVariant(post(`/variants/${jobId}/approve`, { asset_id: variant }), ps(jobId)), 200, R.variantJobResponse, "media-var-approve")
     await expectContract(await downloadVariant(get(`/variants/${jobId}/download?asset_id=${variant}`), ps(jobId)), 200, R.downloadResponse, "media-var-download")
     await expectContract(await downloadVariant(get(`/variants/${jobId}/download`), ps(jobId)), 400, null)
+    // @release-strip-end
   })
 
   it("đường tách nền cũ luôn trả 409, không cần phiên", async () => {

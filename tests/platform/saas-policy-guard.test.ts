@@ -1,6 +1,8 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
+// @release-strip — route không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { PUT as putSaasPolicy } from "@/app/api/v1/greeting-card/integrations/staff-notifications/saas-policy/route"
+// @release-strip-end
 import { PUT as putNavMatrix } from "@/app/api/v1/platform/nav-matrix/route"
 import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
 
@@ -29,20 +31,25 @@ describe("chính sách kênh thông báo SaaS chỉ dành cho người vận hà
     await disconnectDatabase()
   })
 
+  // @release-strip — route không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
   function policyRequest(token: string): Request {
     return withSession(`${BASE}/greeting-card/integrations/staff-notifications/saas-policy`, token, {
       method: "PUT",
       body: JSON.stringify({ targetOrganizationId: b.organizationId, allowedChannels: ["TELEGRAM", "SMS"] }),
     })
   }
+  // @release-strip-end
 
+  // @release-strip — route không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
   it("chủ tiệm A (đủ mọi quyền tenant) sửa chính sách của tiệm B → 403, không ghi gì", async () => {
     const res = await putSaasPolicy(policyRequest(a.token))
     expect(res.status).toBe(403)
     const integration = await prisma.greeting_integrations.findFirst({ where: { organization_id: b.organizationId } })
     expect(JSON.stringify(integration ?? {})).not.toContain("TELEGRAM")
   })
+  // @release-strip-end
 
+  // @release-strip — route không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
   it("người vận hành thiếu N2 → 403; có N2 → qua cổng quyền", async () => {
     await new PlatformOperatorRepository().grant(operator.userId, ["N1"], null)
     expect((await putSaasPolicy(policyRequest(operator.token))).status).toBe(403)
@@ -50,6 +57,7 @@ describe("chính sách kênh thông báo SaaS chỉ dành cho người vận hà
     await new PlatformOperatorRepository().grant(operator.userId, ["N1", "N2"], null)
     expect((await putSaasPolicy(policyRequest(operator.token))).status).not.toBe(403)
   })
+  // @release-strip-end
 
   it("ma trận điều hướng: người vận hành thiếu N12 không sửa được", async () => {
     await new PlatformOperatorRepository().grant(operator.userId, ["N1"], null)

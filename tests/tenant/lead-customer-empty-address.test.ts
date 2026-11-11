@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
 import { GET as listCustomers } from "@/app/api/v1/crm/customers/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as segmentCustomers } from "@/app/api/v1/customer-segments/[id]/customers/route"
+// @release-strip-end
 import { POST as createSegment } from "@/app/api/v1/customer-segments/route"
 import { POST as createLead } from "@/app/api/v1/leads/route"
 import { POST as catalogLead } from "@/app/api/v1/public/catalog/[slug]/lead/route"
@@ -48,7 +50,9 @@ describe("khách tạo từ khách tiềm năng không làm hỏng danh sách kh
     expect((await customers()).status).toBe(200)
     const seg = await createSegment(withSession(`${BASE}/customer-segments`, t.token, { method: "POST", body: JSON.stringify({ name: "Khách mới", rules: { tiers: ["NEW"] } }) }))
     const id = String(((await readJson(seg)).data as { id: string }).id)
+    // @release-strip
     const inSeg = await segmentCustomers(withSession(`${BASE}/customer-segments/${id}/customers`, t.token), { params: Promise.resolve({ id }) })
     expect(inSeg.status).toBe(200)
+    // @release-strip-end
   })
 })

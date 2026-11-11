@@ -3,8 +3,10 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import * as R from "@/app/api/v1/_contracts/responses-misc"
 import { POST as invite } from "@/app/api/v1/members/invite/route"
 import { POST as preflight } from "@/app/api/v1/print/preflight/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { POST as exportRendition } from "@/app/api/v1/print/renditions/[id]/export/route"
 import { GET as getRendition } from "@/app/api/v1/print/renditions/[id]/route"
+// @release-strip-end
 import { GET as listRenditions, POST as createRendition } from "@/app/api/v1/print/renditions/route"
 import { GET as cashflow } from "@/app/api/v1/reports/cashflow/route"
 import { GET as orderReport } from "@/app/api/v1/reports/orders/route"
@@ -107,8 +109,10 @@ describe("hợp đồng — phiên, báo cáo, bản in, mã giảm giá, credit
     )
     const id = String((created.data as { id: string }).id)
     await expectContract(await listRenditions(get("/print/renditions?preset_code=A5&limit=10")), 200, R.renditionsResponse, "print-list")
+    // @release-strip
     await expectContract(await getRendition(get(`/print/renditions/${id}`), ps(id)), 200, R.renditionResponse, "print-get")
     const pdf = await exportRendition(send(`/print/renditions/${id}/export`, "POST", { title: "Thiệp Tết", storeName: "Tiệm hoa" }), ps(id))
     await expectContract(pdf, 200, R.renditionExportResponse, "print-export")
+    // @release-strip-end
   })
 })

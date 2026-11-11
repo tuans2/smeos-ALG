@@ -12,7 +12,9 @@ import { GET as listDomains, POST as addDomain } from "@/app/api/v1/custom-domai
 import { DELETE as removeReview, PATCH as patchReview } from "@/app/api/v1/shop-reviews/[id]/route"
 import { GET as listReviews, POST as createReview } from "@/app/api/v1/shop-reviews/route"
 import { PATCH as patchShortLink } from "@/app/api/v1/short-links/[id]/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as shortLinkStats } from "@/app/api/v1/short-links/[id]/stats/route"
+// @release-strip-end
 import { GET as listShortLinks, POST as createShortLink } from "@/app/api/v1/short-links/route"
 import { POST as revokeShare } from "@/app/api/v1/store-share-link/revoke/route"
 import { GET as getShare, POST as createShare } from "@/app/api/v1/store-share-link/route"
@@ -94,6 +96,8 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
     const id = String(created.id ?? (created.data as { id?: string } | undefined)?.id)
     await expectContract(await listShortLinks(get("/short-links?limit=10")), 200, R.shortLinksResponse, "short-list")
     await expectContract(await patchShortLink(send(`/short-links/${id}`, "PATCH", { name: "QR quầy chính", isActive: false }), ps(id)), 200, R.shortLinkResponse, "short-patch")
+    // @release-strip
     await expectContract(await shortLinkStats(get(`/short-links/${id}/stats?days=7`), ps(id)), 200, R.shortLinkStatsResponse, "short-stats")
+    // @release-strip-end
   })
 })

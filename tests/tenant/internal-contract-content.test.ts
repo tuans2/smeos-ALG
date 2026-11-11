@@ -19,7 +19,9 @@ vi.mock("@/core/ai/gateway", async () => {
 import * as R from "@/app/api/v1/_contracts/responses-content"
 import { POST as catalogGenerate } from "@/app/api/v1/content-engine/catalog-generate/route"
 import { POST as approveGeneration } from "@/app/api/v1/content-engine/generations/[id]/approve/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as getGeneration } from "@/app/api/v1/content-engine/generations/[id]/route"
+// @release-strip-end
 import { GET as lookupGeneration, POST as createGeneration } from "@/app/api/v1/content-engine/generations/route"
 import { POST as landingGenerate } from "@/app/api/v1/content-engine/landing-generate/route"
 import { POST as rewrite } from "@/app/api/v1/content-engine/rewrite/route"
@@ -64,7 +66,9 @@ describe("hợp đồng — viết nội dung AI, xu hướng thị trường", 
       rubricVersion: "v1", posts: [{ channel: "facebook", text: "Bài Facebook", hashtags: ["#hoa"], factIds: ["F1"] }], createdBy: t.userId,
     })
     await expectContract(await lookupGeneration(get("/content-engine/generations?topic_id=topic-1&mode=AUTHENTIC")), 200, R.generationLookupResponse, "gen-lookup")
+    // @release-strip
     await expectContract(await getGeneration(get(`/content-engine/generations/${g.id}`), ps(g.id)), 200, R.generationResponse, "gen-get")
+    // @release-strip-end
     await expectContract(await approveGeneration(send(`/content-engine/generations/${g.id}/approve`, "POST", { posts: [{ channel: "facebook", text: "Bài đã sửa" }] }), ps(g.id)), 200, R.generationApprovedResponse, "gen-approve")
 
     const product = await prisma.products.create({ data: { organization_id: t.organizationId, code: "ND-1", name: "Bó hồng đỏ", status: "ACTIVE" } })
