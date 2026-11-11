@@ -1,3 +1,4 @@
+import { assertOrganizationLifecycle } from "@/modules/organization/use-cases/assert-organization-lifecycle"
 import { AppError, unauthenticated } from "@/core/http/errors"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
@@ -58,6 +59,7 @@ export async function requireIntegrationContext(
   // Tra khoá tích hợp chưa biết tổ chức → quyền hệ thống; xong thì gắn tổ chức của khoá (RLS, checklist ALG 1.18)
   const resolved = await asSystemDb("integration-auth", () => resolveIntegration(request, tokenRepo))
   bindTenantDb(resolved.organizationId)
+  await assertOrganizationLifecycle(resolved.organizationId, request.method) // ADR-016 D-S5
   await enforceRateLimit(request, integrationRateLimit(resolved))
   return resolved
 }

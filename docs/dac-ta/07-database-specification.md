@@ -4165,6 +4165,45 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 53. Vòng đời tổ chức — `organizations.lifecycle_status` (11/11/2026)
+
+ADR-016 D-S5, bước S-3a (PO duyệt 11/11/2026). Migration `20261111120000_organization_lifecycle` (expand, một giao dịch):
+thêm kiểu `organization_lifecycle_status` và ba cột của `organizations`; cột bắt buộc có `DEFAULT 'ACTIVE'` nên mọi tổ chức
+cũ đang hoạt động, không đổi dữ liệu nào khác.
+
+```prisma
+enum organization_lifecycle_status {
+  ACTIVE
+  SUSPENDED
+  OFFBOARDING
+  DELETED
+}
+
+model organizations {
+  // …
+  lifecycle_status     organization_lifecycle_status @default(ACTIVE)
+  lifecycle_changed_at DateTime?                     @db.Timestamptz(3)
+  offboarding_until    DateTime?                     @db.Timestamptz(3) // hạn giữ dữ liệu khi rời nền tảng
+}
+```
+
+| Trạng thái | Thành viên, khoá tích hợp | Ai đặt |
+|---|---|---|
+| `ACTIVE` | Bình thường | Admin SaaS (mở lại) |
+| `SUSPENDED` | Không đăng nhập, không xem, không ghi (403 `ORGANIZATION_INACTIVE`); dữ liệu giữ nguyên | Admin SaaS |
+| `OFFBOARDING` | Chỉ xem để xuất bàn giao; ghi → 403; `offboarding_until` (theo hợp đồng) bắt buộc, ở tương lai | Admin SaaS |
+| `DELETED` | Không ai vào được | Chỉ đường xoá tenant (S-3b), không qua Console |
+
+- Luật: `src/modules/organization/domain/organization-lifecycle.ts`. Kiểm ở `requireTenantContext`,
+  `requireIntegrationContext` và đăng nhập (`assert-organization-lifecycle.ts`).
+- Đổi trạng thái: `PATCH /platform/organizations/:id` với `lifecycle_status` (+ `offboarding_until`), mã `N2`; ghi
+  `platform_audit_logs` và `audit_logs` của tổ chức (`platform.organization_lifecycle_changed`).
+- Chưa làm (S-3b): xoá theo sổ bảng-thuộc-tenant bằng `smeos_system` + `app.purge_reason`, thay
+  `scripts/handover-clean-tenant.ts` và `prisma/seed/clean-siin-store-orders.ts`; trang công khai của tổ chức tạm ngưng;
+  nút đổi trạng thái trên Console.
+
+Ca thử: `tests/tenant/organization-lifecycle.test.ts`.
+
 ## 52. Chống bấm đúp khi tạo đơn — `orders.idempotency_key` (07/11/2026)
 
 Audit API-11, PO duyệt 07/11/2026. Migration `20261107230000_orders_idempotency_key` (expand, một giao dịch): thêm cột

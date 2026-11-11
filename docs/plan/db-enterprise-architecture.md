@@ -139,7 +139,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | ☐ | Mục | Gate thêm |
 |---|---|---|
 | [ ] | S-2 Xuất/nhập tenant theo sổ; thay `scripts/handover-backup-engine.ts` | Vòng tròn xuất → nhập khớp từng dòng |
-| [ ] | S-3 [SCHEMA nhỏ] `lifecycle_status`; tạm ngưng/rời/xoá; thay `handover-clean-tenant.ts`, `clean-siin-store-orders.ts` | Xoá không chạm tổ chức khác |
+| [ ] | S-3 [SCHEMA nhỏ] `lifecycle_status`; tạm ngưng/rời/xoá; thay `handover-clean-tenant.ts`, `clean-siin-store-orders.ts` — **S-3a 11/11/2026:** cột + kiểm truy cập + Console đổi trạng thái (đặc tả 07 §53, `organization-lifecycle.test.ts`). Còn S-3b: xoá theo sổ thay 2 script | Xoá không chạm tổ chức khác |
 | [ ] | S-4 [VẬN HÀNH] Runbook + diễn tập khôi phục riêng một tenant | Biên bản ≤ 4 giờ |
 | [ ] | S-5 [SCHEMA nhỏ] `isolation_tier` gắn gói | Gói không cho phép → 422 |
 | [ ] | S-6 [VẬN HÀNH] Mẫu triển khai `DEDICATED` + dựng thử một lần + sổ triển khai | Biên bản dựng từ đầu |
