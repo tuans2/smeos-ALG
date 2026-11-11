@@ -8,7 +8,7 @@ import { recordManagedWebhook } from "@/modules/integration-hub/use-cases/record
 import { isOwnConnectionAllowed } from "@/modules/integration-hub/use-cases/governance-mode"
 
 /** Webhook / widget công khai ngoài `handle()`: chạy quyền hệ thống (tổ chức suy từ kênh), như nhóm đường dẫn của `handle()`. */
-export function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   return asSystemDb("route:/api/v1/chat/webhooks/zalo", () => postUnscoped(req))
 }
 

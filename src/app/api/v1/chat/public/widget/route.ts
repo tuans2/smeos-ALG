@@ -21,7 +21,7 @@ const PUBLIC_MESSAGES: Partial<Record<string, string>> = {
 }
 
 /** Webhook / widget công khai ngoài `handle()`: chạy quyền hệ thống (tổ chức suy từ kênh), như nhóm đường dẫn của `handle()`. */
-export function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   return asSystemDb("route:/api/v1/chat/public/widget", () => postUnscoped(req))
 }
 

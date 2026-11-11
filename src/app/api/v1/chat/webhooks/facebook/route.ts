@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
 // 2. Tiếp nhận sự kiện tin nhắn từ Facebook Messenger
 /** Webhook / widget công khai ngoài `handle()`: chạy quyền hệ thống (tổ chức suy từ kênh), như nhóm đường dẫn của `handle()`. */
-export function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {
   return asSystemDb("route:/api/v1/chat/webhooks/facebook", () => postUnscoped(req))
 }
 
