@@ -29,6 +29,7 @@ npm ci
 npx prisma generate
 npm run db:deploy
 npm run db:seed
+npm run seed:field-registry   # nạp danh mục trường của nền tảng (`npm run check:field-registry` để đối chiếu)
 npm run dev               # http://localhost:3200
 ```
 
