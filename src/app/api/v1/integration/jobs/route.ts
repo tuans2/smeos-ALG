@@ -1,5 +1,6 @@
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { withoutSunsetFields } from "@/modules/integration/domain/integration-field-sunset"
 import {
   requireIntegrationContext,
   toTenantContext,
@@ -34,5 +35,7 @@ export const POST = handle(async (request) => {
     keyReuse: integrationKeyReuseMode(new Date()),
   })
 
-  return jsonResponse(result, { status: result.deduped ? 200 : 201 })
+  // Trường nội bộ tự bỏ từ 09/02/2027 (ARC-024, `integration-field-sunset.ts`)
+  const job = withoutSunsetFields("job", result.job, new Date())
+  return jsonResponse({ ...result, job }, { status: result.deduped ? 200 : 201 })
 })

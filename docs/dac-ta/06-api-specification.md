@@ -372,6 +372,8 @@ Dành cho `LocalBudd` (M05, M06) và `SocialFlow` (M07). *(M04b đã chuyển v�
 Authorization: Bearer <token cấp theo tổ chức>
 ```
 
+**Gỡ trường nội bộ (ARC-024, PO 11/11/2026).** Báo 11/11/2026, **từ 09/02/2027 00:00 UTC** máy chủ tự bỏ khỏi phản hồi (`src/modules/integration/domain/integration-field-sunset.ts`; OpenAPI đánh dấu `deprecated`): ảnh (`/integration/assets`) — `storage_key`, `thumb_key`, `provider`, `model`, `model_version`, `pipeline_version`, `parameters`, `prompt`, `input_sha256`, `output_sha256`, `cost_usd`, `created_by`, `approved_by`, `trashed_at`, `purge_after`, `legal_hold_until`; `master-image` (`master`, `ratios[]`) — `storage_key`, `thumb_key` (dùng `url`); `job` của `/integration/jobs` — `user_id`, `workspace_id`, `branch_id`, `request_id`, `job_group_id`, `run_after`, `error` (giữ `payload`, `output`, `failure_kind`); `/integration/usage` — `user_id`, `workspace_id`, `cost_usd`, `metadata`; `/integration/catalog-links*` — `created_by`, `revoked_by`, `trashed_at`, `purge_after`. Tên camelCase cũ (`masterImageUrl`, `driveLink`, `costCredit`) giữ tới `/v2`.
+
 **OpenAPI (07/11/2026, audit API đợt 4).** Bản máy đọc được của mục này: `docs/spec/contracts/openapi/integration.openapi.json` (OpenAPI 3.1), sinh từ lược đồ zod ở `src/modules/integration/contracts/` — route dùng chung lược đồ thân, nên tài liệu không lệch mã; phản hồi khai `strictObject` và được kiểm trên CSDL thật. Sửa route `/integration/*` → sửa hợp đồng → `npm run gen:openapi`.
 
 **Giới hạn tần suất (07/11/2026, audit API-09).** Mọi đường `/integration/*`: 600 lần/phút cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức) → 429 kèm `Retry-After`, sau khi xác thực xong — token sai vẫn 401.

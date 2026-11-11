@@ -1,4 +1,5 @@
 import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi"
+import { INTEGRATION_FIELD_SUNSET } from "@/modules/integration/domain/integration-field-sunset"
 import { INTEGRATION_RATE_LIMIT } from "@/modules/integration/domain/integration-rate-limit"
 
 import * as req from "./http-requests"
@@ -129,6 +130,9 @@ export function buildIntegrationOpenApi(): Record<string, unknown> {
       "chứng thư — không endpoint nào nhận `organization_id` từ client.",
       `Giới hạn tần suất: ${INTEGRATION_RATE_LIMIT.limit} lần/${INTEGRATION_RATE_LIMIT.windowMs / 1000} giây cho mỗi token`,
       "(nhánh SSO: mỗi người dùng trong một tổ chức). Lỗi theo envelope `Error`.",
+      `**Thay đổi đã báo trước, áp từ ${INTEGRATION_FIELD_SUNSET.effective} 00:00 UTC** (báo ${INTEGRATION_FIELD_SUNSET.announced}):`,
+      "(1) máy chủ bỏ các trường đánh dấu `deprecated` khỏi phản hồi; (2) `POST /integration/jobs` gửi lại cùng",
+      "`idempotency_key` mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED`.",
     ].join(" "),
     serverUrl: "/api/v1",
     securitySchemes: {

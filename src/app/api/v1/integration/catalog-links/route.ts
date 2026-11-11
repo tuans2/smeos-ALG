@@ -3,6 +3,7 @@ import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
+import { withoutSunsetFields } from "@/modules/integration/domain/integration-field-sunset"
 import {
   requireIntegrationContext,
   toTenantContext,
@@ -44,7 +45,9 @@ export const GET = handle(async (request) => {
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
   const links = await listCatalogLinks(ctx, { includeRevoked: parsed.data.include_revoked ?? false })
-  return jsonResponse({ data: links })
+  // Trường nội bộ tự bỏ từ 09/02/2027 (ARC-024, `integration-field-sunset.ts`)
+  const now = new Date()
+  return jsonResponse({ data: links.map((link) => withoutSunsetFields("catalogLink", link, now)) })
 })
 
 export const POST = handle(async (request) => {
@@ -62,5 +65,5 @@ export const POST = handle(async (request) => {
     filters: parsed.data.filters ?? null,
   })
 
-  return jsonResponse(link, { status: 201 })
+  return jsonResponse(withoutSunsetFields("catalogLink", link, new Date()), { status: 201 })
 })
