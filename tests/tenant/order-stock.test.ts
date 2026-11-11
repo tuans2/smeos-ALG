@@ -96,4 +96,19 @@ describe("tồn kho theo số lượng", () => {
     expect(cancel.status).toBe(200)
     expect(await stock()).toBe(1)
   })
+
+  it("audit BL-26: đơn không gắn chi nhánh, tồn ở 2 chi nhánh → trừ ở chi nhánh còn nhiều hàng nhất; huỷ hoàn đúng chỗ", async () => {
+    const other = (await prisma.branches.create({ data: { organization_id: a.organizationId, name: "Quận 3", code: "Q3" } })).id
+    await prisma.product_inventory.create({ data: { organization_id: a.organizationId, product_id: productId, branch_id: branchId, quantity_available: 2 } })
+    await prisma.product_inventory.create({ data: { organization_id: a.organizationId, product_id: productId, branch_id: other, quantity_available: 5 } })
+    const byBranch = async () =>
+      Object.fromEntries((await prisma.product_inventory.findMany({ where: { product_id: productId } })).map((r) => [r.branch_id, r.quantity_available]))
+
+    const created = await ingestOrder(a.ctx, { source: "MANUAL", items: [{ productId, description: "Bình gốm", quantity: 3, unitPriceVnd: 0 }] })
+    expect(await byBranch()).toEqual({ [branchId]: 2, [other]: 2 })
+
+    const cancel = await postCancel(withSession(`${BASE}/orders/${created.id}/cancel`, a.token, { method: "POST", body: JSON.stringify({ reason: "Khách đổi ý" }) }), { params: Promise.resolve({ id: created.id }) })
+    expect(cancel.status).toBe(200)
+    expect(await byBranch()).toEqual({ [branchId]: 2, [other]: 5 })
+  })
 })

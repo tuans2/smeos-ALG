@@ -20,7 +20,8 @@ describe("hạng khách theo ngưỡng ngành", () => {
 })
 
 describe("bộ quét chỉ số khách", () => {
-  const row = (org: string, customer: string, at: string) => ({ organization_id: org, customer_id: customer, updated_at: new Date(at) })
+  let seq = 0
+  const row = (org: string, customer: string, at: string) => ({ id: `ord-${String(seq++).padStart(4, "0")}`, organization_id: org, customer_id: customer, updated_at: new Date(at) })
 
   it("tính lại mỗi khách một lần, trả con trỏ là lần đổi cuối", async () => {
     const changed = vi.fn(async () => [row("o1", "c1", "2026-11-07T01:00:00Z"), row("o2", "c1", "2026-11-07T02:00:00Z"), row("o1", "c1", "2026-11-07T03:00:00Z")])
@@ -37,5 +38,16 @@ describe("bộ quét chỉ số khách", () => {
     const r = await sweepCustomerMetrics(new Date(0), { changed, sync })
     expect(changed).toHaveBeenCalledTimes(CUSTOMER_METRICS_MAX_PAGES)
     expect(r.failed).toBe(1)
+  })
+
+  it("audit BL-31: hơn một trang đơn cùng mốc giờ → trang sau đi tiếp theo id, không quét lại trang đầu", async () => {
+    const at = "2026-11-07T01:00:00Z"
+    const all = Array.from({ length: 450 }, (_, i) => row("o1", `c${i}`, at))
+    const changed = vi.fn(async (since: Date, take: number, afterId?: string) =>
+      all.filter((r) => r.updated_at > since || (r.updated_at.getTime() === since.getTime() && (!afterId || r.id > afterId))).slice(0, take))
+    const sync = vi.fn(async () => undefined)
+    const r = await sweepCustomerMetrics(new Date(at), { changed, sync })
+    expect(sync).toHaveBeenCalledTimes(450)
+    expect(r.nextAfterId).toBe(all.at(-1)!.id)
   })
 })

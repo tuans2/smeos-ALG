@@ -104,4 +104,11 @@ describe("ghi thu chờ Điều hành xác nhận", () => {
     expect((await payments(a.token))[0]!.status).toBe("PENDING")
     expect(await paid()).toBe(0)
   })
+
+  it("audit BL-21: các khoản chờ cộng lại không vượt phần còn phải thu (đơn 850.000 đ)", async () => {
+    expect((await record(sale.token, 500_000)).status).toBe(201)
+    expect((await record(sale.token, 400_000)).status).toBe(422)
+    expect((await record(sale.token, 350_000)).status).toBe(201)
+    expect((await payments(a.token)).map((p) => p.status)).toEqual(["PENDING", "PENDING"])
+  })
 })

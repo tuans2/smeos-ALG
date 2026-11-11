@@ -25,6 +25,7 @@ import type { CoordinatorOrderRow } from "../infra/coordinator-repository"
 import { loadEffectiveFieldConfigs } from "@/modules/field-platform/use-cases/get-effective-field-config"
 import { findMissingRequiredFields } from "@/modules/field-platform/domain/stage-transitions"
 import { buildOrderFieldValueLookup } from "./field-value-lookup"
+import { paymentProgress } from "@/modules/orders/domain/payment-progress"
 
 const IMAGE_URL_TTL_SECONDS = 3600
 
@@ -32,15 +33,11 @@ const IMAGE_URL_TTL_SECONDS = 3600
  * ĐP-4a (26/09/2026, PO D2), §2.15.7 — suy ra, không lưu tay.
  * REFUNDED: có ít nhất một dòng REFUND và tổng thực thu hiện tại = 0.
  */
-function derivePaymentStatus(
-  paidVnd: number,
-  totalVnd: number,
-  hasRefund: boolean
-): "UNPAID" | "PARTIALLY_PAID" | "PAID" | "REFUNDED" {
+function derivePaymentStatus(paidVnd: number, totalVnd: number, hasRefund: boolean): "UNPAID" | "PARTIALLY_PAID" | "PAID" | "REFUNDED" {
   if (hasRefund && paidVnd <= 0) return "REFUNDED"
-  if (paidVnd <= 0) return "UNPAID"
-  if (paidVnd < totalVnd) return "PARTIALLY_PAID"
-  return "PAID"
+  const progress = paymentProgress(totalVnd, paidVnd)
+  if (progress === "PAID") return "PAID"
+  return progress === "DEPOSIT" ? "PARTIALLY_PAID" : "UNPAID"
 }
 
 /**

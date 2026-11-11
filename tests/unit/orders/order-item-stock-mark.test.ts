@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { clientItemMetadata, stockMarkMatchesItem } from "@/modules/orders/domain/order-item-metadata"
-import { returnStock } from "@/modules/orders/infra/order-stock"
+import { pickStockRow, returnStock } from "@/modules/orders/infra/order-stock"
 
 /**
  * Audit BL-19 (11/11/2026): `metadata` dòng hàng do client gửi được lưu nguyên, kể cả khoá `stock` (dấu "đã trừ
@@ -49,5 +49,11 @@ describe("dấu trừ tồn trong metadata dòng hàng", () => {
         data: { quantity_available: { increment: 2 } },
       },
     ])
+  })
+
+  it("audit BL-26: nhiều dòng tồn → chọn dòng còn nhiều hàng nhất; không có dòng → null", () => {
+    expect(pickStockRow([{ id: "a", quantity_available: 2 }, { id: "b", quantity_available: 5 }, { id: "c", quantity_available: 1 }])?.id).toBe("b")
+    expect(pickStockRow([{ id: "a", quantity_available: 3 }])?.id).toBe("a")
+    expect(pickStockRow([])).toBeNull()
   })
 })

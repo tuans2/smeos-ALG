@@ -15,8 +15,9 @@ type Tx = Prisma.TransactionClient
 /**
  * Tồn kho theo số lượng (PO 07/11/2026, kế hoạch logic nghiệp vụ Q9; audit BL-16): chỉ sản phẩm BẬT theo dõi số
  * lượng — có dòng `product_inventory` với `quantity_available` khác rỗng. Tạo đơn thì trừ (đây cũng là giữ chỗ),
- * huỷ thì hoàn. Dòng tồn chọn theo chi nhánh của đơn; đơn không gắn chi nhánh chỉ trừ khi sản phẩm có đúng một dòng
- * tồn được theo dõi (nhiều chi nhánh mà không biết chi nhánh nào thì không đoán).
+ * huỷ thì hoàn. Dòng tồn chọn theo chi nhánh của đơn; đơn không gắn chi nhánh (đơn catalog/landing công khai, chủ tiệm
+ * nhập) mà sản phẩm theo dõi tồn ở nhiều chi nhánh → trừ ở chi nhánh còn nhiều hàng nhất (audit BL-26 — trước đây bỏ
+ * qua, lặng lẽ bán vượt tồn). Dấu trừ ghi đúng dòng đã trừ nên huỷ hoàn về đúng chi nhánh đó.
  * Trừ bằng câu cập nhật có điều kiện `quantity_available >= số lượng` — hai đơn đồng thời không cùng lấy món cuối.
  */
 export async function takeStock(
@@ -35,7 +36,7 @@ export async function takeStock(
       where: { organization_id: organizationId, product_id: it.productId, quantity_available: { not: null }, ...(branchId ? { branch_id: branchId } : {}) },
       select: { id: true, quantity_available: true },
     })
-    const row = rows.length === 1 ? rows[0]! : null
+    const row = pickStockRow(rows)
     if (!row) {
       marks.push(null)
       continue
@@ -50,6 +51,12 @@ export async function takeStock(
     marks.push({ inventoryId: row.id, quantity: it.quantity })
   }
   return marks
+}
+
+/** Dòng tồn để trừ: một dòng thì dòng đó; nhiều dòng (đơn không gắn chi nhánh) thì dòng còn nhiều hàng nhất. */
+export function pickStockRow<T extends { id: string; quantity_available: number | null }>(rows: readonly T[]): T | null {
+  if (rows.length === 0) return null
+  return rows.reduce((best, r) => ((r.quantity_available ?? 0) > (best.quantity_available ?? 0) ? r : best))
 }
 
 type MarkedItem = { id: string; meta: Record<string, unknown>; mark: StockMark; raw: Prisma.JsonValue; productId: string }

@@ -8,6 +8,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { convertChatToDraftOrder } from "@/modules/chat-assistant/use-cases/convert-chat-to-draft-order"
+import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 
 export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const { ctx } = await requireTenantContext(request)
@@ -27,5 +28,7 @@ export const POST = handle(async (request, context: { params: Promise<{ id: stri
     cardMessage: body.cardMessage,
   })
 
+  // Thông tin khách chưa cho trong chat (SĐT, địa chỉ…) → yêu cầu bổ sung, thay vì điền mặc định (audit BL-25)
+  await syncOrderInfoRequests(ctx, result.order.id)
   return jsonResponse(result, { status: 201 })
 })
