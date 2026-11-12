@@ -4,16 +4,15 @@
  * Quyền: Q1
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getCustomerMasterIndex } from "@/modules/crm/use-cases/get-customer-master-index"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "Q1")
-
-  const { id } = await context.params
-  const customer = await getCustomerMasterIndex(ctx, id)
-  return jsonResponse({ masterIndex: customer })
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "Q1" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    const customer = await getCustomerMasterIndex(ctx, id)
+    return jsonResponse({ masterIndex: customer })
+  },
 })

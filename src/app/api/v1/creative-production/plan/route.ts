@@ -1,9 +1,8 @@
 import { validationFailed } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { planProduction } from "@/modules/creative-production/use-cases/dispatch-production-jobs"
 import { planBody } from "@/app/api/v1/_contracts/requests-creative"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * `POST /api/v1/creative-production/plan` — Lập kế hoạch sản xuất Creative Production.
@@ -13,20 +12,20 @@ import { planBody } from "@/app/api/v1/_contracts/requests-creative"
  *
  * Năng lực: `I1` (sáng tạo nội dung đa phương tiện).
  */
-export const POST = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "I1")
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "I1" },
+  handler: async ({ request, ctx }) => {
+    const parsed = planBody.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const parsed = planBody.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const brief = parsed.data.brief
 
-  const brief = parsed.data.brief
+    if (brief.organizationId !== ctx.organizationId) {
+      throw validationFailed({ organizationId: "organizationId trong body phải khớp session" })
+    }
 
-  if (brief.organizationId !== ctx.organizationId) {
-    throw validationFailed({ organizationId: "organizationId trong body phải khớp session" })
-  }
+    const result = planProduction({ brief })
 
-  const result = planProduction({ brief })
-
-  return jsonResponse(result, { status: 201 })
+    return jsonResponse(result, { status: 201 })
+  },
 })

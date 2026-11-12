@@ -2,14 +2,14 @@ import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { withoutSunsetFields } from "@/modules/integration/domain/integration-field-sunset"
 import {
-  requireIntegrationContext,
   toTenantContext,
 } from "@/modules/integration/use-cases/resolve-integration-context"
 import { listCatalogLinks } from "@/modules/catalog-links/use-cases/list-catalog-links"
 import { createCatalogLink } from "@/modules/catalog-links/use-cases/create-catalog-link"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * `GET`/`POST /integration/catalog-links` (RS-3 18/09) — Core làm chủ DUY
@@ -35,35 +35,39 @@ const createSchema = z.object({
   filters: z.record(z.string(), z.unknown()).nullable().optional(),
 })
 
-export const GET = handle(async (request) => {
-  const ic = await requireIntegrationContext(request)
-  const ctx = await toTenantContext(ic)
-  requireCapability(ctx, "J1")
+export const GET = defineRoute({
+  auth: { kind: "integration" },
+  handler: async ({ request, ic }) => {
+    const ctx = await toTenantContext(ic)
+    requireCapability(ctx, "J1")
 
-  const url = new URL(request.url)
-  const parsed = querySchema.safeParse(Object.fromEntries(url.searchParams))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const url = new URL(request.url)
+    const parsed = querySchema.safeParse(Object.fromEntries(url.searchParams))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const links = await listCatalogLinks(ctx, { includeRevoked: parsed.data.include_revoked ?? false })
-  // Trường nội bộ tự bỏ từ 09/02/2027 (ARC-024, `integration-field-sunset.ts`)
-  const now = new Date()
-  return jsonResponse({ data: links.map((link) => withoutSunsetFields("catalogLink", link, now)) })
+    const links = await listCatalogLinks(ctx, { includeRevoked: parsed.data.include_revoked ?? false })
+    // Trường nội bộ tự bỏ từ 09/02/2027 (ARC-024, `integration-field-sunset.ts`)
+    const now = new Date()
+    return jsonResponse({ data: links.map((link) => withoutSunsetFields("catalogLink", link, now)) })
+  },
 })
 
-export const POST = handle(async (request) => {
-  const ic = await requireIntegrationContext(request)
-  const ctx = await toTenantContext(ic)
-  requireCapability(ctx, "J1")
+export const POST = defineRoute({
+  auth: { kind: "integration" },
+  handler: async ({ request, ic }) => {
+    const ctx = await toTenantContext(ic)
+    requireCapability(ctx, "J1")
 
-  const parsed = createSchema.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const parsed = createSchema.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const link = await createCatalogLink(ctx, {
-    slug: parsed.data.slug,
-    name: parsed.data.name,
-    description: parsed.data.description ?? null,
-    filters: parsed.data.filters ?? null,
-  })
+    const link = await createCatalogLink(ctx, {
+      slug: parsed.data.slug,
+      name: parsed.data.name,
+      description: parsed.data.description ?? null,
+      filters: parsed.data.filters ?? null,
+    })
 
-  return jsonResponse(withoutSunsetFields("catalogLink", link, new Date()), { status: 201 })
+    return jsonResponse(withoutSunsetFields("catalogLink", link, new Date()), { status: 201 })
+  },
 })

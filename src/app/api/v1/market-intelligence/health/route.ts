@@ -1,14 +1,12 @@
-import { handle, jsonResponse } from "@/core/http/response";
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
-import { requireCapability } from "@/core/rbac/capabilities";
-import { marketIntelligenceRepo } from "@/modules/market-intelligence/infra/market-intelligence-repository";
+import { jsonResponse } from "@/core/http/response"
+import { marketIntelligenceRepo } from "@/modules/market-intelligence/infra/market-intelligence-repository"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request);
-  // Gác quyền V1: market-intel.research.run
-  requireCapability(ctx, "V1");
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "V1" },
+  handler: async ({ ctx }) => {
+    const healthRecords = await marketIntelligenceRepo.getAllProviderHealth();
 
-  const healthRecords = await marketIntelligenceRepo.getAllProviderHealth();
-
-  return jsonResponse({ providers: healthRecords });
+    return jsonResponse({ providers: healthRecords });
+  },
 });

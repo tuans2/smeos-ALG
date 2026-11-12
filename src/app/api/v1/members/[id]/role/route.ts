@@ -1,18 +1,17 @@
 import { validationFailed } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { changeMemberRole } from "@/modules/organization/use-cases/change-member-role"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { memberRoleBody } from "@/app/api/v1/_contracts/requests-org"
+import { defineRoute } from "@/core/http/define-route"
 
-export const PATCH = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "F5")
+export const PATCH = defineRoute({
+  auth: { kind: "tenant", capability: "F5" },
+  handler: async ({ request, ctx, params }) => {
+    const parsed = memberRoleBody.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const parsed = memberRoleBody.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-
-  const { id } = await context.params
-  const membership = await changeMemberRole(ctx, id, parsed.data.role_id)
-  return jsonResponse({ membership })
+    const { id } = params as { id: string }
+    const membership = await changeMemberRole(ctx, id, parsed.data.role_id)
+    return jsonResponse({ membership })
+  },
 })

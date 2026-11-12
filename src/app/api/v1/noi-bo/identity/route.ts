@@ -17,21 +17,21 @@
  */
 
 import { notFound } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getOrganizationIdentity } from "@/modules/organization/infra/identity-query"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "F1")
-  const identityData = await getOrganizationIdentity(ctx.organizationId)
-  if (!identityData) throw notFound()
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "F1" },
+  handler: async ({ ctx }) => {
+    const identityData = await getOrganizationIdentity(ctx.organizationId)
+    if (!identityData) throw notFound()
 
-  return jsonResponse({
-    success: true,
-    data: identityData,
-  })
+    return jsonResponse({
+      success: true,
+      data: identityData,
+    })
+  },
 })
 
 export const dynamic = "force-dynamic" as const
