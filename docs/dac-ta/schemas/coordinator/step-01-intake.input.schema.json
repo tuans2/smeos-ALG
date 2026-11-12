@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "step-01-intake.input.schema.json",
-  "title": "Tiếp nhận đơn (T01) — Đầu vào",
+  "title": "Tiếp nhận đơn — Đầu vào",
   "description": "Sales/AI Chat tạo đơn; máy chủ cấp mã FLR-YYMMDD-NNNN, bước INTAKE",
-  "x-floraos": {
+  "x-alg": {
     "stepId": "01",
     "step": 1,
     "code": "INTAKE",

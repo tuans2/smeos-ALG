@@ -3,7 +3,7 @@ import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 
 import { reconcileOrderPayments } from "./reconcile-order-payments"
 
-const STARTED = Symbol.for("smeos.orders.payment-reconciliation")
+const STARTED = Symbol.for("alg.orders.payment-reconciliation")
 const INTERVAL_MS = 6 * 60 * 60 * 1000
 
 /**

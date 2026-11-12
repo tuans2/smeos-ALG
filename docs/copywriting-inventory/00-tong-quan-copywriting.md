@@ -1,8 +1,8 @@
-# HỆ THỐNG NỘI DUNG GIAO DIỆN (UI COPY DECK) — FLORAOS PRODUCTION
+# HỆ THỐNG NỘI DUNG GIAO DIỆN (UI COPY DECK) — ALG PRODUCTION
 
 > **Ngày khởi tạo**: 10/10/2026  
 > **Cập nhật gần nhất**: 10/10/2026 (Phê duyệt bởi PO / Merchant Admin)  
-> **Mục đích**: Bảng đối chiếu và chuẩn hóa 100% câu chữ hiển thị trên giao diện của các chức năng đang hoạt động (active) trên môi trường Production của FloraOS.  
+> **Mục đích**: Bảng đối chiếu và chuẩn hóa 100% câu chữ hiển thị trên giao diện của các chức năng đang hoạt động (active) trên môi trường Production của ALG.  
 > **Trạng thái**: Đã chuẩn hóa toàn diện & Khóa từ điển SSOT.
 
 ---

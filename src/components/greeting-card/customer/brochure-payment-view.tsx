@@ -48,6 +48,7 @@ interface BrochurePaymentViewProps {
   requirePaymentProof?: boolean | undefined
   /** Cơ chế kích hoạt bước tiếp theo (PAYMENT_ONLY hoặc PAYMENT_OR_COORDINATOR). */
   triggerPolicy?: TrackingTriggerPolicy | undefined
+  /** Số phút tự duyệt khi có ảnh bill — chỉ khi tiệm bật (`auto_approve_payment_with_proof`); null = không tự duyệt */ autoApproveMinutes?: number | null | undefined
 }
 
 export function BrochurePaymentView({
@@ -63,7 +64,7 @@ export function BrochurePaymentView({
   onPaymentFailed,
   failedCta,
   requirePaymentProof = true,
-  triggerPolicy,
+  triggerPolicy, autoApproveMinutes = null,
 }: BrochurePaymentViewProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null)
   const [hasReported, setHasReported] = useState(alreadyReported)
@@ -172,7 +173,7 @@ export function BrochurePaymentView({
           href={vietQr.qrUrl}
           target="_blank"
           rel="noreferrer"
-          className="-mt-2 mb-5 inline-flex h-11 items-center justify-center rounded-xl border border-border px-4 text-body-sm font-semibold text-primary hover:bg-surface-muted"
+          className="-mt-2 mb-5 inline-flex h-11 items-center justify-center rounded-xl border border-border px-4 text-body-sm font-semibold text-primary hover:bg-surface-alt"
         >
           Mở ảnh QR để lưu vào máy
         </a>
@@ -181,7 +182,7 @@ export function BrochurePaymentView({
         </p>
 
         {/* Payment details list */}
-        <div className="w-full bg-surface-muted rounded-xl p-3.5 flex flex-col gap-2.5 text-body-sm text-left mb-5 border border-border">
+        <div className="w-full bg-surface-alt rounded-xl p-3.5 flex flex-col gap-2.5 text-body-sm text-left mb-5 border border-border">
           <div className="flex items-center justify-between">
             <span className="text-text-muted">Ngân hàng:</span>
             <span className="font-bold text-text">{vietQr.bankName}</span>
@@ -286,9 +287,8 @@ export function BrochurePaymentView({
             <p className="text-caption text-text-muted">
               {isOrderAccepted
                 ? "Xưởng đã tiếp nhận đơn! Đang chờ Điều hành đối soát chuyển khoản để kích hoạt màn hình theo dõi tiến độ..."
-                : triggerPolicy === "PAYMENT_ONLY"
-                ? "Đang chờ Điều hành đối soát chuyển khoản (hệ thống tự động duyệt sau 15’ khi có ảnh bill hợp lệ)..."
-                : "Đang chờ Điều hành đối soát chuyển khoản (hệ thống tự động duyệt sau 15’ khi có ảnh bill hợp lệ) hoặc Điều phối xác nhận tiếp nhận đơn..."}
+                : `Đang chờ Điều hành đối soát chuyển khoản${autoApproveMinutes ? ` (hệ thống tự động duyệt sau ${autoApproveMinutes}’ khi có ảnh bill hợp lệ)` : ""}${
+                  triggerPolicy === "PAYMENT_ONLY" ? "" : " hoặc Điều phối xác nhận tiếp nhận đơn"}...`}
             </p>
           </div>
           <p className="text-caption text-text-muted text-center">
@@ -332,7 +332,7 @@ export function BrochurePaymentView({
             <span>{loading ? "Đang xử lý..." : "TÔI ĐÃ CHUYỂN KHOẢN THANH TOÁN"}</span>
           </Button>
           {!canSubmit && (
-            <p className="text-caption text-warning font-medium text-center">
+            <p className="text-caption text-warning-text font-medium text-center">
               Vui lòng tải ảnh chuyển khoản để xác nhận
             </p>
           )}

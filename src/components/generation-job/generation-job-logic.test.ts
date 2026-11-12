@@ -30,7 +30,7 @@ describe("hợp đồng API của các công cụ tạo ảnh (03c, pilot + đ�
 
   it("vòng hỏi lại có giới hạn ~5 phút và khoá nhớ gắn tổ chức + công cụ", () => {
     expect(MAX_POLLS * POLL_INTERVAL_MS).toBe(300_000)
-    expect(jobStorageKey("anh-san-pham", "org-a")).toBe("smeos.anh-san-pham.lastJobId__org-a")
+    expect(jobStorageKey("anh-san-pham", "org-a")).toBe("alg.anh-san-pham.lastJobId__org-a")
     expect(jobStorageKey("bo-anh-san-pham", "org-a")).not.toBe(jobStorageKey("anh-san-pham", "org-a"))
     expect(jobStorageKey("anh-san-pham", null)).toBeNull()
   })

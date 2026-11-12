@@ -32,7 +32,7 @@ export function AgreementsSection({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {agreements.map((a) => (
-          <div key={a.id} className="p-3.5 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-2 relative group">
+          <div key={a.id} className="p-3.5 rounded-xl border border-border bg-surface-alt/30 flex flex-col gap-2 relative group">
             <Button variant="ghost"
               type="button"
               onClick={() => onRemove(a.id)}

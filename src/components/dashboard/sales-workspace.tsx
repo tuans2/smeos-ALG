@@ -94,7 +94,7 @@ export function SalesWorkspace() {
         actions=<UserMenu initials={userInitials} />
       />
 
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
         {/* Nhóm hành động chính — một nút chính, hai nút phụ (03a UX-010/011). */}
         <div className="flex flex-wrap items-center gap-2">
           {can("R2") && (
@@ -205,7 +205,7 @@ export function SalesWorkspace() {
         <p className="text-caption text-text-muted">
           Pipeline cơ hội (tiềm năng → cơ hội → chốt) đang phát triển.
         </p>
-      </main>
+      </div>
     </div>
   )
 }

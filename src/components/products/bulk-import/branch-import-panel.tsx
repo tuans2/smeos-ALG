@@ -34,7 +34,7 @@ export function BranchImportPanel() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "smeOS_Template_DanhSach_CuaHang_Chuoi.xlsx"
+    a.download = "ALG_Template_DanhSach_CuaHang_Chuoi.xlsx"
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -172,9 +172,9 @@ export function BranchImportPanel() {
 
       {/* Lưu ý quan trọng về Telegram DM */}
       <div className="p-4 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-3">
-        <Bot size={18} className="text-warning shrink-0 mt-0.5" />
+        <Bot size={18} className="text-warning-text shrink-0 mt-0.5" />
         <div className="text-caption text-text leading-relaxed">
-          <strong className="block text-body-sm font-bold mb-1 text-warning">
+          <strong className="block text-body-sm font-bold mb-1 text-warning-text">
             📱 Về cột "Telegram ID riêng / Nhóm"
           </strong>
           <ul className="space-y-1 text-text-muted">
@@ -192,7 +192,7 @@ export function BranchImportPanel() {
       </div>
 
       {/* Khu vực Upload */}
-      <div className="border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-surface-muted/50 transition-colors hover:border-primary/40">
+      <div className="border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-surface-alt/50 transition-colors hover:border-primary/40">
         <label
           htmlFor="branch-excel-upload"
           className="flex flex-col items-center gap-2 cursor-pointer"

@@ -13,7 +13,7 @@ describe("CreativeStudio Schemas Validation", () => {
     taskType: "GENERATE_SCENE_VARIANT",
     sourceImage: {
       assetId: "asset-flower-001",
-      imageUrl: "https://storage.smeos.vn/org/test/flower-master.jpg",
+      imageUrl: "https://storage.avilotusgroup.com/org/test/flower-master.jpg",
       dimensions: { width: 1024, height: 1024 },
     },
     productPassport: {
@@ -83,7 +83,7 @@ describe("CreativeStudio Schemas Validation", () => {
         {
           ratio: "1:1",
           storageKey: "org/test/variants/variant-1-1.jpg",
-          url: "https://storage.smeos.vn/org/test/variants/variant-1-1.jpg",
+          url: "https://storage.avilotusgroup.com/org/test/variants/variant-1-1.jpg",
           width: 2048,
           height: 2048,
           format: "jpeg",

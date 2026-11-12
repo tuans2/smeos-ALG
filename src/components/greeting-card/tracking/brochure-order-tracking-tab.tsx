@@ -71,7 +71,7 @@ export function BrochureOrderTrackingTab() {
               : `Đang xem việc của Điều phối (nhận đơn, ${terms.makerAction.toLowerCase()}, giao hàng).`}
           </span>
           <Button variant="outline" type="button" onClick={() => change({ owner: "" })}
-            className="py-0 text-[length:inherit] inline-flex h-8 items-center gap-1 rounded-xl border border-border px-2.5 font-bold text-text hover:bg-surface-muted">
+            className="py-0 text-[length:inherit] inline-flex h-8 items-center gap-1 rounded-xl border border-border px-2.5 font-bold text-text hover:bg-surface-alt">
             <X size={13} aria-hidden="true" /> Xem tất cả đơn và link
           </Button>
         </div>

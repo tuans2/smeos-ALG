@@ -107,9 +107,9 @@ Phần tiếp: [09b-api-j-w.md](09b-api-j-w.md).
 | Method | Endpoint | Use-case xử lý | Xác thực | Mã quyền | Input | Consumer trong repo |
 |---|---|---|---|---|---|---|
 | GET · POST | `/chat/channels` | listChatChannels, configureChatChannel | Phiên | GET: không mã · POST: T4 (trong use-case) | channel, isEnabled, config | 1 tệp: `kenh-tich-hop/page.tsx` |
-| GET · POST | `/chat/conversations` | listConversations, createConversation | Phiên | T1 T2 | query: status, limit | 3 tệp: `hoi-thoai/page.tsx`, `chat/floraos-global-copilot.tsx` … |
-| POST | `/chat/conversations/[id]/create-order` | convertChatToDraftOrder | Phiên | T3 | — | 2 tệp: `hoi-thoai/page.tsx`, `chat/floraos-global-copilot.tsx` |
-| GET · POST | `/chat/conversations/[id]/messages` | getConversationMessages, sendChatMessage | Phiên | T1 T2 | — | 2 tệp: `hoi-thoai/page.tsx`, `chat/floraos-global-copilot.tsx` |
+| GET · POST | `/chat/conversations` | listConversations, createConversation | Phiên | T1 T2 | query: status, limit | 3 tệp: `hoi-thoai/page.tsx`, `chat/alg-global-copilot.tsx` … |
+| POST | `/chat/conversations/[id]/create-order` | convertChatToDraftOrder | Phiên | T3 | — | 2 tệp: `hoi-thoai/page.tsx`, `chat/alg-global-copilot.tsx` |
+| GET · POST | `/chat/conversations/[id]/messages` | getConversationMessages, sendChatMessage | Phiên | T1 T2 | — | 2 tệp: `hoi-thoai/page.tsx`, `chat/alg-global-copilot.tsx` |
 | POST | `/chat/public/widget` | handleIncomingChannelMessage | Công khai (không rate limit) | — | slug, visitorId, message | 1 tệp: `chat/public-storefront-chat-widget.tsx` |
 | GET · POST | `/chat/webhooks/facebook` | handleIncomingChannelMessage | GET: hub.verify_token · POST: không xác thực | — | — | bên ngoài: Facebook (webhook) |
 | POST | `/chat/webhooks/zalo` | handleIncomingChannelMessage | Không xác thực | — | — | bên ngoài: Zalo OA (webhook) |
@@ -149,6 +149,7 @@ Phần tiếp: [09b-api-j-w.md](09b-api-j-w.md).
 | POST | `/coordinator/orders/[id]/qc` | recordQcInspection | Phiên | R3 | — | 1 tệp: `coordinator/coordinator-api.ts` |
 | PATCH | `/coordinator/orders/[id]/stage` | updateCoordinatorStage | Phiên | R3 | — | 1 tệp: `coordinator/coordinator-api.ts` |
 | GET · POST | `/coordinator/partners` | createPartner, listPartners | Phiên | R1 R4 | query: active | 4 tệp: `coordinator/coordinator-api.ts`, `coordinator/partner-create-form.tsx` … |
+| GET · POST | `/coordinator/chain-partners` | listChainPartners, provisionChainPartner | Phiên | F1 F2 | query: status, province, q | 2 tệp: `organization/use-chain-partners.ts`, `dieu-phoi/doi-tac/chain-partner-create-modal.tsx` (tách 12/11/2026) |
 | PATCH | `/coordinator/partners/[id]` | updatePartner | Phiên | R4 | — | 1 tệp: `coordinator/partner-management-modal.tsx` |
 
 #### `creative-production`

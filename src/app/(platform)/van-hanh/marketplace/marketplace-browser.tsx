@@ -149,7 +149,7 @@ export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHi
       ) : filteredStores.length === 0 ? (
         <Card className="space-y-3 p-8 py-16 text-center">
           <Store className="mx-auto h-12 w-12 text-text-muted/40" />
-          <h3 className="text-body-sm font-semibold text-text">Không tìm thấy cửa hàng nào phù hợp</h3>
+          <h2 className="text-body-sm font-semibold text-text">Không tìm thấy cửa hàng nào phù hợp</h2>
           <p className="mx-auto max-w-sm text-meta text-text-muted">
             {hasFilter ? "Thử bỏ bớt tiêu chí hoặc đổi từ khoá tìm nhanh." : emptyHint}
           </p>

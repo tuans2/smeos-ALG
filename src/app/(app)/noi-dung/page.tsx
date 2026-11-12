@@ -210,7 +210,7 @@ function ContentEngineContent() {
               <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="text-caption text-text-muted">
                   {selectedChannels.length === 0 ? (
-                    <span className="text-warning font-semibold">
+                    <span className="text-warning-text font-semibold">
                       ⚠️ Vui lòng chọn ít nhất 1 kênh.
                     </span>
                   ) : (

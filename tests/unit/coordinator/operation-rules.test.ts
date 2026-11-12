@@ -30,6 +30,10 @@ describe("cập nhật sản xuất (F08)", () => {
   it("tiến độ ngoài 0–100 hoặc sai bước bị từ chối", () => {
     expect(checkProductionUpdate({ stage: "IN_PRODUCTION", progressPercent: 120, markReady: false, finishedAssetCount: 0 }).ok).toBe(false)
     expect(checkProductionUpdate({ stage: "PLANNING", progressPercent: 50, markReady: false, finishedAssetCount: 0 }).ok).toBe(false)
+    // Audit User Journey R2-10: lý do chặn dùng nhãn bước, không lộ mã `PLANNING`
+    const wrongStage = checkProductionUpdate({ stage: "PLANNING", progressPercent: 50, markReady: false, finishedAssetCount: 0 })
+    expect(wrongStage.ok ? "" : wrongStage.reason).toContain("Lập kế hoạch")
+    expect(wrongStage.ok ? "" : wrongStage.reason).not.toMatch(/[A-Z_]{4,}/)
   })
 })
 

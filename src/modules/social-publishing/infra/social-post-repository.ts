@@ -95,6 +95,22 @@ export class SocialPostRepository {
     await this.db.content_generations.updateMany({ where: scopedWhere(ctx, { id }), data: { status: "SCHEDULED", social_post_ids: [...postIds] } })
   }
 
+  /**
+   * Audit User Journey UJ-30: mọi bài của lượt đã huỷ → lượt bài nguồn về APPROVED để sửa / duyệt lại. Một câu cập nhật
+   * có điều kiện (không còn bài nào khác CANCELED) — bài đã đăng, đang đăng, chờ hay lỗi chờ thử lại đều giữ SCHEDULED.
+   */
+  async reopenGenerationIfAllCanceled(ctx: TenantContext, generationId: string): Promise<boolean> {
+    const r = await this.db.content_generations.updateMany({
+      where: scopedWhere(ctx, {
+        id: generationId,
+        status: "SCHEDULED",
+        social_posts_by_content_generation_id: { none: { status: { not: "CANCELED" } } },
+      }),
+      data: { status: "APPROVED" },
+    })
+    return r.count === 1
+  }
+
   // ── Hệ thống (lượt cron) ───────────────────────────────────────────────────────────────────────────────
 
   /** Bài "PUBLISHING" treo quá lâu (tiến trình chết giữa chừng) → trả về hàng đợi để thử lại. */

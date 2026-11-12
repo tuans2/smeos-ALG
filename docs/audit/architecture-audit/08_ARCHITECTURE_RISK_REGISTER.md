@@ -88,7 +88,7 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 - **Khuyến nghị:** Mỗi kênh một đầu nối duy nhất trong Hub (theo `connector-contract.ts`); Notification và Thẻ chào gọi qua Hub; nhãn trạng thái danh mục phản ánh đúng (`LEGACY`/`BETA`) tới khi chuyển xong; quyết định PO về cổng thanh toán.
 
 ### ARC-008 — Mô hình 4 tầng chưa trọn (P1)
-- **Bằng chứng:** enum `organization_type` = `EXPERIENCE, SINGLE, STORE, CHAIN, FLOWER_NETWORK`; `SYSTEM_ROLES` không có `industry_admin`/`platform_admin`/`chain_admin`/`store_admin`; `tier-of.ts` nhận diện Ngành bằng `organization_type === "INDUSTRY"` (không thể xảy ra) hoặc vai `industry_admin`; `notification/domain/events/industry-events.ts` gửi tới `industry_admin`; `.agents/standards/smeos/01-tier-governance.md` §3: Thanh toán/Phí gia công/Mẫu 🟡, tầng Ngành 🔴 (nợ #185, #195).
+- **Bằng chứng:** enum `organization_type` = `EXPERIENCE, SINGLE, STORE, CHAIN, FLOWER_NETWORK`; `SYSTEM_ROLES` không có `industry_admin`/`platform_admin`/`chain_admin`/`store_admin`; `tier-of.ts` nhận diện Ngành bằng `organization_type === "INDUSTRY"` (không thể xảy ra) hoặc vai `industry_admin`; `notification/domain/events/industry-events.ts` gửi tới `industry_admin`; `.agents/standards/alg/01-tier-governance.md` §3: Thanh toán/Phí gia công/Mẫu 🟡, tầng Ngành 🔴 (nợ #185, #195).
 - **Khuyến nghị:** PO quyết: hoặc chính thức hoá Ngành chỉ là plugin (bỏ khỏi RBAC/thông báo/UI), hoặc thêm dữ liệu tầng Ngành (schema + vai + quyền). Áp 3 ma trận còn lại hoặc giữ `GovernanceScopeNote`.
 
 ### ARC-009 — Worker Python ngoài cổng AI (P1)
@@ -158,7 +158,7 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 - **Phần OpenAPI xong 11/11/2026:** `docs/spec/contracts/openapi/{integration,public,platform,internal}.openapi.json` sinh từ zod (đăng ký `DOC-03-OPENAPI-*`), `npm run check:openapi` gác qua `npm test`; route mới bắt buộc `defineRoute`, envelope lệch bị ratchet chặn (`docs/audit/api-architecture-audit/01_API_ARCHITECTURE_AUDIT.md` §8–§38).
 - **Còn mở (đính chính 11/11/2026 — trước đó ghi nhầm "đã đóng" cả mục):** (1) chưa có tài liệu API công bố cho đối tác/khách — tệp OpenAPI mới nằm trong repo; (2) phản hồi `/integration/*` trả nguyên bản ghi nội bộ (vd. `usage.user_id`, `generation_jobs.payload`) — thu gọn cần `/v2` hoặc báo trước 90 ngày; (3) 501 route cũ chưa theo chuẩn v1.1, 67 mục envelope lệch. Cần PO duyệt trước khi mở API thương mại cho bên thứ ba.
 - **Cập nhật 11/11/2026 (phần B, PO duyệt):** (1) tài liệu cho đối tác: trang `/tich-hop/tai-lieu-api`, xem sau đăng nhập với quyền quản lý khoá ứng dụng, hướng dẫn + tham chiếu sinh từ OpenAPI; (2) trường nội bộ Integration API đánh dấu `deprecated`, máy chủ tự bỏ từ 09/02/2027 (`integration-field-sunset.ts`). Còn: thông báo tới LocalBudd/SocialFlow/đối tác (việc của PO); 67 mục envelope nội bộ theo ratchet.
-- **Trả nợ chuẩn v1.1 (12/11/2026):** kế hoạch 5 đợt ở `docs/audit/api-architecture-audit/01_API_ARCHITECTURE_AUDIT.md` §42; đợt 1–2 bọc 402 route bằng `defineRoute` không đổi hợp đồng — route cũ 501 → 99 (66 + 29 + 1 thuộc Thẻ chào cho đợt 3, 3 webhook chat là ngoại lệ), envelope lệch còn 65.
+- **Trả nợ chuẩn v1.1 (12/11/2026):** kế hoạch 5 đợt ở `docs/audit/api-architecture-audit/01_API_ARCHITECTURE_AUDIT.md` §42; đợt 1–3 bọc 498 route bằng `defineRoute` không đổi hợp đồng — route cũ 501 → 3 (webhook/widget chat, ngoại lệ có lý do); đợt 4 envelope lệch 65 → 12 (chỉ còn ngoại lệ nhà cung cấp/vận hành — §42).
 
 ### ARC-025 — Route thiếu mã năng lực (P2)
 - **Bằng chứng:** `NO_CAPABILITY_GUARD["content-engine/rewrite"] = DEBT_170`.
@@ -199,7 +199,7 @@ Chi tiết, bằng chứng và khuyến nghị ở `13_CROSS_TIER_CONSISTENCY_AU
 Khuyến nghị gộp: `13` §10.
 
 ### ARC-040 … ARC-043 — Cấp hệ sinh thái
-Chi tiết ở `14_ECOSYSTEM_AUDIT.md` §2–§3. Lỗi cấp hệ sinh thái cần quyết định ở nhiều repo; không sửa được chỉ trong `smeOS`.
+Chi tiết ở `14_ECOSYSTEM_AUDIT.md` §2–§3. Lỗi cấp hệ sinh thái cần quyết định ở nhiều repo; không sửa được chỉ trong `ALG`.
 
 ## 3. Phân bố
 
@@ -209,4 +209,4 @@ Chi tiết ở `14_ECOSYSTEM_AUDIT.md` §2–§3. Lỗi cấp hệ sinh thái c�
 | P1 | 13 (ARC-003, 004, 005, 006, 007, 008, 009, 011, 028, 033, 034, 035, 041) |
 | P2 | 24 |
 | P3 | 4 |
-| **Tổng** | **43** (39 cấp repo `smeOS`, 4 cấp hệ sinh thái: ARC-040 … 043) |
+| **Tổng** | **43** (39 cấp repo `ALG`, 4 cấp hệ sinh thái: ARC-040 … 043) |

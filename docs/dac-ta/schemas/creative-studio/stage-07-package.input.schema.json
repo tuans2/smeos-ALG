@@ -3,7 +3,7 @@
   "$id": "stage-07-package.input.schema.json",
   "title": "Chặng 07 — PACKAGE: Đóng gói trọn bộ chiến dịch — Đầu vào",
   "description": "Gom bài B, âm thanh C, ảnh D, video E vào campaign_packages (DRAFT). Sửa gói (PATCH) đưa về DRAFT và xoá kết quả QA cũ.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "07",
     "stage": 7,
     "code": "PACKAGE",

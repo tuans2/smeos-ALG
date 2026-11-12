@@ -42,7 +42,7 @@ export function BrochureVisibilitySettings() {
       {view.error ? (
         <p role="alert" className="text-body-sm text-danger">{view.error.message}</p>
       ) : !data ? (
-        <div className="h-16 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-16 rounded-lg bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <>
           <label className="flex flex-wrap items-center gap-2 text-body-sm">

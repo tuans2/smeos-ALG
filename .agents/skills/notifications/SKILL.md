@@ -1,7 +1,7 @@
 ---
 name: notifications
 description: >-
-  Hệ thống thông báo 4 tầng SMEOS: danh mục sự kiện theo tầng, động cơ cascading-policy
+  Hệ thống thông báo 4 tầng ALG: danh mục sự kiện theo tầng, động cơ cascading-policy
   (kích hoạt kênh → khoá cứng theo phạm vi → ghi đè từ dưới lên), notifyOrganization,
   adapter kênh (in-app, email, Telegram; SMS/Zalo/Web Push gửi khi tầng Mẹ đã đăng ký nhà cung cấp), deep link, SSE.
   Kích hoạt khi sửa src/modules/notification, components/notification, hoặc thêm sự kiện gửi từ use-case.
@@ -9,7 +9,7 @@ description: >-
 
 # Notifications
 
-Đọc trước: `.agents/standards/smeos/06-notifications.md`, rồi `universal/06-notifications.md`; đặc tả `docs/kien-truc/NOTIFICATION_SYSTEM_ARCHITECTURE.md`.
+Đọc trước: `.agents/standards/alg/06-notifications.md`, rồi `universal/06-notifications.md`; đặc tả `docs/kien-truc/NOTIFICATION_SYSTEM_ARCHITECTURE.md`.
 
 Bắt buộc:
 - Sự kiện mới khai trong `domain/events/<tầng>-events.ts`, `deepLinkTemplate` trỏ trang thật (`events-deeplinks.test.ts`).

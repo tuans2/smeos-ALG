@@ -3,7 +3,7 @@
 Dùng toàn bộ tính năng fal có cho việc này:
   - tách nền: `fal-ai/birefnet/v2` (BiRefNet, MIT) — `output_mask`, độ phân giải 2048;
   - dựng cảnh + ghép + hoà sáng: `fal-ai/bria/product-shot` (BRIA, giấy phép thương
-    mại qua API) — `placement_type=original` giữ đúng chỗ bó hoa FloraOS đã đặt,
+    mại qua API) — `placement_type=original` giữ đúng chỗ bó hoa ALG đã đặt,
     `original_quality=true` giữ kích thước, `optimize_description=true`;
   - tăng nét: `fal-ai/esrgan` (Real-ESRGAN chạy trên máy chủ fal).
 

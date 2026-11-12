@@ -83,11 +83,11 @@ export function FlowerSubstituteForm({ orderId, onClose, onDone }: { orderId: st
             Mẫu <strong className="text-text">{info.productName}</strong>. Chọn thành phần phụ cần đổi; thành phần chủ đạo không đổi ở đây. <strong>Tổng tiền giữ nguyên</strong>.
           </p>
           {info.latest && (
-            <p className="rounded-xl bg-surface-muted p-3 text-caption text-text">
+            <p className="rounded-xl bg-surface-alt p-3 text-caption text-text">
               {pending ? "Đang chờ khách trả lời đề xuất trước." : `Lần trước: ${info.latest.choice ? FLOWER_CHOICE_LABEL[info.latest.choice] : "đã trả lời"}.`}
             </p>
           )}
-          {info.lockedReason && <p role="alert" className="text-warning text-caption">{info.lockedReason}</p>}
+          {info.lockedReason && <p role="alert" className="text-warning-text text-caption">{info.lockedReason}</p>}
           {info.lines.length === 0 ? (
             <p className="text-body-sm text-text-muted">Công thức của đơn chưa có hoa phụ nào. Hãy đề xuất đổi cả mẫu hoặc liên hệ khách.</p>
           ) : (
@@ -119,7 +119,7 @@ export function FlowerSubstituteForm({ orderId, onClose, onDone }: { orderId: st
           <label className="text-body-sm font-bold text-text" htmlFor="flower-substitute-reason">Lý do (khách sẽ đọc)</label>
           <Textarea id="flower-substitute-reason" rows={2} maxLength={FLOWER_REASON_MAX} value={reason} onChange={(e) => setReason(e.target.value)} disabled={blocked}
             placeholder="Vd: Hoa baby trắng hôm nay hết, tiệm xin thay bằng cẩm chướng hồng nhạt cùng tông"
-            className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
+            className="w-full rounded-xl border border-border bg-surface-alt p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
         </>
       )}
       {error && <p role="alert" className="text-danger text-caption">{error}</p>}

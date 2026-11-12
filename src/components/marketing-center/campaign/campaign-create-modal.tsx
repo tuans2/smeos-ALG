@@ -116,7 +116,7 @@ export function CampaignCreateModal({ isOpen, onClose, onSuccess }: CampaignCrea
                 className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block cursor-pointer rounded-xl border p-3 text-left transition-colors ${
                   objective === obj
                     ? "border-primary bg-primary/10 text-primary font-medium"
-                    : "border-border bg-surface text-text hover:bg-surface-elevated"
+                    : "border-border bg-surface text-text hover:bg-surface"
                 }`}
               >
                 <div className="text-body-sm font-semibold">{CAMPAIGN_OBJECTIVE_LABELS[obj]}</div>

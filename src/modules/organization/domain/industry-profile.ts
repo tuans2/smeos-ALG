@@ -1,7 +1,7 @@
 /**
  * industry-profile.ts — Định nghĩa và danh mục cấu hình ngành (Industry Profile SSOT)
  *
- * Cho phép smeOS thích ứng linh hoạt đa ngành (Bán lẻ, Thời trang, F&B, Quà tặng/Thủ công, Dịch vụ, Sản phẩm)
+ * Cho phép ALG thích ứng linh hoạt đa ngành (Bán lẻ, Thời trang, F&B, Quà tặng/Thủ công, Dịch vụ, Sản phẩm)
  * mà không phải sửa đổi cấu trúc CSDL hay viết lại logic nghiệp vụ cốt lõi.
  *
  * Tích hợp kiến trúc IndustryPluginContract SSOT:

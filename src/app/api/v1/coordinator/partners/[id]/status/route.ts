@@ -18,6 +18,6 @@ export const PATCH = defineRoute({
       throw validationFailed({ reason: parsed.error.issues.map((e) => e.message).join(", ") })
     }
     const updated = await changePartnershipStatus(ctx, partnershipId, parsed.data.status, parsed.data.reason ?? "")
-    return jsonResponse({ success: true, data: updated })
+    return jsonResponse({ data: updated })
   },
 })

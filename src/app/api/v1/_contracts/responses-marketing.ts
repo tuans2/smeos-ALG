@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { actionDone } from "./responses-actions"
 
 import { LEAD_STATUSES } from "@/modules/acquisition/domain/lead-rules"
 import {
@@ -94,7 +95,7 @@ const segment = z.strictObject({
 })
 export const segmentsResponse = z.strictObject({ data: z.array(segment), ...offsetPage })
 export const segmentResponse = data(segment)
-export const successResponse = z.strictObject({ success: z.literal(true) })
+export const segmentDeletedResponse = actionDone("deleted")
 
 /** Hồ sơ khách tổng hợp (`CustomerMasterIndex`); số điện thoại, email, địa chỉ là chữ rõ đã giải mã. */
 const customer = z.strictObject({
@@ -141,6 +142,7 @@ const customer = z.strictObject({
   ),
   updatedAt: z.string(),
 })
+export const customersPageResponse = z.strictObject({ data: z.array(customer), next_cursor: z.string().nullable() })
 export const segmentCustomersResponse = z.strictObject({
   data: z.array(customer),
   segment_name: z.string(),

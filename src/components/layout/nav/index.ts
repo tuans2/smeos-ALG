@@ -1,6 +1,6 @@
 /**
- * Hệ thống Điều hướng 4 Tầng smeOS (Navigation Dispatcher)
- * Chuẩn hóa theo SSOT SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md
+ * Hệ thống Điều hướng 4 Tầng ALG (Navigation Dispatcher)
+ * Chuẩn hóa theo SSOT ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md
  */
 
 import { isChainTier, tierOf } from "@/core/governance/tier-of"
@@ -13,6 +13,7 @@ import { buildChainNav, CHAIN_NAV_ENTRIES } from "./nav-chain"
 import { buildStoreNav, STORE_NAV_ENTRIES } from "./nav-store"
 import { withIntegrations } from "./nav-integrations"
 import { withDeliveryPhase } from "./nav-phase"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 export * from "./nav-types"
 export * from "./nav-mother"
@@ -39,13 +40,15 @@ export function isChainOrganization(
  * 4. StoreOS: Cửa hàng cơ sở đơn lẻ (organizationType === "SINGLE" hoặc mặc định)
  */
 export function buildNav(
-  can: (code: string) => boolean,
+  canCode: (code: string) => boolean,
   role: RoleUxDefinition | null,
   industryKey?: string | null,
   navHiddenKeys?: string[] | null,
   organizationType?: string | null,
   unlockedToolKeys?: string[] | null
 ): NavView {
+  // Mục menu khai `capability: "F2|R5"` = có một trong các mã là thấy
+  const can = (code: string) => code.split("|").some((c) => canCode(c.trim()))
   const tier = tierOf(organizationType, role)
   return withDeliveryPhase(withIntegrations(buildTierNav(), tier, can, navHiddenKeys), tier)
 
@@ -98,7 +101,8 @@ export function mobileSecondSlot(
     }
   }
 
-  if (tier === "CHAIN") {
+  // Điều phối đang khoá "Sắp ra mắt" (production) thì chuỗi dùng ô mặc định Đơn hàng (audit N-05)
+  if (tier === "CHAIN" && isHrefOpen("/dieu-phoi")) {
     return {
       href: "/dieu-phoi",
       label: "Điều phối",

@@ -17,6 +17,7 @@ describe("PartnerCard (DT-01..06)", () => {
     rating: 4.9,
     capacityDaily: 25,
     isActive: true,
+    customFields: {},
   }
 
   const pausedPartner: PartnerView = {
@@ -31,6 +32,7 @@ describe("PartnerCard (DT-01..06)", () => {
     rating: 4.2,
     capacityDaily: 10,
     isActive: false,
+    customFields: {},
   }
 
   it("render đúng thông tin đối tác VIP đang hoạt động", () => {

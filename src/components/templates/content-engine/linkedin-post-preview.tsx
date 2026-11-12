@@ -18,7 +18,7 @@ export function LinkedInPreview({
   post,
   productName = "Sản phẩm quà tặng cao cấp",
   productImageUrl,
-  shopName = "smeOS Business Solutions",
+  shopName = "ALG Business Solutions",
 }: SocialPostPreviewProps) {
   return (
     <div className="max-w-md mx-auto rounded-xl border border-border bg-white shadow-md overflow-hidden text-text font-sans">
@@ -108,7 +108,7 @@ export function LinkedInPreview({
               {productName}
             </div>
             <span className="text-caption font-semibold text-[var(--color-linkedin)] bg-info-bg px-3 py-1 rounded-full border border-info-border/50">
-              B2B Premium Floral Styling · smeOS
+              B2B Premium Floral Styling · ALG
             </span>
           </div>
         )}
@@ -121,7 +121,7 @@ export function LinkedInPreview({
             <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-[var(--color-linkedin)] text-white text-caption shadow-xs">
               👍
             </span>
-            <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-warning text-white text-caption shadow-xs">
+            <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-warning text-text text-caption shadow-xs">
               💡
             </span>
             <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-primary text-white text-caption shadow-xs">

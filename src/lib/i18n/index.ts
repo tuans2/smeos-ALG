@@ -1,5 +1,5 @@
 /**
- * index.ts — Cổng export duy nhất của Động cơ Đa ngôn ngữ smeOS (i18n SSOT)
+ * index.ts — Cổng export duy nhất của Động cơ Đa ngôn ngữ ALG (i18n SSOT)
  */
 
 export * from "./types"

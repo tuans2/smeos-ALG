@@ -160,7 +160,7 @@ export async function executeAutomatedChainDispatch(
     }
   }
 
-  const baseUrl = order.baseUrl || "https://app.smeos.vn"
+  const baseUrl = order.baseUrl || "https://app.avilotusgroup.com"
   const invitedBranchIds: string[] = []
   const invitedBranchNames: string[] = []
 

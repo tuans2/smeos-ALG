@@ -20,9 +20,6 @@ export const POST = defineRoute({
 
     const result = await applyIndustryMockData(ctx, targetIndustry)
 
-    return jsonResponse({
-      success: true,
-      data: result,
-    })
+    return jsonResponse({ data: result })
   },
 })

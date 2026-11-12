@@ -59,7 +59,7 @@ export function NotificationMatrixGroupTable({
           ) : (
             <ChevronRight size={16} className="text-text-muted" />
           )}
-          <h3 className="text-body-sm font-bold text-text">{groupLabel}</h3>
+          <h2 className="text-body-sm font-bold text-text">{groupLabel}</h2>
           <span className="text-caption text-text-muted">
             ({section.events.length} sự kiện)
           </span>

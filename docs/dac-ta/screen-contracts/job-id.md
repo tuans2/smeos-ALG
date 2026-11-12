@@ -16,6 +16,8 @@ acceptance:
 
 # Screen Contract — Danh sách & Chi tiết Job (`/job/[id]`)
 
+> **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/job` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/job/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
+
 **Mã màn:** `SCR-STORE-job-id` · **Tuyến:** `/job/[id]` · **Tầng:** `STORE` · **Bố cục:** `C` · **Tệp chính:** `src/app/(app)/job/[id]/page.tsx`
 
 Đặc tả nghiệp vụ chi tiết: [`job.md`](./job.md). Tệp này là front-matter v2 cho `check:screen-contracts`; hiện trạng dưới đây đo bằng đọc mã ngày 05/11/2026, không phải kiểm chạy thật.

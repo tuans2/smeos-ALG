@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
  */
 export function TemporaryPasswordNotice({ email, password }: { email: string; password: string }) {
   const [copied, setCopied] = useState(false)
-  const text = `Đăng nhập smeOS\nEmail: ${email}\nMật khẩu tạm: ${password}\nVào xong hãy đổi mật khẩu ở menu tài khoản.`
+  const text = `Đăng nhập ALG\nEmail: ${email}\nMật khẩu tạm: ${password}\nVào xong hãy đổi mật khẩu ở menu tài khoản.`
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(text)

@@ -16,7 +16,7 @@ describe("adapter Chặng 02 qua cổng AI (nợ #155)", () => {
     })
     const r = await createProductVisionAdapter({ name: "x", complete }, { image, productTitle: "Bó" }, "org")(model)
     expect(complete.mock.calls[0]![0]).toMatchObject({ model: "claude_opus", images: [image] })
-    expect(complete.mock.calls[0]![0].system).toContain("smeOS")
+    expect(complete.mock.calls[0]![0].system).toContain("ALG")
     expect(r.ok && r.output.components[0]).toMatchObject({ flowerType: "Hồng đỏ", quantityEstimate: 9 })
     expect(r.ok && r.costUsd).toBe(0.01)
   })

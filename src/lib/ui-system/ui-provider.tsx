@@ -1,5 +1,7 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react"
 import type {
   UiSystemConfig,
@@ -13,7 +15,7 @@ import { DEFAULT_UI_CONFIG, getUiPreset, UI_PRESETS } from "./presets"
  * Chỉ lưu density người dùng TỰ CHỌN. Khoá cũ `smeos_ui_density` bị ghi tự động mỗi lần gắn
  * (gần như luôn là "comfortable"), nên đọc lại nó sẽ đè density máy chủ chọn theo tầng.
  */
-export const UI_DENSITY_STORAGE_KEY = "smeos_ui_density_choice"
+export const UI_DENSITY_STORAGE_KEY = "alg_ui_density_choice"
 
 const UiSystemContext = createContext<UiSystemContextValue | null>(null)
 

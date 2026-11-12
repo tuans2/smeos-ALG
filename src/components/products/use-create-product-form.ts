@@ -11,6 +11,7 @@ import {
   type BomItem,
   type TerminologyGetter,
 } from "./create-product-types"
+import { defaultBomRows } from "./default-bom-rows"
 
 interface UseCreateProductFormProps {
   ti: TerminologyGetter
@@ -60,7 +61,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
   const [pricing, setPricing] = useState(EMPTY_PRICING)
   const [primaryColor, setPrimaryColor] = useState("")
   const [description, setDescription] = useState("")
-  const [status, setStatus] = useState<"ACTIVE" | "DRAFT">("ACTIVE")
+  const [status, setStatus] = useState<"ACTIVE" | "DRAFT">("DRAFT")
 
   // Image upload states
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -85,78 +86,13 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
     }
   }, [activeIndustry.identity.key, categories, designConfig])
 
-  // Initial BOM items based on industry — multi-item template per industry
+  // Dòng công thức ban đầu theo ngành (trống, theo vai) — default-bom-rows.ts
   useEffect(() => {
     const bomCfg = getIndustryBomFieldsConfig(activeIndustry.identity.key)
     const roles = activeIndustry.bomSpec?.componentRoles ?? []
     const units = activeIndustry.bomSpec?.measurementUnits ?? ["cái"]
 
-    const makeItem = (
-      idSuffix: string,
-      name: string,
-      quantity: number,
-      unitIdx = 0,
-      roleIdx = 0,
-      color = "",
-      notes = ""
-    ): BomItem => ({
-      id: `init-${idSuffix}`,
-      name,
-      quantity,
-      unit: units[unitIdx] ?? "cái",
-      color,
-      role: roles[roleIdx]?.label ?? "Chủ đạo",
-      ...(notes ? { notes } : {}),
-    })
-
-
-    const defaultItems: BomItem[] = (() => {
-      switch (activeIndustry.identity.key) {
-        case "FLORAL":
-          return [
-            makeItem("1", "Hồng Ecuador", 10, 0, 0, "Đỏ"),
-            makeItem("2", "Cúc Trắng Fiji", 5, 0, 1, "Trắng"),
-            makeItem("3", "Lá xanh trường sinh", 8, 6, 2, "Xanh"),
-          ]
-        case "FASHION":
-          return [
-            makeItem("1", "Vải lụa satin 100% silk", 2, 2, 0, "Trắng ngà", "SAT-001 / 150cm"),
-            makeItem("2", "Vải lót cotton mềm", 2, 2, 1, "Trắng", "COT-002 / 140cm"),
-            makeItem("3", "Khóa kéo YKK 25cm", 2, 4, 2, "Bạc", ""),
-          ]
-        case "FNB":
-          return [
-            makeItem("1", "Thịt bò Wagyu lòng bàn tay", 200, 0, 0, "", "Nhập khẩu Úc"),
-            makeItem("2", "Sốt Teriyaki thượng hạng", 50, 1, 1, "", "Nhập khẩu Nhật"),
-            makeItem("3", "Cơm gạo Nhật Koshi Hikari", 150, 0, 0, "", "Nhập khẩu Nhật"),
-          ]
-        case "HOMESTAY":
-          return [
-            makeItem("1", "Bộ chăn ga gối tiêu chuẩn (4 món)", 1, 0, 0, "", "Hanvico / Mới 100%"),
-            makeItem("2", "Khăn tắm cotton 500gsm", 2, 2, 1, "", "Khaisilk / Mới"),
-            makeItem("3", "Bộ dầu gội – sữa tắm", 1, 2, 1, "", "Dove / Mới"),
-          ]
-        case "CRAFT_GIFT":
-          return [
-            makeItem("1", "Sáp đậu nho (Soy Wax) thượng hạng", 200, 4, 0, "Trắng kem", "Nhập khẩu Mỹ"),
-            makeItem("2", "Thính hương linh tùng & Lavender", 20, 4, 2, "Không màu", "FDA-approved"),
-            makeItem("3", "Hộp nhựa kính mụ cưỡc thiết kế riêng", 1, 0, 2, "Tróng suốt", "Sản xuất nội"),
-          ]
-        case "RETAIL_GENERAL":
-          return [
-            makeItem("1", "Sản phẩm chính", 1, 0, 0, "", ""),
-          ]
-        case "SERVICES":
-          return [
-            makeItem("1", "Nội dung dịch vụ chính", 1, 0, 0, "", ""),
-            makeItem("2", "Vật tư tiêu hao", 1, 0, 1, "", ""),
-          ]
-        default:
-          return [
-            makeItem("1", "Hồng Ecuador", bomCfg.defaultQuantity, 0, 0, "Đỏ"),
-          ]
-      }
-    })()
+    const defaultItems = defaultBomRows(activeIndustry.identity.key, roles, units, bomCfg.defaultQuantity)
 
     setBomItems((prev) => {
       if (prev.length > 0) return prev

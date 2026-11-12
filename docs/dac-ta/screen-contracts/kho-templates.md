@@ -69,7 +69,7 @@ acceptance:
 - Không áp dụng trực tiếp tại màn này (đây là thư viện giao diện tham chiếu).
 
 ## 10. Dữ liệu và quyền
-- Nguồn sự thật: `docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md` và mã nguồn trong `src/components/templates/`.
+- Nguồn sự thật: `docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md` và mã nguồn trong `src/components/templates/`.
 - Quyền: Mở cho mọi người dùng đã đăng nhập (không hạn chế theo RBAC).
 
 ## 11. Component

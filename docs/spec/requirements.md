@@ -48,7 +48,7 @@ Nguồn: Kiến trúc Repository & Hệ sinh thái Sản phẩm, bản 2.0. Mỗ
 |---|---|---|---|
 | REQ-PRD-001 | MUST | Mỗi sản phẩm phát hành là một Edition = Core + Industry Pack + Connector Profile. | manifest của mỗi app |
 | REQ-PRD-002 | MUST | Core (store-core, chain-core) không chứa quy tắc đặc thù ngành. | architecture test |
-| REQ-PRD-003 | MUST | Store OS và Chain OS là lõi theo chiều ngang; "FloraOS Store OS" = store-core + flora-pack + profile, không có codebase Store OS riêng cho hoa. | kiểm tra cấu trúc apps/ |
+| REQ-PRD-003 | MUST | Store OS và Chain OS là lõi theo chiều ngang; "ALG Store OS" = store-core + flora-pack + profile, không có codebase Store OS riêng cho hoa. | kiểm tra cấu trúc apps/ |
 | REQ-PRD-004 | MUST | Industry Pack cắm vào Core qua extension point có version do Core công bố. | contract test extension point |
 | REQ-PRD-005 | SHOULD | Đặt tên nhất quán: Mother Platform, Industry SaaS, Chain OS, Store OS, kèm tên ngành khi cần. | review thuật ngữ |
 

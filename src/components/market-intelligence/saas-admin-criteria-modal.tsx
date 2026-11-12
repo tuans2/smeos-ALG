@@ -1,5 +1,6 @@
 "use client";
 
+import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { NativeSelect } from "@/components/ui/select"
@@ -308,40 +309,19 @@ export function SaaSAdminCriteriaModal({
                 <label className="text-caption text-text-muted block mb-1">
                   Độ nóng tìm kiếm ({trendWeight}%)
                 </label>
-                <input
-                  type="range"
-                  min={10}
-                  max={80}
-                  value={trendWeight} aria-label="Trọng số độ nóng tìm kiếm"
-                  onChange={(e) => setTrendWeight(Number(e.target.value))}
-                  className="w-full accent-accent"
-                />
+                <Slider aria-label="Trọng số độ nóng tìm kiếm" min={10} max={80} value={trendWeight} onValueChange={(v) => setTrendWeight(v)} getValueText={(v) => `${v}%`} />
               </div>
               <div>
                 <label className="text-caption text-text-muted block mb-1">
                   Lan tỏa TikTok/Reels ({viralWeight}%)
                 </label>
-                <input
-                  type="range"
-                  min={10}
-                  max={80}
-                  value={viralWeight} aria-label="Trọng số lan truyền"
-                  onChange={(e) => setViralWeight(Number(e.target.value))}
-                  className="w-full accent-accent"
-                />
+                <Slider aria-label="Trọng số lan truyền" min={10} max={80} value={viralWeight} onValueChange={(v) => setViralWeight(v)} getValueText={(v) => `${v}%`} />
               </div>
               <div>
                 <label className="text-caption text-text-muted block mb-1">
                   Thương mại chốt đơn ({commercialWeight}%)
                 </label>
-                <input
-                  type="range"
-                  min={10}
-                  max={80}
-                  value={commercialWeight} aria-label="Trọng số thương mại"
-                  onChange={(e) => setCommercialWeight(Number(e.target.value))}
-                  className="w-full accent-accent"
-                />
+                <Slider aria-label="Trọng số thương mại" min={10} max={80} value={commercialWeight} onValueChange={(v) => setCommercialWeight(v)} getValueText={(v) => `${v}%`} />
               </div>
             </div>
           </div>

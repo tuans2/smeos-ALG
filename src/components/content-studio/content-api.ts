@@ -1,5 +1,5 @@
 /**
- * Lời gọi API của hành trình Tạo nội dung — chỉ dùng endpoint sẵn có của SMEOS (kho tệp, quét ảnh, bài giới thiệu)
+ * Lời gọi API của hành trình Tạo nội dung — chỉ dùng endpoint sẵn có của ALG (kho tệp, quét ảnh, bài giới thiệu)
  * và 3 endpoint đọc/ghi gộp dưới `/api/v1/content-studio/*`. Mọi lỗi ném `Error` với câu tiếng Việt cho user.
  */
 import type { ChannelPost, ContentLibraryItem, ContentProductView } from "@/modules/content-studio/use-cases/content-product"

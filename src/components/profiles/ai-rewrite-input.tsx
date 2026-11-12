@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useId, useState } from "react"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Check } from "@/components/ui/icon-set/check"
@@ -63,9 +63,9 @@ export function AiRewriteInput({
         return
       }
       if (!res.ok) throw new Error("Yêu cầu viết lại không thành công")
-      const data = await res.json()
-      if (Array.isArray(data.suggestions) && data.suggestions.length > 0) {
-        setSuggestions(data.suggestions)
+      const suggestions = ((await res.json()) as { data?: { suggestions?: unknown } }).data?.suggestions
+      if (Array.isArray(suggestions) && suggestions.length > 0) {
+        setSuggestions(suggestions)
       } else {
         setSuggestions([value])
       }
@@ -86,10 +86,11 @@ export function AiRewriteInput({
     setShowDropdown(false)
   }
 
+  const inputId = useId()
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-caption font-semibold text-text">
+        <label htmlFor={inputId} className="block text-caption font-semibold text-text">
           {label}
         </label>
       )}
@@ -97,6 +98,7 @@ export function AiRewriteInput({
       <div className="flex gap-2 relative">
         <div className="relative flex-1">
           <Input
+            id={inputId}
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}

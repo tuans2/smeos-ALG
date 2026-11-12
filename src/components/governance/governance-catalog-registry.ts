@@ -41,7 +41,7 @@ export function buildSSOTGovernanceGroups(options: BuildMatrixOptions): Governan
       return [
         {
           groupKey: "DISCOUNT_RULES",
-          groupTitle: "Trần Giảm Giá & Quy Chế Sàn (Mother Hard-Locks)",
+          groupTitle: "Trần Giảm Giá & Quy Chế Sàn",
           items: [
             {
               key: "MAX_DISCOUNT_PERCENT",
@@ -87,7 +87,7 @@ export function buildSSOTGovernanceGroups(options: BuildMatrixOptions): Governan
       return [
         {
           groupKey: "SOP_QC_RULES",
-          groupTitle: "Tiêu Chuẩn Kiểm Định SOP Toàn Sàn (Mother Hard-Locks)",
+          groupTitle: "Tiêu Chuẩn Kiểm Định SOP Toàn Sàn",
           items: [
             {
               key: "MANDATORY_QC_PHOTO",
@@ -133,7 +133,7 @@ export function buildSSOTGovernanceGroups(options: BuildMatrixOptions): Governan
       return [
         {
           groupKey: "PLATFORM_TOS",
-          groupTitle: "Quy Chuẩn Dịch Vụ Sàn (Mother Hard-Locks)",
+          groupTitle: "Quy Chuẩn Dịch Vụ Sàn",
           items: [
             {
               key: "SLA_DISPUTE_24H",
@@ -178,7 +178,7 @@ export function buildSSOTGovernanceGroups(options: BuildMatrixOptions): Governan
       return [
         {
           groupKey: "CORE_GATEWAY",
-          groupTitle: "Hạ Tầng Thanh Toán Sàn (Mother Hard-Locks)",
+          groupTitle: "Hạ Tầng Thanh Toán Sàn",
           items: [
             {
               key: "VIETQR_PAYMENT_ENABLED",
@@ -274,7 +274,7 @@ export function buildSSOTGovernanceGroups(options: BuildMatrixOptions): Governan
       return [
         {
           groupKey: "LABOR_PROTECTION",
-          groupTitle: "Bảo Vệ Người Thợ (Mother Hard-Locks)",
+          groupTitle: "Bảo Vệ Người Thợ",
           items: [
             {
               key: "MAX_PENALTY_DEDUCTION_30",

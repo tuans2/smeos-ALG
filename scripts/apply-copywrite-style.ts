@@ -2,7 +2,7 @@
 /**
  * apply-copywrite-style.ts
  *
- * Script áp dụng nhanh phong cách văn phong (Copywriting Style) cho toàn bộ hệ thống smeOS.
+ * Script áp dụng nhanh phong cách văn phong (Copywriting Style) cho toàn bộ hệ thống ALG.
  * Cách dùng:
  *   npx tsx scripts/apply-copywrite-style.ts --style=minimal
  *   npx tsx scripts/apply-copywrite-style.ts --style=pro-saas
@@ -33,7 +33,7 @@ function deepMerge<T extends Dict>(target: T, source: Dict): T {
 function printHelp() {
   console.log(`
 ======================================================
-  smeOS UI Copywriting Style Engine (SSOT Switcher)
+  ALG UI Copywriting Style Engine (SSOT Switcher)
 ======================================================
 Lựa chọn các style có sẵn:
   --style=friendly   Thân thiện, gần gũi, hướng dẫn tận tình

@@ -51,7 +51,7 @@ function envelope(s: NamedSchema): GeneratedSchemaFile {
       $id: file,
       title: s.title,
       description: s.summary,
-      "x-floraos": {
+      "x-alg": {
         module: "content-engine",
         source: s.sourceFile,
         ...s.meta,
@@ -177,9 +177,9 @@ export function buildContentEngineSchemaFiles(): GeneratedSchemaFile[] {
     json: {
       $schema: "https://json-schema.org/draft/2020-12/schema",
       $id: "index.json",
-      title: "FloraOS Content Engine — hợp đồng dữ liệu",
+      title: "ALG Content Engine — hợp đồng dữ liệu",
       description: "Danh sách tệp JSON Schema của Content Engine (P27).",
-      "x-floraos": {
+      "x-alg": {
         module: "content-engine",
         source: CONTRACTS_SOURCE_DIR,
         generated: "SINH TỰ ĐỘNG — không sửa tay.",

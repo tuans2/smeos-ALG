@@ -105,7 +105,7 @@ export const sessionResponse = z.strictObject({
 })
 export const sessionStatusResponse = z.strictObject({ active: z.literal(true) })
 export const loginResponse = z.strictObject({ user_id: z.string(), organization_id: z.string() })
-export const logoutResponse = z.strictObject({ ok: z.literal(true) })
+export const logoutResponse = z.strictObject({ data: z.strictObject({ logged_out: z.literal(true) }) })
 const pending = { status: z.literal("PENDING_APPROVAL"), message: z.string() }
 export const signupResponse = z.strictObject({ user_id: z.string(), organization_id: z.string(), ...pending })
 export const instantTrialResponse = z.strictObject({

@@ -87,7 +87,7 @@ export function FloristQueueHome() {
         title={orgName}
         actions=<UserMenu initials={userInitials} />
       />
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
         <FeatureGuidanceCard
           id="florist_queue_guidance"
           badgeLabel="VIỆC CỦA TÔI"
@@ -140,7 +140,7 @@ export function FloristQueueHome() {
             </Button>
           </Card>
         ))}
-      </main>
+      </div>
     </div>
   )
 }

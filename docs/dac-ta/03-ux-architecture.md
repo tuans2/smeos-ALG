@@ -5,7 +5,7 @@
 > Tệp này quy định các nguyên tắc thiết kế trải nghiệm nền tảng, luồng phân vai (Role-based Navigation) và hành vi hệ thống chung.  
 > **Chuẩn chất lượng UX toàn cục, thứ bậc L0–L4, WCAG 2.2 và Screen Contract**: [`docs/dac-ta/03a-ux-constitution.md`](03a-ux-constitution.md) (Level 3, CANONICAL).  
 > **Đặc tả trải nghiệm 14 vai (Role UX)**: [`docs/dac-ta/03b-role-ux.md`](03b-role-ux.md) (Level 3, CANONICAL).  
-> **Đặc tả chi tiết giao diện 10 màn hình chức năng lõi và tương tác trực quan** được duy trì tại: [`docs/FloraOS-UIUX-10-chuc-nang.md`](../FloraOS-UIUX-10-chuc-nang.md).
+> **Đặc tả chi tiết giao diện 10 màn hình chức năng lõi và tương tác trực quan** được duy trì tại: [`docs/ALG-UIUX-10-chuc-nang.md`](../ALG-UIUX-10-chuc-nang.md).
 > **Nguyên tắc bố cục thông tin nền tảng (áp dụng mọi page)** — Macro trước Micro, người dùng tự chọn hướng đi, tiết lộ thông tin theo lớp — đã tích hợp trực tiếp vào **§18** của tài liệu này. *(File gốc đã lưu trữ tại `docs/archive/merged/MACRO_TO_MICRO_STORYTELLING_UX_FRAMEWORK.md`)*
 
 ## 1. Bốn quyết định nền
@@ -29,7 +29,7 @@ Phạm vi chi nhánh không có bộ chọn ở bản đầu. RBAC vẫn đỡ s
 
 ## 3. Bản đồ màn hình và Điều hướng (SSOT `nav-model.ts`)
 
-Hệ thống điều hướng toàn cục của FloraOS được chuẩn hóa tập trung qua mô hình một nguồn (`src/components/layout/nav-model.ts`, Screen Contract `docs/dac-ta/screen-contracts/_dieu-huong.md`).
+Hệ thống điều hướng toàn cục của ALG được chuẩn hóa tập trung qua mô hình một nguồn (`src/components/layout/nav-model.ts`, Screen Contract `docs/dac-ta/screen-contracts/_dieu-huong.md`).
 
 ### Sơ đồ điều hướng máy tính (Desktop Sidebar w-64 — 6 nhóm K5)
 

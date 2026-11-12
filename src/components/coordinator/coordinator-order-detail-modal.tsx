@@ -130,17 +130,17 @@ export function CoordinatorOrderDetailModal({
         </div>
 
         <div className="p-4 border-b border-border bg-surface-alt/40 flex items-center gap-2 overflow-x-auto">
-          {tabButton("SALES_INTAKE", "P1 • Tiếp nhận (T01)")}
-          {tabButton("BRIEF", "P2 • Thẻ sản phẩm (T02)")}
-          {tabButton("PRODUCTION", "P4 • Phiếu chế tác (T07)")}
-          {tabButton("QC", "P5 • Kiểm định QC (T14)")}
-          {tabButton("DELIVERY", "P6 • Giao hàng & POD (T21)")}
+          {tabButton("SALES_INTAKE", "Tiếp nhận")}
+          {tabButton("BRIEF", "Thẻ sản phẩm")}
+          {tabButton("PRODUCTION", "Phiếu chế tác")}
+          {tabButton("QC", "Kiểm định QC")}
+          {tabButton("DELIVERY", "Giao hàng & POD")}
           {tabButton(
             "EXCEPTION",
             `Sự cố (${order.exceptions.filter((e) => e.status === "OPEN" || e.status === "IN_PROGRESS").length})`,
             order.hasException ? "text-danger bg-danger/10" : ""
           )}
-          {tabButton("CLOSURE", "P7 • Nghiệm thu (T25)")}
+          {tabButton("CLOSURE", "Nghiệm thu")}
         </div>
 
         <div className="px-4 py-2 flex items-center justify-between gap-2 bg-surface-alt/30 border-b border-border text-caption flex-wrap">
@@ -157,7 +157,7 @@ export function CoordinatorOrderDetailModal({
             </span>
           </div>
           <Button size="sm" variant="outline" onClick={onOpenPaymentModal} className="h-7 px-2.5 text-caption font-bold gap-1">
-            <Wallet size={12} /> Sổ thu (T01/T02/T05)
+            <Wallet size={12} /> Sổ thu
           </Button>
         </div>
 
@@ -226,7 +226,7 @@ export function CoordinatorOrderDetailModal({
                 </span>
                 <div className="flex items-center gap-2">
                   <Button size="sm" variant="outline" onClick={onOpenAssignModal} className="text-caption h-7 px-2.5 font-bold">
-                    Phân công đối tác (T06)
+                    Phân công đối tác
                   </Button>
                   <Button
                     size="sm"
@@ -235,7 +235,7 @@ export function CoordinatorOrderDetailModal({
                     onClick={onOpenProductionModal}
                     className="text-caption h-7 px-2.5 font-bold"
                   >
-                    Cập nhật tiến độ / Thiếu hoa (T10)
+                    Cập nhật tiến độ / Thiếu hoa
                   </Button>
                 </div>
               </div>

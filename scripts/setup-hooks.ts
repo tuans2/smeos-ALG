@@ -1,5 +1,5 @@
 /**
- * setup-hooks.ts — Tự động cài đặt Git Pre-Commit Hook cho smeOS
+ * setup-hooks.ts — Tự động cài đặt Git Pre-Commit Hook cho ALG
  *
  * Tự động chạy khi `npm run setup:hooks` hoặc `npm run prepare`.
  * Hook này sẽ:
@@ -15,7 +15,7 @@ const GIT_HOOKS_DIR = join(REPO_ROOT, ".git/hooks")
 const PRE_COMMIT_PATH = join(GIT_HOOKS_DIR, "pre-commit")
 
 const HOOK_SCRIPT = `#!/bin/sh
-# smeOS Git Pre-Commit Hook — SSOT & Industry Compliance Gate
+# ALG Git Pre-Commit Hook — SSOT & Industry Compliance Gate
 # Tự động kiểm tra tính tuân thủ Đa ngành trước khi commit
 
 echo "🔍 [Pre-Commit] Đang kiểm tra tính tuân thủ Đa ngành & UX Lint..."

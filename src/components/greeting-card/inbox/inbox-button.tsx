@@ -41,7 +41,7 @@ export function InboxButton({ onOpenTarget }: { onOpenTarget: (t: InboxTarget) =
         aria-label={total > 0 ? `Hộp việc: ${total} việc và tin chưa xử lý` : "Hộp việc"}
         title={total > 0 ? `Hộp việc: ${total} việc và tin chưa xử lý` : "Hộp việc"}
         className={cn("font-[inherit] gap-0", 
-          "relative inline-flex h-11 w-11 items-center justify-center rounded-xl border transition-all",
+          "relative inline-flex h-11 w-11 p-0 items-center justify-center rounded-xl border transition-all",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
           open
             ? "border-border bg-surface text-primary shadow-xs"

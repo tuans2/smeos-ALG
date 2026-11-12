@@ -35,9 +35,10 @@ const partner = z.strictObject({
   rating: z.number(),
   capacityDaily: z.number(),
   isActive: z.boolean(),
+  customFields: z.record(z.string(), z.unknown()),
 })
-export const partnerResponse = z.strictObject({ partner })
-export const partnersResponse = z.strictObject({ partners: z.array(partner) })
+export const partnerResponse = z.strictObject({ data: partner })
+export const partnersResponse = z.strictObject({ data: z.array(partner) })
 
 /** Liên kết chuỗi ↔ cửa hàng đối tác (`organization_links`). */
 const partnership = z.strictObject({
@@ -61,19 +62,14 @@ const partnership = z.strictObject({
   createdAt: timestamp,
   updatedAt: timestamp,
 })
-/** `?active=` → đối tác gia công của Điều phối; không có → liên kết chuỗi (cần `F1`). */
-export const chainPartnersResponse = z.union([
-  partnersResponse,
-  z.strictObject({ success: z.literal(true), data: z.array(partnership), partners: z.array(partnership), total: z.number() }),
-])
-/** Tạo cửa hàng đối tác mới (mật khẩu tạm trả đúng MỘT lần) hoặc đối tác gia công ngoài (`partner`). */
-export const createPartnerResponse = z.union([
-  partnerResponse,
-  z.strictObject({ success: z.literal(true), data: partnership, temporaryPassword: z.string().optional() }),
-])
-export const partnershipResponse = z.strictObject({ success: z.literal(true), data: partnership })
+/** `GET /coordinator/chain-partners` — cửa hàng đối tác của chuỗi. */
+export const chainPartnersResponse = z.strictObject({ data: z.array(partnership), meta: z.strictObject({ total: z.number() }) })
+/** `POST /coordinator/chain-partners` — mật khẩu tạm trả đúng MỘT lần. */
+export const chainPartnerProvisionedResponse = z.strictObject({
+  data: z.strictObject({ partnership, temporary_password: z.string().optional() }),
+})
+export const partnershipResponse = z.strictObject({ data: partnership })
 export const partnerToolsResponse = z.strictObject({
-  success: z.literal(true),
   data: z.strictObject({ partnershipId: z.string(), partnerOrgId: z.string(), unlockedTools: z.array(z.string()) }),
 })
 
@@ -151,7 +147,6 @@ export const confirmDeliveryResponse = data(
 )
 export const craftFeeComplaintResponse = data(z.strictObject({ deducted: z.boolean(), payableVnd: z.number() }))
 export const dispatchToChatResponse = z.strictObject({
-  success: z.literal(true),
   data: z.strictObject({
     conversationId: z.string(),
     message: z.strictObject({

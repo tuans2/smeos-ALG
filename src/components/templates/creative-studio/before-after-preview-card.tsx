@@ -182,11 +182,11 @@ export function BeforeAfterPreviewCard({
           }}
           className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "bokeh"
-              ? "bg-surface text-warning border border-warning/30 shadow-sm hover:bg-surface"
+              ? "bg-surface text-warning-text border border-warning/30 shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
           }`}
         >
-          <Coffee size={13} className={activeMode === "bokeh" ? "text-warning" : "text-text-muted"} />
+          <Coffee size={13} className={activeMode === "bokeh" ? "text-warning-text" : "text-text-muted"} />
           ☕ Bokeh
         </Button>
         <Button variant="ghost"

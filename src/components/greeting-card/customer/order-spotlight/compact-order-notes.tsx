@@ -43,7 +43,7 @@ export function CompactOrderNotes({
             type="button"
             onClick={() => remove(kind)}
             aria-label={`Bỏ ô ${orderNoteLabel(kind, industryKey).toLowerCase()}`}
-            className="text-[length:inherit] h-auto font-[inherit] gap-0 absolute right-2 top-2 rounded-md p-1 text-text-muted transition hover:bg-surface-muted hover:text-text"
+            className="text-[length:inherit] h-auto font-[inherit] gap-0 absolute right-2 top-2 rounded-md p-1 text-text-muted transition hover:bg-surface-alt hover:text-text"
           >
             <X size={16} aria-hidden="true" />
           </Button>

@@ -1,4 +1,4 @@
-# QUY CHUẨN HỢP NHẤT HỆ THỐNG 14 CHẶNG VÀO NỀN TẢNG BỘ CÔNG CỤ SMEOS
+# QUY CHUẨN HỢP NHẤT HỆ THỐNG 14 CHẶNG VÀO NỀN TẢNG BỘ CÔNG CỤ ALG
 ## Đặc Tả Hợp Nhất Kiến Trúc Tác Nghiệp: Atomic Toolkit & Auto-Campaign Workflow Engine
 
 > **Mã văn bản:** `DOC-ARCH-UNIFICATION-TOOLKIT-001`  
@@ -13,7 +13,7 @@
 
 Trước đây, hệ thống tồn tại 2 khái niệm có sự giao thoa lớn về mặt tính năng và giá trị mang lại cho người dùng:
 1. **Hệ thống 14 chặng (Product-to-Market Journey / Creative Studio):** Mô hình đường ống tuyến tính (Pipeline) đi từ *Ảnh thô $\rightarrow$ Hiểu sản phẩm $\rightarrow$ Xu hướng $\rightarrow$ Ý tưởng $\rightarrow$ Sáng tạo $\rightarrow$ Đóng gói $\rightarrow$ QA $\rightarrow$ Duyệt $\rightarrow$ Đăng bán $\rightarrow$ Bán hàng $\rightarrow$ Đo lường $\rightarrow$ Học $\rightarrow$ Hành động kế tiếp*.
-2. **Hệ thống 48 công cụ tác nghiệp smeOS:** Mô hình các khối nguyên tử độc lập (Modular Atomic Tools) phục vụ toàn diện các bài toán từ Sáng tạo, Bán hàng, Định mức giá vốn, Vận hành, đến Quản trị Chuỗi.
+2. **Hệ thống 48 công cụ tác nghiệp ALG:** Mô hình các khối nguyên tử độc lập (Modular Atomic Tools) phục vụ toàn diện các bài toán từ Sáng tạo, Bán hàng, Định mức giá vốn, Vận hành, đến Quản trị Chuỗi.
 
 ### Quyết định phê chuẩn của PO (27/10/2026):
 1. **Chức năng 03 (Discover / Trend Research):** Chuyển thành **1 module công cụ mới độc lập** trong Thư viện Công cụ (Công cụ Nghiên cứu Thị trường & Xu hướng theo mùa vụ).
@@ -27,7 +27,7 @@ Trước đây, hệ thống tồn tại 2 khái niệm có sự giao thoa lớn
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│               🏛️ NỀN TẢNG CỐT LÕI: THƯ VIỆN CÔNG CỤ TÁC NGHIỆP SMEOS                   │
+│               🏛️ NỀN TẢNG CỐT LÕI: THƯ VIỆN CÔNG CỤ TÁC NGHIỆP ALG                   │
 │                                                                                        │
 │   ┌────────────────────────────────────────────────────────────────────────────────┐   │
 │   │  ⚡ CÔNG CỤ ĐẶC BIỆT: WORKFLOW CHẾ TÁC TỰ ĐỘNG TỪ A-Z (AUTO-CAMPAIGN ENGINE)   │   │

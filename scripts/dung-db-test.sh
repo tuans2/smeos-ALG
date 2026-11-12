@@ -10,7 +10,7 @@
 # Chạy một lần sau `docker compose up -d`, rồi quên nó đi.
 set -euo pipefail
 
-URL_TEST="${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}"
+URL_TEST="${DATABASE_URL_TEST:-postgresql://alg:alg@localhost:5433/alg_test}"
 
 # Cắt query string rồi lấy phần sau dấu "/" cuối — tên database.
 KHONG_QUERY="${URL_TEST%%\?*}"
@@ -25,11 +25,11 @@ case "$TEN_DB" in
     ;;
 esac
 
-if docker compose exec -T db psql -U smeos -d postgres -tAc \
+if docker compose exec -T db psql -U alg -d postgres -tAc \
      "SELECT 1 FROM pg_database WHERE datname='$TEN_DB'" | grep -q 1; then
   echo "Database $TEN_DB đã có."
 else
-  docker compose exec -T db psql -U smeos -d postgres -c "CREATE DATABASE \"$TEN_DB\""
+  docker compose exec -T db psql -U alg -d postgres -c "CREATE DATABASE \"$TEN_DB\""
   echo "Đã tạo database $TEN_DB."
 fi
 
@@ -49,7 +49,7 @@ DATABASE_URL="$URL_TEST" npx prisma db push --accept-data-loss
 # thiếu cột thì route gói trả 500. `tests/helpers/database.ts` còn so đủ mọi cột.
 # Kiểm cả bảng MỚI NHẤT, không chỉ bảng cũ: DB test dựng trước migration
 # `campaign_packages` (23/09) vẫn qua được kiểm `integration_tokens` (24/09/2026).
-if ! docker compose exec -T db psql -U smeos -d "$TEN_DB" -tAc \
+if ! docker compose exec -T db psql -U alg -d "$TEN_DB" -tAc \
        "SELECT to_regclass('public.integration_tokens'), to_regclass('public.campaign_packages'), to_regclass('public.voice_clones')" \
      | grep -q "integration_tokens|campaign_packages|voice_clones"; then
   echo "" >&2

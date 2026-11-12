@@ -17,7 +17,7 @@ Tài liệu để viết mã. Kiến trúc nền và quyết định gốc nằm
 | 08 | `08-integration-specification.md` | Core phơi gì ra, engine ngoài đọc thế nào |
 | 09 | `09-du-lieu-mau-experience.md` | Workspace dùng thử nạp sẵn những gì |
 | 10 | `10-ai-orchestration.md` | Gọi AI thế nào — năng lực, sổ đăng ký, định tuyến, chấm điểm, tri thức |
-| — | `FloraOS-Intelligence-Engine_FINAL_v2.0.md` | Đặc tả đầy đủ Market Intelligence + Product Intelligence (Đợt A và các đợt sau) — nguồn dẫn hướng có hiệu lực, gộp cả bản v1.0 (giữ ở `FloraOS-Core_Market_Intelligence_Engine_FINAL.md`, chỉ để truy vết lịch sử) |
+| — | `ALG-Intelligence-Engine_FINAL_v2.0.md` | Đặc tả đầy đủ Market Intelligence + Product Intelligence (Đợt A và các đợt sau) — nguồn dẫn hướng có hiệu lực, gộp cả bản v1.0 (giữ ở `ALG-Core_Market_Intelligence_Engine_FINAL.md`, chỉ để truy vết lịch sử) |
 | — | `Checklist_Thuc_Thi.md` | Pha này xong chưa |
 | — | `Roadmap.md` | Đang ở đâu, gì đã đổi so với kế hoạch |
 | — | `TECHNICAL_DEBT.md` | Đang nợ gì, trả khi nào |
@@ -29,6 +29,6 @@ Tài liệu để viết mã. Kiến trúc nền và quyết định gốc nằm
 
 **Con số sinh từ mã nguồn.** Tổng số mã năng lực và tổng số mã có trần cứng không nằm dưới dạng hằng số ở bất kỳ tệp nào trong bộ này — chúng đọc từ `capability-catalog.ts` và `capability-catalog.test.ts`. Bảng năng lực thu hoạch ở tài liệu 02 sinh từ `maChucNang.ts`. Hình dạng hợp đồng Vision đọc từ `Schema.json`. Danh sách cột `assets` đọc từ cơ sở dữ liệu thật của SocialFlow. Con số nào không trích được từ đâu thì không nằm trong bộ tài liệu này.
 
-**Thứ bậc khi mâu thuẫn.** `../kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` là Level 1, thắng tuyệt đối. Bộ đặc tả này là Level 2. Gặp mâu thuẫn thì dừng và báo chủ sản phẩm, không tự chọn bên nào.
+**Thứ bậc khi mâu thuẫn.** `../kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` là Level 1, thắng tuyệt đối. Bộ đặc tả này là Level 2. Gặp mâu thuẫn thì dừng và báo chủ sản phẩm, không tự chọn bên nào.
 
 Chín điểm lệch đã phát hiện giữa tài liệu và mã thật ghi ở `../kien-truc/RA_SOAT_THU_HOACH.md`, và những điểm còn chờ xác nhận nằm trong `TECHNICAL_DEBT.md`.

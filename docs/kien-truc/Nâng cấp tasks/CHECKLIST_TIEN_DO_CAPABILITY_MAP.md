@@ -1,4 +1,4 @@
-# CHECKLIST TIẾN ĐỘ TRIỂN KHAI CAPABILITY MAP FLORAOS
+# CHECKLIST TIẾN ĐỘ TRIỂN KHAI CAPABILITY MAP ALG
 > **Nhánh Git:** `feat/capability-map-expansion`  
 > **Cập nhật lúc:** 30/09/2026 (Hoàn tất 100% GÓI A, GÓI B, GÓI C và GÓI D — ĐẠT 201/201 TÍNH NĂNG 100%)  
 > **Bảo đảm:** 1.457/1.457 Unit Tests XANH (183 tệp) · 283/283 Tenant Tests XANH (36 tệp) · 0 lỗi Typecheck · 0 lỗi UX Lint

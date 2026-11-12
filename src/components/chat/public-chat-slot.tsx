@@ -12,7 +12,7 @@ interface PublicChatSlotProps {
 }
 
 /**
- * Khung chat AI cho trang công khai do công cụ SMEOS tạo. Máy chủ quyết định có vẽ
+ * Khung chat AI cho trang công khai do công cụ ALG tạo. Máy chủ quyết định có vẽ
  * hay không (kênh bật + chủ tiệm không tắt loại trang này); tắt thì không vẽ gì.
  */
 export async function PublicChatSlot({ pageKey, surface }: PublicChatSlotProps) {

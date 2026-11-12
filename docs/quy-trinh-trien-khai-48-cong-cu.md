@@ -1,4 +1,4 @@
-# QUY TRÌNH CHUẨN PHÁT TRIỂN 48 CÔNG CỤ SMEOS
+# QUY TRÌNH CHUẨN PHÁT TRIỂN 48 CÔNG CỤ ALG
 ## (SOP: Tool Blueprint & Implementation Standard)
 
 > **Tài liệu hướng dẫn mẫu (Gold Standard)** đúc kết từ việc triển khai thực tế **Công cụ 01 (Tạo ảnh sản phẩm chuyên nghiệp)**.  
@@ -21,7 +21,7 @@
 
 | # | Nguyên Tắc | Quy Định Cốt Lõi |
 |---|---|---|
-| **T1** | **SSOT Tài Liệu** | SSOT gốc là [`FloraOS_48_cong_cu_v3.md`](nâng%20cấp%20chức%20năng%20cho%20cửa%20hàng/FloraOS_48_cong_cu_v3.md). Mọi tiêu chuẩn đầu ra, prompt mẫu, tiêu chí QC, hành động người dùng phải bám sát đặc tả này. |
+| **T1** | **SSOT Tài Liệu** | SSOT gốc là [`ALG_48_cong_cu_v3.md`](nâng%20cấp%20chức%20năng%20cho%20cửa%20hàng/ALG_48_cong_cu_v3.md). Mọi tiêu chuẩn đầu ra, prompt mẫu, tiêu chí QC, hành động người dùng phải bám sát đặc tả này. |
 | **T2** | **Provider Single-Call** | Mọi tác vụ AI mặc định gọi **MỘT LẦN DUY NHẤT** (Single-Call) tới AI Provider (Gemini, OpenAI, Fal, Photoroom...) với prompt đầy đủ. **Tuyệt đối cấm** dựng pipeline phức tạp nhiều bước cục bộ (như cắt ghép nối SAM2/rembg) trừ trường hợp fallback khẩn cấp khi mất mạng/hết credit. |
 | **T3** | **Zero Friction UX (Mặc định tự động)** | Luôn có chế độ **Mặc định Tự động (AUTO ✨)**. Người dùng chỉ cần cung cấp đầu vào cơ bản (ảnh/văn bản/link) và bấm 1 nút là xong. Bảng tùy chọn preset nâng cao chỉ mở khi bấm mở rộng (Collapsible). |
 | **T4** | **1 Tool = 1 Module Riêng** | Mỗi công cụ nằm trong 1 module độc lập dưới `src/modules/<tool-slug>/` theo chuẩn 4 lớp Clean Architecture: `domain/` → `use-cases/` → `infra/` → `adapters/`. |
@@ -32,7 +32,7 @@
 ## GIAI ĐOẠN 1: ĐỌC & PHÂN TÍCH SSOT ĐẶC TẢ 48 CÔNG CỤ V3
 
 Trước khi viết bất kỳ dòng mã nào, agent/developer phải mở và đọc đúng mục của công cụ trong file SSOT:
-`docs/nâng cấp chức năng cho cửa hàng/FloraOS_48_cong_cu_v3.md`.
+`docs/nâng cấp chức năng cho cửa hàng/ALG_48_cong_cu_v3.md`.
 
 ### Trích xuất 6 thông số bắt buộc:
 1. **Bản chất công cụ**: Hướng người dùng cuối giải quyết bài toán kinh doanh nào?
@@ -170,7 +170,7 @@ Mở [toolkit-catalog.ts](../src/modules/toolkit/domain/toolkit-catalog.ts), tì
 
 Trước khi bàn giao bất kỳ chức năng nào cho người dùng nghiệm thu, hãy đối chiếu checklist sau:
 
-- [ ] **Khớp 100% SSOT v3**: Đúng bản chất nghiệp vụ mô tả trong `FloraOS_48_cong_cu_v3.md`?
+- [ ] **Khớp 100% SSOT v3**: Đúng bản chất nghiệp vụ mô tả trong `ALG_48_cong_cu_v3.md`?
 - [ ] **Provider Single-Call**: Dùng 1 lần gọi AI với prompt chuẩn, không lạm dụng pipeline nối nhiều bước cục bộ?
 - [ ] **Mặc định tự động**: Khách chỉ cần tải lên và bấm nút 1 lần là nhận kết quả ngay?
 - [ ] **Clean Architecture 4 lớp**: Đầy đủ `domain`, `use-cases`, `infra/api`, `components` riêng biệt?

@@ -41,8 +41,10 @@ import {
   runCoordinatorTx,
 } from "./shared"
 import { returnStock } from "@/modules/orders/infra/order-stock"
+import { releaseOrderBookings } from "@/modules/availability/infra/order-booking-hold"
 import { releaseLeadOfCancelledOrder } from "@/modules/orders/infra/order-lead-link"
 import { resolveClosurePayout } from "../domain/partner-payout"
+import { stageLabel } from "../domain/stage-labels"
 import { orderReferencePayoutVnd } from "./partner-payout-source"
 
 function currentAxes(row: CoordinatorOrderRow) {
@@ -172,7 +174,7 @@ export async function recordProductionUpdate(
 
     if (input.action === "REPORT_MATERIAL_ISSUE") {
       if (stage !== "IN_PRODUCTION") {
-        throw new AppError("UNPROCESSABLE_ENTITY", `Chỉ báo thiếu vật liệu khi đơn đang cắm (hiện: ${stage}).`)
+        throw new AppError("UNPROCESSABLE_ENTITY", `Chỉ báo thiếu vật liệu khi đơn đang chế tác (đơn đang ở bước "${stageLabel(stage)}").`)
       }
       if (!input.issueNote?.trim()) throw new AppError("UNPROCESSABLE_ENTITY", "Phải mô tả vật liệu thiếu.")
       await openExceptionInTx(ctx, tx, repo, row, {
@@ -312,6 +314,7 @@ export async function cancelCoordinatorOrder(
     const rejectedPending = await new PendingPaymentRepository(tx).rejectAllForOrder(ctx, row.id)
     // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) trong cùng giao dịch huỷ — huỷ lỗi thì không hoàn (audit BL-26)
     await returnStock(ctx.organizationId, row.id, tx)
+    await releaseOrderBookings(ctx.organizationId, row.id, tx) // trả lịch đặt chỗ (UJ-23)
     await audit(ctx, tx, "coordinator.order.cancel", row.id, { stage: from }, { stage: "CANCELLED", reason: input.reason.trim(), rejectedPending })
     return row.id
   })

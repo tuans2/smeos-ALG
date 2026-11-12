@@ -160,7 +160,7 @@ export function ExecutiveSummaryCards({
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-caption font-bold text-text group-hover:text-warning transition">
+            <span className="text-caption font-bold text-text group-hover:text-warning-text transition">
               Chủ đề nên làm
             </span>
             <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-warning-bg text-warning-text group-hover:scale-110 transition">

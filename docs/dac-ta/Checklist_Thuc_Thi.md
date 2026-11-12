@@ -4,7 +4,7 @@ Một pha chỉ coi là xong khi mọi ô của nó tích được. Mã trong ng
 
 Không tạo bảng, route, job hay đường dẫn lưu trữ thật của bất kỳ module nào trước khi **P1 và P2** tích hết.
 
-P0–P12 là Tuyến A — nền tảng và module lõi. P13–P23 là Tuyến B — bộ tính năng hoàn chỉnh; bảy pha đầu của tuyến này là MVP. AI-1 đến AI-4 là Tuyến C — nền AI, cắt ngang hai tuyến kia. Bảng pha đầy đủ ở `../kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 15.
+P0–P12 là Tuyến A — nền tảng và module lõi. P13–P23 là Tuyến B — bộ tính năng hoàn chỉnh; bảy pha đầu của tuyến này là MVP. AI-1 đến AI-4 là Tuyến C — nền AI, cắt ngang hai tuyến kia. Bảng pha đầy đủ ở `../kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` mục 15.
 
 ## P0 — Khung repo · xong
 
@@ -435,12 +435,12 @@ SERVER-SIDE.*
 - [x] Trả lời tự động bật tắt bằng `T4` trần cứng; cấu hình đa kênh theo từng shop (`YC-H4`) — `configure-chat-channel.ts`
 - [x] Hội thoại lọc theo tổ chức; bộ test cách ly phủ cả 3 bảng — `chat-isolation.test.ts` (3/3), `chat-channel-isolation.test.ts` (2/2)
 - [x] Tích hợp Đa Kênh Omnichannel (E-Catalog, Landing Page, Messenger, Zalo OA, Website ngoài) kèm cơ chế định giá & thu phí credit FloraOS-core
-- [x] Trợ lý nổi In-App Copilot `<FloraOSGlobalCopilot />` (`Cmd+K`) hướng dẫn vận hành M01–M10 kèm Deep Link chuyển trang
+- [x] Trợ lý nổi In-App Copilot `<AlgGlobalCopilot />` (`Cmd+K`) hướng dẫn vận hành M01–M10 kèm Deep Link chuyển trang
 - [x] **Kiến trúc AI Engine Đa Tầng (Multi-tier Pluggable Fallback)**: Dify -> OpenAI Direct (`gpt-4o-mini`, giải quyết triệt để vấn đề rập khuôn, lặp từ) -> Local Qwen 2.5:7b (Ollama 0 VNĐ / 0 Token) -> Local Rule Engine (offline 100%)
 - [x] **Cẩm nang Tri thức & Nhập liệu SSOT (`/tri-thuc`)**: Chuẩn hóa Atomic Disaggregated Fields cho 7 phân hệ, so sánh trực quan Good vs Bad, checklist Onboarding Progress Bar đo lường mức độ sẵn sàng dữ liệu
 - [x] **Tái cấu trúc Sidebar Navigation (`desktop-nav.tsx`)**: Đưa Tri thức & Nhập liệu (`/tri-thuc`) và AI Chat Assistant (`/hoi-thoai`) lên vị trí trung tâm nổi bật, kèm nút Copilot (Cmd+K) chân sidebar
 - [x] **Đồng bộ Quyền RBAC T1–T4**: Cấp quyền đầy đủ cho 4 vai hệ thống trong `role_capabilities`
-- [x] Đặc tả kiến trúc SSOT: `docs/kien-truc/FLORAOS_AI_CHAT_ASSISTANT_OMNICHANNEL_ARCHITECTURE.md`
+- [x] Đặc tả kiến trúc SSOT: `docs/kien-truc/ALG_AI_CHAT_ASSISTANT_OMNICHANNEL_ARCHITECTURE.md`
 - [x] Bộ test xanh toàn diện: `npm test` **414/414 passed**, `tsc --noEmit` **SẠCH 100%**
 
 ## P24 — M04b về đúng kiến trúc job · hoàn tất 09/17
@@ -467,7 +467,7 @@ cổng duyệt. Bốn ô của P16 phía dưới được chỉnh lại theo mã
 - [x] Worker `workers/media_ai/jobs/variant_worker.py` lấy việc bằng `SKIP LOCKED` + `LISTEN/NOTIFY`, nối vào vòng của `jobs/worker.py`
 - [x] Bốn `stage` thật: `SEGMENTING` → `COMPOSING` → `VERIFYING` → `GENERATING_OUTPUTS`; giao diện đọc `stage`, không chạy `setTimeout`
 - [x] Biến thể ghi thành `assets` `kind = MARKETING`, `approval_state = PENDING`, `parent_asset_id` trỏ Master đã duyệt
-- [x] Watermark lấy logo thật từ `brand_profiles.logo_asset_id`, lùi về TÊN TIỆM (`organizations.name`) khi chưa có logo — bỏ chuỗi cứng "FloraOS Tiệm Hoa" đóng tên nền tảng lên hàng của người bán
+- [x] Watermark lấy logo thật từ `brand_profiles.logo_asset_id`, lùi về TÊN TIỆM (`organizations.name`) khi chưa có logo — bỏ chuỗi cứng "ALG Tiệm Hoa" đóng tên nền tảng lên hàng của người bán
 
 ### Cổng Subject Integrity
 
@@ -505,9 +505,9 @@ cổng duyệt. Bốn ô của P16 phía dưới được chỉnh lại theo mã
 
 ### Tài liệu chuẩn hóa (hoàn tất)
 
-- [x] **I/O Spec** — `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_IO_SPEC.md`
-- [x] **User Journey** — `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_JOURNEY.md`
-- [x] **Checklist** — `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_CHECKLIST.md`
+- [x] **I/O Spec** — `docs/dac-ta/ALG_CREATIVE_STUDIO_IO_SPEC.md`
+- [x] **User Journey** — `docs/dac-ta/ALG_CREATIVE_STUDIO_JOURNEY.md`
+- [x] **Checklist** — `docs/dac-ta/ALG_CREATIVE_STUDIO_CHECKLIST.md`
 
 ### Chặng chuyển tiếp (Chặng 4 → 5)
 
@@ -725,7 +725,7 @@ FFmpeg trong sổ đăng ký.
 
 ## UI/UX — Tích hợp 10 chức năng giao diện · bắt đầu 13/09
 
-Đây là công việc kết nối 10 trang UI trong `docs/FloraOS-UIUX-10-chuc-nang.md` với API thật ở `src/app/api/v1/`. 5 trang đã có backend để nối, 5 trang chờ backend tương ứng (M07, M09, M10, M08, M11).
+Đây là công việc kết nối 10 trang UI trong `docs/ALG-UIUX-10-chuc-nang.md` với API thật ở `src/app/api/v1/`. 5 trang đã có backend để nối, 5 trang chờ backend tương ứng (M07, M09, M10, M08, M11).
 
 ### Đã tích hợp
 
@@ -748,7 +748,7 @@ FFmpeg trong sổ đăng ký.
 
 ## CS-23/09 — Creative Studio 14 chặng: rà soát đồng bộ & sửa production
 
-Chi tiết từng ô ở `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_CHECKLIST.md` v2.0; báo cáo rà soát ở project claude.ai `claude/ra-soat-dong-bo-creative-studio-14-chang-23-09-2026.md`.
+Chi tiết từng ô ở `docs/dac-ta/ALG_CREATIVE_STUDIO_CHECKLIST.md` v2.0; báo cáo rà soát ở project claude.ai `claude/ra-soat-dong-bo-creative-studio-14-chang-23-09-2026.md`.
 
 - [x] Nhánh Cloud M04b vào hàng đợi job (`media.variant.cloud`), gỡ `execFileSync` khỏi tiến trình web
 - [x] Sửa phép đo Subject Integrity (co biên 5px > light wrap 4px), REJECTED không ghi asset
@@ -761,7 +761,7 @@ Chi tiết từng ô ở `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_CHECKLIST.md` v2.0
 
 ## CS-24/09 — Creative Studio: nâng cấp sau chạy thật trên máy anh Tony
 
-Chi tiết ở `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_CHECKLIST.md` v2.1, Arch v4.1 §2 / §8.1, IO Spec v4.1 §5.0 / §7.1.
+Chi tiết ở `docs/dac-ta/ALG_CREATIVE_STUDIO_CHECKLIST.md` v2.1, Arch v4.1 §2 / §8.1, IO Spec v4.1 §5.0 / §7.1.
 
 - [x] Kịch bản bối cảnh theo chủ đề (`creative.scene_plan`, AIC-18, 1 credit) sinh ở Chặng 05, dùng chung B/C/D/E; CREATIVE 5 / AUTHENTIC 3 cảnh; gỡ bộ chọn bối cảnh tay ở D
 - [x] Chất lượng ảnh D: chốt lõi alpha, thân sản phẩm đặc lấy điểm ảnh Master, khử viền chỉ dải 6px, cổng phủ lõi ≥ 60%; lý do lùi Stability hiện trên thẻ cảnh
@@ -786,7 +786,7 @@ Báo cáo rà soát: project claude.ai `claude/ra-soat-khu-vuc-c-audio-24-09-202
 
 Quyết định PO 25/09/2026: chỉ một content engine, đặt trong `floraos-core` (không phải `SocialFlow`); `SocialFlow` chỉ còn đăng bài + `content_metrics`. Kế hoạch: project claude.ai `claude/ke-hoach-content-engine-core-25-09-2026.md`.
 
-- [x] Đợt 0 — chốt 8 quyết định (mục 0 của kế hoạch), sửa Level 1 (`FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 2/12, `BO_TINH_NANG_HIEN_TRANG.md` §2.4), dọn thay đổi thăm dò 25/09 (gọi M07 trực tiếp từ Chặng 05) — giữ `callProxyJson`/`isAllowedProxyPath`/`SOCIALFLOW_DIR`
+- [x] Đợt 0 — chốt 8 quyết định (mục 0 của kế hoạch), sửa Level 1 (`ALG_SAAS_TARGET_ARCHITECTURE_V2.md` mục 2/12, `BO_TINH_NANG_HIEN_TRANG.md` §2.4), dọn thay đổi thăm dò 25/09 (gọi M07 trực tiếp từ Chặng 05) — giữ `callProxyJson`/`isAllowedProxyPath`/`SOCIALFLOW_DIR`
 - [x] Đợt 1a — `contracts/brief.ts` (Brief v1, zod, `BRIEF_VERSION=1`) + JSON Schema sinh tự động (`gen-content-engine-schemas.ts`, `npm run gen:schemas:content-engine`/`check:schemas:content-engine`, `docs/dac-ta/schemas/content-engine/`) + `domain/channel-specs.ts` (EXTEND từ `flower_prompts.py`, khoá trần cứng với `campaign-package-rules.ts`) + `domain/deterministic-checks.ts` (độ dài/hashtag/từ cấm/claim ngoài facts) + `domain/brief-builder.ts` (thuần, nhận dữ liệu đã đọc). 30 test mới xanh, `tsc`/`eslint` sạch trên toàn repo, `check:schemas:content-engine` khớp.
 - [x] Đợt 1b — Bộ đọc `infra/` (`read-shop-context.ts`, `read-product-context.ts` — MI report → `product`/`passport`/`topic`, dự phòng `products`, `read-story-context.ts` — kịch bản Chặng 05 `creative.scene_plan`) + `use-cases/get-content-brief.ts` (gộp 3 đầu đọc + `buildContentBrief`, fallback chủ đề tối thiểu khi chưa có báo cáo, không bịa hook/CTA). Còn catalog link (Đợt 2, theo mục 3 kế hoạch). 48 test content-engine + 1024 test toàn repo xanh (trừ 1 test `variant-render-options` không liên quan, thuộc việc nâng cấp ảnh biến thể đang làm song song), `tsc`/`eslint` sạch.
 - [x] Đợt 1c (mã) — model `content_generations` (`prisma/schema.prisma`) + migration `prisma/migrations/20260925090000_content_generations` + `infra/content-generation-repository.ts` (create/findById/findLatest/approve/markScheduled) + `tests/tenant/content-generations.test.ts` (5 test cách ly tenant, theo khuôn `catalog-links.test.ts` gọi thẳng repository). **Chưa chạy được** `prisma generate`/`test:tenant` — VM Linux của cầu nối thiết bị chặn mạng tới `binaries.prisma.sh` (khác máy thật của anh Tony), đúng bẫy đã ghi ở mục 9 kế hoạch. Anh Tony chạy hộ trên Terminal thật của máy:
@@ -973,7 +973,7 @@ Quyết định PO 25/09/2026: mọi bước TẠO (nội dung, giọng, nhạc,
 - [x] Nội dung: Claude (Opus 5 / Sonnet 5) + Gemini (2.5 Pro / Flash) sau cổng AI, `preferredModelKeys` theo thứ tự tiệm, lùi sang bên kế tiếp; Chặng 02 qua cổng (#155); Critic AIC-24 chạy thật (#158)
 - [x] Ảnh A: mặc định chuỗi nhà cung cấp (Photoroom → fal → Gemini Image → OpenAI), lùi Studio cục bộ có lý do
 - [x] Ảnh D: mọi chế độ đi nhà cung cấp (fal → Stability → Gemini Image), AUTHENTIC chỉ nền + sáng, phép đo `perceptual`
-- [x] Video: clip từng cảnh qua Veo / Kling / Runway / Luma, ghép ở FloraOS; lùi Ken Burns cục bộ + hoàn phần clip lúc đọc; chọn bên ở Khu vực E (nợ #160)
+- [x] Video: clip từng cảnh qua Veo / Kling / Runway / Luma, ghép ở ALG; lùi Ken Burns cục bộ + hoàn phần clip lúc đọc; chọn bên ở Khu vực E (nợ #160)
 - [x] Nhạc nền: ElevenLabs Music sinh nhạc không lời theo tâm trạng (sau giọng đọc, đúng thời lượng), bài thư viện là dự phòng + hoàn phần nhạc; giọng đọc theo thứ tự tiệm (nợ #161)
 - [x] Giao diện Cài đặt thứ tự nhà cung cấp của tiệm (`/cai-dat-ai`, `provider-order-settings.tsx`, ghi cần `U2`) + chọn bên từng lượt cho nội dung (Chặng 05, Content Engine), giọng đọc, nhạc, ảnh, video — kiểm bằng Chromium thật
 - [ ] Chạy thật với khoá của từng nhà cung cấp (nợ #153, #159, #160)

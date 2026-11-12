@@ -1,6 +1,6 @@
 /**
  * Common types and schemas for Coordinator Module Contracts.
- * Tuân thủ Atomic Disaggregated Fields & Master Index SSOT của FloraOS.
+ * Tuân thủ Atomic Disaggregated Fields & Master Index SSOT của ALG.
  */
 
 import { z } from "zod"

@@ -129,7 +129,7 @@ function ExportOrdersButtonInner({
           variant="outline"
           size="sm"
           className="gap-1.5 text-body-sm"
-          aria-label="Xuất danh sách đơn hàng ra Excel"
+          aria-label={`${label} danh sách đơn hàng`}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
         >

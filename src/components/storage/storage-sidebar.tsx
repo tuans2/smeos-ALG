@@ -231,7 +231,7 @@ export function StorageSidebar({
             type="button"
             onClick={() => setFilter("raw")}
             className={`text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-              filter === "raw" ? "bg-warning text-white font-bold hover:bg-warning" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
+              filter === "raw" ? "bg-warning text-text font-bold hover:bg-warning" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             Ảnh gốc ({rawAssets.length})
@@ -374,7 +374,7 @@ export function StorageSidebar({
                     className="relative z-10 text-caption h-7 gap-1 px-1 font-semibold hover:text-primary border-border"
                     title="Sinh câu từ bán hàng Sinh dữ liệu bán hàng"
                   >
-                    <Sparkles size={11} className="text-accent" />
+                    <Sparkles size={11} className="text-accent-text" />
                     Sinh Copy (Sinh dữ liệu bán hàng)
                   </Button>
                   <Button variant="secondary"

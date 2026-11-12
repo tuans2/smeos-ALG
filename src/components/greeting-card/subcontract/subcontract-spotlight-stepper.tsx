@@ -66,8 +66,8 @@ export function SubcontractSpotlightStepper({
                     : isCompleted
                     ? "bg-success/5 border-success/30 hover:bg-success/10 text-text"
                     : isUnlocked
-                    ? "bg-surface-muted border-border hover:bg-surface text-text-muted"
-                    : "bg-surface-muted/50 border-border/40 text-text-muted/60 opacity-60 cursor-not-allowed"
+                    ? "bg-surface-alt border-border hover:bg-surface text-text-muted"
+                    : "bg-surface-alt/50 border-border/40 text-text-muted/60 opacity-60 cursor-not-allowed"
                 )}
               >
                 <div
@@ -78,8 +78,8 @@ export function SubcontractSpotlightStepper({
                       : isCompleted
                       ? "bg-success text-white"
                       : isUnlocked
-                      ? "bg-surface-muted text-text border border-border"
-                      : "bg-surface-muted text-text-muted/70 border border-border/40"
+                      ? "bg-surface-alt text-text border border-border"
+                      : "bg-surface-alt text-text-muted/70 border border-border/40"
                   )}
                 >
                   {isCompleted ? (

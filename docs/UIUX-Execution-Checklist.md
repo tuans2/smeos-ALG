@@ -1,10 +1,10 @@
-# Checklist thực thi & tích hợp UI/UX — 10 chức năng lõi FloraOS
+# Checklist thực thi & tích hợp UI/UX — 10 chức năng lõi ALG
 
 > [!NOTE]
 > **NGUỒN SỰ THẬT DUY NHẤT (OSOT) CHO TIẾN ĐỘ THỰC THI & TÍCH HỢP UI/UX**  
-> Tệp này là tài liệu hợp nhất chính thức giữa **Checklist tính năng giao diện** và **Checklist tích hợp Backend API** cho toàn bộ 10 chức năng lõi FloraOS (thay thế và chuẩn hóa từ `UIUX-Feature-Checklist.md` và `UIUX-Integrate-Checklist.md`).  
-> **Đặc tả thiết kế & tương tác chi tiết:** [`docs/FloraOS-UIUX-10-chuc-nang.md`](FloraOS-UIUX-10-chuc-nang.md).  
-> **Lộ trình kiến trúc tổng thể:** [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md#15-kế-hoạch-thực-thi-tổng-thể).
+> Tệp này là tài liệu hợp nhất chính thức giữa **Checklist tính năng giao diện** và **Checklist tích hợp Backend API** cho toàn bộ 10 chức năng lõi ALG (thay thế và chuẩn hóa từ `UIUX-Feature-Checklist.md` và `UIUX-Integrate-Checklist.md`).  
+> **Đặc tả thiết kế & tương tác chi tiết:** [`docs/ALG-UIUX-10-chuc-nang.md`](ALG-UIUX-10-chuc-nang.md).  
+> **Lộ trình kiến trúc tổng thể:** [`docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md`](kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md#15-kế-hoạch-thực-thi-tổng-thể).
 
 **Quy ước trạng thái tính năng:**
 - ✅ **Đã code & kết nối** — Giao diện hoàn thiện, gọi API thật hoặc xử lý trọn vẹn, có error handling.

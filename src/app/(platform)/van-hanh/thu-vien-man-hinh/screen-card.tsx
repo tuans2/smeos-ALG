@@ -62,9 +62,9 @@ export function ScreenCard({ screen, onCopyRoute, isCopied }: ScreenCardProps) {
 
         {/* Title & Screen ID */}
         <div>
-          <h3 className="text-body font-bold text-text group-hover:text-primary transition-colors line-clamp-1" title={screen.title}>
+          <h2 className="text-body font-bold text-text group-hover:text-primary transition-colors line-clamp-1" title={screen.title}>
             {screen.title}
-          </h3>
+          </h2>
           <p className="text-caption font-mono text-text-muted mt-0.5">
             {screen.screenId}
           </p>
@@ -88,7 +88,7 @@ export function ScreenCard({ screen, onCopyRoute, isCopied }: ScreenCardProps) {
         </div>
 
         {screen.isDynamic && (
-          <p className="text-caption text-warning flex items-center gap-1">
+          <p className="text-caption text-warning-text flex items-center gap-1">
             <span>⚠️ Tuyến động có tham số (URL mẫu: {screen.sampleUrl})</span>
           </p>
         )}

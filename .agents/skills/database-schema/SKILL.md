@@ -1,12 +1,12 @@
 ---
 name: database-schema
 description: >-
-  Quy tắc làm việc với Prisma schema và database cho FloraOS. Kích hoạt khi
+  Quy tắc làm việc với Prisma schema và database cho ALG. Kích hoạt khi
   agent cần sửa prisma/schema.prisma, tạo migration, thay đổi data model,
   hoặc làm việc trực tiếp với PostgreSQL.
 ---
 
-# Database & Prisma Schema — FloraOS
+# Database & Prisma Schema — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 
@@ -62,9 +62,9 @@ model my_table {
 5. **⚠️ DỪNG LẠI HỎI USER trước khi sửa schema.**
 
 ### 4. Docker & PostgreSQL
-- Container: `floraos-core-db`, credentials: `floraos:floraos@localhost:5432/floraos`.
+- Container: `alg-db`, credentials: `alg:alg@localhost:5432/alg`.
 - `pg_cron` cần Docker custom image: `docker/postgres-pgcron.Dockerfile`.
-- DB test: `floraos_test`, setup: `npm run db:test:setup`.
+- DB test: `alg_test`, setup: `npm run db:test:setup`.
 
 ---
 

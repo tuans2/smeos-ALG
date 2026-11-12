@@ -109,7 +109,7 @@ function ExportCustomersButtonInner({
         variant="outline"
         size="sm"
         className="gap-1.5 text-body-sm font-semibold"
-        aria-label="Sao lưu và xuất dữ liệu khách hàng"
+        aria-label="Sao lưu & Xuất dữ liệu khách hàng"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         disabled={isLoading}
@@ -147,11 +147,11 @@ function ExportCustomersButtonInner({
             disabled={isLoading}
             role="menuitem"
             className={`text-[length:inherit] h-auto justify-start font-[inherit] w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
-              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-elevated cursor-pointer"
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface cursor-pointer"
             }`}
             onClick={() => !isLoading && handleDownload("xlsx")}
           >
-            <div className="p-2 rounded-md bg-primary-bg text-primary shrink-0 mt-0.5">
+            <div className="p-2 rounded-md bg-primary-muted text-primary shrink-0 mt-0.5">
               <FileSpreadsheet className="h-4 w-4" />
             </div>
             <div>
@@ -167,7 +167,7 @@ function ExportCustomersButtonInner({
             disabled={isLoading}
             role="menuitem"
             className={`text-[length:inherit] h-auto justify-start font-[inherit] w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
-              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-elevated cursor-pointer"
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface cursor-pointer"
             }`}
             onClick={() => !isLoading && handleDownload("json")}
           >

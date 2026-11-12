@@ -81,7 +81,7 @@ export function CopilotMessageItem({
 
   if (isSystem) {
     return (
-      <div className="rounded-lg bg-surface-raised border border-border p-2.5 text-center text-caption text-text-muted italic">
+      <div className="rounded-lg bg-surface border border-border p-2.5 text-center text-caption text-text-muted italic">
         {message.content}
       </div>
     )
@@ -100,7 +100,7 @@ export function CopilotMessageItem({
           className={`rounded-2xl px-3.5 py-2 text-caption leading-relaxed whitespace-pre-line transition-all ${
             isUser
               ? "bg-primary text-white font-medium rounded-br-none"
-              : "bg-surface-raised border border-border text-text rounded-bl-none shadow-2xs select-text"
+              : "bg-surface border border-border text-text rounded-bl-none shadow-2xs select-text"
           }`}
         >
           {displayedText}

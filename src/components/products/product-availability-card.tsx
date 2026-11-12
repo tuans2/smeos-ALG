@@ -102,7 +102,7 @@ export function ProductAvailabilityCard({
           <Calendar size={18} className="text-primary" />
           <span className="text-body font-bold text-text">Cơ chế Khả dụng & Đặt hàng</span>
         </div>
-        <span className="text-caption px-2.5 py-0.5 rounded-full bg-surface-muted text-text-muted font-medium">
+        <span className="text-caption px-2.5 py-0.5 rounded-full bg-surface-alt text-text-muted font-medium">
           Ngành: {industryKey || "Mặc định"}
         </span>
       </div>
@@ -139,7 +139,7 @@ export function ProductAvailabilityCard({
               className={`p-3 h-auto rounded-xl border text-left transition flex flex-col items-start gap-1 justify-start ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                  : "border-border bg-surface hover:bg-surface-muted/30"
+                  : "border-border bg-surface hover:bg-surface-alt/30"
               }`}
             >
               <div className="flex items-center gap-2 font-bold text-body-sm text-text">
@@ -196,7 +196,7 @@ export function ProductAvailabilityCard({
 
       {/* Cấu hình chi tiết cho DAILY_CAPACITY */}
       {config.mode === "DAILY_CAPACITY" && (
-        <div className="p-4 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-3">
+        <div className="p-4 rounded-xl border border-border bg-surface-alt/30 flex flex-col gap-3">
           <div className="text-caption font-bold uppercase tracking-wider text-text">
             Khống chế Năng lực Chế tác Mỗi Ngày
           </div>

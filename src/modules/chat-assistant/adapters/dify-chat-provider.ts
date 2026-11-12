@@ -2,7 +2,7 @@
  * Dify Chat Provider Adapter (Headless AI Engine).
  * Hỗ trợ Dual-Intent:
  * 1. Tư vấn bán hàng Tư vấn bán hoa & Chốt đơn M10 Chốt đơn M10 từ Product Master Index.
- * 2. Trợ lý SaaS In-App Copilot hướng dẫn toàn diện cách sử dụng nền tảng smeOS.
+ * 2. Trợ lý SaaS In-App Copilot hướng dẫn toàn diện cách sử dụng nền tảng ALG.
  */
 
 import { env } from "@/lib/env"
@@ -56,7 +56,7 @@ export class DifyChatProvider {
     const intent = detectUserIntent(input.query)
 
     // ─────────────────────────────────────────────────────────────────────────
-    // NHÁNH 1: HƯỚNG DẪN VẬN HÀNH SAAS FLORAOS (SaaS Help Copilot)
+    // NHÁNH 1: HƯỚNG DẪN VẬN HÀNH SAAS ALG (SaaS Help Copilot)
     // ─────────────────────────────────────────────────────────────────────────
     if (intent === "SAAS_HELP") {
       const kbMatch = querySaasKnowledge(input.query)
@@ -76,7 +76,7 @@ export class DifyChatProvider {
 
       // Trả lời hướng dẫn chung nếu chưa khớp chính xác 1 mục
       return {
-        replyText: `Dạ em là smeOS AI Copilot! Em có thể hướng dẫn anh/chị thao tác toàn bộ tính năng trên hệ thống:\n\n- **M01**: Phân tích ảnh sản phẩm Phân tích ảnh hoa & bóc tách BOM thành phần bóc tách BOM thành phần\n- **M02**: Cấu hình bảng giá niêm yết\n- **M04c**: Dựng video marketing 9:16 cho TikTok/Reels\n- **M06**: Xuất mã QR & quản lý Catalog trực tuyến\n- **M09**: Quản lý khách hàng, phân tầng RFM & nhắc ngày kỷ niệm\n- **M10**: Tạo đơn hàng, in phiếu chế tác xưởng (ẩn giá) & phiếu giao A6\n\nAnh/chị đang cần hỗ trợ thao tác chức năng nào ạ?`,
+        replyText: `Dạ em là ALG AI Copilot! Em có thể hướng dẫn anh/chị thao tác toàn bộ tính năng trên hệ thống:\n\n- **M01**: Phân tích ảnh sản phẩm Phân tích ảnh hoa & bóc tách BOM thành phần bóc tách BOM thành phần\n- **M02**: Cấu hình bảng giá niêm yết\n- **M04c**: Dựng video marketing 9:16 cho TikTok/Reels\n- **M06**: Xuất mã QR & quản lý Catalog trực tuyến\n- **M09**: Quản lý khách hàng, phân tầng RFM & nhắc ngày kỷ niệm\n- **M10**: Tạo đơn hàng, in phiếu chế tác xưởng (ẩn giá) & phiếu giao A6\n\nAnh/chị đang cần hỗ trợ thao tác chức năng nào ạ?`,
         suggestedProducts: [],
         userIntent: "SAAS_HELP",
       }
@@ -168,7 +168,7 @@ export class DifyChatProvider {
         ? `Khách hàng: ${input.customer.name} (Hạng: ${input.customer.metrics.tier || "Mới"})`
         : "Khách hàng"
 
-      const systemPrompt = `Bạn là Trợ lý Sản Phẩm AI chuyên nghiệp và tận tâm của cửa hàng smeOS.
+      const systemPrompt = `Bạn là Trợ lý Sản Phẩm AI chuyên nghiệp và tận tâm của cửa hàng ALG.
 Nhiệm vụ của bạn:
 - Giao tiếp duyên dáng, tinh tế, lịch thiệp, ấm áp bằng tiếng Việt.
 - Tư vấn nhiệt tình theo ngân sách, màu sắc phong thủy, loài hoa hoặc dịp lễ (sinh nhật, khai trương, kỷ niệm, tình yêu...).
@@ -244,7 +244,7 @@ ${catalogSummary}`
         ? `Khách hàng: ${input.customer.name} (Hạng: ${input.customer.metrics.tier || "Mới"})`
         : "Khách hàng"
 
-      const systemPrompt = `Bạn là Trợ lý Sản Phẩm AI chuyên nghiệp của cửa hàng smeOS (sử dụng mô hình Qwen Local).
+      const systemPrompt = `Bạn là Trợ lý Sản Phẩm AI chuyên nghiệp của cửa hàng ALG (sử dụng mô hình Qwen Local).
 Nhiệm vụ:
 - Giao tiếp duyên dáng, thân thiện, lịch thiệp bằng tiếng Việt.
 - Tư vấn sản phẩm phù hợp theo ngân sách, loài hoa hoặc dịp lễ (sinh nhật, khai trương, kỷ niệm...).

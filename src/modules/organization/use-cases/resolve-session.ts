@@ -1,6 +1,6 @@
 import { AppError, sessionSuperseded, unauthenticated } from "@/core/http/errors"
 import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
-import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
+import { readSessionCookie } from "@/core/http/cookies"
 import { bindRequestActor } from "@/core/observability/request-context"
 import type { TenantContext } from "@/core/tenancy"
 import { canSignIn } from "@/modules/organization/domain/account-approval"
@@ -27,7 +27,7 @@ export type ResolvedSession = {
 }
 
 export function sessionTokenFrom(request: Request): string | null {
-  return readCookie(request, SESSION_COOKIE)
+  return readSessionCookie(request)
 }
 
 /**

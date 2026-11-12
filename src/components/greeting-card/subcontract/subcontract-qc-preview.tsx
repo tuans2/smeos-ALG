@@ -19,7 +19,7 @@ export function SubcontractQcPreview({
   onUpload,
 }: SubcontractQcPreviewProps) {
   return (
-    <div className="flex flex-col gap-3 p-3 rounded-xl bg-surface-muted border border-border">
+    <div className="flex flex-col gap-3 p-3 rounded-xl bg-surface-alt border border-border">
       <div className="relative w-full h-56 rounded-lg overflow-hidden bg-black/5 flex items-center justify-center">
         <LocalImagePreview file={selectedFile} label="Xem trước ảnh chụp" fit="contain" width={640} height={448} className="w-full h-full" />
       </div>

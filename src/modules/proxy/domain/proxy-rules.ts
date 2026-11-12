@@ -15,7 +15,7 @@
  * cho trình duyệt.
  *
  * Hai đường danh tính forwarded:
- *   - `X-FloraOS-SSO: <jwt>` — thay mặt NGƯỜI DÙNG đang đăng nhập. Sibling đã
+ *   - `X-ALG-SSO: <jwt>` — thay mặt NGƯỜI DÙNG đang đăng nhập. Sibling đã
  *     có `sso_auth.py`/`sso-jwt.ts` để verify, `claims.org` là tổ chức. Dùng cho
  *     mọi tính năng theo người dùng.
  *   - `Authorization: Bearer <token>` — token MÁY GỌI MÁY (`integration_tokens`,
@@ -31,10 +31,10 @@ import { AppError } from "@/core/http/errors"
 
 export type ProxyClient = "SOCIALFLOW" | "LOCALBUDD"
 
-/** Tên header core forward JWT `smeos_sso` khi gọi server-to-server. */
-export const SSO_HEADER = "x-smeos-sso"
-/** Tên header legacy tương thích ngược. */
-export const LEGACY_SSO_HEADER = "x-floraos-sso"
+/** Tên header mang JWT phiên liên-app (`alg_sso`) khi gọi server-to-server. */
+export const SSO_HEADER = "x-alg-sso"
+/** Tên trước khi đổi thương hiệu ALG (12/11/2026) và trước nữa — vẫn đọc, và vẫn gửi kèm cho ứng dụng liên kết chưa cập nhật. */
+export const LEGACY_SSO_HEADERS = ["x-smeos-sso", "x-floraos-sso"] as const
 
 /** Tên header core forward token máy-gọi-máy. */
 export const AUTHORIZATION_HEADER = "authorization"

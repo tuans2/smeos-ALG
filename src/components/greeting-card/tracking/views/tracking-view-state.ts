@@ -3,6 +3,7 @@
  * mọi view (đổi view không mất bộ lọc). Không chứa dữ liệu đơn — chỉ là tham số gửi lên lớp truy vấn
  * `/api/v1/greeting-card/tracking`. View tự lưu nằm trên máy người dùng (PO 06/10/2026).
  */
+import "@/lib/brand-storage-migration"
 import type { SlaState, SortField } from "@/modules/greeting-card/domain/tracking-views"
 import type { TrackingCategory } from "@/modules/greeting-card/domain/tracking-filters"
 import type { StepOwner } from "@/modules/greeting-card/domain/step-sla"
@@ -113,7 +114,7 @@ export function presetViews(industryKey?: string | null): SavedView[] {
   ]
 }
 
-const STORE_KEY_PREFIX = "smeos:tracking:saved-views"
+const STORE_KEY_PREFIX = "alg:tracking:saved-views"
 const LEGACY_STORE_KEY_PREFIX = "floraos:tracking:saved-views"
 function getStoreKey(orgId?: string | null): string {
   return orgId ? `${STORE_KEY_PREFIX}__${orgId}` : STORE_KEY_PREFIX

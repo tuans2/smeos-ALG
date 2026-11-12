@@ -59,7 +59,7 @@ export function BrochureStepTimeoutSettings() {
             Thời hạn & Tự động huỷ đơn theo bước
           </h3>
         </div>
-        <span className="text-caption font-bold text-text-muted bg-surface-muted px-2.5 py-1 rounded-full">
+        <span className="text-caption font-bold text-text-muted bg-surface-alt px-2.5 py-1 rounded-full">
           Chuẩn toàn tiệm
         </span>
       </div>
@@ -69,7 +69,7 @@ export function BrochureStepTimeoutSettings() {
       </p>
 
       {savedPolicy === null ? (
-        <div className="h-40 rounded-xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-40 rounded-xl bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <div className="space-y-3.5">
           {/* Bước 1: Quá hạn mở link */}

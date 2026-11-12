@@ -52,8 +52,8 @@ export function PartnerManagementModal({
       const res = await fetch(PARTNER_DIRECTORY_URL)
       if (!res.ok) throw new Error("Không thể tải danh bạ đối tác")
       const data = await res.json()
-      if (Array.isArray(data.partners)) {
-        setPartners(data.partners)
+      if (Array.isArray(data.data)) {
+        setPartners(data.data)
       }
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Lỗi kết nối")

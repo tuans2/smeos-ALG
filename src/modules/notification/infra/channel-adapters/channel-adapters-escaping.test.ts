@@ -40,6 +40,14 @@ describe("adapter thông báo thoát ký tự & không rò dữ liệu (AUD-016)
     expect(sendEmail.mock.calls[0]![0].html).toContain('href="https://app.example.com/don-hang/1"')
   })
 
+  it("email: mang nhận diện ALG (tiêu đề [ALG], nút màu chính #133D31)", async () => {
+    await new EmailNotificationAdapter().send(payload({ deepLink: "https://app.example.com/don-hang/1" }))
+    const mail = sendEmail.mock.calls[0]![0]
+    expect(mail.subject.startsWith("[ALG] ")).toBe(true)
+    expect(mail.html).toContain("background-color: #133D31")
+    expect(mail.html).not.toContain("#2563eb")
+  })
+
   it("telegram: thiếu chatId người nhận thì không gửi về chat mặc định dùng chung", async () => {
     vi.stubEnv("TELEGRAM_BOT_TOKEN", "test-token")
     vi.stubEnv("TELEGRAM_DEFAULT_CHAT_ID", "shared-chat")

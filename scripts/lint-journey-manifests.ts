@@ -1,6 +1,6 @@
 /**
  * Journey Manifests Lint Script (FR-J09..J13)
- * FloraOS Core — Final Hardening Patch v2.3 / Mục 11.4
+ * ALG Core — Final Hardening Patch v2.3 / Mục 11.4
  */
 
 import { DECISION_REGISTRY_SEED } from '../src/modules/journey/domain/decision-ownership'

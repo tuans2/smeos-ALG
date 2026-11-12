@@ -1,6 +1,6 @@
 # 02 — Cách ly dữ liệu và phân quyền
 
-smeOS là SaaS nhiều tổ chức trên một CSDL. Mọi bảng thuộc tổ chức có cột `organization_id` và chỉ mục
+ALG là SaaS nhiều tổ chức trên một CSDL. Mọi bảng thuộc tổ chức có cột `organization_id` và chỉ mục
 `@@index([organization_id])`. Cách ly được giữ ở bốn lớp: phiên, repository, Row Level Security, test.
 
 ## 1. Ngữ cảnh tổ chức
@@ -23,7 +23,7 @@ smeOS là SaaS nhiều tổ chức trên một CSDL. Mọi bảng thuộc tổ c
 | Ngữ cảnh CSDL theo luồng (AsyncLocalStorage) | `src/core/tenancy/db-context.ts` — `runWithDbContext`, `bindTenantDb`, `withTenantDb`, `asSystemDb` |
 | Pool đặt biến phiên mỗi lần lấy kết nối | `src/core/tenancy/infra/rls-pool.ts` — `app.org_id`, `app.rls_system`, `app.rls_mode` |
 | Worker | `workers/shared/rls.py` — nhận job bằng quyền hệ thống, xử lý trong tổ chức của dòng job |
-| Vai CSDL | `scripts/db/create-roles.sql` — `smeos_app`, `smeos_worker`, `smeos_system` (bỏ qua RLS), `smeos_readonly` (luôn chặn) |
+| Vai CSDL | `scripts/db/create-roles.sql` — `alg_app`, `alg_worker`, `alg_system` (bỏ qua RLS), `alg_readonly` (luôn chặn) |
 
 Chế độ đặt bằng `DB_RLS_MODE`: `off` (không đặt ngữ cảnh), `audit` (đặt ngữ cảnh, ghi log `db.rls.unscoped_query` khi truy vấn
 chưa gắn tổ chức chạm bảng thuộc tổ chức), `enforce` (CSDL trả 0 dòng / từ chối ghi sai tổ chức). Production đang ở `audit`; điều
@@ -71,7 +71,7 @@ nếu không truy vấn chạy ngoài ngữ cảnh.
 
 Khai ở `org/domain/system-roles.ts`: Điều hành (`dieu_hanh`, vai chủ tiệm), Điều phối, Sale, Quản lý sản phẩm, Marketing, Chăm sóc
 khách hàng (`crm`, `customer_service`), Cửa hàng nhận gia công (`cua_hang`), Thợ chế tác (`tho_cam`), Shipper, Kế toán
-(`ke_toan`), Experience User. Trang chủ theo vai: `org/domain/role-ux-operations.ts`, `src/app/(app)/page.tsx`.
+(`ke_toan`), Người dùng trải nghiệm (`experience_user`). Trang chủ theo vai: `org/domain/role-ux-operations.ts`, `src/app/(app)/page.tsx`.
 
 ## 5. Phạm vi chi nhánh (checklist 9.13)
 

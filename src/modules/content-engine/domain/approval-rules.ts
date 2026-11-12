@@ -55,7 +55,7 @@ export function decideApproval(input: {
     return { ok: false, kind: "CONFLICT", reason: "Bài đã gửi lịch đăng — không duyệt lại được." }
   }
   if (input.status !== "DRAFT" && input.status !== "APPROVED") {
-    return { ok: false, kind: "CONFLICT", reason: `Trạng thái ${input.status} không duyệt được.` }
+    return { ok: false, kind: "CONFLICT", reason: "Lượt bài này không còn duyệt được nữa." }
   }
 
   const byChannel = new Map(input.generatedPosts.map((p) => [p.channel, p]))

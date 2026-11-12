@@ -1,5 +1,5 @@
 /**
- * Ai chịu trách nhiệm một link (PO 06/10/2026): người bấm "Sao chép" trong FloraOS.
+ * Ai chịu trách nhiệm một link (PO 06/10/2026): người bấm "Sao chép" trong ALG.
  * Link cũ không qua nút Sao chép → người phụ trách mặc định do Điều hành chọn. Pure TypeScript.
  */
 

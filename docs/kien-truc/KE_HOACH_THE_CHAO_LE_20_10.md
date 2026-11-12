@@ -83,7 +83,7 @@ Không hạng mục nào sửa cấu trúc cơ sở dữ liệu (`schema.prisma`
 1. Nút **"Thêm nhân viên"**: nhập họ tên, email đăng nhập (không cần email thật, ví dụ `sale1@tenquan.vn`), vai.
    - Máy tạo **mật khẩu tạm** 12 ký tự, hiện **một lần** kèm nút "Sao chép".
    - Tài khoản **đang hoạt động ngay**.
-   - Giữ luồng "Mời" cũ cho trường hợp người đã có tài khoản FloraOS.
+   - Giữ luồng "Mời" cũ cho trường hợp người đã có tài khoản ALG.
 2. Nút **"Đặt lại mật khẩu"** cho từng nhân viên (`A7`, chỉ Điều hành). Đặt lại xong thì nhân viên bị đăng xuất ở mọi máy.
 3. Nút **"Tạm khoá / Mở khoá"** (`A5`): khoá là đăng xuất ngay, dữ liệu và đơn của nhân viên vẫn giữ.
 4. Mục **"Đổi mật khẩu"** trong menu tài khoản cho mọi người (`A2`).

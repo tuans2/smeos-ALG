@@ -34,7 +34,7 @@ export interface SubFeature {
   requiresApprovedInput?: string;
   /** Cần Master Image đã APPROVED (M04b, M04c, M07) */
   dependsOnMasterImage?: boolean;
-  /** Cần consent khách hàng (M09 reminder) */
+  /** Gửi tới khách (M09 nhắc mua lại): chỉ khách đã đồng ý nhận tin — kiểm theo từng khách lúc gửi, không khoá ở đây */
   requiresConsent?: boolean;
   /** Ước tính credit (D14 placeholder — chưa chốt bảng giá) */
   creditCost?: number;
@@ -917,7 +917,7 @@ export function getModuleGroups(): ModuleFeatureGroup[] {
 
 export interface DependencyCheck {
   canRun: boolean;
-  reason?: string;
+  reason?: string; // canRun=false: lý do khoá; canRun=true: ghi chú cho người chạy
 }
 
 export function checkFeatureDependencies(
@@ -925,7 +925,6 @@ export function checkFeatureDependencies(
   context: {
     hasApprovedAnalysis: boolean;
     hasApprovedMasterImage: boolean;
-    hasCustomerConsent: boolean;
   }
 ): DependencyCheck {
   if (feature.requiresApprovedInput && !context.hasApprovedAnalysis) {
@@ -934,8 +933,8 @@ export function checkFeatureDependencies(
   if (feature.dependsOnMasterImage && !context.hasApprovedMasterImage) {
     return { canRun: false, reason: "Cần Master Image đã được duyệt (M04a)" };
   }
-  if (feature.requiresConsent && !context.hasCustomerConsent) {
-    return { canRun: false, reason: "Cần đồng ý dữ liệu cá nhân của khách hàng" };
+  if (feature.requiresConsent) { // audit L-06: đồng ý là của từng khách (projectMarketingAudience…), trang sản phẩm không có khách cụ thể
+    return { canRun: true, reason: "Chỉ gửi cho khách đã đồng ý nhận tin; khách chưa đồng ý tự bị bỏ qua lúc gửi" };
   }
   return { canRun: true };
 }

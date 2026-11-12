@@ -78,7 +78,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
       <div className="flex flex-col">
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           <div className="rounded-xl border border-warning-border bg-warning-bg/40 p-3 text-caption text-warning-text flex items-start gap-2">
-            <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning" aria-hidden="true" />
+            <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning-text" aria-hidden="true" />
             <span>
               Đơn sẽ được ẩn khỏi bảng tiến độ. Sau <strong>5 phút</strong> nếu Điều hành chưa duyệt, hệ thống sẽ tự động chấp thuận. Đơn có thể khôi phục lại bất kỳ lúc nào từ bộ lọc &ldquo;Đã hủy / bỏ hiển thị&rdquo;.
             </span>

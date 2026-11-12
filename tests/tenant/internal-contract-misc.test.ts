@@ -57,7 +57,7 @@ describe("hợp đồng — phiên, báo cáo, bản in, mã giảm giá, credit
     await expectContract(await listInvitations(get("/session/invitations", staff)), 200, R.invitationsResponse, "session-invitations")
     await expectContract(await accept(send(`/session/invitations/${id}/accept`, "POST", undefined, staff), ps(id)), 200, R.invitationAcceptedResponse, "session-accept")
     const sw = await switchOrg(send("/session/organization", "POST", { organization_id: shop.organizationId }, staff))
-    expect(sw.headers.get("set-cookie")).toContain("smeos_sso=")
+    expect(sw.headers.get("set-cookie")).toContain("alg_sso=")
     await expectContract(sw, 200, R.switchOrganizationResponse, "session-switch")
     expect((await switchOrg(send("/session/organization", "POST", { organization_id: (await createTenant("hop-dong-la")).organizationId }, staff))).status).toBe(404)
 
@@ -95,7 +95,7 @@ describe("hợp đồng — phiên, báo cáo, bản in, mã giảm giá, credit
     const id = String(created.id)
     await expectContract(await listBatches(get("/vouchers/batches")), 200, R.voucherBatchesResponse, "voucher-list")
     await expectContract(await getBatch(get(`/vouchers/batches/${id}`), ps(id)), 200, R.voucherBatchResponse, "voucher-get")
-    await expectContract(await patchBatch(send(`/vouchers/batches/${id}`, "PATCH", { is_active: false }), ps(id)), 200, R.okResponse, "voucher-patch")
+    await expectContract(await patchBatch(send(`/vouchers/batches/${id}`, "PATCH", { is_active: false }), ps(id)), 200, R.voucherBatchToggledResponse, "voucher-patch")
     const csv = await exportBatch(get(`/vouchers/batches/${id}/export`), ps(id))
     expect([csv.status, csv.headers.get("content-type")]).toEqual([200, "text/csv; charset=utf-8"])
     expect((await csv.text()).split("\n").filter(Boolean).length).toBeGreaterThanOrEqual(4)

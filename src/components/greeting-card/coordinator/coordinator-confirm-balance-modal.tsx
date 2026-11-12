@@ -54,7 +54,7 @@ export function CoordinatorConfirmBalanceModal({
 
   return (
     <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
-      title={<span className="flex items-center gap-2"><Banknote size={20} className="text-warning shrink-0" /> Xác nhận Nhận Đủ Tiền Lần 2 — #{orderCode}</span>}>
+      title={<span className="flex items-center gap-2"><Banknote size={20} className="text-warning-text shrink-0" /> Xác nhận Nhận Đủ Tiền Lần 2 — #{orderCode}</span>}>
       <form onSubmit={handleConfirm} className="flex flex-col gap-4">
 
         <p className="text-body-sm text-text-muted">
@@ -74,7 +74,7 @@ export function CoordinatorConfirmBalanceModal({
                 width={320}
                 height={200}
                 unoptimized
-                className="w-full max-h-48 object-contain rounded-xl border border-border bg-surface-muted"
+                className="w-full max-h-48 object-contain rounded-xl border border-border bg-surface-alt"
               />
             </a>
             <p className="text-caption text-text-muted">Nhấp ảnh để xem kích thước đầy đủ.</p>
@@ -82,7 +82,7 @@ export function CoordinatorConfirmBalanceModal({
         )}
 
         {!proofUrl && (
-          <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 text-caption text-warning">
+          <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 text-caption text-warning-text">
             Khách chưa tải ảnh bill lần 2. Hãy đối soát tài khoản ngân hàng trực tiếp trước khi xác nhận.
           </div>
         )}
@@ -111,7 +111,7 @@ export function CoordinatorConfirmBalanceModal({
           <Button
             type="submit"
             disabled={busy}
-            className="bg-warning hover:bg-warning/90 text-white font-bold gap-1.5"
+            className="bg-warning hover:bg-warning/90 text-text font-bold gap-1.5"
           >
             <CheckCircle2 size={16} />
             {busy ? "Đang xử lý..." : "Xác nhận Đã Nhận Đủ Tiền"}

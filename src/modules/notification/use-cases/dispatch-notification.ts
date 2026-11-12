@@ -14,6 +14,7 @@ import type {
   ChannelSendResult,
 } from "../domain/notification-payload"
 import { getNotificationEvent } from "../domain/events"
+import { openDeepLink } from "../domain/notification-recipients"
 import { resolveEffectiveNotification } from "./resolve-effective-notification"
 import { getChannelAdapter } from "../infra/channel-adapters"
 
@@ -82,8 +83,8 @@ export async function dispatchNotification(
       recipient,
       title,
       message,
-      // Template còn biến chưa điền ({orderId}) thì không gắn — link hỏng tệ hơn không có link
-      deepLink: deepLink ?? (eventDef?.deepLinkTemplate?.includes("{") ? undefined : eventDef?.deepLinkTemplate ?? undefined),
+      // Template còn biến chưa điền ({orderId}) thì không gắn — link hỏng tệ hơn không có link; tuyến đang khoá cũng không gắn
+      deepLink: openDeepLink(deepLink ?? (eventDef?.deepLinkTemplate?.includes("{") ? undefined : eventDef?.deepLinkTemplate ?? undefined)),
       priority: resolve.priority,
       metadata,
     }

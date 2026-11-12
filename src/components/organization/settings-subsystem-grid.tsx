@@ -41,7 +41,7 @@ export function SettingsSubsystemGrid() {
           className="p-4 rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-xs transition-all flex flex-col justify-between group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="space-y-2">
-            <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+            <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent-text flex items-center justify-center">
               <Cpu size={18} />
             </div>
             <div className="text-body-sm font-bold text-text group-hover:text-accent-text transition-colors">
@@ -61,7 +61,7 @@ export function SettingsSubsystemGrid() {
           className="p-4 rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-xs transition-all flex flex-col justify-between group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="space-y-2">
-            <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+            <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent-text flex items-center justify-center">
               <Share2 size={18} />
             </div>
             <div className="text-body-sm font-bold text-text group-hover:text-accent-text transition-colors">

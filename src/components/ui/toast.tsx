@@ -92,7 +92,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const toneIcons = {
     success: <CheckCircle2 className="h-5 w-5 text-success shrink-0" />,
     error: <XCircle className="h-5 w-5 text-danger shrink-0" />,
-    warning: <AlertCircle className="h-5 w-5 text-warning shrink-0" />,
+    warning: <AlertCircle className="h-5 w-5 text-warning-text shrink-0" />,
     info: <Info className="h-5 w-5 text-primary shrink-0" />,
   }
 

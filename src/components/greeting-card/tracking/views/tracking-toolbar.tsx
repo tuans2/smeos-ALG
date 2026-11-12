@@ -159,7 +159,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             className={`py-0 inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-caption font-semibold transition-colors ${
               showAdvanced || advancedCount > 0
                 ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
-                : "border-border text-text-muted hover:bg-surface-muted hover:text-text"
+                : "border-border text-text-muted hover:bg-surface-alt hover:text-text"
             }`}
           >
             <SlidersHorizontal size={13} />
@@ -207,7 +207,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
               type="button"
               onClick={onRefresh}
               title="Làm mới tiến độ"
-              className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-text"
+              className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt hover:text-text"
             >
               <RefreshCw size={14} />
             </Button>

@@ -18,7 +18,7 @@ acceptance:
 
 **Tuyến:** `/ket-noi` · **Tệp chính:** `src/app/(app)/ket-noi/page.tsx` + `src/components/channel-connections/use-channel-accounts.ts` · **Cập nhật:** 30/10/2026 · **Thẻ:** T5.D2
 
-> **Trạng thái production (01/11/2026, P0-06):** khoá "Sắp ra mắt" ở mọi bản build production (`UNAVAILABLE_ROUTE_PREFIXES`, `src/lib/feature-lock.ts`) — màn này còn gửi tài khoản MXH sang SocialFlow, production không cấu hình SocialFlow. Mở lại khi kết nối OAuth trong SMEOS xong (Workstream S, `docs/audit/architecture-audit/17_SOCIALFLOW_REPLACEMENT_PLAN.md` S-06, S-13).
+> **Trạng thái production (01/11/2026, P0-06):** khoá "Sắp ra mắt" ở mọi bản build production (`UNAVAILABLE_ROUTE_PREFIXES`, `src/lib/feature-lock.ts`) — màn này còn gửi tài khoản MXH sang SocialFlow, production không cấu hình SocialFlow. Mở lại khi kết nối OAuth trong ALG xong (Workstream S, `docs/audit/architecture-audit/17_SOCIALFLOW_REPLACEMENT_PLAN.md` S-06, S-13).
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `marketing_specialist` · Vai phụ: `social_media_manager`

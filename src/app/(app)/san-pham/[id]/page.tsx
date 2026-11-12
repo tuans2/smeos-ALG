@@ -126,6 +126,7 @@ export default function ProductDetailPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => router.push(`/san-pham/${productId}/tinh-nang` as never)}
+                  aria-label="Mở Studio Tính Năng"
                   className="flex items-center gap-1.5"
                 >
                   <Sparkles size={14} className="text-primary" />

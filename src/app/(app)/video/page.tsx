@@ -261,7 +261,7 @@ export default function VideoStudioPage() {
                 <Button
                   onClick={handleApproveScript}
                   disabled={actionLoading}
-                  className="gap-2 bg-success hover:bg-success-dark text-white shadow-xs"
+                  className="gap-2 bg-success hover:bg-success-text text-white shadow-xs"
                 >
                   <CheckCircle2 size={16} /> Chốt duyệt kịch bản (Cổng 1)
                 </Button>
@@ -281,7 +281,7 @@ export default function VideoStudioPage() {
                 <Button
                   onClick={handleApproveVideo}
                   disabled={actionLoading}
-                  className="gap-2 bg-success hover:bg-success-dark text-white shadow-xs"
+                  className="gap-2 bg-success hover:bg-success-text text-white shadow-xs"
                 >
                   <CheckCircle2 size={16} /> Chốt duyệt video (Cổng 2)
                 </Button>
@@ -364,7 +364,7 @@ export default function VideoStudioPage() {
                 </div>
                 <div className="text-right">
                   <span className="text-caption text-text-muted block">Hạn mức dự toán</span>
-                  <span className="text-body-sm font-extrabold text-warning">{activeJob.cost_credits} credits</span>
+                  <span className="text-body-sm font-extrabold text-warning-text">{activeJob.cost_credits} credits</span>
                 </div>
               </Card>
 

@@ -1,4 +1,4 @@
-# 00 — Tóm tắt điều hành: Audit SDAGF cho SMEOS
+# 00 — Tóm tắt điều hành: Audit SDAGF cho ALG
 
 | Mục | Giá trị |
 |---|---|
@@ -10,7 +10,7 @@
 
 ## Kết luận chính
 
-SMEOS có nền tảng tenancy ở tầng dữ liệu khá tốt: `scopedWhere`, đường dẫn kho theo `org/<organization_id>/…` dựng phía máy chủ, 119 file test cách ly tenant chạy trong CI, gitleaks và CodeQL. Ngược lại, **tầng lưu trữ tệp (object storage) chưa được quản trị**: không có xoá payload, không có sao lưu cho kho tệp, chưa có retention/legal hold, và có một lỗ hổng truy cập nghiêm trọng.
+ALG có nền tảng tenancy ở tầng dữ liệu khá tốt: `scopedWhere`, đường dẫn kho theo `org/<organization_id>/…` dựng phía máy chủ, 119 file test cách ly tenant chạy trong CI, gitleaks và CodeQL. Ngược lại, **tầng lưu trữ tệp (object storage) chưa được quản trị**: không có xoá payload, không có sao lưu cho kho tệp, chưa có retention/legal hold, và có một lỗ hổng truy cập nghiêm trọng.
 
 ### Critical / High (xem `05-risk-register.md`)
 

@@ -1,6 +1,6 @@
 /**
- * Domain Types: Product Intelligence (Trụ cột B của FloraOS Intelligence Engine v2.0).
- * Tuân thủ mục 8-19 của tài liệu FloraOS-Intelligence-Engine_FINAL_v2.0.md.
+ * Domain Types: Product Intelligence (Trụ cột B của ALG Intelligence Engine v2.0).
+ * Tuân thủ mục 8-19 của tài liệu ALG-Intelligence-Engine_FINAL_v2.0.md.
  * Thuần TypeScript — Zero external dependencies.
  */
 

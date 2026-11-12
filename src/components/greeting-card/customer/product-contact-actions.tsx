@@ -13,7 +13,7 @@ interface Props {
   variantName?: string | null | undefined
 }
 
-const BTN = "flex h-auto min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-muted"
+const BTN = "flex h-auto min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-alt"
 
 /** Ba cách liên hệ cho mẫu "Liên hệ" / phiên bản theo ý khách: Gọi điện, Zalo, Nhắn tin (form). */
 export function ProductContactActions({ shop, inquiryUrl, product, variantName }: Props) {

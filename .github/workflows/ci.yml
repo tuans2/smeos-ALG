@@ -22,26 +22,26 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: floraos
-          POSTGRES_PASSWORD: floraos
-          POSTGRES_DB: floraos
+          POSTGRES_USER: alg
+          POSTGRES_PASSWORD: alg
+          POSTGRES_DB: alg
         ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready --health-interval 5s
           --health-timeout 5s --health-retries 10
     env:
-      DATABASE_URL: postgresql://floraos:floraos@localhost:5432/floraos
-      # `test:tenant`/`test:platform` mặc định trỏ `smeos@5433/smeos_test` (máy dev, e8a75d2) —
-      # CI dựng Postgres `floraos@5432`, nên phải chỉ rõ DB test ở đây, không thì cổng bắt buộc
+      DATABASE_URL: postgresql://alg:alg@localhost:5432/alg
+      # `test:tenant`/`test:platform` mặc định trỏ `alg@5433/alg_test` (máy dev, e8a75d2) —
+      # CI dựng Postgres `alg@5432`, nên phải chỉ rõ DB test ở đây, không thì cổng bắt buộc
       # không kết nối được (rà soát 21/10/2026, C4).
-      DATABASE_URL_TEST: postgresql://floraos:floraos@localhost:5432/floraos_test
+      DATABASE_URL_TEST: postgresql://alg:alg@localhost:5432/alg_test
       SESSION_SECRET: ci-only-not-a-real-secret
       # P7 (YC-T8) — `src/lib/env.ts` BẮT BUỘC biến này. Thiếu nó thì bước
       # `npm run db:seed` ném ngay ở dòng import, trước cả `typecheck`, và
       # cổng bắt buộc `test:tenant` không bao giờ chạy tới. Khoá riêng, không
       # dùng lại SESSION_SECRET — giữ đúng lý do tách khoá của P7.
       INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
-      # SSO (floraos-core ↔ SocialFlow/LocalBudd) — `src/lib/env.ts` bắt buộc
+      # SSO (alg-core ↔ SocialFlow/LocalBudd) — `src/lib/env.ts` bắt buộc
       # (commit 23c2299). Thiếu thì `db:seed` ném ở dòng import như trường hợp P7.
       SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret
       # Khoá GIẢ. `tests/tenant/product-copies.test.ts` mock HTTP
@@ -68,14 +68,14 @@ jobs:
       # đồng bộ. Cả ba tham số đổi được bằng reload, không phải khởi động lại container.
       - name: Postgres CI dùng một lần — tắt ghi đĩa đồng bộ
         env:
-          PGPASSWORD: floraos
+          PGPASSWORD: alg
         run: |
-          psql -h localhost -U floraos -d postgres -v ON_ERROR_STOP=1 \
+          psql -h localhost -U alg -d postgres -v ON_ERROR_STOP=1 \
             -c "ALTER SYSTEM SET fsync = off" \
             -c "ALTER SYSTEM SET full_page_writes = off" \
             -c "ALTER SYSTEM SET synchronous_commit = off" \
             -c "SELECT pg_reload_conf()"
-          psql -h localhost -U floraos -d postgres -Atc "SELECT name || '=' || setting FROM pg_settings WHERE name IN ('fsync','full_page_writes','synchronous_commit')"
+          psql -h localhost -U alg -d postgres -Atc "SELECT name || '=' || setting FROM pg_settings WHERE name IN ('fsync','full_page_writes','synchronous_commit')"
       # Dựng CSDL bằng đúng lệnh production dùng (`migrate deploy`), rồi đòi
       # migration khớp schema.prisma: sửa schema mà quên `prisma migrate dev` là đỏ.
       - run: npm run db:deploy
@@ -88,13 +88,13 @@ jobs:
       # Database RIÊNG cho `test:tenant`/`test:platform` — hai bộ test này
       # TRUNCATE mọi bảng và `tests/helpers/database.ts` từ chối database không
       # kết thúc bằng `_test`. Thiếu bước này thì cổng bắt buộc đỏ với
-      # `database "floraos_test" does not exist` (CI run 4, 25/09/2026).
-      - name: Dựng database floraos_test
+      # `database "alg_test" does not exist` (CI run 4, 25/09/2026).
+      - name: Dựng database alg_test
         env:
-          PGPASSWORD: floraos
+          PGPASSWORD: alg
         run: |
-          psql -h localhost -U floraos -d postgres -c 'CREATE DATABASE floraos_test'
-          DATABASE_URL=postgresql://floraos:floraos@localhost:5432/floraos_test npx prisma db push
+          psql -h localhost -U alg -d postgres -c 'CREATE DATABASE alg_test'
+          DATABASE_URL=postgresql://alg:alg@localhost:5432/alg_test npx prisma db push
       - run: npm run db:seed
       - run: npm run typecheck
       # Ratchet thay cho `npm run lint` (nợ #172, 05/10/2026): main mang 78 lỗi
@@ -224,15 +224,15 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: floraos
-          POSTGRES_PASSWORD: floraos
-          POSTGRES_DB: floraos
+          POSTGRES_USER: alg
+          POSTGRES_PASSWORD: alg
+          POSTGRES_DB: alg
         ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready --health-interval 5s
           --health-timeout 5s --health-retries 10
     env:
-      DATABASE_URL: postgresql://floraos:floraos@localhost:5432/floraos
+      DATABASE_URL: postgresql://alg:alg@localhost:5432/alg
       SESSION_SECRET: ci-only-not-a-real-secret
       INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
       SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret

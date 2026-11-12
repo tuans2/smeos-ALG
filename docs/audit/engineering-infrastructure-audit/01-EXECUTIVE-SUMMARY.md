@@ -1,4 +1,4 @@
-# 01 — Executive Summary: SMEOS Engineering Infrastructure & Build Performance Audit
+# 01 — Executive Summary: ALG Engineering Infrastructure & Build Performance Audit
 
 > Audit chỉ đọc · 07/11/2026 · Commit: `main@87f30f2` · Không sửa mã/cấu hình/dependency; 12 báo cáo này là thay đổi duy nhất (chưa commit).
 > Phép đo chạy trên bản sao trong scratchpad; dữ liệu CI lấy từ GitHub Actions API. Không truy cập được Render dashboard và cài đặt bảo mật GitHub.
@@ -67,7 +67,7 @@ Không có CRITICAL: không thấy lỗ hổng đang bị khai thác, rò rỉ b
 6. Heap/gói web theo số đo (RES-01) → 7. Tách job `web` (CI-06) → 8. Lock + quét Python (DEP-01, SEC-02) → 9. DB test bằng migration (CI-07) → 10. P2/P3.
 Chi tiết: `10-REMEDIATION-ROADMAP.md`; tiêu chí: `11-ACCEPTANCE-CRITERIA.md`.
 
-## 8. Điều kiện trước khi mở rộng SMEOS
+## 8. Điều kiện trước khi mở rộng ALG
 
 - Ruleset `main` thi hành và SAST tạo kết quả.
 - Heap kiểm kiểu ≤ 75 % trần đang đặt, chỉ kiểm kiểu 1 lần/commit.

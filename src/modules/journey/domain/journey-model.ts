@@ -1,6 +1,6 @@
 /**
  * Mô hình dữ liệu Journey (Hành trình người dùng) — Kiến trúc Journey-First.
- * Nguồn đặc tả: FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§17, §18)
+ * Nguồn đặc tả: ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§17, §18)
  *
  * Luật thuần Clean Architecture — không import React, không import Prisma.
  */

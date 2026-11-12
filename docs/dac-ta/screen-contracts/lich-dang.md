@@ -98,6 +98,7 @@ acceptance:
 | Thẻ chọn khung giờ dùng `button` thiếu `aria-pressed` | Chuẩn trợ năng T1.7 | Thêm `aria-pressed={mode === "..."}` | Tuân thủ T1.7 Clickable Cards | `schedule-confirm-modal.tsx` |
 | Bài lỗi nằm rải rác theo thứ tự thời gian | Ưu tiên xử lý lỗi theo 03a UX-012 | Tự động sắp xếp đưa bài có status lỗi lên đầu | Giúp nhân viên phát hiện và khắc phục sự cố ngay | `lich-dang/page.tsx` |
 | Header chứa mã "M07 (PHẦN ĐĂNG)" | Không lộ mã kỹ thuật | Đổi sang "Xuất bản & Lịch đăng bài" | Quy ước UX không lộ mã nội bộ | `lich-dang/page.tsx` |
+| Thẻ bài đăng `role="button"` không xử lý phím, lồng nút "Phát ngay" | Chọn được bằng bàn phím, không nút lồng nút | Tiêu đề là nút phủ toàn thẻ; "Phát ngay" lớp trên | Đợt 4, D4-09 | `schedule-calendar-card.tsx` |
 
 ## 13. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

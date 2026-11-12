@@ -8,6 +8,7 @@
  * - Tất cả operations đều safe với SSR (typeof window guard).
  */
 
+import "@/lib/brand-storage-migration"
 import { getAllTools } from "@/modules/toolkit/domain/toolkit-catalog"
 import { DEFERRED_TOOL_HREFS } from "@/modules/toolkit/domain/deferred-module-content"
 import { isDevEnvironment } from "@/lib/dev-environment"
@@ -67,7 +68,7 @@ export function getAllToolkitNavEntries(): NavEntry[] {
 
 function storageKey(orgId?: string | null): string {
   const suffix = orgId ? `__${orgId}` : ""
-  return `smeos_toolkit_shortcuts_v1${suffix}`
+  return `alg_toolkit_shortcuts_v1${suffix}`
 }
 
 /**

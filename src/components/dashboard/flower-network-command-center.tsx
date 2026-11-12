@@ -23,6 +23,7 @@ import { PartnerManagementModal } from "@/components/coordinator/partner-managem
 import { NetworkPartnerListCard, type NetworkPartner } from "./network-partner-list-card"
 import { SlaMonitorModal } from "@/components/coordinator/sla-monitor-modal"
 import { PageHeader } from "@/components/ui/page-header"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 type Partner = NetworkPartner
 
@@ -41,6 +42,8 @@ async function layJson<T>(url: string): Promise<T | null> {
 export function FlowerNetworkCommandCenter() {
   const { orgName, userInitials, roleUx } = useSession()
   const router = useRouter()
+  // Bảng điều phối đang khoá "Sắp ra mắt" (production) thì ẩn nút dẫn tới đó (audit N-05)
+  const dispatchOpen = isHrefOpen("/dieu-phoi")
   const { announce } = useAnnounce()
 
   const [loading, setLoading] = useState(true)
@@ -60,12 +63,12 @@ export function FlowerNetworkCommandCenter() {
     setError(null)
     try {
       const [partnersData, ordersData, coordOrdersData] = await Promise.all([
-        layJson<{ partners: Partner[] }>("/api/v1/coordinator/partners?active=1").catch(() => ({ partners: [] })),
+        layJson<{ data: Partner[] }>("/api/v1/coordinator/partners?active=1").catch(() => ({ data: [] })),
         layJson<{ data?: unknown[]; meta?: { total?: number } }>("/api/v1/orders?limit=10").catch(() => ({ data: [], meta: { total: 0 } })),
         layJson<{ orders?: Array<{ riskLevel: string }> }>("/api/v1/coordinator/orders?limit=50").catch(() => ({ orders: [] })),
       ])
 
-      const activeList = (partnersData?.partners ?? []).filter((p) => p.isActive)
+      const activeList = (partnersData?.data ?? []).filter((p) => p.isActive)
       setPartners(activeList.slice(0, 5))
 
       const orderCount = ordersData?.meta?.total ?? 0
@@ -132,16 +135,18 @@ export function FlowerNetworkCommandCenter() {
         }
         actions={
           <>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => router.push("/dieu-phoi" as never)}
-              className="flex items-center gap-1.5"
-            >
-              <Radio className="h-4 w-4 text-primary" />
-              <span>Tháp điều phối</span>
-            </Button>
+            {dispatchOpen && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => router.push("/dieu-phoi" as never)}
+                className="flex items-center gap-1.5"
+              >
+                <Radio className="h-4 w-4 text-primary" />
+                <span>Tháp điều phối</span>
+              </Button>
+            )}
             <UserMenu initials={userInitials || "ĐH"} />
           </>
         }
@@ -170,25 +175,13 @@ export function FlowerNetworkCommandCenter() {
           icon={<CheckCircle className="h-4 w-4 text-success" />}
         />
 
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => setIsSlaModalOpen(true)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault()
-              setIsSlaModalOpen(true)
-            }
-          }}
-          className="cursor-pointer transition-all hover:ring-2 hover:ring-danger/50"
-        >
-          <StatTile
-            label="Rủi ro trễ hẹn"
-            value={<span className="text-danger">{stats.slaRiskOrders}</span>}
-            tip="Đơn có nguy cơ chậm tiến độ cam kết hoặc sự cố chế tác cần can thiệp"
-            icon={<AlertOctagon className="h-4 w-4 text-danger" />}
-          />
-        </div>
+        <StatTile
+          label="Rủi ro trễ hẹn"
+          value={<span className="text-danger">{stats.slaRiskOrders}</span>}
+          tip="Đơn có nguy cơ chậm tiến độ cam kết hoặc sự cố chế tác cần can thiệp"
+          icon={<AlertOctagon className="h-4 w-4 text-danger" />}
+          action={{ label: "Xem đơn rủi ro", onClick: () => setIsSlaModalOpen(true) }}
+        />
       </div>
 
       {/* Tầng 3: Quản lý Mạng lưới & Xưởng đối tác (Management Tier) */}
@@ -203,15 +196,11 @@ export function FlowerNetworkCommandCenter() {
                   Theo dõi 5 chặng hoàn tất từ tiếp nhận đơn đến phân xưởng, chế tác, duyệt chất lượng và giao hàng thành công.
                 </InfoTip>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => router.push("/dieu-phoi" as never)}
-                className="text-caption"
-              >
-                Mở bảng điều phối
-              </Button>
+              {dispatchOpen && (
+                <Button type="button" variant="outline" size="sm" onClick={() => router.push("/dieu-phoi" as never)} className="text-caption">
+                  Mở bảng điều phối
+                </Button>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">

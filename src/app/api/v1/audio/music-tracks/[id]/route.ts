@@ -7,7 +7,8 @@ export const DELETE = defineRoute({
   auth: { kind: "tenant", capability: "I1" },
   handler: async ({ ctx, params }) => {
     const { id } = params as { id: string }
-    await deleteMusicTrack(ctx, decodeURIComponent(id))
-    return jsonResponse({ ok: true })
+    const trackId = decodeURIComponent(id)
+    await deleteMusicTrack(ctx, trackId)
+    return jsonResponse({ data: { id: trackId, deleted: true } })
   },
 })

@@ -64,7 +64,7 @@ Mục tiêu 6 tháng: tất cả ≥ **3 – Controlled** (thi hành nhất quá
 | Kết nối CSDL theo `application_name` | `pg_stat_activity` | hằng ngày |
 | Kích thước Prisma Client sinh, số model | `prisma generate` | mỗi PR schema |
 
-## 4. Điều kiện trước khi mở rộng SMEOS thêm (module/khách hàng)
+## 4. Điều kiện trước khi mở rộng ALG thêm (module/khách hàng)
 
 1. Ruleset `main` thi hành (CI-01) và SAST ra kết quả (SEC-01).
 2. Heap kiểm kiểu ≤ 75 % trần (TC-02) — nếu không, mỗi module mới tăng xác suất CI đỏ toàn cục.

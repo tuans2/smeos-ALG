@@ -122,8 +122,8 @@ Hỗ trợ 2 kịch bản vận hành thực tế:
   - `sync-chat-channel.ts`: Tự động khởi tạo phòng chat khi quan hệ đối tác được xác lập.
 
 ### Bước 3: API Endpoints
-- [ ] `GET /api/v1/coordinator/partners`: Lấy danh sách đối tác chuỗi.
-- [ ] `POST /api/v1/coordinator/partners/provision`: Tạo nhanh tài khoản đối tác & cấp quyền.
+- [x] `GET /api/v1/coordinator/chain-partners`: Lấy danh sách đối tác chuỗi (tách khỏi `/coordinator/partners` 12/11/2026).
+- [x] `POST /api/v1/coordinator/chain-partners`: Tạo nhanh tài khoản đối tác & cấp quyền.
 - [ ] `PATCH /api/v1/coordinator/partners/[id]/status`: Đổi trạng thái (Hoạt động / Tạm ngưng).
 
 ### Bước 4: UI Quản trị Đối tác Chuỗi

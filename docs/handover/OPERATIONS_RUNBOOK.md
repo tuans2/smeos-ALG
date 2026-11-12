@@ -1,4 +1,4 @@
-# Sổ tay vận hành smeOS (bàn giao)
+# Sổ tay vận hành ALG (bàn giao)
 
 Bản nháp bàn giao 28/10/2026 — soạn từ mã nguồn (`render.yaml`, `package.json`, `.env.example`, `CLAUDE.md`) và kết quả audit (`docs/audit/`). Mục đánh dấu **[CẦN XÁC NHẬN]** chưa có bằng chứng trong repo; chủ sản phẩm điền trước khi giao cho khách.
 
@@ -10,7 +10,7 @@ Bản nháp bàn giao 28/10/2026 — soạn từ mã nguồn (`render.yaml`, `pa
 | `smeos-worker-media` | worker (Python) | Xử lý ảnh/biến thể sản phẩm | `python -m media_ai.jobs.worker` |
 | `smeos-worker-video` | worker (Python) | Dựng video | `python -m media_ai.video.video_worker` |
 | `smeos-worker-vision` | worker (Python) | Phân tích ảnh sản phẩm | xem `render.yaml` |
-| `smeos-cron-dispatch-sweep` | cron, mỗi 5 phút | Nhắc việc điều phối chuỗi + kiểm sức khoẻ | gọi `POST /api/v1/internal/chain-dispatch-sweep` rồi `GET /api/v1/internal/health` (header `x-cron-secret`) |
+| `smeos-cron-dispatch-sweep` | cron, mỗi 5 phút | Nhắc việc điều phối chuỗi, kiểm sức khoẻ, sự kiện tích hợp, đăng bài đến hạn, hoàn credit tác vụ AI lỗi/bị huỷ | gọi `POST /api/v1/internal/chain-dispatch-sweep`, `GET /api/v1/internal/health`, rồi `POST /api/v1/internal/integrations-sweep` (header `x-cron-secret`). Hoàn credit chạy tay khi cần: `npm run hoan-credit` (idempotent) |
 | `smeos-postgres` | PostgreSQL 16 (`basic-256mb`) | Dữ liệu chính, mọi bảng tenant có `organization_id` | — |
 | `smeos-redis` | Key Value 256 MB | Bộ đếm giới hạn tần suất dùng chung | chỉ mạng nội bộ Render |
 
@@ -170,17 +170,27 @@ không mở ngữ cảnh. Log `kind=unclassified` của `smeos-web` là chỗ c�
 
 **Tài khoản CSDL theo vai (ADR-013 D-I1):** chạy `scripts/db/create-roles.sql` một lần bằng tài khoản chủ sở hữu, đặt mật khẩu
 từng vai (`ALTER ROLE … PASSWORD`), rồi thay `DATABASE_URL` của từng dịch vụ trên Render (khoá `sync: false`):
-`smeos-web` → `smeos_app`, 3 worker → `smeos_worker`, script vận hành và bộ quét ngoài app → `smeos_system` (bỏ qua RLS),
-báo cáo/điều tra → `smeos_readonly` (luôn chặn theo tổ chức). Bước migration (pre-deploy) giữ tài khoản chủ sở hữu. Trước khi thay
-cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `smeos_app`. Script cũng đặt giới hạn truy vấn
-(ADR-015 D-O5): 15 s cho `smeos_app`, 120 s cho vai khác, giao dịch bỏ ngỏ 60 s — có hiệu lực ở kết nối mới (khởi động lại
+`smeos-web` → `alg_app`, 3 worker → `alg_worker`, script vận hành và bộ quét ngoài app → `alg_system` (bỏ qua RLS),
+báo cáo/điều tra → `alg_readonly` (luôn chặn theo tổ chức). Bước migration (pre-deploy) giữ tài khoản chủ sở hữu. Trước khi thay
+cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `alg_app`.
+
+Script cũng đặt giới hạn truy vấn
+(ADR-015 D-O5): 15 s cho `alg_app`, 120 s cho vai khác, giao dịch bỏ ngỏ 60 s — có hiệu lực ở kết nối mới (khởi động lại
 dịch vụ); chạy lại script an toàn.
+
+**Đổi tên vai `smeos_*` → `alg_*` (đổi thương hiệu ALG, 12/11/2026)** — chỉ cho CSDL đã tạo vai bằng bản cũ của
+`create-roles.sql`. Làm trong một khung bảo trì ngắn vì dịch vụ đăng nhập bằng tên cũ sẽ hỏng ngay sau bước 2:
+1. Chuẩn bị sẵn `DATABASE_URL` mới cho từng dịch vụ (chỉ đổi phần user `smeos_*` → `alg_*`, mật khẩu giữ nguyên).
+2. `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/db/rename-roles-to-alg.sql` bằng tài khoản chủ sở hữu. Script báo
+   từng vai; vai nào báo "mật khẩu MD5 đã bị xoá" thì đặt lại `ALTER ROLE alg_… PASSWORD '…'` (SCRAM giữ nguyên).
+3. Thay `DATABASE_URL` trên Render cho web, 3 worker, cron, rồi deploy lại; kiểm `/van-hanh` (worker còn sống) và đăng nhập.
+Quyền, BYPASSRLS và `app.rls_mode` đi theo vai khi đổi tên; chính sách RLS không tham chiếu tên vai.
 
 **Nhật ký bất biến (ADR-013 D-I4, migration `20261106130000_append_only_logs`):** `audit_logs`, `platform_audit_logs`,
 `order_events`, `job_events`, `usage` không sửa được; xoá (kể cả xoá đơn hàng kéo theo `order_events`) chỉ được trong giao
 dịch đã đặt lý do purge — trong mã dùng `setPurgeReason(tx, …)` (`src/core/tenancy/infra/purge-reason.ts`), trong psql dùng
 `BEGIN; SELECT set_config('app.purge_reason', 'tenant_offboarding', true); …; COMMIT;`. `create-roles.sql` thu quyền
-UPDATE/DELETE của `smeos_app`/`smeos_worker` trên năm bảng này. Script dọn tenant (`handover-clean-tenant.ts`,
+UPDATE/DELETE của `alg_app`/`alg_worker` trên năm bảng này. Script dọn tenant (`handover-clean-tenant.ts`,
 `clean-siin-store-orders.ts`) đã đặt lý do; script mới xoá đơn hàng hay job phải làm như vậy.
 
 Bảng mới có `organization_id`: chạy `node scripts/gen-rls-policies.mjs` để sinh SQL chính sách vào migration của bảng đó —

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { telegramLinkCode } from "../../infra/telegram-link-code"
+import { telegramLegacyLinkCode, telegramLinkCode } from "../../infra/telegram-link-code"
 import { toBranchCandidate } from "../../infra/chain-branch-repository"
 import { chatsWithLinkCode } from "../telegram-dispatch-link"
 
@@ -8,7 +8,17 @@ describe("liên kết nhóm Telegram theo tổ chức", () => {
   it("mỗi tổ chức một mã, ổn định giữa các lần gọi", () => {
     expect(telegramLinkCode("org-a")).toBe(telegramLinkCode("org-a"))
     expect(telegramLinkCode("org-a")).not.toBe(telegramLinkCode("org-b"))
-    expect(telegramLinkCode("org-a")).toMatch(/^SMEOS-[0-9A-F]{10}$/)
+    expect(telegramLinkCode("org-a")).toMatch(/^ALG-[0-9A-F]{10}$/)
+  })
+
+  it("vẫn nhận mã cũ SMEOS-… (trước khi đổi tên ALG) cùng phần băm của tổ chức", () => {
+    const legacy = telegramLegacyLinkCode("org-a")
+    expect(legacy).toBe(telegramLinkCode("org-a").replace(/^ALG-/, "SMEOS-"))
+    const chats = chatsWithLinkCode(
+      [{ chatId: "-300", title: "Nhóm cũ", type: "group", text: legacy }],
+      [telegramLinkCode("org-a"), legacy],
+    )
+    expect(chats.map((c) => c.id)).toEqual(["-300"])
   })
 
   it("chỉ nhóm đã nhắn đúng mã của tổ chức mới được tính, nhóm của tenant khác bị loại", () => {

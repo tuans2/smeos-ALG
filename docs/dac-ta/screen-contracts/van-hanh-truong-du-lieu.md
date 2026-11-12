@@ -16,6 +16,8 @@ acceptance:
 
 # Screen Contract — Trường dữ liệu (`/van-hanh/truong-du-lieu`)
 
+> **Nơi nhập giá trị trường tự tạo (12/11/2026, audit L-09):** `ORDER` — form tiếp nhận đơn điều phối, chi tiết đơn (`PATCH /api/v1/coordinator/orders/:id/custom-fields`); `PARTNER` — form tạo đối tác gia công (`POST /api/v1/coordinator/partners`, sửa qua `PATCH /api/v1/coordinator/partners/:id`, trộn vào giá trị cũ).
+
 **Mã màn:** `SCR-MOTHER-van-hanh-truong-du-lieu` · **Tuyến:** `/van-hanh/truong-du-lieu` · **Tầng:** `MOTHER` · **Bố cục:** `B` · **Tệp chính:** `src/app/(platform)/van-hanh/truong-du-lieu/page.tsx`
 
 Đặc tả nghiệp vụ chi tiết: [`van-hanh.md`](./van-hanh.md). Tệp này là front-matter v2 cho `check:screen-contracts`; hiện trạng dưới đây đo bằng đọc mã ngày 05/11/2026, không phải kiểm chạy thật.

@@ -58,3 +58,10 @@ Cùng công tắc với Bộ sưu tập chung (`KIEN_TRUC_SSOT_DON_HANG_DA_NGUON
 - **Bật Liên hệ:** `/b` thêm nút "Nhắn tin" trên thanh cửa hàng (form tư vấn cho mẫu đang xem); `/g`, `/bst` thêm mục "Cần tư vấn thêm? Nhắn cửa hàng" ở chi tiết mẫu.
 - Mẫu giá "Liên hệ" luôn có khung liên hệ, bất kể công tắc.
 - **Form nhắn tin** có ô bắt buộc "đồng ý để cửa hàng liên hệ lại". Gửi đi tạo yêu cầu tư vấn trong Hội thoại **và** một khách tiềm năng (lead nguồn `BROCHURE`, lý do `CONTACT`, `source_ref` = mã link hoặc id bộ sưu tập). Bản trang cũ không gửi ô đồng ý → chỉ ghi Hội thoại.
+
+## 7. Duyệt ảnh thành phẩm trên trang theo dõi (checklist ALG 5.13)
+
+- Khi cửa hàng gửi ảnh thành phẩm, chủ link thấy khối "Xác nhận hình ảnh sản phẩm" có đồng hồ đếm ngược, nút chính đồng ý và nút phụ "Góp ý để cửa hàng chỉnh".
+- Góp ý: ô nhập (3–500 ký tự) + "Gửi góp ý" (`POST /public/brochure/tracking/:code/photo-feedback`). Gửi xong khối đổi thành "Đã gửi góp ý cho cửa hàng", đồng hồ dừng, không tự duyệt; Điều phối và Sale phụ trách nhận thông báo, đơn có dòng ghi chú `[Khách góp ý ảnh] …`, thẻ đơn ở Điều phối báo "Khách góp ý ảnh" và chặn Giao Ship.
+- Cửa hàng tải ảnh mới → khối duyệt hiện lại với đồng hồ mới.
+

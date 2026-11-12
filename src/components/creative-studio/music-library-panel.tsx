@@ -197,7 +197,7 @@ export function MusicLibraryPanel({
       </RadioGroup>
 
       {selected && !selected.license_verified && (
-        <p className="mt-3 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-meta text-warning">
+        <p className="mt-3 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-meta text-warning-text">
           Bài này chưa có hồ sơ giấy phép thương mại. Chỉ nên dùng để thử — trước khi đăng quảng cáo hãy chọn bài đã xác
           minh hoặc tải nhạc tiệm có giấy phép.
         </p>

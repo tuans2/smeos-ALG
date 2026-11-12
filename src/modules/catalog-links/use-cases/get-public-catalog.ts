@@ -175,7 +175,7 @@ export async function getPublicCatalog(
   }
 
   const shop: PublicCatalogShop = {
-    name: bizProfile?.display_name || org?.name || "Cửa hàng smeOS",
+    name: bizProfile?.display_name || org?.name || "Cửa hàng ALG",
     legalName: bizProfile?.legal_name ?? null,
     phone: bizProfile?.phone ?? null,
     email: bizProfile?.email ?? null,

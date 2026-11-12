@@ -47,7 +47,7 @@ class LocalCinematicProvider(BaseVideoProvider):
         if s.startswith("http://") or s.startswith("https://"):
             dest = temp_dir / f"download_{idx}.jpg"
             try:
-                req = urllib.request.Request(s, headers={"User-Agent": "smeOS-Video/1.0"})
+                req = urllib.request.Request(s, headers={"User-Agent": "ALG-Video/1.0"})
                 with urllib.request.urlopen(req, timeout=10) as resp, open(dest, "wb") as f:
                     f.write(resp.read())
                 if dest.is_file() and dest.stat().st_size > 0:

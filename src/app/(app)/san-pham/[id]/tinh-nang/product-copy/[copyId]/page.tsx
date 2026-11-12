@@ -89,7 +89,7 @@ export default function ProductCopyDetailPage() {
           return
         }
         if (!res.ok) throw new Error(`Không tải được dữ liệu (${res.status})`)
-        const data = await res.json()
+        const { data } = await res.json()
         setCopy(data)
         // Initialize local edit state from existing edited or raw
         setLocalEdited(data.edited ?? data.raw)
@@ -124,7 +124,7 @@ export default function ProductCopyDetailPage() {
         const err = await res.json().catch(() => ({ message: `HTTP ${res.status}` }))
         throw new Error(err.message ?? "Lưu thất bại")
       }
-      const data = await res.json()
+      const { data } = await res.json()
       setCopy(data)
       setLocalEdited(data.edited ?? data.raw)
     } catch (e) {

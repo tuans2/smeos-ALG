@@ -19,7 +19,7 @@ export const step02ValidatePlanContract = defineStep({
   step: 2,
   code: "VALIDATE_PLAN",
   slug: "validate-plan",
-  title: "Thẩm định & Lập kế hoạch (T02)",
+  title: "Thẩm định & Lập kế hoạch",
   summary: "Chuyển INTAKE → VALIDATING/PLANNING → ASSIGNING; máy chủ kiểm luồng và bằng chứng (409 nếu sai)",
   endpoint: {
     method: "PATCH",

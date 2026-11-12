@@ -118,7 +118,7 @@ export function PrintPreviewCanvas({
                 </span>
               </div>
               <p className="text-caption text-text-muted mt-2 max-w-[180px] truncate">
-                {qrLink || "https://smeos.vn/shop"}
+                {qrLink || "https://avilotusgroup.com/shop"}
               </p>
             </div>
 

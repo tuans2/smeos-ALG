@@ -1,5 +1,5 @@
 /**
- * Danh mục công cụ smeOS (51 công cụ gốc + trang có sẵn ở app-page-tools.ts) — SSOT cho /cong-cu.
+ * Danh mục công cụ ALG (51 công cụ gốc + trang có sẵn ở app-page-tools.ts) — SSOT cho /cong-cu.
  *
  * Trạng thái mỗi công cụ:
  *   DONE        – Hoàn thiện, sẵn sàng dùng

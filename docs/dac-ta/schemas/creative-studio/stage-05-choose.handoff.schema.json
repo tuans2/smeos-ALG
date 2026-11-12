@@ -3,7 +3,7 @@
   "$id": "stage-05-choose.handoff.schema.json",
   "title": "Chặng 05 — CHOOSE: Chọn định hướng & kịch bản sản xuất tổng — hợp đồng phụ \"handoff\"",
   "description": "Query string của /creative-studio; tổng độ dài ≤ 2000 ký tự",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "05",
     "stage": 5,
     "code": "CHOOSE",

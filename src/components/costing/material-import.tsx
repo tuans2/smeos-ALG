@@ -89,7 +89,7 @@ export function MaterialImport({ existingNames, onImported }: { existingNames: r
           </div>
         )}
         {parsed.skipped.length > 0 && (
-          <ul className="text-body-sm text-warning">
+          <ul className="text-body-sm text-warning-text">
             {parsed.skipped.map((s) => (
               <li key={s.line}>
                 Dòng {s.line}: {s.reason}

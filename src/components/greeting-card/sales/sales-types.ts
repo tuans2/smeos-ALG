@@ -23,24 +23,24 @@ export interface SessionRow {
 export function getSessionStatusBadge(status: string, sampleProductTerm?: string): { label: string; className: string } {
   const itemLabel = (sampleProductTerm || "sản phẩm").replace(/ chuẩn$/i, "").toLowerCase()
   const badges: Record<string, { label: string; className: string }> = {
-    CREATED: { label: "Chưa mở link", className: "bg-surface-muted text-text-muted" },
-    OPENED: { label: `Đang xem ${itemLabel}`, className: "bg-warning/15 text-warning" },
-    BROWSING: { label: `Đang xem ${itemLabel}`, className: "bg-warning/15 text-warning" },
+    CREATED: { label: "Chưa mở link", className: "bg-surface-alt text-text-muted" },
+    OPENED: { label: `Đang xem ${itemLabel}`, className: "bg-warning/15 text-warning-text" },
+    BROWSING: { label: `Đang xem ${itemLabel}`, className: "bg-warning/15 text-warning-text" },
     SELECTED: { label: `Đã chọn ${itemLabel}`, className: "bg-primary/10 text-primary" },
     ORDER_SUBMITTED: { label: "Đã tạo đơn hàng", className: "bg-info-bg text-info" },
-    PAYMENT_REPORTED: { label: "Khách báo đã chuyển tiền", className: "bg-warning-bg text-warning" },
+    PAYMENT_REPORTED: { label: "Khách báo đã chuyển tiền", className: "bg-warning-bg text-warning-text" },
     COMPLETED: { label: "Đã xác nhận thanh toán", className: "bg-success-bg text-success" },
   }
-  return badges[status] ?? { label: status, className: "bg-surface-muted" }
+  return badges[status] ?? { label: status, className: "bg-surface-alt" }
 }
 
 export const SESSION_STATUS_BADGE: Record<string, { label: string; className: string }> = {
-  CREATED: { label: "Chưa mở link", className: "bg-surface-muted text-text-muted" },
-  OPENED: { label: "Đang xem mẫu", className: "bg-warning/15 text-warning" },
-  BROWSING: { label: "Đang xem mẫu", className: "bg-warning/15 text-warning" },
+  CREATED: { label: "Chưa mở link", className: "bg-surface-alt text-text-muted" },
+  OPENED: { label: "Đang xem mẫu", className: "bg-warning/15 text-warning-text" },
+  BROWSING: { label: "Đang xem mẫu", className: "bg-warning/15 text-warning-text" },
   SELECTED: { label: "Đã chọn mẫu", className: "bg-primary/10 text-primary" },
   ORDER_SUBMITTED: { label: "Đã tạo đơn hàng", className: "bg-info-bg text-info" },
-  PAYMENT_REPORTED: { label: "Khách báo đã chuyển tiền", className: "bg-warning-bg text-warning" },
+  PAYMENT_REPORTED: { label: "Khách báo đã chuyển tiền", className: "bg-warning-bg text-warning-text" },
   COMPLETED: { label: "Đã xác nhận thanh toán", className: "bg-success-bg text-success" },
 }
 

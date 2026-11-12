@@ -149,7 +149,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
 
       <ul className="grid grid-cols-3 gap-2" aria-label="Tệp đã chọn">
         {picked.map((p, i) => (
-          <li key={p.id} className="relative aspect-square overflow-hidden rounded-xl border border-border bg-surface-muted">
+          <li key={p.id} className="relative aspect-square overflow-hidden rounded-xl border border-border bg-surface-alt">
             {p.url ? (
               <>
                 <video src={p.url} muted preload="metadata" className="h-full w-full object-cover" />

@@ -1,11 +1,14 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import * as React from "react"
 import type { LucideIcon } from "@/components/ui/icon-set/wrap"
 import { Info } from "@/components/ui/icon-set/info"
 import { BookOpen } from "@/components/ui/icon-set/book-open"
 import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 export interface GuidanceTip {
   icon?: string | LucideIcon
@@ -26,7 +29,7 @@ export interface FeatureGuidanceCardProps extends React.HTMLAttributes<HTMLDivEl
   guidanceId?: string | undefined
 }
 
-const STORAGE_KEY_PREFIX = "smeos_guidance_seen_"
+const STORAGE_KEY_PREFIX = "alg_guidance_seen_"
 const LEGACY_STORAGE_KEY_PREFIX = "floraos_guidance_seen_"
 
 /** Sinh kebab-case ID ổn định từ chuỗi tiếng Việt có dấu */
@@ -66,7 +69,7 @@ function markAsSeen(id: string): void {
 /**
  * Base Feature Guidance Card Component (Họ Guidance Templates)
  *
- * Khung chuẩn hiển thị hướng dẫn thao tác cho các Tab tính năng trong smeOS:
+ * Khung chuẩn hiển thị hướng dẫn thao tác cho các Tab tính năng trong ALG:
  * - Khung viền đứt nét màu đỏ: `border-2 border-dashed border-red-300`
  * - Nền đỏ pastel dịu mắt: `bg-red-50/70`
  * - Badge định danh chức năng: `bg-guidance-tag-bg text-red-700`
@@ -132,11 +135,13 @@ export function FeatureGuidanceCard({
         )}
         {...props}
       >
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="xs"
           onClick={handleToggle}
           className={cn(
-            "w-full group flex items-center justify-center gap-2",
+            "w-full h-auto group flex items-center justify-center gap-2",
             "rounded-2xl border-2 border-dashed border-guidance-border/80 bg-guidance-bg/40",
             "px-4 py-2.5 cursor-pointer",
             "transition-all duration-300 ease-out",
@@ -155,7 +160,7 @@ export function FeatureGuidanceCard({
             size={14}
             className="text-guidance-border group-hover:text-guidance transition-all duration-200 group-hover:translate-y-0.5"
           />
-        </button>
+        </Button>
       </div>
     )
   }
@@ -173,15 +178,17 @@ export function FeatureGuidanceCard({
       {/* Nút thu gọn ở góc trên phải (chỉ hiện khi đã mount) */}
       {hasMounted && (
         <div className="flex justify-end -mt-1 -mr-1 mb-1">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="xs"
             onClick={handleToggle}
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-semibold text-guidance hover:bg-guidance-tag-bg/60 transition-all duration-200 cursor-pointer"
+            className="gap-1 px-2 rounded-full text-caption font-semibold text-guidance hover:bg-guidance-tag-bg/60 transition-all duration-200 cursor-pointer"
             title="Thu gọn hướng dẫn"
           >
             <ChevronDown size={12} className="rotate-180" />
             <span>Thu gọn</span>
-          </button>
+          </Button>
         </div>
       )}
 

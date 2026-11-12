@@ -1,6 +1,6 @@
 /**
  * Ops Knowledge Base Schema & Types.
- * Định nghĩa cấu trúc dữ liệu tri thức nguyên tử cho OPS Copilot của FloraOS.
+ * Định nghĩa cấu trúc dữ liệu tri thức nguyên tử cho OPS Copilot của ALG.
  */
 
 export type OpsTargetRole = "ALL" | "QUAN_LY" | "BAN_HANG" | "THO_CAM" | "GIAO_HANG"

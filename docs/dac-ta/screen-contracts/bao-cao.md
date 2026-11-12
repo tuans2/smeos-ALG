@@ -15,6 +15,8 @@ acceptance:
 
 # Screen Contract — Báo cáo theo kỳ
 
+> **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/bao-cao` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/bao-cao/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
+
 **Tuyến:** `/bao-cao` · **Tệp chính:** `src/app/(app)/bao-cao/page.tsx`, `src/components/reporting/*` · **Cập nhật:** 05/11/2026
 
 ## 1. Vai và mục đích

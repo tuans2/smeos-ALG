@@ -178,7 +178,7 @@ export function VariantConfigPanel({
           )}
           <p className="mt-1.5 text-caption text-text-muted leading-relaxed">
             {sceneEngine === "cloud_provider"
-              ? "Nhà cung cấp dựng cảnh + hoà sáng quanh sản phẩm thật; smeOS đo lại hình dáng, cấu trúc, màu. Mọi bên lỗi thì lùi phông cục bộ."
+              ? "Nhà cung cấp dựng cảnh + hoà sáng quanh sản phẩm thật; ALG đo lại hình dáng, cấu trúc, màu. Mọi bên lỗi thì lùi phông cục bộ."
               : "Dự phòng: mỗi cảnh dùng phông Studio dựng sẵn gần nhất (6 phông) — rẻ hơn nhưng chất lượng thấp hơn nhà cung cấp."}
           </p>
         </div>

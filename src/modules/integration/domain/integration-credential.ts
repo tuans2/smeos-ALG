@@ -7,7 +7,7 @@
  * - `Authorization: Bearer <token>` — token MÁY GỌI MÁY (`integration_tokens`,
  *   `YC-T8`). Gắn cứng vào một tổ chức, không gắn người dùng. Dùng cho lời gọi
  *   nền: cron, worker, đối soát.
- * - `X-FloraOS-SSO: <jwt>` — JWT phiên liên-app (`floraos_sso`, Unified Shell
+ * - `X-ALG-SSO: <jwt>` — JWT phiên liên-app (`floraos_sso`, Unified Shell
  *   B1). Gắn NGƯỜI DÙNG + tổ chức đang hoạt động của chính người đó. Dùng cho
  *   lời gọi mà `LocalBudd`/`SocialFlow` thực hiện thay mặt một người đang
  *   đăng nhập.
@@ -22,10 +22,10 @@
  * phía máy chủ (`AGENTS.md`, quy ước tenant).
  */
 
-/** Tên header mang JWT `smeos_sso` khi gọi server-to-server. */
-export const SSO_HEADER = "x-smeos-sso"
-/** Tên header legacy để tương thích ngược. */
-export const LEGACY_SSO_HEADER = "x-floraos-sso"
+/** Tên header mang JWT phiên liên-app (`alg_sso`) khi gọi server-to-server. */
+export const SSO_HEADER = "x-alg-sso"
+/** Tên trước khi đổi thương hiệu ALG (12/11/2026) và trước nữa — vẫn đọc, và vẫn gửi kèm cho ứng dụng liên kết chưa cập nhật. */
+export const LEGACY_SSO_HEADERS = ["x-smeos-sso", "x-floraos-sso"] as const
 
 export type IntegrationCredential =
   | { readonly kind: "sso"; readonly value: string }
@@ -43,7 +43,7 @@ function bearerFrom(headers: HeaderReader): string | null {
 
 /** `null` khi lời gọi không mang chứng thư nào đọc được. */
 export function readIntegrationCredential(headers: HeaderReader): IntegrationCredential | null {
-  const sso = headers.get(SSO_HEADER)?.trim() ?? headers.get(LEGACY_SSO_HEADER)?.trim()
+  const sso = [SSO_HEADER, ...LEGACY_SSO_HEADERS].map((h) => headers.get(h)?.trim()).find((v) => v)
   if (sso) return { kind: "sso", value: sso }
 
   const token = bearerFrom(headers)

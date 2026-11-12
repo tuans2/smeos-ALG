@@ -1,5 +1,5 @@
-# HIẾN PHÁP QUẢN TRỊ TÀI LIỆU FLORAOS-CORE
-## (FLORAOS-CORE DOCUMENTATION CONSTITUTION)
+# HIẾN PHÁP QUẢN TRỊ TÀI LIỆU ALG-CORE
+## (ALG-CORE DOCUMENTATION CONSTITUTION)
 
 > **Mã định danh:** `DOC-00-CONSTITUTION`  
 > **Trạng thái:** `CANONICAL` — Có hiệu lực vĩnh viễn và bắt buộc tuân thủ 100% đối với mọi Kỹ sư và AI Coding Agent (Claude Code, Google Antigravity, Copilot).  
@@ -10,7 +10,7 @@
 
 ## 1. MỤC ĐÍCH & TÔN CHỈ (PURPOSE)
 
-Hệ thống quản trị tài liệu FloraOS-Core được thiết lập nhằm:
+Hệ thống quản trị tài liệu ALG-Core được thiết lập nhằm:
 1. **Chống trôi dạt tài liệu (Documentation Drift):** Đảm bảo tài liệu đặc tả luôn phản ánh chính xác 100% mã nguồn thực tế và ngược lại.
 2. **Một nguồn sự thật duy nhất (One Source of Truth - OSOT):** Mỗi chủ đề, phân hệ, hợp đồng API hay bảng dữ liệu chỉ có **DUY NHẤT MỘT** tài liệu nắm quyền phát ngôn chính thức.
 3. **Kiểm soát vòng đời tài liệu:** Không để các bản nháp (Draft), bản kiểm toán cũ (Audit Logs) hay tài liệu lịch sử (Historical) làm nhiễu loạn việc ra quyết định.
@@ -24,7 +24,7 @@ Mọi xung đột thông tin giữa các tài liệu hoặc giữa tài liệu v
 
 ```
 [LEVEL 1: MASTER STRATEGY & SYSTEM ARCHITECTURE]
-FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md | TRANG_THAI.md
+ALG_SAAS_TARGET_ARCHITECTURE_V2.md | TRANG_THAI.md
 (Định hướng chiến lược, ranh giới 13 module, sở hữu repo, trạng thái hệ thống)
        │
        ▼
@@ -34,7 +34,7 @@ FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md | TRANG_THAI.md
        │
        ▼
 [LEVEL 3: MODULE SPECIFICATIONS & UI/UX]
-02-08 Specs | M01-M11 Module Specs | FLORAOS_TEMPLATE_SYSTEM_SSOT.md
+02-08 Specs | M01-M11 Module Specs | ALG_TEMPLATE_SYSTEM_SSOT.md
 (Hợp đồng API REST, CSDL ERD, RBAC, AI Routing, 5 Họ Template UI)
        │
        ▼

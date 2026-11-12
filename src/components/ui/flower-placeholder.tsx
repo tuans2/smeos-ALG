@@ -1,5 +1,5 @@
 // Ảnh sản phẩm chưa có thật trong bản demo này — dùng hình hoa cách điệu
-// (theo mô-típ logo FloraOS) làm chỗ trống rõ ràng, không giả làm ảnh thật.
+// (theo mô-típ logo ALG) làm chỗ trống rõ ràng, không giả làm ảnh thật.
 
 export function FlowerPlaceholder({
   size = 24,

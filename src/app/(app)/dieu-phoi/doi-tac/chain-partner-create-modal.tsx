@@ -60,7 +60,7 @@ export function ChainPartnerCreateModal({
     try {
       let credential: PartnerCredential | undefined
       if (activeTab === "NEW") {
-        const res = await fetch("/api/v1/coordinator/partners", {
+        const res = await fetch("/api/v1/coordinator/chain-partners", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -76,12 +76,13 @@ export function ChainPartnerCreateModal({
         })
         const json = await res.json()
         if (!res.ok) {
-          setErrorMsg(json.message || "Không thể cấp tài khoản đối tác")
+          setErrorMsg(json.error?.message || "Không thể cấp tài khoản đối tác")
           return
         }
         // Mật khẩu ban đầu — máy chủ chỉ trả về một lần (audit AUD-009)
-        if (json.temporaryPassword) {
-          credential = { storeName: partnerStoreName, email: contactEmail, temporaryPassword: json.temporaryPassword }
+        const temporaryPassword = json.data?.temporary_password as string | undefined
+        if (temporaryPassword) {
+          credential = { storeName: partnerStoreName, email: contactEmail, temporaryPassword }
         }
       } else {
         const res = await fetch("/api/v1/coordinator/partners/link-existing", {
@@ -172,7 +173,7 @@ export function ChainPartnerCreateModal({
     >
       <div className="p-6">
         {errorMsg && (
-          <div className="mb-4 p-3 bg-danger-subtle text-danger rounded-xl text-caption flex items-center gap-2 border border-danger/20">
+          <div className="mb-4 p-3 bg-danger-bg text-danger rounded-xl text-caption flex items-center gap-2 border border-danger/20">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{errorMsg}</span>
           </div>
@@ -274,10 +275,10 @@ export function ChainPartnerCreateModal({
             </>
           ) : (
             <>
-              <div className="p-3 bg-warning-subtle rounded-xl text-caption text-warning-text border border-warning/20 flex items-start gap-2">
-                <Sparkles className="w-4 h-4 text-warning shrink-0 mt-0.5" />
+              <div className="p-3 bg-warning-bg rounded-xl text-caption text-warning-text border border-warning/20 flex items-start gap-2">
+                <Sparkles className="w-4 h-4 text-warning-text shrink-0 mt-0.5" />
                 <span>
-                  Dành cho cửa hàng đã có tài khoản trên hệ thống smeOS. Dữ liệu sản phẩm và cài đặt của tiệm sẽ được giữ nguyên hoàn toàn.
+                  Dành cho cửa hàng đã có tài khoản trên hệ thống ALG. Dữ liệu sản phẩm và cài đặt của tiệm sẽ được giữ nguyên hoàn toàn.
                 </span>
               </div>
 
@@ -309,7 +310,7 @@ export function ChainPartnerCreateModal({
             </>
           )}
 
-          <div className="p-3 bg-surface-muted rounded-xl text-caption text-text-muted flex items-start gap-2">
+          <div className="p-3 bg-surface-alt rounded-xl text-caption text-text-muted flex items-start gap-2">
             <ShieldCheck className="w-4 h-4 text-success shrink-0 mt-0.5" />
             <span>
               Sau khi liên kết, hệ thống sẽ tự động mở kênh Chat nội bộ giữa Chuỗi và Cửa hàng này.

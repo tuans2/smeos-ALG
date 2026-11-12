@@ -102,5 +102,5 @@ tạo. Điều hành và người được giao quản lý mọi chi nhánh th�
 **Ai dùng:** Điều hành, Marketing (quyền đăng bài lên mạng xã hội).
 **Mở ở:** Công cụ → **Tạo nội dung** → **Đăng tự động**.
 
-Đăng bài chạy ngay trong smeOS: đã đăng nhập smeOS thì mở Đăng tự động để kết nối kênh, chọn bài và lên lịch, không phải đăng nhập lại,
+Đăng bài chạy ngay trong ALG: đã đăng nhập ALG thì mở Đăng tự động để kết nối kênh, chọn bài và lên lịch, không phải đăng nhập lại,
 không mở ứng dụng nào khác. Khi có ứng dụng liên kết bên ngoài dùng chung đăng nhập, phiên liên kết có hiệu lực 15 phút.

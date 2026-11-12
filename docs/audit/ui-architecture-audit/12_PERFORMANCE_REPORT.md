@@ -1,6 +1,6 @@
 # Hiệu năng tải trang — Web Vitals
 
-> **Phạm vi:** giao diện smeOS (Next.js 16, App Router) · **Lần đo:** 04/11/2026, commit `50988ae4`
+> **Phạm vi:** giao diện ALG (Next.js 16, App Router) · **Lần đo:** 04/11/2026, commit `50988ae4`
 > **Tệp kết quả:** [`perf/2026-11-04/web-vitals-50988ae4.json`](perf/2026-11-04/web-vitals-50988ae4.json) — từng lần đo, trung vị, cấu hình mô phỏng. Các lần đo trước: commit `8a0ac5e7` (trước khi tách icon) [`web-vitals-8a0ac5e7.json`](perf/2026-11-04/web-vitals-8a0ac5e7.json); commit `7ef1b830` (trước khi render phía máy chủ trang `/san-pham`) [`web-vitals.json`](perf/2026-11-04/web-vitals.json).
 > **Loại số liệu:** số đo phòng thí nghiệm (lab) trên bản build production chạy cục bộ; không phải số đo người dùng thật.
 

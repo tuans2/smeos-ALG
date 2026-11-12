@@ -146,9 +146,9 @@ export function MarketIntelligenceView({
             <Clock size={20} />
           </div>
           <div className="max-w-md mx-auto">
-            <h4 className="text-body-sm font-bold text-text">
+            <h2 className="text-body-sm font-bold text-text">
               {opportunities.length === 0 ? "Chưa có tín hiệu thị trường" : <>Không có cơ hội nào trong &ldquo;{currentFilterLabel}&rdquo;</>}
-            </h4>
+            </h2>
             <p className="text-caption text-text-muted mt-1">
               {opportunities.length === 0 ? "Bấm “Làm mới” ở đầu trang để quét xu hướng mới nhất." : <>Hãy chọn mốc khác hoặc chọn &ldquo;Tất cả&rdquo; để xem toàn bộ {opportunities.length} cơ hội.</>}
             </p>

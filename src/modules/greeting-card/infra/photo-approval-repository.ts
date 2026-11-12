@@ -1,4 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { CUSTOMER_PHOTO_FEEDBACK } from "../domain/photo-approval"
 
 export const CUSTOMER_PHOTO_APPROVED = "CUSTOMER_PHOTO_APPROVED"
 
@@ -40,6 +41,39 @@ export class PhotoApprovalRepository {
         },
       })
       return { created: true }
+    })
+  }
+
+  /**
+   * Khách góp ý ảnh thành phẩm (checklist ALG 5.13): một giao dịch ghi QC `CUSTOMER_PHOTO_FEEDBACK`
+   * (`REWORK_REQUESTED`, lời góp ý trong `checklist_result`), sự kiện sản xuất và dòng ghi chú nội bộ.
+   */
+  async recordFeedback(order: { id: string; organization_id: string; production_status: string }, message: string) {
+    await this.db.$transaction(async (tx) => {
+      await tx.order_qc_records.create({
+        data: {
+          organization_id: order.organization_id,
+          order_id: order.id,
+          status: "REWORK_REQUESTED",
+          notes: CUSTOMER_PHOTO_FEEDBACK,
+          checklist_result: { customerFeedback: message },
+        },
+      })
+      await tx.order_events.create({
+        data: {
+          organization_id: order.organization_id,
+          order_id: order.id,
+          axis: "production",
+          from_value: order.production_status,
+          to_value: order.production_status,
+          reason: `${CUSTOMER_PHOTO_FEEDBACK}: ${message}`,
+        },
+      })
+      const current = await tx.orders.findFirst({ where: { id: order.id, organization_id: order.organization_id }, select: { internal_note: true } })
+      await tx.orders.updateMany({
+        where: { id: order.id, organization_id: order.organization_id },
+        data: { internal_note: [current?.internal_note, `[Khách góp ý ảnh] ${message}`].filter(Boolean).join("\n") },
+      })
     })
   }
 }

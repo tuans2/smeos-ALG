@@ -45,6 +45,6 @@ export const DELETE = defineRoute({
   handler: async ({ ctx, params }) => {
     const { id } = params as { id: string }
     await deleteCustomer(ctx, id)
-    return jsonResponse({ success: true })
+    return jsonResponse({ data: { id, deleted: true } })
   },
 })

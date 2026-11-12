@@ -33,7 +33,7 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
   }
   if (status === "PAUSED") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold text-warning">
+      <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold text-warning-text">
         <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
         Tạm ngưng
       </span>
@@ -41,7 +41,7 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
   }
   if (status === "ARCHIVED") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-warning-bg px-2 py-0.5 text-caption font-bold text-warning">
+      <span className="inline-flex items-center gap-1 rounded-full bg-warning-bg px-2 py-0.5 text-caption font-bold text-warning-text">
         <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
         Đã lưu trữ
       </span>
@@ -67,7 +67,7 @@ export function ProposalBadge({ attributes }: { attributes?: Record<string, unkn
   const label = status ? PROPOSAL_LABEL[status] : undefined
   if (!label) return null
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-caption font-bold ${status === "pending" ? "bg-warning-bg text-warning" : "bg-danger-bg text-danger"}`}>
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-caption font-bold ${status === "pending" ? "bg-warning-bg text-warning-text" : "bg-danger-bg text-danger"}`}>
       {label}
     </span>
   )
@@ -98,9 +98,11 @@ export interface ProductCardProps {
   onImageClick?: (product: ProductItem) => void
   /** Thẻ nằm trong khung nhìn đầu tiên: ảnh tải ưu tiên. */
   priority?: boolean | undefined
+  /** Nhãn tiếng Việt của danh mục (thay cho mã trong dữ liệu) */
+  categoryLabel?: string | null | undefined
 }
 
-export function ProductCard({ product, isExecutive, onTrash, onImageClick, priority = false }: ProductCardProps) {
+export function ProductCard({ product, isExecutive, onTrash, onImageClick, priority = false, categoryLabel }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-surface shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
       {/* Vùng ảnh sản phẩm: Bấm để mở Bảng thông số sản phẩm & Phân tích AI */}
@@ -108,7 +110,6 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick, prior
         type="button"
         variant="ghost"
         onClick={() => onImageClick?.(product)}
-        aria-label={`Xem bảng thông số và phân tích AI cho ${product.name}`}
         className="relative aspect-square w-full h-auto p-0 rounded-none bg-surface-alt overflow-hidden text-left focus-visible:outline-2 focus-visible:outline-primary cursor-pointer group/img block"
       >
         <ProductThumb
@@ -118,11 +119,14 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick, prior
           size="card"
           priority={priority}
         />
-        <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
-          <StatusBadge status={product.status} />
-          <ProposalBadge attributes={product.attributes} />
-        </div>
+        {/* Tên nút bằng chữ ẩn thay aria-label: ô "Chưa có ảnh" là chữ nhìn thấy, aria-label sẽ lệch (WCAG 2.5.3) */}
+        <span className="sr-only">Xem bảng thông số và phân tích AI cho {product.name}</span>
       </Button>
+      {/* Nhãn trạng thái nằm ngoài nút ảnh để tên nút khớp chữ hiển thị (WCAG 2.5.3, Đợt 4 D4-10); vị trí giữ nguyên */}
+      <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
+        <StatusBadge status={product.status} />
+        <ProposalBadge attributes={product.attributes} />
+      </div>
 
       {/* Thông tin sản phẩm: Bấm vào tên để chuyển sang trang chi tiết */}
       <Link
@@ -134,7 +138,7 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick, prior
         </div>
         <div className="flex items-center justify-between gap-2 mt-1">
           <span className="truncate text-caption text-text-muted">
-            {product.category ?? "Chưa phân loại"}
+            {categoryLabel ?? product.category ?? "Chưa phân loại"}
           </span>
           <PriceLabel price={product.price_vnd} attributes={product.attributes} />
         </div>

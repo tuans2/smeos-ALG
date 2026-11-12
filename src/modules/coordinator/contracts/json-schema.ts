@@ -47,7 +47,7 @@ function envelope(
       $id: file,
       title,
       description,
-      "x-floraos": {
+      "x-alg": {
         ...meta,
         generated: "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:coordinator`.",
       },
@@ -87,7 +87,7 @@ export function buildCoordinatorSchemaFiles(): GeneratedSchemaFile[] {
       $id: "index.json",
       title: "Chỉ mục JSON Schema — Coordinator Operations",
       description: "Danh sách tệp JSON Schema đầu vào/đầu ra của 7 bước Điều phối Đơn hàng.",
-      "x-floraos": {
+      "x-alg": {
         module: "coordinator",
         stepsCount: COORDINATOR_STEPS.length,
         generated: "SINH TỰ ĐỘNG — không sửa tay.",

@@ -71,7 +71,7 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
               <Check size={18} />
               <span>Đã tạo link riêng thành công!</span>
             </div>
-            <div className="p-3 bg-surface-muted rounded-xl border border-border text-body-sm font-mono break-all">{createdLink}</div>
+            <div className="p-3 bg-surface-alt rounded-xl border border-border text-body-sm font-mono break-all">{createdLink}</div>
             {linkExpiryLabel(expiresAt) && <p className="text-caption text-text-muted">{linkExpiryLabel(expiresAt)}</p>}
             <Button
               type="button"

@@ -58,6 +58,6 @@ export const COSTING_OPERATIONS: OpenApiOperation[] = [
   op(RULE, { method: "patch", path: "/price-lists/{id}", operationId: "togglePriceList", summary: "Bật/tắt bảng giá", cap: "L3", body: req.priceListActiveBody,
     description: NF, ok: [200, { description: "Bảng giá", schema: res.priceListResponse }], errors: [...BODY_ERRORS, 404] }),
   op(RULE, { method: "delete", path: "/price-lists/{id}", operationId: "archivePriceList", summary: "Bỏ bảng giá khỏi danh sách", cap: "L3",
-    description: `Lịch sử phiên bản vẫn giữ. Trả 200 \`{ ok: true }\` cũ (ngoại lệ envelope, \`api-envelope-legacy.txt\`). ${NF}`,
-    ok: [200, { description: "Đã bỏ", schema: res.okResponse }], errors: [404] }),
+    description: `Lịch sử phiên bản vẫn giữ. ${NF}`,
+    ok: [200, { description: "Đã bỏ", schema: res.priceListArchivedResponse }], errors: [404] }),
 ]
