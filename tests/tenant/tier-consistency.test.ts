@@ -180,7 +180,7 @@ describe("đối chiếu tầng — mỗi trục × Mẹ / Chuỗi / Cửa hàng
       const res = await patchTools(
         withSession(`http://localhost/api/v1/coordinator/partners/${linkId}/tools`, chain.token, {
           method: "PATCH",
-          body: JSON.stringify({ unlockedTools: ["catalog"] }),
+          body: JSON.stringify({ unlocked_tools: ["catalog"] }),
         }),
         { params: Promise.resolve({ id: linkId }) },
       )

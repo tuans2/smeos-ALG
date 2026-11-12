@@ -120,7 +120,7 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
     const order = await readJson(await createOrderRoute(send("/orders", "POST", { items: [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 300000 }] })))
     const orderId = String((order as { order: { id: string } }).order.id)
     const dispatched = await readJson(await dispatchToChat(
-      send(`/coordinator/orders/${orderId}/dispatch-to-chat`, "POST", { targetPartnerOrgId: partner.organizationId, targetPartnerUserId: partner.userId }), ps(orderId)
+      send(`/coordinator/orders/${orderId}/dispatch-to-chat`, "POST", { target_partner_org_id: partner.organizationId, target_partner_user_id: partner.userId }), ps(orderId)
     ))
     const cardId = String((dispatched as { data: { message: { id: string } } }).data.message.id)
     await expectContract(await cardAction(send(`/internal-chat/messages/${cardId}/action`, "POST", { action: "ACCEPT_ORDER" }, partner), ps(cardId)), 200, R.internalMessageResponse, "ichat-action")

@@ -654,7 +654,7 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | GET | `/delivery/my-runs` | `R18` | Đơn đang giao có số điện thoại shipper trùng số của người đăng nhập (cùng tổ chức, cùng phạm vi chi nhánh): người nhận, SĐT, địa chỉ, khung giờ, lời thiệp — không giá, không ghi chú nội bộ, không người đặt · `phoneMissing: true` khi tài khoản chưa có số |
 | POST | `/delivery/my-runs/:id` | `R18` | `{ event, pod_asset_id?, recipient_signed_name?, failure_reason? }` — cùng luật giao của Điều phối (ảnh giao bắt buộc theo Cài đặt); đơn không giao cho mình → 404 |
 | GET | `/coordinator/reminders` | `R1` | Mốc nhắc việc Điều phối đang bật của các đơn |
-| POST | `/coordinator/reminders/acknowledge` | `R3` | `{ orderId, milestone, action, snoozeMinutes?, note? }`; đơn của tổ chức khác → 404 |
+| POST | `/coordinator/reminders/acknowledge` | `R3` | `{ order_id, milestone, action, snooze_minutes?, note? }`; đơn của tổ chức khác → 404 |
 | GET · PUT | `/coordinator/settings/reminders` | `D1` (đọc) · `R12` (sửa) | Thời điểm nhắc việc cấp tổ chức (phút, 0–1440) (14/10/2026: sửa đòi `R12`) |
 | GET · PUT | `/coordinator/templates/:id/reminders` | `R1` (đọc) · `R12` (sửa) | Ghi đè thời điểm nhắc theo mẫu hoa; mẫu của tổ chức khác → 404 |
 | GET | `/orders/entry-actions` | `R1` | Đơn hàng đa nguồn §3.2 — nút Đặt hàng / Liên hệ trên trang khách: `{ settings, sources: [{ code, label, effective }] }` |
@@ -1168,7 +1168,7 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | POST | `/platform/notification/providers/test` | `N2` | Gửi một tin thử: SMS / Zalo tới số điện thoại nhập vào; Web Push tới thiết bị chính người vận hành đã bật nhận tin; trả `{ success, error? }` (`NOT_CONFIGURED` khi chưa đăng ký) |
 | GET · PATCH | `/platform/notification/visibility` | đọc: phiên nền tảng · ghi: `N2` | Ma trận hiển thị sự kiện theo tầng |
 | GET · POST · DELETE | `/platform/notification/hard-locks` | đọc: phiên nền tảng · ghi: `N2` | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
-| PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |
+| PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlocked_tools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |
 
 ## 27. Đối tác chuỗi, chat nội bộ, dữ liệu chuỗi, ảnh sản phẩm (26–28/10/2026)
 

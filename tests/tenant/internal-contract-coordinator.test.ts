@@ -130,7 +130,7 @@ describe("hợp đồng — Điều phối", () => {
   it("nhắc việc: danh sách, xác nhận, cấu hình của tiệm và của mẫu", async () => {
     const id = await newOrder()
     await expectContract(await reminders(get("/reminders")), 200, O.remindersResponse, "co-reminders")
-    await expectContract(await acknowledge(send("/reminders/acknowledge", "POST", { orderId: id, milestone: "M0", action: "SNOOZED", snoozeMinutes: 15 })), 200, O.acknowledgeResponse, "co-ack")
+    await expectContract(await acknowledge(send("/reminders/acknowledge", "POST", { order_id: id, milestone: "M0", action: "SNOOZED", snooze_minutes: 15 })), 200, O.acknowledgeResponse, "co-ack")
     await expectContract(await getPolicy(get("/settings/reminders")), 200, O.reminderPolicyResponse, "co-policy")
     await expectContract(await putPolicy(send("/settings/reminders", "PUT", { m0MinutesAfterPaid: 20 })), 200, O.reminderPolicyResponse, "co-policy")
     const productId = (await new ProductRepository().create(t.ctx, { code: "MAU-1", name: "Mẫu nhắc việc", attributes: {} })).id
@@ -143,7 +143,7 @@ describe("hợp đồng — Điều phối", () => {
     await makeChainOrganization(t)
     const provisioned = await expectContract(
       await provisionChainPartner(send("/chain-partners", "POST", {
-        partnerStoreName: "Tiệm Quận 7", partnerCode: "Q7", contactName: "Chị Hạnh", contactPhone: "0909123456", contactEmail: "q7@vi-du.test", province: "TP.HCM",
+        partner_store_name: "Tiệm Quận 7", partner_code: "Q7", contact_name: "Chị Hạnh", contact_phone: "0909123456", contact_email: "q7@vi-du.test", province: "TP.HCM",
       })),
       201,
       O.chainPartnerProvisionedResponse,
@@ -151,10 +151,10 @@ describe("hợp đồng — Điều phối", () => {
     )
     const partnership = (provisioned.data as { partnership: { id: string; partnerOrgId: string } }).partnership
     await expectContract(await listChainPartners(get("/chain-partners")), 200, O.chainPartnersResponse, "co-chain-partners")
-    await expectContract(await partnerTools(send(`/partners/${partnership.id}/tools`, "PATCH", { unlockedTools: ["catalog"] }), ps({ id: partnership.id })), 200, O.partnerToolsResponse, "co-tools")
+    await expectContract(await partnerTools(send(`/partners/${partnership.id}/tools`, "PATCH", { unlocked_tools: ["catalog"] }), ps({ id: partnership.id })), 200, O.partnerToolsResponse, "co-tools")
     const id = await newOrder()
     await expectContract(
-      await dispatchToChat(send(`/orders/${id}/dispatch-to-chat`, "POST", { targetPartnerOrgId: partnership.partnerOrgId }), ps({ id })),
+      await dispatchToChat(send(`/orders/${id}/dispatch-to-chat`, "POST", { target_partner_org_id: partnership.partnerOrgId }), ps({ id })),
       200,
       O.dispatchToChatResponse,
       "co-dispatch-chat"
@@ -162,7 +162,7 @@ describe("hợp đồng — Điều phối", () => {
     await expectContract(await partnershipStatus(send(`/partners/${partnership.id}/status`, "PATCH", { status: "SUSPENDED", reason: "Tạm ngưng để kiểm hồ sơ" }), ps({ id: partnership.id })), 200, O.partnershipResponse, "co-status")
     await createTenant("tiem-co-san")
     await expectContract(
-      await linkExisting(send("/partners/link-existing", "POST", { identifier: "tiem-co-san@vi-du.test", partnerCode: "CS1" })),
+      await linkExisting(send("/partners/link-existing", "POST", { identifier: "tiem-co-san@vi-du.test", partner_code: "CS1" })),
       201,
       O.partnershipResponse,
       "co-link"

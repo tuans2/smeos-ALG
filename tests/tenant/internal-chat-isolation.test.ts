@@ -78,9 +78,9 @@ describe("cách ly tenant — chat nội bộ và điều phối đối tác", (
 
   it("chỉ đẩy đơn sang đối tác ACTIVE của chính chuỗi", async () => {
     const orderId = await orderOf(a)
-    const toStranger = await dispatchToChat(withSession(`${BASE}/coordinator/orders/${orderId}/dispatch-to-chat`, a.token, { method: "POST", body: JSON.stringify({ targetPartnerOrgId: b.organizationId }) }), params(orderId))
+    const toStranger = await dispatchToChat(withSession(`${BASE}/coordinator/orders/${orderId}/dispatch-to-chat`, a.token, { method: "POST", body: JSON.stringify({ target_partner_org_id: b.organizationId }) }), params(orderId))
     expect(toStranger.status).toBe(404)
-    const toPartner = await dispatchToChat(withSession(`${BASE}/coordinator/orders/${orderId}/dispatch-to-chat`, a.token, { method: "POST", body: JSON.stringify({ targetPartnerOrgId: partner.organizationId }) }), params(orderId))
+    const toPartner = await dispatchToChat(withSession(`${BASE}/coordinator/orders/${orderId}/dispatch-to-chat`, a.token, { method: "POST", body: JSON.stringify({ target_partner_org_id: partner.organizationId }) }), params(orderId))
     expect(toPartner.status).toBe(200)
   })
 })

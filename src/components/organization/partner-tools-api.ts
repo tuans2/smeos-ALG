@@ -15,7 +15,7 @@ export async function savePartnerUnlockedTools(
   const res = await fetchImpl(partnerToolsUrl(partnershipId), {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ unlockedTools: [...unlockedTools] }),
+    body: JSON.stringify({ unlocked_tools: [...unlockedTools] }),
   })
   if (res.ok) return { ok: true }
   const json = (await res.json().catch(() => null)) as { error?: { message?: string } } | null

@@ -43,7 +43,7 @@ describe("cách ly tenant — thẻ đơn và tin nhắn chat nội bộ", () =>
   /** Chuỗi gửi đơn vào chat cho đúng người của đối tác → { phòng, thẻ }. */
   async function dispatchCard(): Promise<{ conversationId: string; messageId: string; orderId: string }> {
     const orderId = await orderOf(chain)
-    const res = await dispatchToChat(post(`${BASE}/coordinator/orders/${orderId}/dispatch-to-chat`, chain.token, { targetPartnerOrgId: partner.organizationId, targetPartnerUserId: partner.userId }), params(orderId))
+    const res = await dispatchToChat(post(`${BASE}/coordinator/orders/${orderId}/dispatch-to-chat`, chain.token, { target_partner_org_id: partner.organizationId, target_partner_user_id: partner.userId }), params(orderId))
     expect(res.status).toBe(200)
     const data = ((await readJson(res)) as { data: { conversationId: string; message: { id: string } } }).data
     return { conversationId: data.conversationId, messageId: data.message.id, orderId }
@@ -105,7 +105,7 @@ describe("cách ly tenant — thẻ đơn và tin nhắn chat nội bộ", () =>
     expect(hijack.status).toBe(404)
     expect(await prisma.internal_chat_conversations.count({ where: { order_id: orderId } })).toBe(0)
 
-    await dispatchToChat(post(`${BASE}/coordinator/orders/${orderId}/dispatch-to-chat`, chain.token, { targetPartnerOrgId: partner.organizationId }), params(orderId))
+    await dispatchToChat(post(`${BASE}/coordinator/orders/${orderId}/dispatch-to-chat`, chain.token, { target_partner_org_id: partner.organizationId }), params(orderId))
     const rooms = await prisma.internal_chat_conversations.findMany({ where: { order_id: orderId } })
     expect(rooms.map((r) => r.organization_id)).toEqual([chain.organizationId])
   })

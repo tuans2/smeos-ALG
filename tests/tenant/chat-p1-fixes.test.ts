@@ -48,7 +48,7 @@ describe("chat — cách ly thẻ hành động và sổ credit kênh ngoài", (
   async function orderCard() {
     const order = await readJson(await createOrder(send(a, "/orders", { items: [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 300000 }] })))
     const orderId = String((order as { order: { id: string } }).order.id)
-    const res = await dispatchToChat(send(a, `/coordinator/orders/${orderId}/dispatch-to-chat`, { targetPartnerOrgId: partner.organizationId, targetPartnerUserId: partner.userId }), ps(orderId))
+    const res = await dispatchToChat(send(a, `/coordinator/orders/${orderId}/dispatch-to-chat`, { target_partner_org_id: partner.organizationId, target_partner_user_id: partner.userId }), ps(orderId))
     expect(res.status).toBe(200)
     const data = ((await readJson(res)) as { data: { conversationId: string; message: { id: string; actionPayload: Record<string, unknown> } } }).data
     return { convId: data.conversationId, cardId: data.message.id, payload: data.message.actionPayload }

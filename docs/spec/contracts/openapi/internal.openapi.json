@@ -21966,30 +21966,30 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "partnerStoreName": {
+                  "partner_store_name": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "partnerCode": {
+                  "partner_code": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "partnershipType": {
+                  "partnership_type": {
                     "type": "string",
                     "enum": [
                       "SUBCONTRACTOR",
                       "FRANCHISE"
                     ]
                   },
-                  "contactName": {
+                  "contact_name": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "contactPhone": {
+                  "contact_phone": {
                     "type": "string",
                     "minLength": 8
                   },
-                  "contactEmail": {
+                  "contact_email": {
                     "type": "string",
                     "format": "email",
                     "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
@@ -22007,19 +22007,19 @@
                   "district": {
                     "type": "string"
                   },
-                  "capacityDaily": {
+                  "capacity_daily": {
                     "type": "number"
                   },
-                  "commissionRate": {
+                  "commission_rate": {
                     "type": "number"
                   }
                 },
                 "required": [
-                  "partnerStoreName",
-                  "partnerCode",
-                  "contactName",
-                  "contactPhone",
-                  "contactEmail"
+                  "partner_store_name",
+                  "partner_code",
+                  "contact_name",
+                  "contact_phone",
+                  "contact_email"
                 ]
               }
             }
@@ -35420,19 +35420,19 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "targetPartnerOrgId": {
+                  "target_partner_org_id": {
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
-                  "targetPartnerUserId": {
+                  "target_partner_user_id": {
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   }
                 },
                 "required": [
-                  "targetPartnerOrgId"
+                  "target_partner_org_id"
                 ]
               }
             }
@@ -45997,7 +45997,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "unlockedTools": {
+                  "unlocked_tools": {
                     "maxItems": 200,
                     "type": "array",
                     "items": {
@@ -46007,7 +46007,7 @@
                   }
                 },
                 "required": [
-                  "unlockedTools"
+                  "unlocked_tools"
                 ]
               }
             }
@@ -46112,27 +46112,27 @@
                     "type": "string",
                     "minLength": 2
                   },
-                  "partnerCode": {
+                  "partner_code": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "partnershipType": {
+                  "partnership_type": {
                     "type": "string",
                     "enum": [
                       "SUBCONTRACTOR",
                       "FRANCHISE"
                     ]
                   },
-                  "commissionRate": {
+                  "commission_rate": {
                     "type": "number"
                   },
-                  "capacityDaily": {
+                  "capacity_daily": {
                     "type": "number"
                   }
                 },
                 "required": [
                   "identifier",
-                  "partnerCode"
+                  "partner_code"
                 ]
               }
             }
@@ -46483,7 +46483,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "orderId": {
+                  "order_id": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -46506,7 +46506,7 @@
                       "DISMISSED"
                     ]
                   },
-                  "snoozeMinutes": {
+                  "snooze_minutes": {
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 120
@@ -46517,7 +46517,7 @@
                   }
                 },
                 "required": [
-                  "orderId",
+                  "order_id",
                   "milestone",
                   "action"
                 ]
