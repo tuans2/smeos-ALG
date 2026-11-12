@@ -4215,7 +4215,8 @@ model data_subject_requests {
 - Hạn 72 giờ theo thực hành phổ biến với Nghị định 13/2023/NĐ-CP — **chưa phải ý kiến pháp lý**.
 - Chưa làm: màn hình cho nhân viên; bản CSV của gói xuất.
 
-Ca thử: `src/modules/crm/domain/data-subject-request.test.ts`, `tests/tenant/data-subject-requests.test.ts` (xuất đủ
+Ca thử: `src/modules/crm/domain/data-subject-request.test.ts`, `tests/tenant/data-subject-requests-isolation.test.ts`
+(cách ly ở tầng use-case — bản giao GD1 chưa có route này), `tests/tenant/data-subject-requests.test.ts` (xuất đủ
 bản ghi; xoá xuyên bảng, giữ đơn + VAT, chi nhánh được chia sẻ thấy bản đã xoá; hai khách cùng tổ chức; tổ chức khác → 404).
 
 ## 54. Hạn lưu theo loại dữ liệu — `retention_policies` (11/11/2026)
