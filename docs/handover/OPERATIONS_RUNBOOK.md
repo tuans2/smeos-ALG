@@ -331,3 +331,17 @@ Lưu ý:
    khôi phục PITR trước (ADR-015 D-O4) và cần PO duyệt — không tự làm.
 4. Báo cáo chậm (p95 truy vấn báo cáo > 2 s, `pg_stat_statements`) → cân nhắc bản sao đọc `smeos_readonly` (ADR-013);
    thêm dịch vụ / gói CSDL là quyết định của PO (đổi `render.yaml`).
+
+## 19. Người vận hành đầu tiên trên một bản cài mới
+
+Phát hiện khi chạy Bước 6 bàn giao GD1 (11/11/2026) trên bản cài trắng: mọi tài khoản tự đăng ký bắt đầu ở `PENDING`
+và chưa đăng nhập được (chốt của chủ dự án 22/10/2026), mà người duyệt lại phải là superadmin nền tảng — bản cài mới
+chưa có ai. Hai bước, đúng thứ tự:
+
+1. Đăng ký một tài khoản như người dùng thường (`/dang-ky`, hoặc `POST /api/v1/auth/signup`).
+2. `npm run gan-van-hanh-nen-tang -- --email=<email>` — gán đủ `N1`–`N20` **và duyệt luôn** tài khoản đang chờ
+   (`grantPlatformOperator`, `tests/platform/first-operator-bootstrap.test.ts`). Không cần `UPDATE users` bằng tay.
+
+Tài khoản đã bị từ chối khi duyệt đăng ký thì công cụ không mở lại. Từ người vận hành thứ hai trở đi không cần công cụ
+này: người đầu tiên duyệt họ ở `/van-hanh/dang-ky`. Đăng nhập trả `403 ACCOUNT_PENDING` nghĩa là bước 2 chưa chạy, không
+phải lỗi cấu hình.
