@@ -12,12 +12,24 @@ export interface ChannelOrderItem {
   readonly unitPriceVnd: number
 }
 
+/**
+ * Tiền của đơn sàn (PO 12/11/2026, audit BL-34). `PREPAID` = sàn đã thu của khách (sàn trả lại cho tiệm theo kỳ đối soát
+ * của sàn) → ghi khoản thu ngay khi nhập; `COD` = shipper thu khi giao → không ghi lúc nhập. Đầu nối không biết → bỏ trống.
+ */
+export interface ChannelOrderPayment {
+  readonly kind: "PREPAID" | "COD"
+  /** Số khách đã trả trên sàn (đã trừ mã giảm giá của sàn). */
+  readonly paidVnd: number
+}
+
 export interface ChannelOrder {
   readonly externalOrderId: string
   readonly createdAt: string
   readonly items: readonly ChannelOrderItem[]
   readonly buyerNote: string | null
+  /** SĐT có thể đã bị sàn che một phần (vd. `******789`) — không kiểm định dạng số Việt Nam. */
   readonly recipient: { name: string; phone: string; address: string } | null
+  readonly payment?: ChannelOrderPayment | null
 }
 
 export interface ChannelAvailability {

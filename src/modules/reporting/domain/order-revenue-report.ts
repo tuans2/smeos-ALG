@@ -4,8 +4,9 @@ import type { OrderRow, PaymentRow } from "./report-rows"
 /**
  * Báo cáo đơn (6.1) và doanh thu (6.2) — luật thuần.
  * Hoàn tất = đã giao hoặc hoàn tất. Trễ = giao sau hạn (giờ hẹn Điều phối, cuối khung giờ đã hẹn, hoặc cuối ngày
- * giao). Đang trễ = chưa giao, chưa huỷ, đã quá hạn. Doanh thu dự kiến = tổng giá trị đơn chưa huỷ tạo trong kỳ;
- * thực thu = khoản thu đã xác nhận trong kỳ (cọc + thu nốt) trừ hoàn tiền.
+ * giao). Đang trễ = chưa giao, chưa huỷ, đã quá hạn. Doanh thu dự kiến = tổng giá trị đơn đã chốt (không Nháp, không
+ * huỷ) tạo trong kỳ; đơn Nháp (đơn catalog chưa thu, có thể tự huỷ) đếm riêng "Đơn chờ chốt" (PO 12/11/2026, audit
+ * BL-30); thực thu = khoản thu đã xác nhận trong kỳ (cọc + thu nốt) trừ hoàn tiền.
  */
 
 const DONE = new Set(["DELIVERED", "COMPLETED"])
@@ -51,9 +52,10 @@ export function buildOrderReport(orders: OrderRow[], p: ReportPeriod, now: Date 
 export function buildRevenueReport(orders: OrderRow[], payments: PaymentRow[], p: ReportPeriod) {
   const keys = bucketsOf(p)
   const rows = new Map(keys.map((k) => [k, { bucket: k, expectedVnd: 0, collectedVnd: 0, refundedVnd: 0 }]))
-  let expectedVnd = 0, collectedVnd = 0, refundedVnd = 0
+  let expectedVnd = 0, collectedVnd = 0, refundedVnd = 0, draftCount = 0, draftVnd = 0
   for (const o of orders) {
     if (o.status === "CANCELLED") continue
+    if (o.status === "DRAFT") { draftCount++; draftVnd += o.totalVnd; continue }
     expectedVnd += o.totalVnd
     const r = rows.get(bucketOf(o.createdAt, p.granularity))
     if (r) r.expectedVnd += o.totalVnd
@@ -65,7 +67,10 @@ export function buildRevenueReport(orders: OrderRow[], payments: PaymentRow[], p
   }
   return {
     period: { from: p.from, to: p.to, granularity: p.granularity },
-    totals: { expectedVnd, collectedVnd, refundedVnd, netCollectedVnd: collectedVnd - refundedVnd, collectionRate: ratio(collectedVnd - refundedVnd, expectedVnd) },
+    totals: {
+      expectedVnd, collectedVnd, refundedVnd, netCollectedVnd: collectedVnd - refundedVnd,
+      collectionRate: ratio(collectedVnd - refundedVnd, expectedVnd), draftCount, draftVnd,
+    },
     series: [...rows.values()].map((r) => ({ ...r, netCollectedVnd: r.collectedVnd - r.refundedVnd })),
   }
 }

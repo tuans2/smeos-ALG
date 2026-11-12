@@ -5,19 +5,23 @@
  *   curl -X POST http://localhost:3200/api/v1/internal/integrations-sweep -H "x-cron-secret: dev"
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { AppError } from "@/core/http/errors"
 import { isAuthorizedCronRequest } from "@/core/http/cron-auth"
 import { processDueEvents } from "@/modules/integration-hub/use-cases/process-due-events"
 import { runHealthChecks } from "@/modules/integration-hub/use-cases/run-health-checks"
 import { pollChannelOrders } from "@/modules/integration-hub/use-cases/poll-channel-orders"
 import { publishDuePosts } from "@/modules/social-publishing/use-cases/publish-due-posts"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (req) => {
-  if (!isAuthorizedCronRequest(req)) throw new AppError("UNAUTHENTICATED", "Không được phép")
-  const events = await processDueEvents()
-  const health = await runHealthChecks()
-  const orders = await pollChannelOrders()
-  const social = await publishDuePosts()
-  return jsonResponse({ events, health, orders, social })
+export const POST = defineRoute({
+  auth: { kind: "custom", reason: "cron nội bộ — CRON_SECRET kiểm trong handler (isAuthorizedCronRequest)" },
+  handler: async ({ request: req }) => {
+    if (!isAuthorizedCronRequest(req)) throw new AppError("UNAUTHENTICATED", "Không được phép")
+    const events = await processDueEvents()
+    const health = await runHealthChecks()
+    const orders = await pollChannelOrders()
+    const social = await publishDuePosts()
+    return jsonResponse({ events, health, orders, social })
+  },
 })

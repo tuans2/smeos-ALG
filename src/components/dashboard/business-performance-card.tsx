@@ -159,7 +159,10 @@ function BusinessPerformanceBody({ range, aiCreditUsed = 0, shopName }: Business
               icon={<ShoppingBag size={13} className="text-info shrink-0" />}
               label="Đơn đang xử lý"
               value={String(report.openOrders)}
-              note={report.overdueOpenOrders > 0 ? `${report.overdueOpenOrders} đơn đã quá hẹn giao` : "Không có đơn quá hẹn giao"}
+              note={[
+                report.overdueOpenOrders > 0 ? `${report.overdueOpenOrders} đơn đã quá hẹn giao` : "Không có đơn quá hẹn giao",
+                ...(report.draftOrders > 0 ? [`${report.draftOrders} đơn chờ chốt (${formatCurrency(report.draftValueVnd)}) chưa tính`] : []),
+              ].join(" · ")}
             />
           </div>
 

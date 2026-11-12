@@ -41,7 +41,7 @@ export const orderReportResponse = data(
 export const revenueReportResponse = data(
   z.strictObject({
     period: periodG,
-    totals: z.strictObject({ expectedVnd: z.number(), collectedVnd: z.number(), refundedVnd: z.number(), netCollectedVnd: z.number(), collectionRate: rate }),
+    totals: z.strictObject({ expectedVnd: z.number(), collectedVnd: z.number(), refundedVnd: z.number(), netCollectedVnd: z.number(), collectionRate: rate, draftCount: z.number(), draftVnd: z.number() }),
     series: z.array(z.strictObject({ bucket: z.string(), expectedVnd: z.number(), collectedVnd: z.number(), refundedVnd: z.number(), netCollectedVnd: z.number() })),
     orders: z.array(z.strictObject({ id: z.string(), code: z.string(), status: z.string(), totalVnd: z.number(), paidVnd: z.number(), createdAt: timestamp })).optional(),
   })

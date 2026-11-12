@@ -1,25 +1,25 @@
 
 import { validationFailed } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { putBrandProfileBody } from "@/app/api/v1/_contracts/requests-profile"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getBrandProfile } from "@/modules/profiles/use-cases/get-brand-profile"
 import { putBrandProfile } from "@/modules/profiles/use-cases/put-brand-profile"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "F1")
-  return jsonResponse(await getBrandProfile(ctx))
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "F1" },
+  handler: async ({ ctx }) => {
+    return jsonResponse(await getBrandProfile(ctx))
+  },
 })
 
 
-export const PUT = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "F2")
+export const PUT = defineRoute({
+  auth: { kind: "tenant", capability: "F2" },
+  handler: async ({ request, ctx }) => {
+    const parsed = putBrandProfileBody.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const parsed = putBrandProfileBody.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-
-  return jsonResponse(await putBrandProfile(ctx, parsed.data))
+    return jsonResponse(await putBrandProfile(ctx, parsed.data))
+  },
 })

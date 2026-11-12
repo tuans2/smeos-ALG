@@ -5,19 +5,21 @@
  * của một tổ chức cụ thể. Yêu cầu PlatformContext N1.
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { jsonResponse } from "@/core/http/response"
 import { recordPlatformAccess } from "@/modules/audit/use-cases/record-platform-access"
 import { getPlatformOrgFolderData } from "@/modules/platform/use-cases/get-platform-org-folder-data"
 import { notFound } from "@/core/http/errors"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, { params }) => {
-  const pctx = await requirePlatformContext(request)
-  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
-  const { orgId } = await params
-  const result = await getPlatformOrgFolderData(pctx, orgId as string)
-  if (!result) throw notFound()
-  return jsonResponse({ data: result })
+export const GET = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ request, pctx, params }) => {
+    await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
+    const { orgId } = params as { orgId: string }
+    const result = await getPlatformOrgFolderData(pctx, orgId as string)
+    if (!result) throw notFound()
+    return jsonResponse({ data: result })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

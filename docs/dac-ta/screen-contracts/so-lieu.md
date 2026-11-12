@@ -27,7 +27,7 @@ acceptance:
 ## 2. Hiện trạng (audit)
 - API:
   - `GET /api/v1/usage/summary` → Lấy tổng mức sử dụng credit và số lượt theo tính năng
-  - `GET /api/v1/reports/orders|revenue|products?from&to` (`R20`) → Thẻ Hiệu năng kinh doanh theo nút Tuần / Tháng / Quý (giờ Việt Nam): **Giá trị đơn** (chỉ số chính, đơn chưa huỷ tạo trong kỳ), **Đã thu thực tế** (khoản thu đã xác nhận trừ hoàn tiền), tỷ lệ hoàn tất, đơn đang xử lý / quá hẹn, sản phẩm bán chạy theo giá trị dòng hàng. Không có `R20` → trạng thái không quyền. Định nghĩa KPI: `src/modules/reporting/domain/business-summary.ts` (PO 07/11/2026, Q4 — thay cách tính trên 100 đơn ở trình duyệt)
+  - `GET /api/v1/reports/orders|revenue|products?from&to` (`R20`) → Thẻ Hiệu năng kinh doanh theo nút Tuần / Tháng / Quý (giờ Việt Nam): **Giá trị đơn** (chỉ số chính, đơn đã chốt — không Nháp, không huỷ — tạo trong kỳ; đơn Nháp hiện riêng "đơn chờ chốt" ở ô Đơn đang xử lý, PO 12/11/2026, audit BL-30), **Đã thu thực tế** (khoản thu đã xác nhận trừ hoàn tiền), tỷ lệ hoàn tất, đơn đang xử lý / quá hẹn, sản phẩm bán chạy theo giá trị dòng hàng. Không có `R20` → trạng thái không quyền. Định nghĩa KPI: `src/modules/reporting/domain/business-summary.ts` (PO 07/11/2026, Q4 — thay cách tính trên 100 đơn ở trình duyệt)
   - `GET /api/v1/ai-requests` → Lấy danh sách yêu cầu AI để diễn giải
   - `GET /api/v1/audit-logs?limit=50` → Lấy nhật ký học phong cách `learning.profile`
   - `PUT /api/v1/ai-policy` → Cập nhật chính sách AI (gác quyền U2 `learning.profile.manage`)
@@ -99,6 +99,7 @@ acceptance:
 | Bẫy số liệu: tự bịa phần trăm tăng trưởng | Tuân thủ luật số liệu đo lường | Bỏ `metricChange`, chỉ hiển thị số đo thực tế | Chống tạo số liệu giả tạo cho khách hàng | `so-lieu/page.tsx` |
 | Thiếu cấu trúc số cho trình đọc màn hình | Chuẩn trợ năng bảng số liệu | Thêm thẻ table accessible với caption và scope | Hỗ trợ người dùng khiếm thị / trình đọc | `so-lieu/page.tsx` |
 | KPI doanh thu tính trên 100 đơn đầu ở trình duyệt, lệch trạng thái, "bán chạy" đọc trường không có | Đủ mọi đơn trong kỳ, cùng định nghĩa với `/bao-cao` | Lấy từ báo cáo theo kỳ phía máy chủ; hiện cả Giá trị đơn và Đã thu thực tế | PO 07/11/2026 (Q4), audit BL-12 | `business-performance-card.tsx`, `business-summary.ts` |
+| "Giá trị đơn" gồm đơn Nháp (đơn catalog chưa thu, có thể tự huỷ) — phồng giá trị, kéo tỷ lệ thu xuống | Chỉ đơn đã chốt | Nháp tách thành "đơn chờ chốt" (số đơn + giá trị), không vào trung bình / đang xử lý / tỷ lệ thu; CSV có thêm 2 dòng | PO 12/11/2026, audit BL-30 | `order-revenue-report.ts`, `business-summary.ts` |
 | Spinner tải thô sơ | Chuẩn hóa Skeleton hệ thống | Dùng `SkeletonBlock` | Đồng bộ UX và trợ năng | `so-lieu/page.tsx` |
 
 ## 13. QA Matrix (03a §34)

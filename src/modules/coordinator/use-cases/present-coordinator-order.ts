@@ -26,6 +26,7 @@ import { loadEffectiveFieldConfigs } from "@/modules/field-platform/use-cases/ge
 import { findMissingRequiredFields } from "@/modules/field-platform/domain/stage-transitions"
 import { buildOrderFieldValueLookup } from "./field-value-lookup"
 import { paymentProgress } from "@/modules/orders/domain/payment-progress"
+import { orderReferencePayoutVnd } from "./partner-payout-source"
 
 const IMAGE_URL_TTL_SECONDS = 3600
 
@@ -424,12 +425,9 @@ export async function presentCoordinatorOrders(
       unitPriceVnd: Number(r.total_vnd),
       paidVnd: Number(r.paid_vnd),
       balanceVnd: Number(r.balance_vnd),
-      paymentStatus: derivePaymentStatus(
-        Number(r.paid_vnd),
-        Number(r.total_vnd),
-        r.payments.some((p) => p.kind === "REFUND")
-      ),
-      partnerPayoutVnd: c.partner_payout_vnd === null ? null : Number(c.partner_payout_vnd),
+      paymentStatus: derivePaymentStatus(Number(r.paid_vnd), Number(r.total_vnd), r.payments.some((p) => p.kind === "REFUND")),
+      // Chưa đóng: số chuẩn (phí gia công còn trả / số thoả thuận, audit BL-22); đã đóng: số đã ghi lúc đóng
+      partnerPayoutVnd: c.closed_at ? (c.partner_payout_vnd === null ? null : Number(c.partner_payout_vnd)) : orderReferencePayoutVnd(r),
       partnerRating: c.partner_rating,
       closureNotes: c.closure_notes,
       closedAt: iso(c.closed_at),

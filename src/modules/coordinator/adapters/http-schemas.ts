@@ -199,6 +199,8 @@ export const resolveExceptionSchema = z.object({
 export const closeOrderSchema = z.object({
   partnerRating: z.number().int().min(1).max(5).optional(),
   partnerPayoutVnd: z.number().nonnegative().max(1_000_000_000).optional(),
+  /** Bắt buộc khi tiền công khác số đã chốt (audit BL-22). */
+  payoutReason: text(500).optional(),
   notes: text(2000).optional(),
 })
 

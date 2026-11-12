@@ -1,4 +1,5 @@
 import { notFound, validationFailed } from "@/core/http/errors"
+import { assertQuotationDiscount } from "./quotation-discount-guard"
 import { updateLead } from "@/modules/acquisition/use-cases/manage-leads"
 import { assertWithinPriceBounds } from "@/modules/costing/use-cases/price-floor-guard"
 import { productLinesCeilingBase } from "../domain/quotation-price-bounds"
@@ -36,6 +37,7 @@ export async function updateQuotationUseCase(
   repo: IQuotationRepository = getQuotationRepository(),
   revisions: Pick<QuotationRevisionRepository, "add"> = new QuotationRevisionRepository(),
   updateLeadFn: (ctx: TenantContext, leadId: string, status: string) => Promise<unknown> = followUpLead,
+  discountGuard: typeof assertQuotationDiscount = assertQuotationDiscount,
 ): Promise<Quotation> {
   const existing = await repo.findById(ctx, id)
   if (!existing) {
@@ -85,6 +87,8 @@ export async function updateQuotationUseCase(
       effectiveDiscount,
       input.shippingFee ?? existing.shippingFee,
     )
+    // Trần chiết khấu: 50% nền tảng, mức Sale tự quyết của tiệm (PO 12/11/2026, BL-28)
+    await discountGuard(ctx, subtotal, discountAmount)
     // Dưới sàn cần C10 (checklist ALG 3.4), vượt trần cần C9 (PO 07/11/2026, Q3)
     await assertWithinPriceBounds(
       ctx,

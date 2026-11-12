@@ -45,7 +45,7 @@ export interface CoordinatorActionModalsProps {
   }) => Promise<void>
   onQc: (decision: "PASSED" | "REWORK_REQUESTED" | "REJECTED", notes: string, checklist: Record<string, boolean>) => Promise<void>
   onDelivery: (input: DeliveryEventInput) => Promise<void>
-  onCloseOrder: (input: { partnerRating?: number; partnerPayoutVnd?: number; notes?: string }) => Promise<void>
+  onCloseOrder: (input: { partnerRating?: number; partnerPayoutVnd?: number; payoutReason?: string; notes?: string }) => Promise<void>
   onRecordPayment: (order: CoordinationOrder) => void
   onCraftAccept: (data: { partnerId: string; agreedCraftFeeVnd: number; notes?: string | undefined }) => Promise<void>
   onCraftCancel: (reason: string) => Promise<void>

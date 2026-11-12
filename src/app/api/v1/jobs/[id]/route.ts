@@ -1,12 +1,11 @@
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { getJob } from "@/modules/jobs/use-cases/get-job"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "G4")
-
-  const { id } = await context.params
-  return jsonResponse({ job: await getJob(ctx, id) })
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "G4" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    return jsonResponse({ job: await getJob(ctx, id) })
+  },
 })
