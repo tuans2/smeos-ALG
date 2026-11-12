@@ -16,6 +16,7 @@ import type { PartnerView } from "@/modules/coordinator/use-cases/manage-partner
 import { PartnerCard } from "./partner-card"
 import { PartnerCreateForm } from "./partner-create-form"
 import { PartnerStatementModal } from "./partner-statement-modal"
+import { useSession } from "@/lib/session"
 
 /**
  * Danh bạ xưởng gia công (bảng `partners`, mã `R1`) — cả xưởng đang hoạt động lẫn tạm ngưng. Thiếu `?active` thì route trả
@@ -42,6 +43,7 @@ export function PartnerManagementModal({
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [statementOf, setStatementOf] = useState<PartnerView | null>(null)
+  const canSettle = useSession().can("R19") // bảng kê cần R19 (Điều hành, Kế toán)
 
   const fetchPartners = useCallback(async () => {
     setLoading(true)
@@ -236,7 +238,7 @@ export function PartnerManagementModal({
                 key={p.id}
                 partner={p}
                 onToggleStatus={handleToggleStatus}
-                onOpenSettlement={setStatementOf}
+                onOpenSettlement={canSettle ? setStatementOf : undefined}
               />
             ))
           )}

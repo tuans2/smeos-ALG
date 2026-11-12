@@ -30,12 +30,13 @@ Mục menu "Báo cáo theo kỳ" (Quản trị tiệm; chuỗi: Báo cáo & tài
 
 ## 2. API
 - `GET /api/v1/reports/orders` · `revenue` (`?detail=orders`) · `products` · `performance` · `cashflow` — cùng tham số `from`, `to`, `granularity`; cần `R20`.
+- Tab **Tiền công đối tác** (chỉ hiện khi có thêm `R19` — Điều hành, Kế toán; PO 12/11/2026, audit BL-22): danh bạ xưởng gia công `GET /api/v1/coordinator/partners?active=0`, mỗi xưởng mở Bảng kê theo kỳ đang chọn (`GET /api/v1/coordinator/partners/:id/statement`), lập sổ / đối soát / ghi đã thanh toán. Nút "Lập sổ" khoá kèm lý do khi kỳ chưa có đơn, còn đơn chưa ghi tiền công hoặc trùng sổ đã lập. Đây là lối vào chính: trung tâm mạng lưới chỉ dành cho vai Điều phối (không có `R19`) nên ở đó nút Bảng kê ẩn với người thiếu mã.
 
 ## 3. Thứ bậc thông tin
 | Lớp | Nội dung | Vị trí |
 |---|---|---|
 | L0 | Tiêu đề "Báo cáo theo kỳ", ô Từ ngày, Đến ngày, nút Ngày/Tuần/Tháng, nút "Xem báo cáo" | Đỉnh trang |
-| L1 | Thanh tab: Đơn hàng, Doanh thu, Sản phẩm, Hiệu suất, Dòng tiền | Dưới bộ chọn kỳ |
+| L1 | Thanh tab: Đơn hàng, Doanh thu, Sản phẩm, Hiệu suất, Dòng tiền, Tiền công đối tác (cần `R19`) | Dưới bộ chọn kỳ |
 | L2 | Ô số liệu tổng (StatTile) và bảng theo kỳ của tab đang mở | Khung nội dung |
 | L3 | Doanh thu: bấm một kỳ mở danh sách đơn của kỳ đó; Dòng tiền: danh sách giao dịch ngân hàng chưa khớp | Dưới bảng |
 
