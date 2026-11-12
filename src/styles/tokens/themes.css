@@ -113,6 +113,27 @@
   --color-info-bg: #EFF3F8;
   --color-info-text: #3D5E8B;
   --color-info-border: #9DB4D4;
+  /* Màu nhóm ô biểu tượng (IconTile / AppIcon) và biểu đồ theo brand kit ALG (Đợt 4, D4-18).
+   * Màu nhóm: ≥ 4,6:1 với icon trắng và trên nền nhạt 10% của chính nó. Biểu đồ: ≥ 3:1 trên nền trang/thẻ.
+   * Brand kit không có cam/chàm: "orange" = giữa Yellow Balloon và Brick Red; "indigo" = Powder Blue trầm. */
+  --color-tone-plum: #9C3740;
+  --color-tone-rose: #A1434C;
+  --color-tone-orange: #8C5630;
+  --color-tone-amber: #76600F;
+  --color-tone-teal: #46676C;
+  --color-tone-blue: #416494;
+  --color-tone-indigo: #566471;
+  --color-tone-green: #576745;
+  --color-tone-pink: #94485A;
+  --color-tone-emerald: #133D31;
+  --color-chart-1: #133D31;
+  --color-chart-2: #9C3740;
+  --color-chart-3: #668ABC;
+  --color-chart-4: #A38415;
+  --color-chart-5: #788F5F;
+  --color-chart-6: #C0657C;
+  --color-chart-7: #242C28;
+  --color-chart-8: #587882;
   --font-display: var(--font-sans);
   --radius-card: 0.75rem;
   --radius-button: 0.5rem;

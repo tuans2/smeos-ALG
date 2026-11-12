@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest"
 const root = process.cwd()
 const themes = readFileSync(join(root, "src/styles/tokens/themes.css"), "utf8")
 const block = themes.match(/\[data-theme="alg"\][^{]*\{([^}]*)\}/)?.[1] ?? ""
-const tokens = new Map([...block.matchAll(/(--color-[a-z-]+)\s*:\s*(#[0-9A-Fa-f]{6})\s*;/g)].map((m) => [m[1]!, m[2]!]))
+const tokens = new Map([...block.matchAll(/(--color-[a-z0-9-]+)\s*:\s*(#[0-9A-Fa-f]{6})\s*;/g)].map((m) => [m[1]!, m[2]!]))
 
 function luminance(hex: string): number {
   const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
@@ -56,6 +56,24 @@ describe("preset ALG — màu thương hiệu", () => {
   for (const [fg, bg] of pairs) {
     it(`${fg} trên ${bg} ≥ 4,5:1`, () => {
       expect(contrast(v(fg), v(bg))).toBeGreaterThanOrEqual(4.5)
+    })
+  }
+})
+
+describe("preset ALG — màu nhóm và biểu đồ (Đợt 4, D4-18)", () => {
+  const mix10 = (hex: string, base: string) =>
+    "#" + [1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * 0.1 + parseInt(base.slice(i, i + 2), 16) * 0.9).toString(16).padStart(2, "0")).join("")
+  for (const tone of ["plum", "rose", "orange", "amber", "teal", "blue", "indigo", "green", "pink", "emerald"]) {
+    it(`tone-${tone}: icon trắng trên nền đặc và icon màu trên nền nhạt 10% ≥ 4,5:1`, () => {
+      const c = v(`tone-${tone}`)
+      expect(contrast("#FFFFFF", c)).toBeGreaterThanOrEqual(4.5)
+      for (const base of [v("surface"), v("bg")]) expect(contrast(c, mix10(c, base))).toBeGreaterThanOrEqual(4.5)
+    })
+  }
+  for (let n = 1; n <= 8; n++) {
+    it(`chart-${n} ≥ 3:1 trên nền thẻ và nền trang`, () => {
+      expect(contrast(v(`chart-${n}`), v("surface"))).toBeGreaterThanOrEqual(3)
+      expect(contrast(v(`chart-${n}`), v("bg"))).toBeGreaterThanOrEqual(3)
     })
   }
 })
