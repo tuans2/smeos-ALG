@@ -266,7 +266,8 @@ Migration tự kiểm lại; còn thì dừng, không đổi gì, bản cũ vẫ
 
 ## 16. Hạn lưu dữ liệu — `retention_policies` (ADR-014 D-P4, 11/11/2026)
 
-Job hằng đêm (1–5 giờ sáng giờ Việt Nam) trong `smeos-web`, đặc tả 07 §54. Mặc định **chỉ đếm** số dòng quá hạn — log
+Job hằng đêm (1–5 giờ sáng giờ Việt Nam) trong `smeos-web`, đặc tả 07 §54. Sáu loại: `technical_logs`, `delivery_info`,
+`audit_logs`, `customer_conversations`, `customer_profiles`, `non_ledger_documents`. Mặc định **chỉ đếm** số dòng quá hạn — log
 `retention.policy_ran` (`enforced: false`, `rows`) và cột `last_run_rows`; chưa xoá gì.
 
 1. Xem số dòng quá hạn trên Render shell của `smeos-web`: `npm run retention:sweep` (chỉ đọc, in số dòng theo bảng).

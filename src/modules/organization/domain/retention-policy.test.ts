@@ -12,6 +12,8 @@ describe("hạn lưu theo loại dữ liệu", () => {
   it("chỉ chạy loại mã đã biết, đúng hành động, hạn hợp lệ", () => {
     expect(policySkipReason({ category: "technical_logs", retentionMonths: 3, action: "DELETE", enforce: true })).toBeNull()
     expect(policySkipReason({ category: "delivery_info", retentionMonths: 12, action: "ANONYMIZE", enforce: false })).toBeNull()
+    expect(policySkipReason({ category: "customer_profiles", retentionMonths: 24, action: "ANONYMIZE", enforce: true })).toBeNull()
+    expect(policySkipReason({ category: "non_ledger_documents", retentionMonths: 60, action: "ANONYMIZE", enforce: true })).toMatch(/chỉ hỗ trợ DELETE/)
     expect(policySkipReason({ category: "technical_logs", retentionMonths: 3, action: "ANONYMIZE", enforce: true })).toMatch(/chỉ hỗ trợ DELETE/)
     expect(policySkipReason({ category: "customers", retentionMonths: 24, action: "ANONYMIZE", enforce: true })).toMatch(/chưa được hỗ trợ/)
     expect(policySkipReason({ category: "toString", retentionMonths: 1, action: "DELETE", enforce: true })).toMatch(/chưa được hỗ trợ/)
