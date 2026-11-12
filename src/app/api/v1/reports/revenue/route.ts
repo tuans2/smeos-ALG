@@ -1,12 +1,14 @@
 /** GET /api/v1/reports/revenue?from=YYYY-MM-DD&to=YYYY-MM-DD&granularity=day|week|month (`R20`) — doanh thu dự kiến và thực thu theo kỳ, ?detail=orders mở danh sách đơn (6.2). */
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getRevenueReport } from "@/modules/reporting/use-cases/reports"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  const q = new URL(request.url).searchParams
-  return jsonResponse({ data: await getRevenueReport(ctx, { from: q.get("from"), to: q.get("to"), granularity: q.get("granularity"), detail: q.get("detail") }) })
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: getRevenueReport" },
+  handler: async ({ request, ctx }) => {
+    const q = new URL(request.url).searchParams
+    return jsonResponse({ data: await getRevenueReport(ctx, { from: q.get("from"), to: q.get("to"), granularity: q.get("granularity"), detail: q.get("detail") }) })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

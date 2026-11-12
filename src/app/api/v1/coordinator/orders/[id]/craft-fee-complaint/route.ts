@@ -5,9 +5,8 @@
  * tiệm cài (mặc định 0% — chỉ ghi nhận, không trừ). Mọi khiếu nại đều được lưu; phí chỉ bị trừ một lần (PO 22/10/2026).
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { craftFeePayable } from "@/modules/greeting-card/domain/craft-fee-policy"
@@ -17,34 +16,37 @@ import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-
 import { withCraftFeeDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
 import { craftFeePolicyOf } from "@/modules/greeting-card/use-cases/suggest-craft-fee"
 import { craftFeeComplaintBody } from "@/app/api/v1/_contracts/requests-coordinator"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, GREETING_CARD_CAPABILITY.orderUpdate)
-  const { id: orderId } = await context.params
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "quyền kiểm trong handler: GREETING_CARD_CAPABILITY" },
+  handler: async ({ request, ctx, params }) => {
+    requireCapability(ctx, GREETING_CARD_CAPABILITY.orderUpdate)
+    const { id: orderId } = params as { id: string }
 
-  const parsed = craftFeeComplaintBody.safeParse(await request.json().catch(() => ({})))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const parsed = craftFeeComplaintBody.safeParse(await request.json().catch(() => ({})))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const facts = await new CraftFeeFactsRepository().loadFacts(ctx.organizationId, orderId)
-  if (!facts) throw notFound()
-  const policy = craftFeePolicyOf(facts.settings)
+    const facts = await new CraftFeeFactsRepository().loadFacts(ctx.organizationId, orderId)
+    if (!facts) throw notFound()
+    const policy = craftFeePolicyOf(facts.settings)
 
-  const result = await new SubcontractStepStore().mutateMetadata(ctx.organizationId, orderId, (current) => {
-    const sub = current.subcontract_dispatch as SubcontractOrderState | undefined
-    if (!sub?.claimedBranchId) throw conflict("Đơn chưa có chi nhánh nhận làm.")
-    const complaints = Array.isArray(current.craft_fee_complaints) ? (current.craft_fee_complaints as unknown[]) : []
-    const logged = {
-      ...current,
-      craft_fee_complaints: [...complaints, { reason: parsed.data.reason, at: new Date().toISOString(), by: ctx.userId }],
-    }
-    const { meta, applied } = withCraftFeeDeduction(logged, policy, "COMPLAINT", parsed.data.reason, new Date())
-    const next = meta.subcontract_dispatch as SubcontractOrderState
-    const feeVnd = next.craftFee?.finalVnd ?? next.subcontractPriceVnd ?? 0
-    return { next: meta, result: { deducted: applied, payableVnd: craftFeePayable(feeVnd, next.craftFee?.deductions ?? []) } }
-  })
+    const result = await new SubcontractStepStore().mutateMetadata(ctx.organizationId, orderId, (current) => {
+      const sub = current.subcontract_dispatch as SubcontractOrderState | undefined
+      if (!sub?.claimedBranchId) throw conflict("Đơn chưa có chi nhánh nhận làm.")
+      const complaints = Array.isArray(current.craft_fee_complaints) ? (current.craft_fee_complaints as unknown[]) : []
+      const logged = {
+        ...current,
+        craft_fee_complaints: [...complaints, { reason: parsed.data.reason, at: new Date().toISOString(), by: ctx.userId }],
+      }
+      const { meta, applied } = withCraftFeeDeduction(logged, policy, "COMPLAINT", parsed.data.reason, new Date())
+      const next = meta.subcontract_dispatch as SubcontractOrderState
+      const feeVnd = next.craftFee?.finalVnd ?? next.subcontractPriceVnd ?? 0
+      return { next: meta, result: { deducted: applied, payableVnd: craftFeePayable(feeVnd, next.craftFee?.deductions ?? []) } }
+    })
 
-  return jsonResponse({ data: result })
+    return jsonResponse({ data: result })
+  },
 })
 
 export const dynamic = "force-dynamic"

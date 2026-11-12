@@ -23,10 +23,14 @@ import { handle } from "./response"
  * Tên trường thân/query của route mới là snake_case — kiểm ngay lúc khai báo (ném khi nạp module).
  */
 export type RouteAuth =
-  /** Phiên người dùng + mã năng lực. `capability: null` chỉ cho dữ liệu của chính người gọi, kèm lý do. */
+  /**
+   * Phiên + mã năng lực. `capability: null` kèm lý do: dữ liệu của chính người gọi, hoặc quyền phụ thuộc dữ liệu gửi lên
+   * nên handler tự kiểm (vd. một trong F2/L2/L3) — lý do phải nói rõ mã nào.
+   */
   | { kind: "tenant"; capability: string }
   | { kind: "tenant"; capability: null; reason: string }
   | { kind: "platform"; capability: string }
+  | { kind: "platform"; capability: null; reason: string }
   /** Máy gọi máy (`/integration/*`) — trần 600/phút/token đã nằm trong `requireIntegrationContext`. */
   | { kind: "integration" }
   /** Không đăng nhập — bắt buộc `rateLimit` theo IP. */
@@ -103,7 +107,7 @@ async function authenticate(request: Request, auth: RouteAuth): Promise<Actor> {
     }
     case "platform": {
       const pctx = await requirePlatformContext(request)
-      requirePlatformCapability(pctx, auth.capability)
+      if (auth.capability !== null) requirePlatformCapability(pctx, auth.capability)
       return { pctx }
     }
     case "integration":

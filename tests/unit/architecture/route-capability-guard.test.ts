@@ -40,7 +40,6 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "chat/webhooks/facebook": "webhook nhà cung cấp — xác thực bằng chữ ký",
   "chat/webhooks/zalo": "webhook nhà cung cấp — xác thực bằng chữ ký",
   "storage/[...key]": "URL ký sẵn — verifyStorageSignature",
-  "content-guard/validate": "kiểm từ cấm trên văn bản gửi lên — không đọc/ghi dữ liệu tổ chức",
   "billing/sepay": "webhook SePay của tài khoản nhận tiền thuê bao nền tảng — không có phiên, gác bằng khoá SEPAY_PLATFORM_API_KEY (checklist ALG 10.7)",
   "chat/public/widget": "khung chat AI trên trang công khai do công cụ SMEOS tạo — tổ chức suy từ slug, giới hạn tần suất (đặc tả 06 mục 17)",
   "media/background-removal": "đã đóng ở P24 — luôn trả 409",
@@ -50,9 +49,7 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "notification/inbox/mark-all-read": "đánh dấu đã đọc tin của chính mình",
   "notification/preferences": "tuỳ chọn nhận thông báo của chính mình",
   "notification/stream": "luồng SSE tin của chính mình",
-  "notification/events": "chỉ đọc danh mục sự kiện tĩnh",
   "notification/channels": "chỉ đọc trạng thái bật kênh toàn sàn",
-  "ux-rollout-flags": "chỉ đọc cờ giao diện đang bật cho chính tổ chức của phiên (03c E9)",
 }
 
 function routeFiles(dir: string): string[] {

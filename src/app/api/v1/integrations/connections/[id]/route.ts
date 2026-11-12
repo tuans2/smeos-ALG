@@ -1,12 +1,14 @@
 /** DELETE /api/v1/integrations/connections/:id — ngắt kết nối, xoá khoá đã lưu (W2). */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { disconnectConnection } from "@/modules/integration-hub/use-cases/manage-connection"
+import { defineRoute } from "@/core/http/define-route"
 
-export const DELETE = handle(async (req, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(req)
-  const { id } = await context.params
-  await disconnectConnection(ctx, id)
-  return jsonResponse({ ok: true })
+export const DELETE = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: disconnectConnection" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    await disconnectConnection(ctx, id)
+    return jsonResponse({ ok: true })
+  },
 })

@@ -1,12 +1,14 @@
 /** GET /api/v1/reports/cashflow?from=YYYY-MM-DD&to=YYYY-MM-DD&granularity=day|week|month (`R20`) — dòng tiền theo hình thức thu, đối chiếu giao dịch ngân hàng (6.6). */
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getCashflowReport } from "@/modules/reporting/use-cases/reports"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  const q = new URL(request.url).searchParams
-  return jsonResponse({ data: await getCashflowReport(ctx, { from: q.get("from"), to: q.get("to"), granularity: q.get("granularity"), detail: q.get("detail") }) })
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: getCashflowReport" },
+  handler: async ({ request, ctx }) => {
+    const q = new URL(request.url).searchParams
+    return jsonResponse({ data: await getCashflowReport(ctx, { from: q.get("from"), to: q.get("to"), granularity: q.get("granularity"), detail: q.get("detail") }) })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

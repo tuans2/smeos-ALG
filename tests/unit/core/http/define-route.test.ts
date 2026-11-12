@@ -121,6 +121,14 @@ describe("defineRoute", () => {
     expect(await (await allowed(req("/platform/x"))).json()).toEqual({ data: "op-1" })
     expect((await denied(req("/platform/x"))).status).toBe(403)
   })
+  it("platform: capability null chỉ đòi phiên nền tảng, kèm lý do", async () => {
+    const route = defineRoute({
+      auth: { kind: "platform", capability: null, reason: "mọi người dùng nền tảng" },
+      handler: async ({ pctx }) => ok(pctx.userId),
+    })
+    expect(await (await route(req("/platform/x"))).json()).toEqual({ data: "op-1" })
+  })
+
 
   it("trường camelCase ở thân/query → ném ngay lúc khai báo, kể cả lồng trong mảng/optional", () => {
     expect(() =>
