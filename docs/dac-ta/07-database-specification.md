@@ -4196,6 +4196,9 @@ model retention_policies {
 | `technical_logs` | 3 tháng | Xoá | `job_events`, `notification_inbox`, `link_events`, `greeting_catalog_events` | `created_at` trước mốc |
 | `delivery_info` | 12 tháng | Ẩn danh | `order_recipients` (tên, SĐT, địa chỉ — **giữ** hoá đơn VAT), `orders.delivery_address` | đơn `COMPLETED`/`CANCELLED` và `orders.updated_at` trước mốc |
 | `audit_logs` | 60 tháng | Xoá | `audit_logs`, `platform_access_logs`, `platform_audit_logs` | `created_at` trước mốc |
+| `customer_conversations` | 3 tháng | Ẩn danh | `chat_messages` (xoá), `chat_conversations` (bỏ `customer_id`, giữ dòng), `leads` (tên → `Khách đã xoá`, SĐT → `ERASED`, bỏ băm/4 số cuối/lời nhắn), `greeting_sessions` (bỏ tên, SĐT) | hội thoại không có tin nhắn từ mốc; lead chưa `WON`, không có đơn, `updated_at` trước mốc; phiên Thẻ chào chưa đặt (không `order_id`, chưa `ORDER_SUBMITTED`/`PAYMENT_REPORTED`/`COMPLETED`), `last_active_at` trước mốc |
+| `customer_profiles` | 24 tháng | Ẩn danh | `customer_occasions` (xoá), `customers` (như S-3b: tên, SĐT, băm, email, địa chỉ, ghi chú, nhãn, sở thích) | khách không có đơn, lead, phiên Thẻ chào, báo giá, hội thoại, tương tác nào từ mốc — **kể cả** khách có đơn đã thu (PO 12/11/2026): đơn, phiếu thu, hoá đơn VAT giữ nguyên |
+| `non_ledger_documents` | 60 tháng | Xoá | `quotations`, `orders` `CANCELLED` có `paid_vnd = 0` và không có phiếu thu (dòng con xoá dây chuyền) | `updated_at` trước mốc |
 
 - Luật (loại mã biết xử lý, hành động duy nhất của từng loại, mốc cắt theo tháng lịch, giờ chạy):
   `src/modules/organization/domain/retention-policy.ts`. Dòng có loại lạ hoặc hành động khác bảng trên → bỏ qua, log
@@ -4207,10 +4210,12 @@ model retention_policies {
   `app.purge_reason = retention_policy` (nhật ký bất biến, mục 46). Bỏ qua dòng của tổ chức đang legal hold
   (`organizations.legal_hold_until`); `platform_audit_logs` về một tổ chức đang legal hold cũng giữ.
 - Chạy tay: `npm run retention:sweep` (chỉ đếm, không ghi), `-- --category <loại>`, `-- --run` (như job đêm).
-- Chưa làm (P-6b): hội thoại khách, lead không thành đơn, phiên Thẻ chào không đặt (3 tháng, ẩn danh); hồ sơ khách 24
-  tháng không giao dịch; báo giá và đơn huỷ chưa thu (5 năm); chứng từ ghi sổ (10 năm từ cuối năm tài chính).
+- P-6b (PO 12/11/2026): migration `20261112090000_retention_policies_customer_data` thêm 3 dòng cuối của bảng trên, đều
+  `enforce = false`. Bảng và điều kiện: `src/modules/organization/infra/retention-targets.ts`.
+- Chưa làm: chứng từ ghi sổ (10 năm từ cuối năm tài chính) — chờ pháp lý xác nhận mốc; dữ liệu cũ nhất từ 2026.
 
-Ca thử: `src/modules/organization/domain/retention-policy.test.ts`, `tests/tenant/retention-sweep.test.ts` (mặc định chỉ
+Ca thử: `src/modules/organization/domain/retention-policy.test.ts`, `tests/tenant/retention-sweep-customer.test.ts` (P-6b),
+`tests/tenant/retention-sweep.test.ts` (mặc định chỉ
 đếm, không đổi dữ liệu; bật thực thi → xoá/ẩn danh đúng dòng quá hạn, giữ VAT, đơn chưa xong và dòng còn hạn giữ
 nguyên; legal hold giữ nguyên; chạy thử không ghi; loại chưa hỗ trợ bị bỏ qua).
 
