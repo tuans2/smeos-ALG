@@ -70,3 +70,48 @@ Còn giữ — **cần quyết định riêng vì đổi sẽ gây gián đoạn
 | Tài khoản QA đã tạo | `test01@smeos.com` trên máy chủ | Mặc định mới chỉ áp cho lần tạo sau |
 
 Lệch có sẵn (không do đổi tên, chưa sửa): schema `coordinator` (`assemblySteps`) lệch mã ngay trên HEAD — `npm run check:schemas:coordinator` đỏ trước thay đổi này.
+
+## 6. Đổi định danh hạ tầng (quyết định 12/11/2026, lần 3) — thay cho bảng "Còn giữ" ở mục 5
+
+Nguyên tắc: tên mới là `alg`, tên cũ **vẫn đọc được** ở mọi chỗ có dữ liệu hoặc phiên đang sống, nên triển khai không đăng xuất người dùng, không mất bản nháp, không phụ thuộc thứ tự triển khai web/worker.
+
+| Định danh | Mới | Tương thích ngược | Commit |
+|---|---|---|---|
+| Cookie phiên, SSO, vai dev, xem trước tầng | `alg_session`, `alg_sso`, `alg_dev_role`, `alg_tier_preview` | Đọc `smeos_*`/`floraos_sso`; đăng xuất xoá cả tên cũ | 5dfaa550, 4e7ba0de |
+| Header SSO | `x-alg-sso` | Nhận và vẫn gửi kèm `x-smeos-sso`, `x-floraos-sso` | 5dfaa550 |
+| Khoá mã hoá bí mật tích hợp | salt `alg-secret-box` | Giải được bản mã `smeos-`/`floraos-secret-box` (có test) | 5dfaa550 |
+| Kênh job LISTEN/NOTIFY | `alg_job_*` | Web gửi cả kênh cũ; worker nghe cả hai | 5dfaa550 |
+| Tên kết nối DB | `alg-web`, `alg-worker:*` | Truy vấn "worker còn sống" đếm cả `smeos-worker:*` | 5dfaa550, 4e7ba0de |
+| Hàm trigger DB | `alg_*` (5 hàm) | Migration `20261112030410_rename_db_functions_to_alg` | cb3fdeb4 |
+| Vai DB | `alg_app`, `alg_worker`, `alg_system`, `alg_readonly` | Script `scripts/db/rename-roles-to-alg.sql` + quy trình trong `OPERATIONS_RUNBOOK` | cb3fdeb4 |
+| Khoá lưu trình duyệt | `alg_*`, `alg.*`, `alg:*` | Tự chuyển khoá cũ một lần khi tải trang (`src/lib/brand-storage-migration.ts`) | 4e7ba0de |
+| Biến môi trường nội bộ | `ALG_DA_DOI_PYTHON`, `ALG_DEBUG_MAU` | Cờ gỡ lỗi cũ vẫn nhận | 5dfaa550 |
+| Tên gói npm, thư mục chuẩn agent | `alg`, `.agents/standards/alg/` | — | 4e7ba0de |
+| Docker cục bộ, DB test, CI | container `alg-db`, user/DB `alg`, `alg_test`, volume `alg-db-data` | — (xem bước cho máy dev bên dưới) | đợt D |
+
+### Bước một lần cho máy dev (Docker cục bộ)
+Volume mới `alg-db-data` là DB trống (volume cũ `smeos-db-data` vẫn còn, không bị xoá). Chạy lại đúng lệnh cài đặt: `docker compose up -d && npx prisma generate && npm run db:deploy && npm run db:seed`, rồi `npm run db:test:setup`. Cập nhật `.env` theo `.env.example` (`postgresql://alg:alg@localhost:5433/alg`, `…/alg_test`).
+
+### Render — KHÔNG đổi trong `render.yaml` (cần làm trên bảng điều khiển, theo thứ tự)
+Render nhận diện dịch vụ trong blueprint theo `name`. Đổi `name` trong `render.yaml` khiến Render **tạo dịch vụ mới** (không có biến môi trường, tên miền, lịch sử deploy); với `smeos-postgres` là **một CSDL mới rỗng** và web/worker sẽ trỏ sang đó. `databaseName`/`user` của CSDL đang chạy không đổi được. Nếu muốn đổi tên hiển thị:
+1. Đổi tên từng dịch vụ trên bảng điều khiển Render (Settings → Name) — URL `*.onrender.com` cũ có thể đổi theo, cần cập nhật `CUSTOM_DOMAIN_TARGET`/CNAME của cửa hàng.
+2. Sau đó mới sửa `name`/`fromService`/`fromDatabase` trong `render.yaml` cho khớp và đồng bộ blueprint.
+3. CSDL giữ `databaseName: smeos`, `user: smeos` (không đổi được tại chỗ); muốn đổi phải tạo CSDL mới và chuyển dữ liệu (pg_dump/restore) trong khung bảo trì.
+
+### Cố ý giữ (đổi sẽ làm hỏng dữ liệu hoặc tài nguyên bên ngoài)
+| Định danh | Lý do |
+|---|---|
+| Salt PII `smeos-pii-phone-hash`, `smeos-pii-dev-key` (`src/core/security/pii-cipher.ts`) | Giá trị băm số điện thoại đã lưu để tìm khách; đổi salt = mọi khách hiện có không tra được theo số điện thoại cho tới khi băm lại toàn bộ dữ liệu |
+| Tên bot Telegram `smeos_dieuphoi_bot` (giá trị dự phòng hiển thị) | Tài khoản bot thật trên Telegram — ALG cần tạo bot mới qua BotFather rồi đặt token |
+| Bucket lưu ảnh, nhận diện khoá ảnh cũ `smeos-core/org/`, `floraos-core/org/` | Tên tài nguyên thật và khoá đã lưu trong DB |
+| Dịch vụ và CSDL Render | Xem trên |
+| `scripts/cron-job.sh` (đường dẫn máy cá nhân `/Users/…/floraos-core`) | Đường dẫn trên máy của chủ dự án |
+| Migration cũ, `docs/archive`, nhật ký lịch sử có ngày tháng, ghi chú nguồn gốc "FloraOS v1" | Hồ sơ đã xảy ra |
+| `CLAUDE.md` | PO sở hữu |
+
+### Kiểm tra đợt hạ tầng
+- `npm test` 4912/4914 (2 ca `public-url` đỏ do `.env` local, có từ trước); typecheck, lint, `check:docs`, OpenAPI, schema creative/content-engine đạt.
+- 24 tệp test tenant liên quan (phiên, SSO, proxy, tích hợp, tên miền riêng, RLS, nhật ký bất biến, job, nền tảng): 109/109 sau khi cập nhật 2 ca kỳ vọng `smeos_sso`. **Chưa chạy trọn 276 tệp tenant** (mất hơn 40 phút trên máy này).
+- Migration đổi tên hàm áp thật trên DB dev: mọi trigger trỏ hàm `alg_*`, trigger nhật ký bất biến vẫn chặn sửa.
+- Script đổi vai chạy thật trên Postgres cục bộ: quyền, BYPASSRLS, `rls_mode` giữ nguyên; chạy lại an toàn.
+- **Chưa chạy**: CI trên GitHub với tên DB mới, test worker Python (thiếu `numpy` trong môi trường), e2e.

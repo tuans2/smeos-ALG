@@ -3,21 +3,21 @@ services:
     build:
       context: ./docker
       dockerfile: postgres-pgcron.Dockerfile
-    container_name: smeos-db
-    command: ["postgres", "-c", "shared_preload_libraries=pg_cron", "-c", "cron.database_name=smeos"]
+    container_name: alg-db
+    command: ["postgres", "-c", "shared_preload_libraries=pg_cron", "-c", "cron.database_name=alg"]
     environment:
-      POSTGRES_USER: smeos
-      POSTGRES_PASSWORD: smeos
-      POSTGRES_DB: smeos
+      POSTGRES_USER: alg
+      POSTGRES_PASSWORD: alg
+      POSTGRES_DB: alg
     ports:
       - "5433:5432"
     volumes:
-      - smeos-db-data:/var/lib/postgresql/data
+      - alg-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U smeos"]
+      test: ["CMD-SHELL", "pg_isready -U alg"]
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
-  smeos-db-data:
+  alg-db-data:

@@ -1,7 +1,7 @@
 # IOPaint tự host — Mức 2 (nợ #104, tiếp #78)
 
-Dịch vụ GPU đầu tiên trong `floraos-core`. Xem tài liệu tích hợp đầy đủ:
-"Tích hợp IOPaint Outpainting vào floraos-core" (Claude Doc, 17/09).
+Dịch vụ GPU đầu tiên trong `alg-core`. Xem tài liệu tích hợp đầy đủ:
+"Tích hợp IOPaint Outpainting vào alg-core" (Claude Doc, 17/09).
 
 ## Trạng thái
 
@@ -54,7 +54,7 @@ thẳng bằng `pip`, không qua Docker:
 ```
 
 Script cài `iopaint==1.6.0` vào một venv riêng (`.venv-iopaint/`, không
-đụng tới môi trường Python của `floraos-core`) và khởi động
+đụng tới môi trường Python của `alg-core`) và khởi động
 `iopaint start --device mps --model kandinsky-community/kandinsky-2-2-decoder-inpaint`
 trên `127.0.0.1:8080`. Sau khi thấy log khởi động xong, xác nhận bằng lệnh
 health-check ở mục dưới rồi nối vào `.env`:
@@ -78,13 +78,13 @@ sang VPS/CUDA khi lên production (đã chốt 18/09, xem tài liệu tích hợ
 ## Chạy thử (container, GPU NVIDIA/VPS)
 
 ```bash
-docker build -t floraos-iopaint -f docker/iopaint/Dockerfile .
+docker build -t alg-iopaint -f docker/iopaint/Dockerfile .
 
 docker run --gpus all -p 8080:8080 \
     -v iopaint-models:/root/.cache/iopaint \
-    floraos-iopaint
+    alg-iopaint
 
-# Từ floraos-core:
+# Từ alg-core:
 # IOPAINT_URL=http://localhost:8080
 # IOPAINT_MODEL=kandinsky-community/kandinsky-2-2-decoder-inpaint
 # IOPAINT_DEVICE=cuda

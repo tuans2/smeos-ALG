@@ -4,8 +4,8 @@
 
 | Môi trường | Cách nhận diện trong mã | Bằng chứng |
 |---|---|---|
-| Dev local | `npm run dev` (cổng 3100); `docker compose up -d` dựng Postgres (`floraos/floraos`, cổng 5432, có `pg_cron`); `dev:core` chạy web + worker vision/media/video + MI worker; `dev:all` thêm SocialFlow (cổng 8000) và LocalBudd nếu có thư mục anh em | `package.json`, `docker-compose.yml` |
-| Test | DB tên kết thúc `_test` (`npm run db:test:setup`); `test:tenant`/`test:platform` dùng `DATABASE_URL_TEST` mặc định `floraos_test` | `package.json`, `scripts/dung-db-test.sh` |
+| Dev local | `npm run dev` (cổng 3100); `docker compose up -d` dựng Postgres (`alg/alg`, cổng 5432, có `pg_cron`); `dev:core` chạy web + worker vision/media/video + MI worker; `dev:all` thêm SocialFlow (cổng 8000) và LocalBudd nếu có thư mục anh em | `package.json`, `docker-compose.yml` |
+| Test | DB tên kết thúc `_test` (`npm run db:test:setup`); `test:tenant`/`test:platform` dùng `DATABASE_URL_TEST` mặc định `alg_test` | `package.json`, `scripts/dung-db-test.sh` |
 | CI | GitHub Actions, Postgres 16 service, khoá giả | `.github/workflows/ci.yml` |
 | Production (Render) | `NODE_ENV=production`; khoá tính năng giao diện khi `NEXT_PUBLIC_APP_ENV=production` (khai trên `smeos-web` từ 05/11/2026) | `render.yaml`, `src/lib/feature-lock.ts` |
 
@@ -33,7 +33,7 @@ Giá trị thật trên mọi môi trường: NOT VERIFIED (không đọc `.env`
 |---|---|
 | Cài | `npm ci` (Node 22.x trong CI); worker: `pip install -r workers/requirements.txt` (Python 3.11 trong CI; `ffmpeg` cài thêm cho test âm thanh/video) |
 | Sinh Prisma client | `npx prisma generate` |
-| Lược đồ | `npm run db:deploy` → `prisma migrate deploy` (CI, Render); `npx prisma db push` chỉ dùng dựng database `floraos_test` trong CI |
+| Lược đồ | `npm run db:deploy` → `prisma migrate deploy` (CI, Render); `npx prisma db push` chỉ dùng dựng database `alg_test` trong CI |
 | Seed | `npm run db:seed` |
 | Build | `next build` (`experimental.cpus: 2`, `typedRoutes: true`); Render build với `NODE_OPTIONS=--max-old-space-size=4096` (trong `buildCommand`, từ 08/11/2026); tiến trình chạy giữ `--max-old-space-size=2048` |
 | Chạy web | `next start -p 3100` |
@@ -46,7 +46,7 @@ Giá trị thật trên mọi môi trường: NOT VERIFIED (không đọc `.env`
 
 | Job | Bước |
 |---|---|
-| `web` | `npm ci` → `prisma generate` → `db push` (DB chính + `floraos_test`) → `db:seed` → `typecheck` → `lint:ratchet` → `check:docs` → `lint:ux --check` → `npm test` → `check:template-ssot` → `test:tenant` → `test:platform` → `build` |
+| `web` | `npm ci` → `prisma generate` → `db push` (DB chính + `alg_test`) → `db:seed` → `typecheck` → `lint:ratchet` → `check:docs` → `lint:ux --check` → `npm test` → `check:template-ssot` → `test:tenant` → `test:platform` → `build` |
 | `worker` | Python 3.11 → cài `ffmpeg` → `pip install` → `pytest tests -q` |
 | `e2e-ux` | build → `playwright test tests/e2e/ux` (Chromium) → lưu `test-results/` khi đỏ |
 

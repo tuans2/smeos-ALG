@@ -83,7 +83,7 @@ Bảng tenant mới ⇒ thêm tên bảng vào `TENANT_TABLES` (`tests/helpers/d
 - **Mock ở tầng infra**: Mock repository, không mock domain logic.
 - **Dùng `vi.mock()`** cho external services (AI, storage).
 - **KHÔNG mock** `TenantContext`. Unit test: dựng context thật `{ organizationId: "org-test", ... }`. Tenant test: dùng `createTenant()` (`tests/helpers/fixtures.ts`) — tổ chức thật qua luồng đăng ký.
-- **Test DB** cho tenant test: dùng `floraos_test`, setup bằng `npm run db:test:setup`.
+- **Test DB** cho tenant test: dùng `alg_test`, setup bằng `npm run db:test:setup`.
 
 ### 4. Test Data
 

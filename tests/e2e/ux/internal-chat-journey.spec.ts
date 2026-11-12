@@ -10,7 +10,7 @@ import sharp from "sharp"
 import { createTestUserAndLogin, testClientHeaders } from "./helpers"
 
 const SHOTS = process.env.WALK_SHOTS
-const dbUrl = process.env.DATABASE_URL || "postgresql://floraos:floraos@localhost:5432/floraos"
+const dbUrl = process.env.DATABASE_URL || "postgresql://alg:alg@localhost:5432/alg"
 
 async function sql(text: string, params: unknown[] = []) {
   const c = new Client({ connectionString: dbUrl })

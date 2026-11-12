@@ -62,9 +62,9 @@ model my_table {
 5. **⚠️ DỪNG LẠI HỎI USER trước khi sửa schema.**
 
 ### 4. Docker & PostgreSQL
-- Container: `floraos-core-db`, credentials: `floraos:floraos@localhost:5432/floraos`.
+- Container: `alg-db`, credentials: `alg:alg@localhost:5432/alg`.
 - `pg_cron` cần Docker custom image: `docker/postgres-pgcron.Dockerfile`.
-- DB test: `floraos_test`, setup: `npm run db:test:setup`.
+- DB test: `alg_test`, setup: `npm run db:test:setup`.
 
 ---
 

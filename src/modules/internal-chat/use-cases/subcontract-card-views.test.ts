@@ -10,7 +10,7 @@ const state = (over: Partial<SubcontractOrderState>): SubcontractOrderState =>
 const facts = (over: Partial<SubcontractCardFacts> = {}): SubcontractCardFacts => ({
   orderStatus: "CONFIRMED", productionStatus: "WAITING", deliveryStatus: "PENDING", state: state({}), branchPartnerOrgId: "partner-org", hasShare: true, ...over,
 })
-const sign = () => "https://smeos.test/subcontract/DH-1?branch=DT-HN-01&t=ky"
+const sign = () => "https://alg.test/subcontract/DH-1?branch=DT-HN-01&t=ky"
 const ctx = (viewerOrg = "partner-org", canFulfil = true) => ({ chainOrgId: "chain-org", viewer: { organizationId: viewerOrg, canFulfil }, sign, now: NOW })
 
 describe("thẻ đơn gia công phản chiếu trạng thái thật", () => {

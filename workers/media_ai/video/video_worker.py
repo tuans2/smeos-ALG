@@ -1,6 +1,6 @@
 """
 Worker xử lý tiến trình Render Video (M04c).
-Tuân thủ chuẩn D6-1 của floraos-core:
+Tuân thủ chuẩn D6-1 của alg-core:
 - Lấy việc bằng SELECT ... FOR UPDATE SKIP LOCKED
 - Lắng nghe PostgreSQL LISTEN/NOTIFY qua kênh alg_job_video_render (và kênh cũ floraos_job_video_render)
 - Cập nhật job_events (stage, progress, done) cho SSE client
@@ -228,7 +228,7 @@ def run_worker(db_url: Optional[str] = None):
                     dsn = line.split("=", 1)[1].strip("\"'")
                     break
     if not dsn:
-        dsn = "postgresql://smeos:smeos@127.0.0.1:5433/smeos?sslmode=disable"
+        dsn = "postgresql://alg:alg@127.0.0.1:5433/alg?sslmode=disable"
 
     channel = notify_channel_for(FEATURE)
     print(f"🚀 [VideoWorker] Khởi động lắng nghe kênh: {channel}", flush=True)
