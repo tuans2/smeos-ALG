@@ -73,10 +73,12 @@ Các lỗi dưới đây đã sửa trên mã smeOS, mỗi lỗi kèm test chặ
 | 12 | Câu "tự động duyệt" chỉ hiện khi cửa hàng bật tự duyệt, kèm đúng số phút đã đặt | `9563b2dd` |
 | 13 | Mẫu Tạm ngưng, Lưu trữ không hiện trên link khách | `ee672448` |
 | 14 | Ô Mã ưu đãi chỉ hiện khi cửa hàng bật nhận mã giảm giá | `fb4947cb` |
+| 15 | Checklist gọi tab Cài đặt tiệm theo tên (số tab đánh theo các tab đang hiện); A-17 bật "Áp dụng phụ phí ngày lễ cho bộ sưu tập này", D-09 nêu công tắc "Cho khách nhập mã giảm giá" | `770033f0` |
 | 16 | Ảnh chụp mẫu của đơn Thẻ Chào mang theo công thức sản phẩm, đề xuất thay hoa đọc được thành phần | `c1b54f27` |
+| 17 | Phiếu xưởng in ảnh mẫu (ký mới lúc in), phiên bản, số cành, công thức có ô đánh dấu, kể cả đơn tạo tay có gắn sản phẩm; ghi chú xưởng bỏ dòng về tiền (đối soát, xác nhận thu, báo giá, phí giao lại) | `96572c57` |
 | 18 | Mã quyền mới `R21` (Đổi giờ giao kèm lý do) cho Điều hành, Điều phối, Sale; nút "Đổi giờ giao" trong chi tiết đơn; lịch sử đơn ghi giá trị cũ → mới, người đổi, lý do; Sale chỉ đổi đơn mình tạo | `61f3dd8b` |
-
-Lỗi 15, 17, 19, 20 và hai mục chưa kết luận ở trên xử lý ở lượt sau.
+| 19 | Trang đăng nhập tự hỏi máy chủ lý do phiên kết thúc, nên câu báo "đăng nhập ở thiết bị khác" hiện cả khi màn khác chuyển về sau lỗi 401 (tải lại trang vốn đã hiện đúng); khách có nút "Góp ý để cửa hàng chỉnh" khi duyệt ảnh thành phẩm — góp ý dừng đồng hồ tự duyệt, chặn giao và thu Lần 2 tới khi cửa hàng gửi ảnh mới, báo Điều phối và Sale; tab Nhận thanh toán hiện mã VietQR mẫu | `eb3ce21c`, `bb02912c` |
+| 20 | Menu Cài đặt tiệm dọc ở cột trái, đánh số liền; mọi ô Hồ sơ cửa hàng có nhãn gắn với ô; dòng danh sách sẵn sàng giãn theo nhãn lý do; màn trong khung ứng dụng chỉ một vùng `main` (có test chặn); vai trải nghiệm tên "Người dùng trải nghiệm" | `bb02912c` |
 
 Ba bước D-09, D-12, C-10 chạy lại sau khi khai cài đặt đúng định dạng của các form (khu vực giao `fee_vnd`, ngày lễ `max_orders`/`surcharge_vnd`, kiểu dáng theo mã của ngành) — lượt đầu ghi cài đặt sai định dạng nên kết quả lượt đầu không dùng.
 
@@ -234,7 +236,7 @@ Console: đăng ký và duyệt cửa hàng, tạo tổ chức kèm gói và m�
 
 ## 7. Việc tiếp theo
 
-1. Sửa lỗi 1–4 rồi dựng lại từ môi trường trắng chỉ theo README.
-2. Cắt lại từ mốc đã sửa, chạy lại các bước Không đạt; sửa lỗi 15, 17, 19, 20.
+1. Gắn mốc ứng viên mới chứa các commit ở bảng Xử lý lỗi, cắt lại và dựng từ môi trường trắng chỉ theo README.
+2. Chạy lại các bước Không đạt; kiểm hai mục chưa kết luận (giá theo phiên bản hiện "Liên hệ", đơn Thẻ Chào trong danh sách của Shipper).
 3. Chạy 57 bước chưa chạy, ưu tiên Luồng F (giao hàng), G (đơn nguồn khác, chuỗi, SePay), H (báo cáo), S (cách ly và quyền).
 4. Dựng staging có khoá thật để chạy các bước AI, Zalo ZNS/SMS, SePay, Telegram, tên miền riêng.
