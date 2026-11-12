@@ -1,4 +1,6 @@
-# Đề xuất Đợt 4 — chờ phê duyệt (CHƯA THỰC HIỆN)
+# Đề xuất Đợt 4 — ĐÃ DUYỆT VÀ THỰC HIỆN (12/11/2026)
+
+> Người giao việc duyệt toàn bộ khuyến nghị (D4-08 chọn A, D4-16 tách riêng). Kết quả từng mục: `BAO_CAO_DOT4.md`.
 
 Ngày 12/11/2026, nhánh `claude/fervent-pascal-ilhcgb`. Căn cứ: `KE_HOACH_NANG_CAP_UI.md` mục Đợt 4, `BANG_LECH_CHUAN_DESIGN_SYSTEM.md`, các phát hiện ghi trong `BAO_CAO_*` và `luong-upload-anh/README.md`.
 Mỗi mục: một commit có test, chụp lại màn ảnh hưởng ở 390 và 1280px. Cỡ: S (nhỏ) / M / L — ước lượng tương đối, không phải số ngày.
