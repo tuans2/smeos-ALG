@@ -37,6 +37,8 @@ e3c27f6095e8e0e1366d67aeebf28040a951bc72:src/modules/integration-hub/use-cases/_
 # CI tải mọi nhánh (fetch-depth: 0) nên gitleaks quét cả nhánh này.
 ccbec661ad7921774cb8376bbccf33c63f894139:tests/tenant/internal-contract-integrations.test.ts:generic-api-key:32
 21582ffb82e5118780427ed9a06b4c66d3b56c64:tests/tenant/internal-contract-chat.test.ts:generic-api-key:70
+# Cùng giá trị test trên, dòng đổi khoá `is_enabled` (đợt 5 snake_case, 12/11/2026) — đã đối chiếu không đổi giá trị.
+83d41a941d113719b2ed5b6d7fb6bba49d7c7204:tests/tenant/internal-contract-chat.test.ts:generic-api-key:74
 # Khoá chủ PII giả của job e2e-ux trong CI (nhánh claude/trusting-ramanujan-f6y2cw, PR #18, 10/11/2026) — base64 của
 # chữ "ci-only-not-a-real-pii-key-32b!!", không phải bí mật thật (đã đọc tận mắt; PO duyệt thêm 10/11/2026, PR #23).
 895f80d2ff8558c4ff8527515e4092921a63c319:.github/workflows/ci.yml:generic-api-key:183
