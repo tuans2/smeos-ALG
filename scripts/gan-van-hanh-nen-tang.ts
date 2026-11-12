@@ -11,11 +11,12 @@
  *
  *   npm run gan-van-hanh-nen-tang -- --email=ai@do.com [--capabilities=N1,N4,N5,N6] [--granted-by=<user_id>]
  *
- * Không truyền `--capabilities` thì gán đủ N1–N8.
+ * Không truyền `--capabilities` thì gán đủ N1–N8. Tài khoản đang chờ duyệt đăng ký được duyệt luôn — cách duy nhất
+ * để người vận hành đầu tiên của hệ thống mới dựng đăng nhập được (chưa có ai khác để duyệt).
  */
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { ALL_PLATFORM_CAPABILITY_CODES, isPlatformCapabilityCode } from "@/core/platform/platform-capability-catalog"
-import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
+import { grantPlatformOperator } from "@/modules/platform/use-cases/grant-platform-operator"
 
 function doc(ten: string): string | null {
   const co = process.argv.find((tham_so) => tham_so.startsWith(`--${ten}=`))
@@ -52,10 +53,12 @@ async function main(): Promise<void> {
     process.exit(1)
   }
 
-  const operatorId = await new PlatformOperatorRepository().grant(user.id, capabilityCodes, grantedBy)
+  const result = await grantPlatformOperator(user, capabilityCodes, grantedBy)
 
-  console.log(`Đã gán quyền vận hành nền tảng cho ${email} (user_id=${user.id}, operator_id=${operatorId}).`)
+  console.log(`Đã gán quyền vận hành nền tảng cho ${email} (user_id=${user.id}, operator_id=${result.operatorId}).`)
   console.log(`Năng lực: ${capabilityCodes.join(", ")}`)
+  if (result.approved) console.log("Tài khoản đang chờ duyệt đăng ký → đã duyệt, đăng nhập được ngay.")
+  if (result.temporaryPassword) console.log(`Tài khoản dùng thử không có mật khẩu — mật khẩu tạm (đổi ngay khi đăng nhập): ${result.temporaryPassword}`)
 
   await prisma.$disconnect()
 }
