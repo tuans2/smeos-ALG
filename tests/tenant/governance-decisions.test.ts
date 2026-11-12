@@ -81,9 +81,9 @@ describe("governance_decisions — đường ghi", () => {
   it("khoá cứng thông báo của chuỗi: đặt, đổi, gỡ — dòng gỡ ghi người gỡ", async () => {
     const url = "http://localhost/api/v1/notification/org-hard-locks"
     const send = (method: string, body: unknown) => withSession(url, chain.token, { method, body: JSON.stringify(body) })
-    expect((await postOrgLock(send("POST", { eventKey: "ORDER_RECEIVED", channel: "EMAIL", enabled: false, reason: "Bảo trì" }))).status).toBe(200)
-    expect((await postOrgLock(send("POST", { eventKey: "ORDER_RECEIVED", channel: "EMAIL", enabled: true }))).status).toBe(200)
-    expect((await deleteOrgLock(send("DELETE", { eventKey: "ORDER_RECEIVED", channel: "EMAIL" }))).status).toBe(200)
+    expect((await postOrgLock(send("POST", { event_key: "ORDER_RECEIVED", channel: "EMAIL", enabled: false, reason: "Bảo trì" }))).status).toBe(200)
+    expect((await postOrgLock(send("POST", { event_key: "ORDER_RECEIVED", channel: "EMAIL", enabled: true }))).status).toBe(200)
+    expect((await deleteOrgLock(send("DELETE", { event_key: "ORDER_RECEIVED", channel: "EMAIL" }))).status).toBe(200)
     const rows = await history({ system: "notification.hard_lock" })
     expect(rows.map((r) => r.value)).toEqual([{ enabled: false, reason: "Bảo trì" }, { enabled: true, reason: null }, null])
     expect(rows[2]).toMatchObject({ scope: `org:${chain.organizationId}`, tier: "CHAIN", decided_by: chain.userId })

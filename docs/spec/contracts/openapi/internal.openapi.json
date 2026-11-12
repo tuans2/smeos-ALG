@@ -100946,7 +100946,7 @@
             }
           },
           {
-            "name": "unreadOnly",
+            "name": "unread_only",
             "in": "query",
             "required": false,
             "schema": {
@@ -101368,7 +101368,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -101393,7 +101393,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
                   "enabled"
                 ]
@@ -101476,7 +101476,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -101495,7 +101495,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel"
                 ]
               }
@@ -101671,7 +101671,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -101688,14 +101688,14 @@
                       "MESSENGER"
                     ]
                   },
-                  "roleKey": {
+                  "role_key": {
                     "type": "string",
                     "minLength": 1
                   },
                   "enabled": {
                     "type": "boolean"
                   },
-                  "priorityOverride": {
+                  "priority_override": {
                     "type": "string",
                     "enum": [
                       "NORMAL",
@@ -101705,9 +101705,9 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
-                  "roleKey",
+                  "role_key",
                   "enabled"
                 ]
               }
@@ -101884,7 +101884,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -101904,14 +101904,14 @@
                   "enabled": {
                     "type": "boolean"
                   },
-                  "muteUntil": {
+                  "mute_until": {
                     "type": "string",
                     "format": "date-time",
                     "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
                   "enabled"
                 ]
@@ -102299,7 +102299,7 @@
         ],
         "parameters": [
           {
-            "name": "roleKey",
+            "name": "role_key",
             "in": "query",
             "required": false,
             "schema": {
@@ -102406,7 +102406,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -102423,24 +102423,24 @@
                       "MESSENGER"
                     ]
                   },
-                  "roleKey": {
+                  "role_key": {
                     "type": "string",
                     "minLength": 1
                   },
                   "enabled": {
                     "type": "boolean"
                   },
-                  "scheduleStart": {
+                  "schedule_start": {
                     "type": "string"
                   },
-                  "scheduleEnd": {
+                  "schedule_end": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
-                  "roleKey",
+                  "role_key",
                   "enabled"
                 ]
               }
@@ -102626,7 +102626,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -102651,7 +102651,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
                   "enabled"
                 ]
@@ -102734,7 +102734,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -102753,7 +102753,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel"
                 ]
               }

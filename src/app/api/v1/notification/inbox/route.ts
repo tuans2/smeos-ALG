@@ -9,7 +9,7 @@ export const GET = defineRoute({
     const url = new URL(request.url)
     const page = parseIntParam(url.searchParams.get("page"), { field: "page", fallback: 1, min: 1, max: 100_000 })
     const limit = parseIntParam(url.searchParams.get("limit"), { field: "limit", fallback: 20, min: 1, max: MAX_PAGE_LIMIT })
-    const unreadOnly = url.searchParams.get("unreadOnly") === "true"
+    const unreadOnly = url.searchParams.get("unread_only") === "true"
 
     const result = await listUserInbox(resolved.user.id, ctx.organizationId, {
       page,

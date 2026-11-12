@@ -21,11 +21,10 @@ export const GET = defineRoute({
 
 export const POST = defineRoute({
   auth: { kind: "tenant", capability: "F2" },
-  handler: async ({ request, ctx, resolved }) => {
-    const body = postHardLockSchema.parse(await request.json())
-
+  body: postHardLockSchema,
+  handler: async ({ ctx, resolved, body }) => {
     await setHardLock({
-      eventKey: body.eventKey,
+      eventKey: body.event_key,
       channel: body.channel as NotifyChannel,
       tier: "CHAIN",
       scopeId: ctx.organizationId,
@@ -40,11 +39,10 @@ export const POST = defineRoute({
 
 export const DELETE = defineRoute({
   auth: { kind: "tenant", capability: "F2" },
-  handler: async ({ request, ctx }) => {
-    const body = deleteHardLockSchema.parse(await request.json())
-
+  body: deleteHardLockSchema,
+  handler: async ({ ctx, body }) => {
     await removeHardLock({
-      eventKey: body.eventKey,
+      eventKey: body.event_key,
       channel: body.channel as NotifyChannel,
       tier: "CHAIN",
       scopeId: ctx.organizationId,

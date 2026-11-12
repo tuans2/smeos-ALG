@@ -219,9 +219,9 @@ export function useNotificationMatrix({
     async (eventKey: string, channel: NotifyChannel, enabled: boolean) => {
       if (!paths.policy) return // MOTHER tier không có policy endpoint riêng
       await apiSend(paths.policy, "PATCH", {
-        eventKey,
+        event_key: eventKey,
         channel,
-        roleKey: "*",
+        role_key: "*",
         enabled,
       })
       await policyRes.mutate()
@@ -237,7 +237,7 @@ export function useNotificationMatrix({
       reason?: string
     ) => {
       await apiSend(paths.hardLocks, "POST", {
-        eventKey,
+        event_key: eventKey,
         channel,
         enabled,
         reason,
@@ -250,7 +250,7 @@ export function useNotificationMatrix({
   const removeHardLock = useCallback(
     async (eventKey: string, channel: NotifyChannel) => {
       await apiSend(paths.hardLocks, "DELETE", {
-        eventKey,
+        event_key: eventKey,
         channel,
       })
       await hardLocksRes.mutate()

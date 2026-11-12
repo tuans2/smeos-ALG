@@ -5528,7 +5528,7 @@
         ],
         "parameters": [
           {
-            "name": "eventKey",
+            "name": "event_key",
             "in": "query",
             "required": false,
             "schema": {
@@ -5641,7 +5641,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -5666,7 +5666,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
                   "enabled"
                 ]
@@ -5696,7 +5696,7 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "eventKey": {
+                        "event_key": {
                           "type": "string"
                         },
                         "channel": {
@@ -5720,7 +5720,7 @@
                         }
                       },
                       "required": [
-                        "eventKey",
+                        "event_key",
                         "channel",
                         "enabled"
                       ],
@@ -5769,7 +5769,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -5788,7 +5788,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel"
                 ]
               }
@@ -5817,7 +5817,7 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "eventKey": {
+                        "event_key": {
                           "type": "string"
                         },
                         "channel": {
@@ -5835,7 +5835,7 @@
                         }
                       },
                       "required": [
-                        "eventKey",
+                        "event_key",
                         "channel"
                       ],
                       "additionalProperties": false
@@ -6440,7 +6440,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -6457,7 +6457,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "tier",
                   "visible"
                 ]
@@ -6487,7 +6487,7 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "eventKey": {
+                        "event_key": {
                           "type": "string"
                         },
                         "tier": {
@@ -6503,7 +6503,7 @@
                         }
                       },
                       "required": [
-                        "eventKey",
+                        "event_key",
                         "tier",
                         "visible"
                       ],

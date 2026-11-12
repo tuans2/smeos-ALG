@@ -1152,14 +1152,14 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | GET | `/notification/events` | — (phiên tenant) | Danh mục sự kiện hiển thị cho tầng `?tier=` (mặc định `STORE`), đã áp ma trận hiển thị của SaaS Mother |
 | GET | `/notification/channels` | — (phiên tenant) | Trạng thái bật/tắt kênh toàn sàn (chỉ đọc) |
 | GET | `/ux-rollout-flags` | — (phiên tenant) | Khoá các cờ rollout giao diện đang bật cho tổ chức của phiên `{ enabled: string[] }` — không trả danh sách tổ chức |
-| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page` (≥ 1), `limit` (1–100, mặc định 20), `unreadOnly`; không phải số nguyên hoặc ngoài khoảng → 400 |
+| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page` (≥ 1), `limit` (1–100, mặc định 20), `unread_only`; không phải số nguyên hoặc ngoài khoảng → 400 |
 | PATCH | `/notification/inbox/:id/read` | — (của chính mình) | Đánh dấu đã đọc; tin của người/tổ chức khác → không đổi |
 | POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |
 | GET | `/notification/stream` | — (của chính mình) | SSE tin mới; ping 25 giây. Hub trong bộ nhớ tiến trình (AUD-007) |
 | GET · POST · DELETE | `/notification/push-subscriptions` | — (của chính mình) | Nhận Web Push trên trình duyệt này (checklist 4.30): `GET` trả khoá công khai VAPID khi tầng Mẹ đã bật kênh + số thiết bị của tôi (`?endpoint=` để biết trình duyệt này đã đăng ký chưa); `POST { endpoint, keys: { p256dh, auth } }` chỉ nhận endpoint https của dịch vụ đẩy thật (khác → 422), trần 30 lần / 10 phút / người; `DELETE { endpoint }` chỉ xoá thiết bị của chính mình |
-| GET · PATCH | `/notification/preferences` | — (của chính mình) | Tuỳ chọn theo sự kiện × kênh; sự kiện bị khoá cứng trong phạm vi của tổ chức → 403 |
-| GET · PATCH | `/notification/org-policy` | `F1` · `F2` | Chính sách tổ chức theo sự kiện × kênh × vai (`roleKey`, `*` = mọi vai) |
-| GET · PATCH | `/notification/store-defaults` | `F1` · `F2` | Mặc định cửa hàng theo vai, có khung giờ |
+| GET · PATCH | `/notification/preferences` | — (của chính mình) | Tuỳ chọn theo sự kiện × kênh (`event_key`, `channel`, `enabled`, `mute_until`); sự kiện bị khoá cứng trong phạm vi của tổ chức → 422 `LOCKED_BY_UPPER` |
+| GET · PATCH | `/notification/org-policy` | `F1` · `F2` | Chính sách tổ chức theo sự kiện × kênh × vai (`event_key`, `channel`, `role_key` — `*` = mọi vai, `priority_override`) |
+| GET · PATCH | `/notification/store-defaults` | `F1` · `F2` | Mặc định cửa hàng theo vai (`?role_key=`), có khung giờ (`schedule_start`, `schedule_end`) |
 | GET · POST · DELETE | `/notification/org-hard-locks` | `F1` · `F2` | Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên |
 | GET · POST · DELETE | `/notification/store-hard-locks` | `F1` · `F2` | Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên |
 | GET | `/platform/notification/events` | phiên nền tảng | Toàn bộ danh mục sự kiện |

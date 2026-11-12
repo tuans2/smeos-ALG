@@ -20,13 +20,12 @@ export const GET = defineRoute({
 
 export const PATCH = defineRoute({
   auth: { kind: "tenant", capability: null, reason: "tuỳ chọn nhận thông báo của chính mình" },
-  handler: async ({ request, ctx, resolved }) => {
-    const body = patchPreferenceSchema.parse(await request.json())
-
+  body: patchPreferenceSchema,
+  handler: async ({ ctx, resolved, body }) => {
     // Khoá cứng Mother / Ngành / Chuỗi / Cửa hàng — kể cả khoá tầng cửa hàng (audit API §15: trước đây bỏ qua, tuỳ
     // chọn lưu được nhưng không có hiệu lực vì luật gửi vẫn áp khoá đó)
-    const locks = await listHardLocks({ eventKey: body.eventKey })
-    const appliedLock = getLockForUserPreference(locks, body.eventKey, body.channel as NotifyChannel, { storeOrgId: ctx.organizationId })
+    const locks = await listHardLocks({ eventKey: body.event_key })
+    const appliedLock = getLockForUserPreference(locks, body.event_key, body.channel as NotifyChannel, { storeOrgId: ctx.organizationId })
 
     if (appliedLock) {
       // Cấp trên đã khoá — cùng mã với tích hợp/kênh bán (`LOCKED_BY_UPPER`)
@@ -40,10 +39,10 @@ export const PATCH = defineRoute({
     await updateUserNotificationPreference({
       userId: resolved.user.id,
       organizationId: ctx.organizationId,
-      eventKey: body.eventKey,
+      eventKey: body.event_key,
       channel: body.channel as NotifyChannel,
       enabled: body.enabled,
-      muteUntil: body.muteUntil ? new Date(body.muteUntil) : undefined,
+      muteUntil: body.mute_until ? new Date(body.mute_until) : undefined,
     })
 
     return jsonResponse({ data: body })
