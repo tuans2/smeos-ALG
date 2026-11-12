@@ -1053,7 +1053,7 @@ def process_variant_job(conn: psycopg.Connection, job: dict[str, Any]) -> None:
         lighting = payload.get("lighting") if isinstance(payload.get("lighting"), dict) else {}
         palette = tuple(str(m) for m in (payload.get("palette") or []) if isinstance(m, str))
         seed = payload.get("seed") if isinstance(payload.get("seed"), int) else None
-        # Đợt 2 (25/09/2026): phong cách (ý định FloraOS) + vị trí trong nhóm phương án.
+        # Đợt 2 (25/09/2026): phong cách (ý định ALG) + vị trí trong nhóm phương án.
         style = payload.get("style") if payload.get("style") in PHONG_CACH else None
         # Đợt 3 (25/09/2026): chất lượng / tăng nét / cách ghép — giá trị lạ lùi về mặc định.
         quality = payload.get("quality") if payload.get("quality") in CHAT_LUONG else "standard"

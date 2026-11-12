@@ -1,6 +1,6 @@
 /**
  * Fact Domain Model & Interface (Clean Architecture)
- * FloraOS Core — Final Hardening Patch v2.3 / PATCH P3 (Mục 5.6)
+ * ALG Core — Final Hardening Patch v2.3 / PATCH P3 (Mục 5.6)
  *
  * Cho phép các chức năng sau này (Landing Page, Campaign, Social Post, AI Content...)
  * truy cập thông tin cấu trúc từ Business Profile thông qua cơ chế Fact: PROJECTED

@@ -116,7 +116,7 @@ export function MarketingWorkspace() {
       />
 
       {/* Main Body */}
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
         {/* K1: 1 Feature Guidance Card */}
         <FeatureGuidanceCard
           id="marketing_workspace_guidance"
@@ -248,7 +248,7 @@ export function MarketingWorkspace() {
           <Card className="flex flex-col gap-3 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Flame size={18} className="text-accent" aria-hidden="true" />
+                <Flame size={18} className="text-accent-text" aria-hidden="true" />
                 <h2 className="text-title-sm font-bold">Cơ hội nội dung nóng</h2>
               </div>
               <Button
@@ -322,7 +322,7 @@ export function MarketingWorkspace() {
               onClick={() => router.push("/noi-dung" as Route)}
               className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent-text">
                 <PenTool size={20} aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
@@ -336,7 +336,7 @@ export function MarketingWorkspace() {
               onClick={() => router.push("/video" as Route)}
               className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-bg text-warning">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-bg text-warning-text">
                 <Video size={20} aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
@@ -360,7 +360,7 @@ export function MarketingWorkspace() {
             </Button>
           </div>
         </Card>
-      </main>
+      </div>
     </div>
   )
 }

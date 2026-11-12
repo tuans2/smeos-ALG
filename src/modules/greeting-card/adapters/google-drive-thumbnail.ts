@@ -12,7 +12,7 @@ const CACHE_TTL_MS = 6 * 60 * 60 * 1000
 const MISS_TTL_MS = 5 * 60 * 1000
 const FETCH_TIMEOUT_MS = 5_000
 export const MAX_THUMB_BYTES = 5 * 1024 * 1024
-const UA = "Mozilla/5.0 (compatible; smeOS/1.0)"
+const UA = "Mozilla/5.0 (compatible; ALG/1.0)"
 
 export function isValidDriveId(id: string | null | undefined): id is string {
   return typeof id === "string" && DRIVE_ID.test(id)

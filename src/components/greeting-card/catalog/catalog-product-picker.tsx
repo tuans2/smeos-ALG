@@ -135,7 +135,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
       {/* Inline picker panel */}
       {ci.error && <p role="alert" className="p-2.5 rounded-xl bg-danger-bg text-danger text-body-sm">{ci.error}</p>}
       {showPicker && (
-        <div className="rounded-2xl border border-border bg-surface-muted p-4 flex flex-col gap-3">
+        <div className="rounded-2xl border border-border bg-surface-alt p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <p className="text-body-sm font-bold text-text">Chọn từ kho sản phẩm</p>
             <Button variant="ghost" type="button" onClick={() => setShowPicker(false)} className="h-auto p-0 gap-0 text-caption text-text-muted hover:text-text font-medium underline">Đóng</Button>

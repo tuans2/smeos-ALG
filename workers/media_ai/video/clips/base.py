@@ -2,7 +2,7 @@
 
 Nhà cung cấp sinh chuyển động cho TỪNG cảnh từ ảnh sản phẩm (Veo, Kling, Runway,
 Luma — vai trò tương đương, thứ tự do tiệm đặt). Ghép clip + bản phối Khu vực C
-+ phụ đề là HẬU KỲ của FloraOS (FFmpeg), không phải bước chất lượng của nhà
++ phụ đề là HẬU KỲ của ALG (FFmpeg), không phải bước chất lượng của nhà
 cung cấp. Mọi bên lỗi → dựng Ken Burns cục bộ và ghi rõ lý do.
 """
 

@@ -114,7 +114,7 @@ export function ImageSetViewer({
                   aria-pressed={isSelected}
                   className={`p-2 h-auto rounded-xl border text-left transition-all relative group overflow-hidden cursor-pointer block whitespace-normal w-full ${
                     isSelected
-                      ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"
+                      ? "border-primary bg-primary-muted ring-1 ring-primary shadow-xs"
                       : "border-border bg-surface hover:border-primary/40"
                   }`}
                 >

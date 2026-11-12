@@ -61,7 +61,7 @@ export function PartnerProductionCard({
       <div className="flex items-center justify-between border-b border-dashed border-border pb-4">
         <div>
           <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
-            Lệnh {ti.makerAction} & Phiếu Xưởng (T07)
+            Lệnh {ti.makerAction} & Phiếu Xưởng
           </div>
           <h3 className="text-title-sm font-extrabold text-text">
             Đơn #{orderCode}: {recipeTitle}

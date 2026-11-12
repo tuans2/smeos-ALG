@@ -26,7 +26,7 @@ export class KnowledgeResearcherAgent {
       return {
         nodeId: null,
         moduleIndex: null,
-        moduleTitle: "Tổng quan Hệ thống smeOS",
+        moduleTitle: "Tổng quan Hệ thống ALG",
         topicTitle: "10 Phân Hệ Nghiệp Vụ Cửa Hàng",
         routePath: "/",
         actionLabel: "Về Trang Chủ Điều Hành",

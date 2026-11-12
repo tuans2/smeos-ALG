@@ -298,12 +298,12 @@ function PrerequisiteBadge({
             <Icon 
               size={16} 
               strokeWidth={1.8} 
-              className={cn(ready ? "text-primary" : "text-warning")} 
+              className={cn(ready ? "text-primary" : "text-warning-text")} 
             />
-            <span className={cn("font-medium text-meta", ready ? "text-primary" : "text-warning")}>
+            <span className={cn("font-medium text-meta", ready ? "text-primary" : "text-warning-text")}>
               {label}
             </span>
-            <span className={cn("text-caption font-bold", ready ? "text-primary" : "text-warning")}>
+            <span className={cn("text-caption font-bold", ready ? "text-primary" : "text-warning-text")}>
               {ready ? "✓ Sẵn sàng" : "⏳ Chờ"}
             </span>
           </div>

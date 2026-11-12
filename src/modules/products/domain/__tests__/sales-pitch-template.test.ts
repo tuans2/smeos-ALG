@@ -208,7 +208,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
   })
 
   // --- Test hồi quy: chặn tái phát lỗi rà soát 17/09/2026 ---
-  // (thẻ chào A6 / kịch bản Zalo từng gửi tên tiệm "FloraOS Flower Boutique"
+  // (thẻ chào A6 / kịch bản Zalo từng gửi tên tiệm "ALG Flower Boutique"
   // và hotline "1900 xxxx" GIẢ cho MỌI khách hàng vì UI quên nối tenantDefaults)
 
   it("KHÔNG được rơi về tên tiệm/hotline giả trông như thật khi tenantDefaults là null", () => {
@@ -220,7 +220,7 @@ describe("sales-pitch-template (M01c - Thẻ Chào Sản Phẩm & Kịch bản Z
       null
     )
 
-    expect(pitch.shopName).not.toBe("FloraOS Flower Boutique")
+    expect(pitch.shopName).not.toBe("ALG Flower Boutique")
     expect(pitch.shopHotline).not.toBe("1900 xxxx")
     // Fallback phải hiện rõ đây là chỗ trống cần cập nhật, không phải một
     // thương hiệu/số điện thoại trông như thật.

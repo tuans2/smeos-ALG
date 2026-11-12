@@ -71,7 +71,7 @@ export function BrochurePreviewModal({
         </div>
       }
     >
-        <div className="-m-5 sm:-m-6 h-[calc(100%+2.5rem)] sm:h-[calc(100%+3rem)] bg-surface-muted flex items-center justify-center p-2 sm:p-4 overflow-hidden relative">
+        <div className="-m-5 sm:-m-6 h-[calc(100%+2.5rem)] sm:h-[calc(100%+3rem)] bg-surface-alt flex items-center justify-center p-2 sm:p-4 overflow-hidden relative">
           <div
             className={`transition-all duration-300 h-full flex flex-col bg-bg rounded-2xl overflow-hidden shadow-xl border border-border ${
               device === "mobile"

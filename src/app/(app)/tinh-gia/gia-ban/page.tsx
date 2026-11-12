@@ -91,7 +91,7 @@ export default function GiaBanPage() {
                   Lãi {formatVnd(s.profitVnd)} · biên {s.marginPercent.toLocaleString("vi-VN")}%
                 </p>
                 {s.warnings.map((w) => (
-                  <p key={w} className="text-body-sm text-warning">
+                  <p key={w} className="text-body-sm text-warning-text">
                     {w}
                   </p>
                 ))}

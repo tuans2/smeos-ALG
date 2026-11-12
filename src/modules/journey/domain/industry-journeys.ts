@@ -100,8 +100,8 @@ function storeJourneysFor(industryKey?: string | null): JourneyDefinition[] {
       case "customer-service-chatbot":
         return {
           ...j,
-          goal: "Hỏi trợ lý smeOS",
-          description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng smeOS.",
+          goal: "Hỏi trợ lý ALG",
+          description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng ALG.",
         }
       default:
         return j

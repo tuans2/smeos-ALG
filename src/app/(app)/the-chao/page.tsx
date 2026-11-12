@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Sparkles, Send, ShieldCheck, BookOpen, RefreshCw, GitMerge, Wand2, LayoutList } from "@/components/ui/icons"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { SalesBrochureTab } from "@/components/greeting-card/sales/sales-brochure-tab"
@@ -184,16 +185,17 @@ export default function TheChaoPage() {
         <div className="flex flex-wrap items-center gap-2 xl:shrink-0 xl:flex-nowrap">
           <BrochureUserGuideModal />
           <InboxButton onOpenTarget={openInboxTarget} />
-          <div role="tablist" aria-label="Chế độ làm việc" className="inline-flex rounded-xl border border-border bg-surface-alt p-1">
+          {/* Nhóm nút chọn chế độ (aria-pressed): không có tabpanel nên không dùng vai trò tab (OPERATING_PRINCIPLES §3) */}
+          <div role="group" aria-label="Chế độ làm việc" className="inline-flex rounded-xl border border-border bg-surface-alt p-1">
             {MODES.map((m) => {
               const active = viewMode === m.id
               const Icon = m.icon
               return (
-                <button
+                <Button
                   key={m.id}
                   type="button"
-                  role="tab"
-                  aria-selected={active}
+                  variant="ghost"
+                  aria-pressed={active}
                   onClick={() => setViewMode(m.id)}
                   className={cn(
                     "inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-body-sm font-semibold transition-colors",
@@ -202,12 +204,14 @@ export default function TheChaoPage() {
                 >
                   <Icon size={16} aria-hidden="true" />
                   {m.label}
-                </button>
+                </Button>
               )
             })}
           </div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => {
               refreshAll()
               setRefreshKey((k) => k + 1)
@@ -218,7 +222,7 @@ export default function TheChaoPage() {
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-text active:bg-surface active:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <RefreshCw size={16} aria-hidden="true" />
-          </button>
+          </Button>
           {(can("R11") || can("R1")) && (
             <ExportOrdersButton
               apiPath="/api/v1/orders/export"

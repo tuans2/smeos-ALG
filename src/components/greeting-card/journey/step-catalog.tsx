@@ -88,7 +88,7 @@ export function StepCatalog(props: StepCatalogProps) {
       {loadError && <InlineError message={loadError} onRetry={props.onRetry} />}
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2" aria-busy="true" aria-label="Đang tải bộ sưu tập">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2" role="status" aria-busy="true" aria-label="Đang tải bộ sưu tập">
           <Skeleton className="h-24 rounded-xl" />
           <Skeleton className="h-24 rounded-xl" />
         </div>
@@ -124,7 +124,7 @@ export function StepCatalog(props: StepCatalogProps) {
                   <span
                     className={cn(
                       "mt-2 inline-flex rounded-full px-2 py-0.5 text-caption font-semibold",
-                      cat.itemCount > 0 ? "bg-success-bg text-success" : "bg-warning-bg text-warning",
+                      cat.itemCount > 0 ? "bg-success-bg text-success" : "bg-warning-bg text-warning-text",
                     )}
                   >
                     {cat.itemCount > 0
@@ -148,7 +148,7 @@ export function StepCatalog(props: StepCatalogProps) {
       )}
 
       {selectedId && (
-        <div className="rounded-2xl border border-border bg-surface-muted p-4 sm:p-5">
+        <div className="rounded-2xl border border-border bg-surface-alt p-4 sm:p-5">
           <CatalogProductPicker catalogId={selectedId} compact onItemCountChange={props.onItemCountChange} readOnly={props.readOnly === true} />
         </div>
       )}

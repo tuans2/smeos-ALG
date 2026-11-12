@@ -57,7 +57,7 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
   }
 
   const modeSwitch = target.orderId && !replyTo && (
-    <div role="group" aria-label="Loại tin" className="grid grid-cols-2 gap-1 rounded-xl bg-surface-muted p-1">
+    <div role="group" aria-label="Loại tin" className="grid grid-cols-2 gap-1 rounded-xl bg-surface-alt p-1">
       {(["MESSAGE", "DISCOUNT"] as const).map((m) => (
         <Button variant="ghost" key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}
           className={`px-0 py-0 gap-0 h-10 rounded-lg text-body-sm font-bold ${mode === m ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted"}`}>
@@ -82,7 +82,7 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
       {replyTo ? (
         <div className="flex items-center justify-between gap-2 rounded-lg bg-primary/5 px-3 py-1.5 text-body-sm">
           <span>Trả lời <strong>{replyTo.senderName}</strong></span>
-          <Button variant="ghost" type="button" onClick={onCancelReply} aria-label="Huỷ trả lời" className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted">
+          <Button variant="ghost" type="button" onClick={onCancelReply} aria-label="Huỷ trả lời" className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt">
             <X size={16} aria-hidden="true" />
           </Button>
         </div>

@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { notifyChannelFor } from "@/modules/jobs/adapters/postgres-queue-provider"
+import { legacyNotifyChannelFor, notifyChannelFor } from "@/modules/jobs/adapters/postgres-queue-provider"
 
 /**
  * Hàng đợi lỗi (dead-letter, ROADMAP E5.2): job dừng hẳn ở `FAILED` sau khi hết lượt tự thử lại
@@ -58,6 +58,7 @@ export async function requeueFailedJob(id: string): Promise<{ organizationId: st
   if (count === 0) return null
   // Đánh thức worker như lúc enqueue (kênh theo feature).
   await prisma.$executeRaw`SELECT pg_notify(${notifyChannelFor(job.feature)}, ${id})`
+  await prisma.$executeRaw`SELECT pg_notify(${legacyNotifyChannelFor(job.feature)}, ${id})`
   return { organizationId: job.organization_id, feature: job.feature }
 }
 

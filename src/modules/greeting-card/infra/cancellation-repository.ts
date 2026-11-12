@@ -17,6 +17,7 @@ import { cancelBlocker } from "../domain/brochure-payment-policy"
 import { saleCancellationReminder } from "../domain/customer-cancellation-notice"
 import { getVoucherRedemptionRepository } from "@/modules/promotions/infra/voucher-redemption-repository"
 import { returnStock } from "@/modules/orders/infra/order-stock"
+import { releaseOrderBookings } from "@/modules/availability/infra/order-booking-hold"
 
 type Loose = Record<string, unknown>
 const obj = (v: unknown): Loose => (v && typeof v === "object" ? (v as Loose) : {})
@@ -169,6 +170,7 @@ export class CancellationRepository {
         // Trả lại mã giảm giá khách đã dùng — như nút Huỷ của sổ thu; hoàn tồn đã trừ lúc đặt (PO 07/11/2026)
         await getVoucherRedemptionRepository(tx).releaseForOrder(ctx.organizationId, order.id)
         await returnStock(ctx.organizationId, order.id, tx)
+        await releaseOrderBookings(ctx.organizationId, order.id, tx) // trả lịch đặt chỗ (UJ-23)
 
         await tx.order_events.create({
           data: scopedData(ctx, {

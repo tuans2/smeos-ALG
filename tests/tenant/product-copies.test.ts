@@ -271,7 +271,7 @@ describe("cách ly tenant — M01b dữ liệu bán hàng sản phẩm (P14)", (
     )
 
     expect(response.status).toBe(200)
-    const body = await readJson(response) as { edited: { suggested_name: string }; raw: { suggested_name: string } }
+    const body = (await readJson(response)).data as { edited: { suggested_name: string }; raw: { suggested_name: string } }
     expect(body.edited?.suggested_name).toBe("Tên Mới")
     expect(body.raw.suggested_name).toBe("Bó Hoa Hồng Tết")
   })
@@ -319,7 +319,7 @@ describe("cách ly tenant — M01b dữ liệu bán hàng sản phẩm (P14)", (
     )
 
     expect(response.status).toBe(200)
-    const body = await readJson(response) as { approval_state: string; approved_by: string; product_id: string }
+    const body = (await readJson(response)).data as { approval_state: string; approved_by: string; product_id: string }
     expect(body.approval_state).toBe("APPROVED")
     expect(body.approved_by).toBe(a.userId)
     expect(typeof body.product_id).toBe("string")
@@ -368,7 +368,7 @@ describe("cách ly tenant — M01b dữ liệu bán hàng sản phẩm (P14)", (
     )
 
     expect(response.status).toBe(200)
-    const body = await readJson(response) as { approval_state: string }
+    const body = (await readJson(response)).data as { approval_state: string }
     expect(body.approval_state).toBe("REJECTED")
 
     const copyAfter = await prisma.product_copies.findUnique({ where: { id: copy.id } })

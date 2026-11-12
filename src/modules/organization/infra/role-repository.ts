@@ -85,6 +85,8 @@ export class RoleRepository {
     const capabilities = new CapabilityRepository(this.db)
     for (const role of SYSTEM_ROLES) {
       const existing = await this.findSystemRoleByKey(role.key)
+      // Tên vai hệ thống theo danh mục (vd. đổi tên tiếng Việt) — bản cài cũ được cập nhật ở lần seed kế tiếp
+      if (existing && existing.name !== role.name) await this.db.roles.update({ where: { id: existing.id }, data: { name: role.name } })
       const record =
         existing ??
         (await this.db.roles.create({

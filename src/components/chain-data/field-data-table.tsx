@@ -45,7 +45,7 @@ export function FieldDataTable({ fields }: FieldDataTableProps) {
         )
       case "MASKED":
         return (
-          <span className="px-2 py-0.5 rounded text-caption font-bold bg-warning-bg text-warning border border-warning/30">
+          <span className="px-2 py-0.5 rounded text-caption font-bold bg-warning-bg text-warning-text border border-warning/30">
             MASKED (Đã che)
           </span>
         )

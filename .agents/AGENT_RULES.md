@@ -1,4 +1,4 @@
-# AGENT RULES & STANDARDS — FLORAOS CORE
+# AGENT RULES & STANDARDS — ALG CORE
 
 > This document is the **mandatory core rulebook** for all AI coding agents.
 > Designed in a **3-Tier Architecture (Global / Project-Enterprise / On-Demand Skills)** to optimize context token efficiency and ensure zero-friction portability to other SaaS projects.
@@ -68,7 +68,7 @@ When rules conflict, resolve strictly in this order (lower numbers ALWAYS take p
 ---
 
 # 🏢 PART II: PROJECT & ENTERPRISE CONSTRAINTS (Project Tier)
-*Specific to FloraOS — Customize this section when porting to another repository.*
+*Specific to ALG — Customize this section when porting to another repository.*
 
 ## 8. STRICT LOCALIZATION REQUIREMENT
 - **User-Facing Text MUST BE 100% VIETNAMESE**:
@@ -116,7 +116,7 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
   7. `J7` "WRAP, not REPLACE" & Expert Mode: Wrap existing dashboards as journey destinations; provide toggleable Expert Mode for power users.
 - **Core Modules & UI Kit**: `src/modules/journey/` (domain/catalog) & `src/components/journey/` (`ChoiceGrid`, `ActionCard`, `JourneyShell`, `NextActions`).
 
-## 14. KNOWN FAILURE PATTERNS (FloraOS Battle-Tested Log)
+## 14. KNOWN FAILURE PATTERNS (ALG Battle-Tested Log)
 | # | Issue | Root Cause | Standard Remedy |
 |---|---|---|---|
 | 1 | `server-only` crash in Vitest | Missing `react-server` condition in Vitest | Use stub at `tests/helpers/server-only-stub.ts` |
@@ -129,11 +129,11 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 | 8 | Business guard + its tests deleted inside an unrelated commit (balance-collection guard removed in a products commit) | Large mixed commits; deleted tests not noticed in review | Never delete a test to make a change pass; review `git diff --stat -- "*test*"` for deletions before pushing; restore guard + tests |
 | 9 | Foreign-tenant asset linked as a product image (14/10/2026: `PATCH /products/:id`, batch import, approve) | `product_images.asset_id` has no FK to `assets`, so an `assetId` from the body was never checked for ownership; the list then signed the other tenant's storage key | Before linking any client-supplied `assetId`, load it with `scopedWhere(ctx, { id })` and throw `notFound()` (`assertOwnedAsset` in `products/infra/product-main-image.ts`); scope every `assets.findMany` by `organization_id` |
 | 10 | Direct `fetch` to OpenAI/Ollama inside a module (Ops Copilot tone agent, 14/10/2026) | "LLM polish with template fallback" written as raw provider calls, bypassing `callCapability` (no privacy floor, metering, license filter, timeout) | Route through `callCapability` with a registered AI capability, or stay on the deterministic template; `tests/unit/architecture/ops-copilot-no-direct-ai.test.ts` guards Ops Copilot |
-| 11 | Agent followed `AGENTS.md` into dead code (`core/governance/cascading-resolver.ts`, Journey components that never existed — audit 30/10/2026) | Rule docs described the target architecture as if built; untracked agent files drifted from code | Check `.agents/standards/smeos/*` status column first; trust code over prose; a doc naming a file/function must be verified with `grep` before use |
+| 11 | Agent followed `AGENTS.md` into dead code (`core/governance/cascading-resolver.ts`, Journey components that never existed — audit 30/10/2026) | Rule docs described the target architecture as if built; untracked agent files drifted from code | Check `.agents/standards/alg/*` status column first; trust code over prose; a doc naming a file/function must be verified with `grep` before use |
 | 12 | Every local commit blocked by the industry-term pre-commit hook although no code was staged (30/10/2026) | Hook ran the whole-repo ratchet, already red on `main` | Hook runs only when `src/`, `workers/`, `scripts/`, `prisma/` are staged; fix the ratchet on its own branch, never `--no-verify` |
 | 13 | `storage-write-contract.test.ts` timed out locally (5 s) on 3 runs but passed alone and on CI (30/10/2026) | Repo walker skipped `node_modules`/`__pycache__` but not the local Python virtualenv under workers (`.venv`, 677 MB, ~7.6k `.py`), which exists only on dev machines | Every repo walker in architecture tests skips `.venv`; a test that passes alone but times out in the suite → look for an unexcluded local-only directory before rerunning |
 | 14 | CI `security` red on `main` with no secret in its own diff (31/10/2026: fake HMAC key `const SECRET = "…"` in Integration hub unit tests) | gitleaks scans every fetched branch, so a fake key in a test on any branch turns every PR red | Prefer an obviously fake value without a `key/secret/token = "…"` assignment shape; otherwise add `<commit>:<file>:generic-api-key:<line>` to `.gitleaksignore` with a comment |
-| 15 | A new cross-tenant scanner (cron, sweep, reconciliation, report over all organizations) returns 0 rows with no error once RLS blocks for real (ADR-013, 07/11/2026) | Policy `tenant_isolation` hides other organizations' rows when the session carries neither `app.org_id` nor the system flag; in audit mode it only records a `pending` event | In the web process wrap the scan in `asSystemDb("<reason>", fn)` (`src/core/tenancy/db-context.ts`) or serve it from a path classified as system there; scripts and tools outside the app connect as `smeos_system` (`BYPASSRLS`). Before merging, run the suites with `DB_RLS_MODE=audit DB_RLS_AUDIT_FILE=<file>` and expect 0 `pending` events (plan I-5) |
+| 15 | A new cross-tenant scanner (cron, sweep, reconciliation, report over all organizations) returns 0 rows with no error once RLS blocks for real (ADR-013, 07/11/2026) | Policy `tenant_isolation` hides other organizations' rows when the session carries neither `app.org_id` nor the system flag; in audit mode it only records a `pending` event | In the web process wrap the scan in `asSystemDb("<reason>", fn)` (`src/core/tenancy/db-context.ts`) or serve it from a path classified as system there; scripts and tools outside the app connect as `alg_system` (`BYPASSRLS`). Before merging, run the suites with `DB_RLS_MODE=audit DB_RLS_AUDIT_FILE=<file>` and expect 0 `pending` events (plan I-5) |
 | 15 | E2E checks the old UI instead of the new flagged flow (31/10/2026: `/cong-cu/bo-anh-san-pham` "credit" not found) | Test waited for the flag cache by checking "Công cụ 0x" was absent; removing tool codes from the old UI made that wait a no-op | Wait for a landmark only the new flow renders (`ready` region in `a11y-done-tools.spec.ts`) |
 | 16 | Tạo alias palette Tailwind để né luật lint (01/11/2026, ADR-011 D-UI-02) | Tạo 12 thang màu alias trong `src/app/globals.css:189` (`stone→cool`, `rose→blush`...) để lách regex R1 khiến ux-lint báo xanh giả, màu không áp theo preset theme | TUYỆT ĐỐI CẤM tạo alias hoặc đổi tên palette Tailwind để né lint. Mọi màu sắc phải dùng token ngữ nghĩa (`bg-primary`, `bg-surface`, `text-text`...) hoặc token phân loại được chuẩn hóa (`--color-chart-1..8`, `--color-tone-*`). Thêm/sửa token chỉ qua PR chạm `src/styles/tokens/` được PO duyệt |
 | 17 | Báo cáo bàn giao ghi số liệu không có nguồn đo (03/11/2026: bảng LCP/CLS không có tệp đo, "4 preset" trong khi có 3, biên bản WCAG "đã ký" không có kết quả chạy) | Báo cáo viết theo mục tiêu kế hoạch thay vì theo kết quả lệnh | Mỗi con số trong tài liệu bàn giao kèm lệnh đo hoặc tệp kết quả lưu trong repo; chưa chạy thì ghi "Chưa kiểm chứng" (`docs/audit/ui-architecture-audit/13_RE_AUDIT_ENTERPRISE_REPORT.md`) |
@@ -146,10 +146,11 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 | 24 | Màn nghiệp vụ hiển thị dữ liệu mẫu cứng như số thật (11/11/2026, audit BL-22/23: "Sổ đối soát" đối tác chỉ có 3 dòng mẫu, nút "Đã thanh toán" chỉ đổi state trình duyệt; "Hiệu quả quảng cáo" trên `/so-lieu` tính ROAS từ chiến dịch mẫu, cho tải CSV) | Thành phần dựng trước khi có API, dùng `SAMPLE_*` làm giá trị mặc định rồi được gắn vào màn thật | Màn thật không import dữ liệu `SAMPLE_*`/`MOCK_*`; chưa có nguồn thật thì không gắn lối vào (guard `tests/unit/architecture/no-sample-data-screens.test.ts`); dữ liệu minh hoạ chỉ ở `kho-templates/preview-data` |
 | 25 | Ẩn danh khách bằng `prisma.customers.updateMany({ phone: "ERASED", phone_hash: null })` hỏng khi có từ hai khách (12/11/2026: xoá tenant S-3b, xoá theo yêu cầu P-7) | Lớp mã hoá của client Prisma (`pii-write.ts`) tính lại `phone_hash` từ số mới, bỏ qua `null` truyền vào — số không chuẩn hoá được thành `""`, trùng khoá duy nhất `(organization_id, phone_hash)` | Ẩn danh cột có băm bằng SQL thô đặt `phone_hash`/`phone_last4` = NULL (`customer-erasure.ts`, `tenant-purge.ts`, `retention-targets.ts`); test luôn ẩn danh ≥ 2 khách cùng tổ chức |
 | 26 | Tuyến khoá "Sắp ra mắt" vẫn vào được bằng URL gõ thẳng trên production (audit L-03: `/tin-nhan` sửa 09/11, rồi 10 tuyến nữa 12/11/2026) | Thêm tiền tố vào `LOCKED_ROUTE_PREFIXES` chỉ làm mờ mục sidebar; phải có `layout.tsx` bọc `FeatureLockedGuard` ở thư mục tuyến | Thêm tiền tố khoá thì thêm luôn `layout.tsx` với `<FeatureLockedGuard route="/…">`; `tests/unit/architecture/locked-route-guard.test.ts` đỏ khi thiếu |
+| 27 | Mã chứng từ lấy từ "đếm dòng trong ngày + 1" trùng mã khi nhiều yêu cầu cùng lúc (12/11/2026, thử tải O-9: 10 đơn đồng thời của một chuỗi lỗi 70/100 "Đang có nhiều đơn tạo cùng lúc") | Hai giao dịch đọc cùng số đếm trước khi ghi; vài lần thử lại cũng đọc lại số cũ | Mã đơn mới cấp số bằng bộ đếm nguyên tử `order_code_sequences` (`allocateOrderCodeNumber`, đặc tả 07 §57); mã mới khác không viết theo kiểu đếm dòng — có ca `test:tenant` tạo đồng thời ≥ 10 bản ghi (`tests/tenant/order-code-sequences.test.ts`) |
 
 ## 15. OPS COPILOT KNOWLEDGE SYNC & ZERO-LEAKAGE PERIMETER
 - **Mandatory Triad Sync**: Any modification to webapp UI, routes, action buttons, or business workflows (`src/app/(app)/`) MUST update both:
-  1. User Guide SSOT (`docs/production-feature-map/Huong_Dan_Su_Dung_FloraOS_DungchoDIEUHANH.md`)
+  1. User Guide SSOT (`docs/production-feature-map/Huong_Dan_Su_Dung_ALG_DungchoDIEUHANH.md`)
   2. OPS Copilot Knowledge Nodes (`src/modules/chat-assistant/ops-copilot/knowledge-base/node-*.ts`)
 - **Zero-Leakage Security Perimeter**: User-facing manual & Copilot knowledge MUST ONLY contain what shop staff see and interact with on the browser.
   - **STRICTLY PROHIBITED**: Third-party AI providers (OpenAI, Anthropic, Dify), API raw costs, `.env` variables, database schema/SQL, raw capability codes (`A3`, `F4`, `T2`), internal stack traces, and multi-tenant infrastructure internals.
@@ -172,4 +173,4 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 | 4-tier governance, nav theo tầng, khoá công cụ, gói dịch vụ, plugin ngành | [`tier-governance`](skills/tier-governance/SKILL.md) |
 | Ghi/đọc/xoá tệp, thùng rác, legal hold, Kho dữ liệu | [`storage`](skills/storage/SKILL.md) |
 | Sự kiện & kênh thông báo | [`notifications`](skills/notifications/SKILL.md) |
-| Tiêu chuẩn kiến trúc (chung + SMEOS, trạng thái ✅/🟡/🔴) | [`standards/README.md`](standards/README.md) |
+| Tiêu chuẩn kiến trúc (chung + ALG, trạng thái ✅/🟡/🔴) | [`standards/README.md`](standards/README.md) |

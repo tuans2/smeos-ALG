@@ -62,7 +62,7 @@ export const AI_STUDIO_OPERATIONS: OpenApiOperation[] = [
     description: "Sai định dạng/kích thước (MP3/WAV/M4A ≤ 20MB) hoặc loại giấy phép lạ → 400; thiếu nguồn giấy phép hoặc `attest` → 422.",
     ok: [201, { description: "Bài nhạc", schema: res.musicTrackResponse }], errors: [...BODY_ERRORS, 422] }),
   op(AUD, { method: "delete", path: "/audio/music-tracks/{id}", operationId: "deleteMusicTrack", summary: "Gỡ bài nhạc tiệm đã tải", cap: "I1", description: NF,
-    ok: [200, { description: "Đã gỡ", schema: res.okResponse }], errors: [404] }),
+    ok: [200, { description: "Đã gỡ", schema: res.musicTrackDeletedResponse }], errors: [404] }),
   op(AUD, { method: "get", path: "/audio/music-tracks/system/{trackId}", operationId: "playSystemTrack", summary: "Nghe thử bài nhạc hệ thống", cap: "I1",
     description: "Mã bài lạ → 404.", ok: [200, { description: "Tệp âm thanh", contentType: "audio/*" }], errors: [404] }),
   op(AUD, { method: "get", path: "/audio/voice-clones", operationId: "listVoiceClones", summary: "Giọng nhân bản của tổ chức", cap: "I1",

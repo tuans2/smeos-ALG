@@ -111,7 +111,7 @@ export default function PlatformConnectionsPage() {
             </span>
           }
           title="Kết nối kênh bán hàng"
-          description="Kết nối trang mạng xã hội và kênh nhắn tin để đăng bài sản phẩm từ smeOS"
+          description="Kết nối trang mạng xã hội và kênh nhắn tin để đăng bài sản phẩm từ ALG"
         />
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="success" className="text-caption px-2.5 py-1">

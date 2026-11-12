@@ -1,7 +1,7 @@
 import { GreetingCardRepository, getGreetingCardRepository } from "../infra/greeting-card-repository"
 import type { GreetingCatalogProduct } from "../domain/greeting-card-types"
 import { withPaymentCodeFlag, type ShippingConfig } from "../domain/brochure-pricing"
-import { collectImageAssetIds, toCatalogProduct } from "./brochure-product-mapper"
+import { collectImageAssetIds, forCustomer, toCatalogProduct } from "./brochure-product-mapper"
 import { toPublicCatalogFilters } from "../domain/greeting-template-registry"
 import type { ShopContact } from "../domain/shop-contact"
 import { getShopContact } from "./get-shop-contact"
@@ -44,7 +44,7 @@ export async function mapCatalogToPublicResult(
   // Mẫu tạm hết hàng không hiện cho khách
   const visibility = readPriceVisibility(catalog.organization.settings)
   const products: GreetingCatalogProduct[] = catalog.items
-    .map((item) => applyPriceVisibility(toCatalogProduct(item, assetMap), visibility))
+    .map((item) => forCustomer(applyPriceVisibility(toCatalogProduct(item, assetMap), visibility)))
     .filter((p) => p.available !== false)
 
   const shop = await repo.getShopProfile(catalog.organization_id)

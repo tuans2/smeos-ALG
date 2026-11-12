@@ -10,7 +10,9 @@ import { ROLE_UX_CATALOG, type RoleUxDefinition } from "@/modules/organization/d
  * mọi API vẫn đi qua `requireTenantContext()`/`requireCapability()` của
  * phiên thật, nên không nới cách ly tenant hay RBAC.
  */
-export const TIER_PREVIEW_COOKIE = "smeos_tier_preview"
+export const TIER_PREVIEW_COOKIE = "alg_tier_preview"
+/** Tên trước khi đổi thương hiệu ALG (12/11/2026) — vẫn đọc để phiên xem trước đang mở không bị ngắt. */
+export const LEGACY_TIER_PREVIEW_COOKIE = "smeos_tier_preview"
 
 /** Mã năng lực nền tảng bắt buộc để xem trước tầng (xem mọi tổ chức). */
 export const TIER_PREVIEW_CAPABILITY = "N1"

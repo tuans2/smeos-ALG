@@ -1,5 +1,5 @@
 /**
- * SSOT Types — Hệ thống Lọc & Tìm kiếm Sản phẩm FloraOS
+ * SSOT Types — Hệ thống Lọc & Tìm kiếm Sản phẩm ALG
  *
  * Tất cả interface/type liên quan đến search & filter đều định nghĩa ở đây.
  * Mọi module import từ `@/lib/product-filter`, không tự định nghĩa riêng.

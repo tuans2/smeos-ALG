@@ -145,4 +145,35 @@ describe("đăng bài tự động", () => {
     expect(retried).toMatchObject({ status: "QUEUED", attempt_count: 0 })
     await expect(cancelPost(can(a), pa.id)).rejects.toMatchObject({ code: "CONFLICT" })
   })
+
+  it("audit User Journey UJ-30: huỷ HẾT bài của lượt → nội dung về ĐÃ DUYỆT (sửa / duyệt lại được); còn bài chờ hay đã đăng → giữ ĐÃ LÊN LỊCH", async () => {
+    const { generationId } = await approvedGeneration(a)
+    await connect(a, "facebook"); await connect(a, "zalo")
+    const [fb, zalo] = await schedulePosts(can(a), { generationId, channels: ["facebook", "zalo"], mode: { kind: "NOW" }, idempotencyKey: "reopen" })
+    const status = async () => (await prisma.content_generations.findUniqueOrThrow({ where: { id: generationId } })).status
+
+    await cancelPost(can(a), fb!.id)
+    expect(await status()).toBe("SCHEDULED") // bài Zalo vẫn chờ đăng
+    await expect(cancelPost(can(b), zalo!.id)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(await status()).toBe("SCHEDULED")
+
+    await cancelPost(can(a), zalo!.id)
+    expect(await status()).toBe("APPROVED")
+    const reopened = await prisma.audit_logs.findMany({ where: { organization_id: a.organizationId, action: "content_generation.reopen", entity_id: generationId } })
+    expect(reopened).toHaveLength(1)
+
+    // Lên lịch lại bằng khoá mới được như lượt đầu
+    const again = await schedulePosts(can(a), { generationId, channels: ["facebook"], mode: { kind: "NOW" }, idempotencyKey: "reopen-2" })
+    expect(again).toHaveLength(1)
+    expect(await status()).toBe("SCHEDULED")
+  })
+
+  it("UJ-30: lượt có bài đã đăng thì huỷ bài còn lại không mở lại nội dung (tránh lệch với bài đã lên kênh)", async () => {
+    const { generationId } = await approvedGeneration(a)
+    await connect(a, "facebook"); await connect(a, "zalo")
+    const [fb, zalo] = await schedulePosts(can(a), { generationId, channels: ["facebook", "zalo"], mode: { kind: "NOW" }, idempotencyKey: "pub" })
+    await prisma.social_posts.update({ where: { id: fb!.id }, data: { status: "PUBLISHED", published_at: new Date() } })
+    await cancelPost(can(a), zalo!.id)
+    expect((await prisma.content_generations.findUniqueOrThrow({ where: { id: generationId } })).status).toBe("SCHEDULED")
+  })
 })

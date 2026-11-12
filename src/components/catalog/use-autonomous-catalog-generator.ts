@@ -53,10 +53,10 @@ export function useAutonomousCatalogGenerator({
   const [usedFallbackIntro, setUsedFallbackIntro] = useState(false)
 
   const [catalogAiSteps, setCatalogAiSteps] = useState<ProcessingStep[]>([
-    { id: "analyze", label: "Phân tích yêu cầu & sự kiện", status: "pending" },
-    { id: "select", label: `Tuyển chọn các ${sampleProductTerm} phù hợp nhất`, status: "pending" },
-    { id: "intro", label: "Sinh lời chào & tiêu đề Catalog bằng AI", status: "pending" },
-    { id: "layout", label: "Hoàn thiện cấu hình & Xuất bản Catalog tự động", status: "pending" },
+    { id: "analyze", label: "Phân tích yêu cầu & sự kiện", status: "idle" },
+    { id: "select", label: `Tuyển chọn các ${sampleProductTerm} phù hợp nhất`, status: "idle" },
+    { id: "intro", label: "Sinh lời chào & tiêu đề Catalog bằng AI", status: "idle" },
+    { id: "layout", label: "Hoàn thiện cấu hình & Xuất bản Catalog tự động", status: "idle" },
   ])
 
   const executeGeneration = async (
@@ -70,9 +70,9 @@ export function useAutonomousCatalogGenerator({
     setUsedFallbackIntro(false)
     setCatalogAiSteps([
       { id: "analyze", label: "Phân tích yêu cầu & sự kiện", status: "running" },
-      { id: "select", label: `Tuyển chọn các ${sampleProductTerm} phù hợp nhất`, status: "pending" },
-      { id: "intro", label: "Sinh lời chào & tiêu đề Catalog bằng AI", status: "pending" },
-      { id: "layout", label: "Hoàn thiện cấu hình & Xuất bản Catalog tự động", status: "pending" },
+      { id: "select", label: `Tuyển chọn các ${sampleProductTerm} phù hợp nhất`, status: "idle" },
+      { id: "intro", label: "Sinh lời chào & tiêu đề Catalog bằng AI", status: "idle" },
+      { id: "layout", label: "Hoàn thiện cấu hình & Xuất bản Catalog tự động", status: "idle" },
     ])
 
     try {
@@ -87,7 +87,7 @@ export function useAutonomousCatalogGenerator({
       // Bước 1 xong ngay khi đọc xong yêu cầu — không chờ giả lập.
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
-          s.id === "analyze" ? { ...s, status: "done" } : s.id === "select" ? { ...s, status: "running" } : s
+          s.id === "analyze" ? { ...s, status: "succeeded" } : s.id === "select" ? { ...s, status: "running" } : s
         )
       )
 
@@ -105,7 +105,7 @@ export function useAutonomousCatalogGenerator({
 
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
-          s.id === "select" ? { ...s, status: "done" } : s.id === "intro" ? { ...s, status: "running" } : s
+          s.id === "select" ? { ...s, status: "succeeded" } : s.id === "intro" ? { ...s, status: "running" } : s
         )
       )
 
@@ -146,7 +146,7 @@ export function useAutonomousCatalogGenerator({
 
       setCatalogAiSteps((prev) =>
         prev.map((s) =>
-          s.id === "intro" ? { ...s, status: "done" } : s.id === "layout" ? { ...s, status: "running" } : s
+          s.id === "intro" ? { ...s, status: "succeeded" } : s.id === "layout" ? { ...s, status: "running" } : s
         )
       )
 
@@ -200,7 +200,7 @@ export function useAutonomousCatalogGenerator({
         studioProducts
       )
 
-      setCatalogAiSteps((prev) => prev.map((s) => (s.id === "layout" ? { ...s, status: "done" } : s)))
+      setCatalogAiSteps((prev) => prev.map((s) => (s.id === "layout" ? { ...s, status: "succeeded" } : s)))
 
       setAutonomousResult({
         publishedUrl: null,

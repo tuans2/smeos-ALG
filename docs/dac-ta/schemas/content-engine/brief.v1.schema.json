@@ -3,7 +3,7 @@
   "$id": "brief.v1.schema.json",
   "title": "Content Engine — Content Brief v1",
   "description": "Hợp đồng duy nhất mà chuỗi agent Strategist→Writer→Critic→Rewriter đọc để viết bài; nơi duy nhất thêm thông tin cho engine.",
-  "x-floraos": {
+  "x-alg": {
     "module": "content-engine",
     "source": "src/modules/content-engine/contracts/brief.ts",
     "briefVersion": 1,

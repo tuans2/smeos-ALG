@@ -58,6 +58,8 @@ export const catalogResponse = data(
 )
 export const catalogItemResponse = data(z.strictObject(catalogItem))
 export const successResponse = z.strictObject({ success: z.boolean() })
+/** Bỏ sản phẩm khỏi catalog: `{ data: { product_id, removed: true } }`. */
+export const catalogProductRemovedResponse = z.strictObject({ data: z.strictObject({ product_id: z.string(), removed: z.literal(true) }) })
 export const catalogHeartsResponse = data(
   z.strictObject({
     catalogId: z.string(),

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { actionDone } from "./responses-actions"
 
 import { LIBRARY_TYPES } from "@/modules/storage/domain/library"
 import { TRASH_ITEM_TYPES } from "@/modules/storage/domain/trash-types"
@@ -64,7 +65,7 @@ export const assetsResponse = z.strictObject({
 export const uploadUrlResponse = z.strictObject({ asset_id: z.string(), storage_key: z.string(), upload_url: signedUrl, expires_in: z.number() })
 export const viewUrlResponse = z.strictObject({ asset_id: z.string(), url: signedUrl, expires_in: z.number() })
 /** `PUT /storage/{key}` — envelope cũ `{ ok, key }`. */
-export const uploadedResponse = z.strictObject({ ok: z.literal(true), key: z.string() })
+export const uploadedResponse = z.strictObject({ data: z.strictObject({ key: z.string() }) })
 
 export const assetUsage = z.strictObject({
   id: z.string(),
@@ -109,7 +110,9 @@ export const trashResponse = z.strictObject({
   ),
 })
 /** Envelope cũ `{ success: true }` (`api-envelope-legacy.txt`). */
-export const successResponse = z.strictObject({ success: z.literal(true) })
+export const trashedResponse = actionDone("trashed")
+export const restoredResponse = actionDone("restored")
+export const purgedResponse = actionDone("deleted")
 
 const branchRef = z.strictObject({ id: z.string(), name: z.string() })
 export const libraryResponse = z.strictObject({

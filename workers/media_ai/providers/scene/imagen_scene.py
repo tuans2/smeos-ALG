@@ -1,12 +1,12 @@
 """Google Gemini Image — nhà cung cấp dựng cảnh cho biến thể Khu vực D (25/09/2026, PO chọn thêm).
 
 `gemini-2.5-flash-image` DỰNG CẢNH + hoà sáng quanh bó hoa đã đặt đúng chỗ
-(bố cục của FloraOS). Gemini không trả mặt nạ và không có bước tăng nét riêng,
+(bố cục của ALG). Gemini không trả mặt nạ và không có bước tăng nét riêng,
 nên `nang_luc` khai thật: `tach_nen=False`, `tang_net=False` —
-  - tách nền: bộ tách của FloraOS (`RembgSegmenter`), ghi `bo_qua: tach_nen:floraos`;
+  - tách nền: bộ tách của ALG (`RembgSegmenter`), ghi `bo_qua: tach_nen:alg`;
   - tăng nét 2x: LANCZOS, ghi `bo_qua: tang_net:lanczos`.
 Không trộn cục bộ thay cho bước Gemini LÀM ĐƯỢC (dựng cảnh, ánh sáng). Cổng
-"giữ nguyên sản phẩm" vẫn là của FloraOS (`do_giu_nguyen`).
+"giữ nguyên sản phẩm" vẫn là của ALG (`do_giu_nguyen`).
 """
 
 from __future__ import annotations
@@ -51,7 +51,7 @@ class ImagenSceneProvider:
                 self._seg = RembgSegmenter()
             _, mat_na = self._seg.extract_subject(anh)  # type: ignore[attr-defined]
         except Exception as exc:  # noqa: BLE001
-            raise SceneProviderError(f"Tách nền (FloraOS) cho Gemini lỗi: {exc}") from exc
+            raise SceneProviderError(f"Tách nền (ALG) cho Gemini lỗi: {exc}") from exc
         mat_na = mat_na.convert("L")
         return mat_na.resize(anh.size, Image.BILINEAR) if mat_na.size != anh.size else mat_na
 
@@ -65,7 +65,7 @@ class ImagenSceneProvider:
         )
         if req.style in PHONG_CACH_THANH_PROMPT:
             prompt = PHONG_CACH_THANH_PROMPT[req.style] + ". " + prompt
-        bo_qua = [*bo_qua, "tach_nen:floraos"]
+        bo_qua = [*bo_qua, "tach_nen:alg"]
         if req.seed is not None:
             bo_qua.append("seed")
         from io import BytesIO

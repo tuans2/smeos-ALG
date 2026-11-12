@@ -8,7 +8,7 @@
  * Level 2: Bảng bản ghi thực tế (100/trang) + Tải CSV
  */
 
-import { Input } from "@/components/ui/input"; import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"; import { Button, TEXT_BUTTON_HIT_AREA } from "@/components/ui/button"
 import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -119,12 +119,12 @@ function OrgCard({
     org.readinessScore >= 80
       ? "text-success"
       : org.readinessScore >= 50
-      ? "text-warning"
+      ? "text-warning-text"
       : "text-danger"
 
   const typeLabel: Record<string, string> = {
     TRIAL: "Dùng thử",
-    STORE: "Cửa hàng",
+    STORE: "Cửa hàng", SINGLE: "Cửa hàng",
     CHAIN: "Chuỗi",
     ENTERPRISE: "Doanh nghiệp",
   }
@@ -136,7 +136,7 @@ function OrgCard({
     <Button variant="outline"
       type="button"
       onClick={() => onOpen(org)}
-      className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary hover:bg-surface"
+      className="text-[length:inherit] h-auto flex-col items-stretch justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary hover:bg-surface"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -179,7 +179,7 @@ function OrgCard({
       <div className="flex items-center gap-1.5 text-caption text-text-muted bg-surface-alt rounded-lg px-2.5 py-1.5">
         <Database size={11} />
         <span>
-          ~{totalRecords.toLocaleString("vi-VN")} bản ghi có thể xem &amp; tải về
+          Khoảng {totalRecords.toLocaleString("vi-VN")} bản ghi có thể xem &amp; tải về
         </span>
         <FileDown size={11} className="ml-auto opacity-50 group-hover:opacity-100 transition-opacity" />
       </div>
@@ -205,7 +205,7 @@ function OrgCard({
       </div>
 
       {/* Profile status */}
-      <div className="flex items-center gap-3 pt-1 border-t border-border/60 text-caption">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 border-t border-border/60 text-caption">
         <span className={`flex items-center gap-1 ${org.hasBusinessProfile ? "text-success" : "text-text-muted"}`}>
           {org.hasBusinessProfile ? <CheckCircle2 size={11} /> : <AlertCircle size={11} />}
           Hồ sơ pháp lý
@@ -268,7 +268,7 @@ function DomainPicker({
         <a
           href={`/api/v1/platform/orgs-data/${org.id}/export?type=full`}
           download={`${org.name.replace(/\s+/g, "_")}_full.zip`}
-          className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-xl text-caption font-bold bg-primary hover:bg-primary-hover text-white transition-colors shrink-0 shadow-sm"
+          className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-xl text-caption font-bold bg-primary hover:bg-primary-dark text-white transition-colors shrink-0 shadow-sm"
         >
           <FileDown size={14} />
           <span>Tải Trọn Bộ + Ảnh (.ZIP)</span>
@@ -300,7 +300,7 @@ function DomainPicker({
                       {d.label}
                     </p>
                     <p className="text-caption text-text-muted font-bold">
-                      {typeof count === "number" ? `~${count.toLocaleString("vi-VN")} bản ghi` : "—"}
+                      {typeof count === "number" ? `Khoảng ${count.toLocaleString("vi-VN")} bản ghi` : "—"}
                     </p>
                   </div>
                 </div>
@@ -385,11 +385,11 @@ export function PlatformDataHub() {
     <div className="space-y-5">
       {/* Breadcrumb */}
       <div className="space-y-1">
-        <nav className="flex items-center gap-2 text-caption font-bold text-text-muted flex-wrap">
+        <nav aria-label="Đường dẫn" className="flex items-center gap-2 text-caption font-bold text-text-muted flex-wrap">
           <Button variant="ghost"
             type="button"
             onClick={handleBackToOrgs}
-            className="text-[length:inherit] h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
+            className={`text-[length:inherit] h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold ${TEXT_BUTTON_HIT_AREA}`}
           >
             <Globe size={15} className="text-primary" />
             <span>Dữ Liệu Nền Tảng</span>

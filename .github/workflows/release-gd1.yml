@@ -28,16 +28,16 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: floraos
-          POSTGRES_PASSWORD: floraos
-          POSTGRES_DB: floraos
+          POSTGRES_USER: alg
+          POSTGRES_PASSWORD: alg
+          POSTGRES_DB: alg
         ports: ["5432:5432"]
         options: >-
           --health-cmd pg_isready --health-interval 5s
           --health-timeout 5s --health-retries 10
     env:
-      DATABASE_URL: postgresql://floraos:floraos@localhost:5432/floraos
-      DATABASE_URL_TEST: postgresql://floraos:floraos@localhost:5432/floraos_test
+      DATABASE_URL: postgresql://alg:alg@localhost:5432/alg
+      DATABASE_URL_TEST: postgresql://alg:alg@localhost:5432/alg_test
       SESSION_SECRET: ci-only-not-a-real-secret
       INTEGRATION_TOKEN_SECRET: ci-only-not-a-real-integration-secret
       SSO_SESSION_SECRET: ci-only-not-a-real-sso-secret
@@ -77,9 +77,9 @@ jobs:
       # `resetDatabase()` của test tenant/platform hằng đêm nhanh hơn. Không đổi ngữ nghĩa giao dịch.
       - name: Postgres CI dùng một lần — tắt ghi đĩa đồng bộ
         env:
-          PGPASSWORD: floraos
+          PGPASSWORD: alg
         run: |
-          psql -h localhost -U floraos -d postgres -v ON_ERROR_STOP=1 \
+          psql -h localhost -U alg -d postgres -v ON_ERROR_STOP=1 \
             -c "ALTER SYSTEM SET fsync = off" \
             -c "ALTER SYSTEM SET full_page_writes = off" \
             -c "ALTER SYSTEM SET synchronous_commit = off" \
@@ -87,13 +87,13 @@ jobs:
       - name: Cài và dựng CSDL cho bản cắt
         working-directory: ${{ env.CUT }}
         env:
-          PGPASSWORD: floraos
+          PGPASSWORD: alg
         run: |
           npm ci
           npx prisma generate
           npm run db:deploy
-          psql -h localhost -U floraos -d postgres -c 'CREATE DATABASE floraos_test'
-          DATABASE_URL=postgresql://floraos:floraos@localhost:5432/floraos_test npx prisma db push
+          psql -h localhost -U alg -d postgres -c 'CREATE DATABASE alg_test'
+          DATABASE_URL=postgresql://alg:alg@localhost:5432/alg_test npx prisma db push
           npm run db:seed
       - name: Typecheck bản cắt
         working-directory: ${{ env.CUT }}

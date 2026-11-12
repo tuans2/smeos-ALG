@@ -25,7 +25,7 @@ export function CatalogListFilters({
   statusFilter, setStatusFilter, staffFilter, setStaffFilter, staffList, showStaffFilter,
 }: Props) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 bg-surface-muted/40 p-3.5 rounded-xl border border-border">
+    <div className="flex flex-wrap items-center justify-between gap-3 bg-surface-alt/40 p-3.5 rounded-xl border border-border">
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-body-sm font-semibold text-text flex items-center gap-1.5">
           <Filter size={15} className="text-primary" />

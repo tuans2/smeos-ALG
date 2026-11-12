@@ -27,7 +27,7 @@ export type DeliveryStatus =
   | "DELIVERED"
   | "FAILED"
 
-export type OrderEventAxis = "order" | "production" | "delivery"
+export type OrderEventAxis = "order" | "production" | "delivery" | "delivery_window"
 
 export interface DeliveryWindow {
   date: string // YYYY-MM-DD

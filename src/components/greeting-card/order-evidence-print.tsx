@@ -50,7 +50,7 @@ export function OrderEvidencePrint({
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "2px solid #111", paddingBottom: 12, marginBottom: 16 }}>
         <div>
           <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, color: "#555" }}>
-            {storeName ?? "smeOS"}
+            {storeName ?? "ALG"}
           </div>
           <div style={{ fontSize: 20, fontWeight: 900, marginTop: 2 }}>
             BẰNG CHỨNG ĐƠN HÀNG
@@ -61,7 +61,7 @@ export function OrderEvidencePrint({
         </div>
         <div style={{ textAlign: "right", fontSize: 10, color: "#666" }}>
           <div>In lúc: {printedAt}</div>
-          <div style={{ marginTop: 4, fontSize: 9 }}>smeOS · Nền tảng quản trị bán hàng đa ngành</div>
+          <div style={{ marginTop: 4, fontSize: 9 }}>ALG · Nền tảng quản trị bán hàng đa ngành</div>
         </div>
       </div>
 
@@ -85,9 +85,9 @@ export function OrderEvidencePrint({
         <div style={{ border: "1px solid #ddd", borderRadius: 6, padding: 10 }}>
           <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: "#888", marginBottom: 4 }}>Thanh toán</div>
           <div style={{ fontSize: 13, fontWeight: 700 }}>Tổng: {vnd(totalVnd ?? 0)}</div>
-          <div style={{ fontSize: 11, color: "#22a74a", fontWeight: 700, marginTop: 2 }}>Đã thu: {vnd(paidVnd ?? 0)}</div>
+          <div style={{ fontSize: 11, color: "#5F714B", fontWeight: 700, marginTop: 2 }}>Đã thu: {vnd(paidVnd ?? 0)}</div>
           {(totalVnd ?? 0) > (paidVnd ?? 0) && (
-            <div style={{ fontSize: 11, color: "#e53e3e", fontWeight: 700 }}>
+            <div style={{ fontSize: 11, color: "#9C3740", fontWeight: 700 }}>
               Còn: {vnd(Math.max(0, (totalVnd ?? 0) - (paidVnd ?? 0)))}
             </div>
           )}
@@ -152,7 +152,7 @@ export function OrderEvidencePrint({
         </div>
         {events.map((ev, i) => (
           <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, paddingBottom: 8, borderBottom: i < events.length - 1 ? "1px solid #eee" : "none" }}>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: ev.imageUrls?.length ? "#22a74a" : "#999", marginTop: 5, flexShrink: 0 }} />
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: ev.imageUrls?.length ? "#5F714B" : "#999", marginTop: 5, flexShrink: 0 }} />
             <div style={{ flex: 1 }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
                 <span style={{ fontSize: 12, fontWeight: 700 }}>{ev.label}</span>
@@ -180,9 +180,9 @@ export function OrderEvidencePrint({
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {segments.map((seg) => (
               <div key={seg.stepId} style={{
-                border: `1px solid ${seg.overMinutes > 0 ? "#e53e3e" : "#ddd"}`,
+                border: `1px solid ${seg.overMinutes > 0 ? "#9C3740" : "#ddd"}`,
                 borderRadius: 4, padding: "3px 8px", fontSize: 10,
-                color: seg.overMinutes > 0 ? "#e53e3e" : "#333",
+                color: seg.overMinutes > 0 ? "#9C3740" : "#333",
               }}>
                 {seg.title}: {seg.durationMinutes}p
                 {seg.overMinutes > 0 && ` (vượt ${seg.overMinutes}p)`}
@@ -194,7 +194,7 @@ export function OrderEvidencePrint({
 
       {/* Footer */}
       <div style={{ borderTop: "1px solid #ddd", paddingTop: 10, fontSize: 9, color: "#aaa", display: "flex", justifyContent: "space-between" }}>
-        <span>Hệ thống đối soát xác nhận tự động · smeOS Core</span>
+        <span>Hệ thống đối soát xác nhận tự động · ALG Core</span>
         <span>{printedAt}</span>
       </div>
     </div>

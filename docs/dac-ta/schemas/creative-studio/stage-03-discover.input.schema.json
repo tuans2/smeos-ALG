@@ -3,7 +3,7 @@
   "$id": "stage-03-discover.input.schema.json",
   "title": "Chặng 03 — DISCOVER: Nghiên cứu xu hướng & cơ hội thị trường — Đầu vào",
   "description": "Một lượt gọi trả ProductIntelligenceReport: điểm phù hợp, ma trận xu hướng, KEEP/IMPROVE/TEST — và luôn cả 10 chủ đề của Chặng 04.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "03",
     "stage": 3,
     "code": "DISCOVER",

@@ -1,4 +1,4 @@
-# Báo cáo tối ưu phút GitHub Actions — SMEOS
+# Báo cáo tối ưu phút GitHub Actions — ALG
 
 > Ngày: 10/11/2026 · Nhánh: `claude/bold-bardeen-473alq` · Phạm vi: `.github/workflows/*.yml` (không sửa mã ứng dụng, không sửa `render.yaml`).
 > Nhật ký thay đổi: [`GITHUB_ACTIONS_OPTIMIZATION_CHANGELOG.md`](GITHUB_ACTIONS_OPTIMIZATION_CHANGELOG.md).

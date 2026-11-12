@@ -1,5 +1,5 @@
 /**
- * smeOS Template Library — Báo Cáo & Giám Sát AI (Analytics & Governance M11)
+ * ALG Template Library — Báo Cáo & Giám Sát AI (Analytics & Governance M11)
  */
 
 export * from "./analytics-guidance-card"

@@ -14,7 +14,7 @@ export const PageContainer = React.forwardRef<HTMLDivElement, PageContainerProps
     }
 
     return (
-      <main
+      <div
         ref={ref}
         className={cn(
           "w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6",

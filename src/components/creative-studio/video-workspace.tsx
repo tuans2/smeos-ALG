@@ -264,7 +264,7 @@ export function VideoWorkspace() {
               {scenePlan.scenes.map((sc) => sc.beat).join(" → ")}.
             </span>
           )}
-          {storyboardNote && <span className="text-warning">{storyboardNote}</span>}
+          {storyboardNote && <span className="text-warning-text">{storyboardNote}</span>}
           {scenes.length > 0 && (
             <span>
               <Button
@@ -331,7 +331,7 @@ export function VideoWorkspace() {
           metrics={[
             { label: "Khuôn video", value: spec.label },
             { label: "Tỷ lệ", value: spec.aspectRatio },
-            { label: "Thời lượng", value: `~${spec.targetDurationSeconds}s` },
+            { label: "Thời lượng", value: `khoảng ${spec.targetDurationSeconds} giây` },
             { label: "Phụ đề", value: hasSubtitle ? "Có" : "Không" },
           ]}
         />

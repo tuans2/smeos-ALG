@@ -3,7 +3,7 @@
   "$id": "stage-13-learn.input.schema.json",
   "title": "Chặng 13 — LEARN: Trích xuất mẫu thắng (Winning Patterns) — Đầu vào",
   "description": "So trên các gói đã duyệt của chính tiệm; dưới 3 gói có số đo thì trả INSUFFICIENT_DATA, không bịa mẫu.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "13",
     "stage": 13,
     "code": "LEARN",

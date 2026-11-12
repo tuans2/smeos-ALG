@@ -58,7 +58,7 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
               {branch.branchName}
             </span>
             {branch.rank <= 3 && (
-              <span className="text-caption font-bold px-1 rounded bg-warning/10 text-warning">
+              <span className="text-caption font-bold px-1 rounded bg-warning/10 text-warning-text">
                 #{branch.rank}
               </span>
             )}
@@ -70,7 +70,7 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
             </span>
             <span>·</span>
             <span className="flex items-center gap-0.5">
-              <Star size={10} className="text-warning" />
+              <Star size={10} className="text-warning-text" />
               {branch.qualityScore}/100
             </span>
             <span>·</span>
@@ -96,7 +96,7 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
             </span>
           )}
           {branch.channels?.hasTelegram && branch.channels.telegramLinked === false && (
-            <span className="px-1 py-0.5 rounded bg-warning/10 text-warning font-bold" title="Gửi mã liên kết vào nhóm rồi bấm Quét Chat ID mới trong Cài đặt">
+            <span className="px-1 py-0.5 rounded bg-warning/10 text-warning-text font-bold" title="Gửi mã liên kết vào nhóm rồi bấm Quét Chat ID mới trong Cài đặt">
               Telegram chưa liên kết
             </span>
           )}

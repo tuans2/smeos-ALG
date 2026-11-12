@@ -89,12 +89,12 @@ export function CatalogCardGlass({
               {product.category}
             </span>
           )}
-          <h4
+          <h2
             className={`text-body-sm md:text-body font-bold leading-snug line-clamp-1 ${fontDisplay}`}
             style={{ color: textPrimary }}
           >
             {product.name}
-          </h4>
+          </h2>
           {product.description && (
             <p
               className="text-caption mt-1 line-clamp-2 leading-relaxed opacity-80"

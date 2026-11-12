@@ -1,5 +1,5 @@
 /**
- * SMEOS Platform Admin — Get Org Actual Records (Platform-Level)
+ * ALG Platform Admin — Get Org Actual Records (Platform-Level)
  *
  * Trả về bản ghi thực tế (không phải schema metadata) của từng domain:
  * - catalog: danh sách sản phẩm đầy đủ

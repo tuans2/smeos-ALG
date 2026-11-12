@@ -103,7 +103,7 @@ export function DailyCapacityBoard({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Day selection strip */}
         <div className="lg:col-span-1 rounded-2xl border border-border bg-surface p-4 shadow-xs space-y-3">
-          <h3 className="text-body-sm font-bold text-text">Lịch các ngày trong tháng</h3>
+          <h2 className="text-body-sm font-bold text-text">Lịch các ngày trong tháng</h2>
           <div className="max-h-[500px] overflow-y-auto space-y-1.5 pr-1">
             {safeDays.map((day) => {
               const count = safeBookings.filter((b) => day >= b.checkInDate && day < b.checkOutDate).length
@@ -161,7 +161,7 @@ export function DailyCapacityBoard({
                   percentFilled >= 100
                     ? "bg-danger/15 text-danger"
                     : percentFilled >= 75
-                    ? "bg-warning/15 text-warning"
+                    ? "bg-warning/15 text-warning-text"
                     : "bg-success/15 text-success"
                 }`}
               >

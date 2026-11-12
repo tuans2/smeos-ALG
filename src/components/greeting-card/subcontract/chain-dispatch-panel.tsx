@@ -190,7 +190,7 @@ export function ChainDispatchPanel({
                 <span className={`text-caption font-extrabold px-2 py-0.5 rounded-full uppercase ${
                   data.data.dispatchState.status === "COMMITTED"
                     ? "bg-success text-white"
-                    : "bg-warning-bg text-warning border border-warning/30"
+                    : "bg-warning-bg text-warning-text border border-warning/30"
                 }`}>
                   {data.data.dispatchState.status === "COMMITTED" ? "Đã chốt sản xuất" : "Đang kiểm tra kho"}
                 </span>
@@ -224,7 +224,7 @@ export function ChainDispatchPanel({
       {data?.data?.dispatchState && data.data.dispatchState.status !== "COMMITTED" && data.data.dispatchState.status !== "CLAIMED_GRACE" && !dispatchResult && (
         <div className="p-3.5 rounded-xl bg-warning-bg/60 border border-warning/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-lg bg-warning/20 text-warning">
+            <span className="p-1.5 rounded-lg bg-warning/20 text-warning-text">
               <Clock size={16} />
             </span>
             <div>
@@ -265,7 +265,7 @@ export function ChainDispatchPanel({
                 }
               }}
               disabled={isSubmitting}
-              className="text-caption h-8 font-bold border-warning/50 text-warning hover:bg-warning/10"
+              className="text-caption h-8 font-bold border-warning/50 text-warning-text hover:bg-warning/10"
             >
               {isSubmitting ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none mr-1" /> : <Send size={12} className="mr-1" />}
               Gửi lại thông báo

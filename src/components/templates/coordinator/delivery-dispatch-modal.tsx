@@ -137,7 +137,7 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
               <span className="px-2 py-0.5 rounded bg-surface-alt text-text text-caption font-black uppercase border border-border">
                 BƯỚC 6 • GIAO HÀNG
               </span>
-              <h3 className="text-body font-extrabold text-text">Giao Hàng & Bằng Chứng Giao (T20/T21)</h3>
+              <h3 className="text-body font-extrabold text-text">Giao Hàng & Bằng Chứng Giao</h3>
             </div>
           </div>
         </div>

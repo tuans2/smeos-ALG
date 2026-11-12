@@ -2925,9 +2925,9 @@ model decision_registry {
 }
 ```
 
-## 30. Bổ sung đợt smeOS đa ngành (17–21/10/2026)
+## 30. Bổ sung đợt ALG đa ngành (17–21/10/2026)
 
-> **Bổ sung 21/10/2026** theo mã thật — các bảng và cột thêm từ mốc chuyển sang smeOS (`8c53b38`).
+> **Bổ sung 21/10/2026** theo mã thật — các bảng và cột thêm từ mốc chuyển sang ALG (`8c53b38`).
 >
 > - `product_bookings` — **TENANT**. Lịch đặt chỗ theo khoảng ngày (Homestay, chế độ `BOOKING_CALENDAR`). `order_id = null` là khoá thủ công do admin đặt. Ngày ra không tính. Từ 22/10/2026 ngày là cột `DATE`, trạng thái là enum `booking_status`, `order_id` có khoá ngoại sang `orders` — xem mục 31. Chống chồng lịch: mọi lần ghi đi qua `AvailabilityRepository.createBooking`, khoá tư vấn theo sản phẩm (`pg_advisory_xact_lock`) rồi kiểm chồng với đặt chỗ ACTIVE trong cùng giao dịch. Chưa đặt ràng buộc `EXCLUDE` ở CSDL, vì Prisma không khai được và `db push` lúc deploy sẽ gỡ ràng buộc ngoài lược đồ. Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
 > - `staff_notifications` — **TENANT**. Nhật ký thông báo nhân viên đa kênh (APP_INBOX, ZALO, SMS, TELEGRAM, WHATSAPP, MESSENGER). `recipient_info` là thông tin liên hệ nội bộ, chưa có hạn lưu (M5). Ca thử cách ly: `tests/tenant/availability-isolation.test.ts`.
@@ -3016,7 +3016,7 @@ model platform_settings {
 
 ## 32. Quản trị danh mục sản phẩm (23/10/2026)
 
-> - **TENANT**, PO duyệt 23/10/2026 — giai đoạn 3 của `docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md`. Migration `20261023024723_product_catalog_governance` chỉ thêm ba bảng. Ca thử: `tests/tenant/product-governance.test.ts`.
+> - **TENANT**, PO duyệt 23/10/2026 — giai đoạn 3 của `docs/dac-ta/ALG_PRODUCT_CATALOG_GOVERNANCE_SPEC.md`. Migration `20261023024723_product_catalog_governance` chỉ thêm ba bảng. Ca thử: `tests/tenant/product-governance.test.ts`.
 > - `product_change_requests` — nhân viên không có `H3` đề xuất sửa mẫu chính thức; bản gốc không đổi tới khi Điều hành duyệt (toàn bộ hoặc một phần). `base_updated_at` khác `products.updated_at` lúc duyệt → 409, không tự gộp. Quá `expires_at` (30 ngày) tác vụ quét đóng `EXPIRED`.
 > - `product_revisions` — ảnh chụp nội dung mẫu TRƯỚC mỗi lần đổi (Điều hành sửa, duyệt đề xuất sửa, nhập Excel cập nhật, khôi phục). Khôi phục giữ nguyên trạng thái bán và nhãn đề xuất hiện tại.
 > - `product_import_batches` — mỗi lần gọi `POST /products/batch-import`; hoàn tác trong 24 giờ: mẫu tạo ra vào thùng rác, mẫu bị cập nhật trả về phiên bản đầu tiên cùng `import_batch_id`.
@@ -4095,7 +4095,7 @@ số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE
 - Ca thử: `tests/tenant/industries.test.ts` (ghi tách ngành ra cột; đọc lồng theo cột khi JSON không còn `industry`).
 
 **T-6c-2** (contract, PO duyệt 06/11/2026, sau khi T-6c-1 #161 đã chạy trên production; không đổi schema): migration
-`20261106110000_industry_contract` (một giao dịch) bỏ trigger + hàm `smeos_organizations_sync_industry_key` TRƯỚC, chép
+`20261106110000_industry_contract` (một giao dịch) bỏ trigger + hàm `alg_organizations_sync_industry_key` TRƯỚC, chép
 bù `industry_key` cho dòng còn trống mà JSON có mã hợp lệ, báo (NOTICE) số dòng mã lạ sẽ mất, rồi xoá khoá
 `settings.industry`; chốt cuối: không còn dòng nào có khoá đó. Mã: `industryKeyOf` và `resolveTierChain` chỉ đọc cột;
 `withIndustryKey` phủ `settings.industry` = cột, cột trống thì BỎ khoá (JSON sót lại không có tác dụng); worker phân tích
@@ -4165,6 +4165,39 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
   phạm vi T-5b.
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
+
+## 57. Bộ đếm mã đơn — `order_code_sequences` (12/11/2026)
+
+PO duyệt 12/11/2026 sau thử tải O-9 (`docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md` §5): mã đơn `DH<yymmdd>-<số>`
+lấy số bằng cách đếm đơn trong ngày rồi cộng 1, nên 10 đơn tạo cùng lúc trong một chuỗi trùng mã 70/100 lần
+(`Đang có nhiều đơn tạo cùng lúc`). Migration `20261112160000_order_code_sequences` (expand, một giao dịch): bảng mới
+`order_code_sequences (organization_id, prefix, last_value, updated_at)`, khoá chính `(organization_id, prefix)`,
+khoá ngoại tới `organizations`, chính sách RLS `tenant_isolation`. Không backfill.
+
+```prisma
+model order_code_sequences {
+  organization_id String
+  prefix          String   // phần mã trước số thứ tự, vd `DH261112-`
+  last_value      Int      // số đã cấp gần nhất
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@id([organization_id, prefix])
+}
+```
+
+- **Ghi.** `createOrder` (`src/modules/orders/use-cases/create-order.ts`) gọi
+  `allocateOrderCodeNumber` (`src/modules/orders/infra/order-code-sequence.ts`) với tiền tố ngày Việt Nam
+  (`orderCodePrefix`). Mỗi lần cấp là một câu SQL tự giao dịch (`UPDATE … RETURNING`, lần đầu trong ngày
+  `INSERT … ON CONFLICT DO UPDATE`), khoá dòng nhả ngay. Lần đầu trong ngày bắt đầu sau số lớn nhất đã có với tiền tố
+  đó (đơn tạo trước khi deploy, mã không phải số thì bỏ qua). Tạo đơn lỗi sau khi đã cấp số → số đó bị bỏ: mã có thể
+  nhảy số, không trùng. Vẫn thử lại tối đa `ORDER_CODE_ATTEMPTS` lần khi trùng khoá (bản cũ còn chạy lúc deploy).
+- **Đọc.** Không màn hình nào đọc bảng. Một dòng mỗi tổ chức mỗi ngày có đơn; không có dữ liệu cá nhân. Xuất/nhập/xoá
+  tổ chức đi theo sổ bảng-thuộc-tenant như mọi bảng khác.
+- **Ngoài phạm vi:** mã đơn Điều phối `FLR-…` (`create-coordinator-order.ts`) và mã báo giá (`quotation-repository.ts`)
+  vẫn đếm dòng + thử lại 5 lần — chưa đo dưới tải.
+
+Ca thử: `tests/tenant/order-code-sequences.test.ts` (30 đơn đồng thời ra mã liền nhau, tách tổ chức, bắt đầu sau số lớn
+nhất có sẵn, mã lạ cùng tiền tố, ngày mới đếm lại), `tests/unit/orders/order-code.test.ts`.
 
 ## 56. Mức cô lập của tổ chức — `organizations.isolation_tier` (12/11/2026)
 
@@ -4615,7 +4648,7 @@ model platform_access_logs {
 ```
 
 - Thuộc tổ chức: RLS `tenant_isolation` như mọi bảng tenant (`scripts/gen-rls-policies.mjs`); đọc qua `scopedWhere`.
-- Chỉ thêm dòng: trigger `platform_access_logs_append_only` (hàm `smeos_append_only_guard`, §46).
+- Chỉ thêm dòng: trigger `platform_access_logs_append_only` (hàm `alg_append_only_guard`, §46).
 - Ghi: `recordPlatformAccess` (`src/modules/audit/use-cases/record-platform-access.ts`) ở mọi handler
   `platform/organizations/[id]/*` và `platform/orgs-data/[orgId]/*`, ngay sau khi giải phiên Console (xuất dữ liệu: sau
   khi kiểm `N1`), TRƯỚC khi đọc/ghi; ghi lỗi → yêu cầu lỗi (biện pháp bù R-2). `INSERT … SELECT … WHERE` tổ chức tồn
@@ -4628,7 +4661,7 @@ Ca thử: `tests/tenant/platform-access-isolation.test.ts`, `src/modules/audit/d
 ## 46. Nhật ký bất biến — `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage` (06/11/2026)
 
 ADR-013 D-I4, bước **I-2a** (PO duyệt ADR-013 06/11/2026; không đổi schema Prisma). Migration
-`20261106130000_append_only_logs`: hàm `smeos_append_only_guard()` + trigger `<bảng>_append_only` (`BEFORE UPDATE OR
+`20261106130000_append_only_logs`: hàm `alg_append_only_guard()` + trigger `<bảng>_append_only` (`BEFORE UPDATE OR
 DELETE … FOR EACH ROW`) trên năm bảng:
 
 - `UPDATE` → luôn từ chối (mọi tài khoản, kể cả chủ sở hữu).
@@ -4638,7 +4671,7 @@ DELETE … FOR EACH ROW`) trên năm bảng:
 - `TRUNCATE` không qua trigger theo dòng (chỉ dùng ở CSDL test, `resetDatabase`).
 - Rà mã 06/11/2026: ứng dụng, worker, test không sửa/xoá năm bảng này; chỉ `scripts/handover-clean-tenant.ts` và
   `prisma/seed/clean-siin-store-orders.ts` xoá — cả hai đặt lý do purge đầu giao dịch.
-- Quyền: `scripts/db/create-roles.sql` thu `UPDATE, DELETE` của `smeos_app`/`smeos_worker` trên năm bảng.
+- Quyền: `scripts/db/create-roles.sql` thu `UPDATE, DELETE` của `alg_app`/`alg_worker` trên năm bảng.
 
 Ca thử: `tests/tenant/append-only-logs.test.ts` (tự cài hàm + trigger từ tệp migration và gỡ khi xong, vì CSDL test
 dựng bằng `db push`).

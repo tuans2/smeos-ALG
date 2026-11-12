@@ -60,7 +60,7 @@ export function ValidationScreen({
             Mức độ hoàn thiện
           </span>
           <span className={`text-body font-extrabold ${
-            completionPercent >= 80 ? "text-success" : "text-warning"
+            completionPercent >= 80 ? "text-success" : "text-warning-text"
           }`}>
             {completionPercent}%
           </span>
@@ -122,13 +122,13 @@ export function ValidationScreen({
       {/* ── Warnings ── */}
       {warnings.length > 0 && (
         <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 space-y-2">
-          <div className="flex items-center gap-2 text-meta font-bold text-warning uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-meta font-bold text-warning-text uppercase tracking-wider">
             <AlertTriangle className="h-4 w-4" />
             Gợi ý cải thiện ({warnings.length})
           </div>
           <ul className="space-y-1">
             {warnings.slice(0, 5).map((w, i) => (
-              <li key={i} className="text-caption text-warning flex items-start gap-2">
+              <li key={i} className="text-caption text-warning-text flex items-start gap-2">
                 <span className="mt-0.5">•</span>
                 <span>{w}</span>
               </li>

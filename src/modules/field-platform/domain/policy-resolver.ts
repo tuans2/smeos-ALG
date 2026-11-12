@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Policy Resolver Engine
+ * ALG Inputs Architecture v2.1 — Policy Resolver Engine
  *
  * Implements the 3-step hierarchical resolution algorithm across Organization Tree
  * and Object Tree with fail-safe clamping.

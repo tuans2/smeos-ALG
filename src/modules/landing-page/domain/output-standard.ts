@@ -1,6 +1,6 @@
 /**
  * Tiêu chuẩn đầu ra chuẩn hóa 08 cho Công cụ 08 — Tạo landing page cửa hàng hoặc chuỗi.
- * SSOT cho 8 tiêu chí kiểm tra chất lượng Landing Page theo chuẩn FloraOS v3.
+ * SSOT cho 8 tiêu chí kiểm tra chất lượng Landing Page theo chuẩn ALG v3.
  */
 
 export type CriterionType = "MANDATORY" | "SCORED"

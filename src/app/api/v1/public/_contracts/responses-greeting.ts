@@ -19,6 +19,7 @@ export {
 } from "./responses-greeting-session"
 export {
   approvePhotoResponse,
+  photoFeedbackResponse,
   catalogEventResponse,
   changeRequestResponse,
   flowerSubstituteAnswerResponse as flowerSubstituteResponseResponse,

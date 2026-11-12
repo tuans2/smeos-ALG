@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Store Collection Transparency Use-Case (§9.5.8)
+ * ALG Inputs Architecture v2.1 — Store Collection Transparency Use-Case (§9.5.8)
  *
  * Allows a store to view all data items being collected by the chain,
  * their effective sharing format (RAW, MASKED, AGGREGATED), and the legal purpose.

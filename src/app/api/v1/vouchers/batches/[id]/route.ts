@@ -24,6 +24,6 @@ export const PATCH = defineRoute({
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
     const { id } = params as { id: string }
     await setVoucherBatchActive(ctx, id, parsed.data.is_active)
-    return jsonResponse({ ok: true })
+    return jsonResponse({ data: { id, is_active: parsed.data.is_active } })
   },
 })

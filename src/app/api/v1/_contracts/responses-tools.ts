@@ -18,9 +18,8 @@ const bannerCopy = z.strictObject({
   validityText: z.string().optional(),
 })
 /** `source`: `AI_CONTENT_ENGINE` khi mô hình chạy được, không thì `INSTANT_TEMPLATE` (mẫu dựng sẵn). */
-export const bannerCopyResponse = z.strictObject({ success: z.literal(true), copy: bannerCopy, source: z.enum(["AI_CONTENT_ENGINE", "INSTANT_TEMPLATE"]) })
-export const bannerRenderResponse = z.strictObject({
-  success: z.literal(true),
+export const bannerCopyResponse = z.strictObject({ data: z.strictObject({ copy: bannerCopy, source: z.enum(["AI_CONTENT_ENGINE", "INSTANT_TEMPLATE"]) }) })
+export const bannerRenderResponse = z.strictObject({ data: z.strictObject({
   qc: z.strictObject({
     isPassed: z.boolean(),
     overallScore: z.number(),
@@ -32,7 +31,7 @@ export const bannerRenderResponse = z.strictObject({
   results: z.array(
     z.strictObject({ format: z.enum(["1:1", "4:5", "9:16", "16:9", "A4"]), renderedUrl: z.string().optional(), mode: z.enum(["SINGLE_CALL_AI", "TEMPLATE_LAYOUT"]), note: z.string() })
   ),
-})
+}) })
 /** Không bọc `{ data }`. Tư liệu mới chờ duyệt. */
 export const bannerSavedResponse = z.strictObject({
   assetId: z.string(),
@@ -107,11 +106,10 @@ const override = z.strictObject({
 })
 export const templateOverridesResponse = z.strictObject({ data: z.array(override), next_cursor: z.null() })
 export const templateOverrideResponse = z.strictObject({ override })
-export const okResponse = z.strictObject({ ok: z.literal(true) })
+export const overrideRemovedResponse = z.strictObject({ data: z.strictObject({ template_key: z.string(), field_key: z.string(), deleted: z.literal(true) }) })
 
-/** Envelope cũ `{ success, data }`. `members`: thành viên đang hoạt động (tên, email) — tối đa 100. */
+/** `members`: thành viên đang hoạt động (tên, email) — tối đa 100. */
 export const identityResponse = z.strictObject({
-  success: z.literal(true),
   data: z.strictObject({
     organization: z.strictObject({
       id: z.string(),

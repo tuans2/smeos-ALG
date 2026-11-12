@@ -1,6 +1,6 @@
-# Tài liệu kỹ thuật smeOS — 123 chức năng bàn giao ALG
+# Tài liệu kỹ thuật ALG — 123 chức năng bàn giao ALG
 
-Bộ tài liệu dành cho đội kỹ thuật bảo trì, cập nhật và nâng cấp smeOS. Nội dung mô tả mã nguồn trên nhánh `main`. Mỗi chức năng trong checklist bàn giao ALG (123 chức năng, 10 nhóm) có mục riêng: mã nằm ở đâu, dữ
+Bộ tài liệu dành cho đội kỹ thuật bảo trì, cập nhật và nâng cấp ALG. Nội dung mô tả mã nguồn trên nhánh `main`. Mỗi chức năng trong checklist bàn giao ALG (123 chức năng, 10 nhóm) có mục riêng: mã nằm ở đâu, dữ
 liệu nào, API nào, ai được dùng, test nào bảo vệ, và cần sửa chỗ nào khi đổi hành vi.
 
 Hướng dẫn thao tác cho người dùng cuối nằm ở [`docs/huong-dan-su-dung/`](../huong-dan-su-dung/README.md).

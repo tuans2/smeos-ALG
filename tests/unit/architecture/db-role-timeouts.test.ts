@@ -12,14 +12,14 @@ const setting = (role: string, name: string) => sql.match(new RegExp(`ALTER ROLE
 
 describe("giới hạn truy vấn theo tài khoản CSDL", () => {
   it("đúng giá trị ADR-015 D-O5", () => {
-    expect(setting("smeos_app", "statement_timeout")).toBe("15s")
-    for (const role of ["smeos_worker", "smeos_system", "smeos_readonly"]) expect(setting(role, "statement_timeout")).toBe("120s")
-    for (const role of ["smeos_app", "smeos_worker", "smeos_system", "smeos_readonly"]) {
+    expect(setting("alg_app", "statement_timeout")).toBe("15s")
+    for (const role of ["alg_worker", "alg_system", "alg_readonly"]) expect(setting(role, "statement_timeout")).toBe("120s")
+    for (const role of ["alg_app", "alg_worker", "alg_system", "alg_readonly"]) {
       expect(setting(role, "idle_in_transaction_session_timeout")).toBe("60s")
     }
   })
 
-  it("thao tác dài chạy bằng smeos_system tự nâng giới hạn trong giao dịch", () => {
+  it("thao tác dài chạy bằng alg_system tự nâng giới hạn trong giao dịch", () => {
     for (const file of ["src/modules/organization/infra/tenant-import.ts", "src/modules/organization/infra/tenant-purge.ts"]) {
       expect(readFileSync(path.join(process.cwd(), file), "utf8")).toContain("SET LOCAL statement_timeout")
     }

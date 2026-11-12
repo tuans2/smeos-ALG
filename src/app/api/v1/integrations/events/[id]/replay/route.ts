@@ -9,6 +9,6 @@ export const POST = defineRoute({
   handler: async ({ ctx, params }) => {
     const { id } = params as { id: string }
     await replayEvent(ctx, id)
-    return jsonResponse({ ok: true })
+    return jsonResponse({ data: { id, replayed: true } })
   },
 })

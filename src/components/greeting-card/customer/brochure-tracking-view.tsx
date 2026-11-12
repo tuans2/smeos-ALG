@@ -64,7 +64,7 @@ type TrackingData = {
     productPhotoUrls?: string[]
     recipientPhotoUrls?: string[]
     photoApproval?: {
-      status: "NONE" | "PENDING" | "APPROVED" | "AUTO_APPROVED"
+      status: "NONE" | "PENDING" | "FEEDBACK" | "APPROVED" | "AUTO_APPROVED"
       uploadedAt: string | null
       countdownMinutes: number
       approvedAt: string | null
@@ -229,7 +229,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       )}
 
       {!isHomestayStay && productPhotos.length > 0 && (
-        <section className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-muted border border-border">
+        <section className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-alt border border-border">
           <div className="flex items-center justify-between">
             <h3 className="flex items-center gap-2 text-text font-extrabold text-body">
               <Camera size={18} className="text-primary" aria-hidden="true" />
@@ -251,9 +251,9 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
           <p className="text-caption text-text-muted">Được chụp nghiệm thu trước khi giao.</p>
 
           {/* KHUNG XÁC NHẬN HÌNH ẢNH SẢN PHẨM & ĐỒNG HỒ ĐẾM NGƯỢC (SPEC #3) */}
-          {sendCode && order.photoApproval?.status === "PENDING" && order.photoApproval.uploadedAt && (
+          {sendCode && (order.photoApproval?.status === "PENDING" || order.photoApproval?.status === "FEEDBACK") && order.photoApproval.uploadedAt && (
             <PhotoApprovalCard
-              orderCode={order.code}
+              orderCode={order.code} feedbackSent={order.photoApproval.status === "FEEDBACK"}
               sendCode={sendCode}
               uploadedAt={order.photoApproval.uploadedAt}
               countdownMinutes={order.photoApproval.countdownMinutes}
@@ -271,7 +271,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
         </section>
       )}
       {recipientPhotos.length > 0 && (
-        <section className="flex flex-col gap-2 p-4 rounded-2xl bg-surface-muted border border-border">
+        <section className="flex flex-col gap-2 p-4 rounded-2xl bg-surface-alt border border-border">
           <h3 className="flex items-center gap-2 text-text font-extrabold text-body">
             <Camera size={18} className="text-success" aria-hidden="true" />
             Ảnh {getIndustryOrderTerms(order.industryKey).recipientShortLabel}
@@ -300,7 +300,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       {order.verified === false && <TrackingVerifyForm orderCode={orderCode} onVerified={setLast4} />}
       {order.deliveryFailure && (
         <div role="status" className="rounded-2xl border border-warning/30 bg-warning-bg p-4 flex flex-col gap-1 text-body-sm">
-          <p className="font-extrabold text-warning">Lần giao {order.deliveryFailure.attempts > 1 ? `thứ ${order.deliveryFailure.attempts} ` : ""}chưa thành công: {order.deliveryFailure.reasonLabel}</p>
+          <p className="font-extrabold text-warning-text">Lần giao {order.deliveryFailure.attempts > 1 ? `thứ ${order.deliveryFailure.attempts} ` : ""}chưa thành công: {order.deliveryFailure.reasonLabel}</p>
           {order.deliveryFailure.note && <p className="text-text">Shipper ghi: {order.deliveryFailure.note}</p>}
           {order.deliveryFailure.feeVnd > 0 && <p className="text-text">Phí giao lại: {order.deliveryFailure.feeVnd.toLocaleString("vi-VN")}đ (đã cộng vào đơn).</p>}
           <p className="text-text-muted">
@@ -316,7 +316,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       )}
 
       {/* Order Details Summary */}
-      <div id={THANK_YOU_TARGET.details} className="flex flex-col gap-2 text-body-sm text-text-muted bg-surface-muted p-4 rounded-xl border border-border">
+      <div id={THANK_YOU_TARGET.details} className="flex flex-col gap-2 text-body-sm text-text-muted bg-surface-alt p-4 rounded-xl border border-border">
         <div className="flex justify-between gap-3">
           <span className="shrink-0">Người nhận:</span>
           <span className="font-bold text-text text-right break-words">{order.recipientName}</span>
@@ -329,7 +329,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
         </div>
         <div className="flex justify-between">
           <span>Thanh toán:</span>
-          <span className={`font-bold ${isPaid || order.paidVnd > 0 ? "text-success" : "text-warning"}`}>
+          <span className={`font-bold ${isPaid || order.paidVnd > 0 ? "text-success" : "text-warning-text"}`}>
             {awaitingQuote ? "Chờ cửa hàng báo giá" : isPaid ? "Đã thanh toán đủ" : order.paidVnd > 0 ? (order.payment?.balanceDue ? "Đã nhận cọc · Chờ thanh toán lần 2" : "Đã nhận tiền cọc") : "Chờ xác nhận chuyển khoản"}
           </span>
         </div>

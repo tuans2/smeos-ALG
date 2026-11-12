@@ -69,7 +69,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
               type="button"
               onClick={() => setShowQrModal(true)}
               aria-label="Mã QR Zalo"
-              className="py-0 inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-muted transition-colors"
+              className="py-0 inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors"
             >
               <QrCode size={16} aria-hidden="true" />
               <span>Mã QR</span>
@@ -81,7 +81,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
             <Button variant="outline"
               type="button"
               onClick={inquiry.onMessage}
-              className="py-0 inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-muted transition-colors"
+              className="py-0 inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors"
             >
               <MessageSquareText size={16} aria-hidden="true" />
               <span>Nhắn tin</span>

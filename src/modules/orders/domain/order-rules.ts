@@ -189,16 +189,20 @@ export function calculateOrderSla(
   }
 }
 
-/**
- * Sinh mã đơn hàng chuẩn FloraOS dạng `DHYYMMDD-XXXX`, ngày theo giờ Việt Nam (audit BL-10).
- */
-export function generateOrderCode(seqNumber: number, date = new Date()): string {
+/** Phần mã đơn trước số thứ tự: `DHYYMMDD-`, ngày theo giờ Việt Nam (audit BL-10) — khoá của bộ đếm mã đơn. */
+export function orderCodePrefix(date = new Date()): string {
   const vn = vnCalendarDate(date)
   const yy = String(vn.year).slice(-2)
   const mm = String(vn.month).padStart(2, "0")
   const dd = String(vn.day).padStart(2, "0")
-  const suffix = String(seqNumber).padStart(4, "0")
-  return `DH${yy}${mm}${dd}-${suffix}`
+  return `DH${yy}${mm}${dd}-`
+}
+
+/**
+ * Sinh mã đơn hàng chuẩn ALG dạng `DHYYMMDD-XXXX`, ngày theo giờ Việt Nam (audit BL-10).
+ */
+export function generateOrderCode(seqNumber: number, date = new Date()): string {
+  return `${orderCodePrefix(date)}${String(seqNumber).padStart(4, "0")}`
 }
 
 /**

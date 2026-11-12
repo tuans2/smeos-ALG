@@ -1,6 +1,6 @@
 # Quy trình Kỹ thuật Bàn giao Sạch cho Tenant (Clean Handover SOP)
 
-> **Tài liệu SSOT Level 5 — Vận hành Platform SaaS FloraOS**  
+> **Tài liệu SSOT Level 5 — Vận hành Platform SaaS ALG**  
 > **Áp dụng cho:** Đội ngũ Kỹ thuật, DevOps, Platform Lead, AI Coding Agents  
 > **Mã quy trình:** `SOP-OPS-HANDOVER-01`  
 > **Cập nhật:** 10/10/2026
@@ -9,7 +9,7 @@
 
 ## 1. Mục tiêu & Phạm vi (Context & Objectives)
 
-Khi triển khai FloraOS cho một cửa hàng hoa mới (Tenant), giai đoạn kiểm thử dòng tiền thật (UAT), quét mã VietQR, in thiệp mẫu, hoặc test webhook ngân hàng thường tạo ra các dữ liệu giao dịch mẫu trực tiếp trên môi trường **Production (Render)**.
+Khi triển khai ALG cho một cửa hàng hoa mới (Tenant), giai đoạn kiểm thử dòng tiền thật (UAT), quét mã VietQR, in thiệp mẫu, hoặc test webhook ngân hàng thường tạo ra các dữ liệu giao dịch mẫu trực tiếp trên môi trường **Production (Render)**.
 
 Trước thời điểm bàn giao chính thức (Go-Live) cho chủ cửa hàng:
 - **Mục tiêu:** Đưa toàn bộ chỉ số giao dịch (đơn hàng, sổ thu, phiên thiệp, lịch sử QC, sự cố) về trạng thái `0` tinh khôi.
@@ -36,7 +36,7 @@ Trước thời điểm bàn giao chính thức (Go-Live) cho chủ cửa hàng:
 
 Pipeline được hiện thực tại `scripts/handover-clean-tenant.ts` dựa trên 5 nguyên tắc:
 
-1. **Zero-Downtime Row Locks:** Mọi câu lệnh `deleteMany` / `updateMany` đều có điều kiện `where: { organization_id: orgId }`. Do `organization_id` đã được đánh index ở tất cả các bảng (Luật cách ly Tenant của FloraOS), Postgres chỉ khóa các dòng của chính cửa hàng đó trong ~50ms, hoàn toàn không khóa bảng (Table Lock), không gây nghẽn webapp.
+1. **Zero-Downtime Row Locks:** Mọi câu lệnh `deleteMany` / `updateMany` đều có điều kiện `where: { organization_id: orgId }`. Do `organization_id` đã được đánh index ở tất cả các bảng (Luật cách ly Tenant của ALG), Postgres chỉ khóa các dòng của chính cửa hàng đó trong ~50ms, hoàn toàn không khóa bảng (Table Lock), không gây nghẽn webapp.
 2. **ACID Atomic Transaction:** Tất cả các thao tác xóa và hoàn nguyên được bọc trong một `prisma.$transaction(..., { timeout: 30000 })`. Nếu có bất kỳ lỗi nào (đứt mạng, foreign key conflict, timeout), toàn bộ database rollback 100% trạng thái ban đầu.
 3. **Master Data Integrity Guard:** Trước khi xóa, pipeline đo lường số lượng sản phẩm (`products`), biến thể (`product_variants`), mẫu thiệp (`greeting_catalogs`) và tài khoản (`memberships`). Sau khi xóa trong transaction, nếu bất kỳ số lượng nào bị giảm, pipeline lập tức ném Exception để hủy và rollback giao dịch.
 4. **Dry-Run & Confirmation Gate:** Script từ chối xóa dữ liệu nếu thiếu cờ `--confirm` hoặc `--force`. Chế độ `--dry-run` cho phép quét trước toàn bộ số liệu sẽ bị xóa mà không đụng chạm vào CSDL.

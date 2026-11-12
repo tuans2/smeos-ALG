@@ -1,5 +1,5 @@
 /**
- * Design Tokens Registry & Mapping — smeOS Architecture (Phase 1)
+ * Design Tokens Registry & Mapping — ALG Architecture (Phase 1)
  *
  * Ánh xạ giữa các Design Tokens trừu tượng và CSS Custom Properties.
  * Density: compact và comfortable (ADR-011 D-UI-03: loại bỏ spacious).

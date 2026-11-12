@@ -16,8 +16,8 @@ vi.mock("@/components/layout/mobile-nav-drawer", () => ({
 vi.mock("@/components/layout/session-takeover-watcher", () => ({
   SessionTakeoverWatcher: () => <div data-testid="takeover-watcher" />,
 }))
-vi.mock("@/components/chat/floraos-global-copilot", () => ({
-  FloraOSGlobalCopilot: () => <div data-testid="copilot" />,
+vi.mock("@/components/chat/alg-global-copilot", () => ({
+  AlgGlobalCopilot: () => <div data-testid="copilot" />,
 }))
 vi.mock("@/components/layout/ui-studio-drawer", () => ({
   UiStudioDrawer: () => <div data-testid="ui-studio" />,

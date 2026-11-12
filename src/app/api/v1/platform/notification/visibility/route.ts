@@ -27,6 +27,6 @@ export const PATCH = defineRoute({
       updatedBy: platform.userId,
     })
 
-    return jsonResponse({ success: true, updated: body })
+    return jsonResponse({ data: body })
   },
 })

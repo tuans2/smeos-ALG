@@ -95,7 +95,7 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="p-3.5 rounded-xl bg-warning-bg border border-warning-border text-warning-text flex items-start gap-2.5">
-          <Handshake size={18} className="shrink-0 mt-0.5 text-warning" />
+          <Handshake size={18} className="shrink-0 mt-0.5 text-warning-text" />
           <p className="text-caption leading-relaxed">
             Áp dụng cho cửa hàng thuộc pháp nhân khác (§4.3). Dữ liệu thu thập bị giới hạn bởi <strong>Thỏa thuận chia sẻ dữ liệu (DSA)</strong> để bảo vệ bí mật kinh doanh và thông tin cá nhân của đối tác.
           </p>

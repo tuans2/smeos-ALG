@@ -2,7 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { PATCH as patchOrgPolicy } from "@/app/api/v1/notification/org-policy/route"
 import { POST as postStoreLock } from "@/app/api/v1/notification/store-hard-locks/route"
-import { POST as provisionPartner } from "@/app/api/v1/coordinator/partners/route"
+import { POST as provisionPartner } from "@/app/api/v1/coordinator/chain-partners/route"
 import { PATCH as patchTools } from "@/app/api/v1/coordinator/partners/[id]/tools/route"
 import { verifyPassword } from "@/modules/organization/infra/password-hasher"
 
@@ -46,7 +46,7 @@ describe("mã năng lực cho cấu hình thông báo & đối tác chuỗi", ()
   })
 
   it("nhân viên không có F2 không cấp được tài khoản đối tác, không mở khoá công cụ", async () => {
-    expect((await provisionPartner(send(saleToken, "coordinator/partners", "POST", partner("P-01")))).status).toBe(403)
+    expect((await provisionPartner(send(saleToken, "coordinator/chain-partners", "POST", partner("P-01")))).status).toBe(403)
     const res = await patchTools(send(saleToken, "coordinator/partners/x/tools", "PATCH", { unlockedTools: [] }), {
       params: Promise.resolve({ id: "x" }),
     })
@@ -54,10 +54,10 @@ describe("mã năng lực cho cấu hình thông báo & đối tác chuỗi", ()
   })
 
   it("mỗi tài khoản đối tác có mật khẩu ngẫu nhiên riêng, trả về một lần", async () => {
-    const a = await readJson(await provisionPartner(send(chain.token, "coordinator/partners", "POST", partner("P-01"))))
-    const b = await readJson(await provisionPartner(send(chain.token, "coordinator/partners", "POST", partner("P-02"))))
-    const pa = a.temporaryPassword as string
-    const pb = b.temporaryPassword as string
+    const a = await readJson(await provisionPartner(send(chain.token, "coordinator/chain-partners", "POST", partner("P-01"))))
+    const b = await readJson(await provisionPartner(send(chain.token, "coordinator/chain-partners", "POST", partner("P-02"))))
+    const pa = (a.data as { temporary_password: string }).temporary_password
+    const pb = (b.data as { temporary_password: string }).temporary_password
     expect(pa).toMatch(/^[A-Za-z0-9_-]{16}$/)
     expect(pa).not.toBe(pb)
     const user = await prisma.users.findFirstOrThrow({ where: { email: "p-01@vi-du.test" } })

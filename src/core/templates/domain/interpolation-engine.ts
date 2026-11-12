@@ -1,5 +1,5 @@
 /**
- * smeOS Template Engine — Variable Interpolation Engine
+ * ALG Template Engine — Variable Interpolation Engine
  * Bộ phân tích và trộn biến an toàn cho template văn bản/kịch bản.
  *
  * DỰ TRỮ, KHÔNG PHẢI NỢ (nợ #99, chốt 17/09) — xem chú thích đầy đủ ở

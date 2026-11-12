@@ -1,9 +1,11 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import { useEffect, useState } from "react"
 import { familyResumeTarget, type FamilyMember } from "@/modules/greeting-card/domain/order-family"
 
-const KEY = "smeos:order-family:"
+const KEY = "alg:order-family:"
 const LEGACY_KEY = "floraos:order-family:"
 /** Khách chủ động mở trang này (Đặt thêm đơn / Lịch sử đơn hàng) → không tự chuyển đi nơi khác. */
 const CHOSEN_PARAM = "chon"

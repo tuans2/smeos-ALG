@@ -149,7 +149,7 @@ export function ScheduledPulsePanel({
                     onCheckedChange={(checked) => setNotifyCopilot((checked === true))}
                     className="h-4 w-4 rounded accent-primary"
                   />
-                  <span>smeOS Copilot chào buổi sáng</span>
+                  <span>ALG Copilot chào buổi sáng</span>
                 </label>
                 <label className="flex items-center gap-2 text-caption text-text cursor-pointer">
                   <Checkbox
@@ -240,7 +240,7 @@ export function ScheduledPulsePanel({
       <div className="rounded-2xl border border-warning-border/80 bg-gradient-to-br from-warning-bg/50 via-white to-primary-muted/40 p-5 shadow-sm space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warning text-white">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warning text-text">
               <Sparkles size={16} />
             </span>
             <div>

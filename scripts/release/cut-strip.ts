@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 
 /**
- * Khối mã chỉ thuộc smeOS (dữ liệu mẫu của cửa hàng khác…) đánh dấu bằng hai dòng chú thích
+ * Khối mã chỉ thuộc ALG (dữ liệu mẫu của cửa hàng khác…) đánh dấu bằng hai dòng chú thích
  * `// @release-strip` … `// @release-strip-end`; bản cắt bỏ cả khối, kể cả hai dòng đánh dấu.
  */
 const START = /^\s*(\/\/|#)\s*@release-strip(\s|$)(?!-end)/

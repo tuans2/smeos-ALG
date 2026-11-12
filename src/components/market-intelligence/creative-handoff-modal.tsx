@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Creative Handoff Modal — Chặng 5 CHOOSE (FloraOS Design System Standard).
+ * Creative Handoff Modal — Chặng 5 CHOOSE (ALG Design System Standard).
  *
  * Hiển thị overlay modal trên /thi-truong và /tai-anh để user:
  * 1. Xem lại topic đã chọn từ Chặng 04 (tiêu đề, hook, CTA, nhãn nghiệp vụ Việt hóa chuẩn)
@@ -13,7 +13,7 @@
  *
  * Tuân thủ nghiêm ngặt:
  * - Anti-Keyword-Dumping: Tuyệt đối không render raw enum (PRODUCT_SHOWCASE, REELS_TIKTOK_9_16)
- * - Mộc Lan FloraOS Design System: Primary #7A2E42, Sage #52643F, Gold #C89B3C, Stone neutrals
+ * - Mộc Lan ALG Design System: Primary #7A2E42, Sage #52643F, Gold #C89B3C, Stone neutrals
  * - Hành trình 14 bước Product-to-Market SSOT: Chặng 05 CHOOSE
  */
 

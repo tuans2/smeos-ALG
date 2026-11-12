@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Get Chain Collection Profile Use-Case (§9.5.8)
+ * ALG Inputs Architecture v2.1 — Get Chain Collection Profile Use-Case (§9.5.8)
  */
 
 import {

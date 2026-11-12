@@ -54,7 +54,7 @@ export default function KnowledgeBasePage() {
 
   function handleAskCopilot(prompt: string) {
     // Kích hoạt Copilot toàn cục và tự động gửi câu hỏi mẫu
-    window.dispatchEvent(new CustomEvent("smeos:open-copilot", { detail: { prompt } }))
+    window.dispatchEvent(new CustomEvent("alg:open-copilot", { detail: { prompt } }))
   }
 
   return (
@@ -64,12 +64,12 @@ export default function KnowledgeBasePage() {
         <div className="flex items-start"><MobileMenuButton /><div>
           <PageHeader
             title="Cẩm nang tri thức"
-            tip="Bảng tra cứu các trường bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ smeOS."
+            tip="Bảng tra cứu các trường bắt buộc, tiêu chuẩn thao tác và ví dụ chuẩn cho toàn bộ 7 phân hệ ALG."
           />
         </div></div>
 
         {/* Top-Right Action Toolbar (K2: 1 primary + 1 secondary) */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link href={"/hoi-thoai/kenh-tich-hop" as Route}>
             <Button
               variant="outline"
@@ -88,23 +88,23 @@ export default function KnowledgeBasePage() {
             className="font-bold text-caption gap-1.5 shadow-xs"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Mở smeOS Copilot (⌘K)</span>
+            <span>Mở ALG Copilot (⌘K)</span>
           </Button>
         </div>
       </header>
 
       {/* 2. Main Content */}
-      <main className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
+      <div className="flex-1 p-6 space-y-6 max-w-7xl mx-auto w-full">
         {/* Banner Hướng Dẫn Chuẩn FeatureGuidanceCard (K1: đúng 1 card duy nhất) */}
         <FeatureGuidanceCard
           badgeLabel="CẨM NANG VẬN HÀNH THƯƠNG MẠI SSOT"
           badgeIcon={BookOpen}
           title="Quy Chuẩn Nhập Liệu Nguyên Tử (Atomic Disaggregated Data)"
-          description={`Để hệ thống smeOS hoạt động chính xác 100% khi tính giá vốn, đo SLA ${ti.makerTitle} và tư vấn AI bán hàng, mọi thông tin phải được phân rã thành các trường độc lập (Tên ${ti.rawMaterialItem}, Số lượng, Đơn vị tính, Màu sắc...). Tuyệt đối không gộp chung văn bản và số lượng vào cùng một ô tự do.`}
+          description={`Để hệ thống ALG hoạt động chính xác 100% khi tính giá vốn, đo SLA ${ti.makerTitle} và tư vấn AI bán hàng, mọi thông tin phải được phân rã thành các trường độc lập (Tên ${ti.rawMaterialItem}, Số lượng, Đơn vị tính, Màu sắc...). Tuyệt đối không gộp chung văn bản và số lượng vào cùng một ô tự do.`}
           tips={[
             { icon: "⚡", text: "Atomic Fields: Sửa trực tiếp từng ô dữ liệu nguyên tử mà không làm hỏng cấu trúc" },
             { icon: "🛡️", text: "Dữ liệu tách riêng: Dữ liệu của mỗi cửa hàng được giữ riêng, cửa hàng khác không xem hay ghi đè được" },
-            { icon: "💬", text: "AI Copilot: Bấm 'Hỏi smeOS Copilot' để được trợ lý ảo hướng dẫn từng bước 24/7" },
+            { icon: "💬", text: "AI Copilot: Bấm 'Hỏi ALG Copilot' để được trợ lý ảo hướng dẫn từng bước 24/7" },
             { icon: "🖨️", text: `In ấn bảo mật: Luôn dùng phiếu ${ti.makerAction} giấu giá cho thợ và phiếu A6 cho shipper` },
           ]}
         />
@@ -172,7 +172,7 @@ export default function KnowledgeBasePage() {
             ))
           )}
         </div>
-      </main>
+      </div>
     </div>
   )
 }

@@ -47,7 +47,7 @@ export interface TemplateReminderOverrides {
 }
 
 /**
- * Giá trị mặc định chuẩn SSOT toàn hệ thống FloraOS / ALG.
+ * Giá trị mặc định chuẩn SSOT toàn hệ thống ALG / ALG.
  */
 export const DEFAULT_DISPATCH_REMINDER_POLICY: Readonly<DispatchReminderPolicyConfig> = {
   m0MinutesAfterPaid: 10,

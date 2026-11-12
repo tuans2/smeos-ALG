@@ -82,7 +82,7 @@ acceptance:
 - Quyền: `U1` (xem cấu hình AI), `U2` (hiệu chỉnh trần và thứ tự nhà cung cấp).
 
 ## 11. Component
-- Dùng lại: `Button`, `Badge`, `SkeletonBlock`, `FeatureGuidanceCard`, `ProviderOrderSettings`.
+- Dùng lại: `Button`, `Badge`, `SkeletonBlock`, `FeatureGuidanceCard`, `ProviderOrderSettings`, `InfoTip`.
 - Tạo mới: Không.
 
 ## 12. Ma trận quyết định
@@ -91,6 +91,7 @@ acceptance:
 | Text "Đang tải dữ liệu chính sách AI..." | Chuẩn hóa SkeletonBlock | Dùng `<SkeletonBlock lines={4} />` | Tuân thủ UX-006 trạng thái tải | `cai-dat-ai/page.tsx` |
 | Chưa nhấn mạnh phạm vi tổ chức | Tuân thủ 03a IA-005 | Thêm chú thích "Phạm vi áp dụng chỉ trong tổ chức hiện tại" | Tránh hiểu lầm cấu hình ảnh hưởng toàn hệ thống SaaS | `cai-dat-ai/page.tsx` |
 | Sàn bảo mật SENSITIVE | Khóa cứng không cho đổi | Duy trì badge cảnh báo `Lock` và vô hiệu hóa nút đổi | Tuân thủ tuyệt đối Luật YC-K1 và sàn quyền riêng tư | `cai-dat-ai/page.tsx` |
+| Dòng "Mô hình" in tên model (Claude, Gemini…) | OPERATING §2: không tên model trên màn hình | Hiện mô tả tiếng Việt theo khoá từ `provider-catalog` (`model-label.ts`); tên model chỉ trong `InfoTip` | T3-6 phương án A, quyết định 11/11/2026 (chờ PO xác nhận trước khi gộp) | `cai-dat-ai/page.tsx`, `model-label.ts` |
 
 ## 13. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

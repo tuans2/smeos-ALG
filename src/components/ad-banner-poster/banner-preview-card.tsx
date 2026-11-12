@@ -220,13 +220,13 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
             <div className="flex flex-wrap items-center justify-between gap-x-2 text-caption text-white/80 px-0.5 font-medium">
               {brandInfo.hotline && (
                 <span className="inline-flex shrink-0 items-center gap-0.5">
-                  <Phone className="h-2 w-2 shrink-0 text-warning" />
+                  <Phone className="h-2 w-2 shrink-0 text-warning-text" />
                   <span className="tracking-wider">{brandInfo.hotline}</span>
                 </span>
               )}
               {brandInfo.address && (
                 <span className="inline-flex min-w-0 items-center gap-0.5">
-                  <MapPin className="h-2 w-2 shrink-0 text-warning" />
+                  <MapPin className="h-2 w-2 shrink-0 text-warning-text" />
                   <span className="line-clamp-2">{brandInfo.address}</span>
                 </span>
               )}
@@ -238,7 +238,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
         {isWatermarked && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10 rotate-12">
             <span className="text-display font-black uppercase tracking-widest text-white">
-              smeOS Banner
+              ALG Banner
             </span>
           </div>
         )}

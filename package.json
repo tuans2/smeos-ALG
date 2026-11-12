@@ -1,5 +1,5 @@
 {
-  "name": "smeos",
+  "name": "alg",
   "version": "0.0.0",
   "private": true,
   "license": "UNLICENSED",
@@ -32,8 +32,8 @@
     "typecheck": "node node_modules/typescript-7/lib/tsc.js --noEmit",
     "test": "vitest run --exclude 'tests/tenant/**' --exclude 'tests/platform/**' --exclude 'node_modules/**'",
     "test:harvest": "tsx --test tests/maChucNang.test.ts",
-    "test:tenant": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}\" vitest run tests/tenant",
-    "test:platform": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}\" vitest run tests/platform",
+    "test:tenant": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://alg:alg@localhost:5433/alg_test}\" vitest run tests/tenant",
+    "test:platform": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://alg:alg@localhost:5433/alg_test}\" vitest run tests/platform",
     "db:test:setup": "bash scripts/dung-db-test.sh",
     "gen:tenant-registry": "node scripts/gen-tenant-table-registry.mjs",
     "gen:erd": "node scripts/gen-erd.mjs",

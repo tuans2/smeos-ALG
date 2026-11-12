@@ -45,7 +45,7 @@ export function MobileNavDrawer({ children }: { children: React.ReactNode }) {
     document.body.style.overflow = "hidden"
     // Đưa tiêu điểm vào menu; đóng lại thì trả về nút burger đã bấm
     const burger = document.activeElement as HTMLElement | null
-    drawerRef.current?.querySelector<HTMLElement>("button[aria-label=\"Đóng menu\"]")?.focus()
+    drawerRef.current?.querySelector<HTMLElement>("[data-drawer-close]")?.focus()
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpenedAt(null)
     }
@@ -75,7 +75,7 @@ export function MobileNavDrawer({ children }: { children: React.ReactNode }) {
             <Menu size={22} />
           </Button>
           <span className="truncate text-title-sm font-bold text-text">
-            {(orgName || "smeOS").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
+            {(orgName || "ALG").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
           </span>
         </header>
       )}
@@ -87,17 +87,10 @@ export function MobileNavDrawer({ children }: { children: React.ReactNode }) {
           <div className="flex animate-in slide-in-from-left duration-200 z-10 shadow-2xl">
             <DesktopNav drawer onNavigate={close} onClose={close} />
           </div>
+          {/* Lớp nền chỉ để bấm chuột/chạm; bàn phím đóng bằng Esc hoặc nút "Đóng menu" trong ngăn kéo */}
           <div
-            role="button"
-            tabIndex={0}
-            aria-label="Đóng menu"
+            aria-hidden="true"
             onClick={close}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault()
-                close()
-              }
-            }}
             className="flex-1 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200 cursor-pointer"
           />
         </div>

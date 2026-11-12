@@ -3,7 +3,7 @@
   "$id": "stage-01-bring.output.schema.json",
   "title": "Chặng 01 — BRING: Tải ảnh sản phẩm vào kho — Đầu ra",
   "description": "Xin URL (POST /assets/upload-url) → PUT byte ảnh → đăng ký asset ORIGINAL. Từ đây mọi chặng chỉ mang asset_id, không mang ảnh.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "01",
     "stage": 1,
     "code": "BRING",

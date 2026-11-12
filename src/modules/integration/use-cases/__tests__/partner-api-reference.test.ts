@@ -29,7 +29,7 @@ describe("partnerApiReference", () => {
     const status = usage.body.find((f) => f.name === "status")!
     expect(status).toMatchObject({ type: "chuỗi", required: true, allowed: ["COMPLETED", "REFUNDED"] })
     expect(usage.body.find((f) => f.name === "job_id")).toMatchObject({ required: false, nullable: true })
-    expect(usage.auth).toEqual(["Khoá ứng dụng (Bearer)", "Phiên SSO (x-smeos-sso)"])
+    expect(usage.auth).toEqual(["Khoá ứng dụng (Bearer)", "Phiên SSO (x-alg-sso)"])
     expect(usage.errors).toContain("429")
     expect(ref.operations.find((o) => o.path === "/integration/products")!.query.map((q) => q.name)).toContain("cursor")
   })

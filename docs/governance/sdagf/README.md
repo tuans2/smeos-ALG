@@ -1,14 +1,14 @@
-# SMEOS Storage, Data & Artifact Governance Framework (SDAGF)
+# ALG Storage, Data & Artifact Governance Framework (SDAGF)
 
 **Phiên bản:** 0.1.0-draft  
-**Trạng thái:** Draft — cần audit repository SMEOS và phê duyệt trước khi áp dụng  
+**Trạng thái:** Draft — cần audit repository ALG và phê duyệt trước khi áp dụng  
 **Ngôn ngữ:** Tiếng Việt; tên kỹ thuật giữ bằng tiếng Anh khi hữu ích.
 
 ## Mục tiêu
 
-SDAGF là framework quản trị vòng đời của dữ liệu và tài sản số trên toàn SMEOS, từ lúc được tiếp nhận/tạo ra đến khi được xác thực, lưu trữ, xử lý, chia sẻ, phát hành, lưu trữ dài hạn hoặc xóa. Framework bao phủ input, business data, intermediate artifacts, output, technical artifacts và governance records.
+SDAGF là framework quản trị vòng đời của dữ liệu và tài sản số trên toàn ALG, từ lúc được tiếp nhận/tạo ra đến khi được xác thực, lưu trữ, xử lý, chia sẻ, phát hành, lưu trữ dài hạn hoặc xóa. Framework bao phủ input, business data, intermediate artifacts, output, technical artifacts và governance records.
 
-Đây là **bộ tiêu chuẩn mục tiêu để đánh giá và điều chỉnh**, không phải mô tả hiện trạng SMEOS. Không được giả định công nghệ, cấu trúc thư mục, database, cloud provider hoặc kiến trúc hiện có khi chưa kiểm tra.
+Đây là **bộ tiêu chuẩn mục tiêu để đánh giá và điều chỉnh**, không phải mô tả hiện trạng ALG. Không được giả định công nghệ, cấu trúc thư mục, database, cloud provider hoặc kiến trúc hiện có khi chưa kiểm tra.
 
 ## Cấu trúc bộ tài liệu
 
@@ -35,7 +35,7 @@ SDAGF là framework quản trị vòng đời của dữ liệu và tài sản s
 
 ## Quy tắc sử dụng
 
-1. Đưa bộ tài liệu vào repository SMEOS tại vị trí được chủ dự án phê duyệt.
+1. Đưa bộ tài liệu vào repository ALG tại vị trí được chủ dự án phê duyệt.
 2. Không sửa code, di chuyển, đổi tên hoặc xóa file trong giai đoạn audit chỉ vì framework đề xuất cấu trúc khác.
 3. AI agent phải thu thập bằng chứng thực tế và phân biệt: **Observed Fact**, **Inference**, **Recommendation**, **Decision Required**.
 4. Mọi thay đổi phải có kế hoạch, đánh giá tác động, kiểm thử và phê duyệt phù hợp.
@@ -43,4 +43,4 @@ SDAGF là framework quản trị vòng đời của dữ liệu và tài sản s
 
 ## Trạng thái kiểm soát
 
-Các chính sách trong bộ tài liệu là **đề xuất mục tiêu**. Chúng chỉ trở thành chính sách chính thức sau khi được chủ sở hữu SMEOS phê duyệt, được điều chỉnh theo audit và được tích hợp vào các kiểm soát kỹ thuật tương ứng.
+Các chính sách trong bộ tài liệu là **đề xuất mục tiêu**. Chúng chỉ trở thành chính sách chính thức sau khi được chủ sở hữu ALG phê duyệt, được điều chỉnh theo audit và được tích hợp vào các kiểm soát kỹ thuật tương ứng.

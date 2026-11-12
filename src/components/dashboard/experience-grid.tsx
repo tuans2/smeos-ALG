@@ -287,8 +287,8 @@ export function ExperienceGrid() {
 
         {isLocked && (
           <div className="flex items-center gap-3 rounded-2xl bg-warning-bg p-3.5">
-            <Zap size={20} strokeWidth={1.8} className="text-warning" />
-            <div className="flex-1 text-meta leading-snug text-warning">
+            <Zap size={20} strokeWidth={1.8} className="text-warning-text" />
+            <div className="flex-1 text-meta leading-snug text-warning-text">
               Đã dùng hết hạn mức dùng thử. Chuyển sang tổ chức thật để tiếp tục.
             </div>
           </div>

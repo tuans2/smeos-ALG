@@ -115,7 +115,7 @@ describe("Ops Copilot Knowledge Base & Adaptive Persona Engine (10 Chức Năng 
       })
 
       expect(res.appliedStyle).toBe("CONSULTANT")
-      expect(res.replyText).toContain("[Cố vấn Vận hành smeOS]")
+      expect(res.replyText).toContain("[Cố vấn Vận hành ALG]")
       expect(res.replyText).toContain("Khuyến nghị quản trị")
       expect(res.targetRoute).toBe("/cai-dat/thanh-vien")
     })

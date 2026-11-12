@@ -182,7 +182,7 @@ Danh sách đầy đủ (Medium/Low) ở mục 3.
 - `store-journey-home.tsx:32` giữ `journeyState` trong React; các bước điều hướng sang `/san-pham`, `/bao-gia`, `/creative-studio` (`next-actions-registry.ts`) → quay lại là mất. Bảng `journey_runs` (`schema.prisma:3503`) không được dùng.
 
 **D1 — Low — Nhiều nguồn hành trình chồng nhau**
-- `FLORAOS_STORE_13_USER_JOURNEYS_DETAIL_SPEC.md` (+ bản `_BACKUP`), `FLORAOS_PRODUCT_TO_MARKET_USER_JOURNEY.md` (14 chặng), `FLORAOS_CREATIVE_STUDIO_JOURNEY.md`, `user-journey-cong-cu-02.md`, `quy-trinh-trien-khai-48-cong-cu.md`. Bộ 13 hành trình viết riêng cho tiệm hoa trong khi sản phẩm có 7 ngành; chưa có hành trình nghiệp vụ đơn hàng đa nguồn ở dạng journey.
+- `ALG_STORE_13_USER_JOURNEYS_DETAIL_SPEC.md` (+ bản `_BACKUP`), `ALG_PRODUCT_TO_MARKET_USER_JOURNEY.md` (14 chặng), `ALG_CREATIVE_STUDIO_JOURNEY.md`, `user-journey-cong-cu-02.md`, `quy-trinh-trien-khai-48-cong-cu.md`. Bộ 13 hành trình viết riêng cho tiệm hoa trong khi sản phẩm có 7 ngành; chưa có hành trình nghiệp vụ đơn hàng đa nguồn ở dạng journey.
 
 ### H. Tích hợp & tác vụ nền
 

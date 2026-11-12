@@ -23,8 +23,14 @@ import { AddStaffDialog } from "./_components/add-staff-dialog"
 import { ChangeRoleDialog } from "./_components/change-role-dialog"
 import { MemberTable, type MemberListItem } from "./_components/member-table"
 import { PageHeader } from "@/components/ui/page-header"
+import { RequireCapability } from "@/components/layout/require-capability"
 
+/** Đội ngũ chỉ mở cho người quản lý nhân viên: tạo tài khoản, gỡ, hoặc phân vai (PO 11/11/2026) */
 export default function QuanLyThanhVienPage() {
+  return <RequireCapability anyOf={["A3", "F4", "F5"]}><QuanLyThanhVienContent /></RequireCapability>
+}
+
+function QuanLyThanhVienContent() {
   const { can } = useSession()
   const { t, dict } = useI18n()
   // PO 08/10/2026: Điều hành tạo tài khoản dùng được ngay (A3) thay cho lời mời chưa có bước nhận
@@ -129,7 +135,7 @@ export default function QuanLyThanhVienPage() {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"
             variant="outline"
@@ -218,7 +224,7 @@ export default function QuanLyThanhVienPage() {
         </div>
 
         <div className="p-4 rounded-2xl border border-border bg-surface flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center flex-shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-accent/10 text-accent-text flex items-center justify-center flex-shrink-0">
             <Building size={20} />
           </div>
           <div>

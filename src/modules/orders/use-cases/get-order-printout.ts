@@ -8,7 +8,8 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { formatDate } from "@/lib/i18n/formatters"
-import { toFloristItem, type FloristItem } from "../domain/florist-work"
+import { floristNoteFrom, toFloristItem, withProductFallback, type FloristItem, type FloristProductFallback } from "../domain/florist-work"
+import { loadPrintProducts } from "../infra/order-print-products"
 
 export interface OrderPrintData {
   orderCode: string
@@ -36,7 +37,8 @@ export interface OrderPrintData {
 export async function getOrderPrintout(
   ctx: TenantContext,
   orderId: string,
-  repo: IOrderRepository = getOrderRepository()
+  repo: IOrderRepository = getOrderRepository(),
+  products: (organizationId: string, productIds: string[]) => Promise<Map<string, FloristProductFallback>> = loadPrintProducts
 ): Promise<OrderPrintData> {
   const order = await repo.findById(ctx.organizationId, orderId)
   // Ngoài chi nhánh được giao → như không tồn tại (checklist ALG 9.13)
@@ -44,6 +46,8 @@ export async function getOrderPrintout(
     throw new AppError("NOT_FOUND", `Không tìm thấy đơn hàng với mã ID: ${orderId}`)
   }
 
+  const items = order.items ?? []
+  const productInfo = await products(ctx.organizationId, items.flatMap((it) => (it.productId ? [it.productId] : [])))
   const recipient = order.deliveryAddress
   const fullAddress = [
     recipient?.street,
@@ -75,7 +79,12 @@ export async function getOrderPrintout(
       subtotal: it.quantity * it.unitPriceVnd,
     })),
     totalVnd: order.totalVnd,
-    floristNote: order.internalNote ?? "",
-    florist: (order.items ?? []).map((it) => toFloristItem({ description: it.description ?? null, quantity: it.quantity, metadata: it.metadata })),
+    floristNote: floristNoteFrom(order.internalNote),
+    florist: items.map((it) =>
+      withProductFallback(
+        toFloristItem({ description: it.description ?? null, quantity: it.quantity, metadata: it.metadata }),
+        it.productId ? productInfo.get(it.productId) : undefined
+      )
+    ),
   }
 }

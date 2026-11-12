@@ -3,7 +3,7 @@
   "$id": "stage-10-launch.output.schema.json",
   "title": "Chặng 10 — LAUNCH: Đăng tải / lên lịch đa kênh — Đầu ra",
   "description": "Gói phải APPROVED. post_refs khớp content_metrics.content_id để Chặng 12 đọc số thật; việc đăng thực hiện ở Lịch đăng.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "10",
     "stage": 10,
     "code": "LAUNCH",

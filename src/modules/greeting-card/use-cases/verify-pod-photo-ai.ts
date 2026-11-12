@@ -24,7 +24,7 @@ export async function verifyPodPhotoWithAi(input: VerifyPodPhotoInput): Promise<
   const [sample, qc] = await Promise.all([loadImageForAi(input.sampleImageUrl), loadImageForAi(input.qcImageUrl)])
   const photo = { mimeType: input.podPhotoMimeType, base64: Buffer.from(input.podPhotoBytes).toString("base64") }
   const order = [sample ? "Mẫu Đặt Hàng Ban Đầu" : null, qc ? "Ảnh Thành Phẩm QC Trước Khi Giao" : null, "Ảnh Bàn Giao Hàng (POD)"].filter(Boolean)
-  const prompt = `Bạn là Chuyên gia Kiểm định Giao nhận (Proof of Delivery Auditor) của nền tảng quản lý đơn hàng smeOS.
+  const prompt = `Bạn là Chuyên gia Kiểm định Giao nhận (Proof of Delivery Auditor) của nền tảng quản lý đơn hàng ALG.
 Nhiệm vụ của bạn là kiểm tra Ảnh Bàn Giao Hàng do nhân viên giao hàng hoặc cửa hàng vừa chụp tải lên.
 
 Thông tin đơn hàng:

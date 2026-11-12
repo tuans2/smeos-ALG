@@ -5,7 +5,7 @@ import { productSnapshot, shippingSettings, shopInfo, vietQrInstructions } from 
 /** Phản hồi phiên khách Thẻ chào `/public/brochure/{sendCode}/*` (audit API đợt 6). */
 export const brochureOpenedResponse = z.strictObject({ opened: z.boolean() })
 export const brochureEventResponse = z.strictObject({ recorded: z.literal(true) })
-export const brochureSelectResponse = z.strictObject({ success: z.literal(true), snapshot: productSnapshot })
+export const brochureSelectResponse = z.strictObject({ data: z.strictObject({ snapshot: productSnapshot }) })
 export const paymentNotifyResponse = z.strictObject({ success: z.boolean(), message: z.string() })
 export const paymentProofResponse = z.strictObject({ assetId: z.string(), url: z.string() })
 export const brochureUnlockResponse = z.strictObject({ unlocked: z.literal(true) })
@@ -93,6 +93,8 @@ export const brochureViewResponse = z.strictObject({
   shipping: shippingSettings,
   payment: vietQrInstructions.nullable(),
   trackingTriggerPolicy: z.enum(["PAYMENT_ONLY", "PAYMENT_OR_COORDINATOR"]).optional(),
+  /** Số phút tự duyệt chuyển khoản có ảnh bill khi tiệm bật; null = chỉ Điều hành duyệt */
+  autoApprovePaymentMinutes: z.number().int().positive().nullable().optional(),
   /** Công tắc "Đặt hàng" / "Liên hệ" của chủ cửa hàng cho Bộ sưu tập riêng */
   entryActions: z.strictObject({ order: z.boolean(), contact: z.boolean() }),
 })

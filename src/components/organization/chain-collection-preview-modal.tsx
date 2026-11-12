@@ -73,7 +73,7 @@ export function ChainCollectionPreviewModal({
             <div className="text-caption text-text-muted">Trường thu thập</div>
           </div>
           <div className="p-3 rounded-xl border border-border bg-surface-alt text-center">
-            <ShieldAlert size={16} className="mx-auto text-warning mb-1" />
+            <ShieldAlert size={16} className="mx-auto text-warning-text mb-1" />
             <div className="text-title-sm font-black text-warning-text">{summary.s2FieldsCollected}</div>
             <div className="text-caption text-text-muted">Trường S2/Cá nhân</div>
           </div>

@@ -152,7 +152,7 @@ export function ConfirmCraftAcceptanceModal({
           </div>
           <div className="flex items-center justify-between text-caption pt-0.5">
             <span className="text-text-muted">
-              Tỷ lệ chi phí: <strong className={isHighCost ? "text-warning" : "text-text"}>{feeRatio.toFixed(1)}%</strong> giá bán
+              Tỷ lệ chi phí: <strong className={isHighCost ? "text-warning-text" : "text-text"}>{feeRatio.toFixed(1)}%</strong> giá bán
             </span>
             <div className="flex items-center gap-1">
               <Button variant="outline"
@@ -181,8 +181,8 @@ export function ConfirmCraftAcceptanceModal({
         </div>
 
         {isHighCost && (
-          <div className="p-3 rounded-xl bg-warning/10 border border-warning/20 text-warning flex items-start gap-2">
-            <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning" />
+          <div className="p-3 rounded-xl bg-warning/10 border border-warning/20 text-warning-text flex items-start gap-2">
+            <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning-text" />
             <div className="text-caption leading-relaxed">
               <strong>Cảnh báo biên lợi nhuận:</strong> Giá gia công chiếm {feeRatio.toFixed(1)}% giá bán (vượt ngưỡng thông thường 60%). Vui lòng kiểm tra kỹ chi phí phụ cấp hoặc nguyên vật liệu phát sinh.
             </div>

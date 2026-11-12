@@ -59,10 +59,10 @@ export function BrochurePolicySettings() {
         <h3 className="text-title-sm font-extrabold text-text">Chính sách thu tiền</h3>
       </div>
       {!policy ? (
-        <div className="h-40 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-40 rounded-2xl bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-muted/40">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt/40">
             <div>
               <span className="font-bold text-text text-body-sm">Mức đặt cọc tối thiểu mặc định</span>
               <p className="text-caption text-text-muted">Tỉ lệ giá trị đơn hàng khách cần chuyển khoản trước khi xưởng tiến hành thực hiện đơn hàng.</p>

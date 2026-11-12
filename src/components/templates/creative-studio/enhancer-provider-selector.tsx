@@ -61,7 +61,7 @@ export const ENHANCER_PROVIDERS: EnhancerProviderOption[] = [
   {
     id: "studio",
     name: "Tách nền và phông có sẵn (dự phòng)",
-    desc: "Chạy trên hệ thống smeOS: tách nền, xoá logo chìm, ghép phông có sẵn. Chất lượng thấp hơn các lựa chọn trên — dùng khi cần xoá logo chìm hoặc tiết kiệm.",
+    desc: "Chạy trên hệ thống ALG: tách nền, xoá logo chìm, ghép phông có sẵn. Chất lượng thấp hơn các lựa chọn trên — dùng khi cần xoá logo chìm hoặc tiết kiệm.",
     badge: "Dự phòng",
     tone: "accent",
     icon: Sparkles,
@@ -77,7 +77,7 @@ export const ENHANCER_PROVIDERS: EnhancerProviderOption[] = [
   {
     id: "local",
     name: "Làm nét trên hệ thống (miễn phí)",
-    desc: "Làm nét ngay trên hệ thống smeOS, không gửi ảnh ra ngoài.",
+    desc: "Làm nét ngay trên hệ thống ALG, không gửi ảnh ra ngoài.",
     badge: "Miễn phí",
     tone: "neutral",
     icon: Cpu,

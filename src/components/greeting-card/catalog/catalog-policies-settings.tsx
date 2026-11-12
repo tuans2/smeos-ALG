@@ -217,7 +217,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
       {/* 3. THỎA THUẬN ÁP DỤNG */}
       <div className="space-y-3 pt-3 border-t border-border">
         <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
-          <FileText size={15} className="text-warning" />
+          <FileText size={15} className="text-warning-text" />
           <span>Thỏa thuận khách cần xác nhận ({selectedAgrees.length}/{policies.agreements.length})</span>
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
@@ -234,7 +234,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
               >
                 <div className="flex items-center justify-between font-bold text-caption">
                   <span>{a.title}</span>
-                  <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${active ? "bg-warning border-warning text-white" : "border-border"}`}>
+                  <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${active ? "bg-warning border-warning text-text" : "border-border"}`}>
                     {active && <Check size={12} />}
                   </div>
                 </div>

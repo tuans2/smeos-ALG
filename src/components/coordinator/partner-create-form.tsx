@@ -50,7 +50,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
       })
       if (!res.ok) {
         const errJson = await res.json().catch(() => ({}))
-        throw new Error(errJson.message || "Tạo đối tác thất bại")
+        throw new Error(errJson.error?.message || "Tạo đối tác thất bại")
       }
       onSuccess()
     } catch (err) {

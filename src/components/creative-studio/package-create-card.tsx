@@ -69,7 +69,7 @@ export function PackageCreateCard({
                   {multiRatio && typeof a.metadata?.ratio === "string" ? ` · ${a.metadata.ratio}` : ""}
                 </span>
                 {a.approval_state !== "APPROVED" && (
-                  <span className="absolute bottom-1 left-1 rounded bg-warning-bg px-1 text-caption text-warning">chưa duyệt</span>
+                  <span className="absolute bottom-1 left-1 rounded bg-warning-bg px-1 text-caption text-warning-text">chưa duyệt</span>
                 )}
               </div>
             ))}
@@ -85,7 +85,7 @@ export function PackageCreateCard({
                 .join(" | ")
             : "chưa có video đã dựng"}
           {multiRatio && suggestedVideos.length < planRatios.length && (
-            <span className="ml-1 text-warning">
+            <span className="ml-1 text-warning-text">
               — thiếu video khung {planRatios.filter((r) => !suggestedVideos.some((v) => v.aspect_ratio === r)).join(", ")}
             </span>
           )}

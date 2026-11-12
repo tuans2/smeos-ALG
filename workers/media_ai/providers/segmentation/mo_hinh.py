@@ -4,7 +4,7 @@ Luật D18 (`AGENTS.md`): mô hình không vào production khi thiếu một tro
 giấy phép. Soát 25/09/2026 phát hiện mặc định cũ `bria-rmbg` (BRIA RMBG-1.4)
 theo giấy phép **bria-rmbg-1.4 — chỉ phi thương mại**, dùng thương mại phải ký
 hợp đồng với BRIA (thẻ mô hình huggingface.co/briaai/RMBG-1.4). RMBG-2.0 cũng
-CC BY-NC 4.0. FloraOS là SaaS thu phí → không dùng được hai mô hình này nếu
+CC BY-NC 4.0. ALG là SaaS thu phí → không dùng được hai mô hình này nếu
 chưa có hợp đồng.
 
 Mặc định mới: `isnet-general-use` (IS-Net / DIS, repo xuebinqin/DIS, Apache-2.0).

@@ -50,7 +50,7 @@ export function BypassRequestModal({
 
   return (
     <Dialog open onOpenChange={(o) => { if (!o && !submitting) onClose() }} size="sm"
-      title={<span className="flex items-center gap-2"><ShieldAlert size={18} className="text-warning" />Xin Bỏ Qua: {stepTitle}</span>}>
+      title={<span className="flex items-center gap-2"><ShieldAlert size={18} className="text-warning-text" />Xin Bỏ Qua: {stepTitle}</span>}>
       <div className="flex flex-col">
         {/* Warning Content */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -103,7 +103,7 @@ export function BypassRequestModal({
               type="submit"
               variant="secondary"
               disabled={submitting}
-              className="flex-1 h-10 text-caption font-extrabold bg-warning hover:bg-warning/90 text-white"
+              className="flex-1 h-10 text-caption font-extrabold bg-warning hover:bg-warning/90 text-text"
             >
               {submitting ? (
                 <>

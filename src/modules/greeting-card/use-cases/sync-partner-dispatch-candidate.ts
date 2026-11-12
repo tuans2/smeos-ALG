@@ -1,7 +1,7 @@
 /**
  * sync-partner-dispatch-candidate.ts
  *
- * Cửa hàng đối tác có tài khoản smeOS vào CHUNG vòng phân bổ theo khu vực với chi nhánh (PO 09/11/2026, P1 / D9):
+ * Cửa hàng đối tác có tài khoản ALG vào CHUNG vòng phân bổ theo khu vực với chi nhánh (PO 09/11/2026, P1 / D9):
  * mỗi liên kết chuỗi → cửa hàng có một dòng `branches` mang `partner_org_id`. Bộ máy bắn đơn, điểm chất lượng,
  * phạt huỷ, quyền xem đơn (`shared_order_access`) dùng nguyên như chi nhánh — không đổi thuật toán, không ưu tiên kênh.
  *

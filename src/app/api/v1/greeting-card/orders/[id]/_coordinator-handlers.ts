@@ -1,8 +1,8 @@
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { defineRoute } from "@/core/http/define-route"
+import { jsonResponse } from "@/core/http/response"
+import type { TenantContext } from "@/core/tenancy"
 import {
   assignBrochureFlorist,
   uploadBrochureProductPhoto,
@@ -15,8 +15,6 @@ import {
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { acceptOrderBody, deliveryFailedBody, floristBody, photoBody, rejectOrderBody, shipBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 
-type RouteCtx = { params: Promise<{ id: string }> }
-
 /**
  * Dựng một handler tác vụ xưởng: phiên → năng lực → schema → use-case.
  * Bốn route con chỉ khác nhau ở bốn tham số này.
@@ -24,15 +22,16 @@ type RouteCtx = { params: Promise<{ id: string }> }
 function coordinatorHandler<T>(
   capability: string,
   schema: z.ZodType<T>,
-  run: (ctx: Awaited<ReturnType<typeof requireTenantContext>>["ctx"], id: string, input: T) => Promise<unknown>
+  run: (ctx: TenantContext, id: string, input: T) => Promise<unknown>
 ) {
-  return handle<[RouteCtx]>(async (request, context) => {
-    const { ctx } = await requireTenantContext(request)
-    requireCapability(ctx, capability)
-    const { id } = await context.params
-    const parsed = schema.safeParse(await request.json().catch(() => ({})))
-    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    return jsonResponse({ data: await run(ctx, id, parsed.data) })
+  return defineRoute({
+    auth: { kind: "tenant", capability },
+    handler: async ({ request, ctx, params }) => {
+      const { id } = params as { id: string }
+      const parsed = schema.safeParse(await request.json().catch(() => ({})))
+      if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+      return jsonResponse({ data: await run(ctx, id, parsed.data) })
+    },
   })
 }
 

@@ -1,7 +1,5 @@
 import { validationFailed, unprocessable, notFound } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { coordinatorConfirmBalancePayment } from "@/modules/greeting-card/use-cases/confirm-brochure-payment"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { parsePaymentPolicy, resolveBalancePaymentTriggerPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
@@ -14,48 +12,49 @@ import { coordinatorBalanceConfirmBlocker } from "@/modules/greeting-card/domain
 import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { BrochureOrderRepository } from "@/modules/greeting-card/infra/brochure-order-repository"
 import { confirmBalanceBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * POST /api/v1/greeting-card/orders/[id]/confirm-balance
  * Điều phối xác nhận đã nhận đủ tiền thanh toán lần 2 (balance) cho đơn đặt cọc.
  * Chỉ hoạt động khi policy cho phép Điều phối (PAYMENT_OR_COORDINATOR hoặc workflowPolicy.requireAdminDepositApproval === false hoặc đơn hỏa tốc).
  */
-export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
+export const POST = defineRoute({
   // Điều phối cần ít nhất quyền assignFlorist (R4) — tương đương vai Điều phối
-  requireCapability(ctx, GREETING_CARD_CAPABILITY.assignFlorist)
+  auth: { kind: "tenant", capability: GREETING_CARD_CAPABILITY.assignFlorist },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
 
-  const { id } = await context.params
+    // Trần cứng: kiểm tra policy trước khi cho phép Điều phối xác nhận lần 2
+    const repo = new GreetingCardRepository()
+    const ordersRepo = new BrochureOrderRepository()
+    const shop = await repo.getShopProfile(ctx.organizationId)
+    const workflowPolicy = parseBrochureWorkflowPolicy(shop.settings)
 
-  // Trần cứng: kiểm tra policy trước khi cho phép Điều phối xác nhận lần 2
-  const repo = new GreetingCardRepository()
-  const ordersRepo = new BrochureOrderRepository()
-  const shop = await repo.getShopProfile(ctx.organizationId)
-  const workflowPolicy = parseBrochureWorkflowPolicy(shop.settings)
+    const order = await ordersRepo.findBrochureOrder(ctx, id)
+    if (!order) throw notFound()
 
-  const order = await ordersRepo.findBrochureOrder(ctx, id)
-  if (!order) throw notFound()
+    const deliveryWindow = order.delivery_window as { date?: string; timeSlot?: string } | null
+    const isUrgent = isUrgentOrder({
+      deliveryDate: deliveryWindow?.date,
+      deliveryTimeSlot: deliveryWindow?.timeSlot,
+    })
 
-  const deliveryWindow = order.delivery_window as { date?: string; timeSlot?: string } | null
-  const isUrgent = isUrgentOrder({
-    deliveryDate: deliveryWindow?.date,
-    deliveryTimeSlot: deliveryWindow?.timeSlot,
-  })
+    // Cùng luật với nút trên thẻ Điều phối; tính cả ghi đè theo bộ sưu tập của đơn
+    const blocker = coordinatorBalanceConfirmBlocker({
+      requireAdminDepositApproval: workflowPolicy.requireAdminDepositApproval,
+      isUrgent,
+      balanceTrigger: resolveBalancePaymentTriggerPolicy(parsePaymentPolicy(shop.settings), order.greeting_sessions[0]?.catalog?.filters),
+    })
+    if (blocker) throw unprocessable(blocker)
 
-  // Cùng luật với nút trên thẻ Điều phối; tính cả ghi đè theo bộ sưu tập của đơn
-  const blocker = coordinatorBalanceConfirmBlocker({
-    requireAdminDepositApproval: workflowPolicy.requireAdminDepositApproval,
-    isUrgent,
-    balanceTrigger: resolveBalancePaymentTriggerPolicy(parsePaymentPolicy(shop.settings), order.greeting_sessions[0]?.catalog?.filters),
-  })
-  if (blocker) throw unprocessable(blocker)
+    const body = await request.json().catch(() => ({}))
+    const parsed = confirmBalanceBody.safeParse(body)
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const body = await request.json().catch(() => ({}))
-  const parsed = confirmBalanceBody.safeParse(body)
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-
-  const result = await coordinatorConfirmBalancePayment(ctx, id, { note: parsed.data.note })
-  return jsonResponse({ data: result })
+    const result = await coordinatorConfirmBalancePayment(ctx, id, { note: parsed.data.note })
+    return jsonResponse({ data: result })
+  },
 })
 
 export const dynamic = "force-dynamic"

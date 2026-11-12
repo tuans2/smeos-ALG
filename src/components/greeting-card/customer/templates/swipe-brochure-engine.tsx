@@ -144,16 +144,18 @@ export function SwipeBrochureEngine({
   }
 
   const soldOut = current?.available === false
+  // Trang khách đứng riêng: khối ngoài cùng là vùng nội dung chính; khi nhúng xem trước thì shell đã có <main>
+  const Stage = embedded ? "div" : "main"
 
   return (
-    <div className={`flex ${embedded ? "h-full" : "min-h-dvh"} w-full flex-col items-center`} style={stageStyle}>
+    <Stage className={`flex ${embedded ? "h-full" : "min-h-dvh"} w-full flex-col items-center`} style={stageStyle}>
       <div className="flex w-full max-w-[440px] flex-1 flex-col px-3 pb-[max(env(safe-area-inset-bottom),12px)] pt-3">
-        <header className="flex items-center justify-between px-1 pb-3">
+        <div className="flex items-center justify-between px-1 pb-3">
           <h1 className="truncate text-body font-semibold" style={{ fontFamily: theme.font }}>{catalogName}</h1>
           <span className="shrink-0 text-caption tabular-nums" style={{ color: theme.stageMuted }}>
             {Math.min(index + 1, visible.length)} / {visible.length}
           </span>
-        </header>
+        </div>
         {range && (
           <p className="flex items-center justify-between px-1 pb-2 text-caption" style={{ color: theme.stageMuted }}>
             <span>Đang xem mẫu {range.label.toLowerCase()}</span>
@@ -273,6 +275,6 @@ export function SwipeBrochureEngine({
           }}
         />
       )}
-    </div>
+    </Stage>
   )
 }

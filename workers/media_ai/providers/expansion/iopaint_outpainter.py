@@ -1,6 +1,6 @@
 """`IOPaintExpander` — mở khung bằng IOPaint tự host (Mức 2, trọng số mở,
 nợ #104, nối tiếp #78) — quyết định chốt với người dùng 17/09 qua đánh giá
-đặc tả "FLORAOS-CORE — IOPaint Outpainting Integration Specification": vẫn
+đặc tả "ALG-CORE — IOPaint Outpainting Integration Specification": vẫn
 tích hợp Mức 2 ngay dù tài liệu kiến trúc khuyến nghị thứ tự API-trước
 (§2 `docs/dac-ta/10-ai-orchestration.md`), và AIC-13 giữ NESTED trong M04b
 (không tách capability/endpoint riêng) — xem tài liệu "Tích hợp IOPaint

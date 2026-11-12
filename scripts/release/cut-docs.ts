@@ -9,7 +9,7 @@ import path from "node:path"
  * - SSOT hệ mẫu: dòng nhắc tệp mẫu không có trong bản cắt được đánh dấu "(ngoài SSOT)".
  */
 export const API_SPEC = "docs/dac-ta/06-api-specification.md"
-export const TEMPLATE_SSOT = "docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md"
+export const TEMPLATE_SSOT = "docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md"
 const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 
 /** Đọc thẳng, thiếu tệp/thư mục thì trả null — không kiểm tồn tại trước rồi mới đọc (tránh tranh chấp tệp). */

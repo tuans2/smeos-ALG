@@ -31,7 +31,7 @@ export function DashboardView({ qs }: { qs: string }) {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Đang theo dõi" value={`${d.orders} đơn · ${d.links} link`} />
             <Stat label="Quá thời gian chuẩn" value={d.overdue} tone={d.overdue > 0 ? "text-danger" : ""} />
-            <Stat label="Sắp quá hạn" value={d.dueSoon} tone={d.dueSoon > 0 ? "text-warning" : ""} />
+            <Stat label="Sắp quá hạn" value={d.dueSoon} tone={d.dueSoon > 0 ? "text-warning-text" : ""} />
             <Stat label="Còn phải thu" value={vnd(d.outstandingVnd)} />
           </div>
           <p className="text-body-sm text-text-muted">Đã thu tiền trở đi: {d.progress.paidOrBeyondRate}% đơn · Hoàn tất: {d.progress.completedRate}% đơn</p>
@@ -41,7 +41,7 @@ export function DashboardView({ qs }: { qs: string }) {
               {d.byStep.map((s) => (
                 <li key={s.stepId} className="grid grid-cols-[8rem_1fr_auto] items-center gap-2 text-caption">
                   <span className="truncate text-text">{s.title}</span>
-                  <span className="h-2 rounded-full bg-surface-muted"><span className="block h-2 rounded-full bg-primary" style={{ width: `${(s.count / max) * 100}%` }} /></span>
+                  <span className="h-2 rounded-full bg-surface-alt"><span className="block h-2 rounded-full bg-primary" style={{ width: `${(s.count / max) * 100}%` }} /></span>
                   <span className="text-text-muted">{s.count}{s.overdue > 0 && <span className="text-danger"> · {s.overdue} quá hạn</span>}</span>
                 </li>
               ))}

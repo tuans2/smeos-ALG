@@ -5,11 +5,11 @@ import { signUp } from "@/modules/organization/use-cases/sign-up"
 
 /**
  * Hai tài khoản chuyên test chức năng (PO 22/10/2026), dùng qua `scripts/tao-tai-khoan-test.ts`:
- * - chủ tiệm (vai `dieu_hanh`) tạo bằng đúng luồng đăng ký thật, kèm tổ chức riêng "smeOS QA";
+ * - chủ tiệm (vai `dieu_hanh`) tạo bằng đúng luồng đăng ký thật, kèm tổ chức riêng "ALG QA";
  * - nhân viên vai hạn chế (mặc định `sale`) trong CÙNG tổ chức, để thử phân quyền.
  * Không cấp mã nền tảng (N) cho tài khoản nào — superadmin nền tảng chỉ có một người.
  */
-export const QA_ORGANIZATION_NAME = "smeOS QA"
+export const QA_ORGANIZATION_NAME = "ALG QA"
 export const QA_MIN_PASSWORD_LENGTH = 12
 
 export interface QaAccountsInput {

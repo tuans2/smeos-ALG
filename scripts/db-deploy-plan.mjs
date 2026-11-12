@@ -1,7 +1,7 @@
 // Quyết định các bước cập nhật CSDL lúc deploy — tách riêng, không I/O, để test được.
 // Xem scripts/db-deploy.mjs và docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md.
 
-/** Migration nền của smeOS (22/10/2026): toàn bộ lược đồ tại thời điểm bỏ `db push`. */
+/** Migration nền của ALG (22/10/2026): toàn bộ lược đồ tại thời điểm bỏ `db push`. */
 export const BASELINE_MIGRATION = "20261022000000_smeos_baseline"
 
 /**

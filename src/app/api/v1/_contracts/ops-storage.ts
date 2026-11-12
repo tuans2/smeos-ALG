@@ -10,7 +10,6 @@ const USAGE = "Tư liệu — nơi dùng"
 const STORE = "Kho tệp & thùng rác"
 const NF = "Của tổ chức khác → 404."
 const TRASH_CAP = "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác)."
-const LEGACY = "Trả envelope cũ `{ success: true }`."
 const legacyErrors = (o: OpenApiOperation): OpenApiOperation => ({ ...o, extensions: { ...o.extensions, "x-legacy-error-envelope": true } })
 
 export const STORAGE_OPERATIONS: OpenApiOperation[] = [
@@ -50,13 +49,13 @@ export const STORAGE_OPERATIONS: OpenApiOperation[] = [
   op(STORE, { method: "get", path: "/storage/trash", operationId: "listTrash", summary: "Thùng rác", cap: "G3",
     description: `${TRASH_CAP} Giữ 30 ngày rồi xoá vĩnh viễn tự động (\`daysRemaining\`).`, ok: [200, { description: "Mục trong thùng rác", schema: res.trashResponse }] }),
   op(STORE, { method: "post", path: "/storage/trash", operationId: "moveToTrash", summary: "Chuyển một mục vào thùng rác", cap: "G3", body: req.moveTrashSchema,
-    description: `${TRASH_CAP} Catalog thu hồi link, thẻ chào ẩn. ${LEGACY} ${NF}`, ok: [200, { description: "Đã chuyển", schema: res.successResponse }], errors: [...BODY_ERRORS, 404, 409] }),
+    description: `${TRASH_CAP} Catalog thu hồi link, thẻ chào ẩn. ${NF}`, ok: [200, { description: "Đã chuyển", schema: res.trashedResponse }], errors: [...BODY_ERRORS, 404, 409] }),
   op(STORE, { method: "post", path: "/storage/trash/{id}/restore", operationId: "restoreFromTrash", summary: "Khôi phục từ thùng rác", cap: "phân quyền như `GET /storage/trash` (kiểm ở use-case)",
-    body: req.restoreSchema, description: `${TRASH_CAP} ${LEGACY} ${NF}`, ok: [200, { description: "Đã khôi phục", schema: res.successResponse }], errors: [...BODY_ERRORS, 404] }),
+    body: req.restoreSchema, description: `${TRASH_CAP} ${NF}`, ok: [200, { description: "Đã khôi phục", schema: res.restoredResponse }], errors: [...BODY_ERRORS, 404] }),
   op(STORE, { method: "delete", path: "/storage/trash/{id}", operationId: "purgeFromTrash", summary: "Xoá vĩnh viễn", cap: "phân quyền như `GET /storage/trash` (kiểm ở use-case)",
     query: req.trashTypeQuery,
-    description: `${TRASH_CAP} \`type\` bắt buộc, thiếu/sai → 400. Đang giữ pháp lý, ảnh đang được dùng hoặc sản phẩm đã có đơn → 409. Xoá tệp trên kho qua hàng đợi (outbox), ghi nhật ký kiểm toán. ${LEGACY} ${NF}`,
-    ok: [200, { description: "Đã xoá vĩnh viễn", schema: res.successResponse }], errors: [400, 404, 409] }),
+    description: `${TRASH_CAP} \`type\` bắt buộc, thiếu/sai → 400. Đang giữ pháp lý, ảnh đang được dùng hoặc sản phẩm đã có đơn → 409. Xoá tệp trên kho qua hàng đợi (outbox), ghi nhật ký kiểm toán. ${NF}`,
+    ok: [200, { description: "Đã xoá vĩnh viễn", schema: res.purgedResponse }], errors: [400, 404, 409] }),
   op(STORE, { method: "get", path: "/storage/library", operationId: "listLibrary", summary: "Kho dữ liệu v2 — mục theo loại", cap: "theo `type`: `G1` (ảnh gốc, ảnh AI) · `I1` (video, âm thanh, nội dung) · `J1` (catalog, landing page) · `L1` (catalog thẻ chào)",
     query: req.libraryQuery,
     description: "Mã năng lực kiểm ở use-case theo `type`; `scope` = `all` · `hq` · mã chi nhánh (chi nhánh lạ → 404); `from` ISO; phân trang con trỏ. Ảnh bìa là URL ký 1 giờ.",

@@ -26,7 +26,7 @@
 
 | Token CSS | Giá trị mẫu | Ghi chú & Ứng dụng |
 |---|---|---|
-| `--font-sans` | `"Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif` | — |
+| `--font-sans` | `"Google Sans", ui-sans-serif, system-ui, sans-serif` | — |
 | `--font-serif` | `"Playfair Display", Georgia, Cambria, serif` | — |
 | `--font-display` | `"Fraunces", "Playfair Display", Georgia, serif` | — |
 | `--font-cursive` | `"Caveat", "Dancing Script", cursive` | — |
@@ -304,6 +304,61 @@
 | `--radius-card` | `0.25rem` | — |
 | `--radius-button` | `0.25rem` | — |
 | `--radius-dialog` | `0.375rem` | — |
+| `--color-primary` | `#133D31` | — |
+| `--color-primary-dark` | `#0C2920` | — |
+| `--color-primary-muted` | `#E7ECEA` | — |
+| `--color-primary-border` | `#B8C5C1` | — |
+| `--color-secondary` | `#93A87C` | — |
+| `--color-secondary-text` | `#556744` | — |
+| `--color-accent` | `#E7C447` | — |
+| `--color-accent-bg` | `#FBF6E2` | — |
+| `--color-accent-text` | `#705A0F` | — |
+| `--color-bg` | `#F0EFEF` | — |
+| `--color-surface` | `#FFFFFF` | — |
+| `--color-surface-alt` | `#E8E7E6` | — |
+| `--color-border` | `#DCDAD8` | — |
+| `--color-text` | `#242C28` | — |
+| `--color-text-muted` | `#5A6360` | — |
+| `--color-selected` | `#E7ECEA` | — |
+| `--color-selected-text` | `#133D31` | — |
+| `--color-warning` | `#E7C447` | — |
+| `--color-warning-bg` | `#FBF6E2` | — |
+| `--color-warning-text` | `#705A0F` | — |
+| `--color-warning-border` | `#E7C447` | — |
+| `--color-danger` | `#97353E` | — |
+| `--color-danger-bg` | `#F7ECED` | — |
+| `--color-danger-text` | `#7E2C34` | — |
+| `--color-danger-border` | `#C99196` | — |
+| `--color-success` | `#4E5D3D` | — |
+| `--color-success-bg` | `#EEF1EA` | — |
+| `--color-success-text` | `#526141` | — |
+| `--color-success-border` | `#93A87C` | — |
+| `--color-info` | `#3A5984` | — |
+| `--color-info-bg` | `#EFF3F8` | — |
+| `--color-info-text` | `#3D5E8B` | — |
+| `--color-info-border` | `#9DB4D4` | — |
+| `--color-tone-plum` | `#9C3740` | — |
+| `--color-tone-rose` | `#A1434C` | — |
+| `--color-tone-orange` | `#8C5630` | — |
+| `--color-tone-amber` | `#76600F` | — |
+| `--color-tone-teal` | `#46676C` | — |
+| `--color-tone-blue` | `#416494` | — |
+| `--color-tone-indigo` | `#566471` | — |
+| `--color-tone-green` | `#576745` | — |
+| `--color-tone-pink` | `#94485A` | — |
+| `--color-tone-emerald` | `#133D31` | — |
+| `--color-chart-1` | `#133D31` | — |
+| `--color-chart-2` | `#9C3740` | — |
+| `--color-chart-3` | `#668ABC` | — |
+| `--color-chart-4` | `#A38415` | — |
+| `--color-chart-5` | `#788F5F` | — |
+| `--color-chart-6` | `#C0657C` | — |
+| `--color-chart-7` | `#242C28` | — |
+| `--color-chart-8` | `#587882` | — |
+| `--font-display` | `var(--font-sans)` | — |
+| `--radius-card` | `0.75rem` | — |
+| `--radius-button` | `0.5rem` | — |
+| `--radius-dialog` | `0.75rem` | — |
 
 ---
 *Tài liệu tự động cập nhật bởi `scripts/gen-design-tokens-doc.ts` vào CI pipeline.*

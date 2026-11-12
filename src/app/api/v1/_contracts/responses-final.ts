@@ -55,10 +55,11 @@ export const integrationsSweepResponse = z.strictObject({
   orders: z.strictObject({ connections: z.number(), imported: z.number() }),
   /** Bài mạng xã hội đến hạn (tối đa 20 mỗi lượt) — `recovered`: bài kẹt trạng thái đang đăng được trả lại hàng đợi. */
   social: z.strictObject({ published: z.number(), retrying: z.number(), failed: z.number(), recovered: z.number() }),
+  /** Hoàn credit tác vụ AI lỗi / bị huỷ / bị Guard từ chối (tối đa 200 job mỗi lượt, checklist ALG 10.2). */
+  credits: z.strictObject({ refundedJobs: z.number(), refundedCredit: z.number() }),
 })
 /** Mỗi tác vụ con hỏng riêng → `null`, lượt quét vẫn 200. `sentDetails`/`errors` chỉ khi có, tối đa vài dòng. */
-export const dispatchSweepResponse = z.strictObject({
-  ok: z.literal(true),
+const dispatchSweepResult = z.strictObject({
   processed: z.number(),
   remindersSent: z.number(),
   roundsAdvanced: z.number(),
@@ -78,4 +79,8 @@ export const dispatchSweepResponse = z.strictObject({
   errorCount: z.number(),
   errors: z.array(z.unknown()).optional(),
   sweepAt: timestamp,
+})
+/** Lượt trước còn giữ khoá quét → `{ data: { skipped, sweepAt } }`. */
+export const dispatchSweepResponse = z.strictObject({
+  data: z.union([dispatchSweepResult, z.strictObject({ skipped: z.string(), sweepAt: timestamp })]),
 })

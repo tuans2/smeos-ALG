@@ -3,7 +3,7 @@
   "$id": "stage-06d-create-video.input.schema.json",
   "title": "Chặng 06d — CREATE · Khu vực E: Video — Đầu vào",
   "description": "Tạo job video (DRAFT) với storyboard theo kịch bản; duyệt kịch bản (P3) → render → duyệt video (P4) ngay trong Khu vực E.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "06d",
     "stage": 6,
     "code": "CREATE_VIDEO",

@@ -97,7 +97,7 @@ export function CancellationDecision({
           size="sm"
           disabled={busy}
           onClick={() => void handleDecide(true)}
-          className="h-8 gap-1 bg-danger hover:bg-danger-dark text-white text-caption font-bold"
+          className="h-8 gap-1 bg-danger hover:bg-danger-text text-white text-caption font-bold"
         >
           {busy ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={14} />}
           <span>Phê duyệt</span>

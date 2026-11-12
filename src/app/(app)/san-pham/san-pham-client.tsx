@@ -94,18 +94,25 @@ export function SanPhamClient({ initialPage }: { initialPage: ProductListPage<Pr
   }
 
   // Tự động gộp các danh mục thực tế từ kho sản phẩm và danh mục chuẩn của ngành
+  // Mã danh mục trong dữ liệu (BOX, VASE…) hiện ra bằng nhãn tiếng Việt của ngành
+  const categoryLabelByKey = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const c of industry?.taxonomy?.defaultCategories ?? []) map.set(c.key.toUpperCase(), c.label)
+    return map
+  }, [industry])
+  const categoryLabelOf = (raw: string | null) => (raw ? (categoryLabelByKey.get(raw.trim().toUpperCase()) ?? raw.trim()) : null)
+
   const availableCategories = useMemo(() => {
     const defaultCats = industry?.taxonomy?.defaultCategories?.map((c) => c.label) || []
     const set = new Set<string>(["Tất cả", ...defaultCats])
     if (rawProducts) {
       for (const p of rawProducts) {
-        if (p.category && p.category.trim()) {
-          set.add(p.category.trim())
-        }
+        const label = p.category && p.category.trim() ? (categoryLabelByKey.get(p.category.trim().toUpperCase()) ?? p.category.trim()) : null
+        if (label) set.add(label)
       }
     }
     return Array.from(set)
-  }, [rawProducts, industry])
+  }, [rawProducts, industry, categoryLabelByKey])
 
   // Lọc và sắp xếp theo Dịp, Giá, Từ khoá, Danh mục
   const baseFiltered = useMemo(() => (rawProducts ? filterAndSortProducts(rawProducts, filters) : []), [rawProducts, filters])
@@ -200,7 +207,7 @@ export function SanPhamClient({ initialPage }: { initialPage: ProductListPage<Pr
       {session.can("H3") && <ProposalQueueBar active={onlyProposals} onToggle={() => setOnlyProposals((v) => !v)} />}
 
       {/* Nội dung chính */}
-      <main className="flex flex-1 flex-col overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col overflow-y-auto p-4">
         {loi && (
           <div className="mb-3 rounded-xl border border-danger/30 bg-danger-bg px-3.5 py-2.5 text-body-sm font-medium text-danger">
             {loi}
@@ -232,6 +239,7 @@ export function SanPhamClient({ initialPage }: { initialPage: ProductListPage<Pr
               <ProductCard
                 key={p.id}
                 product={p}
+                categoryLabel={categoryLabelOf(p.category)}
                 priority={index < 4}
                 isExecutive={isExecutive}
                 onImageClick={(prod) => setSelectedProduct(prod)}
@@ -308,7 +316,7 @@ export function SanPhamClient({ initialPage }: { initialPage: ProductListPage<Pr
             )}
           </div>
         )}
-      </main>
+      </div>
 
       {/* Modal xác nhận xóa an toàn */}
       <TrashConfirmModal

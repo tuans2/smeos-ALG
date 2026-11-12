@@ -25,7 +25,6 @@ const GUARD =
 
 /** Route không gọi gác quyền nào — có chủ đích hoặc đang là nợ. */
 const NO_CAPABILITY_GUARD: Record<string, string> = {
-  "internal/chain-dispatch-sweep": "cron nội bộ, không có phiên — gác bằng CRON_SECRET (isAuthorizedCronRequest)",
   // Có chủ đích: chưa có phiên/tổ chức, hoặc gác bằng cơ chế khác.
   "chat/webhooks/facebook": "webhook nhà cung cấp — xác thực bằng chữ ký",
   "chat/webhooks/zalo": "webhook nhà cung cấp — xác thực bằng chữ ký",

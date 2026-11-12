@@ -2,9 +2,9 @@
 
 > [!NOTE]
 > **VAI TRÒ TÀI LIỆU — SSOT LỚP TRẢI NGHIỆM THEO VAI (Level 3, CANONICAL)**
-> Tệp này quy định **16 vai trải nghiệm** của FloraOS: vai đó thấy gì trước, trang chủ là gì, điều hướng ưu tiên gì, hành động chính là gì, AI cư xử ra sao.
+> Tệp này quy định **16 vai trải nghiệm** của ALG: vai đó thấy gì trước, trang chủ là gì, điều hướng ưu tiên gì, hành động chính là gì, AI cư xử ra sao.
 > Tệp **không** quy định quyền. Quyền vẫn là mã năng lực ở `02-function-catalog.md` + `src/core/rbac/capability-catalog.ts`.
-> **Nguồn:** hợp đồng `FLORAOS-UX-ROLE-001` v1.1 (`docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md`, SUPPORTING) và Kế hoạch nâng cấp kiến trúc năng lực (`docs/kien-truc/KE_HOACH_THUC_THI_NANG_CAP_ROLE_CAPABILITY_ARCHITECTURE.md`).
+> **Nguồn:** hợp đồng `ALG-UX-ROLE-001` v1.1 (`docs/kien-truc/ALG_ROLE_UX_EXECUTION_CONTRACT.md`, SUPPORTING) và Kế hoạch nâng cấp kiến trúc năng lực (`docs/kien-truc/KE_HOACH_THUC_THI_NANG_CAP_ROLE_CAPABILITY_ARCHITECTURE.md`).
 > **Mã nguồn chuẩn:** `src/modules/organization/domain/role-ux-catalog.ts` (+ test cùng thư mục). Tài liệu và mã phải khớp nhau. Lệch nhau thì sửa cả hai trong cùng một commit.
 
 ---
@@ -63,7 +63,7 @@
 Mỗi vai theo khuôn: **câu hỏi chính → P0 (thấy ngay) → P1 (thấy khi cần) → P2 (xem sâu) → hành động chính.**
 
 ### 4.1 `platform_admin` — Platform Journey Home (ChoiceGrid 10 tác vụ)
-- **Câu hỏi chính:** Bạn muốn làm gì với FloraOS hôm nay?
+- **Câu hỏi chính:** Bạn muốn làm gì với ALG hôm nay?
 - **P0:** Lưới ChoiceGrid 10 tác vụ quản trị (Báo cáo hệ thống, Quản lý tổ chức, Quản lý người dùng, Gói dịch vụ, Năng lực, AI & Credit, Tích hợp, Sức khỏe hệ thống, Cài đặt, Kiểm toán bảo mật).
 - **Hành động:** Chọn tác vụ mục tiêu để mở workspace/route chức năng tương ứng; hỗ trợ toggle "Chế độ chuyên gia" để xem bảng số liệu tổng quan.
 - **Giao diện:** `PlatformJourneyHome` (`src/components/dashboard/platform-journey-home.tsx`) tại tuyến `/van-hanh`.

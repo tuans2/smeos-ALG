@@ -8,7 +8,7 @@ import { createTenant, makeChainOrganization, seedChainBranch, type Tenant } fro
 
 const run = async () => {
   const res = await sweep(new Request("http://localhost/api/v1/internal/chain-dispatch-sweep", { method: "POST", headers: { "x-cron-secret": "dev" } }))
-  return (await res.json()) as { graceCommitted: number; errorCount: number }
+  return ((await res.json()) as { data: { graceCommitted: number; errorCount: number } }).data
 }
 
 /**

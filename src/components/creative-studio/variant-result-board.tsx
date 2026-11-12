@@ -96,7 +96,7 @@ export function VariantResultBoard({
             <ProviderSelect kind="image_variant" value={sceneProvider} onChange={setSceneProvider} label="" />
           )}
           <Button size="sm" onClick={handleGenerateAllScenes} disabled={generatingAllScenes || generatingSceneIndex !== null}
-            className="gap-2 bg-primary text-primary-foreground hover:bg-primary-hover font-bold shadow-md h-9">
+            className="gap-2 bg-primary text-primary-foreground hover:bg-primary-dark font-bold shadow-md h-9">
             {generatingAllScenes ? `Đang sinh phân cảnh...` : `⚡ Sinh trọn bộ ${sceneCount} phân cảnh${planRatios.length > 1 ? ` khung ${viewRatio}` : ""} (${sceneCreditTotal} credit)`}
           </Button>
           {planRatios.length > 1 && (
@@ -123,7 +123,7 @@ export function VariantResultBoard({
       )}
 
       {judgmentB === "warning" && variantIntegrity && (
-        <div className="w-full rounded-xl border-2 border-warning bg-warning-bg px-4 py-3 text-body-sm text-warning">
+        <div className="w-full rounded-xl border-2 border-warning bg-warning-bg px-4 py-3 text-body-sm text-warning-text">
           Lõi chủ thể lệch nhẹ so với Master Image ({(variantIntegrity.subject_pixel_identity * 100).toFixed(2)}%). Xem kỹ ảnh trước khi duyệt.
         </div>
       )}

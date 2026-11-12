@@ -1,6 +1,6 @@
 /**
  * Máy trạng thái Journey (State Machine) thuần túy.
- * Nguồn đặc tả: FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§18)
+ * Nguồn đặc tả: ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§18)
  *
  * Luật Clean Architecture: Không import React, không import Prisma, không side-effects.
  */

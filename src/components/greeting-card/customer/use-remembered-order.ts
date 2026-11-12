@@ -1,8 +1,10 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import { useEffect, useState } from "react"
 
-const PREFIX = "smeos:catalog-order:"
+const PREFIX = "alg:catalog-order:"
 const LEGACY_PREFIX = "floraos:catalog-order:"
 const TTL_MS = 30 * 86_400_000
 

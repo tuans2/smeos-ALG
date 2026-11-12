@@ -35,10 +35,6 @@ export const POST = defineRoute({
       shopPromotions: await shopPromotionTitles(ctx.organizationId),
     }, { ctx })
 
-    return jsonResponse({
-      success: true,
-      copy: result.copy,
-      source: result.source,
-    })
+    return jsonResponse({ data: { copy: result.copy, source: result.source } })
   },
 })

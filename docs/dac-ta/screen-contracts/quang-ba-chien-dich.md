@@ -14,7 +14,7 @@ acceptance:
   - Không vi phạm axe-core critical/serious ở 390px và 1280px
 ---
 
-# Screen Contract — Chiến dịch quảng bá | smeOS (`/quang-ba/chien-dich`)
+# Screen Contract — Chiến dịch quảng bá | ALG (`/quang-ba/chien-dich`)
 
 **Mã màn:** `SCR-STORE-quang-ba-chien-dich` · **Tuyến:** `/quang-ba/chien-dich` · **Tầng:** `STORE` · **Bố cục:** `B` · **Tệp chính:** `src/app/(app)/quang-ba/chien-dich/page.tsx`
 

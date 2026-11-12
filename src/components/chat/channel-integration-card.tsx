@@ -53,7 +53,7 @@ export function ChannelIntegrationCard({
         </div>
 
         {/* Thông tin biểu phí */}
-        <div className="rounded-xl bg-surface-raised border border-border/70 p-3 space-y-1.5 text-caption">
+        <div className="rounded-xl bg-surface border border-border/70 p-3 space-y-1.5 text-caption">
           <div className="flex items-center justify-between">
             <span className="text-text-muted text-caption">Phí kích hoạt kênh:</span>
             <span className="font-bold text-primary">

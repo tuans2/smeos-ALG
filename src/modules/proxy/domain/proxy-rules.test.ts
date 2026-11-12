@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import { requireProxyUrl, isAllowedProxyPath, proxyCapabilityFor, NO_BODY_METHODS, SSO_HEADER, AUTHORIZATION_HEADER } from "./proxy-rules"
+import { requireProxyUrl, isAllowedProxyPath, proxyCapabilityFor, NO_BODY_METHODS, SSO_HEADER, LEGACY_SSO_HEADERS, AUTHORIZATION_HEADER } from "./proxy-rules"
 import { AppError } from "@/core/http/errors"
 
 describe("proxy-rules", () => {
@@ -21,7 +21,8 @@ describe("proxy-rules", () => {
   })
 
   it("header constants đúng", () => {
-    expect(SSO_HEADER).toBe("x-smeos-sso")
+    expect(SSO_HEADER).toBe("x-alg-sso")
+    expect(LEGACY_SSO_HEADERS).toEqual(["x-smeos-sso", "x-floraos-sso"])
     expect(AUTHORIZATION_HEADER).toBe("authorization")
   })
 

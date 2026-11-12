@@ -5,7 +5,7 @@ Vì sao cần một phép đo khác phép đo từng điểm ảnh (`variant_wor
 Product Shot…), nhà cung cấp tự ghép và CHỈNH SÁNG cả bó hoa cho khớp cảnh —
 điểm ảnh của bó hoa được phép đổi độ sáng/màu một chút. So trùng từng điểm ảnh
 sẽ luôn báo sai. Không nhà cung cấp nào trả điểm "giữ nguyên" (đã soát 25/09:
-Stability, BRIA, fal chỉ trả ảnh/seed/prompt) — nên cổng vẫn là của FloraOS.
+Stability, BRIA, fal chỉ trả ảnh/seed/prompt) — nên cổng vẫn là của ALG.
 
 Ba số đo, đều trên đúng vị trí bó hoa được đặt trong khung (nhà cung cấp được
 yêu cầu giữ vị trí: Stability `preserve_original_subject`, BRIA

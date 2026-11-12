@@ -5,6 +5,7 @@ import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { canProposeDismissal, type DismissalInfo } from "../domain/dismissal-policy"
 import { getVoucherRedemptionRepository } from "@/modules/promotions/infra/voucher-redemption-repository"
 import { returnStock } from "@/modules/orders/infra/order-stock"
+import { releaseOrderBookings } from "@/modules/availability/infra/order-booking-hold"
 
 type Tx = Prisma.TransactionClient
 type Loose = Record<string, unknown>
@@ -52,6 +53,7 @@ export async function writeOrderDismissal(tx: Tx, ctx: TenantContext, order: Ord
   if (!approve) return
   await getVoucherRedemptionRepository(tx).releaseForOrder(ctx.organizationId, order.id)
   await returnStock(ctx.organizationId, order.id, tx) // hoàn tồn đã trừ lúc đặt; khôi phục thì trừ lại
+  await releaseOrderBookings(ctx.organizationId, order.id, tx) // trả lịch đặt chỗ; khôi phục thì giữ lại (UJ-23)
   await tx.greeting_sessions.updateMany({
     where: scopedWhere(ctx, { order_id: order.id, revoked_at: null }),
     data: { revoked_at: now, revoked_by: ctx.userId },

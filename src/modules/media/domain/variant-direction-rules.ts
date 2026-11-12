@@ -1,6 +1,6 @@
 /**
  * Chỉ đạo khung hình cho biến thể Khu vực D (Đợt 1 nâng cấp chất lượng ảnh,
- * 24/09/2026). Nói bằng Ý ĐỊNH của FloraOS — không bằng tên tham số của nhà
+ * 24/09/2026). Nói bằng Ý ĐỊNH của ALG — không bằng tên tham số của nhà
  * cung cấp; adapter phía worker (`providers/background/`) tự dịch.
  *
  * Nguồn giá trị, theo thứ tự ưu tiên:
@@ -29,7 +29,7 @@ export const MAX_VARIANT_SEED = 4_294_967_294
 export const MAX_PALETTE_COLORS = 5
 
 /**
- * Phong cách hình ảnh hậu cảnh (Đợt 2, 25/09/2026) — Ý ĐỊNH của FloraOS, không
+ * Phong cách hình ảnh hậu cảnh (Đợt 2, 25/09/2026) — Ý ĐỊNH của ALG, không
  * phải `style_preset` của Stability. Adapter worker tự dịch
  * (`providers/background/stability_background.py#STYLE_SANG_PRESET`); nhà cung
  * cấp không hỗ trợ thì ghi `provider_ignored`, không âm thầm bỏ.
@@ -42,14 +42,14 @@ export const VARIANT_STYLES = ["natural", "cinematic", "film", "vivid"] as const
 export type VariantStyle = (typeof VARIANT_STYLES)[number]
 
 /**
- * Tuỳ chọn dựng ảnh (Đợt 3, 25/09/2026) — ý định FloraOS, khớp `CHAT_LUONG` /
+ * Tuỳ chọn dựng ảnh (Đợt 3, 25/09/2026) — ý định ALG, khớp `CHAT_LUONG` /
  * `TANG_NET` / `CACH_GHEP` ở `workers/media_ai/providers/background/base.py`.
  *   quality      standard | high (đám mây: Stability Ultra; cục bộ: provider_ignored)
  *   upscale      none | 2x (khung xuất ×2; tăng nét HẬU CẢNH — sản phẩm không qua mô hình siêu phân giải)
  *   compose_mode paste | harmonize | relight
  *     relight   = NHÀ CUNG CẤP LÀM TRỌN GÓI (tách nền, dựng cảnh, ghép, chỉnh sáng, tăng nét) —
  *                 MẶC ĐỊNH của nhánh đám mây (PO 25/09/2026); cổng đo `perceptual`;
- *     paste     = FloraOS tự dán nguyên khối sản phẩm lên hậu cảnh (giữ từng điểm ảnh) —
+ *     paste     = ALG tự dán nguyên khối sản phẩm lên hậu cảnh (giữ từng điểm ảnh) —
  *                 mặc định của nhánh cục bộ; trên đám mây = chỉ xin hậu cảnh;
  *     harmonize = như paste + hoà bóng / độ nét (xử lý cục bộ).
  */
