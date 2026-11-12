@@ -640,14 +640,14 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | Phương thức | Đường dẫn | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/coordinator/orders` | `R1` | `?stage=` `?limit=` (≤200). Rủi ro trễ tính lại lúc đọc (F09/F12) |
-| POST | `/coordinator/orders` | `R2` | Mã đơn do máy chủ cấp `FLR-YYMMDD-NNNN`, tuần tự theo ngày Việt Nam; chuyển khoản ghi mã này (kể cả bỏ gạch) được tự khớp như mã `DH…`. `source` theo danh mục nguồn chung (`MANUAL · CHAT · CATALOG · LANDING · SHORT_LINK · CHANNEL · NETWORK · QUOTATION`, mặc định `MANUAL`), ghi cùng mã vào `orders.source`; mã cũ `ORDER_M10 · CHAT_M08 · CATALOG_M06` → 400. Đơn vào thẳng Điều phối (PO 07/11/2026, Q2); `sampleImageUrl` cấm `data:` — ảnh tải lên dùng `sampleAssetId` |
+| POST | `/coordinator/orders` | `R2` | Mã đơn do máy chủ cấp `FLR-YYMMDD-NNNN`, tuần tự theo ngày Việt Nam; chuyển khoản ghi mã này (kể cả bỏ gạch) được tự khớp như mã `DH…`. `source` theo danh mục nguồn chung (`MANUAL · CHAT · CATALOG · LANDING · SHORT_LINK · CHANNEL · NETWORK · QUOTATION`, mặc định `MANUAL`), ghi cùng mã vào `orders.source`; mã cũ `ORDER_M10 · CHAT_M08 · CATALOG_M06` → 400. Đơn vào thẳng Điều phối (PO 07/11/2026, Q2); `sample_image_url` cấm `data:` — ảnh tải lên dùng `sample_asset_id` |
 | GET | `/coordinator/orders/:id` | `R1` | |
 | PATCH | `/coordinator/orders/:id/stage` | `R3` | Kiểm luồng + bằng chứng (đối tác / QC đạt / POD / hết sự cố); `→ COMPLETED` cần đã thu đủ như `/close` (audit BL-02) |
 | PATCH | `/coordinator/orders/:id/custom-fields` | `R3` | ĐP-3.16 — sửa giá trị trường tự tạo (entity ORDER); trộn vào giá trị cũ, không thay nguyên khối |
 | GET | `/coordinator/orders/:id/payments` | `R1` | ĐP-4a (PO D2) — sổ thu của một đơn |
 | POST | `/coordinator/orders/:id/payments` | `R9`/`R10` | ĐP-4a (PO D2) — ghi một dòng sổ thu. `kind=DEPOSIT`/`BALANCE` đòi `R9`; `kind=REFUND` đòi `R10` (trần cứng điều hành). Người có `R11` ghi thì `orders.paid_vnd`/`balance_vnd` cập nhật cùng giao dịch; người không có `R11` ghi thì dòng ở trạng thái `PENDING`, chưa cộng vào số đã thu (checklist ALG 1.16). Chung luật `planPayment`/`planRefund` với sổ đơn: thu vượt phần còn phải thu, thu vào đơn đã huỷ, hoàn quá số đã thu → 422; `paid_vnd` đổi giữa lúc đọc và ghi → 409 (audit BL-05) |
 | POST | `/coordinator/orders/:id/payments/:paymentId/decision` | `R11` | Checklist ALG 1.16 — Điều hành xác nhận (`approve: true`, cộng vào số đã thu) hoặc từ chối (`approve: false`, bắt buộc `note`) dòng sổ thu `PENDING`. Người tạo dòng không tự duyệt khi công tắc tự duyệt tắt |
-| POST | `/coordinator/orders/:id/assign-partner` | `R4` | Đối tác cùng tổ chức, đang hoạt động, chưa vượt `capacity_daily` (trừ `overrideCapacity`) |
+| POST | `/coordinator/orders/:id/assign-partner` | `R4` | Đối tác cùng tổ chức, đang hoạt động, chưa vượt `capacity_daily` (trừ `override_capacity`) |
 | POST | `/coordinator/orders/:id/production` | `R3` | `MARK_READY` bắt buộc ảnh thành phẩm (`assets` cùng tổ chức); `REPORT_MATERIAL_ISSUE` mở sự cố |
 | POST | `/coordinator/orders/:id/qc` | `R3` | Người kiểm kết luận; không đạt bắt buộc lý do; `REJECTED` mở sự cố `QC_FAILURE` |
 | POST | `/coordinator/orders/:id/delivery` | `R5` | Sự kiện giao; thành công bắt buộc ảnh POD hoặc tên người ký; thất bại mở sự cố |
@@ -673,7 +673,7 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | GET | `/orders/export` | `R13` (chỉ Điều hành; người khác cần Điều hành cấp quyền — PO 14/10/2026) | `?from_date` `?to_date` `?source=BROCHURE\|MANUAL\|CHAT` → tệp Excel đơn hàng của tổ chức |
 | POST | `/coordinator/orders/:id/exceptions` | `R3` | Đưa đơn về `EXCEPTION`, nhớ bước cũ |
 | POST | `/coordinator/exceptions/:id/resolve` | `R3` | Hết sự cố mở → đơn tự về bước cũ |
-| POST | `/coordinator/orders/:id/close` | `R3` | Chỉ khi `DELIVERED` và không còn sự cố; chốt điểm + tiền công đối tác. Không gửi `partnerPayoutVnd` → giữ số chuẩn (phí gia công sau khấu trừ, không có thì giá thoả thuận lúc giao xưởng); gửi số khác số chuẩn phải kèm `payoutReason` (≥ 5 ký tự), thiếu → 422 (audit BL-22) |
+| POST | `/coordinator/orders/:id/close` | `R3` | Chỉ khi `DELIVERED` và không còn sự cố; chốt điểm + tiền công đối tác. Không gửi `partner_payout_vnd` → giữ số chuẩn (phí gia công sau khấu trừ, không có thì giá thoả thuận lúc giao xưởng); gửi số khác số chuẩn phải kèm `payout_reason` (≥ 5 ký tự), thiếu → 422 (audit BL-22) |
 | POST | `/coordinator/orders/:id/cancel` | `R6` | Trần cứng điều hành; bắt buộc lý do; không huỷ đơn đã giao |
 | GET | `/coordinator/partners` | `R1` | Đối tác gia công của Điều phối; `?active=1` chỉ đang hoạt động. Trả `{ data }` (12/11/2026) |
 | POST | `/coordinator/partners` | `R4` | Đối tác gia công: trùng mã trong tổ chức → 409. Trả `{ data }` |
@@ -686,8 +686,8 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/partner-settlements/:id/reconcile` | `R19` | Chờ đối soát → Đã đối soát; sai thứ tự → 422; hai người bấm cùng lúc → 409; sổ tổ chức khác → 404 |
 | POST | `/coordinator/partner-settlements/:id/pay` | `R19` | Đã đối soát → Đã thanh toán `{ payment_reference? }` (mã phiếu chi); sai thứ tự → 422 |
 | GET | `/field-config` | `R1` | ĐP-3 — cấu hình trường hiệu lực cho tổ chức của người gọi (lớp mã + cấu hình nền tảng + ghi đè theo tổ chức + trường riêng của tổ chức), `?entity=ORDER\|PARTNER` |
-| POST | `/field-config` | `D18` | Checklist ALG 1.9 — cửa hàng tạo trường riêng `{ entity, label, dataType, requirement?, visibility?, placeholder? }` (không gồm kiểu chọn từ danh mục); khoá máy sinh `cf_…`; tối đa 50 trường/thực thể/tổ chức. 201 |
-| PUT | `/field-config` | `D18` | `{ key, label?, isEnabled?, requirement?, visibility? }` — trường riêng: sửa trực tiếp; trường nền tảng: ghi đè của chính tổ chức, không hạ mức yêu cầu, không ẩn trường bắt buộc, không mở trường chỉ nội bộ (400). Trường riêng của tổ chức khác → 404 |
+| POST | `/field-config` | `D18` | Checklist ALG 1.9 — cửa hàng tạo trường riêng `{ entity, label, data_type, requirement?, visibility?, placeholder? }` (không gồm kiểu chọn từ danh mục); khoá máy sinh `cf_…`; tối đa 50 trường/thực thể/tổ chức. 201 |
+| PUT | `/field-config` | `D18` | `{ key, label?, is_enabled?, requirement?, visibility? }` — trường riêng: sửa trực tiếp; trường nền tảng: ghi đè của chính tổ chức, không hạ mức yêu cầu, không ẩn trường bắt buộc, không mở trường chỉ nội bộ (400). Trường riêng của tổ chức khác → 404 |
 | GET | `/field-config/settings` | `D18` | Danh sách cho màn Cài đặt → Trường dữ liệu: trường nền tảng kèm mức sàn (`floorRequirement`, `canHide`) và trường riêng (gồm trường đang ẩn), `?entity=ORDER\|PARTNER` |
 | GET | `/custom-domains` | `D19` | Checklist ALG 10.8 — tên miền riêng của tổ chức người gọi: `hostname`, `status` (`PENDING`·`VERIFIED`·`LOCKED`), `statusText`, `certificateStatus`, `lastCheckedAt`, `lockedReason`, `records` (bản ghi TXT `_smeos-verify.<tên miền>` = `smeos-verify=<mã>` và CNAME về máy chủ hệ thống) |
 | POST | `/custom-domains` | `D19` | `{ hostname }` — chuẩn hoá (chữ thường, punycode); từ chối IP, tên miền một nhãn, tên miền của hệ thống (400); tối đa 3 tên miền/tổ chức, tên miền đã có người gắn (409, không nêu tổ chức). 201, trạng thái chờ xác minh |

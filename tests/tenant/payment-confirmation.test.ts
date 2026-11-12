@@ -12,11 +12,11 @@ import { addStaffWithSession, createTenant, readJson, withSession, type Tenant }
 
 const BASE = "http://localhost/api/v1/coordinator"
 const ORDER_BODY = {
-  customerName: "Nguyễn Văn An", customerPhone: "0987654321", customerTier: "VIP",
-  recipientName: "Trần Thị Bình", recipientPhone: "0901234567",
-  deliveryAddress: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
-  deliveryTargetTime: "17:00 hôm nay", deliveryTargetAt: new Date(Date.now() + 6 * 3600_000).toISOString(),
-  productTitle: "Bó hoa hồng Pastel", unitPriceVnd: 850000,
+  customer_name: "Nguyễn Văn An", customer_phone: "0987654321", customer_tier: "VIP",
+  recipient_name: "Trần Thị Bình", recipient_phone: "0901234567",
+  delivery_address: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
+  delivery_target_time: "17:00 hôm nay", delivery_target_at: new Date(Date.now() + 6 * 3600_000).toISOString(),
+  product_title: "Bó hoa hồng Pastel", unit_price_vnd: 850000,
   flowers: [{ flowerName: "Hồng Ohara", quantity: 12, unit: "cành", color: "hồng", role: "Chủ đạo" }],
 }
 
@@ -44,7 +44,7 @@ describe("ghi thu chờ Điều hành xác nhận", () => {
 
   const record = (token: string, amountVnd: number) =>
     recordPayment(withSession(`${BASE}/orders/${orderId}/payments`, token, {
-      method: "POST", body: JSON.stringify({ kind: "DEPOSIT", amountVnd, paymentMethod: "CASH" }),
+      method: "POST", body: JSON.stringify({ kind: "DEPOSIT", amount_vnd: amountVnd, payment_method: "CASH" }),
     }), { params: Promise.resolve({ id: orderId }) })
   const decide = (token: string, paymentId: string, body: Record<string, unknown>) =>
     decidePayment(withSession(`${BASE}/orders/${orderId}/payments/${paymentId}/decision`, token, {

@@ -127,9 +127,9 @@ describe("order_recipients — ghi kép và backfill", () => {
     const res = await createCoordinatorOrder(withSession("http://localhost/api/v1/coordinator/orders", b.token, {
       method: "POST",
       body: JSON.stringify({
-        customerName: "Nguyễn Văn An", customerPhone: "0987654321", recipientName: "Trần Thị Bình", recipientPhone: "0901234567",
-        deliveryAddress: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
-        deliveryTargetTime: "17:00 hôm nay", productTitle: "Bó hoa hồng Pastel", unitPriceVnd: 850_000,
+        customer_name: "Nguyễn Văn An", customer_phone: "0987654321", recipient_name: "Trần Thị Bình", recipient_phone: "0901234567",
+        delivery_address: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
+        delivery_target_time: "17:00 hôm nay", product_title: "Bó hoa hồng Pastel", unit_price_vnd: 850_000,
       }),
     }))
     expect(res.status).toBe(201)

@@ -18,17 +18,17 @@
   },
   "type": "object",
   "properties": {
-    "partnerRating": {
+    "partner_rating": {
       "type": "integer",
       "minimum": 1,
       "maximum": 5
     },
-    "partnerPayoutVnd": {
+    "partner_payout_vnd": {
       "type": "number",
       "minimum": 0,
       "maximum": 1000000000
     },
-    "payoutReason": {
+    "payout_reason": {
       "type": "string",
       "maxLength": 500
     },
@@ -39,8 +39,8 @@
   },
   "examples": [
     {
-      "partnerRating": 5,
-      "partnerPayoutVnd": 350000,
+      "partner_rating": 5,
+      "partner_payout_vnd": 350000,
       "notes": "Giao sớm 5 phút"
     }
   ]

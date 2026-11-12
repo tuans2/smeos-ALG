@@ -29,7 +29,7 @@ export const step07CloseLearnContract = defineStep({
   input: Step07CloseLearnInputSchema,
   output: Step07CloseLearnOutputSchema,
   examples: {
-    input: { partnerRating: 5, partnerPayoutVnd: 350000, notes: "Giao sớm 5 phút" },
+    input: { partner_rating: 5, partner_payout_vnd: 350000, notes: "Giao sớm 5 phút" },
     output: { order: exampleOrderView({ stage: "COMPLETED", stageLabel: "Hoàn tất", partnerRating: 5, partnerPayoutVnd: 350000, closureNotes: "Giao sớm 5 phút", closedAt: "2026-09-25T10:05:00.000Z" }) },
   },
 })

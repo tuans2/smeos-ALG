@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Switch } from "@/components/ui/switch"
+import { snakeKeys } from "@/lib/case-keys"
 
 type Entity = "ORDER" | "PARTNER"
 interface FieldRow {
@@ -28,8 +29,8 @@ const TYPES = [
 ] as const
 const REQUIREMENT_LABEL = { OPTIONAL: "Không bắt buộc", RECOMMENDED: "Nên nhập", REQUIRED: "Bắt buộc" } as const
 
-async function send(method: "POST" | "PUT", body: unknown) {
-  const res = await fetch("/api/v1/field-config", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+async function send(method: "POST" | "PUT", body: object) {
+  const res = await fetch("/api/v1/field-config", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(snakeKeys(body)) })
   if (!res.ok) {
     const data = (await res.json().catch(() => null)) as { error?: { message?: string; details?: Record<string, unknown> } } | null
     const detail = data?.error?.details ? Object.values(data.error.details).find((v) => typeof v === "string") : undefined

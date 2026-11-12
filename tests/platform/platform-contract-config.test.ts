@@ -55,7 +55,7 @@ describe("hợp đồng — Console Vận hành Nền tảng: cấu hình", () =
     await expectContract(await listFields(get("/fields?entity=ORDER")), 200, R.fieldsResponse, "fields")
     await expectContract(await patchField(send("/fields", "PATCH", { key: "customerPhone", label: "Số điện thoại người mua" })), 200, R.fieldResponse, "field")
     const created = await expectContract(
-      await createField(send("/fields", "POST", { entity: "ORDER", label: "Mã giới thiệu", dataType: "TEXT" })),
+      await createField(send("/fields", "POST", { entity: "ORDER", label: "Mã giới thiệu", data_type: "TEXT" })),
       200,
       R.fieldResponse,
       "field"
@@ -66,13 +66,13 @@ describe("hợp đồng — Console Vận hành Nền tảng: cấu hình", () =
     await expectContract(await behaviors(get("/behaviors")), 200, R.behaviorsResponse, "behaviors")
     const id = shop.organizationId
     await expectContract(
-      await fieldOverrides(send(`/organizations/${id}/field-overrides`, "PUT", { target: "field", fieldKey: "customerPhone", label: "SĐT khách" }), ps({ id })),
+      await fieldOverrides(send(`/organizations/${id}/field-overrides`, "PUT", { target: "field", field_key: "customerPhone", label: "SĐT khách" }), ps({ id })),
       200,
       R.fieldOverrideResponse,
       "field-override"
     )
     await expectContract(
-      await fieldOverrides(send(`/organizations/${id}/field-overrides`, "PUT", { target: "catalogValue", catalogKey: "kenh_ban", code: "ZALO", isEnabled: false }), ps({ id })),
+      await fieldOverrides(send(`/organizations/${id}/field-overrides`, "PUT", { target: "catalogValue", catalog_key: "kenh_ban", code: "ZALO", is_enabled: false }), ps({ id })),
       200,
       R.fieldOverrideResponse,
       "field-override"

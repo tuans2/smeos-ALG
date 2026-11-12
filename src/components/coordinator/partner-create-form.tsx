@@ -44,8 +44,8 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
           district: district.trim() || undefined,
           address: address.trim() || undefined,
           tier,
-          capacityDaily: Number(capacity) || 10,
-          ...(Object.keys(customFields).length > 0 ? { customFields } : {}),
+          capacity_daily: Number(capacity) || 10,
+          ...(Object.keys(customFields).length > 0 ? { custom_fields: customFields } : {}),
         }),
       })
       if (!res.ok) {

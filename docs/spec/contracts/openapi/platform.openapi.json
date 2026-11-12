@@ -598,7 +598,7 @@
                     "type": "string",
                     "maxLength": 500
                   },
-                  "sortOrder": {
+                  "sort_order": {
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 9007199254740991
@@ -1443,7 +1443,7 @@
                       }
                     }
                   },
-                  "catalogKey": {
+                  "catalog_key": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -1454,7 +1454,7 @@
                       }
                     ]
                   },
-                  "defaultEnabled": {
+                  "default_enabled": {
                     "type": "boolean"
                   }
                 },
@@ -1697,7 +1697,7 @@
                     "type": "string",
                     "maxLength": 200
                   },
-                  "dataType": {
+                  "data_type": {
                     "type": "string",
                     "enum": [
                       "TEXT",
@@ -1724,7 +1724,7 @@
                       "REQUIRED"
                     ]
                   },
-                  "requiredAtStage": {
+                  "required_at_stage": {
                     "type": "string",
                     "maxLength": 60
                   },
@@ -1745,7 +1745,7 @@
                       }
                     }
                   },
-                  "catalogKey": {
+                  "catalog_key": {
                     "type": "string",
                     "maxLength": 100
                   },
@@ -1757,14 +1757,14 @@
                       "SENSITIVE"
                     ]
                   },
-                  "defaultEnabled": {
+                  "default_enabled": {
                     "type": "boolean"
                   }
                 },
                 "required": [
                   "entity",
                   "label",
-                  "dataType"
+                  "data_type"
                 ]
               }
             }
@@ -7818,7 +7818,7 @@
                         "type": "string",
                         "const": "field"
                       },
-                      "fieldKey": {
+                      "field_key": {
                         "type": "string",
                         "minLength": 1
                       },
@@ -7851,13 +7851,13 @@
                           "REQUIRED"
                         ]
                       },
-                      "isEnabled": {
+                      "is_enabled": {
                         "type": "boolean"
                       }
                     },
                     "required": [
                       "target",
-                      "fieldKey"
+                      "field_key"
                     ]
                   },
                   {
@@ -7867,7 +7867,7 @@
                         "type": "string",
                         "const": "catalogValue"
                       },
-                      "catalogKey": {
+                      "catalog_key": {
                         "type": "string",
                         "minLength": 1
                       },
@@ -7879,13 +7879,13 @@
                         "type": "string",
                         "maxLength": 200
                       },
-                      "isEnabled": {
+                      "is_enabled": {
                         "type": "boolean"
                       }
                     },
                     "required": [
                       "target",
-                      "catalogKey",
+                      "catalog_key",
                       "code"
                     ]
                   }

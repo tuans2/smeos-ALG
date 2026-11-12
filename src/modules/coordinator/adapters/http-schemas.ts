@@ -4,6 +4,7 @@
  * 500 như bản trước (`schema.parse` ném `ZodError` ra `handle()`).
  */
 
+import { camelKeys, type CamelKeys } from "@/lib/case-keys"
 import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
@@ -11,10 +12,11 @@ import { COORDINATOR_ENTRY_SOURCES } from "@/modules/orders/domain/order-source"
 import { COORDINATOR_STAGES } from "../domain/stage-transitions"
 import { EXCEPTION_SEVERITIES, EXCEPTION_TYPES } from "../domain/operation-rules"
 
-export async function parseBody<S extends z.ZodType>(request: Request, schema: S): Promise<z.infer<S>> {
+/** Thân HTTP snake_case (PO D-69) → camelCase cho use-case, đổi đúng một lần ở đây. */
+export async function parseBody<S extends z.ZodType>(request: Request, schema: S): Promise<CamelKeys<z.infer<S>>> {
   const parsed = schema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-  return parsed.data
+  return camelKeys(parsed.data as object) as CamelKeys<z.infer<S>>
 }
 
 const text = (max: number) => z.string().trim().max(max)
@@ -23,13 +25,13 @@ const id = z.string().trim().min(1).max(64)
 
 /**
  * URL ảnh mẫu từ Product Master / catalog. Cấm `data:` — bản trước nhét ảnh
- * base64 vài MB vào `metadata` của đơn. Ảnh tải lên đi qua `assets` (`sampleAssetId`).
+ * base64 vài MB vào `metadata` của đơn. Ảnh tải lên đi qua `assets` (`sample_asset_id`).
  */
 const externalImageUrl = z
   .string()
   .trim()
   .max(2048)
-  .refine((v) => /^https?:\/\//i.test(v) || v.startsWith("/"), "Chỉ nhận URL http(s) hoặc đường dẫn nội bộ; ảnh tải lên dùng sampleAssetId")
+  .refine((v) => /^https?:\/\//i.test(v) || v.startsWith("/"), "Chỉ nhận URL http(s) hoặc đường dẫn nội bộ; ảnh tải lên dùng sample_asset_id")
 
 export const stageSchema = z.enum(COORDINATOR_STAGES as [string, ...string[]])
 
@@ -59,27 +61,27 @@ const demUnitSchema = z.enum(["bông", "cành", "lá", "cây"])
 const flowerRoleSchema = z.enum(["Chủ đạo", "Phụ", "Điểm xuyến", "Lấp đầy"])
 
 export const createOrderSchema = z.object({
-  customerId: id.optional(),
+  customer_id: id.optional(),
   // ĐP-2.6 (26/09/2026): khi có, máy chủ đọc Product Master Index và ghi
   // snapshot (xem `use-cases/create-coordinator-order.ts`). Tuỳ chọn — vẫn
   // tạo được đơn mẫu ngoài danh mục bằng `productTitle` + `flowers` nhập tay.
-  productId: id.optional(),
-  customerName: requiredText(200, "Thiếu tên khách hàng"),
-  customerTier: z.enum(["NEW", "BRONZE", "SILVER", "GOLD", "VIP"]).default("NEW"),
+  product_id: id.optional(),
+  customer_name: requiredText(200, "Thiếu tên khách hàng"),
+  customer_tier: z.enum(["NEW", "BRONZE", "SILVER", "GOLD", "VIP"]).default("NEW"),
   // ĐP-1.3 (26/09/2026): SĐT của khách MUA (khác `recipientPhone` là SĐT người
   // NHẬN hoa). Trước bản này, form có ô nhập nhưng giá trị không nằm trong
   // schema nên bị lặng lẽ bỏ ở phía máy chủ. Với khách lẻ (không có `customerId`
   // trỏ vào CMI), số này là nơi lưu duy nhất, ở `order_coordinations.metadata`.
-  customerPhone: text(20).optional(),
-  recipientName: requiredText(200, "Thiếu tên người nhận"),
-  recipientPhone: z.string().trim().regex(/^\+?[0-9 .-]{8,15}$/, "Số điện thoại người nhận không hợp lệ"),
-  deliveryAddress: addressSchema,
-  deliveryTargetTime: requiredText(100, "Thiếu khung giờ giao"),
-  deliveryTargetAt: z.string().datetime({ offset: true }).optional(),
-  productTitle: requiredText(300, "Thiếu tên sản phẩm hoa"),
-  sampleImageUrl: externalImageUrl.optional(),
-  sampleAssetId: id.optional(),
-  unitPriceVnd: z.number().nonnegative().max(1_000_000_000).default(0),
+  customer_phone: text(20).optional(),
+  recipient_name: requiredText(200, "Thiếu tên người nhận"),
+  recipient_phone: z.string().trim().regex(/^\+?[0-9 .-]{8,15}$/, "Số điện thoại người nhận không hợp lệ"),
+  delivery_address: addressSchema,
+  delivery_target_time: requiredText(100, "Thiếu khung giờ giao"),
+  delivery_target_at: z.string().datetime({ offset: true }).optional(),
+  product_title: requiredText(300, "Thiếu tên sản phẩm hoa"),
+  sample_image_url: externalImageUrl.optional(),
+  sample_asset_id: id.optional(),
+  unit_price_vnd: z.number().nonnegative().max(1_000_000_000).default(0),
   // ĐP-2.13 (26/09/2026): `unit`/`role` xưa nhận CHUỖI TỰ DO — đơn tạo qua
   // form vẫn gửi đúng danh mục nhưng API không ép, nên một client khác (AI
   // Chat M10, tích hợp ngoài) có thể gửi giá trị ngoài danh mục mà không ai
@@ -98,34 +100,34 @@ export const createOrderSchema = z.object({
     )
     .max(100)
     .default([]),
-  cardMessage: text(1000).optional(),
+  card_message: text(1000).optional(),
   // ĐP-4a.1 (26/09/2026): `cardMessage` bắt buộc khi `cardRequired = true`
   // (kiểm ở `.superRefine` dưới, vì phụ thuộc lẫn nhau giữa 2 trường).
-  cardRequired: z.boolean().default(false),
-  internalNote: text(2000).optional(),
+  card_required: z.boolean().default(false),
+  internal_note: text(2000).optional(),
   // ĐP-4a.1 (26/09/2026), Đặc tả trường §2.1/§3.1 — mã chuỗi kiểm theo danh
   // mục (D12), kiểm active thật ở use-case (`validate-catalog-code.ts`) vì
   // zod thuần không gọi DB. `priority` để trống thì máy TỰ GỢI Ý (§2.15.1).
   // PO 07/11/2026 (Q2, audit BL-06): nguồn theo danh mục chung `order-source.ts`, ghi cả `orders.source`
   source: z.enum(COORDINATOR_ENTRY_SOURCES).optional(),
-  sourceReference: text(200).optional(),
+  source_reference: text(200).optional(),
   channel: text(60).optional(),
-  orderType: text(60).optional(),
+  order_type: text(60).optional(),
   priority: text(60).optional(),
-  serviceLevel: text(60).optional(),
-  deliveryType: text(60).optional(),
-  deliveryLocationType: text(60).optional(),
-  receivedAt: z.string().datetime({ offset: true }).optional(),
-  deliveryWindowStart: z.string().datetime({ offset: true }).optional(),
-  deliveryWindowEnd: z.string().datetime({ offset: true }).optional(),
+  service_level: text(60).optional(),
+  delivery_type: text(60).optional(),
+  delivery_location_type: text(60).optional(),
+  received_at: z.string().datetime({ offset: true }).optional(),
+  delivery_window_start: z.string().datetime({ offset: true }).optional(),
+  delivery_window_end: z.string().datetime({ offset: true }).optional(),
   // ĐP-3.16 (26/09/2026): giá trị trường tự tạo (entity ORDER) — `applyCustomFields`
   // (field-platform) kiểm lại theo đúng định nghĩa đang ACTIVE, khoá lạ bị bỏ qua.
-  customFields: z.record(z.string(), z.unknown()).optional(),
+  custom_fields: z.record(z.string(), z.unknown()).optional(),
 }).superRefine((data, ctx) => {
-  if (data.cardRequired && !data.cardMessage?.trim()) {
+  if (data.card_required && !data.card_message?.trim()) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ["cardMessage"],
+      path: ["card_message"],
       message: "Thiếu lời thiệp — bắt buộc khi có yêu cầu thiệp/băng rôn",
     })
   }
@@ -133,7 +135,7 @@ export const createOrderSchema = z.object({
 
 /** `PATCH /api/v1/coordinator/orders/:id/custom-fields` (R3, ĐP-3.16). */
 export const updateCustomFieldsSchema = z.object({
-  customFields: z.record(z.string(), z.unknown()),
+  custom_fields: z.record(z.string(), z.unknown()),
 })
 
 /**
@@ -144,30 +146,30 @@ export const updateCustomFieldsSchema = z.object({
  */
 export const recordPaymentSchema = z.object({
   kind: z.enum(["DEPOSIT", "BALANCE", "REFUND"]),
-  amountVnd: z.number().positive().max(1_000_000_000),
-  paymentMethod: text(40).optional(),
+  amount_vnd: z.number().positive().max(1_000_000_000),
+  payment_method: text(40).optional(),
   reference: text(200).optional(),
-  evidenceAssetId: id.optional(),
+  evidence_asset_id: id.optional(),
   note: text(1000).optional(),
 })
 
 export const updateStageSchema = z.object({
   stage: stageSchema,
-  nextAction: text(300).optional(),
+  next_action: text(300).optional(),
 })
 
 export const assignPartnerSchema = z.object({
-  partnerId: id,
+  partner_id: id,
   notes: text(1000).optional(),
-  overrideCapacity: z.boolean().optional(),
-  agreedCraftFeeVnd: z.number().int().nonnegative().max(1_000_000_000).optional(),
+  override_capacity: z.boolean().optional(),
+  agreed_craft_fee_vnd: z.number().int().nonnegative().max(1_000_000_000).optional(),
 })
 
 export const productionUpdateSchema = z.object({
   action: z.enum(["UPDATE_PROGRESS", "MARK_READY", "REPORT_MATERIAL_ISSUE"]),
-  progressPercent: z.number().int().min(0).max(100),
-  finishedAssetIds: z.array(id).max(10).optional(),
-  issueNote: text(1000).optional(),
+  progress_percent: z.number().int().min(0).max(100),
+  finished_asset_ids: z.array(id).max(10).optional(),
+  issue_note: text(1000).optional(),
 })
 
 export const qcInspectionSchema = z.object({
@@ -179,11 +181,11 @@ export const qcInspectionSchema = z.object({
 export const deliveryUpdateSchema = z.object({
   event: z.enum(["PICKED_UP", "ON_THE_WAY", "DELIVERED_SUCCESS", "DELIVERY_FAILED"]),
   carrier: text(100).optional(),
-  shipperName: requiredText(200, "Thiếu tên shipper"),
-  shipperPhone: text(20).optional(),
-  podAssetId: id.optional(),
-  recipientSignedName: text(200).optional(),
-  failureReason: text(1000).optional(),
+  shipper_name: requiredText(200, "Thiếu tên shipper"),
+  shipper_phone: text(20).optional(),
+  pod_asset_id: id.optional(),
+  recipient_signed_name: text(200).optional(),
+  failure_reason: text(1000).optional(),
 })
 
 export const openExceptionSchema = z.object({
@@ -197,10 +199,10 @@ export const resolveExceptionSchema = z.object({
 })
 
 export const closeOrderSchema = z.object({
-  partnerRating: z.number().int().min(1).max(5).optional(),
-  partnerPayoutVnd: z.number().nonnegative().max(1_000_000_000).optional(),
+  partner_rating: z.number().int().min(1).max(5).optional(),
+  partner_payout_vnd: z.number().nonnegative().max(1_000_000_000).optional(),
   /** Bắt buộc khi tiền công khác số đã chốt (audit BL-22). */
-  payoutReason: text(500).optional(),
+  payout_reason: text(500).optional(),
   notes: text(2000).optional(),
 })
 
@@ -216,12 +218,12 @@ export const createPartnerSchema = z.object({
   district: text(100).optional(),
   province: text(100).optional(),
   tier: z.enum(["STANDARD", "PREFERRED", "VIP"]).default("STANDARD"),
-  capacityDaily: z.number().int().min(1).max(1000).default(10),
+  capacity_daily: z.number().int().min(1).max(1000).default(10),
   /** Giá trị trường tự tạo (entity PARTNER) — kiểm theo định nghĩa ở `applyCustomFields` (audit L-09). */
-  customFields: z.record(z.string(), z.unknown()).optional(),
+  custom_fields: z.record(z.string(), z.unknown()).optional(),
 })
 
 export const updatePartnerSchema = createPartnerSchema
   .omit({ code: true })
   .partial()
-  .extend({ isActive: z.boolean().optional() })
+  .extend({ is_active: z.boolean().optional() })

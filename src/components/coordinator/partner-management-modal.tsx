@@ -92,7 +92,7 @@ export function PartnerManagementModal({
       const res = await fetch(`/api/v1/coordinator/partners/${partner.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: !partner.isActive }),
+        body: JSON.stringify({ is_active: !partner.isActive }),
       })
       if (!res.ok) throw new Error("Không thể cập nhật trạng thái đối tác")
       await fetchPartners()

@@ -19,18 +19,18 @@ import { createTenant, readJson, withSession, type Tenant } from "../helpers/fix
 type Handler = (req: Request, ctx: { params: Promise<{ id: string }> }) => Promise<Response>
 
 const ORDER_BODY = {
-  customerName: "Nguyễn Văn An",
-  customerPhone: "0987654321",
-  customerTier: "VIP",
-  recipientName: "Trần Thị Bình",
-  recipientPhone: "0901234567",
-  deliveryAddress: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
-  deliveryTargetTime: "17:00 hôm nay",
-  deliveryTargetAt: new Date(Date.now() + 6 * 3600_000).toISOString(),
-  productTitle: "Bó hoa hồng Pastel",
-  unitPriceVnd: 850000,
+  customer_name: "Nguyễn Văn An",
+  customer_phone: "0987654321",
+  customer_tier: "VIP",
+  recipient_name: "Trần Thị Bình",
+  recipient_phone: "0901234567",
+  delivery_address: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
+  delivery_target_time: "17:00 hôm nay",
+  delivery_target_at: new Date(Date.now() + 6 * 3600_000).toISOString(),
+  product_title: "Bó hoa hồng Pastel",
+  unit_price_vnd: 850000,
   flowers: [{ flowerName: "Hồng Ohara", quantity: 12, unit: "cành", color: "hồng", role: "Chủ đạo" }],
-  cardMessage: "Chúc mừng sinh nhật!",
+  card_message: "Chúc mừng sinh nhật!",
 }
 
 describe("Điều phối tôn trọng khoá đơn Thẻ chào", () => {
@@ -69,7 +69,7 @@ describe("Điều phối tôn trọng khoá đơn Thẻ chào", () => {
     ["chuyển bước", patchStage as Handler, { stage: "PLANNING" }, "PATCH"],
     ["huỷ đơn", cancelOrder as Handler, { reason: "Khách đổi ý" }, "POST"],
     ["mở sự cố", openException as Handler, { type: "MISSING_INFORMATION", description: "Thiếu địa chỉ" }, "POST"],
-    ["ghi tiền", recordPayment as Handler, { kind: "DEPOSIT", amountVnd: 100000 }, "POST"],
+    ["ghi tiền", recordPayment as Handler, { kind: "DEPOSIT", amount_vnd: 100000 }, "POST"],
   ])("%s trên đơn Thẻ chào → 409, dữ liệu không đổi", async (_name, handler, body, method) => {
     const id = await newOrder("BROCHURE")
     const before = await snapshot(id)
@@ -88,7 +88,7 @@ describe("Điều phối tôn trọng khoá đơn Thẻ chào", () => {
 
   it("trường tuỳ chỉnh (không đụng luật Thẻ chào) vẫn sửa được trên đơn Thẻ chào", async () => {
     const id = await newOrder("BROCHURE")
-    const res = await call(patchCustomFields as Handler, id, { customFields: {} }, "PATCH")
+    const res = await call(patchCustomFields as Handler, id, { custom_fields: {} }, "PATCH")
     expect(res.status).not.toBe(409)
   })
 })

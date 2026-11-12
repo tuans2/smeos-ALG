@@ -80,7 +80,7 @@ export const createInternalConversationBody = z.object({
 export const sendInternalMessageBody = z
   .object({
     content: z.string().max(CHAT_MESSAGE_MAX_LENGTH, `Tin nhắn tối đa ${CHAT_MESSAGE_MAX_LENGTH} ký tự`),
-    messageType: z.literal("TEXT").optional(),
+    message_type: z.literal("TEXT").optional(),
   })
   .strict()
 

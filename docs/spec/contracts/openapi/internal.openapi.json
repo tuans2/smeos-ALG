@@ -24944,22 +24944,22 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "customerId": {
+                  "customer_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "productId": {
+                  "product_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "customerName": {
+                  "customer_name": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 200
                   },
-                  "customerTier": {
+                  "customer_tier": {
                     "default": "NEW",
                     "type": "string",
                     "enum": [
@@ -24970,20 +24970,20 @@
                       "VIP"
                     ]
                   },
-                  "customerPhone": {
+                  "customer_phone": {
                     "type": "string",
                     "maxLength": 20
                   },
-                  "recipientName": {
+                  "recipient_name": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 200
                   },
-                  "recipientPhone": {
+                  "recipient_phone": {
                     "type": "string",
                     "pattern": "^\\+?[0-9 .-]{8,15}$"
                   },
-                  "deliveryAddress": {
+                  "delivery_address": {
                     "type": "object",
                     "properties": {
                       "street": {
@@ -25022,31 +25022,31 @@
                       "city"
                     ]
                   },
-                  "deliveryTargetTime": {
+                  "delivery_target_time": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 100
                   },
-                  "deliveryTargetAt": {
+                  "delivery_target_at": {
                     "type": "string",
                     "format": "date-time",
                     "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
                   },
-                  "productTitle": {
+                  "product_title": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 300
                   },
-                  "sampleImageUrl": {
+                  "sample_image_url": {
                     "type": "string",
                     "maxLength": 2048
                   },
-                  "sampleAssetId": {
+                  "sample_asset_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "unitPriceVnd": {
+                  "unit_price_vnd": {
                     "default": 0,
                     "type": "number",
                     "minimum": 0,
@@ -25101,15 +25101,15 @@
                       ]
                     }
                   },
-                  "cardMessage": {
+                  "card_message": {
                     "type": "string",
                     "maxLength": 1000
                   },
-                  "cardRequired": {
+                  "card_required": {
                     "default": false,
                     "type": "boolean"
                   },
-                  "internalNote": {
+                  "internal_note": {
                     "type": "string",
                     "maxLength": 2000
                   },
@@ -25126,7 +25126,7 @@
                       "QUOTATION"
                     ]
                   },
-                  "sourceReference": {
+                  "source_reference": {
                     "type": "string",
                     "maxLength": 200
                   },
@@ -25134,7 +25134,7 @@
                     "type": "string",
                     "maxLength": 60
                   },
-                  "orderType": {
+                  "order_type": {
                     "type": "string",
                     "maxLength": 60
                   },
@@ -25142,34 +25142,34 @@
                     "type": "string",
                     "maxLength": 60
                   },
-                  "serviceLevel": {
+                  "service_level": {
                     "type": "string",
                     "maxLength": 60
                   },
-                  "deliveryType": {
+                  "delivery_type": {
                     "type": "string",
                     "maxLength": 60
                   },
-                  "deliveryLocationType": {
+                  "delivery_location_type": {
                     "type": "string",
                     "maxLength": 60
                   },
-                  "receivedAt": {
+                  "received_at": {
                     "type": "string",
                     "format": "date-time",
                     "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
                   },
-                  "deliveryWindowStart": {
+                  "delivery_window_start": {
                     "type": "string",
                     "format": "date-time",
                     "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
                   },
-                  "deliveryWindowEnd": {
+                  "delivery_window_end": {
                     "type": "string",
                     "format": "date-time",
                     "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
                   },
-                  "customFields": {
+                  "custom_fields": {
                     "type": "object",
                     "propertyNames": {
                       "type": "string"
@@ -25178,12 +25178,12 @@
                   }
                 },
                 "required": [
-                  "customerName",
-                  "recipientName",
-                  "recipientPhone",
-                  "deliveryAddress",
-                  "deliveryTargetTime",
-                  "productTitle"
+                  "customer_name",
+                  "recipient_name",
+                  "recipient_phone",
+                  "delivery_address",
+                  "delivery_target_time",
+                  "product_title"
                 ]
               }
             }
@@ -28155,7 +28155,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "partnerId": {
+                  "partner_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -28164,17 +28164,17 @@
                     "type": "string",
                     "maxLength": 1000
                   },
-                  "overrideCapacity": {
+                  "override_capacity": {
                     "type": "boolean"
                   },
-                  "agreedCraftFeeVnd": {
+                  "agreed_craft_fee_vnd": {
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 1000000000
                   }
                 },
                 "required": [
-                  "partnerId"
+                  "partner_id"
                 ]
               }
             }
@@ -30925,17 +30925,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "partnerRating": {
+                  "partner_rating": {
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 5
                   },
-                  "partnerPayoutVnd": {
+                  "partner_payout_vnd": {
                     "type": "number",
                     "minimum": 0,
                     "maximum": 1000000000
                   },
-                  "payoutReason": {
+                  "payout_reason": {
                     "type": "string",
                     "maxLength": 500
                   },
@@ -32629,7 +32629,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "customFields": {
+                  "custom_fields": {
                     "type": "object",
                     "propertyNames": {
                       "type": "string"
@@ -32638,7 +32638,7 @@
                   }
                 },
                 "required": [
-                  "customFields"
+                  "custom_fields"
                 ]
               }
             }
@@ -34023,32 +34023,32 @@
                     "type": "string",
                     "maxLength": 100
                   },
-                  "shipperName": {
+                  "shipper_name": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 200
                   },
-                  "shipperPhone": {
+                  "shipper_phone": {
                     "type": "string",
                     "maxLength": 20
                   },
-                  "podAssetId": {
+                  "pod_asset_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "recipientSignedName": {
+                  "recipient_signed_name": {
                     "type": "string",
                     "maxLength": 200
                   },
-                  "failureReason": {
+                  "failure_reason": {
                     "type": "string",
                     "maxLength": 1000
                   }
                 },
                 "required": [
                   "event",
-                  "shipperName"
+                  "shipper_name"
                 ]
               }
             }
@@ -37148,12 +37148,12 @@
                       "REFUND"
                     ]
                   },
-                  "amountVnd": {
+                  "amount_vnd": {
                     "type": "number",
                     "exclusiveMinimum": 0,
                     "maximum": 1000000000
                   },
-                  "paymentMethod": {
+                  "payment_method": {
                     "type": "string",
                     "maxLength": 40
                   },
@@ -37161,7 +37161,7 @@
                     "type": "string",
                     "maxLength": 200
                   },
-                  "evidenceAssetId": {
+                  "evidence_asset_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -37173,7 +37173,7 @@
                 },
                 "required": [
                   "kind",
-                  "amountVnd"
+                  "amount_vnd"
                 ]
               }
             }
@@ -39941,12 +39941,12 @@
                       "REPORT_MATERIAL_ISSUE"
                     ]
                   },
-                  "progressPercent": {
+                  "progress_percent": {
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 100
                   },
-                  "finishedAssetIds": {
+                  "finished_asset_ids": {
                     "maxItems": 10,
                     "type": "array",
                     "items": {
@@ -39955,14 +39955,14 @@
                       "maxLength": 64
                     }
                   },
-                  "issueNote": {
+                  "issue_note": {
                     "type": "string",
                     "maxLength": 1000
                   }
                 },
                 "required": [
                   "action",
-                  "progressPercent"
+                  "progress_percent"
                 ]
               }
             }
@@ -42943,7 +42943,7 @@
                       "CANCELLED"
                     ]
                   },
-                  "nextAction": {
+                  "next_action": {
                     "type": "string",
                     "maxLength": 300
                   }
@@ -44959,13 +44959,13 @@
                       "VIP"
                     ]
                   },
-                  "capacityDaily": {
+                  "capacity_daily": {
                     "default": 10,
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 1000
                   },
-                  "customFields": {
+                  "custom_fields": {
                     "type": "object",
                     "propertyNames": {
                       "type": "string"
@@ -45164,20 +45164,20 @@
                       "VIP"
                     ]
                   },
-                  "capacityDaily": {
+                  "capacity_daily": {
                     "default": 10,
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 1000
                   },
-                  "customFields": {
+                  "custom_fields": {
                     "type": "object",
                     "propertyNames": {
                       "type": "string"
                     },
                     "additionalProperties": {}
                   },
-                  "isActive": {
+                  "is_active": {
                     "type": "boolean"
                   }
                 }
@@ -68982,7 +68982,7 @@
                     "minLength": 1,
                     "maxLength": 120
                   },
-                  "dataType": {
+                  "data_type": {
                     "type": "string",
                     "enum": [
                       "TEXT",
@@ -69034,7 +69034,7 @@
                 "required": [
                   "entity",
                   "label",
-                  "dataType"
+                  "data_type"
                 ]
               }
             }
@@ -69134,7 +69134,7 @@
                     "minLength": 1,
                     "maxLength": 120
                   },
-                  "isEnabled": {
+                  "is_enabled": {
                     "type": "boolean"
                   },
                   "requirement": {
@@ -90692,7 +90692,7 @@
                     "type": "string",
                     "maxLength": 4000
                   },
-                  "messageType": {
+                  "message_type": {
                     "type": "string",
                     "const": "TEXT"
                   }

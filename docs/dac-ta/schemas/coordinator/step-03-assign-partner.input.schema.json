@@ -18,7 +18,7 @@
   },
   "type": "object",
   "properties": {
-    "partnerId": {
+    "partner_id": {
       "type": "string",
       "minLength": 1,
       "maxLength": 64
@@ -27,21 +27,21 @@
       "type": "string",
       "maxLength": 1000
     },
-    "overrideCapacity": {
+    "override_capacity": {
       "type": "boolean"
     },
-    "agreedCraftFeeVnd": {
+    "agreed_craft_fee_vnd": {
       "type": "integer",
       "minimum": 0,
       "maximum": 1000000000
     }
   },
   "required": [
-    "partnerId"
+    "partner_id"
   ],
   "examples": [
     {
-      "partnerId": "0b7f4a52-2c1e-4a8f-9c3d-5e6f7a8b9c0d",
+      "partner_id": "0b7f4a52-2c1e-4a8f-9c3d-5e6f7a8b9c0d",
       "notes": "Ưu tiên hồng nhập sáng nay"
     }
   ]

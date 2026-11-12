@@ -60,7 +60,7 @@ describe("Nền quản trị trường (ĐP-3) — N12", () => {
     const res = await postFields(
       withSession(`${BASE}/platform/fields`, nguoiVanHanh.token, {
         method: "POST",
-        body: JSON.stringify({ entity: "ORDER", label: "Mã PO khách", dataType: "TEXT" }),
+        body: JSON.stringify({ entity: "ORDER", label: "Mã PO khách", data_type: "TEXT" }),
       })
     )
     expect(res.status).toBe(200)
@@ -76,7 +76,7 @@ describe("Nền quản trị trường (ĐP-3) — N12", () => {
     const res = await postFields(
       withSession(`${BASE}/platform/fields`, nguoiVanHanh.token, {
         method: "POST",
-        body: JSON.stringify({ entity: "ORDER", label: "X", dataType: "STRUCTURED_ADDRESS" }),
+        body: JSON.stringify({ entity: "ORDER", label: "X", data_type: "STRUCTURED_ADDRESS" }),
       })
     )
     expect(res.status).toBe(400)
@@ -145,7 +145,7 @@ describe("Nền quản trị trường (ĐP-3) — N12", () => {
     const putRes = await putOrgOverride(
       withSession(`${BASE}/platform/organizations/${a.organizationId}/field-overrides`, nguoiVanHanh.token, {
         method: "PUT",
-        body: JSON.stringify({ target: "field", fieldKey: "cardMessage", label: "Nội dung thiệp riêng của A" }),
+        body: JSON.stringify({ target: "field", field_key: "cardMessage", label: "Nội dung thiệp riêng của A" }),
       }),
       withParams({ id: a.organizationId })
     )
@@ -171,12 +171,12 @@ describe("Nền quản trị trường (ĐP-3) — N12", () => {
     )
     expect(lower.status).toBe(400)
     const hide = await putShopField(
-      withSession(`${BASE}/field-config`, a.token, { method: "PUT", body: JSON.stringify({ key: "customerPhone", isEnabled: false }) })
+      withSession(`${BASE}/field-config`, a.token, { method: "PUT", body: JSON.stringify({ key: "customerPhone", is_enabled: false }) })
     )
     expect(hide.status).toBe(400)
 
     const created = await postShopField(
-      withSession(`${BASE}/field-config`, a.token, { method: "POST", body: JSON.stringify({ entity: "ORDER", label: "Mã thẻ thành viên", dataType: "TEXT" }) })
+      withSession(`${BASE}/field-config`, a.token, { method: "POST", body: JSON.stringify({ entity: "ORDER", label: "Mã thẻ thành viên", data_type: "TEXT" }) })
     )
     expect(created.status).toBe(201)
     const row = await prisma.field_definitions.findFirstOrThrow({ where: { label: "Mã thẻ thành viên" } })

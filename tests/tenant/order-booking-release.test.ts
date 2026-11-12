@@ -79,9 +79,9 @@ describe("huỷ đơn trả lại lịch đặt chỗ", () => {
 
   it("Điều phối: huỷ đơn → đặt chỗ CANCELLED trong cùng giao dịch", async () => {
     const body = {
-      productId, customerName: "Nguyễn Văn An", recipientName: "Trần Thị Bình", recipientPhone: "0901 234 567",
-      deliveryAddress: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" }, deliveryTargetTime: "17:00",
-      deliveryTargetAt: new Date(Date.now() + 6 * 3600_000).toISOString(), productTitle: "Phòng đôi", unitPriceVnd: 300_000, flowers: [],
+      productId, customer_name: "Nguyễn Văn An", recipient_name: "Trần Thị Bình", recipient_phone: "0901 234 567",
+      delivery_address: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" }, delivery_target_time: "17:00",
+      delivery_target_at: new Date(Date.now() + 6 * 3600_000).toISOString(), product_title: "Phòng đôi", unit_price_vnd: 300_000, flowers: [],
     }
     const created = await postCoordinatorOrder(withSession(`${BASE}/coordinator/orders`, a.token, { method: "POST", body: JSON.stringify(body) }))
     expect(created.status).toBe(201)

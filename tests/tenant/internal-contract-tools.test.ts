@@ -54,10 +54,10 @@ describe("hợp đồng — ấn phẩm quảng cáo, trường dữ liệu, ghi
     await prisma.field_catalogs.deleteMany({ where: { key: CATALOG } })
     await prisma.field_catalogs.create({ data: { key: CATALOG, label: "Mức ưu tiên", values: { create: [{ code: "GAP", label: "Gấp", sort_order: 1 }, { code: "CU", label: "Cũ", is_active: false }] } } })
     await expectContract(await fieldCatalogs(get(`/field-config/catalogs?keys=${CATALOG}`)), 200, R.fieldCatalogsResponse, "field-catalogs")
-    const created = await expectContract(await createField(send("/field-config", "POST", { entity: "ORDER", label: "Mã thẻ thành viên", dataType: "TEXT" })), 201, R.shopFieldCreatedResponse, "field-create")
+    const created = await expectContract(await createField(send("/field-config", "POST", { entity: "ORDER", label: "Mã thẻ thành viên", data_type: "TEXT" })), 201, R.shopFieldCreatedResponse, "field-create")
     const key = String((created.data as { key: string }).key)
     await expectContract(await fieldConfig(get("/field-config?entity=ORDER")), 200, R.fieldConfigResponse, "field-config")
-    await expectContract(await updateField(send("/field-config", "PUT", { key, label: "Mã thẻ hội viên", isEnabled: false })), 200, R.shopFieldUpdatedResponse, "field-update")
+    await expectContract(await updateField(send("/field-config", "PUT", { key, label: "Mã thẻ hội viên", is_enabled: false })), 200, R.shopFieldUpdatedResponse, "field-update")
     await expectContract(await fieldSettings(get("/field-config/settings?entity=ORDER")), 200, R.fieldSettingsResponse, "field-settings")
   })
 

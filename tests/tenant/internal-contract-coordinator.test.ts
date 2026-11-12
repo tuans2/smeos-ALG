@@ -40,10 +40,10 @@ import { addStaffWithSession, createTenant, makeChainOrganization, withSession, 
 const BASE = "http://localhost/api/v1/coordinator"
 const ps = <T extends Record<string, string>>(params: T) => ({ params: Promise.resolve(params) })
 const ORDER = {
-  customerName: "Nguyễn Văn An", customerPhone: "0987654321", customerTier: "VIP", recipientName: "Trần Thị Bình", recipientPhone: "0901234567",
-  deliveryAddress: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
-  deliveryTargetTime: "17:00 hôm nay", deliveryTargetAt: new Date(Date.now() + 6 * 3600_000).toISOString(), productTitle: "Bó hoa hồng Pastel",
-  unitPriceVnd: 850000, flowers: [{ flowerName: "Hồng Ohara", quantity: 12, unit: "cành", color: "hồng", role: "Chủ đạo" }], cardMessage: "Chúc mừng sinh nhật!",
+  customer_name: "Nguyễn Văn An", customer_phone: "0987654321", customer_tier: "VIP", recipient_name: "Trần Thị Bình", recipient_phone: "0901234567",
+  delivery_address: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
+  delivery_target_time: "17:00 hôm nay", delivery_target_at: new Date(Date.now() + 6 * 3600_000).toISOString(), product_title: "Bó hoa hồng Pastel",
+  unit_price_vnd: 850000, flowers: [{ flowerName: "Hồng Ohara", quantity: 12, unit: "cành", color: "hồng", role: "Chủ đạo" }], card_message: "Chúc mừng sinh nhật!",
 }
 
 describe("hợp đồng — Điều phối", () => {
@@ -71,10 +71,10 @@ describe("hợp đồng — Điều phối", () => {
     const id = (created.order as { id: string }).id
     await expectContract(await listOrders(get("/orders?limit=10")), 200, R.coordinatorOrdersResponse, "co-orders")
     await expectContract(await getOrder(get(`/orders/${id}`), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
-    await expectContract(await customFields(send(`/orders/${id}/custom-fields`, "PATCH", { customFields: { ghiChu: "Giao cổng sau" } }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
-    await expectContract(await stage(send(`/orders/${id}/stage`, "PATCH", { stage: "PLANNING", nextAction: "Chọn xưởng" }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
+    await expectContract(await customFields(send(`/orders/${id}/custom-fields`, "PATCH", { custom_fields: { ghiChu: "Giao cổng sau" } }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
+    await expectContract(await stage(send(`/orders/${id}/stage`, "PATCH", { stage: "PLANNING", next_action: "Chọn xưởng" }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
     const partner = await expectContract(
-      await createPartner(send("/partners", "POST", { code: "XUONG-01", name: "Xưởng 01", phone: "0912345678", capacityDaily: 10 })),
+      await createPartner(send("/partners", "POST", { code: "XUONG-01", name: "Xưởng 01", phone: "0912345678", capacity_daily: 10 })),
       201,
       O.partnerResponse,
       "co-partner"
@@ -82,10 +82,10 @@ describe("hợp đồng — Điều phối", () => {
     const partnerId = (partner.data as { id: string }).id
     await expectContract(await patchPartner(send(`/partners/${partnerId}`, "PATCH", { code: "XUONG-01", name: "Xưởng số 1", phone: "0912345678" }), ps({ id: partnerId })), 200, O.partnerResponse, "co-partner")
     await expectContract(await listPartners(get("/partners?active=1")), 200, O.partnersResponse, "co-partners")
-    await expectContract(await assignPartner(send(`/orders/${id}/assign-partner`, "POST", { partnerId, agreedCraftFeeVnd: 150_000 }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
+    await expectContract(await assignPartner(send(`/orders/${id}/assign-partner`, "POST", { partner_id: partnerId, agreed_craft_fee_vnd: 150_000 }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
     const imageId = await asset()
     await expectContract(
-      await production(send(`/orders/${id}/production`, "POST", { action: "MARK_READY", progressPercent: 100, finishedAssetIds: [imageId] }), ps({ id })),
+      await production(send(`/orders/${id}/production`, "POST", { action: "MARK_READY", progress_percent: 100, finished_asset_ids: [imageId] }), ps({ id })),
       200,
       R.coordinatorOrderResponse,
       "co-order"
@@ -100,13 +100,13 @@ describe("hợp đồng — Điều phối", () => {
     const exceptionId = (exception.order as { exceptions: { id: string }[] }).exceptions[0]?.id ?? ""
     await expectContract(await resolveException(send(`/exceptions/${exceptionId}/resolve`, "POST", { resolution: "Đã đổi giờ" }), ps({ id: exceptionId })), 200, R.coordinatorOrderResponse, "co-order")
     const pod = await asset()
-    for (const extra of [{ event: "PICKED_UP" }, { event: "DELIVERED_SUCCESS", podAssetId: pod, recipientSignedName: "Bình" }]) {
-      const body = { shipperName: "Anh Tâm", shipperPhone: "0909000111", ...extra }
+    for (const extra of [{ event: "PICKED_UP" }, { event: "DELIVERED_SUCCESS", pod_asset_id: pod, recipient_signed_name: "Bình" }]) {
+      const body = { shipper_name: "Anh Tâm", shipper_phone: "0909000111", ...extra }
       await expectContract(await delivery(send(`/orders/${id}/delivery`, "POST", body), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
     }
-    await expectContract(await recordPayment(send(`/orders/${id}/payments`, "POST", { kind: "DEPOSIT", amountVnd: 850_000, paymentMethod: "CASH" }), ps({ id })), 201, R.coordinatorOrderResponse, "co-order")
+    await expectContract(await recordPayment(send(`/orders/${id}/payments`, "POST", { kind: "DEPOSIT", amount_vnd: 850_000, payment_method: "CASH" }), ps({ id })), 201, R.coordinatorOrderResponse, "co-order")
     await expectContract(await listPayments(get(`/orders/${id}/payments`), ps({ id })), 200, O.coordinatorPaymentsResponse, "co-payments")
-    await expectContract(await closeOrder(send(`/orders/${id}/close`, "POST", { partnerRating: 5, notes: "Tốt" }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
+    await expectContract(await closeOrder(send(`/orders/${id}/close`, "POST", { partner_rating: 5, notes: "Tốt" }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
 
     const other = await newOrder()
     await expectContract(await cancelOrder(send(`/orders/${other}/cancel`, "POST", { reason: "Khách huỷ" }), ps({ id: other })), 200, R.coordinatorOrderResponse, "co-order")
