@@ -27,6 +27,8 @@ export const ORDER_OPERATIONS: OpenApiOperation[] = [
     ok: [200, { description: "Đơn sau khi giao", schema: res.orderResponse }], errors: [...BODY_ERRORS, 404, 409, 422] }),
   op(ORDERS, { method: "post", path: "/orders/{id}/cancel", operationId: "cancelOrder", summary: "Huỷ đơn (bắt buộc lý do)", cap: "R6", body: req.cancelOrderBody,
     description: "Mã năng lực kiểm ở use-case.", ok: [200, { description: "Đơn đã huỷ", schema: res.orderResponse }], errors: [...BODY_ERRORS, 404, 409, 422] }),
+  op(ORDERS, { method: "patch", path: "/orders/{id}/delivery-window", operationId: "changeOrderDeliveryWindow", summary: "Đổi giờ giao kèm lý do (lịch sử giữ giá trị cũ/mới)", cap: "R21", body: req.deliveryWindowChangeBody,
+    description: "Người không có R3 chỉ đổi đơn mình tạo (đơn khác → 404); đơn Thẻ Chào → 409.", ok: [200, { description: "Đơn sau khi đổi", schema: res.orderResponse }], errors: [...BODY_ERRORS, 404, 409] }),
   op(ORDERS, { method: "get", path: "/orders/{id}/events", operationId: "listOrderEvents", summary: "Nhật ký đổi trạng thái và SLA", cap: "R1",
     ok: [200, { description: "Sự kiện theo ba trục", schema: res.orderEventsResponse }], errors: [404] }),
   op(ORDERS, { method: "get", path: "/orders/{id}/print", operationId: "printOrder", summary: "Phiếu đơn và phiếu sản xuất", cap: "R7",

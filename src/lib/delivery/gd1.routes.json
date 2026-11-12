@@ -377,6 +377,7 @@
     "/api/v1/orders/[id]/assign",
     "/api/v1/orders/[id]/cancel",
     "/api/v1/orders/[id]/deliver-before-pay",
+    "/api/v1/orders/[id]/delivery-window",
     "/api/v1/orders/[id]/events",
     "/api/v1/orders/[id]/info-requests",
     "/api/v1/orders/[id]/info-requests/[requestId]",

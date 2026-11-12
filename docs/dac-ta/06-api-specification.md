@@ -610,6 +610,7 @@ Nội dung nhắc mua sinh từ dịp và sản phẩm. Không endpoint nào g�
 | POST | `/orders/:id/info-requests` | `R3` | `{ field, label, reason, requestedFrom, dueAt?, channel? }` tạo yêu cầu tay; đơn đã kết thúc → 422 |
 | POST | `/orders/:id/info-requests/:requestId` | `R3` | `{ outcome: RECEIVED \| CANCELLED, note? }` — huỷ bắt buộc lý do (400); yêu cầu đã đóng → 409 |
 | GET | `/orders/info-requests` | `R1` | Mọi yêu cầu còn mở của tổ chức trong phạm vi chi nhánh, hạn gần nhất trước (việc "Thiếu thông tin" trong Hộp việc) |
+| PATCH | `/orders/:id/delivery-window` | `R21` | Body `{ date, time_slot?, reason }`. Bắt buộc lý do (≥ 3 ký tự); lịch sử đơn ghi trục `delivery_window` (giá trị cũ/mới, người, thời điểm), ghi `audit_logs`. Người không có `R3` chỉ đổi đơn mình tạo, đơn khác → 404; đơn Thẻ Chào → 409 (PO 11/11/2026) |
 | POST | `/orders/:id/cancel` | `R6` | Bắt buộc có lý do |
 | GET | `/orders/:id/print` | `R7` | Phiếu đơn và phiếu sản xuất · trả thêm `florist[]` (mẫu, số lượng, phiên bản và số cành, công thức, ảnh mẫu — không giá) cho phiếu xưởng A6 `/in-phieu/:id` (checklist ALG 4.9) |
 | GET | `/orders/:id/events` | `R1` | Nhật ký đổi trạng thái, nguồn đo SLA |

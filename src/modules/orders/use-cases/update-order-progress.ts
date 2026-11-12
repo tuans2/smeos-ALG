@@ -6,6 +6,7 @@ import { AppError } from "@/core/http/errors"
 import { inBranchScope } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { brochureLockReason, manualStatusBlockReason } from "../domain/order-rules"
+import { deliveryWindowChangeEvent } from "../domain/delivery-window-change"
 import { checkLifecycleTransition } from "../domain/order-lifecycle"
 import type { OrderRecord, UpdateOrderInput } from "../domain/order-types"
 import type { IOrderRepository, PendingOrderEvent } from "../domain/repositories/order-repository.interface"
@@ -57,6 +58,8 @@ export async function updateOrderProgress(
     events.push({ axis: "delivery", fromValue: existing.deliveryStatus, toValue: input.deliveryStatus, actorId, reason: "Cập nhật tiến độ giao hàng" })
   }
 
+  const windowEvent = input.deliveryWindow ? deliveryWindowChangeEvent(existing.deliveryWindow, input.deliveryWindow, actorId, "Đổi giờ giao") : null
+  if (windowEvent) events.push(windowEvent)
   const updated = await repo.update(ctx.organizationId, orderId, input, events)
   for (const eventKey of progressEvents(existing, input)) {
     // Không chờ: thông báo lỗi không làm hỏng việc cập nhật đơn

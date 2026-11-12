@@ -749,7 +749,9 @@
       "pages": [
         "/don-hang"
       ],
-      "apis": [],
+      "apis": [
+        "/api/v1/orders/[id]/delivery-window"
+      ],
       "scenarios": [
         "E-14"
       ]
