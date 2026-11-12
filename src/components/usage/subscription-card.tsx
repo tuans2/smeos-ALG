@@ -7,7 +7,10 @@ import { Receipt } from "@/components/ui/icon-set/receipt"
 import { formatCurrency, formatDate } from "@/lib/i18n/formatters"
 
 interface Data {
-  subscription: { planLabel: string; cycle: string; priceVnd: number; status: string; currentPeriodEnd: string; includedCreditsMonthly: number } | null
+  subscription: {
+    planLabel: string; cycle: string; priceVnd: number; status: string; currentPeriodEnd: string; includedCreditsMonthly: number
+    pendingChange?: { planLabel: string; cycle: string; priceVnd: number; effectiveAt: string } | null
+  } | null
   invoices: Array<{
     id: string; code: string; amountVnd: number; status: string; dueAt: string; periodStart: string; periodEnd: string
     payment: { bankName: string; accountNumber: string; accountHolder: string; transferContent: string; qrImageUrl: string } | null
@@ -43,6 +46,11 @@ export function SubscriptionCard() {
         {formatCurrency(s.priceVnd)} mỗi {s.cycle === "YEARLY" ? "năm" : "tháng"} · kỳ hiện tại tới {formatDate(s.currentPeriodEnd)}
         {s.includedCreditsMonthly > 0 ? ` · tặng ${s.includedCreditsMonthly} credit mỗi tháng (hết hạn cuối tháng)` : ""}
       </p>
+      {s.pendingChange && (
+        <p className="text-caption text-text">
+          Từ {formatDate(s.pendingChange.effectiveAt)} chuyển sang gói {s.pendingChange.planLabel} — {formatCurrency(s.pendingChange.priceVnd)} mỗi {s.pendingChange.cycle === "YEARLY" ? "năm" : "tháng"}. Tới lúc đó vẫn dùng gói hiện tại.
+        </p>
+      )}
       {s.status === "OVERDUE" && <p role="alert" className="text-caption font-semibold text-danger-text">Tài khoản đang ở chế độ chỉ xem. Thanh toán hoá đơn dưới đây để mở lại.</p>}
       {pending.map((i) => (
         <div key={i.id} className="flex flex-wrap items-start gap-4 rounded-xl border border-border p-3">

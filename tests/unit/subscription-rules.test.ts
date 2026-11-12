@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { planChangeKind, prorationVnd, repricedPendingAmount, splitOverpayment } from "@/modules/subscription/domain/plan-change"
+import { billingFor, parsePendingChange, pendingChangeDue, planChangeKind, prorationVnd, repricedPendingAmount, splitOverpayment } from "@/modules/subscription/domain/plan-change"
 import { addCycle, expiringPlanCredit, findInvoiceCode, formatInvoiceCode, reminderDue, renewalOpensAt } from "@/modules/subscription/domain/subscription-rules"
 
 /** Checklist ALG 10.7, PO Q9/Q10 — chu kỳ, mã hoá đơn đối soát, nhắc gia hạn, credit tặng hết hạn cuối tháng. */
@@ -56,5 +56,18 @@ describe("vòng đời thuê bao", () => {
     expect(splitOverpayment(100_000, 300_000)).toEqual({ appliedVnd: 100_000, leftoverVnd: 0 })
     expect(splitOverpayment(500_000, 300_000)).toEqual({ appliedVnd: 300_000, leftoverVnd: 200_000 })
     expect(splitOverpayment(-5, 300_000)).toEqual({ appliedVnd: 0, leftoverVnd: 0 })
+  })
+
+  it("hạ gói chờ áp: đọc an toàn, tới kỳ khi qua mốc hoặc kỳ đã dời; hoá đơn từ mốc theo gói mới", () => {
+    const raw = { plan: "STARTER", cycle: "MONTHLY", priceVnd: 300_000, includedCreditsMonthly: 50, effectiveAt: "2026-12-01T00:00:00.000Z" }
+    const p = parsePendingChange(raw)!
+    expect(parsePendingChange({ ...raw, priceVnd: -1 })).toBeNull()
+    expect(parsePendingChange(null)).toBeNull()
+    expect(pendingChangeDue(p, new Date("2026-11-30T00:00:00Z"), new Date("2026-11-01T00:00:00Z"))).toBe(false)
+    expect(pendingChangeDue(p, new Date("2026-12-01T00:00:00Z"), new Date("2026-11-01T00:00:00Z"))).toBe(true)
+    expect(pendingChangeDue(p, new Date("2026-11-28T00:00:00Z"), new Date("2026-12-01T00:00:00Z"))).toBe(true)
+    const cur = { priceVnd: 600_000, cycle: "MONTHLY" as const }
+    expect(billingFor(cur, p, new Date("2026-11-01T00:00:00Z"))).toEqual(cur)
+    expect(billingFor(cur, p, new Date("2026-12-01T00:00:00Z"))).toEqual({ priceVnd: 300_000, cycle: "MONTHLY" })
   })
 })

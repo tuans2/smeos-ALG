@@ -17,7 +17,7 @@ acceptance:
 
 > **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/so-lieu` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/so-lieu/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
 
-**Tuyến:** `/so-lieu` · **Tệp chính:** `src/app/(app)/so-lieu/page.tsx` · **Cập nhật:** 07/11/2026 · thẻ Hiệu năng kinh doanh lấy số từ báo cáo theo kỳ phía máy chủ (PO Q4) · nút "Báo cáo theo kỳ" ở đầu trang (chỉ hiện khi có `R20`) mở `/bao-cao` · 11/11/2026: gỡ nút "Hiệu quả quảng cáo" — số liệu là chiến dịch mẫu cứng, trái nguyên tắc "Bẫy số liệu" mục 5 (audit BL-23); gắn lại khi có nguồn số liệu quảng cáo thật · **Thẻ:** T5.D1
+**Tuyến:** `/so-lieu` · **Tệp chính:** `src/app/(app)/so-lieu/page.tsx` · **Cập nhật:** 07/11/2026 · thẻ Hiệu năng kinh doanh lấy số từ báo cáo theo kỳ phía máy chủ (PO Q4) · nút "Báo cáo theo kỳ" ở đầu trang (chỉ hiện khi có `R20`) mở `/bao-cao` · 11/11/2026: gỡ nút "Hiệu quả quảng cáo" — số liệu là chiến dịch mẫu cứng, trái nguyên tắc "Bẫy số liệu" mục 5 (audit BL-23); 12/11/2026: xoá hẳn màn mẫu `ad-performance-modal.tsx`; dựng lại khi có nguồn số liệu quảng cáo thật · **Thẻ:** T5.D1
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `marketing_specialist`, `analyst` · Vai phụ: `lead_marketing`
