@@ -109,7 +109,7 @@ function ExportCustomersButtonInner({
         variant="outline"
         size="sm"
         className="gap-1.5 text-body-sm font-semibold"
-        aria-label="Sao lưu và xuất dữ liệu khách hàng"
+        aria-label="Sao lưu & Xuất dữ liệu khách hàng"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         disabled={isLoading}

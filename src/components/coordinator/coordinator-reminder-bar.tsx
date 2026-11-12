@@ -168,7 +168,7 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
               onClick={() => setIsSettingsOpen(true)}
               className="h-8 px-2.5 text-caption gap-1.5 border-border hover:bg-surface"
               title="Cài đặt chính sách mốc nhắc"
-              aria-label="Cài đặt chính sách mốc nhắc"
+              aria-label="Cài đặt mốc nhắc"
             >
               <Settings2 size={13} />
               <span className="hidden sm:inline">Cài đặt mốc</span>

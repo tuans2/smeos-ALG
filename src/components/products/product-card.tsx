@@ -110,7 +110,6 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick, prior
         type="button"
         variant="ghost"
         onClick={() => onImageClick?.(product)}
-        aria-label={`Xem bảng thông số và phân tích AI cho ${product.name}`}
         className="relative aspect-square w-full h-auto p-0 rounded-none bg-surface-alt overflow-hidden text-left focus-visible:outline-2 focus-visible:outline-primary cursor-pointer group/img block"
       >
         <ProductThumb
@@ -120,6 +119,8 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick, prior
           size="card"
           priority={priority}
         />
+        {/* Tên nút bằng chữ ẩn thay aria-label: ô "Chưa có ảnh" là chữ nhìn thấy, aria-label sẽ lệch (WCAG 2.5.3) */}
+        <span className="sr-only">Xem bảng thông số và phân tích AI cho {product.name}</span>
       </Button>
       {/* Nhãn trạng thái nằm ngoài nút ảnh để tên nút khớp chữ hiển thị (WCAG 2.5.3, Đợt 4 D4-10); vị trí giữ nguyên */}
       <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
