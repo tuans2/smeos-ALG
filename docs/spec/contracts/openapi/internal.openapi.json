@@ -63695,7 +63695,7 @@
       "post": {
         "operationId": "eraseCustomerData",
         "summary": "Khách yêu cầu xoá dữ liệu cá nhân",
-        "description": "Ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT; thu hồi đồng ý nhận tin. `result` = số dòng theo bảng. Khách của tổ chức khác → 404.",
+        "description": "Ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT; thu hồi đồng ý nhận tin. `result` = số dòng theo bảng. Đơn chưa kết thúc giữ địa chỉ / người nhận / lời thiệp tới khi đóng: yêu cầu ở `RECEIVED` với `result.orders_waiting`, lượt quét nội bộ xoá nốt và hoàn tất khi mọi đơn đã đóng. Khách của tổ chức khác → 404.",
         "tags": [
           "Khách hàng — yêu cầu về dữ liệu cá nhân"
         ],
@@ -65133,7 +65133,7 @@
       "patch": {
         "operationId": "resolveDataRequest",
         "summary": "Đóng yêu cầu: hoàn tất hoặc từ chối",
-        "description": "Yêu cầu của tổ chức khác → 404; đã đóng → 409.",
+        "description": "Yêu cầu của tổ chức khác → 404; đã đóng → 409; yêu cầu xoá không đóng tay bằng `COMPLETED` (hệ thống tự hoàn tất khi đơn của khách đã đóng) → 409.",
         "tags": [
           "Khách hàng — yêu cầu về dữ liệu cá nhân"
         ],
@@ -110623,13 +110623,17 @@
                           },
                           "type": {
                             "type": "string"
+                          },
+                          "lifecycle_status": {
+                            "type": "string"
                           }
                         },
                         "required": [
                           "id",
                           "name",
                           "slug",
-                          "type"
+                          "type",
+                          "lifecycle_status"
                         ],
                         "additionalProperties": false
                       }
@@ -127376,7 +127380,7 @@
       "post": {
         "operationId": "switchOrganization",
         "summary": "Đổi tổ chức đang hoạt động của phiên",
-        "description": "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Phát lại cookie `alg_sso`.",
+        "description": "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Tổ chức đang tạm ngưng / đã đóng → 403 `ORGANIZATION_INACTIVE` (audit User Journey UJ-27). Phát lại cookie `alg_sso`.",
         "tags": [
           "Phiên — tổ chức & mật khẩu"
         ],
@@ -127436,13 +127440,17 @@
                         },
                         "type": {
                           "type": "string"
+                        },
+                        "lifecycle_status": {
+                          "type": "string"
                         }
                       },
                       "required": [
                         "id",
                         "name",
                         "slug",
-                        "type"
+                        "type",
+                        "lifecycle_status"
                       ],
                       "additionalProperties": false
                     }
@@ -127460,6 +127468,9 @@
           },
           "401": {
             "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
           },
           "404": {
             "$ref": "#/components/responses/Error404"

@@ -21,6 +21,11 @@ export function lifecycleAccess(status: OrganizationLifecycleStatus): LifecycleA
   return "blocked"
 }
 
+/** Thành viên vào được tổ chức này không (xem hoặc làm) — `false` với tổ chức tạm ngưng / đã đóng. */
+export function canEnterOrganization(status: OrganizationLifecycleStatus): boolean {
+  return lifecycleAccess(status) !== "blocked"
+}
+
 /** Đổi trạng thái hợp lệ: tổ chức đã xoá không đổi lại được; không tự chuyển sang `DELETED` qua Console. */
 export function canChangeLifecycle(from: OrganizationLifecycleStatus, to: OrganizationLifecycleStatus): boolean {
   if (from === "DELETED" || to === "DELETED") return false
@@ -32,4 +37,14 @@ export function lifecycleBlockedMessage(status: OrganizationLifecycleStatus): st
   if (status === "OFFBOARDING") return "Cửa hàng đang trong thời gian kết thúc dịch vụ — chỉ xem và tải dữ liệu, không thay đổi được."
   if (status === "DELETED") return "Tài khoản cửa hàng này đã đóng."
   return "Tài khoản cửa hàng đang tạm ngưng. Vui lòng liên hệ bộ phận hỗ trợ."
+}
+
+/**
+ * Banner trên ứng dụng của tổ chức không hoạt động (audit User Journey UJ-26, PO 12/11/2026 UQ13) — cùng câu với lỗi
+ * máy chủ trả, để người dùng biết vì sao thao tác bị chặn thay vì gặp lỗi rời rạc ở từng nút. `null` = không hiện.
+ */
+export function lifecycleBanner(status: string | null | undefined): { tone: "danger" | "warning"; message: string } | null {
+  if (status === "SUSPENDED" || status === "DELETED") return { tone: "danger", message: lifecycleBlockedMessage(status) }
+  if (status === "OFFBOARDING") return { tone: "warning", message: lifecycleBlockedMessage(status) }
+  return null
 }

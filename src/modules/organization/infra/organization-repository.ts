@@ -30,6 +30,7 @@ function mapOrganization(row: organizations): OrganizationEntity {
     credit_plan: org.credit_plan ?? null,
     data_region: org.data_region ?? null,
     settings: (org.settings as Record<string, unknown> | null) ?? null,
+    lifecycle_status: org.lifecycle_status,
     created_at: org.created_at,
     updated_at: org.updated_at,
   }

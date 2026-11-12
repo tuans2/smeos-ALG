@@ -1,4 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { ACTIVE_ORGANIZATION_ONLY } from "@/modules/organization/infra/active-organization-filter"
 
 /** Đơn tạo quá ngần này mà vẫn mở thì coi như đơn treo, không quét nhắc giao. */
 const LOOKBACK_DAYS = 60
@@ -12,6 +13,7 @@ export async function listOrganizationsWithOpenOrders(now: Date, limit: number):
     where: {
       status: { notIn: ["COMPLETED", "CANCELLED"] },
       created_at: { gte: new Date(now.getTime() - LOOKBACK_DAYS * 24 * 60 * 60_000) },
+      ...ACTIVE_ORGANIZATION_ONLY, // UJ-26
     },
     distinct: ["organization_id"],
     select: { organization_id: true },

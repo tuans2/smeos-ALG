@@ -30,15 +30,20 @@ export async function exportForCustomer(ctx: TenantContext, customerId: string, 
   return { request, package: pkg }
 }
 
-/** Xoá: ẩn danh xuyên bảng ngay, giữ dòng tài chính. */
+/**
+ * Xoá: ẩn danh xuyên bảng ngay, giữ dòng tài chính. Đơn chưa kết thúc giữ địa chỉ / người nhận / lời thiệp tới khi đóng
+ * (audit User Journey UJ-28, PO 12/11/2026 UQ15): yêu cầu khi đó ở RECEIVED với `orders_waiting`, và bộ quét
+ * `completePendingErasures` xoá nốt rồi hoàn tất.
+ */
 export async function eraseForCustomer(ctx: TenantContext, customerId: string, note: string | null, now = new Date()) {
   await assertCustomer(ctx, customerId)
-  const result = await eraseCustomerData(ctx.organizationId, customerId, now)
+  const result = await eraseCustomerData(ctx.organizationId, customerId, now, { keepOpenOrders: true })
+  const waiting = (result["orders_waiting"] ?? 0) > 0
   const request = await insertDsr(ctx.organizationId, {
     customerId, type: "ERASE", receivedBy: ctx.userId, receivedAt: now, dueAt: dsrDueAt(now), note,
-    completed: { by: ctx.userId, at: now, result },
+    ...(waiting ? { partialResult: result } : { completed: { by: ctx.userId, at: now, result } }),
   })
-  await audit(ctx, "crm.data_subject_erased", request)
+  await audit(ctx, waiting ? "crm.data_subject_erase_pending_orders" : "crm.data_subject_erased", request)
   return request
 }
 
@@ -59,6 +64,10 @@ export async function resolveDataSubjectRequest(ctx: TenantContext, id: string, 
   const current = await findDsr(ctx.organizationId, id)
   if (!current) throw notFound()
   if (!canResolve(current.status, input.status)) throw conflict("Yêu cầu này đã được xử lý")
+  // Xoá còn chờ đơn đang giao: hệ thống tự hoàn tất khi đơn kết thúc — đánh tay "hoàn tất" sẽ báo sai cho khách (UJ-28)
+  if (current.type === "ERASE" && input.status === "COMPLETED") {
+    throw conflict("Khách còn đơn chưa kết thúc — hệ thống tự xoá nốt dữ liệu giao nhận và hoàn tất yêu cầu khi đơn đóng.")
+  }
   const view = await resolveDsr(ctx.organizationId, id, { status: input.status, by: ctx.userId, at: now, note: input.note })
   if (!view) throw conflict("Yêu cầu này đã được xử lý")
   await audit(ctx, "crm.data_subject_resolved", view)

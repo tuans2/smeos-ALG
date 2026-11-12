@@ -21,7 +21,7 @@ export const invitationsResponse = data(
 export const invitationAcceptedResponse = data(z.strictObject({ organization_id: z.string() }))
 export const invitationDeclinedResponse = data(z.strictObject({ declined: z.literal(true) }))
 /** Kèm `Set-Cookie: alg_sso` mới — JWT liên-app mang tổ chức bên trong nên phải phát lại ngay. */
-export const switchOrganizationResponse = z.strictObject({ organization: z.strictObject({ id: z.string(), name: z.string(), slug: z.string(), type: z.string() }) })
+export const switchOrganizationResponse = z.strictObject({ organization: z.strictObject({ id: z.string(), name: z.string(), slug: z.string(), type: z.string(), lifecycle_status: z.string() }) })
 export const passwordChangedResponse = data(z.strictObject({ changed: z.literal(true) }))
 
 // ── Báo cáo ─────────────────────────────────────────────────────────────────

@@ -5,6 +5,7 @@ import { POST as erase } from "@/app/api/v1/crm/customers/[id]/data-requests/era
 import { POST as exportData } from "@/app/api/v1/crm/customers/[id]/data-requests/export/route"
 import { POST as rectify } from "@/app/api/v1/crm/customers/[id]/data-requests/rectify/route"
 import { PATCH as resolve } from "@/app/api/v1/crm/data-requests/[id]/route"
+import { completePendingErasures } from "@/modules/crm/use-cases/complete-pending-erasures"
 import { GET as listRequests } from "@/app/api/v1/crm/data-requests/route"
 import { GET as viewSubcontract } from "@/app/api/v1/public/subcontract/[orderCode]/route"
 import type { SubcontractOrderState } from "@/modules/greeting-card/domain/subcontract-order"
@@ -23,7 +24,7 @@ const BASE = "http://localhost/api/v1"
 const CODE = "DH261112-0001"
 const ps = (id: string) => ({ params: Promise.resolve({ id }) })
 
-async function seed(t: Tenant, tag: string, phone: string) {
+async function seed(t: Tenant, tag: string, phone: string, orderStatus: "CONFIRMED" | "COMPLETED" = "COMPLETED") {
   const org = t.organizationId
   const c = await prisma.customers.create({ data: { organization_id: org, code: `KH-${tag}`, name: "Chị Lan", phone, email: "lan@vi-du.test", notes: "thích hồng" } })
   await prisma.customer_occasions.create({ data: { organization_id: org, customer_id: c.id, name: "Sinh nhật mẹ", date: "05-12", recipient_name: "Mẹ" } })
@@ -32,7 +33,7 @@ async function seed(t: Tenant, tag: string, phone: string) {
   const conv = await prisma.chat_conversations.create({ data: { organization_id: org, customer_id: c.id } })
   await prisma.chat_messages.create({ data: { organization_id: org, conversation_id: conv.id, sender_type: "USER", content: "Giao giúp em 12 Lý Thường Kiệt" } })
   const order = await prisma.orders.create({
-    data: { organization_id: org, code: `${CODE}-${tag}`, source: "BROCHURE", status: "CONFIRMED", customer_id: c.id, total_vnd: 500_000, paid_vnd: 500_000, balance_vnd: 0, created_by: t.userId, card_message: "Chúc mừng sinh nhật" },
+    data: { organization_id: org, code: `${CODE}-${tag}`, source: "BROCHURE", status: orderStatus, customer_id: c.id, total_vnd: 500_000, paid_vnd: 500_000, balance_vnd: 0, created_by: t.userId, card_message: "Chúc mừng sinh nhật" },
   })
   await prisma.order_recipients.create({
     data: { organization_id: org, order_id: order.id, recipient_name: "Bà Hoa", recipient_phone: "0100000003", address_line: "12 Lý Thường Kiệt", vat_company_name: "Công ty Hoa Việt", vat_tax_code: "0101234567" },
@@ -67,8 +68,8 @@ describe("yêu cầu của khách về dữ liệu cá nhân", () => {
     expect((await exportData(post(b, `/crm/customers/${s.customerId}/data-requests/export`), ps(s.customerId))).status).toBe(404)
   })
 
-  it("xoá: ẩn danh xuyên bảng, giữ đơn và hoá đơn VAT, thu hồi đồng ý; chi nhánh được chia sẻ thấy bản đã xoá", async () => {
-    const s = await seed(a, "a", "0100000001")
+  it("xoá: ẩn danh xuyên bảng, giữ đơn và hoá đơn VAT, thu hồi đồng ý; đơn đang giao gia công giữ người nhận cho chi nhánh tới khi đơn đóng (UJ-28)", async () => {
+    const s = await seed(a, "a", "0100000001", "CONFIRMED")
     const other = await seed(b, "b", "0100000002")
     const repo = new SubcontractOrderRepository()
     await prisma.branches.create({ data: { organization_id: a.organizationId, name: "Chi nhánh CN-A", code: "CN-A", accepts_dispatch: true } })
@@ -90,20 +91,26 @@ describe("yêu cầu của khách về dữ liệu cá nhân", () => {
     const res = await erase(post(a, `/crm/customers/${s.customerId}/data-requests/erase`, { note: "khách gọi điện yêu cầu" }), ps(s.customerId))
     expect(res.status).toBe(201)
     const { data } = (await readJson(res)) as { data: { status: string; result: Record<string, number> } }
-    expect(data).toMatchObject({ status: "COMPLETED", result: expect.objectContaining({ customers: 1, leads: 1, chat_messages: 1, order_recipients: 1 }) })
+    // Đơn còn đang giao (PO UQ15): yêu cầu chờ, phần hồ sơ / lead / tin nhắn đã xoá ngay
+    expect(data).toMatchObject({ status: "RECEIVED", result: expect.objectContaining({ customers: 1, leads: 1, chat_messages: 1, orders_waiting: 1 }) })
 
     expect(await prisma.customers.findUniqueOrThrow({ where: { id: s.customerId } })).toMatchObject({ name: "Khách đã xoá", phone: "ERASED", email: null, notes: null, phone_hash: null })
     expect(await prisma.customer_occasions.count({ where: { customer_id: s.customerId } })).toBe(0)
     expect((await prisma.customer_consents.findFirstOrThrow({ where: { customer_id: s.customerId } })).granted).toBe(false)
     expect(await prisma.leads.findFirstOrThrow({ where: { customer_id: s.customerId } })).toMatchObject({ name: "Khách đã xoá", phone: "ERASED", message: null })
     expect(await prisma.chat_messages.count({ where: { conversation_id: s.conversationId } })).toBe(0)
+    // Chi nhánh đang làm đơn vẫn thấy người nhận để giao
+    expect(await branchView()).toContain("Bà Hoa")
+
+    // Đơn kết thúc → lượt quét xoá nốt dữ liệu giao nhận, giữ tiền và hoá đơn VAT
+    await prisma.orders.update({ where: { id: s.orderId }, data: { status: "COMPLETED" } })
+    expect(await completePendingErasures()).toEqual({ completed: 1, failed: 0 })
     const order = await prisma.orders.findUniqueOrThrow({ where: { id: s.orderId } })
     expect(order).toMatchObject({ customer_id: s.customerId, card_message: null })
     expect(Number(order.paid_vnd)).toBe(500_000)
     expect(await prisma.order_recipients.findUniqueOrThrow({ where: { order_id: s.orderId } })).toMatchObject({
       recipient_name: null, recipient_phone: null, address_line: null, vat_company_name: "Công ty Hoa Việt", vat_tax_code: "0101234567",
     })
-    expect(await branchView()).not.toContain("Bà Hoa")
 
     // Tổ chức khác nguyên vẹn
     expect((await prisma.customers.findUniqueOrThrow({ where: { id: other.customerId } })).name).toBe("Chị Lan")
@@ -148,5 +155,32 @@ describe("yêu cầu của khách về dữ liệu cá nhân", () => {
     expect((await patch(a, "COMPLETED")).status).toBe(200)
     expect((await patch(a, "REJECTED")).status).toBe(409)
     expect(await prisma.audit_logs.count({ where: { organization_id: a.organizationId, entity_type: "data_subject_requests" } })).toBe(2)
+  })
+
+  it("audit User Journey UJ-28 (PO UQ15): xoá khi còn đơn đang giao → hồ sơ + hội thoại ẩn danh ngay, đơn giữ địa chỉ tới khi đóng rồi bộ quét xoá nốt và hoàn tất", async () => {
+    const s = await seed(a, "a", "0100000001", "CONFIRMED")
+    const res = await erase(post(a, `/crm/customers/${s.customerId}/data-requests/erase`), ps(s.customerId))
+    expect(res.status).toBe(201)
+    const { data } = (await readJson(res)) as { data: { id: string; status: string; result: Record<string, number> } }
+    expect(data).toMatchObject({ status: "RECEIVED", result: expect.objectContaining({ customers: 1, chat_messages: 1, orders_waiting: 1 }) })
+    expect((await prisma.customers.findUniqueOrThrow({ where: { id: s.customerId } })).name).toBe("Khách đã xoá")
+    expect(await prisma.chat_messages.count({ where: { conversation_id: s.conversationId } })).toBe(0)
+    // Đơn đang giao vẫn đủ địa chỉ, người nhận, lời thiệp để thợ / người giao làm tiếp
+    expect((await prisma.orders.findUniqueOrThrow({ where: { id: s.orderId } })).card_message).toBe("Chúc mừng sinh nhật")
+    expect(await prisma.order_recipients.findUniqueOrThrow({ where: { order_id: s.orderId } })).toMatchObject({ recipient_name: "Bà Hoa", address_line: "12 Lý Thường Kiệt" })
+
+    // Nhân viên không đánh "hoàn tất" tay được; đơn còn mở → bộ quét chưa đụng
+    const manual = await resolve(withSession(`${BASE}/crm/data-requests/${data.id}`, a.token, { method: "PATCH", body: JSON.stringify({ status: "COMPLETED" }) }), ps(data.id))
+    expect(manual.status).toBe(409)
+    expect(await completePendingErasures()).toEqual({ completed: 0, failed: 0 })
+
+    await prisma.orders.update({ where: { id: s.orderId }, data: { status: "COMPLETED" } })
+    expect(await completePendingErasures()).toEqual({ completed: 1, failed: 0 })
+    expect((await prisma.orders.findUniqueOrThrow({ where: { id: s.orderId } })).card_message).toBeNull()
+    expect(await prisma.order_recipients.findUniqueOrThrow({ where: { order_id: s.orderId } })).toMatchObject({ recipient_name: null, address_line: null, vat_tax_code: "0101234567" })
+    const done = await prisma.data_subject_requests.findUniqueOrThrow({ where: { id: data.id } })
+    expect(done).toMatchObject({ status: "COMPLETED", completed_by: "system:dsr-erasure" })
+    expect(await prisma.audit_logs.count({ where: { organization_id: a.organizationId, entity_id: data.id, action: "crm.data_subject_erased" } })).toBe(1)
+    expect(await completePendingErasures()).toEqual({ completed: 0, failed: 0 })
   })
 })

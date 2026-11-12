@@ -33,6 +33,8 @@ export interface OrganizationEntity {
   credit_plan?: string | null | undefined
   data_region?: string | null | undefined
   settings: Record<string, unknown> | null
+  /** ADR-016 D-S5 — `ACTIVE` · `SUSPENDED` · `OFFBOARDING` · `DELETED` */
+  lifecycle_status?: string | undefined
   created_at: Date
   updated_at: Date
 }
