@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Chain Collection Profile (§9.5.8)
+ * ALG Inputs Architecture v2.1 — Chain Collection Profile (§9.5.8)
  *
  * Implements:
  * 1. CollectionRule: selector, min_form (floor), max_form (chain ceiling), scope, status

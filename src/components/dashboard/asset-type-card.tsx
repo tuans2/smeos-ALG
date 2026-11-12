@@ -68,7 +68,7 @@ export function AssetTypeCard({ asset, tool, isDev }: AssetTypeCardProps) {
                   readiness === "READY"
                     ? "bg-success-bg text-success border-success-border"
                     : readiness === "EXTEND"
-                      ? "bg-warning-bg text-warning border-warning-border"
+                      ? "bg-warning-bg text-warning-text border-warning-border"
                       : "bg-surface-alt text-text-muted border-border"
                 }`}
               >

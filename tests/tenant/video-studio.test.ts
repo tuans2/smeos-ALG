@@ -181,7 +181,7 @@ describe("Video Studio Tenant Isolation & Approval Lifecycle", () => {
 
     // 6. Mô phỏng worker render hoàn tất
     await repo.updateStage(tenantA.ctx, job.id, "RENDER_COMPLETED", {
-      finalVideoUrl: "https://storage.smeos.vn/org/test/video.mp4",
+      finalVideoUrl: "https://storage.avilotusgroup.com/org/test/video.mp4",
     });
 
     // 7. Phê duyệt Video thành phẩm (Cổng 2) -> THÀNH CÔNG

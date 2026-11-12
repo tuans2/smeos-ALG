@@ -140,12 +140,10 @@ export function ScheduleCalendarCard({
           {filtered.map((item) => {
             const isCurrent = selectedId === item.id
             return (
+              // Cả thẻ bấm được nhờ nút tiêu đề phủ toàn thẻ (after:inset-0); nút "Phát ngay" nằm lớp trên (Đợt 4, D4-09)
               <div
-              role="button"
-              tabIndex={0}
                 key={item.id}
-                onClick={() => onSelectPost?.(item)}
-                className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${
+                className={`relative flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary ${
                   isCurrent
                     ? "border-primary ring-1 ring-primary/20 bg-primary/5 shadow-xs"
                     : "border-border hover:border-primary/40 bg-surface"
@@ -178,7 +176,15 @@ export function ScheduleCalendarCard({
 
                   {/* Chi tiết bài đăng */}
                   <div className="flex-1 min-w-0">
-                    <div className="text-body-sm font-bold text-text truncate">{item.title}</div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => onSelectPost?.(item)}
+                      aria-pressed={isCurrent}
+                      className="block h-auto w-full p-0 text-left text-body-sm font-bold text-text truncate hover:bg-transparent focus-visible:outline-none after:absolute after:inset-0 after:rounded-xl after:content-['']"
+                    >
+                      {item.title}
+                    </Button>
                     <div className="text-caption text-text-muted flex items-center gap-2 mt-0.5">
                       <span className="font-semibold text-primary capitalize">
                         {item.channelLabel || item.channel}
@@ -186,7 +192,7 @@ export function ScheduleCalendarCard({
                       <span>·</span>
                       <span>ID #{item.id}</span>
                       {item.is_mock_media && (
-                        <span className="text-caption font-bold px-1.5 py-0.2 rounded bg-warning-bg text-warning border border-warning/30">
+                        <span className="text-caption font-bold px-1.5 py-0.2 rounded bg-warning-bg text-warning-text border border-warning/30">
                           Ảnh mẫu (Mock)
                         </span>
                       )}
@@ -195,7 +201,7 @@ export function ScheduleCalendarCard({
                 </div>
 
                 {/* Badge trạng thái & Nút phát ngay */}
-                <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                <div className="relative z-10 flex items-center gap-2 flex-shrink-0 ml-3">
                   {item.status === "scheduled" && onPublishNow && (
                     <Button
                       size="sm"

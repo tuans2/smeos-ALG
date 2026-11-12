@@ -72,7 +72,7 @@ export async function processPaymentProofVisionJob(
     const base64 = Buffer.from(bytes).toString("base64")
     const mimeType = asset.mime_type || "image/jpeg"
 
-    // 3. Khởi tạo TenantContext chuẩn theo kiến trúc FloraOS
+    // 3. Khởi tạo TenantContext chuẩn theo kiến trúc ALG
     const ctx: TenantContext = {
       organizationId,
       workspaceId: organizationId,

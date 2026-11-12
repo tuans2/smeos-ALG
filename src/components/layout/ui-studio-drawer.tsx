@@ -10,6 +10,7 @@ import { Eye } from "@/components/ui/icon-set/eye"
 import { useUiSystem } from "@/lib/ui-system/ui-provider"
 import type { UiPresetId, UiDensity } from "@/lib/ui-system/types"
 import { Button } from "@/components/ui/button"
+import { FloatingItemSlot } from "./floating-item-slot"
 import { Card } from "@/components/ui/card"
 import { UiStudioPresetList } from "./ui-studio-preset-list"
 
@@ -31,16 +32,19 @@ export function UiStudioDrawer() {
     return () => window.removeEventListener("open-ui-studio", handleOpen)
   }, [])
 
+  // Nhãn truy cập phải chứa chữ nhìn thấy (WCAG 2.5.3): "UI Studio" + tên preset; ở 390px chỉ còn tên preset.
+  const presetWord = currentPreset.name.split(" ")[0]
+
   return (
     <>
-      {/* Floating Toggle Button */}
-      <div className="fixed bottom-24 right-6 z-40">
+      {/* Nút mở UI Studio: đăng ký vào lớp phần tử nổi thay vì tự định vị (T3-2) */}
+      <FloatingItemSlot id="ui-studio" priority={10}>
         <Button variant="outline"
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
           className="text-[length:inherit] h-auto font-[inherit] group relative flex items-center gap-2 px-3 py-2.5 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-text cursor-pointer hover:bg-surface"
           title="Tùy biến Giao diện & UI Presets"
-          aria-label="Mở bảng điều khiển giao diện"
+          aria-label={`UI Studio ${presetWord} — mở bảng điều khiển giao diện`}
         >
           <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-primary-fg shadow-xs">
             <Palette className="w-3.5 h-3.5" />
@@ -48,11 +52,12 @@ export function UiStudioDrawer() {
           <span className="text-caption font-semibold pr-1 hidden sm:inline-block">
             UI Studio
           </span>
-          <span className="text-caption uppercase font-mono px-1.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-primary/20">
-            {currentPreset.name.split(" ")[0]}
+          {" "}
+          <span className="text-caption uppercase font-mono px-1.5 py-0.5 rounded-full bg-primary-muted text-primary border border-primary/20">
+            {presetWord}
           </span>
         </Button>
-      </div>
+      </FloatingItemSlot>
 
       {/* Drawer Overlay */}
       {isOpen && (
@@ -67,7 +72,7 @@ export function UiStudioDrawer() {
                   </div>
                   <div>
                     <h2 className="text-body-sm font-bold text-text leading-tight">
-                      smeOS UI Studio
+                      ALG UI Studio
                     </h2>
                     <p className="text-caption text-text-muted mt-0.5">
                       Chuyển đổi phong cách & mật độ giao diện (ADR-011 D-UI-03)
@@ -112,7 +117,7 @@ export function UiStudioDrawer() {
                           onClick={() => setDensity(item.id)}
                           className={`text-[length:inherit] h-auto p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                             isSelected
-                              ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs hover:bg-primary-subtle"
+                              ? "border-primary bg-primary-muted text-primary font-bold shadow-xs hover:bg-primary-muted"
                               : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text hover:bg-surface"
                           }`}
                         >
@@ -126,7 +131,7 @@ export function UiStudioDrawer() {
                 </div>
 
                 {/* Live Preview Specs */}
-                <Card className="p-3.5 space-y-2 bg-surface-muted/50" variant="default">
+                <Card className="p-3.5 space-y-2 bg-surface-alt/50" variant="default">
                   <div className="text-caption font-bold text-text uppercase tracking-wider">
                     Thông số hiển thị thực tế
                   </div>

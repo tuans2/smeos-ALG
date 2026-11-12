@@ -189,7 +189,7 @@ export function CareWorkflow({
         <div className="md:col-span-7 bg-surface p-5 rounded-2xl border border-border shadow-xs space-y-3">
           <div className="flex items-center gap-2">
             <Heart className="w-5 h-5 text-primary" aria-hidden="true" />
-            <h3 className="text-title-sm font-bold text-text">Bước 1: Chọn mục tiêu chăm sóc</h3>
+            <h2 className="text-title-sm font-bold text-text">Bước 1: Chọn mục tiêu chăm sóc</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {CARE_GOALS.map((goal) => {
@@ -219,7 +219,7 @@ export function CareWorkflow({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-primary" aria-hidden="true" />
-                <h3 className="text-title-sm font-bold text-text">Bước 2: Nhóm khách hàng</h3>
+                <h2 className="text-title-sm font-bold text-text">Bước 2: Nhóm khách hàng</h2>
               </div>
               <Button
                 type="button"
@@ -263,7 +263,7 @@ export function CareWorkflow({
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" aria-hidden="true" />
-          <h3 className="text-title-sm font-bold text-text">Bước 3: Tùy chỉnh thiệp & lời nhắn</h3>
+          <h2 className="text-title-sm font-bold text-text">Bước 3: Tùy chỉnh thiệp & lời nhắn</h2>
         </div>
         <CareCardDesigner
           initialCode={currentAssetCode}
@@ -277,9 +277,9 @@ export function CareWorkflow({
       <div className="bg-surface p-5 sm:p-6 rounded-2xl border border-border shadow-xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="text-title-sm font-bold text-text">
+            <h2 className="text-title-sm font-bold text-text">
               Bước 4: Danh sách gửi thủ công ({customers.length} khách)
-            </h3>
+            </h2>
             <p className="text-caption text-text-muted mt-0.5">
               Gửi qua Zalo/cuộc gọi và bấm &quot;Đánh dấu đã gửi&quot; để tự động lưu vào nhật ký chăm sóc
             </p>

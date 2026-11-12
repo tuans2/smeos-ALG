@@ -1,11 +1,11 @@
 # PRD — `floraos-core`
 
-**Sản phẩm:** FloraOS SaaS — nền tảng đa tenant cho cửa hàng và chuỗi cửa hàng hoa
+**Sản phẩm:** ALG SaaS — nền tảng đa tenant cho cửa hàng và chuỗi cửa hàng hoa
 **Phạm vi tài liệu:** repo `floraos-core` (Core) và ranh giới của nó với `LocalBudd`, `SocialFlow`
-**Cấp tài liệu:** rút gọn từ `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` (Level 1) · `HARVEST_MANIFEST.md` · `M01` · `M04` · `TRANG_THAI.md`
+**Cấp tài liệu:** rút gọn từ `ALG_SAAS_TARGET_ARCHITECTURE_V2.md` (Level 1) · `HARVEST_MANIFEST.md` · `M01` · `M04` · `TRANG_THAI.md`
 **Ngày:** 2026-09-11
 
-> Khi PRD này và `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` lệch nhau, tài liệu kiến trúc thắng. PRD trả lời *xây cái gì và vì sao*; kiến trúc trả lời *xây thế nào*.
+> Khi PRD này và `ALG_SAAS_TARGET_ARCHITECTURE_V2.md` lệch nhau, tài liệu kiến trúc thắng. PRD trả lời *xây cái gì và vì sao*; kiến trúc trả lời *xây thế nào*.
 
 ---
 
@@ -15,7 +15,7 @@ Cửa hàng hoa bán bằng hình ảnh, nhưng ảnh chụp bằng điện tho�
 
 `floraos-core` là nền đa tenant để một tổ chức nhập dữ liệu sản phẩm **một lần** và mọi module dùng lại.
 
-Giá trị mà cửa hàng nhận được đo bằng một chuỗi duy nhất: chụp ảnh bó hoa, rồi có sẵn bản ghi sản phẩm, ảnh quảng cáo, video, bài viết, lịch đăng, landing page và catalog. FloraOS không cạnh tranh với một công cụ thiết kế hay một trợ lý viết bài tổng quát — nó là hệ điều hành của cửa hàng hoa, và điều đó chỉ đúng khi mọi mắt của chuỗi trên đọc cùng một Product Master và cùng một Master Image đã duyệt.
+Giá trị mà cửa hàng nhận được đo bằng một chuỗi duy nhất: chụp ảnh bó hoa, rồi có sẵn bản ghi sản phẩm, ảnh quảng cáo, video, bài viết, lịch đăng, landing page và catalog. ALG không cạnh tranh với một công cụ thiết kế hay một trợ lý viết bài tổng quát — nó là hệ điều hành của cửa hàng hoa, và điều đó chỉ đúng khi mọi mắt của chuỗi trên đọc cùng một Product Master và cùng một Master Image đã duyệt.
 
 ## 2. Người dùng
 
@@ -216,7 +216,7 @@ Ba mức triển khai, thứ tự không đảo được: API là mặc định 
 Không mô hình nào vào production khi thiếu một trong bốn ô: giấy phép, được dùng thương mại, lãnh thổ, phạm vi sử dụng cho phép.
 Mỗi lời gọi mang một mức quyền riêng tư suy từ loại dữ liệu, và **sàn quyền riêng tư cắt sau cùng** — không đường nào, kể cả bước dự phòng, mở được một lời gọi chạm dữ liệu cá nhân khách hàng ra nhà cung cấp bên ngoài.
 Đầu ra AI được máy chấm điểm trước khi thành dữ liệu; điểm chất lượng không thay Identity Guard và không thay Review → Approve. Ba cổng, không cổng nào thay cổng nào.
-Đặc tả đầy đủ ở `10-ai-orchestration.md`; phần thắng tuyệt đối ở `../kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 19.
+Đặc tả đầy đủ ở `10-ai-orchestration.md`; phần thắng tuyệt đối ở `../kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` mục 19.
 
 ## 8. Sở hữu dữ liệu
 
@@ -253,7 +253,7 @@ Hệ quả có tên trong lộ trình (P7): `LocalBudd` bỏ `products`, `produc
 
 ## 10. Lộ trình
 
-Hai tuyến. **Tuyến A** dựng nền đa tenant và bộ module lõi; nó chặn mọi thứ khác. **Tuyến B** dựng bộ tính năng hoàn chỉnh trên nền đó. Bảng pha đầy đủ ở `../kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 15.
+Hai tuyến. **Tuyến A** dựng nền đa tenant và bộ module lõi; nó chặn mọi thứ khác. **Tuyến B** dựng bộ tính năng hoàn chỉnh trên nền đó. Bảng pha đầy đủ ở `../kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` mục 15.
 
 ### Tuyến A — nền tảng và module lõi
 

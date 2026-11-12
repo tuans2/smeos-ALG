@@ -5,14 +5,14 @@
 > **Hệ thống áp dụng:** FloraOS Core (`floraos-core`)  
 > **Tài liệu tham chiếu SSOT:**  
 > - Hiến pháp Role UX: [`docs/dac-ta/03b-role-ux.md`](../../dac-ta/03b-role-ux.md)  
-> - Hợp đồng thực thi Role UX: [`docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md`](../FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md)  
+> - Hợp đồng thực thi Role UX: [`docs/kien-truc/ALG_ROLE_UX_EXECUTION_CONTRACT.md`](../ALG_ROLE_UX_EXECUTION_CONTRACT.md)  
 > - Danh mục vai trong mã nguồn: [`src/modules/organization/domain/role-ux-catalog.ts`](../../../src/modules/organization/domain/role-ux-catalog.ts)  
 > - Kế hoạch Console Vận hành: [`docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md`](../KE_HOACH_CONSOLE_VAN_HANH.md)  
-> - Kiến trúc mục tiêu FloraOS SaaS V2: [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](../FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md)  
+> - Kiến trúc mục tiêu FloraOS SaaS V2: [`docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md`](../ALG_SAAS_TARGET_ARCHITECTURE_V2.md)  
 
 ---
 
-## 1. TỔNG QUAN KIẾN TRÚC PHÂN CẤP QUẢN TRỊ TRONG FLORAOS
+## 1. TỔNG QUAN KIẾN TRÚC PHÂN CẤP QUẢN TRỊ TRONG ALG
 
 Trong hệ sinh thái FloraOS, quản trị được thiết kế theo 3 nguyên tắc phân tầng chặt chẽ:
 
@@ -117,7 +117,7 @@ Bố cục bất đối xứng 2 cột chuẩn Responsive (`lg:grid lg:grid-cols
 ## 4. CHI TIẾT CHAIN_ADMIN (QUẢN TRỊ CHUỖI & MẠNG LƯỚI GIAO HOA)
 
 ### 4.1. Bản chất Kiến trúc & Hiện trạng trong FloraOS
-Trong mô hình Chuỗi cửa hàng ([`FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` §11.3](../FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md#L395-L403)), cơ cấu tổ chức gồm:
+Trong mô hình Chuỗi cửa hàng ([`ALG_SAAS_TARGET_ARCHITECTURE_V2.md` §11.3](../ALG_SAAS_TARGET_ARCHITECTURE_V2.md#L395-L403)), cơ cấu tổ chức gồm:
 ```text
 Tổ chức Chuỗi (Chain Organization)
 ├── Trung tâm Vận hành Điều hành (Central Operations)

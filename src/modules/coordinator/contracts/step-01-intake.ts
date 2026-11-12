@@ -19,7 +19,7 @@ export const step01IntakeContract = defineStep({
   step: 1,
   code: "INTAKE",
   slug: "intake",
-  title: "Tiếp nhận đơn (T01)",
+  title: "Tiếp nhận đơn",
   summary: "Sales/AI Chat tạo đơn; máy chủ cấp mã FLR-YYMMDD-NNNN, bước INTAKE",
   endpoint: {
     method: "POST",

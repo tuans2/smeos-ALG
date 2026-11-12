@@ -99,3 +99,7 @@ SSOT: `docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §6. Archetype: bản
 | Dữ liệu | PASS | Kết nối API Orders thật |
 | Quyền | PASS | Gating theo R1, R2, R3, R21 |
 | Nhất quán | PASS | 100% token Semantic, font token chuẩn |
+
+## Thay đổi Đợt 4 (12/11/2026)
+
+- Hàng nút đầu trang cho xuống dòng, chữ trong nút không gãy (VD-03 ở 390px). Huy hiệu biên lai chưa có kết quả AI ghi "Có ảnh bill" thay cho "Đang đọc bill" (D4-14).

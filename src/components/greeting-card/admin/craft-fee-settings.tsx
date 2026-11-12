@@ -69,7 +69,7 @@ export function CraftFeeSettings() {
   const policy = draft ?? (org.data ? craftFeePolicyOf(settings) : null)
 
   if (org.data && !industryHasCraftFee) return null
-  if (!policy) return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+  if (!policy) return <div className="h-44 rounded-2xl bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
 
   const set = <K extends keyof CraftFeePolicy>(key: K, value: CraftFeePolicy[K]) => {
     setDraft({ ...policy, [key]: value })
@@ -151,7 +151,7 @@ export function CraftFeeSettings() {
         )}
         {policy.method === "TIERED" &&
           [0, 1, 2].map((i) => (
-            <div key={i} className="flex flex-col gap-1.5 rounded-lg bg-surface-muted p-2.5">
+            <div key={i} className="flex flex-col gap-1.5 rounded-lg bg-surface-alt p-2.5">
               {i < 2 ? (
                 <NumberField label={`Bậc ${i + 1}: đơn đến`} value={tierAt(i)?.upToVnd ?? 0} onChange={(v) => set("tiers", policy.tiers.map((t, j) => (j === i ? { ...t, upToVnd: v } : t)))} suffix="đ" step={100_000} />
               ) : (

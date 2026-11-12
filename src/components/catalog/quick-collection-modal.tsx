@@ -202,7 +202,7 @@ export function QuickCollectionModal({
         <div className="flex items-center justify-between gap-3 pr-6">
           <div className="flex items-center gap-2">
             <span className="text-title font-extrabold text-primary flex items-center gap-1.5">
-              <Zap size={18} className="text-accent" />
+              <Zap size={18} className="text-accent-text" />
               Tạo nhanh bộ sưu tập
             </span>
             <Badge tone="accent" className="text-caption">&lt; 10s</Badge>

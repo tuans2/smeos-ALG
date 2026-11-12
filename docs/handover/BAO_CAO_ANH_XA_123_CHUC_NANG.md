@@ -1,7 +1,7 @@
-# Báo cáo ánh xạ 123 chức năng bàn giao ALG với mã nguồn smeOS
+# Báo cáo ánh xạ 123 chức năng bàn giao ALG với mã nguồn ALG
 
 Đối tượng đối chiếu: *Checklist bàn giao chức năng nền tảng điện hoa cho ALG* (123 chức năng, 10 nhóm).
-Đối tượng kiểm tra: mã nguồn smeOS tại commit `662a9aab` (nhánh `claude/festive-fermat-9ctmbf`), ngày kiểm tra 04/11/2026.
+Đối tượng kiểm tra: mã nguồn ALG tại commit `662a9aab` (nhánh `claude/festive-fermat-9ctmbf`), ngày kiểm tra 04/11/2026.
 
 ## 1. Phạm vi và phương pháp
 

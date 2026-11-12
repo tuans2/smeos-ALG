@@ -191,7 +191,7 @@ export function PlanVideoAssembly({
             ))
           )}
           {report.warnings.map((w, i) => (
-            <p key={i} className="text-warning">⚠ {w}</p>
+            <p key={i} className="text-warning-text">⚠ {w}</p>
           ))}
         </div>
       )}

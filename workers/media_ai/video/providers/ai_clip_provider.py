@@ -1,5 +1,5 @@
 """Video nhà cung cấp (PO 25/09/2026): mỗi cảnh một clip chuyển động do nhà cung cấp
-sinh từ ảnh sản phẩm, FloraOS ghép clip + bản phối Khu vực C + phụ đề.
+sinh từ ảnh sản phẩm, ALG ghép clip + bản phối Khu vực C + phụ đề.
 
 Thứ tự thử = `payload.provider_order` (bên chọn cho lượt → thứ tự tiệm → mặc
 định veo → kling → runway → luma), chỉ bên có khoá. MỘT nhà cung cấp làm trọn

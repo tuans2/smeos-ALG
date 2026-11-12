@@ -30,7 +30,7 @@ export const proSaasStyle: CopywritingStyleDefinition = {
       },
       tiers: {
         mother: {
-          title: "TRUNG TÂM ĐIỀU HÀNH VẬN HÀNH NỀN TẢNG SMEOS",
+          title: "TRUNG TÂM ĐIỀU HÀNH VẬN HÀNH NỀN TẢNG ALG",
           subtitle: "Định hướng tác vụ, kiểm soát tài nguyên microservices và phân quyền tổ chức toàn hệ thống.",
         },
         industry: {
@@ -78,7 +78,7 @@ export const proSaasStyle: CopywritingStyleDefinition = {
     toolkit: {
       header: {
         badge: "Thư viện giải pháp kinh doanh toàn diện (51 công cụ)",
-        titleDev: "Hệ thống Công cụ & Nghiệp vụ Kinh doanh smeOS",
+        titleDev: "Hệ thống Công cụ & Nghiệp vụ Kinh doanh ALG",
         titleProd: "Trung tâm Nghiệp vụ & Công cụ Vận hành",
         descDev: "Phân loại 51 giải pháp nghiệp vụ chuẩn hóa theo 9 nhóm chức năng vận hành đa tầng.",
         descProd: "Lựa chọn công cụ chuyên dụng để tối ưu hiệu suất kinh doanh và tự động hóa.",
@@ -106,7 +106,7 @@ export const minimalStyle: CopywritingStyleDefinition = {
       },
       tiers: {
         mother: {
-          title: "QUẢN TRỊ NỀN TẢNG SMEOS",
+          title: "QUẢN TRỊ NỀN TẢNG ALG",
           subtitle: "Chọn phân hệ quản lý hệ thống.",
         },
         industry: {

@@ -1,11 +1,11 @@
 ---
 name: testing
 description: >-
-  Quy tắc testing cho FloraOS. Kích hoạt khi agent viết test, debug test failure,
+  Quy tắc testing cho ALG. Kích hoạt khi agent viết test, debug test failure,
   cấu hình Vitest/Playwright, hoặc cần chạy test suite (unit, tenant, e2e).
 ---
 
-# Testing — FloraOS
+# Testing — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 
@@ -32,7 +32,7 @@ describe("myAction", () => {
 })
 ```
 
-### Tenant isolation test (Chuẩn FloraOS: 404 chứ không 403)
+### Tenant isolation test (Chuẩn ALG: 404 chứ không 403)
 ```typescript
 // tests/tenant/<resource>.test.ts — khuôn thật, xem tests/tenant/greeting-card.test.ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
@@ -83,7 +83,7 @@ Bảng tenant mới ⇒ thêm tên bảng vào `TENANT_TABLES` (`tests/helpers/d
 - **Mock ở tầng infra**: Mock repository, không mock domain logic.
 - **Dùng `vi.mock()`** cho external services (AI, storage).
 - **KHÔNG mock** `TenantContext`. Unit test: dựng context thật `{ organizationId: "org-test", ... }`. Tenant test: dùng `createTenant()` (`tests/helpers/fixtures.ts`) — tổ chức thật qua luồng đăng ký.
-- **Test DB** cho tenant test: dùng `floraos_test`, setup bằng `npm run db:test:setup`.
+- **Test DB** cho tenant test: dùng `alg_test`, setup bằng `npm run db:test:setup`.
 
 ### 4. Test Data
 

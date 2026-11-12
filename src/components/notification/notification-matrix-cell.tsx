@@ -90,7 +90,7 @@ export function NotificationMatrixCell({
           onCheckedChange={() => void handleToggle()}
           disabled={isDisabled}
           aria-label={`${cell.enabled ? "Tắt" : "Bật"} thông báo`}
-          className="h-5 w-9"
+          className="relative h-5 w-9 after:absolute after:-inset-x-[6px] after:-inset-y-[5px] [@media(pointer:coarse)]:after:-inset-[14px]"
         />
         {toggling && (
           <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -105,7 +105,7 @@ export function NotificationMatrixCell({
           className="flex items-center"
           title={`🔒 Khóa cứng bởi ${TIER_LABELS[cell.hardLockedBy]}${cell.hardLockReason ? `: ${cell.hardLockReason}` : ""}`}
         >
-          <Lock size={11} className="text-warning" />
+          <Lock size={11} className="text-warning-text" />
         </div>
       )}
 
@@ -117,7 +117,7 @@ export function NotificationMatrixCell({
             variant="ghost"
             size="sm"
             onClick={() => setShowLockMenu(!showLockMenu)}
-            className={`h-6 w-6 p-0 ${isOwnLocked ? "text-warning" : "text-text-muted hover:text-text"}`}
+            className={`h-6 w-6 p-0 ${isOwnLocked ? "text-warning-text" : "text-text-muted hover:text-text"}`}
             title={isOwnLocked ? "Đã khóa cứng — bấm để quản lý" : "Đặt khóa cứng"}
           >
             {isOwnLocked ? <Lock size={11} /> : <Unlock size={11} />}

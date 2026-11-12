@@ -1,4 +1,4 @@
-# smeOS
+# ALG
 
 Nền tảng quản trị và vận hành doanh nghiệp vừa và nhỏ (SME OS).
 
@@ -15,7 +15,7 @@ Hai bên nối nhau qua bảng `generation_jobs` trên Postgres, không qua HTTP
 | # | Tệp | Nội dung |
 |---|---|---|
 | 1 | `docs/kien-truc/TRANG_THAI.md` | Đang ở đâu, làm gì tiếp |
-| 2 | `docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` | Kiến trúc đích, lộ trình P0–P12 |
+| 2 | `docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` | Kiến trúc đích, lộ trình P0–P12 |
 | 3 | `docs/dac-ta/` | Bộ đặc tả 14 tệp — PRD, yêu cầu kỹ thuật, năng lực, UX, frontend, backend, API, cơ sở dữ liệu, tích hợp, dữ liệu mẫu, checklist |
 | 4 | `docs/kien-truc/HARVEST_MANIFEST.md` | Thu hoạch gì từ repo nào, hạng REUSE/EXTEND/ADAPTER/BUILD |
 | 5 | `AGENTS.md` | Quy ước, bản đồ mã, bẫy |

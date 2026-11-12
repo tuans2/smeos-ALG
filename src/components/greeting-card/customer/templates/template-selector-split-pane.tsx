@@ -169,7 +169,7 @@ function TemplateListItem({
       className={`text-[length:inherit] h-auto justify-start font-[inherit] w-full text-left flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-150 cursor-pointer ${
         isActive
           ? "bg-primary/10 border border-primary/25 hover:bg-primary/10"
-          : "hover:bg-surface-muted border border-transparent"
+          : "hover:bg-surface-alt border border-transparent"
       }`}
     >
       {/* Thumbnail */}
@@ -262,7 +262,7 @@ function LivePreviewPane({
         {isLoading ? (
           <div
             style={{ width: PHONE_INNER_W + 16, height: PHONE_INNER_H + 54 }}
-            className="flex flex-col items-center justify-center gap-2 text-text-muted rounded-2xl bg-surface-muted"
+            className="flex flex-col items-center justify-center gap-2 text-text-muted rounded-2xl bg-surface-alt"
           >
             <div
               className="rounded-full border-2 border-primary/30 border-t-primary animate-spin motion-reduce:animate-none"
@@ -346,7 +346,7 @@ function LivePreviewPane({
           <Button variant="primary"
             type="button"
             onClick={onSelect}
-            className="h-auto w-full py-2 px-3 rounded-xl text-body-sm font-bold flex items-center justify-center gap-1.5 bg-primary text-white hover:bg-primary-hover shadow-sm transition-colors cursor-pointer"
+            className="h-auto w-full py-2 px-3 rounded-xl text-body-sm font-bold flex items-center justify-center gap-1.5 bg-primary text-white hover:bg-primary-dark shadow-sm transition-colors cursor-pointer"
           >
             <Sparkles size={13} />
             <span>Chọn mẫu</span>
@@ -420,7 +420,7 @@ export function TemplateSelectorSplitPane({
             </div>
           </div>
 
-          <div className="flex items-center gap-1 p-1 bg-surface-muted rounded-xl self-start sm:self-auto shrink-0">
+          <div className="flex items-center gap-1 p-1 bg-surface-alt rounded-xl self-start sm:self-auto shrink-0">
             {(
               [
                 ["swipe-style", "12 Vuốt Thẻ"],
@@ -463,7 +463,7 @@ export function TemplateSelectorSplitPane({
           </div>
 
           {/* RIGHT: live preview — fills remaining width, fixed height */}
-          <div className="flex-1 overflow-hidden bg-surface-muted/40">
+          <div className="flex-1 overflow-hidden bg-surface-alt/40">
             {activeTpl && (
               <LivePreviewPane
                 tpl={activeTpl}

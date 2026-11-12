@@ -183,7 +183,7 @@ export function TelegramDispatchConnector() {
         </div>
       ) : isConfigured || isLoading ? null : (
         <div className="p-4 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-3">
-          <AlertCircle size={20} className="text-warning shrink-0 mt-0.5" />
+          <AlertCircle size={20} className="text-warning-text shrink-0 mt-0.5" />
           <div className="text-caption text-text leading-relaxed">
             <strong className="block text-body-sm font-bold mb-1">Chưa cấu hình Telegram Bot Token</strong>
             Vui lòng khai báo <code className="font-mono font-bold text-text">TELEGRAM_DISPATCH_BOT_TOKEN</code> trong file biến môi trường <code className="font-mono font-bold text-text">.env</code> để kích hoạt tính năng điều phối tự động.
@@ -193,7 +193,7 @@ export function TelegramDispatchConnector() {
 
       {respData?.error && (
         <div className="p-3 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-2 text-caption text-text">
-          <AlertCircle size={16} className="text-warning shrink-0 mt-0.5" />
+          <AlertCircle size={16} className="text-warning-text shrink-0 mt-0.5" />
           <span>
             <strong>Không quét được nhóm mới:</strong> {respData.error}. Vui lòng liên hệ bộ phận hỗ trợ.
           </span>
@@ -203,7 +203,7 @@ export function TelegramDispatchConnector() {
       <TelegramDirectChatGuide botUsername={bot?.username || "smeos_dieuphoi_bot"} linkCode={linkCode} />
 
       {/* Hướng dẫn 3 bước kết nối */}
-      <div className="p-4 rounded-xl bg-surface-muted border border-border flex flex-col gap-2.5">
+      <div className="p-4 rounded-xl bg-surface-alt border border-border flex flex-col gap-2.5">
         <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
           <MessageSquare size={16} className="text-primary" /> Hoặc dùng nhóm Telegram cho Chi nhánh trong 3 bước:
         </h4>
@@ -236,7 +236,7 @@ export function TelegramDispatchConnector() {
         </div>
 
         {recentChats.length === 0 ? (
-          <div className="p-4 text-center text-caption text-text-muted bg-surface-muted/50 rounded-xl border border-border border-dashed">
+          <div className="p-4 text-center text-caption text-text-muted bg-surface-alt/50 rounded-xl border border-border border-dashed">
             Chưa có nhóm nào gửi mã liên kết. Hãy thêm bot vào nhóm, gửi mã liên kết ở bước 2 rồi bấm quét lại.
           </div>
         ) : (

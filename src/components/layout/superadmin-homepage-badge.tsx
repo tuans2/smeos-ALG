@@ -30,19 +30,19 @@ const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
   },
   TOOLKIT_HOME: {
     label: "🧰 Toolkit Hub",
-    color: "bg-warning-bg text-warning border-warning-border",
+    color: "bg-warning-bg text-warning-text border-warning-border",
   },
   NETWORK_JOURNEY_HOME: {
     label: "Network Home",
-    color: "bg-accent/10 text-accent border-accent/20",
+    color: "bg-accent/10 text-accent-text border-accent/20",
   },
   CONTROL_TOWER: {
     label: "Tháp điều phối đơn",
-    color: "bg-accent/10 text-accent border-accent/20",
+    color: "bg-accent/10 text-accent-text border-accent/20",
   },
   FLOWER_NETWORK_COMMAND_CENTER: {
     label: "Flower Network",
-    color: "bg-accent/10 text-accent border-accent/20",
+    color: "bg-accent/10 text-accent-text border-accent/20",
   },
   STORE_JOURNEY_HOME: {
     label: "Store Home",
@@ -62,7 +62,7 @@ const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
   },
   SALES_WORKSPACE: {
     label: "Sales Workspace",
-    color: "bg-warning-bg text-warning border-warning-border",
+    color: "bg-warning-bg text-warning-text border-warning-border",
   },
   PRODUCT_WORKSPACE: {
     label: "Product Workspace",
@@ -191,7 +191,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
 
       {open && (
         <div
-          role="listbox"
+          role="group"
           aria-label="Chọn tầng / vai trò"
           className="absolute left-0 top-full z-[9999] mt-1.5 w-64 overflow-hidden rounded-xl border border-primary/20 bg-surface shadow-2xl"
         >
@@ -209,7 +209,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
               const isActive = roleKey === preset.roleKey
               const isLoading = loading === preset.roleKey
               return (
-                <li key={preset.roleKey} role="option" aria-selected={isActive}>
+                <li key={preset.roleKey}>
                   <Button variant="ghost"
                     type="button"
                     disabled={isLoading}
@@ -217,6 +217,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
                       if (!isLoading) applyOverride(preset)
                     }}
                     aria-disabled={isLoading}
+                    aria-pressed={isActive}
                     className={cn("h-auto", "justify-start", 
                       "flex w-full items-center gap-2 px-3 py-2 text-left text-caption transition-colors cursor-pointer",
                       isActive

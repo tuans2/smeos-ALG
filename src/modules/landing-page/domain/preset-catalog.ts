@@ -1,6 +1,6 @@
 /**
  * Danh mục Preset và Mẫu thiết kế cho Công cụ 08 — Tạo Landing Page.
- * Hỗ trợ đa ngành theo chuẩn IndustryPluginContract và SSOT FloraOS v3.
+ * Hỗ trợ đa ngành theo chuẩn IndustryPluginContract và SSOT ALG v3.
  */
 
 export type LandingPageType = "STORE_BRAND" | "CHAIN_BRAND" | "CAMPAIGN_SEASONAL" | "SHOWCASE_HIGHLIGHT"

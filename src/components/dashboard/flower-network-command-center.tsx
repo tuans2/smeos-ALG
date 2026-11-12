@@ -175,25 +175,13 @@ export function FlowerNetworkCommandCenter() {
           icon={<CheckCircle className="h-4 w-4 text-success" />}
         />
 
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => setIsSlaModalOpen(true)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault()
-              setIsSlaModalOpen(true)
-            }
-          }}
-          className="cursor-pointer transition-all hover:ring-2 hover:ring-danger/50"
-        >
-          <StatTile
-            label="Rủi ro trễ hẹn"
-            value={<span className="text-danger">{stats.slaRiskOrders}</span>}
-            tip="Đơn có nguy cơ chậm tiến độ cam kết hoặc sự cố chế tác cần can thiệp"
-            icon={<AlertOctagon className="h-4 w-4 text-danger" />}
-          />
-        </div>
+        <StatTile
+          label="Rủi ro trễ hẹn"
+          value={<span className="text-danger">{stats.slaRiskOrders}</span>}
+          tip="Đơn có nguy cơ chậm tiến độ cam kết hoặc sự cố chế tác cần can thiệp"
+          icon={<AlertOctagon className="h-4 w-4 text-danger" />}
+          action={{ label: "Xem đơn rủi ro", onClick: () => setIsSlaModalOpen(true) }}
+        />
       </div>
 
       {/* Tầng 3: Quản lý Mạng lưới & Xưởng đối tác (Management Tier) */}

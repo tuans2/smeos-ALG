@@ -49,7 +49,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
         <div className="flex gap-2">
           <Link
             href={"/cai-dat?tab=BROCHURE_FLOW" as Route}
-            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border border-border bg-bg text-caption font-bold text-text hover:bg-surface-muted transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border border-border bg-bg text-caption font-bold text-text hover:bg-surface-alt transition-colors"
           >
             <Settings size={14} aria-hidden="true" />
             <span>Cài đặt</span>
@@ -93,7 +93,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
               aria-pressed={filter === f.id}
               onClick={() => { setFilter(f.id); onClearFocus?.() }}
               className={`py-0 gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
-                filter === f.id ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"
+                filter === f.id ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-alt"
               }`}
             >
               {f.label}
@@ -125,7 +125,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
           <p role="alert" className="p-4 text-body-sm text-danger">{orders.error.message}</p>
         ) : orders.isLoading ? (
           <div className="p-4 flex flex-col gap-2" aria-busy="true">
-            {[0, 1, 2].map((i) => <div key={i} className="h-12 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" />)}
+            {[0, 1, 2].map((i) => <div key={i} className="h-12 rounded-lg bg-surface-alt animate-pulse motion-reduce:animate-none" />)}
           </div>
         ) : orders.items.length === 0 ? (
           <p className="p-8 text-center text-body-sm text-text-muted">Không có đơn nào trong mục này.</p>

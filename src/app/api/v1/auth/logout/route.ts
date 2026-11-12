@@ -1,4 +1,4 @@
-import { serializeClearedSessionCookie, serializeClearedSsoCookie } from "@/core/http/cookies"
+import { serializeClearedLegacyCookies, serializeClearedSessionCookie, serializeClearedSsoCookie } from "@/core/http/cookies"
 import { jsonResponse } from "@/core/http/response"
 import { logOut } from "@/modules/organization/use-cases/log-out"
 import { sessionTokenFrom } from "@/modules/organization/use-cases/resolve-session"
@@ -16,7 +16,7 @@ export const POST = defineRoute({
       { data: { logged_out: true } },
       {
         headers: {
-          "set-cookie": [serializeClearedSessionCookie(), serializeClearedSsoCookie()],
+          "set-cookie": [serializeClearedSessionCookie(), serializeClearedSsoCookie(), ...serializeClearedLegacyCookies()],
         },
       }
     )

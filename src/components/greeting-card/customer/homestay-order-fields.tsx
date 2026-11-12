@@ -227,7 +227,7 @@ export function HomestayOrderFields({
       />
 
       {/* 3. KHỐI ĐỊA ĐIỂM HOMESTAY & PHƯƠNG TIỆN */}
-      <div className="p-4 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-3">
+      <div className="p-4 rounded-xl border border-border bg-surface-alt/30 flex flex-col gap-3">
         <div className="flex items-center gap-2 text-body-sm font-extrabold text-text">
           <Home size={17} className="text-primary" />
           <span>Địa điểm lưu trú & Đón tiếp</span>

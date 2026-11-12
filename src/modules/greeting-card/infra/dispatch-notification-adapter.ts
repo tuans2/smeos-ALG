@@ -24,7 +24,7 @@ import { ZaloOaTokenVault } from "./platform-secret-repository"
 import { CLAIM_BUTTON_TEXT } from "../use-cases/invite-cards"
 import { publicAppUrl } from "@/lib/public-url"
 
-/** Cửa hàng đối tác có tài khoản smeOS: đăng tin vào phòng Trao đổi nội bộ (nạp động — không vòng phụ thuộc module). */
+/** Cửa hàng đối tác có tài khoản ALG: đăng tin vào phòng Trao đổi nội bộ (nạp động — không vòng phụ thuộc module). */
 async function postToPartnerRoom(ctx: TenantContext, target: DispatchNotificationTarget, partnerOrgId: string, isInvite: boolean): Promise<boolean> {
   try {
     const { postSubcontractMessageToChat } = await import("@/modules/internal-chat/infra/subcontract-chat-channel")
@@ -107,7 +107,7 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
     const isInvite = baseActions.some((a) => a.text === CLAIM_BUTTON_TEXT)
     const chatSent = partnerOrgId && !target.existingTelegramCard ? await postToPartnerRoom(ctx, target, partnerOrgId, isInvite) : false
     const actions = partnerOrgId
-      ? [...baseActions, { text: "💬 Mở trong smeOS", url: `${publicAppUrl()}/tin-nhan?chuoi=${ctx.organizationId}` }]
+      ? [...baseActions, { text: "💬 Mở trong ALG", url: `${publicAppUrl()}/tin-nhan?chuoi=${ctx.organizationId}` }]
       : baseActions
 
     const fullText = `<b>${target.title ?? `🌸 [ĐƠN GIA CÔNG #${target.orderCode}]`}</b>\n\n${target.messageText}`

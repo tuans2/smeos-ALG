@@ -1,6 +1,6 @@
 /**
  * Cẩm nang Cố vấn Chiến lược Cửa hàng Hoa (Senior Florist Advisor Catalog)
- * SSOT Dữ liệu Nghiệp vụ Thực tế Ngành Hoa — FloraOS Core
+ * SSOT Dữ liệu Nghiệp vụ Thực tế Ngành Hoa — ALG Core
  */
 
 export interface AdvisorOptionItem {

@@ -9,7 +9,7 @@ export function VietQrSample({ bankId, accountNo, accountName }: { bankId: strin
   }
   const url = generateVietQrUrl({ bankId, accountNo, accountName, amount: 0, description: "DON MAU" })
   return (
-    <figure className="sm:col-span-2 flex items-center gap-3 rounded-xl border border-border bg-surface-muted p-3">
+    <figure className="sm:col-span-2 flex items-center gap-3 rounded-xl border border-border bg-surface-alt p-3">
       {/* eslint-disable-next-line @next/next/no-img-element -- ảnh do VietQR sinh theo tài khoản, không qua bộ tối ưu ảnh */}
       <img src={url} alt="Mã VietQR mẫu của tài khoản nhận tiền" width={120} height={120} className="h-30 w-30 rounded-lg bg-surface object-contain" />
       <figcaption className="text-caption text-text-muted">

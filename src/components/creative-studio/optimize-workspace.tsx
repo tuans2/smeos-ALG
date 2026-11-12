@@ -294,7 +294,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
                   >
                     <Sparkles size={18} strokeWidth={2} className="mr-2" />
                     {optimizationEngine === "local_studio"
-                      ? "Tiến hành tối ưu ảnh M04a (Thuật toán Studio Cục bộ)"
+                      ? "Tiến hành tối ưu ảnh (Studio cục bộ)"
                       : `Nâng cấp qua Cloud AI (${ENHANCER_PROVIDERS.find((p) => p.id === selectedEnhancerProvider)?.name || "Provider"})`}
                   </Button>
 
@@ -374,8 +374,8 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
           {requiresWarning && approvalState !== "approved" && (
             <div className="w-full rounded-xl border-[1.5px] border-warning/30 bg-warning/10 p-4">
               <div className="flex items-start gap-2.5">
-                <AlertTriangle size={16} strokeWidth={2} className="mt-0.5 flex-shrink-0 text-warning" />
-                <div className="text-body-sm leading-relaxed text-warning font-medium">
+                <AlertTriangle size={16} strokeWidth={2} className="mt-0.5 flex-shrink-0 text-warning-text" />
+                <div className="text-body-sm leading-relaxed text-warning-text font-medium">
                   Lưu ý chất lượng: Identity Guard phát hiện sự khác biệt nhẹ giữa ảnh gốc và ảnh sau tối ưu. Vui lòng kiểm tra kỹ trước khi duyệt.
                 </div>
               </div>

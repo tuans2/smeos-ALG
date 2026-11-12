@@ -89,6 +89,7 @@ acceptance:
 |---|---|---|---|---|
 | Card div onClick | Chuẩn hóa trợ năng T1.7 | Đổi sang `<button role="radio">` trong `radiogroup` | Hỗ trợ bàn phím, screen reader và focus ring chuẩn | `bo-may/page.tsx` |
 | Bấm chuyển là gọi API ngay | Hành động tác động lớn cần xác nhận 03a §22 | Thêm `Dialog` Base-UI giải thích rõ tác động | Tránh bấm nhầm làm thay đổi luồng nhận diện ảnh của cả tiệm | `bo-may/page.tsx` |
+| Thẻ chọn bộ máy tự dựng `role="radio"` | Nhóm lựa chọn chuẩn | `RadioGroup` + `RadioGroupItem`, mỗi thẻ là `<label>` | Bàn phím/ARIA chuẩn, bỏ xử lý phím tự viết (Đợt 4, D4-09) | `bo-may/page.tsx` |
 
 ## 13. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

@@ -1,4 +1,4 @@
-import { LEGACY_SSO_COOKIE, readCookie, SESSION_COOKIE, SSO_COOKIE } from "./cookies"
+import { LEGACY_SESSION_COOKIES, LEGACY_SSO_COOKIES, readCookie, SESSION_COOKIE, SSO_COOKIE } from "./cookies"
 import { AppError } from "./errors"
 
 /**
@@ -81,7 +81,7 @@ export function needsOriginCheck(request: Request, pathname: string): boolean {
   const relative = pathname.startsWith(`${API_V1}/`) ? pathname.slice(API_V1.length + 1) : null
   if (relative !== null && Object.keys(ORIGIN_CHECK_EXEMPT_PREFIXES).some((prefix) => relative.startsWith(prefix))) return false
   if (relative !== null && AUTH_ENTRY_PATHS.includes(relative)) return true
-  return [SESSION_COOKIE, SSO_COOKIE, LEGACY_SSO_COOKIE].some((name) => readCookie(request, name) !== null)
+  return [SESSION_COOKIE, SSO_COOKIE, ...LEGACY_SESSION_COOKIES, ...LEGACY_SSO_COOKIES].some((name) => readCookie(request, name) !== null)
 }
 
 /** `null` khi hợp lệ; ngược lại là lý do (để ghi log). */

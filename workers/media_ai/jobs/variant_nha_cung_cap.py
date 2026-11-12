@@ -4,13 +4,13 @@ Khi job chạy trên đám mây (`media.variant.cloud`, `compose_mode=relight` �
 định của nhánh đám mây), MỌI bước chất lượng do nhà cung cấp làm:
 
     SEGMENTING            tách nền Master          → provider.tach_nen
-    (FloraOS)             đặt bó hoa vào khung đích theo kịch bản (bố cục là ý
-                          định của FloraOS) + làm mờ cẳng tay chạm mép ảnh gốc
+    (ALG)             đặt bó hoa vào khung đích theo kịch bản (bố cục là ý
+                          định của ALG) + làm mờ cẳng tay chạm mép ảnh gốc
     GENERATING_BACKGROUND dựng cảnh + ghép + chỉnh sáng → provider.dung_canh
     (upscale=2x)          tăng nét cả ảnh             → provider.tang_net
     VERIFYING             tách nền ảnh ra + đo hình dáng / cấu trúc / màu
                           (`image/do_giu_nguyen.py`) — nhà cung cấp không trả
-                          phép đo nào, cổng vẫn là của FloraOS
+                          phép đo nào, cổng vẫn là của ALG
 
 Một nhà cung cấp làm trọn các bước của mình; bước nào lỗi → thử NHÀ CUNG CẤP KẾ
 TIẾP từ đầu (vai trò tương đương, thứ tự ở `providers/scene/registry.py`). Mọi
@@ -100,7 +100,7 @@ def _chay_mot_ben(
     rgba = master.convert("RGBA")
     rgba.putalpha(alpha)
 
-    # Chuẩn bị đầu vào theo Ý ĐỊNH FloraOS: bố cục + làm mờ cẳng tay chạm mép.
+    # Chuẩn bị đầu vào theo Ý ĐỊNH ALG: bố cục + làm mờ cẳng tay chạm mép.
     rgba_ghep, alpha_ghep, mo_mep = lam_mo_mep_cat(rgba, alpha)
     upscale = y_dinh.get("upscale") or "none"
     he_so_xuat = 2 if upscale == "2x" else 1

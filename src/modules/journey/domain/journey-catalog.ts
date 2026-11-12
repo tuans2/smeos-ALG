@@ -1,6 +1,6 @@
 /**
  * Danh mục Journey tĩnh cho 3 Role cấp cao.
- * Nguồn đặc tả: FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§5.3, §7, §11)
+ * Nguồn đặc tả: ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§5.3, §7, §11)
  *
  * Luật Clean Architecture: Không import React, không import Prisma.
  * UX Lint R8: Không hiển thị mã kỹ thuật (M01a, M04b, RBAC...) trên label/description.
@@ -34,7 +34,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   {
     id: "view-store-overview",
     goal: "Xem báo cáo",
-    description: "Xem doanh thu, số đơn hàng và hoạt động trên smeOS của cửa hàng.",
+    description: "Xem doanh thu, số đơn hàng và hoạt động trên ALG của cửa hàng.",
     icon: "BarChart3",
     roleScope: "STORE",
     category: "SINGLE",
@@ -335,8 +335,8 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "customer-service-chatbot",
-    goal: "Hỏi trợ lý smeOS",
-    description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng smeOS.",
+    goal: "Hỏi trợ lý ALG",
+    description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng ALG.",
     icon: "Bot",
     badgeText: "Trợ lý AI",
     roleScope: "STORE",

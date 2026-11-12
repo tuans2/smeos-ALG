@@ -2,11 +2,11 @@
 
 > [!NOTE]
 > **NGUỒN SỰ THẬT DUY NHẤT (OSOT) CHO LỘ TRÌNH VÀ CÁC PHA DỰ ÁN**  
-> • Bảng đặc tả đầy đủ các pha (P0–P12, Tuyến B P13–P23, Tuyến C AI-1–AI-4) nằm tại **Mục 15** của [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](../kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md#15-kế-hoạch-thực-thi-tổng-thể).  
+> • Bảng đặc tả đầy đủ các pha (P0–P12, Tuyến B P13–P23, Tuyến C AI-1–AI-4) nằm tại **Mục 15** của [`docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md`](../kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md#15-kế-hoạch-thực-thi-tổng-thể).  
 > • Tiến độ thực thi chi tiết của từng pha được quản lý tập trung tại: [`docs/dac-ta/Checklist_Thuc_Thi.md`](Checklist_Thuc_Thi.md).  
 > Tệp này chỉ đóng vai trò tóm tắt nhanh các mốc điều chỉnh sau rà soát.
 
-Bảng pha đầy đủ nằm ở `../kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 15 — hai tuyến, P0–P12 là nền tảng và module lõi, P13–P23 là bộ tính năng hoàn chỉnh. Tài liệu này không chép lại bảng đó; nó ghi những gì đã thay đổi kể từ khi bảng ấy được viết.
+Bảng pha đầy đủ nằm ở `../kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` mục 15 — hai tuyến, P0–P12 là nền tảng và module lõi, P13–P23 là bộ tính năng hoàn chỉnh. Tài liệu này không chép lại bảng đó; nó ghi những gì đã thay đổi kể từ khi bảng ấy được viết.
 
 ## Trạng thái
 
@@ -74,7 +74,7 @@ Tuyến C, bốn đợt. Chúng cắt ngang mọi pha chứ không nối tiếp 
 | AI-3 | `flower_taxonomy` và `knowledge_chunks` trên `pgvector`, truy hồi kèm thứ bậc nguồn sự thật | P23 |
 | AI-4 | Sự kiện miền, `content_features`, bốn pha học | — |
 
-AI-1 đứng trước P16 vì P16 là lần đầu FloraOS gọi một loại nhà cung cấp mới. Làm P16 trước nghĩa là tên nhà cung cấp ảnh đi vào mã của `SocialFlow` trước khi có cổng, và rút nó ra sau đó đắt hơn đặt đúng chỗ ngay từ đầu.
+AI-1 đứng trước P16 vì P16 là lần đầu ALG gọi một loại nhà cung cấp mới. Làm P16 trước nghĩa là tên nhà cung cấp ảnh đi vào mã của `SocialFlow` trước khi có cổng, và rút nó ra sau đó đắt hơn đặt đúng chỗ ngay từ đầu.
 
 ## Quyết định
 

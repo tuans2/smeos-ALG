@@ -25,7 +25,7 @@ export function MessageItem({
   if (message.messageType === "SYSTEM_NOTICE") {
     return (
       <div className="flex justify-center my-2">
-        <span className="inline-block bg-surface-elevated text-text-muted text-caption px-3 py-1.5 rounded-2xl font-medium border border-border whitespace-pre-line max-w-lg">
+        <span className="inline-block bg-surface text-text-muted text-caption px-3 py-1.5 rounded-2xl font-medium border border-border whitespace-pre-line max-w-lg">
           {message.content}
         </span>
       </div>

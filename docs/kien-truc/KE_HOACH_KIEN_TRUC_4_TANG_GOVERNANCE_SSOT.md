@@ -12,7 +12,7 @@
 ## 1. MỤC TIÊU VÀ NGUYÊN TẮC BẤT BIẾN
 
 ### 1.1. Mục tiêu
-Chuyển đổi toàn diện các hệ thống cấu hình, quy tắc vận hành và định mức của smeOS từ mô hình "Cửa hàng đơn lẻ/phẳng" sang mô hình **Quản trị Phân tầng Thác Đổ 4 Cấp (4-Tier Cascading Governance)** đã chuẩn hóa thành công ở hệ thống Thông báo (Notification).
+Chuyển đổi toàn diện các hệ thống cấu hình, quy tắc vận hành và định mức của ALG từ mô hình "Cửa hàng đơn lẻ/phẳng" sang mô hình **Quản trị Phân tầng Thác Đổ 4 Cấp (4-Tier Cascading Governance)** đã chuẩn hóa thành công ở hệ thống Thông báo (Notification).
 
 ### 1.2. 4 Tầng Quản trị (The 4 Governance Tiers)
 1. **Tier 1 — SaaS Mother (Nền tảng / Console `/van-hanh`)**:

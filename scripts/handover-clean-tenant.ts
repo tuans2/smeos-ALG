@@ -170,7 +170,7 @@ function getDbTargetInfo(): { target: string; isRemote: boolean } {
 
 export async function runHandoverCleanPipeline(options: HandoverCleanOptions = {}): Promise<void> {
   console.log("================================================================================")
-  console.log("🚀 [FLORAOS] KHỞI ĐỘNG QUY TRÌNH BÀN GIAO SẠCH (HANDOVER CLEAN PIPELINE)")
+  console.log("🚀 [ALG] KHỞI ĐỘNG QUY TRÌNH BÀN GIAO SẠCH (HANDOVER CLEAN PIPELINE)")
   console.log("================================================================================")
 
   const dbInfo = getDbTargetInfo()

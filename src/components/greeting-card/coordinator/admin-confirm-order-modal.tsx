@@ -145,7 +145,7 @@ export function AdminConfirmOrderModal({
               }
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-success/40"
+              className="w-full rounded-xl border border-border bg-surface-alt p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-success/40"
             />
           </div>
         ) : (
@@ -176,7 +176,7 @@ export function AdminConfirmOrderModal({
               placeholder="Nhập hoặc chỉnh sửa lý do từ chối đơn (bắt buộc)..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-danger/40"
+              className="w-full rounded-xl border border-border bg-surface-alt p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-danger/40"
             />
           </div>
         )}

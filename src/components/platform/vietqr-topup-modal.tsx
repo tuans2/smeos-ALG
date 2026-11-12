@@ -119,7 +119,7 @@ export function VietQrTopupModal({
             <Badge tone="success" className="text-caption">Napas 247</Badge>
           </div>
           <div className="flex items-center gap-1.5 text-caption text-text-muted">
-            <Clock size={13} className="text-warning" />
+            <Clock size={13} className="text-warning-text" />
             Hết hạn sau: <span className="font-mono font-bold text-text">{formattedTime}</span>
           </div>
         </div>

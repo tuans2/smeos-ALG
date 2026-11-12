@@ -223,12 +223,12 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       }
     />
     {preview && (
-      <p className="bg-warning-bg px-4 py-2 text-center text-body-sm text-warning">
+      <p className="bg-warning-bg px-4 py-2 text-center text-body-sm text-warning-text">
         Bạn đang xem trước link của khách — thao tác ở đây không được lưu cho khách.
       </p>
     )}
     {family.redirecting && (
-      <p role="status" className="bg-surface-muted px-4 py-2 text-center text-body-sm text-text">
+      <p role="status" className="bg-surface-alt px-4 py-2 text-center text-body-sm text-text">
         Đang mở đơn bạn đang làm dở…
       </p>
     )}
@@ -236,7 +236,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       <OrderHistorySheet members={family.members} currentSendCode={session.sendCode} />
     )}
     {contactNote && (
-      <p role="status" className="bg-surface-muted px-4 py-2 text-center text-body-sm text-text">
+      <p role="status" className="bg-surface-alt px-4 py-2 text-center text-body-sm text-text">
         {contactNote}
       </p>
     )}
@@ -332,7 +332,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       </div>
 
       <footer className="text-center text-caption text-text-muted mt-8">
-        Đặt hàng trực tuyến · Vận hành bởi smeOS
+        Đặt hàng trực tuyến · Vận hành bởi ALG
       </footer>
     </div>
     </CustomerJourneyContext.Provider>

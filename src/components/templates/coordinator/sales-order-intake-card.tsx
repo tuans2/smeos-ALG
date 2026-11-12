@@ -48,7 +48,7 @@ export function SalesOrderIntakeCard({
       <div className="flex items-center justify-between border-b border-dashed border-border pb-3">
         <div className="flex items-center gap-2">
           <ShoppingCart size={16} className="text-danger-text" />
-          <span className="text-caption font-bold text-text-muted">HỒ SƠ TIẾP NHẬN SALES (T01)</span>
+          <span className="text-caption font-bold text-text-muted">HỒ SƠ TIẾP NHẬN SALES</span>
           <span className="text-body-sm font-extrabold text-text">#{orderCode}</span>
         </div>
         <div className="flex items-center gap-2">

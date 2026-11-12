@@ -1,7 +1,7 @@
 /**
  * PRODUCT & INVENTORY 4-TIER HIERARCHY SSOT CONTRACT
  *
- * Định nghĩa chuẩn hóa phân cấp dữ liệu Sản phẩm & Kho cho 4 tầng của smeOS:
+ * Định nghĩa chuẩn hóa phân cấp dữ liệu Sản phẩm & Kho cho 4 tầng của ALG:
  * - Tầng 1 (SaaS Mother): Thu thập & giám sát toàn diện dữ liệu sản phẩm/kho toàn nền tảng.
  * - Tầng 2 (SaaS Ngành): Thu thập dữ liệu & chuẩn hóa theo từng ngành hàng (Taxonomy, BOM, Mẫu).
  * - Tầng 3 (ChainOS): Thu thập, quản lý dữ liệu chuỗi (bộ sưu tập chuỗi + chi nhánh/đối tác trực thuộc).

@@ -19,7 +19,7 @@ interface CatalogCoverPosterProps {
 
 function cleanDisplayUrl(url?: string): string {
   if (!url) return ""
-  return url.replace(/^https?:\/\/(localhost:\d+|127\.0\.0\.1:\d+)/, "smeos.vn").replace(/^https?:\/\//, "")
+  return url.replace(/^https?:\/\/(localhost:\d+|127\.0\.0\.1:\d+)/, "avilotusgroup.com").replace(/^https?:\/\//, "")
 }
 
 /**

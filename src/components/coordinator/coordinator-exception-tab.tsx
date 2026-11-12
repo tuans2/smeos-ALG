@@ -113,7 +113,7 @@ export function CoordinatorExceptionTab({
 
       {order.stage !== "COMPLETED" && order.stage !== "CANCELLED" && (
         <div className="p-3 rounded-xl border border-dashed border-danger/40 flex flex-col gap-2">
-          <span className="font-bold text-text">Mở sự cố mới (T22)</span>
+          <span className="font-bold text-text">Mở sự cố mới</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <NativeSelect
               value={newException.type}

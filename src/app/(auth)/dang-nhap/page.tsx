@@ -1,11 +1,13 @@
 "use client"
 
-// Trang xác thực smeOS — Hỗ trợ 3 luồng:
+// Trang xác thực ALG — Hỗ trợ 3 luồng:
 // 1. Đăng nhập tài khoản có sẵn (POST /api/v1/auth/login)
 // 2. Đăng ký tài khoản chính thức (POST /api/v1/auth/signup)
 // 3. Đăng ký dùng thử, chờ quản trị viên duyệt (POST /api/v1/auth/instant-trial)
 // Cấp session cookie và điều hướng vào Dashboard ("/").
 
+import Image from "next/image"
+import { BRAND } from "@/lib/brand"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 import { Suspense, useState, useEffect } from "react"
@@ -33,20 +35,23 @@ export default function DangNhapPage() {
   }, [])
 
   return (
-    <div className="relative flex min-h-dvh flex-col justify-center overflow-hidden bg-bg px-[20px] sm:px-[30px] py-9">
+    <main className="relative flex min-h-dvh flex-col justify-center overflow-hidden bg-bg px-[20px] sm:px-[30px] py-9">
       <svg width="260" height="260" viewBox="0 0 260 260" className="pointer-events-none absolute -right-24 -top-24 opacity-50">
-        <circle cx="130" cy="130" r="130" fill="var(--color-flora-leaf)" />
+        <circle cx="130" cy="130" r="130" fill="var(--color-primary-muted)" />
       </svg>
 
       <div className={`mx-auto flex w-full ${cheDo === "dang-nhap" ? "max-w-sm" : "max-w-xl"} flex-col gap-6 transition-all duration-300`}>
         <div className="flex flex-col items-center gap-2.5">
-          <svg width="50" height="50" viewBox="0 0 100 100">
-            <path d="M50,50 C48.5,45 41.5,38 50,32 C58.5,38 51.5,45 50,50 Z" fill="var(--color-flora-petal)" transform="rotate(258 50 50)" />
-            <path d="M50,50 C47,40 33,26 50,14 C67,26 53,40 50,50 Z" fill="var(--color-flora-green)" />
-            <path d="M50,50 C47,40 33,26 50,14 C67,26 53,40 50,50 Z" fill="var(--color-flora-sage)" transform="rotate(140 50 50)" />
-            <circle cx="50" cy="50" r="3" fill="var(--color-flora-green)" />
-          </svg>
-          <div className="text-display-xl font-extrabold tracking-tight text-primary">smeOS</div>
+          {/* Logo AVI Lotus Group (bộ nhận diện ALG, logo trong public/brand/avi-lotus) */}
+          <Image
+            src={BRAND.logo.horizontalDark}
+            alt={BRAND.companyName}
+            width={BRAND.logo.horizontalSize.width}
+            height={BRAND.logo.horizontalSize.height}
+            priority
+            className="h-12 w-auto"
+          />
+          <h1 className="text-display-xl font-extrabold tracking-tight text-primary">{BRAND.productName}</h1>
           <div className="text-center text-body-sm text-text-muted">
             {cheDo === "dung-thu"
               ? "Đăng ký dùng thử Cửa hàng mẫu theo ngành nghề — quản trị viên duyệt trước khi dùng"
@@ -88,7 +93,7 @@ export default function DangNhapPage() {
             className={`px-0 h-auto cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               cheDo === "dung-thu"
                 ? "bg-primary text-text-inverse shadow-xs font-extrabold hover:bg-primary"
-                : "text-primary hover:text-primary-hover font-semibold"
+                : "text-primary hover:text-primary-dark font-semibold"
             }`}
           >
             <Zap size={14} className={cheDo === "dung-thu" ? "text-text-inverse" : "text-primary"} />
@@ -117,8 +122,8 @@ export default function DangNhapPage() {
       </div>
 
       <div className="pb-1 pt-9 text-center text-caption text-text-muted">
-        © smeOS — Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ
+        © {BRAND.productName} — Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ
       </div>
-    </div>
+    </main>
   )
 }

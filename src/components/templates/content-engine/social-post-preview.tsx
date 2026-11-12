@@ -202,7 +202,7 @@ function InstagramPreview({
             </div>
           </div>
           <div>
-            <div className="text-caption font-bold leading-none">cuahang.smeos</div>
+            <div className="text-caption font-bold leading-none">cuahang.alg</div>
             <div className="text-caption text-text-muted mt-0.5">{shopName}</div>
           </div>
         </div>
@@ -246,7 +246,7 @@ function InstagramPreview({
 
         {/* Caption */}
         <div className="text-caption leading-relaxed space-y-1">
-          <span className="font-bold mr-1.5">cuahang.smeos</span>
+          <span className="font-bold mr-1.5">cuahang.alg</span>
           <span className="font-semibold">{post.headline}</span>
           <div className="text-text whitespace-pre-line mt-1">
             {post.bodyText}
@@ -461,7 +461,7 @@ function ZaloOAPreview({
           </div>
 
           {post.cta && (
-            <div className="text-caption font-bold text-warning bg-warning-bg p-2.5 rounded-lg border border-warning-border/60">
+            <div className="text-caption font-bold text-warning-text bg-warning-bg p-2.5 rounded-lg border border-warning-border/60">
               💬 {post.cta}
             </div>
           )}

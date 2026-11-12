@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Standard Core Fields Registry
+ * ALG Inputs Architecture v2.1 — Standard Core Fields Registry
  *
  * Implements standard G1 Core Fields according to §8.1:
  * - org_legal: Store name, address, phone, tax code, timezone

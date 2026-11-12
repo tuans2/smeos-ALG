@@ -90,7 +90,7 @@ export function FloristTicketCard({
           </div>
 
           {notes && (
-            <div className="rounded bg-warning-bg border border-warning/25 p-2 text-caption text-warning font-medium">
+            <div className="rounded bg-warning-bg border border-warning/25 p-2 text-caption text-warning-text font-medium">
               Lưu ý khách: {notes}
             </div>
           )}

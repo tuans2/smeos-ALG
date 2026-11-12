@@ -115,7 +115,7 @@ describe("Print Use Cases", () => {
       mockRepo
     )
 
-    expect(exportRes.fileName).toContain("smeos_print_a6")
+    expect(exportRes.fileName).toContain("alg_print_a6")
     expect(exportRes.mimeType).toBe("application/pdf")
     expect(exportRes.base64).toContain("data:application/pdf")
     expect(exportRes.widthMm).toBe(105 + 6) // with bleed 3mm each side

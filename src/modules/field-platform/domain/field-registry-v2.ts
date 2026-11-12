@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Field Registry v2 Standard Types
+ * ALG Inputs Architecture v2.1 — Field Registry v2 Standard Types
  *
  * Implements 4-axis classification, sensitivity S0-S3, data layers L1-L4,
  * AI permissions, propagation, and PII compliance attributes.

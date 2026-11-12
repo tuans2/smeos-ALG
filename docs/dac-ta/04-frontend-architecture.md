@@ -6,7 +6,7 @@ Theo `LocalBudd`, để hai repo dùng chung được component và người là
 
 | Lớp | Chọn | Vì sao |
 |---|---|---|
-| Khung | Next.js 16, App Router | Cả `LocalBudd` và `smeOS` đang dùng |
+| Khung | Next.js 16, App Router | Cả `LocalBudd` và `ALG` đang dùng |
 | Giao diện | React 19 | Server Components mặc định |
 | Kiểu dáng | Tailwind CSS 4 | Token ngữ nghĩa tập trung |
 | Component | Base UI (`@base-ui/react` 1.9.0) | Chuẩn hoá theo ADR-011, không phụ thuộc Radix |

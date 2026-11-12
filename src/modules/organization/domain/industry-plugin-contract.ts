@@ -1,7 +1,7 @@
 /**
  * industry-plugin-contract.ts — Hợp đồng Đặc tả Ngành SSOT (Industry Plugin Contract)
  *
- * Tiêu chuẩn kiến trúc cấp doanh nghiệp: Mọi ngành muốn vận hành trên smeOS
+ * Tiêu chuẩn kiến trúc cấp doanh nghiệp: Mọi ngành muốn vận hành trên ALG
  * đều bắt buộc phải triển khai đầy đủ 6 khối thành phần chuẩn mực.
  *
  * Zero architectural leaks: Domain thuần, không import Prisma, không phụ thuộc client.

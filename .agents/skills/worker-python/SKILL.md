@@ -1,17 +1,17 @@
 ---
 name: worker-python
 description: >-
-  Quy tắc phát triển Python workers cho FloraOS. Kích hoạt khi agent tạo/sửa
+  Quy tắc phát triển Python workers cho ALG. Kích hoạt khi agent tạo/sửa
   code trong workers/, bao gồm vision worker, media_ai worker (image, video,
   audio, guard), hoặc job system, hoặc bất kỳ logic nào liên quan đến
   background job processing.
 ---
 
-# Python Workers — FloraOS
+# Python Workers — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 
-## Quick Reference (Khuôn chuẩn Worker FloraOS)
+## Quick Reference (Khuôn chuẩn Worker ALG)
 
 ### Job Handler & 3 Trục Trạng thái (status / stage / result)
 

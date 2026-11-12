@@ -1,6 +1,6 @@
 """Khung adapter chung cho nhà cung cấp HẬU CẢNH của M04b (Đợt 1, 24/09/2026).
 
-Hợp đồng Chặng 06c nói bằng Ý ĐỊNH của FloraOS (khung, ánh sáng, bảng màu, cỡ
+Hợp đồng Chặng 06c nói bằng Ý ĐỊNH của ALG (khung, ánh sáng, bảng màu, cỡ
 cảnh, seed) — không bằng tên tham số của Stability hay bên nào. Mỗi nhà cung
 cấp là một adapter:
 
@@ -78,12 +78,12 @@ class BackgroundRequest:
     palette: tuple[str, ...] = ()
     shot: str | None = None
     seed: int | None = None
-    # `style` (Đợt 2, 25/09/2026) — Ý ĐỊNH "phong cách hình ảnh" của FloraOS
+    # `style` (Đợt 2, 25/09/2026) — Ý ĐỊNH "phong cách hình ảnh" của ALG
     # (`PHONG_CACH`: natural / cinematic / film / vivid), KHÔNG phải tên
     # `style_preset` của nhà cung cấp nào. Adapter tự dịch (Stability:
     # `STYLE_SANG_PRESET`); không hỗ trợ hoặc giá trị lạ thì ghi `bo_qua`.
     style: str | None = None
-    # `quality` (Đợt 3, 25/09/2026): "standard" | "high" — ý định FloraOS.
+    # `quality` (Đợt 3, 25/09/2026): "standard" | "high" — ý định ALG.
     # Stability: high = Stable Image Ultra. Bên không có bậc cao hơn ghi `bo_qua`.
     quality: str = "standard"
 

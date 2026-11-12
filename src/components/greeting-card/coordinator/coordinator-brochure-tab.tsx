@@ -120,7 +120,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
             {BUCKETS.map((b) => (
               <Button variant="outline" key={b} type="button" aria-pressed={bucket === b} onClick={() => setBucket(bucket === b ? null : b)}
                 className={`py-0 gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${
-                  bucket === b ? "border-primary bg-primary text-white hover:bg-primary" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger hover:bg-danger-bg" : "border-border text-text-muted hover:bg-surface-muted"
+                  bucket === b ? "border-primary bg-primary text-white hover:bg-primary" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger hover:bg-danger-bg" : "border-border text-text-muted hover:bg-surface-alt"
                 }`}>
                 {WORK_BUCKET_LABEL[b]} ({counts[b]})
               </Button>
@@ -160,7 +160,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
               <>
                 {dayChips.map((c) => (
                   <Button variant="outline" key={c.label} type="button" aria-pressed={day === c.id} onClick={() => setDay(c.id)}
-                    className={`py-0 gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${day === c.id ? "border-primary bg-primary text-white hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"}`}>
+                    className={`py-0 gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${day === c.id ? "border-primary bg-primary text-white hover:bg-primary" : "border-border text-text-muted hover:bg-surface-alt"}`}>
                     {c.label}
                   </Button>
                 ))}
@@ -226,7 +226,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
         </div>
       )}
       {board.data?.truncated && (
-        <p role="status" className="text-center text-caption text-warning">Có quá nhiều đơn — chọn một ngày giao để xem đủ.</p>
+        <p role="status" className="text-center text-caption text-warning-text">Có quá nhiều đơn — chọn một ngày giao để xem đủ.</p>
       )}
       {board.error && <p role="alert" className="text-center text-caption text-danger">{board.error.message}</p>}
 

@@ -1,6 +1,6 @@
 > [!NOTE]
 > **Tài liệu lịch sử — đã được thay thế bởi bản v2.0.**
-> Đây là đặc tả gốc v1.0 của Market Intelligence Engine, dùng làm cơ sở đối chiếu kiến trúc và cho kế hoạch Đợt A (xem `../../claude/ke-hoach-market-intelligence-dot-a-19-09-2026.md` trong project claude.ai, hoặc lịch sử trao đổi liên quan). Bản đầy đủ, cập nhật và có hiệu lực dẫn hướng là **[`FloraOS-Intelligence-Engine_FINAL_v2.0.md`](./FloraOS-Intelligence-Engine_FINAL_v2.0.md)** (gộp cả Market Intelligence và Product Intelligence). Giữ lại tệp này để truy vết quyết định — không dùng làm nguồn quyết định mới.
+> Đây là đặc tả gốc v1.0 của Market Intelligence Engine, dùng làm cơ sở đối chiếu kiến trúc và cho kế hoạch Đợt A (xem `../../claude/ke-hoach-market-intelligence-dot-a-19-09-2026.md` trong project claude.ai, hoặc lịch sử trao đổi liên quan). Bản đầy đủ, cập nhật và có hiệu lực dẫn hướng là **[`ALG-Intelligence-Engine_FINAL_v2.0.md`](./ALG-Intelligence-Engine_FINAL_v2.0.md)** (gộp cả Market Intelligence và Product Intelligence). Giữ lại tệp này để truy vết quyết định — không dùng làm nguồn quyết định mới.
 >
 > Nạp vào `docs/dac-ta/` ngày 19/09/2026.
 

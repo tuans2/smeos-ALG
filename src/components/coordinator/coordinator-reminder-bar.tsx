@@ -108,7 +108,7 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
                 totalCritical > 0
                   ? "bg-danger text-white shadow-xs"
                   : totalOverdue > 0
-                  ? "bg-warning text-white"
+                  ? "bg-warning text-text"
                   : hasReminders
                   ? "bg-primary text-white"
                   : "bg-surface-alt text-text-muted"
@@ -168,7 +168,7 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
               onClick={() => setIsSettingsOpen(true)}
               className="h-8 px-2.5 text-caption gap-1.5 border-border hover:bg-surface"
               title="Cài đặt chính sách mốc nhắc"
-              aria-label="Cài đặt chính sách mốc nhắc"
+              aria-label="Cài đặt mốc nhắc"
             >
               <Settings2 size={13} />
               <span className="hidden sm:inline">Cài đặt mốc</span>
@@ -195,7 +195,7 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
                 onClick={() => setIsExpanded(!isExpanded)}
                 className={`h-8 px-3 text-caption font-bold gap-1.5 ${
                   totalCritical > 0
-                    ? "bg-danger hover:bg-danger-dark text-white"
+                    ? "bg-danger hover:bg-danger-text text-white"
                     : "bg-primary hover:bg-primary-dark text-white"
                 }`}
               >

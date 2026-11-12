@@ -42,10 +42,10 @@ function statusText(view: SubcontractCardView): { key: ChatKey; tone: "warning" 
 }
 
 const TONE_CLASS = {
-  warning: "bg-warning-subtle text-warning-text",
-  primary: "bg-primary-subtle text-primary",
-  success: "bg-success-subtle text-success",
-  muted: "bg-surface-muted text-text-muted",
+  warning: "bg-warning-bg text-warning-text",
+  primary: "bg-primary-muted text-primary",
+  success: "bg-success-bg text-success",
+  muted: "bg-surface-alt text-text-muted",
 } as const
 
 function deadlineText(iso: string | null): string | null {

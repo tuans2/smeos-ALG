@@ -3,7 +3,7 @@
 > **Đường dẫn**: `/`
 > **Nhóm Sidebar**: Không thuộc nhóm (Mục gốc đầu tiên)
 > **Trạng thái Production**: ✅ **Đang hoạt động**
-> **Tài liệu SSOT liên quan**: `docs/dac-ta/03b-role-ux.md`, `docs/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md`
+> **Tài liệu SSOT liên quan**: `docs/dac-ta/03b-role-ux.md`, `docs/ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md`
 
 ---
 

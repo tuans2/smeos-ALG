@@ -64,7 +64,7 @@ export function PhotoApprovalCard({
 
   if (feedbackSent) {
     return (
-      <div role="status" className="p-4 rounded-xl border border-border bg-surface-muted flex flex-col gap-1 mt-1">
+      <div role="status" className="p-4 rounded-xl border border-border bg-surface-alt flex flex-col gap-1 mt-1">
         <span className="text-body-sm font-extrabold text-text">Đã gửi góp ý cho cửa hàng</span>
         <span className="text-caption text-text-muted">Cửa hàng sẽ chỉnh theo góp ý và gửi lại ảnh để bạn xem trước khi giao.</span>
       </div>

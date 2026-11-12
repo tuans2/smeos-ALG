@@ -22,9 +22,9 @@ import { Clock, AlertCircle, CheckCircle2 } from "@/components/ui/icons"
 
 const SLA_STYLE: Record<SlaInfo["state"], { label: string; cls: string }> = {
   OVERDUE: { label: "Quá hạn", cls: "bg-danger-bg text-danger font-bold" },
-  DUE_SOON: { label: "Sắp quá hạn", cls: "bg-warning-bg text-warning font-bold" },
+  DUE_SOON: { label: "Sắp quá hạn", cls: "bg-warning-bg text-warning-text font-bold" },
   ON_TRACK: { label: "Đúng tiến độ", cls: "bg-success-bg text-success font-medium" },
-  NONE: { label: "Đã ở bước này", cls: "bg-surface-muted text-text-muted font-medium" },
+  NONE: { label: "Đã ở bước này", cls: "bg-surface-alt text-text-muted font-medium" },
 }
 
 /** Nhãn thời gian chuẩn: trạng thái + đã ở bước bao lâu / chuẩn bao lâu. */
@@ -32,7 +32,7 @@ export function SlaBadge({ item, compact = false }: { item: TrackingViewItem; co
   if (item.sla.state === "NONE") {
     const age = formatMinutes(item.sla.ageMinutes)
     return (
-      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-surface-muted px-2 py-0.5 text-caption font-medium text-text-muted">
+      <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-surface-alt px-2 py-0.5 text-caption font-medium text-text-muted">
         <Clock size={11} className="shrink-0" aria-hidden="true" />
         <span>{compact ? age : `Đã ở bước này ${age}`}</span>
       </span>
@@ -59,7 +59,7 @@ export function SlaBadge({ item, compact = false }: { item: TrackingViewItem; co
 
 export function ViewState({ loading, error, empty, children }: { loading: boolean; error: unknown; empty: boolean; children: React.ReactNode }) {
   if (error) return <p role="alert" className="rounded-xl bg-danger-bg p-4 text-body-sm text-danger">{(error as Error).message}</p>
-  if (loading) return <div className="flex flex-col gap-3" aria-busy="true">{[0, 1, 2].map((i) => <div key={i} className="h-16 animate-pulse motion-reduce:animate-none rounded-xl bg-surface-muted" />)}</div>
+  if (loading) return <div className="flex flex-col gap-3" aria-busy="true">{[0, 1, 2].map((i) => <div key={i} className="h-16 animate-pulse motion-reduce:animate-none rounded-xl bg-surface-alt" />)}</div>
   if (empty) return <p className="rounded-2xl border border-border bg-surface p-8 text-center text-body-sm text-text-muted">Không có đơn hoặc link nào khớp bộ lọc.</p>
   return <>{children}</>
 }

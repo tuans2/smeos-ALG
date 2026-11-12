@@ -17,7 +17,7 @@ export const PUBLIC_OPERATIONS: OpenApiOperation[] = [...CATALOG_OPERATIONS, ...
 
 export function buildPublicOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({
-    title: "SMEOS Public API",
+    title: "ALG Public API",
     version: "1.0.0",
     description: [
       "Endpoint không cần đăng nhập. Tổ chức luôn suy từ mã gửi / slug / token / khoá webhook phía máy chủ,",

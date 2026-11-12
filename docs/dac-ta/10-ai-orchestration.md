@@ -1,6 +1,6 @@
 # 10 — Nền AI: cổng, sổ đăng ký, định tuyến, chấm điểm
 
-Bốn engine ở PRD mục 5 nói FloraOS *làm gì* với AI. Tài liệu này nói FloraOS *gọi* AI thế nào — và nó áp cho mọi module ở cả ba repo, không riêng module nào.
+Bốn engine ở PRD mục 5 nói ALG *làm gì* với AI. Tài liệu này nói ALG *gọi* AI thế nào — và nó áp cho mọi module ở cả ba repo, không riêng module nào.
 
 Lý do tài liệu này tồn tại: mô hình đổi nhanh hơn sản phẩm. Bộ máy phân tích ảnh đã đổi mặc định một lần trong hai ngày (D5-e). Model video mở trọng số đổi giấy phép giữa các phiên bản. Nếu tên nhà cung cấp nằm trong luật nghiệp vụ thì mỗi lần thị trường đổi là một lần sửa mã nghiệp vụ.
 
@@ -21,7 +21,7 @@ Luật 2 là luật dễ vi phạm nhất và cũng là luật đáng giá nhấ
 |---|---|---|
 | **Mức 1 — API** | Nhà cung cấp thương mại | Mặc định. Ra sản phẩm nhanh, chất lượng cao, không gánh hạ tầng GPU |
 | **Mức 2 — Trọng số mở** | Tự vận hành hoặc dịch vụ quản lý | Khi khối lượng, chi phí, độ trễ, quyền riêng tư hoặc mức kiểm soát đủ lớn để bù chi phí vận hành |
-| **Mức 3 — Lai** | Nhiều mô hình cộng thị giác máy tính tất định cộng tri thức ngành | Khi cần độ chính xác cao nhất và khi FloraOS đã biết mô hình hiện tại sai ở đâu |
+| **Mức 3 — Lai** | Nhiều mô hình cộng thị giác máy tính tất định cộng tri thức ngành | Khi cần độ chính xác cao nhất và khi ALG đã biết mô hình hiện tại sai ở đâu |
 
 **Thứ tự lên mức không đảo được:** API → thu dữ liệu → đo → hiểu ca sai → trọng số mở → thu thêm dữ liệu → lai → chỉ khi đó mới tính tới tinh chỉnh mô hình. Tinh chỉnh trước khi biết mô hình sai ở đâu là trả tiền để khoá lại một cái sai chưa ai mô tả được.
 
@@ -349,13 +349,13 @@ ai_capabilities · ai_models · ai_policies
 
 ## 13. Tri thức ngành hoa
 
-Mô hình đổi trong sáu tháng. Tri thức ngành hoa của FloraOS thì tích lại. Đây là phần không mua được và không thuê được, nên nó nằm trong cơ sở dữ liệu của FloraOS chứ không nằm trong prompt.
+Mô hình đổi trong sáu tháng. Tri thức ngành hoa của ALG thì tích lại. Đây là phần không mua được và không thuê được, nên nó nằm trong cơ sở dữ liệu của ALG chứ không nằm trong prompt.
 
 ### 13.1 Một hợp đồng, không phải hai
 
 Hợp đồng `PhanTichSanPhamHoa` là hình dạng duy nhất mà một lượt phân tích trả về, ở cả ba bộ máy. Mọi cách biểu diễn khác — bảng cho người đọc, JSON cho engine ngoài, cột trong báo cáo — là **hình chiếu** của hợp đồng đó, không phải một lược đồ thứ hai. Hợp đồng chỉ được thêm trường, không xoá và không đổi trường đã có (`YC-N3`).
 
-Hệ quả trực tiếp: mô hình trả `"rose"` thì FloraOS tra danh mục loài để ra `"Hoa hồng"` và mã loài. **Mô hình không bao giờ quyết định giá trị đi vào cơ sở dữ liệu.** Không tra được thì trường mã để trống cho người soát gắn lại, và nhãn gốc của mô hình giữ nguyên ở trường dấu hiệu nhận dạng — mất nhãn gốc là mất manh mối duy nhất để người soát sửa đúng.
+Hệ quả trực tiếp: mô hình trả `"rose"` thì ALG tra danh mục loài để ra `"Hoa hồng"` và mã loài. **Mô hình không bao giờ quyết định giá trị đi vào cơ sở dữ liệu.** Không tra được thì trường mã để trống cho người soát gắn lại, và nhãn gốc của mô hình giữ nguyên ở trường dấu hiệu nhận dạng — mất nhãn gốc là mất manh mối duy nhất để người soát sửa đúng.
 
 ### 13.2 Danh mục loài
 
@@ -403,7 +403,7 @@ Câu hỏi "mẫu này còn không" được trả lời ở bậc 1 và 2, **kh
 
 ## 14. Đếm không chỉ bằng mô hình ngôn ngữ
 
-Một câu "có khoảng mười bảy cành hồng" không dùng được cho báo giá. Đường đếm của FloraOS có ba kênh và một bước chốt:
+Một câu "có khoảng mười bảy cành hồng" không dùng được cho báo giá. Đường đếm của ALG có ba kênh và một bước chốt:
 
 ```
 Ứng viên từ bộ nhận dạng  ─┐
@@ -497,7 +497,7 @@ learning.updated        → đổi tham số soạn nội dung cho lượt sau
 
 ## 18. Bậc trưởng thành
 
-| Bậc | Nội dung | FloraOS |
+| Bậc | Nội dung | ALG |
 |---|---|---|
 | 1 | Gọi API AI | Đã qua |
 | 2 | AI cộng tri thức của cửa hàng | Đang ở đây — hồ sơ thương hiệu và danh mục loài đã có, truy hồi chưa có |
@@ -505,7 +505,7 @@ learning.updated        → đổi tham số soạn nội dung cho lượt sau
 | 4 | Đường lai nhiều mô hình cộng thị giác máy tính | `count_engine` ba kênh, mới nối một kênh |
 | 5 | Trí tuệ riêng của ngành hoa | Cần dữ liệu tích từ vận hành thật |
 
-Bậc 4 và bậc 5 là phần không ai sao chép được trong sáu tháng. Bậc 1 thì ai cũng làm được trong một tuần — nên giá trị lâu dài của FloraOS không nằm ở việc gọi được mô hình nào, mà nằm ở danh mục loài, bộ ảnh có nhãn, cặp *máy đoán gì / người sửa thành gì*, và số liệu hiệu quả theo từng cửa hàng.
+Bậc 4 và bậc 5 là phần không ai sao chép được trong sáu tháng. Bậc 1 thì ai cũng làm được trong một tuần — nên giá trị lâu dài của ALG không nằm ở việc gọi được mô hình nào, mà nằm ở danh mục loài, bộ ảnh có nhãn, cặp *máy đoán gì / người sửa thành gì*, và số liệu hiệu quả theo từng cửa hàng.
 
 ## 19. Bản đồ công nghệ
 

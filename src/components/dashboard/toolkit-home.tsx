@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button"
 import React, { useState, useMemo } from "react"
 import { useSearchParams } from "next/navigation"
 import { Search } from "@/components/ui/icon-set/search"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Hammer } from "@/components/ui/icon-set/hammer"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { ClipboardList } from "@/components/ui/icon-set/clipboard-list"
 import { Input } from "@/components/ui/input"
 import {
   countByStatus,
@@ -32,12 +36,15 @@ const useIsDev = isDevEnvironment
 
 type StatusFilter = "ALL" | ToolStatus
 
+/** Icon chuẩn thay emoji (OPERATING_PRINCIPLES §6.11; T3-5a, 11/11/2026) — khu vực này chỉ hiện ở môi trường dev */
+const STATUS_ICON: Record<ToolStatus, typeof CheckCircle2> = { DONE: CheckCircle2, IN_PROGRESS: Hammer, FOUNDATION: Layers, PLANNED: ClipboardList }
+
 const FILTER_OPTIONS: { id: StatusFilter; label: string }[] = [
   { id: "ALL", label: "Tất cả" },
-  { id: "DONE", label: "✅ Hoàn thiện" },
-  { id: "IN_PROGRESS", label: "🔨 Đang làm" },
-  { id: "FOUNDATION", label: "🏗️ Nền tảng sẵn" },
-  { id: "PLANNED", label: "📋 Sẽ làm" },
+  { id: "DONE", label: "Hoàn thiện" },
+  { id: "IN_PROGRESS", label: "Đang làm" },
+  { id: "FOUNDATION", label: "Nền tảng sẵn" },
+  { id: "PLANNED", label: "Sẽ làm" },
 ]
 
 function ToolkitStats({ isDev }: { isDev: boolean }) {
@@ -54,7 +61,7 @@ function ToolkitStats({ isDev }: { isDev: boolean }) {
             key={status}
             className="flex items-center gap-3 p-3 rounded-lg border border-border bg-surface"
           >
-            <span className="text-display">{info.emoji}</span>
+            {(() => { const Icon = STATUS_ICON[status]; return <Icon size={28} className="shrink-0 text-primary" aria-hidden="true" /> })()}
             <div>
               <div className="text-title font-extrabold text-text">{count}</div>
               <div className="text-caption text-text-muted">{info.label}</div>

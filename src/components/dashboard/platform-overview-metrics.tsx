@@ -58,9 +58,9 @@ export function PlatformOverviewMetrics({
 
         <StatTile
           label="Tác vụ tồn đọng"
-          value={<span className={health.stuckJobs.length > 0 ? "text-warning" : "text-text"}>{health.stuckJobs.length}</span>}
+          value={<span className={health.stuckJobs.length > 0 ? "text-warning-text" : "text-text"}>{health.stuckJobs.length}</span>}
           tip="Các tác vụ xử lý ảnh/video nền bị treo hoặc cần can thiệp hệ thống"
-          icon={<AlertTriangle className="w-4 h-4 text-warning" aria-hidden="true" />}
+          icon={<AlertTriangle className="w-4 h-4 text-warning-text" aria-hidden="true" />}
         />
       </div>
 

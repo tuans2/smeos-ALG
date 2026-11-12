@@ -3,7 +3,7 @@
   "$id": "stage-06b-create-audio.output.schema.json",
   "title": "Chặng 06b — CREATE · Khu vực C: Giọng đọc & nhạc nền — Đầu ra",
   "description": "Bốn tác vụ thật: VOICEOVER, MUSIC_SELECT, AUDIO_MIX, VOICE_CLONE. Nhà cung cấp trước (25/09/2026): giọng theo thứ tự tiệm, nhạc nền AI (ElevenLabs Music) với bài thư viện làm dự phòng; musicProvider=library = 0 credit phần nhạc. Kết quả cuối (audio_storage_key) đọc từ job khi COMPLETED.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "06b",
     "stage": 6,
     "code": "CREATE_AUDIO",

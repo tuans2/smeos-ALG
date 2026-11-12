@@ -19,7 +19,7 @@ export const step07CloseLearnContract = defineStep({
   step: 7,
   code: "CLOSE_LEARN",
   slug: "close-learn",
-  title: "Nghiệm thu & Đóng đơn (T25–T27)",
+  title: "Nghiệm thu & Đóng đơn",
   summary: "Chỉ khi DELIVERED và không còn sự cố mở; chốt điểm + tiền công đối tác, ghi audit",
   endpoint: {
     method: "POST",

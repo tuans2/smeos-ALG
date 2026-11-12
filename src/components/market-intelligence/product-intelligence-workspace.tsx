@@ -245,7 +245,7 @@ export function ProductIntelligenceWorkspace() {
 
       {extractError && (
         <div className="flex items-center gap-2 p-3 rounded-xl bg-warning-bg border border-warning-border text-caption text-warning-text">
-          <AlertCircle size={16} className="text-warning shrink-0" />
+          <AlertCircle size={16} className="text-warning-text shrink-0" />
           <span>{extractError} (Đã chuyển sang cấu hình chỉnh sửa thủ công nguyên tử).</span>
         </div>
       )}

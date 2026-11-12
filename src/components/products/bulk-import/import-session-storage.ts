@@ -1,10 +1,11 @@
+import "@/lib/brand-storage-migration"
 import type { ParsedProductRow } from "./types"
 
 /** Lưu tạm dòng đã đọc vào sessionStorage — khoá gắn organization_id để không lộ giữa các tổ chức. */
 function keys(orgId: string) {
   return {
-    rowsKey: `smeos_bulk_import_rows_v1__${orgId}`,
-    metaKey: `smeos_bulk_import_meta_v1__${orgId}`,
+    rowsKey: `alg_bulk_import_rows_v1__${orgId}`,
+    metaKey: `alg_bulk_import_meta_v1__${orgId}`,
     legacyRowsKey: `floraos_bulk_import_rows_v1__${orgId}`,
     legacyMetaKey: `floraos_bulk_import_meta_v1__${orgId}`,
   } as const

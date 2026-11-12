@@ -1,6 +1,6 @@
 # IOPaint tự host (Mức 2, nợ #104, tiếp #78) — dịch vụ GPU ĐẦU TIÊN trong
-# repo `floraos-core` (xem tài liệu "Tích hợp IOPaint Outpainting vào
-# floraos-core", mục "Thiết kế tích hợp" §5 và "Rủi ro").
+# repo `alg-core` (xem tài liệu "Tích hợp IOPaint Outpainting vào
+# alg-core", mục "Thiết kế tích hợp" §5 và "Rủi ro").
 #
 # KHÔNG dùng lại `docker/CPUDockerfile`/`GPUDockerfile` của repo IOPaint
 # chính thức — đã xác minh (17/09) hai tệp đó CŨ, còn trỏ tên gói
@@ -67,14 +67,14 @@ ENTRYPOINT iopaint start \
     --model ${MODEL} \
     --model-dir ${IOPAINT_MODEL_DIR}
 
-# Cách chạy thật (điền vào IOPAINT_URL của floraos-core sau khi xác nhận
+# Cách chạy thật (điền vào IOPAINT_URL của alg-core sau khi xác nhận
 # container khởi động thành công — xem README cạnh tệp này). `-e MODEL=`
 # có thể bỏ qua (dùng mặc định Kandinsky 2.2 đã đặt sẵn ở trên):
 #
-#   docker build -t floraos-iopaint -f docker/iopaint/Dockerfile .
+#   docker build -t alg-iopaint -f docker/iopaint/Dockerfile .
 #   docker run --gpus all -p 8080:8080 \
 #       -v iopaint-models:/root/.cache/iopaint \
-#       floraos-iopaint
+#       alg-iopaint
 #
 # Trên Apple Silicon (macOS), Docker Desktop KHÔNG pass-through Metal vào
 # container — image này chỉ chạy CPU trên máy đó dù máy có GPU thật. Dùng

@@ -1,6 +1,6 @@
 # Từ điển thuật ngữ UI (03c UX-026)
 
-Một khái niệm — một cách gọi. **Đây là bảng thuật ngữ UI duy nhất của repo**; `docs/dac-ta/SMEOS_UX_WRITING_GLOSSARY.md` chỉ giữ giọng điệu và mẫu câu thông báo, không định nghĩa từ (gộp 07/11/2026).
+Một khái niệm — một cách gọi. **Đây là bảng thuật ngữ UI duy nhất của repo**; `docs/dac-ta/ALG_UX_WRITING_GLOSSARY.md` chỉ giữ giọng điệu và mẫu câu thông báo, không định nghĩa từ (gộp 07/11/2026).
 
 Cột "Không dùng" là đầu vào cho lint R16 (`scripts/ux-lint/rules-pd.ts`, danh sách `GLOSSARY_BANNED`). R16 hiện tự động bắt: Worker, render, job, P\d, BOM, Master Index, PII, Control Tower, payload, tenant, M0–M5, mã chức năng M01–M19, mức R1–R9, Sale Pitch — trong chữ JSX, thuộc tính hiển thị của thẻ và giá trị các khoá hiển thị (`label`, `title`, `description`…) trong mảng/object; các dòng trạng thái tác vụ do R14 + `task-state.ts` thực thi.
 

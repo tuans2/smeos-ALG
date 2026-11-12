@@ -31,7 +31,7 @@ export function WorkStatus({ item, me, now, code }: { item: TrackingPipelineItem
       </div>
       {item.stuck && (
         <div role={mine ? "alert" : undefined}
-          className={`flex items-start gap-2 rounded-xl p-2.5 text-body-sm font-semibold ${mine ? "bg-danger-bg text-danger" : "bg-warning-bg text-warning"}`}>
+          className={`flex items-start gap-2 rounded-xl p-2.5 text-body-sm font-semibold ${mine ? "bg-danger-bg text-danger" : "bg-warning-bg text-warning-text"}`}>
           <AlertTriangle size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
           <span>{mine ? "Cần bạn: " : `Đang chờ ${STEP_OWNER_LABEL[item.stuck.owner]}: `}{item.stuck.message}</span>
         </div>

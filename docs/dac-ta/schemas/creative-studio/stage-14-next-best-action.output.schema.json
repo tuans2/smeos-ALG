@@ -3,7 +3,7 @@
   "$id": "stage-14-next-best-action.output.schema.json",
   "title": "Chặng 14 — NEXT BEST ACTION: Đề xuất hành động kế tiếp — Đầu ra",
   "description": "Danh sách hành động có lý do và đích (khu vực Creative Studio hoặc route).",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "14",
     "stage": 14,
     "code": "NEXT_BEST_ACTION",

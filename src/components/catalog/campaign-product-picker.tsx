@@ -42,7 +42,7 @@ export function CampaignProductPicker({
             variant="outline"
             size="sm"
             onClick={onOpenQuickUpload}
-            className="h-7 text-caption gap-1 text-primary border-primary/30 hover:bg-primary-bg/20 font-bold"
+            className="h-7 text-caption gap-1 text-primary border-primary/30 hover:bg-primary-muted/20 font-bold"
           >
             <Camera size={13} />
             <span>📸 Tải ảnh {ti.sampleProduct} mới vào chiến dịch</span>

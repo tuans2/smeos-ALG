@@ -2,7 +2,7 @@ import { log } from "@/core/observability/log"
 import { runExclusive } from "@/core/runtime/infra/cluster-lock"
 import { recoverPaymentTimeoutLeads } from "./recover-payment-timeout-leads"
 
-const STARTED = Symbol.for("smeos.acquisition.lead-recovery")
+const STARTED = Symbol.for("alg.acquisition.lead-recovery")
 const INTERVAL_MS = 5 * 60 * 1000
 
 /**

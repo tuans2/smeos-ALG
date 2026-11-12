@@ -1,5 +1,5 @@
 /**
- * UI System Types — smeOS Architecture (Phase 1 — Enterprise Design System)
+ * UI System Types — ALG Architecture (Phase 1 — Enterprise Design System)
  *
  * Định nghĩa hợp đồng kiểu dữ liệu cho toàn bộ hệ thống Runtime UI System:
  * - Presets: Mộc Lan (chuẩn StoreOS), Modern Slate (Platform/ChainOS), Pure Swiss (Minimalist)
@@ -7,7 +7,7 @@
  * - ColorMode: Light (v1 light mode only — ADR-011 D-UI-03)
  */
 
-export type UiPresetId = "moc-lan" | "modern-slate" | "pure-swiss"
+export type UiPresetId = "alg" | "moc-lan" | "modern-slate" | "pure-swiss"
 
 /** Scope xác định preset này dành cho platform nào */
 export type UiPresetScope = "saas-mother" | "chain-store" | "all"

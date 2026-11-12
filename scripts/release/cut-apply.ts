@@ -96,7 +96,7 @@ export function applyCut(root: string, phase: string, manifest: CutManifest, pla
 
   const commit = (message: string) => {
     execFileSync("git", ["add", "-A"], { cwd: root })
-    execFileSync("git", ["-c", "user.name=smeOS release", "-c", "user.email=release@invalid", "commit", "-q", "-m", message], { cwd: root })
+    execFileSync("git", ["-c", "user.name=ALG release", "-c", "user.email=release@invalid", "commit", "-q", "-m", message], { cwd: root })
     return execFileSync("git", ["rev-parse", "HEAD"], { cwd: root }).toString().trim()
   }
   execFileSync("git", ["init", "-q", "-b", "main"], { cwd: root })

@@ -59,7 +59,7 @@ export function CustomerTierPricingCard({ canEdit }: { canEdit: boolean }) {
   if (!tiers) return null
   return (
     <Card className="flex flex-col gap-3 p-5">
-      <h3 className="flex items-center gap-2 text-body font-extrabold text-text"><Crown size={18} className="text-primary" /> Ưu đãi hạng khách & giờ cao điểm</h3>
+      <h2 className="flex items-center gap-2 text-body font-extrabold text-text"><Crown size={18} className="text-primary" /> Ưu đãi hạng khách & giờ cao điểm</h2>
       <p className="text-caption text-text-muted">Giảm theo % tiền hàng cho khách đã có hạng (tối đa 50%); phụ phí cộng khi khung giờ giao rơi vào giờ cao điểm. Mỗi khoản hiện thành một dòng trên báo giá.</p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
         {CUSTOMER_TIERS.map((t) => (

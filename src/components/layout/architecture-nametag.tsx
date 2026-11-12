@@ -98,7 +98,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: `ChainOS • ${industryShort}`,
         title: `Hệ điều hành Mạng lưới Chuỗi`,
         badgeClass:
-          "bg-accent/10 text-accent border-accent/20",
+          "bg-accent/10 text-accent-text border-accent/20",
       }
     }
 
@@ -186,7 +186,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
           />
 
           <div
-            role="listbox"
+            role="group"
             aria-label="Chọn vai dev"
             className="absolute left-0 top-full z-[9999] mt-2 w-64 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl"
           >
@@ -207,7 +207,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
                 const isActive = roleKey === preset.roleKey
                 const isLoading = loading === preset.roleKey
                 return (
-                  <li key={preset.roleKey} role="option" aria-selected={isActive}>
+                  <li key={preset.roleKey}>
                     <Button variant="ghost"
                       type="button"
                       disabled={isLoading}
@@ -215,6 +215,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
                         if (!isLoading) applyOverride(preset)
                       }}
                       aria-disabled={isLoading}
+                      aria-pressed={isActive}
                       className={cn("h-auto", "justify-start", 
                         "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors cursor-pointer",
                         isActive

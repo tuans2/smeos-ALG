@@ -97,9 +97,10 @@ class FakeProvider:
 
 def test_notify_channel_for_khop_voi_ban_mirror_ts():
     # phải khớp `notifyChannelFor` phía TS (postgres-queue-provider.ts):
-    # "floraos_job_" + tên feature, ký tự không phải chữ/số/_ đổi thành "_"
-    assert worker.notify_channel_for("vision.analyze") == "floraos_job_vision_analyze"
-    assert worker.notify_channel_for("a-b c") == "floraos_job_a_b_c"
+    # "alg_job_" + tên feature, ký tự không phải chữ/số/_ đổi thành "_" (kênh cũ "floraos_job_" vẫn nghe)
+    assert worker.notify_channel_for("vision.analyze") == "alg_job_vision_analyze"
+    assert worker.notify_channel_for("a-b c") == "alg_job_a_b_c"
+    assert worker.legacy_notify_channel_for("vision.analyze") == "floraos_job_vision_analyze"
 
 
 class TestClaimNext:

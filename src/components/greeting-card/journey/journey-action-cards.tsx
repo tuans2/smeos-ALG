@@ -31,7 +31,7 @@ export function JourneyActionCards({
       {hasNoCatalog && (
         <div className="bg-warning-bg/50 border border-warning/30 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-warning/15 text-warning flex items-center justify-center shrink-0 mt-0.5">
+            <div className="w-10 h-10 rounded-xl bg-warning/15 text-warning-text flex items-center justify-center shrink-0 mt-0.5">
               <BookOpen size={20} />
             </div>
             <div>
@@ -102,7 +102,7 @@ export function JourneyActionCards({
               <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
                 <BookOpen size={24} />
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-caption font-bold bg-surface-muted text-text-muted border border-border">
+              <span className="px-2.5 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border">
                 {catalogCount} Bộ sưu tập
               </span>
             </div>
@@ -192,7 +192,7 @@ export function JourneyActionCards({
               <div className="w-12 h-12 rounded-xl bg-success-bg text-success flex items-center justify-center group-hover:scale-105 transition-transform">
                 <ShieldCheck size={24} />
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-caption font-bold bg-surface-muted text-text-muted border border-border">
+              <span className="px-2.5 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border">
                 Điều hành
               </span>
             </div>

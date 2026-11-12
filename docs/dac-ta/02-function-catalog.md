@@ -228,7 +228,7 @@ Các nhóm dưới đây không tồn tại ở FloraOS v1. Chúng nhận nhóm 
 | `M4` | `crm.segment.manage` | Quản lý nhóm khách và chăm sóc khách hàng | Điều hành · Marketing | — |
 | `M5` | `print.rendition.export` | Kiểm quy cách và xuất ấn phẩm in ấn | Điều hành · Điều phối · Marketing | — |
 
-Nhóm M vào cùng Marketing & Sales Center (PO 01/11/2026, `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/03_KE_HOACH_TRIEN_KHAI.md`).
+Nhóm M vào cùng Marketing & Sales Center (PO 01/11/2026, `docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/03_KE_HOACH_TRIEN_KHAI.md`).
 
 ### Sản phẩm và giá — nhóm L
 

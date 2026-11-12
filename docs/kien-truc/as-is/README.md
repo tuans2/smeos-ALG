@@ -1,4 +1,4 @@
-# FloraOS Core — As-Is System Specification
+# ALG Core — As-Is System Specification
 
 > **Trạng thái tài liệu:** `SUPPORTING` · ảnh chụp hiện trạng (snapshot) dựng từ mã nguồn.
 > **Mốc mã nguồn:** nhánh `main` tại commit `9b4a54b` (07/10/2026).

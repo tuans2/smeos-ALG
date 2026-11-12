@@ -4,7 +4,7 @@ import { Client } from "pg"
 import { isHrefInPhase } from "../../../src/lib/delivery/delivery-phase"
 import { createTestUserAndLogin } from "./helpers"
 
-const dbUrl = process.env.DATABASE_URL || "postgresql://floraos:floraos@localhost:5432/floraos"
+const dbUrl = process.env.DATABASE_URL || "postgresql://alg:alg@localhost:5432/alg"
 
 /** Ảnh PNG 2×2 hợp lệ, truyền thẳng bằng buffer — không ghi tệp tạm. */
 function tinyPng() {

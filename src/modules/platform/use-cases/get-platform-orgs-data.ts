@@ -1,5 +1,5 @@
 /**
- * SMEOS Platform Admin — Get All Organizations Data (Platform-Level Hub)
+ * ALG Platform Admin — Get All Organizations Data (Platform-Level Hub)
  *
  * Tương tự get-chain-stores-data.ts nhưng ở tầng Platform:
  * - Không có organization_id context — xuyên tổ chức

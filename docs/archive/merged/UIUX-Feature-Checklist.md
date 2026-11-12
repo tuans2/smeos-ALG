@@ -5,7 +5,7 @@
 > Tệp này đã được hợp nhất cùng `UIUX-Integrate-Checklist.md` vào **[`docs/UIUX-Execution-Checklist.md`](../../UIUX-Execution-Checklist.md)**.  
 > Vui lòng theo dõi và cập nhật tiến độ thực thi UI & API tại tài liệu hợp nhất để đảm bảo tính duy nhất của dữ liệu.
 
-**Cơ sở:** `docs/FloraOS-UIUX-10-chuc-nang.md` — đặc tả UI/UX 10 chức năng lõi.
+**Cơ sở:** `docs/ALG-UIUX-10-chuc-nang.md` — đặc tả UI/UX 10 chức năng lõi.
 **Mục đích:** Rà soát từng tính năng, xác định trạng thái (Đã code / Cần code / Chờ backend), và tiếp tục triển khai theo thứ tự ưu tiên.
 
 **Quy ước trạng thái:**

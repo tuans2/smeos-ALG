@@ -22,6 +22,8 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { ProviderOrderSettings } from "@/components/creative-studio/provider-order-settings"
 import { PageHeader } from "@/components/ui/page-header"
 import { EmptyState } from "@/components/ui/empty-state"
+import { InfoTip } from "@/components/ui/info-tip"
+import { modelDescription } from "./model-label"
 
 interface AllowedModel {
   key: string
@@ -220,9 +222,14 @@ export default function AiSettingsPage() {
                       Mô hình:{" "}
                       <span className="font-medium text-text">
                         {cap.allowed_models.length > 0
-                          ? cap.allowed_models.map((m) => m.display_name).join(", ")
+                          ? cap.allowed_models.map((m) => modelDescription(m.key, m.display_name)).join(" · ")
                           : "Toàn bộ mô hình đạt chuẩn"}
                       </span>
+                      {cap.allowed_models.length > 0 && (
+                        <InfoTip label={`Mô hình của ${cap.capability_name}`}>
+                          Tên mô hình: {cap.allowed_models.map((m) => m.display_name).join(", ")}
+                        </InfoTip>
+                      )}
                     </span>
 
                     {cap.cost_ceiling && (

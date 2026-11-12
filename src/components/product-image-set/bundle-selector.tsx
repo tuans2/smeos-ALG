@@ -40,7 +40,7 @@ export function BundleSelector({
             Gói bộ ảnh thương mại:{" "}
             <span className="text-primary font-bold">{currentBundle?.name}</span>
           </span>
-          <span className="text-caption bg-primary-subtle text-primary border border-primary/20 px-2 py-0.5 rounded-full font-medium">
+          <span className="text-caption bg-primary-muted text-primary border border-primary/20 px-2 py-0.5 rounded-full font-medium">
             {currentBundle?.variants.length ?? 0} ảnh biến thể
           </span>
         </div>
@@ -63,7 +63,7 @@ export function BundleSelector({
                   aria-pressed={isSelected}
                   className={`p-3.5 h-auto rounded-xl border text-left transition-all relative cursor-pointer block whitespace-normal w-full ${
                     isSelected
-                      ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"
+                      ? "border-primary bg-primary-muted ring-1 ring-primary shadow-xs"
                       : "border-border bg-surface hover:border-primary/40"
                   }`}
                 >

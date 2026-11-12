@@ -41,7 +41,7 @@ from media_ai.providers.scene.base import (
 API = "https://api.stability.ai/v2beta"
 MODEL_CANH = "stable-image-edit-replace-background-and-relight-v2beta"
 HUONG_SANG_STABILITY = {"left": "left", "right": "right", "above": "above"}
-# Giữ chủ thể ở mức cao nhất API cho phép dò — FloraOS không muốn bó hoa bị vẽ lại.
+# Giữ chủ thể ở mức cao nhất API cho phép dò — ALG không muốn bó hoa bị vẽ lại.
 GIU_CHU_THE = 0.95
 DO_MANH_SANG = 0.3
 SEED_TOI_DA = 4_294_967_294

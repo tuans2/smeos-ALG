@@ -8,7 +8,7 @@ snapshots:
   - 390x844
   - 1280x800
 acceptance:
-  - Tiêu đề thương hiệu smeOS nổi bật, đúng tỷ lệ thị giác
+  - Tiêu đề thương hiệu ALG nổi bật, đúng tỷ lệ thị giác
   - Chuyển đổi mượt mà giữa 3 chế độ: Đăng nhập, Đăng ký và Dùng thử
   - Tối đa 1 nút hành động chính (Primary CTA) trên mỗi biểu mẫu theo K2
   - Báo lỗi xác thực rõ ràng, thân thiện, bảo mật thông tin (không lộ cấu trúc CSDL)
@@ -28,7 +28,7 @@ acceptance:
 - **Mật độ thông tin (Density):** `comfortable`
 
 ## 2. Cấu trúc Bố cục & Thứ bậc (Visual Hierarchy)
-- **Header:** Logo thương hiệu hoa smeOS, tiêu đề hệ thống và mô tả định vị đa ngành.
+- **Header:** Logo thương hiệu hoa ALG, tiêu đề hệ thống và mô tả định vị đa ngành.
 - **Vùng làm việc:** Hộp biểu mẫu tập trung (`max-w-sm` cho đăng nhập, `max-w-xl` cho đăng ký/dùng thử) nằm giữa màn hình.
 - **Khối chức năng chính:**
   1. L0 (Thiết yếu): Bộ chọn 3 chế độ: Đăng nhập · Đăng ký mới · Dùng thử.

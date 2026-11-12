@@ -3,7 +3,7 @@
   "$id": "generate-content-request.v1.schema.json",
   "title": "Content Engine — POST /generations request body",
   "description": "Thân yêu cầu tạo lượt sinh bài đa kênh (Đợt 2) — cần asset_id hoặc product_id để dựng Brief.",
-  "x-floraos": {
+  "x-alg": {
     "module": "content-engine",
     "source": "src/modules/content-engine/contracts/generation.ts",
     "generateContentVersion": 1,

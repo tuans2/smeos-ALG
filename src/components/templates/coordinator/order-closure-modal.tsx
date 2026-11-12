@@ -107,7 +107,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
               <span className="px-2 py-0.5 rounded bg-surface-alt text-text text-caption font-black uppercase border border-border">
                 BƯỚC 7 • HOÀN TẤT ĐƠN
               </span>
-              <h3 className="text-body font-extrabold text-text">Nghiệm Thu & Đóng Đơn (T25/T26)</h3>
+              <h3 className="text-body font-extrabold text-text">Nghiệm Thu & Đóng Đơn</h3>
             </div>
           </div>
         </div>

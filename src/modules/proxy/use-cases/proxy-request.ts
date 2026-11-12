@@ -15,7 +15,7 @@ import { resolveSession } from "@/modules/organization/use-cases/resolve-session
 import { ssoClaimsFor, SSO_TOKEN_TTL_SECONDS } from "@/modules/sso/domain/sso-claims"
 import { signSsoToken, verifySsoToken } from "@/modules/sso/infra/sso-jwt"
 import { proxyTimeoutSignal, proxyRequest, ProxyError, proxyErrorMessage } from "../infra/proxy-http-adapter"
-import { requireProxyUrl, isAllowedProxyPath, SSO_HEADER, LEGACY_SSO_HEADER, AUTHORIZATION_HEADER, NO_BODY_METHODS, PROXY_TIMEOUT_MS, type ProxyClient } from "../domain/proxy-rules"
+import { requireProxyUrl, isAllowedProxyPath, SSO_HEADER, LEGACY_SSO_HEADERS, AUTHORIZATION_HEADER, NO_BODY_METHODS, PROXY_TIMEOUT_MS, type ProxyClient } from "../domain/proxy-rules"
 
 export { ProxyClient }
 
@@ -44,16 +44,16 @@ export class ProxyRouteError extends AppError {
  *
  * SSO JWT `floraos_sso` core tự đặt cookie host-only "localhost" — trình duyệt
  * tự gửi kèm khi dashboard gọi proxy same-origin, core đọc ở đây rồi forward
- * làm header `X-FloraOS-SSO` sang sibling (sibling verify bằng chính bí mật
+ * làm header `X-ALG-SSO` sang sibling (sibling verify bằng chính bí mật
  * `SSO_SESSION_SECRET` dùng chung). Không forward cookie session
  * (`floraos_session`) — sibling không cần, và JWT/token là chứng thư đã ký,
  * tự xác minh được.
  */
 export function readProxyIdentity(request: Request): ProxyIdentity {
-  const ssoHeader = request.headers.get(SSO_HEADER)?.trim() ?? request.headers.get(LEGACY_SSO_HEADER)?.trim()
+  const ssoHeader = [SSO_HEADER, ...LEGACY_SSO_HEADERS].map((h) => request.headers.get(h)?.trim()).find((v) => v)
   if (ssoHeader) return { kind: "sso", value: ssoHeader }
 
-  // Dashboard core không tự gửi JWT — core đọc cookie `smeos_sso` (hoặc legacy) rồi forward.
+  // Dashboard core không tự gửi JWT — core đọc cookie `alg_sso` (hoặc tên cũ) rồi forward.
   const ssoCookie = readSsoCookie(request)
   if (ssoCookie) return { kind: "sso", value: ssoCookie }
 
@@ -71,8 +71,7 @@ export function buildForwardHeaders(input: {
 }): Record<string, string> {
   const headers: Record<string, string> = {}
   if (input.identity.kind === "sso") {
-    headers[SSO_HEADER] = input.identity.value
-    headers[LEGACY_SSO_HEADER] = input.identity.value
+    for (const h of [SSO_HEADER, ...LEGACY_SSO_HEADERS]) headers[h] = input.identity.value
   } else if (input.identity.kind === "token") {
     headers[AUTHORIZATION_HEADER] = input.identity.value
   }

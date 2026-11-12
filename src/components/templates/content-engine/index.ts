@@ -1,5 +1,5 @@
 /**
- * smeOS Template Library — Máy Nội Dung (Content Engine M06)
+ * ALG Template Library — Máy Nội Dung (Content Engine M06)
  */
 
 export * from "./content-guidance-card"

@@ -61,7 +61,7 @@
 | V4 | Cờ tính năng: phương án tối ưu đạt chuẩn enterprise | §V4 |
 | V5 | Mở rộng axe (`@axe-core/playwright` đã có) ra luồng cốt lõi | Giai đoạn 2.8 |
 
-### §V3. Quyết định theo tính chất từng chặng (journey `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_JOURNEY.md`)
+### §V3. Quyết định theo tính chất từng chặng (journey `docs/dac-ta/ALG_CREATIVE_STUDIO_JOURNEY.md`)
 
 | Chặng | Tính chất | Rủi ro | Pattern | Quyết định |
 |---|---|---|---|---|

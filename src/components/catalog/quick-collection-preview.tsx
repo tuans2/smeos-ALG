@@ -19,7 +19,7 @@ export function QuickCollectionPreview({
     <div>
       <div className="flex items-center justify-between mb-2">
         <span className="text-caption font-bold text-text flex items-center gap-1.5">
-          <Sparkles size={13} className="text-accent" />
+          <Sparkles size={13} className="text-accent-text" />
           Mẫu hoa đề xuất ({liveResult.selectedProducts.length} mẫu)
         </span>
         <div className="flex items-center gap-2">

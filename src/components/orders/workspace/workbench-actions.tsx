@@ -88,11 +88,11 @@ export function ConfirmPaymentAction({ item, onDone, onFail }: { item: Workbench
         void run(async () => (await ordersWorkspaceApi.confirmPayment(item.id, amount, method), `Đã ghi nhận tiền đơn ${item.code}`))
       }}
     >
-      <Input aria-label={`Số tiền đã nhận cho đơn ${item.code} (đồng)`} inputMode="numeric" value={value} onChange={(e) => setValue(e.target.value)} className={inputCls} />
+      <Input aria-label={`Số tiền đã nhận cho đơn ${item.code} (đồng)`} inputMode="numeric" value={value ? Number(value.replace(/\D/g, "")).toLocaleString("vi-VN") : ""} onChange={(e) => setValue(e.target.value.replace(/\D/g, ""))} className={inputCls} />
       <NativeSelect aria-label="Cách thanh toán" value={method} onChange={(e) => setMethod(e.target.value)} className={inputCls}>
         {METHODS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
       </NativeSelect>
-      <Button type="submit" size="sm" disabled={busy || amount <= 0}>Xác nhận tiền</Button>
+      <Button type="submit" size="sm" className="shrink-0 whitespace-nowrap" disabled={busy || amount <= 0}>Xác nhận tiền</Button>
     </form>
   )
 }

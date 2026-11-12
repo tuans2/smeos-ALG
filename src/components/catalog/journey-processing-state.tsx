@@ -2,11 +2,13 @@
 
 import React from "react"
 import { Loader2, CheckCircle2, Circle } from "@/components/ui/icons"
+import type { TaskUiState } from "@/lib/ui-system/task-state"
 
 export interface ProcessingStep {
   id: string
   label: string
-  status: "pending" | "running" | "done" | "skipped"
+  /** Từ vựng chung TaskUiState (03c UX-016); "skipped" = bước không áp dụng */
+  status: Extract<TaskUiState, "idle" | "running" | "succeeded"> | "skipped"
 }
 
 interface JourneyProcessingStateProps {
@@ -18,7 +20,7 @@ export function JourneyProcessingState({
   title = "AI đang xử lý...",
   steps,
 }: JourneyProcessingStateProps) {
-  const doneCount = steps.filter((s) => s.status === "done").length
+  const doneCount = steps.filter((s) => s.status === "succeeded").length
   const total = steps.filter((s) => s.status !== "skipped").length
   const progress = total > 0 ? Math.round((doneCount / total) * 100) : 0
 
@@ -55,13 +57,13 @@ export function JourneyProcessingState({
       <div className="space-y-2">
         {steps.map((step) => (
           <div key={step.id} className="flex items-center gap-3">
-            {step.status === "done" && (
+            {step.status === "succeeded" && (
               <CheckCircle2 className="h-4.5 w-4.5 text-success shrink-0" />
             )}
             {step.status === "running" && (
               <Loader2 className="h-4.5 w-4.5 text-primary animate-spin motion-reduce:animate-none shrink-0" />
             )}
-            {step.status === "pending" && (
+            {step.status === "idle" && (
               <Circle className="h-4.5 w-4.5 text-text-muted/40 shrink-0" />
             )}
             {step.status === "skipped" && (
@@ -69,7 +71,7 @@ export function JourneyProcessingState({
             )}
             <span
               className={`text-body-sm ${
-                step.status === "done"
+                step.status === "succeeded"
                   ? "text-text font-semibold"
                   : step.status === "running"
                     ? "text-primary font-bold"

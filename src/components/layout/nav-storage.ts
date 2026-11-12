@@ -1,3 +1,4 @@
+import "@/lib/brand-storage-migration"
 /**
  * nav-storage.ts — Trạng thái điều hướng persistent (localStorage)
  * Gắn organization_id để không lẫn trạng thái giữa các tổ chức.
@@ -6,9 +7,9 @@
 export function navStorageKeys(orgId?: string | null) {
   const suffix = orgId ? `__${orgId}` : ""
   return {
-    groupsKey: `smeos_nav_groups_v2${suffix}`,
-    reportsKey: `smeos_nav_reports_open_v2${suffix}`,
-    collapseKey: `smeos_nav_collapsed_v1`,
+    groupsKey: `alg_nav_groups_v2${suffix}`,
+    reportsKey: `alg_nav_reports_open_v2${suffix}`,
+    collapseKey: `alg_nav_collapsed_v1`,
   }
 }
 

@@ -50,7 +50,7 @@ describe("media-export-presets — HA-05..10, VD-05..07", () => {
         ratio: "1:1",
         format: "png",
       })
-      expect(fileName).toBe("smeos-asset_facebook-feed_1-1.png")
+      expect(fileName).toBe("alg-asset_facebook-feed_1-1.png")
     })
   })
 

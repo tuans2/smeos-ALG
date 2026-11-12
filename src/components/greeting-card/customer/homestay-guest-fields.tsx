@@ -39,7 +39,7 @@ export function HomestayGuestFields({
   hideSelfToggle,
 }: HomestayGuestFieldsProps) {
   return (
-    <div className="p-4 rounded-xl border border-border bg-surface-muted/40 flex flex-col gap-3">
+    <div className="p-4 rounded-xl border border-border bg-surface-alt/40 flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <div className="text-body-sm font-extrabold text-text flex items-center gap-2">
           <Users size={17} className="text-primary" />

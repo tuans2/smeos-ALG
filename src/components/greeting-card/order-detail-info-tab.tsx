@@ -53,7 +53,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
                 href={zaloHref(target.customerPhone)}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-md border border-border bg-surface px-2 py-0.5 text-caption font-bold text-info hover:bg-surface-muted"
+                className="rounded-md border border-border bg-surface px-2 py-0.5 text-caption font-bold text-info hover:bg-surface-alt"
               >
                 Zalo
               </a>
@@ -150,7 +150,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
         <div className="mt-1 flex items-center gap-1.5">
           <span
             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-caption font-bold ${
-              isPaid ? "bg-success/15 text-success" : isDeposit ? "bg-warning/15 text-warning" : "bg-danger-bg text-danger"
+              isPaid ? "bg-success/15 text-success" : isDeposit ? "bg-warning/15 text-warning-text" : "bg-danger-bg text-danger"
             }`}
           >
             <CheckCircle2 size={12} />
@@ -176,7 +176,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
                   : `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${target.orderCode || target.sendCode} đã ${terms.makerAction.toLowerCase()} hoàn tất ạ! Anh/chị mở link kiểm tra ${terms.completedProductPhoto.toLowerCase()} và thanh toán phần còn lại ${(target.balanceVnd ?? 0).toLocaleString("vi-VN")} đ để cửa hàng tiến hành bàn giao nhé ạ:${url ? ` ${url}` : ""}`
                 void navigator.clipboard.writeText(msg)
               }}
-              className="h-auto gap-0 rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-text hover:bg-surface-muted transition-colors"
+              className="h-auto gap-0 rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-text hover:bg-surface-alt transition-colors"
             >
               📋 Chép tin nhắc khách
             </Button>

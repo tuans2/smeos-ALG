@@ -158,7 +158,7 @@ export function ScreenLibraryExplorer({ initialCatalog }: ScreenLibraryExplorerP
             <span>{tab.label}</span>
             <span
               className={`text-caption px-1.5 py-0.2 rounded-full ${
-                selectedTier === tab.key ? "bg-white/20 text-white" : "bg-surface-alt text-text-muted"
+                selectedTier === tab.key ? "bg-black/20 text-white" : "bg-surface-alt text-text-muted"
               }`}
             >
               {tierCounts[tab.key]}

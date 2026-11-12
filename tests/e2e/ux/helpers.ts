@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto"
 import type { APIRequestContext, Page } from "@playwright/test"
 import { Client } from "pg"
 
-const dbUrl = process.env.DATABASE_URL || "postgresql://floraos:floraos@localhost:5432/floraos"
+const dbUrl = process.env.DATABASE_URL || "postgresql://alg:alg@localhost:5432/alg"
 
 /**
  * Mỗi tài khoản E2E đóng vai một khách riêng: địa chỉ trong dải TEST-NET (RFC 5737) gửi qua
@@ -44,7 +44,7 @@ export async function createTestUserAndLogin(
     workspaceKind?: "EXPERIENCE" | "PRODUCTION"
   }
 ): Promise<{ email: string; orgId: string; userId: string }> {
-  const email = `e2e-ux-${randomUUID().slice(0, 8)}@floraos.test`
+  const email = `e2e-ux-${randomUUID().slice(0, 8)}@alg.test`
   const password = "MatKhau-E2E-2026!"
   const orgName = `Tiệm E2E UX ${randomUUID().slice(0, 4)}`
 

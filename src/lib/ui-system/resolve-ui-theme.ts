@@ -29,33 +29,31 @@ export interface ResolvedUiTheme {
 /**
  * Phân giải UI Theme tại máy chủ (Server Component) — ADR-011 D-UI-03 & F1-03.
  *
- * 1. Theme sản phẩm theo tầng:
- *    - SaaS Mother (Platform Console / Admin): modern-slate, compact
- *    - ChainOS (Điều phối chuỗi / Coordinator): modern-slate, compact
- *    - StoreOS (Cửa hàng đơn lẻ / Ngành): moc-lan (hoặc preset tổ chức chọn), comfortable
+ * 1. Theme sản phẩm theo tầng (đổi thương hiệu ALG mức 3, 12/11/2026 — chờ PO xác nhận):
+ *    - Mọi tầng dùng preset `alg` (bộ nhận diện AVI Lotus Group).
+ *    - SaaS Mother (Platform Console / Admin) và ChainOS: mật độ compact.
+ *    - StoreOS: comfortable; tổ chức vẫn chọn được preset khác qua `settings.ui_preset`.
  *
  * 2. Nhận diện thương hiệu tổ chức:
  *    - Đọc `organizations.settings.ui_brand` để sinh CSS custom properties đè màu primary/accent.
  */
 export function resolveUiTheme(session?: UiThemeSessionLike | null): ResolvedUiTheme {
-  let preset: UiPresetId = "moc-lan"
+  let preset: UiPresetId = "alg"
   let density: UiDensity = "comfortable"
 
   const orgType = session?.organizationType
   const roleKey = session?.roleKey
 
   if (orgType === "PLATFORM" || roleKey === "platform_admin") {
-    preset = "modern-slate"
     density = "compact"
   } else if (orgType === "CHAIN" || roleKey === "coordinator") {
-    preset = "modern-slate"
     density = "compact"
   } else {
     // StoreOS hoặc role khác
     const orgSettings = session?.organization?.settings
     if (orgSettings && typeof orgSettings === "object") {
       const configuredPreset = orgSettings["ui_preset"] as string | undefined
-      if (configuredPreset === "modern-slate" || configuredPreset === "pure-swiss") {
+      if (configuredPreset === "moc-lan" || configuredPreset === "modern-slate" || configuredPreset === "pure-swiss") {
         preset = configuredPreset
       }
     }

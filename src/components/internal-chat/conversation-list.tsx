@@ -74,10 +74,10 @@ export function ConversationList({ conversations, state, activeId, onSelect, onR
                 onClick={() => onSelect(conv)}
                 aria-current={isActive ? "true" : undefined}
                 className={`h-auto w-full justify-start text-left p-3 rounded-xl flex items-center gap-3 border ${
-                  isActive ? "bg-primary-subtle border-primary/30" : "border-transparent hover:bg-surface-muted"
+                  isActive ? "bg-primary-muted border-primary/30" : "border-transparent hover:bg-surface-alt"
                 }`}
               >
-                <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-primary-subtle text-primary">
+                <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 bg-primary-muted text-primary">
                   <Icon className="w-5 h-5" aria-hidden="true" />
                 </span>
                 <span className="flex-1 min-w-0">
@@ -91,7 +91,7 @@ export function ConversationList({ conversations, state, activeId, onSelect, onR
                   </span>
                   <span className="block text-caption text-text-muted truncate mt-0.5">{conv.lastMessageSnippet || t("chat.list.noMessages")}</span>
                   {Boolean(conv.activeOrderCount) && (
-                    <span className="inline-block mt-1 text-caption font-semibold px-2 py-0.5 rounded-full bg-warning-subtle text-warning-text">
+                    <span className="inline-block mt-1 text-caption font-semibold px-2 py-0.5 rounded-full bg-warning-bg text-warning-text">
                       {t("chat.list.activeOrders", { count: conv.activeOrderCount ?? 0 })}
                     </span>
                   )}

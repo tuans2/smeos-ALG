@@ -79,7 +79,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-surface rounded-3xl p-8 border border-border shadow-xl text-center flex flex-col items-center">
-          <div className="w-16 h-16 rounded-2xl bg-warning-bg text-warning flex items-center justify-center mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-warning-bg text-warning-text flex items-center justify-center mb-4">
             <AlertCircle size={32} />
           </div>
           <h1 className="text-title font-black text-text mb-2">Bộ sưu tập đã đóng</h1>

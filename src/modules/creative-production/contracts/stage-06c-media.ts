@@ -52,7 +52,7 @@ export const mediaVariantBodySchema = z.object({
     .describe("Chỉ nhánh cloud_provider — nhà cung cấp thử TRƯỚC; bỏ trống = theo VARIANT_PROVIDER_ORDER (các bên vai trò tương đương, bên lỗi thì thử bên kế tiếp)"),
   scene_prompt: z.string().max(MAX_SCENE_PROMPT_LENGTH).optional().describe("Chỉ nhánh cloud_provider — backgroundPrompt của cảnh"),
   // ── Chỉ đạo khung hình (Đợt 1 nâng cấp chất lượng ảnh, 24/09/2026) ──
-  // Ý định của FloraOS, KHÔNG phải tên tham số của nhà cung cấp — adapter worker
+  // Ý định của ALG, KHÔNG phải tên tham số của nhà cung cấp — adapter worker
   // tự dịch. Bỏ trống thì máy chủ lấy từ đúng cảnh trong kịch bản Chặng 05.
   fill_mode: z
     .enum(FILL_MODES)
@@ -86,7 +86,7 @@ export const mediaVariantBodySchema = z.object({
   style: z
     .enum(VARIANT_STYLES)
     .optional()
-    .describe("Phong cách hậu cảnh (ý định FloraOS) — Stability dịch sang style_preset; phông cục bộ ghi provider_ignored"),
+    .describe("Phong cách hậu cảnh (ý định ALG) — Stability dịch sang style_preset; phông cục bộ ghi provider_ignored"),
   variant_count: z
     .number()
     .int()

@@ -1,4 +1,4 @@
-# KẾ HOẠCH THỰC THI CHI TIẾT — NÂNG CẤP UI/UX FLORAOS-CORE (bản giao việc cho AI Agent)
+# KẾ HOẠCH THỰC THI CHI TIẾT — NÂNG CẤP UI/UX ALG-CORE (bản giao việc cho AI Agent)
 
 **Mã định danh:** `DOC-05-KE-HOACH-NANG-CAP-UIUX` · **Phiên bản:** 2.0 (26/09/2026, thay bản 1.0 cùng ngày)
 **Trạng thái:** SUPPORTING (Level 5). PO duyệt từng giai đoạn trước khi agent viết mã.
@@ -10,8 +10,8 @@
 | **03-UX** | `docs/dac-ta/03-ux-architecture.md` | Khung UX, bản đồ màn, trạng thái (§15), mobile-first (§17), Macro→Micro (§18) |
 | **03b** | `docs/dac-ta/03b-role-ux.md` | 14 vai trải nghiệm (CANONICAL) |
 | **03a** | `docs/archive/drafts/FLORAOS_UX_CONSTITUTION_DRAFT.md`, sẽ thành `docs/dac-ta/03a-ux-constitution.md` ở T0.2 | Chuẩn chất lượng UX toàn cục |
-| **Contract** | `docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md` v1.1 | Khung audit theo vai |
-| **SSOT-TPL** | `docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md` | 5 họ template, component dùng chung |
+| **Contract** | `docs/kien-truc/ALG_ROLE_UX_EXECUTION_CONTRACT.md` v1.1 | Khung audit theo vai |
+| **SSOT-TPL** | `docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md` | 5 họ template, component dùng chung |
 | **AGENTS** | `AGENTS.md` | Quy ước repo, Bẫy |
 
 ---
@@ -133,7 +133,7 @@ Toàn repo (`src/app` + `src/components`): màu thô **2.211**, `text-[Npx]` **1
 
 ### III.3. Trạng thái và tương tác
 - `loading.tsx` / `error.tsx` / `not-found.tsx` cấp tuyến: **0**.
-- Khung xám `animate-pulse` tự vẽ ở **21 tệp**: `(app)/video/page.tsx`, `(app)/tai-anh/page.tsx`, `(app)/noi-dung/page.tsx`, `video-studio/{video-rendering-progress,video-job-list}.tsx`, `coordinator/control-tower-dashboard.tsx`, `chat/{floraos-global-copilot,public-storefront-chat-widget}.tsx`, `catalog/landing-templates/{landing-template-hero,landing-template-products}.tsx`, `dashboard/{store-manager-dashboard,sales-workspace}.tsx`, `market-intelligence/{timeframe-distribution-bar,executive-summary-cards,research-status-banner,research-runs-table}.tsx`, `templates/social-publishing/post-status-report-card.tsx`, `templates/content-engine/{social-post-preview,multichannel-post-card}.tsx`, `upload/upload-wizard.tsx`, `flow/flow-steps.tsx`.
+- Khung xám `animate-pulse` tự vẽ ở **21 tệp**: `(app)/video/page.tsx`, `(app)/tai-anh/page.tsx`, `(app)/noi-dung/page.tsx`, `video-studio/{video-rendering-progress,video-job-list}.tsx`, `coordinator/control-tower-dashboard.tsx`, `chat/{alg-global-copilot,public-storefront-chat-widget}.tsx`, `catalog/landing-templates/{landing-template-hero,landing-template-products}.tsx`, `dashboard/{store-manager-dashboard,sales-workspace}.tsx`, `market-intelligence/{timeframe-distribution-bar,executive-summary-cards,research-status-banner,research-runs-table}.tsx`, `templates/social-publishing/post-status-report-card.tsx`, `templates/content-engine/{social-post-preview,multichannel-post-card}.tsx`, `upload/upload-wizard.tsx`, `flow/flow-steps.tsx`.
 - Chữ "Đang tải…" thay cho khung xám ở **21 chỗ**: `(app)/bo-may/page.tsx:124`, `(app)/san-pham/page.tsx:88`, `(app)/job/[id]/page.tsx:124`, `(app)/job/page.tsx:91`, `(app)/duyet/page.tsx:212`, `(platform)/van-hanh/{to-chuc/[id]:54, to-chuc:41, muc-dung:38, nhat-ky:42, suc-khoe:39, page:59}`, `(platform)/van-hanh/truong-du-lieu/_components/*` (4 chỗ — vùng Điều phối, để sau), `organization/occasions-settings-form.tsx:183`, `creative-studio/voice-clone-panel.tsx:72`, `crm/customer-detail-modal.tsx:101`, `templates/coordinator/sales-order-intake-modal.tsx:752` (vùng Điều phối), `orders/order-detail-modal.tsx:162`, `profiles/greeting-line-override-form.tsx:148`.
 - `onClick` trên phần tử không tương tác: `(app)/duyet/page.tsx:370` (div), `creative-studio/video-workspace.tsx:254` (div), `catalog/catalog-management-tab.tsx:129` (Card), `catalog/catalog-storefront.tsx:158` (div). Các lớp phủ `fixed inset-0 … onClick={close}` là nền modal — xử lý ở T1.8 (Dialog), không tính.
 - **Modal tự dựng không có component chung: 33 tệp** dùng `fixed inset-0` (không bẫy focus, phần lớn không đóng bằng Esc, không `aria-modal`). Danh sách ở T1.8.
@@ -238,7 +238,7 @@ UX-7  T7.1–T7.3 sau UX-1; T7.4 sau T7.1–T7.3; T7.5 cuối cùng
      ```yaml
      - id: "DOC-03-UX-CONSTITUTION"
        path: "docs/dac-ta/03a-ux-constitution.md"
-       title: "FloraOS UX Constitution — Chuẩn chất lượng UX toàn cục"
+       title: "ALG UX Constitution — Chuẩn chất lượng UX toàn cục"
        domain: "UX/UI"
        layer: "Level 3"
        purpose: "Chuẩn chất lượng UX toàn cục: thứ bậc thông tin L0–L4, mật độ, content budget, trạng thái, WCAG 2.2, Screen Contract, UX Lint, định nghĩa Production/Commercial-ready"
@@ -827,7 +827,7 @@ UX-7  T7.1–T7.3 sau UX-1; T7.4 sau T7.1–T7.3; T7.5 cuối cùng
 - **UI:** bộ chọn vai trong menu tài khoản; `useSession().roleUx` theo vai đang hoạt động.
 
 #### T6.10 — AI theo vai (#168) · M · **Phụ thuộc:** đợt A xong
-- **Đọc trước:** `src/components/chat/floraos-global-copilot.tsx`, `src/modules/chat-assistant/**`, AGENTS.md (cổng AI `callCapability`, D15, sàn quyền riêng tư).
+- **Đọc trước:** `src/components/chat/alg-global-copilot.tsx`, `src/modules/chat-assistant/**`, AGENTS.md (cổng AI `callCapability`, D15, sàn quyền riêng tư).
 - **Các bước:**
   1. Phía **máy chủ**, lấy `roleKey` + `organizationId` từ phiên (**không nhận từ client** — quy ước AGENTS).
   2. Thêm vào ngữ cảnh lời nhắc của copilot một khối "Vai người dùng: <label>, câu hỏi chính: <primaryQuestion>, hành động chính: <dominantActions>" (lấy từ `role-ux-catalog.ts`).
@@ -836,7 +836,7 @@ UX-7  T7.1–T7.3 sau UX-1; T7.4 sau T7.1–T7.3; T7.5 cuối cùng
 - **Không làm:** tự động hành động thay người dùng.
 
 #### T6.11 — Ngoại lệ và thông báo P0–P3 (#166, #163a) · L · **Phụ thuộc:** ĐP-4c
-- **Làm theo thứ tự:** đặc tả trường (`FLORAOS_COORDINATOR_FIELD_SPEC.md`) → đặc tả 07 → lược đồ → API `GET /coordinator/exceptions` (danh sách, lọc theo trạng thái) → khối "Ngoại lệ đang mở" ở P0 của `store_manager` + Control Tower. Bảng thông báo: đặc tả riêng, PO duyệt.
+- **Làm theo thứ tự:** đặc tả trường (`ALG_COORDINATOR_FIELD_SPEC.md`) → đặc tả 07 → lược đồ → API `GET /coordinator/exceptions` (danh sách, lọc theo trạng thái) → khối "Ngoại lệ đang mở" ở P0 của `store_manager` + Control Tower. Bảng thông báo: đặc tả riêng, PO duyệt.
 - **Chỉ trường có trong Master Index** (Contract §13).
 
 #### T6.12 — Pipeline Sales (#164) · L · **Cổng:** PO duyệt thiết kế dữ liệu

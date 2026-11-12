@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SMEOS Integration API",
+    "title": "ALG Integration API",
     "version": "1.0.0",
     "description": "Bề mặt máy gọi máy cho ứng dụng đối tác (LocalBudd, SocialFlow…). Tổ chức luôn suy từ chứng thư — không endpoint nào nhận `organization_id` từ client. Giới hạn tần suất: 600 lần/60 giây cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức). Lỗi theo envelope `Error`. **Thay đổi đã báo trước, áp từ 2027-02-09 00:00 UTC** (báo 2026-11-11): (1) máy chủ bỏ các trường đánh dấu `deprecated` khỏi phản hồi; (2) `POST /integration/jobs` gửi lại cùng `idempotency_key` mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED`."
   },
@@ -24,7 +24,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -543,7 +543,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "responses": {
@@ -757,7 +757,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "responses": {
@@ -919,7 +919,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1018,7 +1018,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1163,7 +1163,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1367,7 +1367,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1544,7 +1544,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1624,7 +1624,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1886,7 +1886,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -2431,7 +2431,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -2766,7 +2766,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -2995,7 +2995,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -3163,11 +3163,11 @@
         "scheme": "bearer",
         "description": "Token máy gọi máy cấp theo tổ chức (`/integration-tokens`)"
       },
-      "smeosSso": {
+      "algSso": {
         "type": "apiKey",
         "in": "header",
-        "name": "x-smeos-sso",
-        "description": "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-floraos-sso` vẫn nhận)"
+        "name": "x-alg-sso",
+        "description": "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-smeos-sso`, `x-floraos-sso` vẫn nhận)"
       }
     },
     "headers": {

@@ -31,7 +31,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: "4. Lưu trữ và bảo vệ",
     body: [
-      "Thông tin được lưu trên hệ thống smeOS mà cửa hàng sử dụng, chỉ nhân viên cửa hàng có thẩm quyền xem được, và được giữ trong thời gian cần cho việc giao hoa, đối soát và nghĩa vụ kế toán theo quy định.",
+      "Thông tin được lưu trên hệ thống ALG mà cửa hàng sử dụng, chỉ nhân viên cửa hàng có thẩm quyền xem được, và được giữ trong thời gian cần cho việc giao hoa, đối soát và nghĩa vụ kế toán theo quy định.",
     ],
   },
   {
@@ -42,7 +42,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
   },
 ]
 
-/** Chính sách bảo mật mẫu chung FloraOS cho trang đặt hoa — chỉ mở khi bật cờ D13. */
+/** Chính sách bảo mật mẫu chung ALG cho trang đặt hoa — chỉ mở khi bật cờ D13. */
 export default function PrivacyPolicyPage() {
   const dict = getDictionary("vi")
   if (!isPrivacyNoticeEnabled()) notFound()

@@ -5,24 +5,24 @@
 > **Ngày phê duyệt đề xuất:** 30/09/2026  
 > **Hệ thống áp dụng:** `floraos-core` (Next.js 15, PostgreSQL, Prisma ORM, Clean Architecture)  
 > **Căn cứ kiến trúc cốt lõi:**  
-> - Đặc tả nâng cấp: `docs/FLORAOS_CORE_ROLE_CAPABILITY_ARCHITECTURE_UPGRADE.md`  
+> - Đặc tả nâng cấp: `docs/ALG_CORE_ROLE_CAPABILITY_ARCHITECTURE_UPGRADE.md`  
 > - Báo cáo layout & chức năng Admin: [`docs/dac-ta/BAO_CAO_LAYOUT_VA_CHUC_NANG_ADMIN.md`](../dac-ta/BAO_CAO_LAYOUT_VA_CHUC_NANG_ADMIN.md)  
 > - Hiến pháp Role UX: [`docs/dac-ta/03b-role-ux.md`](../dac-ta/03b-role-ux.md)  
 > - Danh mục năng lực & RBAC: [`docs/dac-ta/02-function-catalog.md`](../dac-ta/02-function-catalog.md) & [`src/core/rbac/capability-catalog.ts`](../../src/core/rbac/capability-catalog.ts)  
-> - Kiến trúc mục tiêu FloraOS SaaS V2: [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md)  
+> - Kiến trúc mục tiêu ALG SaaS V2: [`docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md`](ALG_SAAS_TARGET_ARCHITECTURE_V2.md)  
 
 ---
 
 ## 1. MỤC TIÊU VÀ TUYÊN NGÔN CHUẨN MỰC (PRODUCTION & COMMERCIAL STANDARDS)
 
 ### 1.1. Mục tiêu Cốt lõi
-Chuyển đổi toàn diện hệ thống phân tầng quản trị và phân quyền của FloraOS Core từ mô hình chuỗi truyền thống sang mô hình nền tảng điện hoa thương mại hiện đại:
+Chuyển đổi toàn diện hệ thống phân tầng quản trị và phân quyền của ALG Core từ mô hình chuỗi truyền thống sang mô hình nền tảng điện hoa thương mại hiện đại:
 - **Từ mô hình cũ:** `PLATFORM` | `ONE_STORE` | `CHAIN`
 - **Sang mô hình chuẩn thương mại:** `PLATFORM` | `STORE` | `FLOWER_NETWORK`
 
 Với 3 vai trò cấp cao (Top-Level Roles) phân định ranh giới trách nhiệm tuyệt đối:
 1. **Platform Admin (`platform_admin`)** — Quản trị hạ tầng, tenant, AI quota và an toàn bảo mật toàn nền tảng SaaS.
-2. **Store Admin (`store_admin`)** — Trực tiếp sử dụng toàn bộ năng lực FloraOS để vận hành và thúc đẩy tăng trưởng một cửa hàng hoa độc lập.
+2. **Store Admin (`store_admin`)** — Trực tiếp sử dụng toàn bộ năng lực ALG để vận hành và thúc đẩy tăng trưởng một cửa hàng hoa độc lập.
 3. **Điện hoa Admin (`flower_network_admin`)** — Siêu vai trò điều hành, giám sát, quản lý và thực thi trên toàn bộ mạng lưới điện hoa đa chi nhánh và xưởng đối tác.
 
 ---
@@ -43,7 +43,7 @@ Mọi dòng code, cấu trúc CSDL và giao diện người dùng sinh ra từ k
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│                              FLORAOS CORE                              │
+│                              ALG CORE                              │
 ├────────────────────────────────────────────────────────────────────────┤
 │ 1. USER                                                                │
 │    └─► 2. SCOPE (PLATFORM | STORE | FLOWER_NETWORK)                   │

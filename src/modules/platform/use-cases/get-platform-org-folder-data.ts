@@ -1,5 +1,5 @@
 /**
- * SMEOS Platform Admin — Get Organization Folder Data (Platform-Level)
+ * ALG Platform Admin — Get Organization Folder Data (Platform-Level)
  *
  * Tương tự get-store-folder-data.ts nhưng ở tầng Platform:
  * - Input: organizationId bất kỳ (không phải branch/store)

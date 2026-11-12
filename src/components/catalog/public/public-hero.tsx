@@ -30,7 +30,7 @@ export function PublicHero({
   productsAnchorId,
 }: PublicHeroProps) {
   return (
-    <section className="relative isolate flex min-h-[78svh] w-full items-end overflow-hidden md:min-h-[70vh]">
+    <section aria-label="Giới thiệu bộ sưu tập" className="relative isolate flex min-h-[78svh] w-full items-end overflow-hidden md:min-h-[70vh]">
       <img
         src={imageUrl}
         alt={headline}

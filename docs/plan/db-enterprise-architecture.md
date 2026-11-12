@@ -1,9 +1,9 @@
-# Kế hoạch hoàn thiện kiến trúc CSDL smeOS — Production · Commercial · Enterprise
+# Kế hoạch hoàn thiện kiến trúc CSDL ALG — Production · Commercial · Enterprise
 
 - Trạng thái: `PROPOSED` — lập 05/11/2026. Chuyển `ACTIVE` khi PO duyệt ADR-012…016 (mục 0).
 - Quyết định nền: `docs/adr/ADR-012.md` (mô hình tầng) · `ADR-013.md` (cách ly, toàn vẹn) · `ADR-014.md` (dữ liệu cá nhân) ·
   `ADR-015.md` (vận hành) · `ADR-016.md` (cô lập theo gói).
-- Đầu vào: báo cáo "Audit kiến trúc CSDL smeOS 4 tầng" (G1–G17, 05/11/2026) · `docs/audit/architecture-audit/15_PO_DECISION_REGISTER.md`
+- Đầu vào: báo cáo "Audit kiến trúc CSDL ALG 4 tầng" (G1–G17, 05/11/2026) · `docs/audit/architecture-audit/15_PO_DECISION_REGISTER.md`
   · `16_IMPLEMENTATION_PLAN.md` / `18_IMPLEMENTATION_CHECKLIST.md` (các mục P1-01, P1-02, P2-A2…A5, P2-F1…F3, P3-03, P3-09
   được kế hoạch này thay thế hoặc chi tiết hoá — đánh dấu ở cột "Thay").
 - Cách giao: mỗi ô checklist một PR (D-42). Mục **[SCHEMA]** cần PO duyệt từng PR (D-29); mục **[VẬN HÀNH]** đổi
@@ -41,7 +41,7 @@ GĐ0 Quyết định ─► GĐ1 Nền nhanh ─► GĐ2 Mô hình tầng ─┬
                                      GĐ1 ─────────────────► GĐ5 Cô lập theo gói ──┘
 ```
 
-GĐ3 và GĐ4 chạy song song sau GĐ2. GĐ5 cần sổ bảng (GĐ1) và nhật ký/`smeos_system` (GĐ3). GĐ6 cần tất cả.
+GĐ3 và GĐ4 chạy song song sau GĐ2. GĐ5 cần sổ bảng (GĐ1) và nhật ký/`alg_system` (GĐ3). GĐ6 cần tất cả.
 
 ## 3. Checklist
 
@@ -108,13 +108,13 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | ☐ | Mục | Gate thêm |
 |---|---|---|
 | [ ] | I-1 [VẬN HÀNH] 5 tài khoản CSDL; mỗi dịch vụ một chuỗi kết nối | Không dịch vụ nào dùng tài khoản chủ |
-| [ ] | O-8 [VẬN HÀNH] `statement_timeout`, `idle_in_transaction_session_timeout` theo tài khoản — **12/11/2026, phần mã:** `scripts/db/create-roles.sql` đặt 15 s (`smeos_app`) / 120 s (worker, hệ thống, chỉ đọc) / giao dịch bỏ ngỏ 60 s; xoá / nhập / khôi phục tổ chức tự nâng trong giao dịch. Đã thử trên Postgres cục bộ: truy vấn 20 s của `smeos_app` bị huỷ ở 15 s. Còn: chạy lại script trên production (cùng lúc I-1) | Truy vấn 20 s bị huỷ ở `smeos_app` · `db-role-timeouts.test.ts` |
+| [ ] | O-8 [VẬN HÀNH] `statement_timeout`, `idle_in_transaction_session_timeout` theo tài khoản — **12/11/2026, phần mã:** `scripts/db/create-roles.sql` đặt 15 s (`alg_app`) / 120 s (worker, hệ thống, chỉ đọc) / giao dịch bỏ ngỏ 60 s; xoá / nhập / khôi phục tổ chức tự nâng trong giao dịch. Đã thử trên Postgres cục bộ: truy vấn 20 s của `alg_app` bị huỷ ở 15 s. Còn: chạy lại script trên production (cùng lúc I-1) | Truy vấn 20 s bị huỷ ở `alg_app` · `db-role-timeouts.test.ts` |
 | [x] | I-2a [SCHEMA] Nhật ký bất biến (trigger trên `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage`) + đường xoá `app.purge_reason` (`setPurgeReason`); thu quyền UPDATE/DELETE ở `create-roles.sql` (đặc tả 07 §46) | `tests/tenant/append-only-logs.test.ts`: `UPDATE audit_logs` bị từ chối; xoá ngoài đường purge bị từ chối |
 | [x] | I-2b [SCHEMA] `platform_access_logs` (D-I5) + ghi mỗi lần nhân viên nền tảng truy cập dữ liệu một tổ chức (16 handler Console) + tab "Truy cập của nền tảng" trong `/audit` cho chủ tổ chức (D-60, G9) — đặc tả 07 §47 | `tests/tenant/platform-access-isolation.test.ts`: truy cập Console → một dòng; chủ tổ chức thấy, tổ chức khác không; `platform-access-guard.test.ts` |
 | [x] | I-7 Test kiến trúc: route ghi có tenant phải ghi `audit_logs` hoặc có trong danh sách miễn — `tests/unit/architecture/audit-boundary.test.ts`; 123 route cũ chưa ghi vào tệp nợ chỉ co lại (nợ #204) | Test xanh |
 | [x] | I-4 Client extension đặt `app.org_id` theo giao dịch; worker đặt ngữ cảnh job; đo p95 — pool `RlsPool` + `workers/shared/rls.py` (ADR-013 §7); đo 11/11/2026 bằng `scripts/bench-rls.ts`: request 4 truy vấn p95 không tăng ở `audit` / `enforce`, truy vấn lẻ đổi tổ chức +~1 ms (ADR-013 §7). Số production ở O-9 | p95 tăng ≤ 10% |
 | [ ] | I-5 [SCHEMA] RLS chế độ ghi nhận trên CSDL khôi phục; chạy toàn bộ test + e2e — **07/11/2026, phần test:** `DB_RLS_MODE=audit` + `DB_RLS_AUDIT_FILE` chạy toàn bộ `test:tenant` (195 tệp, 884 ca) + `test:platform` (14 tệp, 43 ca): lần đầu 54 sự kiện `pending` (52 URL giả trong test, 2 route Console `saas-policy` xếp nhầm) → sửa `db-context.ts` + test kiến trúc mọi route `requirePlatformContext` chạy quyền hệ thống; chạy lại **0 sự kiện**. Còn thiếu: CSDL khôi phục từ production + e2e | 0 vi phạm ghi nhận |
-| [x] | Ghi dòng mới `AGENT_RULES.md` §14: bộ quét liên tenant phải chạy bằng quyền hệ thống (`asSystemDb` trong ứng dụng, `smeos_system` cho script) — dòng 15 | — |
+| [x] | Ghi dòng mới `AGENT_RULES.md` §14: bộ quét liên tenant phải chạy bằng quyền hệ thống (`asSystemDb` trong ứng dụng, `alg_system` cho script) — dòng 15 | — |
 
 ### GĐ4 — Dữ liệu cá nhân (ADR-014)
 
