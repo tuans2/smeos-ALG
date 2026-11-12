@@ -122,10 +122,12 @@ export const publicChatLimitsResponse = z.strictObject({
 export const publicChatLimitRequestedResponse = z.strictObject({ pending: pendingLimit })
 
 export const publicChatWidgetResponse = z.strictObject({
-  replyText: z.string(),
-  suggestedProducts: z.array(productCard),
-  conversationId: z.string(),
-  channel: CHANNEL,
+  data: z.strictObject({
+    replyText: z.string(),
+    suggestedProducts: z.array(productCard),
+    conversationId: z.string(),
+    channel: CHANNEL,
+  }),
 })
 
 // ── Chat nội bộ ─────────────────────────────────────────────────────────────

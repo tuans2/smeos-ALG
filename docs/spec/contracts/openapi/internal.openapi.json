@@ -17951,7 +17951,7 @@
       "post": {
         "operationId": "sendPublicChatWidgetMessage",
         "summary": "Khung chat AI trên trang công khai",
-        "description": "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
+        "description": "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Lỗi theo envelope chuẩn `{ error: { code, message } }`; route không qua `handle()` nên không có header `RateLimit-*`.",
         "tags": [
           "Trợ lý AI — kênh & hạn mức"
         ],
@@ -18019,74 +18019,83 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "replyText": {
-                      "type": "string"
-                    },
-                    "suggestedProducts": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "productId": {
-                            "type": "string"
-                          },
-                          "productCode": {
-                            "type": "string"
-                          },
-                          "productName": {
-                            "type": "string"
-                          },
-                          "sampleImageUrl": {
-                            "type": "string"
-                          },
-                          "priceVnd": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "category": {
-                            "type": "string"
-                          },
-                          "wrapStyle": {
-                            "type": "string"
-                          },
-                          "reason": {
-                            "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "replyText": {
+                          "type": "string"
+                        },
+                        "suggestedProducts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "productId": {
+                                "type": "string"
+                              },
+                              "productCode": {
+                                "type": "string"
+                              },
+                              "productName": {
+                                "type": "string"
+                              },
+                              "sampleImageUrl": {
+                                "type": "string"
+                              },
+                              "priceVnd": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "category": {
+                                "type": "string"
+                              },
+                              "wrapStyle": {
+                                "type": "string"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "productId",
+                              "productCode",
+                              "productName",
+                              "priceVnd",
+                              "category",
+                              "wrapStyle",
+                              "reason"
+                            ],
+                            "additionalProperties": false
                           }
                         },
-                        "required": [
-                          "productId",
-                          "productCode",
-                          "productName",
-                          "priceVnd",
-                          "category",
-                          "wrapStyle",
-                          "reason"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "conversationId": {
-                      "type": "string"
-                    },
-                    "channel": {
-                      "type": "string",
-                      "enum": [
-                        "INTERNAL_DASHBOARD",
-                        "STOREFRONT_CATALOG",
-                        "LANDING_PAGE",
-                        "FACEBOOK_MESSENGER",
-                        "ZALO_OA",
-                        "EMBEDDED_WIDGET"
-                      ]
+                        "conversationId": {
+                          "type": "string"
+                        },
+                        "channel": {
+                          "type": "string",
+                          "enum": [
+                            "INTERNAL_DASHBOARD",
+                            "STOREFRONT_CATALOG",
+                            "LANDING_PAGE",
+                            "FACEBOOK_MESSENGER",
+                            "ZALO_OA",
+                            "EMBEDDED_WIDGET"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "replyText",
+                        "suggestedProducts",
+                        "conversationId",
+                        "channel"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "replyText",
-                    "suggestedProducts",
-                    "conversationId",
-                    "channel"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -18106,8 +18115,7 @@
             "$ref": "#/components/responses/Error500"
           }
         },
-        "x-capability": "công khai",
-        "x-legacy-error-envelope": true
+        "x-capability": "công khai"
       }
     },
     "/chat/webhooks/facebook": {

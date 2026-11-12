@@ -15,9 +15,6 @@ next-response-json	src/app/api/dev/role-override/route.ts
 next-response-json	src/app/api/health/ready/route.ts
 next-response-json	src/app/api/health/route.ts
 string-error	src/app/api/dev/role-override/route.ts
-# Còn nợ (12/11/2026): widget chat công khai chạy asSystemDb ngoài handle() (cùng ngoại lệ route-contract-legacy).
-next-response-json	src/app/api/v1/chat/public/widget/route.ts
-string-error	src/app/api/v1/chat/public/widget/route.ts
 # Còn nợ: một route phục vụ hai nghiệp vụ theo query/thân (đối tác gia công vs đối tác chuỗi) — cần tách route trước.
 success-envelope	src/app/api/v1/coordinator/partners/route.ts
 # Còn nợ: phía gọi nằm trong src/components/greeting-card/** — luật B5 (test khoá hành vi trước khi sửa).

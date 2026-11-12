@@ -773,10 +773,12 @@ Phát hiện ngoài phạm vi (có từ trước, chưa sửa — ghi rõ trong 
 
 Đợt 5 (lược đồ thân/query, snake_case) đổi hợp đồng — làm theo module, phía gọi sửa cùng commit; `/public`, `/integration` cần PO duyệt.
 
-**Đợt 4 — đã làm (12/11/2026):** envelope lệch **65 → 19** mục (`api-envelope-legacy.txt`, chia nhóm kèm lý do). Đổi hợp đồng nội bộ — route, lược đồ phản hồi, OpenAPI, test hợp đồng và mọi phía gọi ở giao diện sửa cùng commit.
+**Đợt 4 — đã làm (12/11/2026):** envelope lệch **65 → 17** mục (`api-envelope-legacy.txt`, chia nhóm kèm lý do). Đổi hợp đồng nội bộ — route, lược đồ phản hồi, OpenAPI, test hợp đồng và mọi phía gọi ở giao diện sửa cùng commit.
 - Thông báo: lệnh ghi trả `{ data: <thân đã lưu> }`; tuỳ chọn bị khoá cứng → **422** `UNPROCESSABLE_ENTITY`, `details.violation = "LOCKED_BY_UPPER"` (trước: 403 `{ error: "chuỗi" }`), cùng cách tích hợp/kênh bán báo khoá tầng trên.
 - 19 thao tác không trả bản ghi → `{ data: { id, <việc>: true } }` (lược đồ dùng chung `actionDone`, `_contracts/responses-actions.ts`), vd. xoá, khôi phục, thu hồi, ngắt kết nối, đăng xuất (`{ data: { logged_out: true } }`).
 - Chat nội bộ: danh sách `{ data, meta: { total } }`, tin nhắn `{ data, next_cursor }`; `content-engine/rewrite`, banner, nhập hàng loạt, cron `chain-dispatch-sweep` bọc kết quả trong `data`; `product-copies` trả `{ data: copy }`.
 - Sửa kèm: trang `/noi-bo/ket-noi` còn đòi `success` sau khi route bỏ cờ đó (phát hiện khi rà phía gọi, sửa trước khi đẩy).
 
-Còn 19 mục: 12 ngoại lệ lâu dài (webhook Facebook/Zalo/Zalo OA/SePay do nhà cung cấp quy định thân; `/api/health*`, `/api/dev/role-override`); 7 còn nợ — widget chat công khai (ngoài `handle()`), `coordinator/partners` (một route hai nghiệp vụ, cần tách trước; khi tách sửa luôn `control-tower-dashboard` đang gọi danh sách không kèm `active` nên nhận đối tác chuỗi thay vì đối tác gia công), 4 route có phía gọi trong `src/components/greeting-card/**` (luật B5).
+Widget chat công khai (`/chat/public/widget`, vẫn chạy `asSystemDb` ngoài `handle()`) trả `{ data }` / `{ error: { code, message } }`; khung chat trên trang công khai đọc `body.data` / `body.error.message`.
+
+Còn 17 mục: 12 ngoại lệ lâu dài (webhook Facebook/Zalo/Zalo OA/SePay do nhà cung cấp quy định thân; `/api/health*`, `/api/dev/role-override`); 5 còn nợ — `coordinator/partners` (một route hai nghiệp vụ, cần tách trước; khi tách sửa luôn `control-tower-dashboard` đang gọi danh sách không kèm `active` nên nhận đối tác chuỗi thay vì đối tác gia công), 4 route Thẻ chào (`greeting-catalog/[id]/event`, `catalogs/[id]/products`, `brochure/[sendCode]/select`, `tracking/[code]/approve-photo`): đổi envelope buộc sửa test hợp đồng/E2E Thẻ chào đang có, trái luật B5 ("test Thẻ chào sẵn có chạy xanh không sửa") — cần PO cho phép.

@@ -44,10 +44,10 @@ export const CHAT_OPERATIONS: OpenApiOperation[] = [
     description: "Mức xin phải là một mức chọn sẵn và cao hơn mức hiện tại → không thì 400; đã có yêu cầu chờ duyệt → 409.",
     ok: [201, { description: "Yêu cầu đã ghi", schema: res.publicChatLimitRequestedResponse }], errors: [...BODY_ERRORS, 409] }),
 
-  legacyErrors(op(CH, { method: "post", path: "/chat/public/widget", operationId: "sendPublicChatWidgetMessage", summary: "Khung chat AI trên trang công khai", cap: null, auth: "public",
+  op(CH, { method: "post", path: "/chat/public/widget", operationId: "sendPublicChatWidgetMessage", summary: "Khung chat AI trên trang công khai", cap: null, auth: "public",
     body: req.publicChatWidgetBody,
-    description: "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
-    ok: [200, { description: "Trả lời của trợ lý", schema: res.publicChatWidgetResponse }], errors: [400, 404, 429, 500] })),
+    description: "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Lỗi theo envelope chuẩn `{ error: { code, message } }`; route không qua `handle()` nên không có header `RateLimit-*`.",
+    ok: [200, { description: "Trả lời của trợ lý", schema: res.publicChatWidgetResponse }], errors: [400, 404, 429, 500] }),
   legacyErrors(op(HOOK, { method: "get", path: "/chat/webhooks/facebook", operationId: "verifyFacebookWebhook", summary: "Xác minh webhook Facebook", cap: null, auth: "public",
     query: req.facebookVerifyQuery,
     description: "`hub.verify_token` khớp `FB_WEBHOOK_VERIFY_TOKEN` → 200 thân là `hub.challenge` (văn bản thường); khác hoặc chưa cấu hình → 403 `Forbidden`.",

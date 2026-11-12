@@ -89,7 +89,7 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
     const visit = (body: unknown) => widget(raw("/chat/public/widget", JSON.stringify(body), { "x-forwarded-for": "203.0.113.7" }) as never)
     await expectContract(await visit({ slug: org.slug, visitorId: "khach-1", message: "Tiệm có giao hoa tối nay không?" }), 200, R.publicChatWidgetResponse, "chat-widget")
     const missing = await visit({ slug: "khong-co-tiem-nay", visitorId: "khach-1", message: "Xin chào" })
-    expect([missing.status, typeof (await readJson(missing)).error]).toEqual([404, "string"])
+    expect([missing.status, ((await readJson(missing)).error as { code: string }).code]).toEqual([404, "NOT_FOUND"])
     const bad = await visit({ slug: org.slug })
     expect([bad.status, typeof (await readJson(bad)).error]).toEqual([400, "string"])
   })
