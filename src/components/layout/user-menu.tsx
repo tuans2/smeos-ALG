@@ -68,7 +68,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
         ref={buttonRef}
         type="button"
         onClick={() => setMo((v) => !v)}
-        aria-label="Menu tài khoản"
+        aria-label={`Menu tài khoản ${initials}`}
         aria-expanded={mo}
         className={cn("h-auto p-0 gap-0", 
           "flex items-center justify-center rounded-full bg-primary font-bold text-white shadow-xs transition-opacity hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer hover:bg-primary",

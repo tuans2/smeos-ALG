@@ -120,11 +120,12 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick, prior
           size="card"
           priority={priority}
         />
-        <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
-          <StatusBadge status={product.status} />
-          <ProposalBadge attributes={product.attributes} />
-        </div>
       </Button>
+      {/* Nhãn trạng thái nằm ngoài nút ảnh để tên nút khớp chữ hiển thị (WCAG 2.5.3, Đợt 4 D4-10); vị trí giữ nguyên */}
+      <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
+        <StatusBadge status={product.status} />
+        <ProposalBadge attributes={product.attributes} />
+      </div>
 
       {/* Thông tin sản phẩm: Bấm vào tên để chuyển sang trang chi tiết */}
       <Link

@@ -31,7 +31,8 @@ export function ProductThumb({ name, masterImageUrl, driveLink, size, priority =
   }
   if (driveLink) return <DriveThumbImage driveLink={driveLink} alt={name} className="h-full w-full" fallback={size === "card" ? "full" : "icon"} />
   return size === "card" ? (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-text-muted">
+    // Ô thay ảnh chỉ trang trí: nằm trong nút đã có nhãn, chữ ở đây không được làm lệch tên nút (WCAG 2.5.3)
+    <div aria-hidden="true" className="flex h-full w-full flex-col items-center justify-center gap-1.5 text-text-muted">
       <ImageOff size={28} strokeWidth={1.5} />
       <span className="text-caption">Chưa có ảnh</span>
     </div>

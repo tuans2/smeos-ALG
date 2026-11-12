@@ -8,7 +8,7 @@
  * Level 2: Bảng bản ghi thực tế (100/trang) + Tải CSV
  */
 
-import { Input } from "@/components/ui/input"; import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"; import { Button, TEXT_BUTTON_HIT_AREA } from "@/components/ui/button"
 import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -389,7 +389,7 @@ export function PlatformDataHub() {
           <Button variant="ghost"
             type="button"
             onClick={handleBackToOrgs}
-            className="text-[length:inherit] h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
+            className={`text-[length:inherit] h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold ${TEXT_BUTTON_HIT_AREA}`}
           >
             <Globe size={15} className="text-primary" />
             <span>Dữ Liệu Nền Tảng</span>

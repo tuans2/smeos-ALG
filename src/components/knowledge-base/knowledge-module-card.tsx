@@ -10,7 +10,7 @@ import { HelpCircle } from "@/components/ui/icon-set/help-circle"
 import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { ChevronUp } from "@/components/ui/icon-set/chevron-up"
 import { Table } from "@/components/ui/icon-set/table"
-import { Button } from "@/components/ui/button"
+import { Button, TEXT_BUTTON_HIT_AREA } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ModuleKnowledgeSpec } from "./knowledge-data"
 import type { Route } from "next"
@@ -131,7 +131,7 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
           variant="ghost"
           size="sm"
           onClick={() => onAskCopilot?.(module.copilotPrompt)}
-          className="h-auto p-0 inline-flex items-center gap-1.5 text-caption font-bold text-primary hover:underline"
+          className={`h-auto p-0 inline-flex items-center gap-1.5 text-caption font-bold text-primary hover:underline ${TEXT_BUTTON_HIT_AREA}`}
         >
           <Sparkles className="h-3.5 w-3.5" />
           <span>Hỏi ALG Copilot về phân hệ này</span>

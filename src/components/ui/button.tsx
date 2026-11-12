@@ -31,6 +31,13 @@ export const buttonVariants = cva(
   }
 )
 
+/**
+ * Vùng bấm cho nút chỉ có chữ (`h-auto p-0`) đứng riêng: lớp giả `::before` nới 5px trên/dưới (≥ 24px với chữ 13–15px),
+ * 15px khi màn cảm ứng (≥ 44px) — không đổi kích thước hiển thị. Không dùng cho liên kết trong dòng chữ (WCAG miễn).
+ */
+export const TEXT_BUTTON_HIT_AREA =
+  "relative before:absolute before:inset-x-0 before:-inset-y-[5px] before:content-[''] [@media(pointer:coarse)]:before:-inset-y-[15px]"
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
