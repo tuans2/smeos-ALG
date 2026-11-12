@@ -44,6 +44,7 @@ import { returnStock } from "@/modules/orders/infra/order-stock"
 import { releaseOrderBookings } from "@/modules/availability/infra/order-booking-hold"
 import { releaseLeadOfCancelledOrder } from "@/modules/orders/infra/order-lead-link"
 import { resolveClosurePayout } from "../domain/partner-payout"
+import { stageLabel } from "../domain/stage-labels"
 import { orderReferencePayoutVnd } from "./partner-payout-source"
 
 function currentAxes(row: CoordinatorOrderRow) {
@@ -173,7 +174,7 @@ export async function recordProductionUpdate(
 
     if (input.action === "REPORT_MATERIAL_ISSUE") {
       if (stage !== "IN_PRODUCTION") {
-        throw new AppError("UNPROCESSABLE_ENTITY", `Chỉ báo thiếu vật liệu khi đơn đang cắm (hiện: ${stage}).`)
+        throw new AppError("UNPROCESSABLE_ENTITY", `Chỉ báo thiếu vật liệu khi đơn đang chế tác (đơn đang ở bước "${stageLabel(stage)}").`)
       }
       if (!input.issueNote?.trim()) throw new AppError("UNPROCESSABLE_ENTITY", "Phải mô tả vật liệu thiếu.")
       await openExceptionInTx(ctx, tx, repo, row, {
