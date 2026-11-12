@@ -41,6 +41,7 @@ export async function requestDeliverBeforePay(
 
   const [settings, stats] = await Promise.all([repo.orgSettings(ctx), repo.customerStats(ctx, order.customer_id, now)])
   const verdict = decide(settings, {
+    hasCustomer: order.customer_id !== null,
     totalVnd: Number(order.total_vnd),
     paidVnd: Number(order.paid_vnd),
     isUrgent: isUrgentOrder(deliveryWindowOf(order.delivery_window), now),
