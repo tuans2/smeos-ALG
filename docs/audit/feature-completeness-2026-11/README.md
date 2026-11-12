@@ -24,25 +24,24 @@ Có hai đích chạy, nên ma trận có hai cột trạng thái:
 
 | Trạng thái | Nghĩa | smeOS production (lần 1 → lần 2) | Bản giao GD1 |
 |---|---|---:|---:|
-| ✅ Hoàn thiện | Đủ UI + API + backend + DB (khi cần) + test; màn hình của AC mở | 105 → **108** | **123** |
-| 🔒 Có mã, khoá production | Mã đủ tầng, nhưng màn hình của AC bị khoá "Sắp ra mắt" | 13 → **15** | 0 |
+| ✅ Hoàn thiện | Đủ UI + API + backend + DB (khi cần) + test; màn hình của AC mở | 105 → **109** | **123** |
+| 🔒 Có mã, khoá production | Mã đủ tầng, nhưng màn hình của AC bị khoá "Sắp ra mắt" | 13 → **14** | 0 |
 | 🟡 Một phần | Thiếu một mắt xích, hoặc AC chỉ đạt một phần / lệch quyết định đã chốt | 5 → **0** | **0** |
 | 🎨 Chỉ có UI | Có giao diện, không có logic | 0 → 0 | 0 |
 | ❌ Chưa triển khai | Không có route, bảng hay màn hình | 0 → 0 | 0 |
 | 🐞 Lỗi | Chức năng trong danh mục chạy sai | 0 → 0 | 0 |
 
 Cả 123 chức năng đều có mã thật. Phần còn chưa xong:
-- **Trên smeOS production:** chỉ còn khoá "Sắp ra mắt" (15 chức năng).
+- **Trên smeOS production:** chỉ còn khoá "Sắp ra mắt" (14 chức năng).
 - **Trên bản giao GD1:** cả 123 chức năng đạt về mã. Hai câu AC từng lệch quyết định đã chốt (I-01 của 9.1, I-09 của 9.14) đã được sửa trong checklist ngày 12/11/2026 (mục 2.2).
 
-**🔒 Khoá trên smeOS production (15), mở trên bản giao GD1:**
+**🔒 Khoá trên smeOS production (14), mở trên bản giao GD1:**
 - 1.17 Nhật ký thao tác
 - 3.1 Quy tắc giá (`/gia`)
 - 4.11 Lịch sử đơn cùng khách (`/khach-hang`)
 - 4.12 Bảng điều phối rủi ro (`/dieu-phoi`)
 - 6.1, 6.2, 6.3, 6.5, 6.6 Báo cáo theo kỳ (`/bao-cao`)
 - 6.9 và 10.1 Sổ quỹ & credit (`/muc-dung`)
-- 8.1 Landing page (lối vào `/catalog`)
 - 9.1 Trao đổi nội bộ (`/tin-nhan`)
 - 9.6 Tác vụ nền (`/job`)
 - 9.7 Chính sách AI (`/cai-dat-ai`)
@@ -53,7 +52,7 @@ Cả 123 chức năng đều có mã thật. Phần còn chưa xong:
 |---|---|---|---|
 | 4.30 | 🟡 | ✅ | Tầng Mẹ đăng ký nhà cung cấp SMS (eSMS) / Zalo (ZNS) một lần (`PUT /api/v1/platform/notification/providers`, khối "Kênh liên lạc" ở `/van-hanh/thong-bao`); adapter gửi thật, thiếu cấu hình thì `NOT_CONFIGURED`. Web Push tự viết theo RFC 8291/VAPID (`push_subscriptions`). PR #30, #32 |
 | 4.32 | 🟡 | ✅ | Mốc M1/M2 được đẩy thành tin (sự kiện `DELIVERY_REMINDER_DUE`) trong cron 5 phút `chain-dispatch-sweep`, mỗi mốc một lần. Đổi mốc ở Cài đặt tiệm (mở). PR #30 |
-| 8.1 | 🟡 | 🔒 | Đổi cách xếp loại, mã không đổi: mã đủ tầng, chỉ lối vào AC (`/catalog`, nay là "Bộ sưu tập chung") bị khoá — cùng loại với 13 chức năng khoá khác. Bản giao GD1 mở |
+| 8.1 | 🟡 | ✅ | Mã đủ tầng. AC I-10 đã sửa sang lối vào hiện tại Công cụ → Quảng bá sản phẩm → Landing page (mục 2.2), không còn đi qua `/catalog` đang khoá |
 | 9.1 | 🟡 | 🔒 | Trao đổi nội bộ hoàn thiện, có test (PR #18); `/tin-nhan` nay có guard URL. AC I-01 đã sửa cho khớp quyết định thu hồi tin (mục 2.2). Còn lại chỉ là khoá "Sắp ra mắt"; bản giao GD1 mở |
 | 9.14 | 🟡 | ✅ | D-46: đăng bài chạy trong smeOS (module `social-publishing`). AC I-09 đã sửa sang Công cụ → Tạo nội dung → Đăng tự động (mục 2.2) |
 
@@ -78,6 +77,11 @@ Không có chức năng ✅ nào ở lần 1 bị hạ bậc. Toàn bộ đườ
 - A-08 (tên menu), B-11, G-06 (tên sheet trong file Excel xuất, theo `orders/use-cases/export-orders.ts:241`), G-07 (nhãn nguồn đơn, theo `orders/domain/order-source.ts:47`), J-11.
 
 Ô D-01 "Thẻ chào sản phẩm → Quản lý → Bộ sưu tập" đổi thành "Bộ sưu tập riêng → Quản lý → Bộ sưu tập", vì "Thẻ chào sản phẩm" giờ là bước 2 của Tạo nội dung. Tên tab trong trang (Gửi nhanh, Quản lý, Theo dõi đơn, Bán hàng, Điều hành, Điều phối, Hộp việc) không đổi. Tên chức năng và tên nhóm ở "Phủ 123 chức năng" không sửa.
+
+**I-10 (8.1):**
+- Vai: Marketing → **Điều hành** (có `J1`, `J7`; trang Chuẩn bị không có tài khoản Marketing).
+- Mở ở: "Công cụ → Tạo catalog → landing page" → **"Công cụ → Quảng bá sản phẩm → Landing page → Tạo landing mới"** (`promotion-hub/landing-panel.tsx`, PO 09/11/2026).
+- Thao tác và kết quả mong đợi giữ nguyên.
 
 Căn cứ:
 - I-01: quyết định PO 09/11/2026 (`docs/plan/hoan-thien-chat-noi-bo.md` §10). Hành vi trong mã: `internal-chat/domain/message-change-policy.ts`, `components/internal-chat/message-actions.tsx`, `message-item.tsx`.
@@ -120,7 +124,7 @@ Môi trường: CSDL cục bộ Postgres 16. `floraos` dựng bằng `db:deploy`
 |---|---|---|---|---|
 | N-01 | ⚠️ AC | AC I-01 (9.1) "không có cách xoá tin" ngược quyết định PO 09/11/2026 cho thu hồi tin trong 24 giờ | `internal-chat/domain/message-change-policy.ts`, `api/v1/internal-chat/messages/[id]/route.ts:32` | ✅ Đã sửa câu AC 12/11 (mục 2.2) |
 | N-02 | ⚠️ AC | AC I-09 (9.14) vẫn ghi "Từ smeOS mở ứng dụng liên kết", trong khi D-46 đã bỏ ứng dụng liên kết | `gd1.manifest.json` mục 9.14 `acceptanceNote`; `docs/plan/BANGIAO_GD1_123_CHUC_NANG.md` Bước 4 | ✅ Đã sửa câu AC 12/11 (mục 2.2). Cần báo ALG bản checklist mới |
-| N-03 | ℹ️ AC | Giao diện đổi tên "Thẻ chào" → **"Bộ sưu tập riêng"** và "Catalog" → **"Bộ sưu tập chung"** (PO 09/11/2026, D-66). 19 bước kịch bản vẫn ghi "Thẻ chào" ở cột "Mở ở"/"Thao tác"; I-10 ghi "Tạo catalog" | `src/modules/toolkit/domain/collection-names.ts` | 🟡 Phần "Thẻ chào" đã sửa 12/11: 23 ô ở sheet "Kịch bản" và 1 ô ở "Chuẩn bị" đổi sang "Bộ sưu tập riêng" (mục 2.2). Tên chức năng và tên nhóm ở "Phủ 123 chức năng"/"Tổng hợp" giữ nguyên vì là danh mục đã thống nhất với ALG. I-10 "Tạo catalog" chưa sửa |
+| N-03 | ℹ️ AC | Giao diện đổi tên "Thẻ chào" → **"Bộ sưu tập riêng"** và "Catalog" → **"Bộ sưu tập chung"** (PO 09/11/2026, D-66). 19 bước kịch bản vẫn ghi "Thẻ chào" ở cột "Mở ở"/"Thao tác"; I-10 ghi "Tạo catalog" | `src/modules/toolkit/domain/collection-names.ts` | ✅ Đã sửa 12/11 (mục 2.2): "Thẻ chào" ở 24 ô và I-10. Tên chức năng, tên nhóm ở "Phủ 123 chức năng"/"Tổng hợp" giữ nguyên vì là danh mục đã thống nhất với ALG |
 | N-04 | ℹ️ | Ba phát hiện nghiệp vụ chạm tới AC của danh mục vẫn chờ PO: BL-28 (trần chiết khấu mọi kênh, chạm 3.4/3.7), BL-29 (nhắc thu quá hạn chỉ một lần, chạm 4.26), BL-30 ("Giá trị đơn" gồm đơn Nháp, chạm 6.2). BL-35 (bộ máy duyệt thay đổi cấu hình trường không được dùng) cũng chờ PO | `docs/audit/business-logic-audit/BUSINESS_LOGIC_AUDIT_2026-11-11.md` | Các bước C-03, C-11, F-09, H-02 vẫn đạt với dữ liệu chuẩn bị trong kịch bản; rủi ro nằm ở trường hợp biên |
 
 ## 5. Phạm vi chưa xác minh

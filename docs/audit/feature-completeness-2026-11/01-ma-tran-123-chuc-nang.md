@@ -20,10 +20,10 @@
 | 5. Thẻ Chào mẫu hoa & trang khách hàng | 15 | 15 | 0 | 0 | 0 | 0 | 0 |
 | 6. Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 | 0 | 0 | 0 |
 | 7. AI phân tích, nội dung & marketing | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
-| 8. Landing page bán hàng | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| 8. Landing page bán hàng | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | 9. Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 11 | 3 | 0 | 0 | 0 | 0 |
 | 10. Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 7 | 1 | 0 | 0 | 0 | 0 |
-| **Tổng** | **123** | **108** | **15** | **0** | **0** | **0** | **0** |
+| **Tổng** | **123** | **109** | **14** | **0** | **0** | **0** | **0** |
 
 ## 1. Nền tảng chung & phân quyền
 
@@ -164,7 +164,7 @@
 
 | Mã | Chức năng | UI | API | Backend | DB | Test | smeOS production | Bản giao GD1 | Bằng chứng | Ghi chú / AC |
 |---|---|:-:|:-:|:-:|:-:|:-:|---|---|---|---|
-| 8.1 | Trình dựng Landing Page bộ sưu tập / sự kiện | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `/landing-page` (`LandingPageStudioClient`), `/c/[slug]`, `public/catalog/[slug]/order` | Mã đủ tầng. Lối vào AC I-10 ("Công cụ → Tạo catalog", nay là ô "Bộ sưu tập chung" → `/catalog`) khoá production (có guard); `/landing-page` vẫn mở |
+| 8.1 | Trình dựng Landing Page bộ sưu tập / sự kiện | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `promotion-hub/landing-panel.tsx` → `catalog/landing-campaign-tab.tsx`; `api/v1/content-engine/landing-generate` (AI), `api/v1/catalog-links`; `/c/[slug]` (+ `opengraph-image.tsx`), `public/catalog/[slug]/order` | AC I-10 đã sửa 12/11: Công cụ → Quảng bá sản phẩm → Landing page → Tạo landing mới, vai Điều hành (`J1`, `J7`). `/cong-cu` mở trên cả hai đích; không còn đi qua `/catalog` (khoá production) |
 
 ## 9. Chat nội bộ, đa chuỗi & phân quyền nâng cao
 
