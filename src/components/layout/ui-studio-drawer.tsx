@@ -10,6 +10,7 @@ import { Eye } from "@/components/ui/icon-set/eye"
 import { useUiSystem } from "@/lib/ui-system/ui-provider"
 import type { UiPresetId, UiDensity } from "@/lib/ui-system/types"
 import { Button } from "@/components/ui/button"
+import { FloatingItemSlot } from "./floating-item-slot"
 import { Card } from "@/components/ui/card"
 import { UiStudioPresetList } from "./ui-studio-preset-list"
 
@@ -33,8 +34,8 @@ export function UiStudioDrawer() {
 
   return (
     <>
-      {/* Floating Toggle Button */}
-      <div className="fixed bottom-24 right-6 z-40">
+      {/* Nút mở UI Studio: đăng ký vào lớp phần tử nổi thay vì tự định vị (T3-2) */}
+      <FloatingItemSlot id="ui-studio" priority={10}>
         <Button variant="outline"
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -52,7 +53,7 @@ export function UiStudioDrawer() {
             {currentPreset.name.split(" ")[0]}
           </span>
         </Button>
-      </div>
+      </FloatingItemSlot>
 
       {/* Drawer Overlay */}
       {isOpen && (

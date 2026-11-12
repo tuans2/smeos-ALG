@@ -9,6 +9,7 @@ import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Button } from "@/components/ui/button"
+import { FloatingItemSlot } from "@/components/layout/floating-item-slot"
 import { Input } from "@/components/ui/input"
 import { CopilotMessageItem } from "@/components/chat/copilot-message-item"
 import { errorText } from "@/lib/error-text"
@@ -180,8 +181,8 @@ export function FloraOSGlobalCopilot() {
 
   return (
     <>
-      {/* Nút bong bóng nổi — định vị tránh đụng BottomNav trên mobile */}
-      <div className="fixed top-1/2 right-3 -translate-y-1/2 z-40 flex items-center gap-2">
+      {/* Nút bong bóng nổi: đăng ký vào lớp phần tử nổi (góc dưới phải, trên BottomNav ở di động) — T3-2 */}
+      <FloatingItemSlot id="copilot" priority={20}>
         {!isOpen && (
           <Button
             type="button"
@@ -201,7 +202,7 @@ export function FloraOSGlobalCopilot() {
             </div>
           </Button>
         )}
-      </div>
+      </FloatingItemSlot>
 
       {/* Cửa sổ Chat Copilot: BottomSheet trên mobile (< sm), Floating Dialog trên desktop (>= sm) */}
       {isOpen && (
