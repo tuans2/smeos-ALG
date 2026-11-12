@@ -95,7 +95,7 @@ Nhận xét: Thẻ chào chiếm ~20% mã mô-đun và bị khoá "đóng băng 
 | Cách ly tenant | `CLAUDE.md` #2, đặc tả 05 §3 | `src/core/tenancy/`, `requireTenantContext`, 137 test tenant | Thực thi |
 | RBAC theo mã năng lực, 3 lớp + trần cứng | `docs/dac-ta/02-function-catalog.md`, `src/core/rbac/README.md` | `capability-catalog.ts`, `permission-resolver.ts`, route guard test | Thực thi |
 | Quyền console nền tảng (N1–N17) | TRANG_THAI D-N6 | `src/core/platform/`, `platform_operators` | Thực thi |
-| Quản trị 4 tầng (Mẹ → Ngành → Chuỗi → Cửa hàng) | `ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md`, `.agents/standards/smeos/01-tier-governance.md` | `core/governance/layered-resolver.ts`, `tier-of.ts`, `governance-decisions.ts` | Một phần (xem ARC-008) |
+| Quản trị 4 tầng (Mẹ → Ngành → Chuỗi → Cửa hàng) | `ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md`, `.agents/standards/alg/01-tier-governance.md` | `core/governance/layered-resolver.ts`, `tier-of.ts`, `governance-decisions.ts` | Một phần (xem ARC-008) |
 | Gói dịch vụ / entitlement | standard 01 | `core/entitlements/entitlement-service.ts`, `tool-route-entitlement.ts` | Thực thi |
 | Cổng AI (`callCapability`) | `CLAUDE.md` #5, kiến trúc V2 §17–19 | `src/core/ai/gateway.ts` (18 tệp gọi) | Thực thi cho TS; không cho worker Python |
 | Industry plugin | standard 08 | `organization/domain/industries/*`, `check:industry`, `audit:industry:check` | Thực thi (ratchet đang đỏ trên `main`) |

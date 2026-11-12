@@ -1,9 +1,11 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import { useCallback, useEffect, useRef } from "react"
 
 type TrackedEvent = "VIEW" | "DETAIL" | "FORM_OPEN" | "LIKE" | "UNLIKE"
-const VISITOR_KEY = "smeos:visitor"
+const VISITOR_KEY = "alg:visitor"
 const LEGACY_VISITOR_KEY = "floraos:visitor"
 
 /** Mã khách ngẫu nhiên trên máy (không phải danh tính) — để đếm khách không trùng. */

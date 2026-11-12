@@ -3,7 +3,7 @@
   "$id": "stage-08-qa.input.schema.json",
   "title": "Chặng 08 — QA: Kiểm tra Thương hiệu / Sản phẩm / Nội dung / Kênh — Đầu vào",
   "description": "Trục: product_integrity, approvals, platform_specs, content, brand, plan_consistency. Kết quả đổi status: QA_PASSED | QA_NEEDS_REVIEW | QA_REJECTED.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "08",
     "stage": 8,
     "code": "QA",

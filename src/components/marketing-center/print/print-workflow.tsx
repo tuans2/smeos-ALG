@@ -156,7 +156,7 @@ export function PrintWorkflow({
   const downloadPdf = (base64String: string) => {
     const link = document.createElement("a")
     link.href = `data:application/pdf;base64,${base64String}`
-    link.download = `smeos-ban-in-${presetCode.toLowerCase()}-${Date.now()}.pdf`
+    link.download = `alg-ban-in-${presetCode.toLowerCase()}-${Date.now()}.pdf`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)

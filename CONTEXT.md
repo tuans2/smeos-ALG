@@ -27,7 +27,7 @@ Quyết định của tầng trên khoá tầng dưới theo thứ tự: khoá d
 - **Entitlement:** gói dịch vụ, khoá công cụ, `src/core/entitlements/`
 - **Governance:** ma trận quản trị, `src/modules/organization/domain/governance-decisions.ts`
 
-Chi tiết: skill `tier-governance`, `.agents/standards/smeos/01-tier-governance.md`.
+Chi tiết: skill `tier-governance`, `.agents/standards/alg/01-tier-governance.md`.
 
 ## 3. Kiến trúc tổng thể
 
@@ -95,7 +95,7 @@ Bảng này là bản đồ định hướng. Trạng thái thật của từng 
 | Đang ở đâu, quyết định đã chốt, việc kế tiếp | `docs/kien-truc/TRANG_THAI.md` | chỉ §4–6, phần còn lại `grep` |
 | Kiến trúc đích | `docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` | `grep -n "^## "` rồi đọc mục cần |
 | Đặc tả sản phẩm, API, CSDL, UX | `docs/dac-ta/` | theo tệp |
-| Chuẩn kiến trúc đối chiếu mã (10 mảng) | `.agents/standards/README.md`, `.agents/standards/smeos/` | theo mảng |
+| Chuẩn kiến trúc đối chiếu mã (10 mảng) | `.agents/standards/README.md`, `.agents/standards/alg/` | theo mảng |
 | Quy ước mã, bản đồ mã, bẫy | `AGENTS.md` | `grep` theo mục |
 | Luật cấm và lỗi lặp lại | `.agents/AGENT_RULES.md` | theo mục |
 | Nguyên tắc UX | `docs/dac-ta/ux-patterns/OPERATING_PRINCIPLES.md` | trước mọi việc giao diện |

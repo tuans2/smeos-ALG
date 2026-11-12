@@ -16,9 +16,9 @@ export type RlsMode = "off" | "audit" | "enforce"
 
 interface RlsSettings { orgId: string; system: string; mode: string }
 
-const APPLIED = Symbol("smeos.rls.applied")
-const WATCHED = Symbol("smeos.rls.watched")
-const CTX = Symbol("smeos.rls.ctx")
+const APPLIED = Symbol("alg.rls.applied")
+const WATCHED = Symbol("alg.rls.watched")
+const CTX = Symbol("alg.rls.ctx")
 type TrackedClient = pg.PoolClient & { [APPLIED]?: string; [WATCHED]?: boolean; [CTX]?: DbContext | undefined }
 
 const TENANT_TABLES = new Set(TENANT_SCOPED_TABLES)

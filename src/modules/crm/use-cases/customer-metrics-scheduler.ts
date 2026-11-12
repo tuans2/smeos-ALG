@@ -1,7 +1,7 @@
 import { log } from "@/core/observability/log"
 import { CUSTOMER_METRICS_LOOKBACK_MS, sweepCustomerMetrics } from "./customer-metrics-sweep"
 
-const STARTED = Symbol.for("smeos.crm.customer-metrics")
+const STARTED = Symbol.for("alg.crm.customer-metrics")
 const INTERVAL_MS = 5 * 60 * 1000
 
 /**

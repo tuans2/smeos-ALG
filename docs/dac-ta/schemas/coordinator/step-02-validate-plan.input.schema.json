@@ -3,7 +3,7 @@
   "$id": "step-02-validate-plan.input.schema.json",
   "title": "Thẩm định & Lập kế hoạch (T02) — Đầu vào",
   "description": "Chuyển INTAKE → VALIDATING/PLANNING → ASSIGNING; máy chủ kiểm luồng và bằng chứng (409 nếu sai)",
-  "x-floraos": {
+  "x-alg": {
     "stepId": "02",
     "step": 2,
     "code": "VALIDATE_PLAN",

@@ -76,7 +76,7 @@ test.describe("Ảnh mốc màn chính 12 hành trình", () => {
         await page.addInitScript(() => {
           const get = Storage.prototype.getItem
           Storage.prototype.getItem = function (key: string) {
-            return key.startsWith("smeos_guidance_seen_") ? "1" : get.call(this, key)
+            return key.startsWith("alg_guidance_seen_") ? "1" : get.call(this, key)
           }
         })
         await settle(page, screen.path)

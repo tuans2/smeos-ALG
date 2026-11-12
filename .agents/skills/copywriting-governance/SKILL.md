@@ -8,7 +8,7 @@ description: >-
   (src/lib/i18n/locales/), hoặc tích hợp i18n hook useI18n() vào components.
 ---
 
-> **Cập nhật 30/10/2026 — đọc trước.** Đối chiếu code + trạng thái: `.agents/standards/smeos/04-i18n.md`; nguyên tắc chung: `.agents/standards/universal/04-i18n.md`; SSOT: `docs/dac-ta/ALG_I18N_STANDARD.md` §0.
+> **Cập nhật 30/10/2026 — đọc trước.** Đối chiếu code + trạng thái: `.agents/standards/alg/04-i18n.md`; nguyên tắc chung: `.agents/standards/universal/04-i18n.md`; SSOT: `docs/dac-ta/ALG_I18N_STANDARD.md` §0.
 > - Định dạng chỉ qua `src/lib/i18n/formatters.ts` (`formatCurrency` vi → `"350.000 ₫"`); ratchet `tests/unit/architecture/i18n-direct-intl-ratchet.test.ts`.
 > - Thêm khóa vào **cả** `vi` và `en` — `i18n-integrity.test.ts` so mọi cấp khóa.
 > - **Chưa có, không dùng:** `tp()` số nhiều; mã lỗi API `{ code, message }`.

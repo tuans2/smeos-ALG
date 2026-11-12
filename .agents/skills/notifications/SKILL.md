@@ -9,7 +9,7 @@ description: >-
 
 # Notifications
 
-Đọc trước: `.agents/standards/smeos/06-notifications.md`, rồi `universal/06-notifications.md`; đặc tả `docs/kien-truc/NOTIFICATION_SYSTEM_ARCHITECTURE.md`.
+Đọc trước: `.agents/standards/alg/06-notifications.md`, rồi `universal/06-notifications.md`; đặc tả `docs/kien-truc/NOTIFICATION_SYSTEM_ARCHITECTURE.md`.
 
 Bắt buộc:
 - Sự kiện mới khai trong `domain/events/<tầng>-events.ts`, `deepLinkTemplate` trỏ trang thật (`events-deeplinks.test.ts`).

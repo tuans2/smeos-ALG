@@ -95,7 +95,7 @@ Commit được audit: `c27f39e1` (HEAD `main`, 31/10/2026). Mọi lệnh dướ
 
 ## 4. Tham chiếu tài liệu
 
-- `CLAUDE.md`, `AGENTS.md`, `.agents/AGENT_RULES.md`, `.agents/standards/smeos/01-tier-governance.md`, `.claude/skills/*`
+- `CLAUDE.md`, `AGENTS.md`, `.agents/AGENT_RULES.md`, `.agents/standards/alg/01-tier-governance.md`, `.claude/skills/*`
 - `docs/00-DOCUMENTATION-CONSTITUTION.md`, `docs/00-DOCUMENTATION-REGISTRY.yaml`
 - `docs/kien-truc/TRANG_THAI.md` §2–6, `HO_SO_BAN_GIAO.md`, `ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md`
 - `docs/handover/OPERATIONS_RUNBOOK.md`

@@ -88,7 +88,7 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 - **Khuyến nghị:** Mỗi kênh một đầu nối duy nhất trong Hub (theo `connector-contract.ts`); Notification và Thẻ chào gọi qua Hub; nhãn trạng thái danh mục phản ánh đúng (`LEGACY`/`BETA`) tới khi chuyển xong; quyết định PO về cổng thanh toán.
 
 ### ARC-008 — Mô hình 4 tầng chưa trọn (P1)
-- **Bằng chứng:** enum `organization_type` = `EXPERIENCE, SINGLE, STORE, CHAIN, FLOWER_NETWORK`; `SYSTEM_ROLES` không có `industry_admin`/`platform_admin`/`chain_admin`/`store_admin`; `tier-of.ts` nhận diện Ngành bằng `organization_type === "INDUSTRY"` (không thể xảy ra) hoặc vai `industry_admin`; `notification/domain/events/industry-events.ts` gửi tới `industry_admin`; `.agents/standards/smeos/01-tier-governance.md` §3: Thanh toán/Phí gia công/Mẫu 🟡, tầng Ngành 🔴 (nợ #185, #195).
+- **Bằng chứng:** enum `organization_type` = `EXPERIENCE, SINGLE, STORE, CHAIN, FLOWER_NETWORK`; `SYSTEM_ROLES` không có `industry_admin`/`platform_admin`/`chain_admin`/`store_admin`; `tier-of.ts` nhận diện Ngành bằng `organization_type === "INDUSTRY"` (không thể xảy ra) hoặc vai `industry_admin`; `notification/domain/events/industry-events.ts` gửi tới `industry_admin`; `.agents/standards/alg/01-tier-governance.md` §3: Thanh toán/Phí gia công/Mẫu 🟡, tầng Ngành 🔴 (nợ #185, #195).
 - **Khuyến nghị:** PO quyết: hoặc chính thức hoá Ngành chỉ là plugin (bỏ khỏi RBAC/thông báo/UI), hoặc thêm dữ liệu tầng Ngành (schema + vai + quyền). Áp 3 ma trận còn lại hoặc giữ `GovernanceScopeNote`.
 
 ### ARC-009 — Worker Python ngoài cổng AI (P1)

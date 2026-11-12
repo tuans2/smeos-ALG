@@ -1,5 +1,7 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import React, { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
@@ -15,7 +17,7 @@ import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { StoreGrowthCenter } from "./store-growth-center"
 
-const STORAGE_KEY_EXPERT_MODE = "smeos_expert_mode_store"
+const STORAGE_KEY_EXPERT_MODE = "alg_expert_mode_store"
 const LEGACY_STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_store"
 
 export function StoreJourneyHome() {
@@ -60,7 +62,7 @@ export function StoreJourneyHome() {
       return
     }
 
-    if (journey.id === "floraos-copilot-chat" || journey.id === "smeos-copilot-chat") {
+    if (journey.id === "floraos-copilot-chat" || journey.id === "alg-copilot-chat") {
       if (typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("alg:open-copilot"))
       }

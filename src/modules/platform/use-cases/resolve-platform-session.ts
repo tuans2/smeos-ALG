@@ -38,7 +38,7 @@ export async function requirePlatformContext(request: Request): Promise<Platform
   if (!user) throw unauthenticated()
 
   // Quyền vận hành CHỈ đến từ `platform_operators` — ở mọi môi trường (P0-04, ARC-003). Trước đây
-  // ngoài production, email đuôi `@dev.com` hoặc cookie `smeos_dev_role` tự có mã N: môi trường thử
+  // ngoài production, email đuôi `@dev.com` hoặc cookie `alg_dev_role` tự có mã N: môi trường thử
   // nào mở ra Internet cũng thành console xuyên tổ chức cho người lạ. Máy dev cấp quyền bằng seed
   // dev (`prisma/seed/sync-siin-store.ts`) hoặc `npm run gan-van-hanh-nen-tang`.
   const operator = await getPlatformOperatorRepository().findActiveByUserId(user.id)

@@ -37,7 +37,7 @@
 | Tiêu chí | Chuẩn/cổng hiện có | Bằng chứng mã | Trạng thái |
 |---|---|---|---|
 | 1.4.3 Tương phản | Tỉ lệ đo bằng công thức cho token chính (`globals.css:58-63`, 03a §5); `OPERATING_PRINCIPLES` §3 cấm `opacity` lên chữ; test 12 phong cách catalog | 2.081 lần dùng thang màu `cool/blush…` không có số đo tương phản; `disabled:opacity-40`; `text-caption` 11px phổ biến | Một phần — axe chỉ chạy trên 13 tuyến |
-| 2.1.1 Bàn phím | R5 (`onClick` trên phần tử không tương tác, FAIL với tệp mới) | Chưa kiểm thủ công (`.agents/standards/smeos/03-ux.md` §2 🟡) | Chưa kiểm chứng |
+| 2.1.1 Bàn phím | R5 (`onClick` trên phần tử không tương tác, FAIL với tệp mới) | Chưa kiểm thủ công (`.agents/standards/alg/03-ux.md` §2 🟡) | Chưa kiểm chứng |
 | 2.4.7 / 2.4.11 Focus thấy được, không bị che | `Button` `focus-visible:outline-2` | 336 `outline-none` (cần rà từng chỗ có thay thế); phần tử nổi `fixed` có thể che focus (2.4.11 mới của 2.2) | Chưa kiểm chứng |
 | 1.3.1 Ngữ nghĩa | `page-archetypes.md` §1 “một `<h1>`” | 85 tệp tự viết `<h1>`; chưa kiểm số `<h1>` mỗi trang; 44 `<table>` tự viết (chưa rà `<th scope>`) | Một phần |
 | 4.1.2 Tên truy cập | R6 (nút icon), R7 (`alt`) — **0 vi phạm** | 502 `aria-label` | Đã triển khai (tự động, phạm vi lint) |

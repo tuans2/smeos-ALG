@@ -168,7 +168,7 @@ export function AccountStorageHub({
     }
     try {
       const orgKey = session.organization?.id ?? "default"
-      const saved = localStorage.getItem(`smeos_finalized_pitches_${orgKey}`) ?? localStorage.getItem(`floraos_finalized_pitches_${orgKey}`)
+      const saved = localStorage.getItem(`alg_finalized_pitches_${orgKey}`) ?? localStorage.getItem(`floraos_finalized_pitches_${orgKey}`)
       if (saved) {
         const parsed = JSON.parse(saved) as SalesPitchData[]
         setInternalFinalizedPitches(parsed)
@@ -210,7 +210,7 @@ export function AccountStorageHub({
       const updated = prev.filter((p) => (p.id ?? p.productName) !== pitchId)
       try {
         const orgKey = session.organization?.id ?? "default"
-        localStorage.setItem(`smeos_finalized_pitches_${orgKey}`, JSON.stringify(updated))
+        localStorage.setItem(`alg_finalized_pitches_${orgKey}`, JSON.stringify(updated))
       } catch { /* ignore */ }
       return updated
     })

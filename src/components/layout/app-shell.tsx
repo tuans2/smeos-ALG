@@ -9,6 +9,8 @@ import { SessionTakeoverWatcher } from "@/components/layout/session-takeover-wat
 import { LiveRegionProvider } from "@/components/ui/live-region"
 import { ToastProvider } from "@/components/ui/toast"
 import { FloatingLayerProvider } from "@/components/layout/floating-layer"
+// Chuyển khoá lưu trên trình duyệt smeos*/floraos* → alg* trước khi trang đọc (đổi tên ALG, 12/11/2026)
+import "@/lib/brand-storage-migration"
 import { ToolLockGuard } from "@/components/layout/tool-lock-guard"
 import { UiStudioAvailabilityProvider } from "@/components/layout/ui-studio-availability"
 import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"

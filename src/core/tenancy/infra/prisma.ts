@@ -20,14 +20,14 @@ import { RlsPool } from "./rls-pool"
  * xuất hiện ở đây và ở `prisma.config.ts`.
  */
 const globalForPrisma = globalThis as unknown as {
-  smeosPrisma?: PrismaClient
+  algPrisma?: PrismaClient
   schemaVersion?: string
 }
 
 const CURRENT_SCHEMA_VERSION = "2026-11-09-pii-cleanup"
 if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
-  globalForPrisma.smeosPrisma?.$disconnect?.().catch(() => {})
-  delete globalForPrisma.smeosPrisma
+  globalForPrisma.algPrisma?.$disconnect?.().catch(() => {})
+  delete globalForPrisma.algPrisma
   globalForPrisma.schemaVersion = CURRENT_SCHEMA_VERSION
 }
 
@@ -39,7 +39,7 @@ function createClient(): PrismaClient {
         connectionString: env.DATABASE_URL,
         // ADR-015 D-O5: pool có trần rõ ràng và tên ứng dụng để `pg_stat_activity` phân biệt dịch vụ.
         max: env.DATABASE_POOL_MAX,
-        application_name: "smeos-web",
+        application_name: "alg-web",
       }, env.DB_RLS_MODE),
     ),
   })
@@ -74,8 +74,8 @@ function createClient(): PrismaClient {
   }) as unknown as PrismaClient
 }
 
-export const prisma: PrismaClient = globalForPrisma.smeosPrisma ?? createClient()
+export const prisma: PrismaClient = globalForPrisma.algPrisma ?? createClient()
 
 if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.smeosPrisma = prisma
+  globalForPrisma.algPrisma = prisma
 }

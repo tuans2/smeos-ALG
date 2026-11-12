@@ -1,6 +1,6 @@
 # 13 — Audit nhất quán xuyên 4 tầng (Giai đoạn 4)
 
-> Câu hỏi: bốn tầng **SaaS Mẹ → SaaS Ngành → ChainOS → StoreOS** có được biểu diễn **cùng một cách** ở mọi trục của hệ thống không, và tầng trên có thực sự quản được tầng dưới như thiết kế (`ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md`, `.agents/standards/smeos/01-tier-governance.md`) hay không.
+> Câu hỏi: bốn tầng **SaaS Mẹ → SaaS Ngành → ChainOS → StoreOS** có được biểu diễn **cùng một cách** ở mọi trục của hệ thống không, và tầng trên có thực sự quản được tầng dưới như thiết kế (`ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md`, `.agents/standards/alg/01-tier-governance.md`) hay không.
 > Phương pháp: với mỗi trục, đọc mã nơi tầng được xác định và nơi quyết định được áp; so sánh giữa các trục. Phát hiện mới đánh số `ARC-033…ARC-040` (bổ sung vào `08`).
 
 ## 1. Ma trận đối chiếu: tầng × trục
@@ -57,7 +57,7 @@ Rủi ro:
 - `core/entitlements/entitlement-service.ts` định nghĩa 5 gói (`EXPERIENCE`, `STARTER`, `PRO`, `FLOWER_NETWORK`, `ENTERPRISE`) và `requireFeatureAccess()`.
 - `grep` toàn `src/`: **không route/use-case nào gọi `requireFeatureAccess` hay `hasPlanEntitlement`**. Chỉ `integration-hub/infra/org-profile.ts` đọc `PLAN_FEATURES` (cho danh mục tích hợp).
 - `resolvePlanFromOrg`: tổ chức không có `credit_plan` → **`PRO`** ("Mặc định gói đầy đủ cho các tổ chức cửa hàng chuẩn").
-- Hệ quả: ngoài Tích hợp, mọi tính năng trả phí (studio sáng tạo, video, giọng nói, chat AI bán hàng, nghiên cứu thị trường…) chỉ được chặn bởi RBAC và credit — không có phân tầng gói thương mại. Tài liệu (`standards/smeos/01` §3 "Gói dịch vụ ✅") ghi là đã có.
+- Hệ quả: ngoài Tích hợp, mọi tính năng trả phí (studio sáng tạo, video, giọng nói, chat AI bán hàng, nghiên cứu thị trường…) chỉ được chặn bởi RBAC và credit — không có phân tầng gói thương mại. Tài liệu (`standards/alg/01` §3 "Gói dịch vụ ✅") ghi là đã có.
 
 ## 6. Khoá công cụ chuỗi → chi nhánh — **ARC-037 (P2)**
 

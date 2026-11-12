@@ -7,7 +7,7 @@ import { canOverrideIndustryLock } from "@/modules/organization/domain/organizat
 import { describeSession } from "./describe-session"
 import { resolveSession } from "./resolve-session"
 import { parseDevRoleOverride, applyDevRoleOverride, DEV_ROLE_COOKIE } from "@/lib/dev-role-override"
-import { TIER_PREVIEW_COOKIE, canUseTierPreview, parseTierPreview } from "@/modules/platform/domain/tier-preview"
+import { LEGACY_TIER_PREVIEW_COOKIE, TIER_PREVIEW_COOKIE, canUseTierPreview, parseTierPreview } from "@/modules/platform/domain/tier-preview"
 
 function readCookieValue(cookieHeader: string, name: string): string | null {
   const segment = cookieHeader.split(";").map((c) => c.trim()).find((c) => c.startsWith(`${name}=`))
@@ -88,7 +88,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
   // Người vận hành nền tảng (N1) xem trước tầng — chạy cả production. Kiểm
   // lại quyền ở mỗi request: thu hồi N1 thì cookie cũ hết tác dụng.
   if (canUseTierPreview(platformCapabilities)) {
-    const preview = parseTierPreview(readCookieValue(cookieHeader, TIER_PREVIEW_COOKIE))
+    const preview = parseTierPreview(readCookieValue(cookieHeader, TIER_PREVIEW_COOKIE) ?? readCookieValue(cookieHeader, LEGACY_TIER_PREVIEW_COOKIE))
     if (preview !== null) return { ...applyDevRoleOverride(session, preview), tierPreviewActive: true }
   }
 

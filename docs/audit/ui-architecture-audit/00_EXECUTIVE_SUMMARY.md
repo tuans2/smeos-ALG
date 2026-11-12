@@ -36,7 +36,7 @@ Danh sách đầy đủ, mức P0–P3 và việc cần PO quyết: `11_FINDINGS
 
 ## 4. Phương pháp
 
-- Đọc: `CLAUDE.md`, `AGENTS.md`, `.agents/AGENT_RULES.md`, `.agents/standards/smeos/01,03`, skill `ui-development`, `tier-governance`; `docs/dac-ta/03a`, `03c`, `04`, `ux-patterns/*`, `screen-contracts/*`; toàn bộ `docs/ui-ux/*.md` liên quan.
+- Đọc: `CLAUDE.md`, `AGENTS.md`, `.agents/AGENT_RULES.md`, `.agents/standards/alg/01,03`, skill `ui-development`, `tier-governance`; `docs/dac-ta/03a`, `03c`, `04`, `ux-patterns/*`, `screen-contracts/*`; toàn bộ `docs/ui-ux/*.md` liên quan.
 - Mã: `src/app/globals.css`, `src/lib/ui-system/*`, `src/components/ui/*`, `src/components/layout/**`, 6 trang đại diện, `scripts/ux-lint*`, `tests/e2e/ux/*`, `.github/workflows/ci.yml`.
 - Đo: `grep`/`find` trên 935 tệp `.tsx` của `src/app` + `src/components` (lệnh tái lập ở phụ lục mỗi tệp); chạy thật `npx tsx scripts/ux-lint.ts` và `--check`.
 - Phân loại trạng thái: **Không triển khai · Một phần · Có nhưng bất nhất · Đã triển khai & kiểm chứng · Không áp dụng**. Thiếu bằng chứng ≠ PASS.

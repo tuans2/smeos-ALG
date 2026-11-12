@@ -64,7 +64,7 @@ Còn giữ — **cần quyết định riêng vì đổi sẽ gây gián đoạn
 | Tên DB, dịch vụ Docker/Render | `smeos`, `smeos_test`, `smeos-web`, `smeos-worker` | Đổi cấu hình triển khai, `render.yaml` (PO duyệt) |
 | Biến môi trường | `FLORAOS_CORE_INTEGRATION_TOKEN`, `FLORAOS_DA_DOI_PYTHON` | Phải đặt lại trên mọi môi trường cùng lúc |
 | Khoá lưu trên trình duyệt, tiền tố job | `smeos_finalized_pitches_…`, `floraos_job_…` | Người dùng mất dữ liệu nháp đã lưu; job đang chạy mất liên kết |
-| Tên gói npm, thư mục `.agents/standards/smeos/` | `"name": "smeos"` | Không hiển thị cho người dùng |
+| Tên gói npm, thư mục `.agents/standards/alg/` | `"name": "smeos"` | Không hiển thị cho người dùng |
 | Ghi chú nguồn gốc mã | "thu hoạch từ FloraOS v1", đường dẫn `FloraOS/floraos-web/…` | Là tên kho mã gốc — đổi sẽ sai lịch sử |
 | Tên chủ tài khoản billing mặc định | `CONG TY CONG NGHE SMEOS` (số tài khoản giả) | Cần tài khoản thật của ALG |
 | Tài khoản QA đã tạo | `test01@smeos.com` trên máy chủ | Mặc định mới chỉ áp cho lần tạo sau |

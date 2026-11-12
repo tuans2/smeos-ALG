@@ -9,7 +9,7 @@ description: >-
 
 # Storage
 
-Đọc trước: `.agents/standards/smeos/02-storage.md` (code thật + trạng thái), rồi `.agents/standards/universal/02-storage.md`.
+Đọc trước: `.agents/standards/alg/02-storage.md` (code thật + trạng thái), rồi `.agents/standards/universal/02-storage.md`.
 
 Bắt buộc:
 - Ghi chỉ qua `StorageProvider` + `buildStorageKey`. Adapter AI/media không ghi kho.

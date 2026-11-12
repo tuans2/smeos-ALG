@@ -1,5 +1,7 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import React, { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
@@ -15,7 +17,7 @@ import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
-const STORAGE_KEY_EXPERT_MODE = "smeos_expert_mode_network"
+const STORAGE_KEY_EXPERT_MODE = "alg_expert_mode_network"
 const LEGACY_STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_network"
 
 export function NetworkJourneyHome() {

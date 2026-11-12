@@ -11,7 +11,7 @@ description: >-
 # Tier Governance
 
 Đọc trước, theo thứ tự:
-1. `.agents/standards/smeos/01-tier-governance.md` — code thật, trạng thái ✅/🟡/🔴, quy tắc agent.
+1. `.agents/standards/alg/01-tier-governance.md` — code thật, trạng thái ✅/🟡/🔴, quy tắc agent.
 2. `.agents/standards/universal/01-tiered-saas-governance.md` — nguyên tắc chung.
 
 Tóm tắt bắt buộc:

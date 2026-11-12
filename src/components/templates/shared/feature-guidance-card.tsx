@@ -1,5 +1,7 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import * as React from "react"
 import type { LucideIcon } from "@/components/ui/icon-set/wrap"
 import { Info } from "@/components/ui/icon-set/info"
@@ -27,7 +29,7 @@ export interface FeatureGuidanceCardProps extends React.HTMLAttributes<HTMLDivEl
   guidanceId?: string | undefined
 }
 
-const STORAGE_KEY_PREFIX = "smeos_guidance_seen_"
+const STORAGE_KEY_PREFIX = "alg_guidance_seen_"
 const LEGACY_STORAGE_KEY_PREFIX = "floraos_guidance_seen_"
 
 /** Sinh kebab-case ID ổn định từ chuỗi tiếng Việt có dấu */

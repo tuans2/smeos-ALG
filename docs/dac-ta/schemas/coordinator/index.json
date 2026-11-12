@@ -3,7 +3,7 @@
   "$id": "index.json",
   "title": "Chỉ mục JSON Schema — Coordinator Operations",
   "description": "Danh sách tệp JSON Schema đầu vào/đầu ra của 7 bước Điều phối Đơn hàng.",
-  "x-floraos": {
+  "x-alg": {
     "module": "coordinator",
     "stepsCount": 7,
     "generated": "SINH TỰ ĐỘNG — không sửa tay."

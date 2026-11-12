@@ -3,7 +3,7 @@
   "$id": "step-05-quality-check.output.schema.json",
   "title": "Kiểm định chất lượng (T14–T15) — Đầu ra",
   "description": "Người kiểm kết luận PASSED / REWORK_REQUESTED / REJECTED; không đạt bắt buộc lý do. Điểm AI chỉ ghi khi có lượt Vision thật (nợ #140)",
-  "x-floraos": {
+  "x-alg": {
     "stepId": "05",
     "step": 5,
     "code": "QUALITY_CHECK",
