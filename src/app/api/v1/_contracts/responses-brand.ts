@@ -133,8 +133,8 @@ export const brandLibraryResponse = data(z.array(libraryItem))
 /** `data: null` khi tổ chức không thuộc chuỗi. */
 export const brandLibraryChainResponse = data(z.strictObject({ chain_name: z.string(), items: z.array(libraryItem) }).nullable())
 
-/** Dòng `product_copies` nguyên bản — route trả thẳng, không bọc `{ data }`. */
-export const productCopyResponse = z.strictObject({
+/** Dòng `product_copies` nguyên bản. */
+const productCopy = z.strictObject({
   id: z.string(),
   organization_id: z.string(),
   analysis_id: z.string(),
@@ -154,6 +154,7 @@ export const productCopyResponse = z.strictObject({
   created_at: timestamp,
   updated_at: timestamp,
 })
-export const productCopiesResponse = data(z.array(productCopyResponse))
+export const productCopyResponse = data(productCopy)
+export const productCopiesResponse = data(z.array(productCopy))
 /** Lượt phân tích đã có bản → trả lại bản đó (`needsReview: false`), không gọi AI lần hai. */
 export const productCopyGeneratedResponse = z.strictObject({ copyId: z.string(), raw: jsonObject, needsReview: z.boolean(), modelKey: z.string().nullable() })

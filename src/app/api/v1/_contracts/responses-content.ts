@@ -77,7 +77,7 @@ export const catalogContentResponse = z.strictObject({
   }),
 })
 /** Envelope cũ `{ success: true, … }`. `fallback: true` = gợi ý dựng sẵn khi AI không trả được — không tính credit. */
-export const rewriteResponse = z.strictObject({ success: z.literal(true), suggestions: z.array(z.string()), fallback: z.boolean().optional() })
+export const rewriteResponse = z.strictObject({ data: z.strictObject({ suggestions: z.array(z.string()), fallback: z.boolean().optional() }) })
 
 /** Mục cơ hội nội dung — chưa có mẫu thật trong test hợp đồng (bảng trống), nên khai đối tượng tự do. */
 export const opportunitiesResponse = z.strictObject({ items: z.array(z.record(z.string(), z.unknown())), nextCursor: z.string().nullable(), total: z.number() })

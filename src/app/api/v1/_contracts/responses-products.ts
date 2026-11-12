@@ -196,8 +196,7 @@ export const importBatchesResponse = data(
   )
 )
 export const undoImportBatchResponse = z.strictObject({ trashed: z.number(), restored: z.number(), failedCount: z.number() })
-export const batchImportResponse = z.strictObject({
-  success: z.literal(true),
+export const batchImportResponse = z.strictObject({ data: z.strictObject({
   batch_id: z.string(),
   total_requested: z.number(),
   created_count: z.number(),
@@ -210,7 +209,7 @@ export const batchImportResponse = z.strictObject({
   updated: z.array(z.string()),
   skipped: z.array(z.string()),
   failed: z.array(z.strictObject({ code: z.string(), error: z.string() })),
-})
+}) })
 export const driveThumbnailsResponse = z.strictObject({ thumbnails: z.record(z.string(), z.string().nullable()) })
 
 const JOB_STATUS = z.enum(["PENDING", "PROCESSING", "COMPLETED", "FAILED", "CANCELLED"])

@@ -35,7 +35,6 @@ export const PATCH = defineRoute({
     }
 
     return jsonResponse({
-      success: true,
       data: {
         partnershipId,
         partnerOrgId: partnership.partnerOrgId,

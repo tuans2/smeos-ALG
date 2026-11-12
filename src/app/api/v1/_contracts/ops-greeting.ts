@@ -34,7 +34,7 @@ export const GREETING_OPERATIONS: OpenApiOperation[] = [
   op(CAT, { method: "post", path: "/greeting-card/catalogs/{id}/products", operationId: "addCatalogProduct", summary: "Thêm mẫu vào bộ sưu tập", cap: "R2", body: req.catalogProductBody,
     description: "Cần là người tạo hoặc có `L4`." + NF, ok: [201, { description: "Dòng mẫu", schema: res.catalogItemResponse }], errors: ACT }),
   op(CAT, { method: "delete", path: "/greeting-card/catalogs/{id}/products", operationId: "removeCatalogProduct", summary: "Bỏ mẫu khỏi bộ sưu tập", cap: "R2", body: req.catalogProductRemoveBody,
-    description: "Cần là người tạo hoặc có `L4`." + NF, ok: [200, { description: "Đã bỏ", schema: res.successResponse }], errors: ACT }),
+    description: "Cần là người tạo hoặc có `L4`." + NF, ok: [200, { description: "Đã bỏ", schema: res.catalogProductRemovedResponse }], errors: ACT }),
   op(CAT, { method: "get", path: "/greeting-card/catalogs/{id}/collage", operationId: "downloadCatalogCollage", summary: "Ảnh ghép bộ sưu tập (PNG tải về)", cap: "L1", description: NF.trim(),
     ok: [200, { description: "Ảnh PNG", contentType: "image/png" }], errors: [404] }),
   op(CAT, { method: "get", path: "/greeting-card/catalogs/{id}/hearts", operationId: "getCatalogHearts", summary: "Lượt thả tim theo mẫu", cap: "L1", description: NF.trim(),

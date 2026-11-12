@@ -29,6 +29,6 @@ export const PATCH = defineRoute({
       priorityOverride: body.priorityOverride as NotifyPriority | undefined,
     })
 
-    return jsonResponse({ success: true, updated: body })
+    return jsonResponse({ data: body })
   },
 })

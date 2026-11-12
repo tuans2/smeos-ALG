@@ -86,7 +86,7 @@ describe("hợp đồng — khách hàng & marketing", () => {
     await expectContract(await customerInteractions(get(`/customers/${customerId}/interactions`), ps(customerId)), 200, R.interactionsResponse, "customer-interactions")
     // @release-strip-end
     await expectContract(await listInteractions(get(`/customer-interactions?customer_id=${customerId}`)), 200, R.interactionsResponse, "interactions")
-    await expectContract(await removeSegment(send(`/customer-segments/${id}`, "DELETE"), ps(id)), 200, R.successResponse, "segment-remove")
+    await expectContract(await removeSegment(send(`/customer-segments/${id}`, "DELETE"), ps(id)), 200, R.segmentDeletedResponse, "segment-remove")
   })
 
   it("dịp bán hàng", async () => {

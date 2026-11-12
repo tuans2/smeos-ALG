@@ -10,6 +10,6 @@ export const POST = defineRoute({
   handler: async ({ request, ctx, params }) => {
     const { id, requestId } = params as { id: string; requestId: string }
     await closeOrderInfoRequest(ctx, id, requestId, closeInfoRequestBody.parse(await request.json()))
-    return jsonResponse({ ok: true })
+    return jsonResponse({ data: { id: requestId, closed: true } })
   },
 })

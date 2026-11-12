@@ -34,7 +34,6 @@ export const POST = defineRoute({
     })
 
     return jsonResponse({
-      success: true,
       data: updatedMessage,
     })
   },

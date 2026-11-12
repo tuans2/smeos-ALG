@@ -160,7 +160,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
         setSelectError(await readApiError(res, "Không chọn được mẫu này, vui lòng thử lại"))
         return
       }
-      const data = (await res.json()) as { snapshot: ProductSnapshot }
+      const { data } = (await res.json()) as { data: { snapshot: ProductSnapshot } }
       setSnapshot(data.snapshot)
       setStep("ORDER_FORM")
     } catch {

@@ -88,7 +88,7 @@ describe("chat — cách ly thẻ hành động và sổ credit kênh ngoài", (
     const res = await widget(req as never)
     const body = await readJson(res)
     expect(res.status, JSON.stringify(body)).toBe(200)
-    expect(String(body.conversationId)).not.toBe("")
+    expect(String((body.data as { conversationId: string }).conversationId)).not.toBe("")
     expect((await prisma.organizations.findUniqueOrThrow({ where: { id: a.organizationId } })).credit_balance).toBe(9)
     const usage = await prisma.usage.findMany({ where: { organization_id: a.organizationId, feature: "chat.message.ai_reply" } })
     const workspace = await prisma.workspaces.findFirstOrThrow({ where: { organization_id: a.organizationId }, orderBy: { created_at: "asc" } })

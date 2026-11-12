@@ -139,49 +139,53 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "copy": {
+                    "data": {
                       "type": "object",
                       "properties": {
-                        "headline": {
-                          "type": "string"
+                        "copy": {
+                          "type": "object",
+                          "properties": {
+                            "headline": {
+                              "type": "string"
+                            },
+                            "subHeadline": {
+                              "type": "string"
+                            },
+                            "promotionBadge": {
+                              "type": "string"
+                            },
+                            "ctaText": {
+                              "type": "string"
+                            },
+                            "validityText": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "headline",
+                            "subHeadline",
+                            "promotionBadge",
+                            "ctaText"
+                          ],
+                          "additionalProperties": false
                         },
-                        "subHeadline": {
-                          "type": "string"
-                        },
-                        "promotionBadge": {
-                          "type": "string"
-                        },
-                        "ctaText": {
-                          "type": "string"
-                        },
-                        "validityText": {
-                          "type": "string"
+                        "source": {
+                          "type": "string",
+                          "enum": [
+                            "AI_CONTENT_ENGINE",
+                            "INSTANT_TEMPLATE"
+                          ]
                         }
                       },
                       "required": [
-                        "headline",
-                        "subHeadline",
-                        "promotionBadge",
-                        "ctaText"
+                        "copy",
+                        "source"
                       ],
                       "additionalProperties": false
-                    },
-                    "source": {
-                      "type": "string",
-                      "enum": [
-                        "AI_CONTENT_ENGINE",
-                        "INSTANT_TEMPLATE"
-                      ]
                     }
                   },
                   "required": [
-                    "success",
-                    "copy",
-                    "source"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -353,109 +357,113 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "qc": {
+                    "data": {
                       "type": "object",
                       "properties": {
-                        "isPassed": {
-                          "type": "boolean"
+                        "qc": {
+                          "type": "object",
+                          "properties": {
+                            "isPassed": {
+                              "type": "boolean"
+                            },
+                            "overallScore": {
+                              "type": "number"
+                            },
+                            "criteria": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "passed": {
+                                    "type": "boolean"
+                                  },
+                                  "score": {
+                                    "type": "number"
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "code",
+                                  "name",
+                                  "passed",
+                                  "score"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "failedCriteria": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "retryHint": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "isPassed",
+                            "overallScore",
+                            "criteria",
+                            "failedCriteria"
+                          ],
+                          "additionalProperties": false
                         },
-                        "overallScore": {
-                          "type": "number"
-                        },
-                        "criteria": {
+                        "results": {
                           "type": "array",
                           "items": {
                             "type": "object",
                             "properties": {
-                              "code": {
+                              "format": {
+                                "type": "string",
+                                "enum": [
+                                  "1:1",
+                                  "4:5",
+                                  "9:16",
+                                  "16:9",
+                                  "A4"
+                                ]
+                              },
+                              "renderedUrl": {
                                 "type": "string"
                               },
-                              "name": {
-                                "type": "string"
+                              "mode": {
+                                "type": "string",
+                                "enum": [
+                                  "SINGLE_CALL_AI",
+                                  "TEMPLATE_LAYOUT"
+                                ]
                               },
-                              "passed": {
-                                "type": "boolean"
-                              },
-                              "score": {
-                                "type": "number"
-                              },
-                              "message": {
+                              "note": {
                                 "type": "string"
                               }
                             },
                             "required": [
-                              "code",
-                              "name",
-                              "passed",
-                              "score"
+                              "format",
+                              "mode",
+                              "note"
                             ],
                             "additionalProperties": false
                           }
-                        },
-                        "failedCriteria": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "retryHint": {
-                          "type": "string"
                         }
                       },
                       "required": [
-                        "isPassed",
-                        "overallScore",
-                        "criteria",
-                        "failedCriteria"
+                        "qc",
+                        "results"
                       ],
                       "additionalProperties": false
-                    },
-                    "results": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "format": {
-                            "type": "string",
-                            "enum": [
-                              "1:1",
-                              "4:5",
-                              "9:16",
-                              "16:9",
-                              "A4"
-                            ]
-                          },
-                          "renderedUrl": {
-                            "type": "string"
-                          },
-                          "mode": {
-                            "type": "string",
-                            "enum": [
-                              "SINGLE_CALL_AI",
-                              "TEMPLATE_LAYOUT"
-                            ]
-                          },
-                          "note": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "format",
-                          "mode",
-                          "note"
-                        ],
-                        "additionalProperties": false
-                      }
                     }
                   },
                   "required": [
-                    "success",
-                    "qc",
-                    "results"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -5301,13 +5309,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -6471,13 +6492,22 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "logged_out": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "logged_out"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -7006,13 +7036,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -11897,7 +11940,7 @@
       "post": {
         "operationId": "applyIndustryMockData",
         "summary": "Nạp dữ liệu mẫu theo ngành (không gian trải nghiệm)",
-        "description": "Chỉ tổ chức loại không gian trải nghiệm — tổ chức thường → 403. Mã ngành lạ → 400. Trả envelope cũ `{ success: true, data }`.",
+        "description": "Chỉ tổ chức loại không gian trải nghiệm — tổ chức thường → 403. Mã ngành lạ → 400.",
         "tags": [
           "Hồ sơ cửa hàng"
         ],
@@ -11940,10 +11983,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -11970,7 +12009,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -13304,7 +13342,7 @@
       "get": {
         "operationId": "getCatalogLinkPublic",
         "summary": "Xem link catalog (khách quét QR, không đăng nhập)",
-        "description": "Công khai có chủ đích. Link đã thu hồi hoặc mã lạ → 404. Thân không bọc `{ data }`; có `created_by` (mã người tạo, audit API §32).",
+        "description": "Công khai có chủ đích. Trần 60 lượt/phút/IP (→ 429). Link đã thu hồi hoặc mã lạ → 404. Thân không bọc `{ data }`; có `created_by` (mã người tạo, audit API §32).",
         "tags": [
           "Link catalog"
         ],
@@ -13422,6 +13460,9 @@
           },
           "404": {
             "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
           }
         },
         "x-capability": "công khai"
@@ -15788,7 +15829,7 @@
       "get": {
         "operationId": "listChatChannels",
         "summary": "Kênh chat, biểu phí và trạng thái",
-        "description": "Chưa gác mã năng lực (RS-8 đặc tả 06). Khoá bí mật đã che.",
+        "description": "Xem trong màn Tích hợp — cùng mã xem danh mục tích hợp (PO 12/11/2026; trước đó không gác mã). Khoá bí mật đã che.",
         "tags": [
           "Trợ lý AI — kênh & hạn mức"
         ],
@@ -16000,7 +16041,7 @@
             "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "phiên đăng nhập"
+        "x-capability": "W1"
       },
       "post": {
         "operationId": "configureChatChannel",
@@ -17777,7 +17818,7 @@
             "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "phiên đăng nhập"
+        "x-capability": "W1"
       },
       "post": {
         "operationId": "requestPublicChatLimits",
@@ -17913,7 +17954,7 @@
       "post": {
         "operationId": "sendPublicChatWidgetMessage",
         "summary": "Khung chat AI trên trang công khai",
-        "description": "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
+        "description": "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Lỗi theo envelope chuẩn `{ error: { code, message } }`; route không qua `handle()` nên không có header `RateLimit-*`.",
         "tags": [
           "Trợ lý AI — kênh & hạn mức"
         ],
@@ -17981,74 +18022,83 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "replyText": {
-                      "type": "string"
-                    },
-                    "suggestedProducts": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "productId": {
-                            "type": "string"
-                          },
-                          "productCode": {
-                            "type": "string"
-                          },
-                          "productName": {
-                            "type": "string"
-                          },
-                          "sampleImageUrl": {
-                            "type": "string"
-                          },
-                          "priceVnd": {
-                            "type": [
-                              "number",
-                              "null"
-                            ]
-                          },
-                          "category": {
-                            "type": "string"
-                          },
-                          "wrapStyle": {
-                            "type": "string"
-                          },
-                          "reason": {
-                            "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "replyText": {
+                          "type": "string"
+                        },
+                        "suggestedProducts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "productId": {
+                                "type": "string"
+                              },
+                              "productCode": {
+                                "type": "string"
+                              },
+                              "productName": {
+                                "type": "string"
+                              },
+                              "sampleImageUrl": {
+                                "type": "string"
+                              },
+                              "priceVnd": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "category": {
+                                "type": "string"
+                              },
+                              "wrapStyle": {
+                                "type": "string"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "productId",
+                              "productCode",
+                              "productName",
+                              "priceVnd",
+                              "category",
+                              "wrapStyle",
+                              "reason"
+                            ],
+                            "additionalProperties": false
                           }
                         },
-                        "required": [
-                          "productId",
-                          "productCode",
-                          "productName",
-                          "priceVnd",
-                          "category",
-                          "wrapStyle",
-                          "reason"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "conversationId": {
-                      "type": "string"
-                    },
-                    "channel": {
-                      "type": "string",
-                      "enum": [
-                        "INTERNAL_DASHBOARD",
-                        "STOREFRONT_CATALOG",
-                        "LANDING_PAGE",
-                        "FACEBOOK_MESSENGER",
-                        "ZALO_OA",
-                        "EMBEDDED_WIDGET"
-                      ]
+                        "conversationId": {
+                          "type": "string"
+                        },
+                        "channel": {
+                          "type": "string",
+                          "enum": [
+                            "INTERNAL_DASHBOARD",
+                            "STOREFRONT_CATALOG",
+                            "LANDING_PAGE",
+                            "FACEBOOK_MESSENGER",
+                            "ZALO_OA",
+                            "EMBEDDED_WIDGET"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "replyText",
+                        "suggestedProducts",
+                        "conversationId",
+                        "channel"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "replyText",
-                    "suggestedProducts",
-                    "conversationId",
-                    "channel"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -18068,8 +18118,7 @@
             "$ref": "#/components/responses/Error500"
           }
         },
-        "x-capability": "công khai",
-        "x-legacy-error-envelope": true
+        "x-capability": "công khai"
       }
     },
     "/chat/webhooks/facebook": {
@@ -19632,23 +19681,27 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "suggestions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "fallback": {
-                      "type": "boolean"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "suggestions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "fallback": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "suggestions"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "suggestions"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -21694,6 +21747,445 @@
           }
         },
         "x-capability": "H1"
+      }
+    },
+    "/coordinator/chain-partners": {
+      "get": {
+        "operationId": "listChainPartners",
+        "summary": "Cửa hàng đối tác của chuỗi",
+        "tags": [
+          "Điều phối — đối tác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "ACTIVE",
+                "SUSPENDED",
+                "TERMINATED"
+              ]
+            }
+          },
+          {
+            "name": "province",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liên kết",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "chainOrgId": {
+                            "type": "string"
+                          },
+                          "partnerOrgId": {
+                            "type": "string"
+                          },
+                          "partnerCode": {
+                            "type": "string"
+                          },
+                          "partnershipType": {
+                            "type": "string",
+                            "enum": [
+                              "SUBCONTRACTOR",
+                              "FRANCHISE"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "ACTIVE",
+                              "SUSPENDED",
+                              "TERMINATED"
+                            ]
+                          },
+                          "commissionRate": {
+                            "type": "number"
+                          },
+                          "capacityDaily": {
+                            "type": "number"
+                          },
+                          "contactName": {
+                            "type": "string"
+                          },
+                          "contactPhone": {
+                            "type": "string"
+                          },
+                          "contactEmail": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "province": {
+                            "type": "string"
+                          },
+                          "district": {
+                            "type": "string"
+                          },
+                          "partnerOrgName": {
+                            "type": "string"
+                          },
+                          "partnerOrgSlug": {
+                            "type": "string"
+                          },
+                          "unlockedTools": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "chainOrgId",
+                          "partnerOrgId",
+                          "partnerCode",
+                          "partnershipType",
+                          "status",
+                          "capacityDaily",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "total"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "post": {
+        "operationId": "provisionChainPartner",
+        "summary": "Tạo tài khoản cửa hàng đối tác mới",
+        "description": "Chỉ Điều hành (`F2` hardCap). Mật khẩu tạm trả MỘT lần (`temporary_password`). Sai lược đồ → 400 `details.reason` (một chuỗi).",
+        "tags": [
+          "Điều phối — đối tác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "partnerStoreName": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "partnerCode": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "partnershipType": {
+                    "type": "string",
+                    "enum": [
+                      "SUBCONTRACTOR",
+                      "FRANCHISE"
+                    ]
+                  },
+                  "contactName": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "contactPhone": {
+                    "type": "string",
+                    "minLength": 8
+                  },
+                  "contactEmail": {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 10
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "province": {
+                    "type": "string"
+                  },
+                  "district": {
+                    "type": "string"
+                  },
+                  "capacityDaily": {
+                    "type": "number"
+                  },
+                  "commissionRate": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "partnerStoreName",
+                  "partnerCode",
+                  "contactName",
+                  "contactPhone",
+                  "contactEmail"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cửa hàng đối tác",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "partnership": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "chainOrgId": {
+                              "type": "string"
+                            },
+                            "partnerOrgId": {
+                              "type": "string"
+                            },
+                            "partnerCode": {
+                              "type": "string"
+                            },
+                            "partnershipType": {
+                              "type": "string",
+                              "enum": [
+                                "SUBCONTRACTOR",
+                                "FRANCHISE"
+                              ]
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "PENDING",
+                                "ACTIVE",
+                                "SUSPENDED",
+                                "TERMINATED"
+                              ]
+                            },
+                            "commissionRate": {
+                              "type": "number"
+                            },
+                            "capacityDaily": {
+                              "type": "number"
+                            },
+                            "contactName": {
+                              "type": "string"
+                            },
+                            "contactPhone": {
+                              "type": "string"
+                            },
+                            "contactEmail": {
+                              "type": "string"
+                            },
+                            "address": {
+                              "type": "string"
+                            },
+                            "province": {
+                              "type": "string"
+                            },
+                            "district": {
+                              "type": "string"
+                            },
+                            "partnerOrgName": {
+                              "type": "string"
+                            },
+                            "partnerOrgSlug": {
+                              "type": "string"
+                            },
+                            "unlockedTools": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "chainOrgId",
+                            "partnerOrgId",
+                            "partnerCode",
+                            "partnershipType",
+                            "status",
+                            "capacityDaily",
+                            "createdAt",
+                            "updatedAt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "temporary_password": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "partnership"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "F2"
       }
     },
     "/coordinator/exceptions/{id}/resolve": {
@@ -34965,10 +35457,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -35051,7 +35539,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -44283,7 +44770,8 @@
     "/coordinator/partners": {
       "get": {
         "operationId": "listCoordinatorPartners",
-        "summary": "Đối tác gia công hoặc cửa hàng đối tác của chuỗi",
+        "summary": "Đối tác gia công của Điều phối",
+        "description": "`active=1` chỉ đối tác đang hoạt động. Cửa hàng đối tác của chuỗi ở `/coordinator/chain-partners` (tách 12/11/2026).",
         "tags": [
           "Điều phối — đối tác"
         ],
@@ -44304,36 +44792,6 @@
                 "1"
               ]
             }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "PENDING",
-                "ACTIVE",
-                "SUSPENDED",
-                "TERMINATED"
-              ]
-            }
-          },
-          {
-            "name": "province",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -44353,310 +44811,85 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "partners": {
-                          "type": "array",
-                          "items": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "district": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "province": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "tier": {
+                            "type": "string"
+                          },
+                          "rating": {
+                            "type": "number"
+                          },
+                          "capacityDaily": {
+                            "type": "number"
+                          },
+                          "isActive": {
+                            "type": "boolean"
+                          },
+                          "customFields": {
                             "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "code": {
-                                "type": "string"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "phone": {
-                                "type": "string"
-                              },
-                              "address": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "district": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "province": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "tier": {
-                                "type": "string"
-                              },
-                              "rating": {
-                                "type": "number"
-                              },
-                              "capacityDaily": {
-                                "type": "number"
-                              },
-                              "isActive": {
-                                "type": "boolean"
-                              },
-                              "customFields": {
-                                "type": "object",
-                                "propertyNames": {
-                                  "type": "string"
-                                },
-                                "additionalProperties": {}
-                              }
+                            "propertyNames": {
+                              "type": "string"
                             },
-                            "required": [
-                              "id",
-                              "code",
-                              "name",
-                              "phone",
-                              "address",
-                              "district",
-                              "province",
-                              "tier",
-                              "rating",
-                              "capacityDaily",
-                              "isActive",
-                              "customFields"
-                            ],
-                            "additionalProperties": false
-                          }
-                        }
-                      },
-                      "required": [
-                        "partners"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "success": {
-                          "type": "boolean",
-                          "const": true
-                        },
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "chainOrgId": {
-                                "type": "string"
-                              },
-                              "partnerOrgId": {
-                                "type": "string"
-                              },
-                              "partnerCode": {
-                                "type": "string"
-                              },
-                              "partnershipType": {
-                                "type": "string",
-                                "enum": [
-                                  "SUBCONTRACTOR",
-                                  "FRANCHISE"
-                                ]
-                              },
-                              "status": {
-                                "type": "string",
-                                "enum": [
-                                  "PENDING",
-                                  "ACTIVE",
-                                  "SUSPENDED",
-                                  "TERMINATED"
-                                ]
-                              },
-                              "commissionRate": {
-                                "type": "number"
-                              },
-                              "capacityDaily": {
-                                "type": "number"
-                              },
-                              "contactName": {
-                                "type": "string"
-                              },
-                              "contactPhone": {
-                                "type": "string"
-                              },
-                              "contactEmail": {
-                                "type": "string"
-                              },
-                              "address": {
-                                "type": "string"
-                              },
-                              "province": {
-                                "type": "string"
-                              },
-                              "district": {
-                                "type": "string"
-                              },
-                              "partnerOrgName": {
-                                "type": "string"
-                              },
-                              "partnerOrgSlug": {
-                                "type": "string"
-                              },
-                              "unlockedTools": {
-                                "anyOf": [
-                                  {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "createdAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              },
-                              "updatedAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "chainOrgId",
-                              "partnerOrgId",
-                              "partnerCode",
-                              "partnershipType",
-                              "status",
-                              "capacityDaily",
-                              "createdAt",
-                              "updatedAt"
-                            ],
-                            "additionalProperties": false
+                            "additionalProperties": {}
                           }
                         },
-                        "partners": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "chainOrgId": {
-                                "type": "string"
-                              },
-                              "partnerOrgId": {
-                                "type": "string"
-                              },
-                              "partnerCode": {
-                                "type": "string"
-                              },
-                              "partnershipType": {
-                                "type": "string",
-                                "enum": [
-                                  "SUBCONTRACTOR",
-                                  "FRANCHISE"
-                                ]
-                              },
-                              "status": {
-                                "type": "string",
-                                "enum": [
-                                  "PENDING",
-                                  "ACTIVE",
-                                  "SUSPENDED",
-                                  "TERMINATED"
-                                ]
-                              },
-                              "commissionRate": {
-                                "type": "number"
-                              },
-                              "capacityDaily": {
-                                "type": "number"
-                              },
-                              "contactName": {
-                                "type": "string"
-                              },
-                              "contactPhone": {
-                                "type": "string"
-                              },
-                              "contactEmail": {
-                                "type": "string"
-                              },
-                              "address": {
-                                "type": "string"
-                              },
-                              "province": {
-                                "type": "string"
-                              },
-                              "district": {
-                                "type": "string"
-                              },
-                              "partnerOrgName": {
-                                "type": "string"
-                              },
-                              "partnerOrgSlug": {
-                                "type": "string"
-                              },
-                              "unlockedTools": {
-                                "anyOf": [
-                                  {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "createdAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              },
-                              "updatedAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "chainOrgId",
-                              "partnerOrgId",
-                              "partnerCode",
-                              "partnershipType",
-                              "status",
-                              "capacityDaily",
-                              "createdAt",
-                              "updatedAt"
-                            ],
-                            "additionalProperties": false
-                          }
-                        },
-                        "total": {
-                          "type": "number"
-                        }
-                      },
-                      "required": [
-                        "success",
-                        "data",
-                        "partners",
-                        "total"
-                      ],
-                      "additionalProperties": false
+                        "required": [
+                          "id",
+                          "code",
+                          "name",
+                          "phone",
+                          "address",
+                          "district",
+                          "province",
+                          "tier",
+                          "rating",
+                          "capacityDaily",
+                          "isActive",
+                          "customFields"
+                        ],
+                        "additionalProperties": false
+                      }
                     }
-                  ]
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -44671,12 +44904,12 @@
             "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "R1 hoặc F1"
+        "x-capability": "R1"
       },
       "post": {
         "operationId": "createCoordinatorPartner",
-        "summary": "Tạo cửa hàng đối tác (tài khoản mới) hoặc đối tác gia công ngoài",
-        "description": "Thân có `partnerStoreName`/`contactEmail` → tạo cửa hàng đối tác (`F2`, mật khẩu tạm trả MỘT lần); còn lại → đối tác gia công (`R4`).",
+        "summary": "Tạo đối tác gia công ngoài",
+        "description": "Trùng mã → 409.",
         "tags": [
           "Điều phối — đối tác"
         ],
@@ -44690,123 +44923,60 @@
           "content": {
             "application/json": {
               "schema": {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "partnerStoreName": {
-                        "type": "string",
-                        "minLength": 2
-                      },
-                      "partnerCode": {
-                        "type": "string",
-                        "minLength": 2
-                      },
-                      "partnershipType": {
-                        "type": "string",
-                        "enum": [
-                          "SUBCONTRACTOR",
-                          "FRANCHISE"
-                        ]
-                      },
-                      "contactName": {
-                        "type": "string",
-                        "minLength": 2
-                      },
-                      "contactPhone": {
-                        "type": "string",
-                        "minLength": 8
-                      },
-                      "contactEmail": {
-                        "type": "string",
-                        "format": "email",
-                        "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
-                      },
-                      "password": {
-                        "type": "string",
-                        "minLength": 10
-                      },
-                      "address": {
-                        "type": "string"
-                      },
-                      "province": {
-                        "type": "string"
-                      },
-                      "district": {
-                        "type": "string"
-                      },
-                      "capacityDaily": {
-                        "type": "number"
-                      },
-                      "commissionRate": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "partnerStoreName",
-                      "partnerCode",
-                      "contactName",
-                      "contactPhone",
-                      "contactEmail"
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{2,32}$"
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "phone": {
+                    "type": "string",
+                    "pattern": "^\\+?[0-9 .-]{8,15}$"
+                  },
+                  "address": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "district": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "province": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "tier": {
+                    "default": "STANDARD",
+                    "type": "string",
+                    "enum": [
+                      "STANDARD",
+                      "PREFERRED",
+                      "VIP"
                     ]
                   },
-                  {
+                  "capacityDaily": {
+                    "default": 10,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000
+                  },
+                  "customFields": {
                     "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "string",
-                        "pattern": "^[A-Za-z0-9_-]{2,32}$"
-                      },
-                      "name": {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 200
-                      },
-                      "phone": {
-                        "type": "string",
-                        "pattern": "^\\+?[0-9 .-]{8,15}$"
-                      },
-                      "address": {
-                        "type": "string",
-                        "maxLength": 500
-                      },
-                      "district": {
-                        "type": "string",
-                        "maxLength": 100
-                      },
-                      "province": {
-                        "type": "string",
-                        "maxLength": 100
-                      },
-                      "tier": {
-                        "default": "STANDARD",
-                        "type": "string",
-                        "enum": [
-                          "STANDARD",
-                          "PREFERRED",
-                          "VIP"
-                        ]
-                      },
-                      "capacityDaily": {
-                        "default": 10,
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 1000
-                      },
-                      "customFields": {
-                        "type": "object",
-                        "propertyNames": {
-                          "type": "string"
-                        },
-                        "additionalProperties": {}
-                      }
+                    "propertyNames": {
+                      "type": "string"
                     },
-                    "required": [
-                      "code",
-                      "name",
-                      "phone"
-                    ]
+                    "additionalProperties": {}
                   }
+                },
+                "required": [
+                  "code",
+                  "name",
+                  "phone"
                 ]
               }
             }
@@ -44829,201 +44999,82 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
+                  "type": "object",
+                  "properties": {
+                    "data": {
                       "type": "object",
                       "properties": {
-                        "partner": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "code": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "phone": {
-                              "type": "string"
-                            },
-                            "address": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "district": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "province": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "tier": {
-                              "type": "string"
-                            },
-                            "rating": {
-                              "type": "number"
-                            },
-                            "capacityDaily": {
-                              "type": "number"
-                            },
-                            "isActive": {
-                              "type": "boolean"
-                            },
-                            "customFields": {
-                              "type": "object",
-                              "propertyNames": {
-                                "type": "string"
-                              },
-                              "additionalProperties": {}
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "code",
-                            "name",
-                            "phone",
-                            "address",
-                            "district",
-                            "province",
-                            "tier",
-                            "rating",
-                            "capacityDaily",
-                            "isActive",
-                            "customFields"
-                          ],
-                          "additionalProperties": false
-                        }
-                      },
-                      "required": [
-                        "partner"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "success": {
-                          "type": "boolean",
-                          "const": true
-                        },
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "chainOrgId": {
-                              "type": "string"
-                            },
-                            "partnerOrgId": {
-                              "type": "string"
-                            },
-                            "partnerCode": {
-                              "type": "string"
-                            },
-                            "partnershipType": {
-                              "type": "string",
-                              "enum": [
-                                "SUBCONTRACTOR",
-                                "FRANCHISE"
-                              ]
-                            },
-                            "status": {
-                              "type": "string",
-                              "enum": [
-                                "PENDING",
-                                "ACTIVE",
-                                "SUSPENDED",
-                                "TERMINATED"
-                              ]
-                            },
-                            "commissionRate": {
-                              "type": "number"
-                            },
-                            "capacityDaily": {
-                              "type": "number"
-                            },
-                            "contactName": {
-                              "type": "string"
-                            },
-                            "contactPhone": {
-                              "type": "string"
-                            },
-                            "contactEmail": {
-                              "type": "string"
-                            },
-                            "address": {
-                              "type": "string"
-                            },
-                            "province": {
-                              "type": "string"
-                            },
-                            "district": {
-                              "type": "string"
-                            },
-                            "partnerOrgName": {
-                              "type": "string"
-                            },
-                            "partnerOrgSlug": {
-                              "type": "string"
-                            },
-                            "unlockedTools": {
-                              "anyOf": [
-                                {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string"
-                                  }
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "createdAt": {
-                              "type": "string",
-                              "format": "date-time",
-                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                            },
-                            "updatedAt": {
-                              "type": "string",
-                              "format": "date-time",
-                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "chainOrgId",
-                            "partnerOrgId",
-                            "partnerCode",
-                            "partnershipType",
-                            "status",
-                            "capacityDaily",
-                            "createdAt",
-                            "updatedAt"
-                          ],
-                          "additionalProperties": false
-                        },
-                        "temporaryPassword": {
+                        "id": {
                           "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "phone": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "district": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "province": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tier": {
+                          "type": "string"
+                        },
+                        "rating": {
+                          "type": "number"
+                        },
+                        "capacityDaily": {
+                          "type": "number"
+                        },
+                        "isActive": {
+                          "type": "boolean"
+                        },
+                        "customFields": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
                         }
                       },
                       "required": [
-                        "success",
-                        "data"
+                        "id",
+                        "code",
+                        "name",
+                        "phone",
+                        "address",
+                        "district",
+                        "province",
+                        "tier",
+                        "rating",
+                        "capacityDaily",
+                        "isActive",
+                        "customFields"
                       ],
                       "additionalProperties": false
                     }
-                  ]
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -45050,7 +45101,7 @@
             "$ref": "#/components/responses/Error422"
           }
         },
-        "x-capability": "R4 hoặc F2"
+        "x-capability": "R4"
       }
     },
     "/coordinator/partners/{id}": {
@@ -45153,7 +45204,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "partner": {
+                    "data": {
                       "type": "object",
                       "properties": {
                         "id": {
@@ -45224,7 +45275,7 @@
                     }
                   },
                   "required": [
-                    "partner"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -45784,10 +45835,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -45888,7 +45935,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -45986,10 +46032,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -46015,7 +46057,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -46116,10 +46157,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -46220,7 +46257,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -63442,13 +63478,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -67411,13 +67460,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -71513,12 +71575,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "product_id": {
+                          "type": "string"
+                        },
+                        "removed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "product_id",
+                        "removed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -87434,7 +87510,7 @@
       "delete": {
         "operationId": "revokeIntegrationToken",
         "summary": "Thu hồi token ngay",
-        "description": "Không xoá bản ghi. Trả `{ ok: true }` cũ. Token của tổ chức khác → 404.",
+        "description": "Không xoá bản ghi. Token của tổ chức khác → 404.",
         "tags": [
           "Token tích hợp & SSO"
         ],
@@ -87472,13 +87548,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "revoked": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "revoked"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -88211,7 +88300,7 @@
       "delete": {
         "operationId": "disconnectIntegration",
         "summary": "Ngắt kết nối",
-        "description": "Mã năng lực kiểm ở use-case. Thu hồi phía nhà cung cấp nếu hỗ trợ, xoá khoá đã lưu. Trả `{ ok: true }` cũ. Kết nối của tổ chức khác hoặc đã ngắt → 404. Kết nối của tích hợp quản lý ở phân hệ khác (`managed`) → 422.",
+        "description": "Mã năng lực kiểm ở use-case. Thu hồi phía nhà cung cấp nếu hỗ trợ, xoá khoá đã lưu. Kết nối của tổ chức khác hoặc đã ngắt → 404. Kết nối của tích hợp quản lý ở phân hệ khác (`managed`) → 422.",
         "tags": [
           "Trung tâm Tích hợp — kết nối"
         ],
@@ -88249,13 +88338,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "disconnected": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "disconnected"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -89053,7 +89155,7 @@
       "post": {
         "operationId": "unpublishFromSalesChannel",
         "summary": "Gỡ tin đã đăng",
-        "description": "Mã năng lực kiểm ở use-case. Ghi nhật ký kiểm toán. Trả `{ ok: true }` cũ. Kết nối không phải kênh bán, đã ngắt hoặc của tổ chức khác → 404; kết nối đang lỗi/hết hạn hoặc cấp trên đã khoá kênh → 422.",
+        "description": "Mã năng lực kiểm ở use-case. Ghi nhật ký kiểm toán. Kết nối không phải kênh bán, đã ngắt hoặc của tổ chức khác → 404; kết nối đang lỗi/hết hạn hoặc cấp trên đã khoá kênh → 422.",
         "tags": [
           "Trung tâm Tích hợp — kênh bán"
         ],
@@ -89116,13 +89218,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "unpublished": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "unpublished"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -89334,7 +89449,7 @@
       "post": {
         "operationId": "replayIntegrationEvent",
         "summary": "Đưa sự kiện lỗi về hàng chờ",
-        "description": "Mã năng lực kiểm ở use-case. Chỉ sự kiện `FAILED`/`DEAD` — khác hoặc của tổ chức khác → 404; đầu nối không xử lý lại được → 422. Trả `{ ok: true }` cũ.",
+        "description": "Mã năng lực kiểm ở use-case. Chỉ sự kiện `FAILED`/`DEAD` — khác hoặc của tổ chức khác → 404; đầu nối không xử lý lại được → 422.",
         "tags": [
           "Trung tâm Tích hợp — kết nối"
         ],
@@ -89372,13 +89487,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "replayed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "replayed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -89669,7 +89797,7 @@
       "get": {
         "operationId": "listInternalConversations",
         "summary": "Hội thoại nội bộ tôi tham gia",
-        "description": "Không cần mã năng lực. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực.",
         "tags": [
           "Chat nội bộ"
         ],
@@ -89721,10 +89849,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -89825,14 +89949,22 @@
                         "additionalProperties": false
                       }
                     },
-                    "total": {
-                      "type": "number"
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "total"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
                     "data",
-                    "total"
+                    "meta"
                   ],
                   "additionalProperties": false
                 }
@@ -89854,7 +89986,7 @@
       "post": {
         "operationId": "createInternalConversation",
         "summary": "Tạo hoặc lấy lại hội thoại nội bộ",
-        "description": "Thân `{ partnerOrgId }` / `{ chainOrgId }` / `{ branchId }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi). Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Thân `{ partnerOrgId }` / `{ chainOrgId }` / `{ branchId }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -89973,10 +90105,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -90076,7 +90204,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -90339,7 +90466,7 @@
       "get": {
         "operationId": "listInternalMessages",
         "summary": "Tin nhắn của hội thoại nội bộ",
-        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404.",
         "tags": [
           "Chat nội bộ"
         ],
@@ -90377,10 +90504,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -90505,7 +90628,7 @@
                         "additionalProperties": false
                       }
                     },
-                    "nextCursor": {
+                    "next_cursor": {
                       "type": [
                         "string",
                         "null"
@@ -90513,9 +90636,8 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data",
-                    "nextCursor"
+                    "next_cursor"
                   ],
                   "additionalProperties": false
                 }
@@ -90540,7 +90662,7 @@
       "post": {
         "operationId": "sendInternalMessage",
         "summary": "Gửi tin nhắn nội bộ",
-        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tin chữ: thân có `actionPayload` / `attachments` / loại khác `TEXT` hoặc tin rỗng → 400 (thẻ đơn và tin hệ thống chỉ do máy chủ sinh; ảnh gửi qua `/images`). Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tin chữ: thân có `actionPayload` / `attachments` / loại khác `TEXT` hoặc tin rỗng → 400 (thẻ đơn và tin hệ thống chỉ do máy chủ sinh; ảnh gửi qua `/images`).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -90602,10 +90724,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -90729,7 +90847,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -91181,7 +91298,7 @@
       "post": {
         "operationId": "handleInternalCardAction",
         "summary": "Bấm nút trên thẻ hành động (nhận/từ chối đơn)",
-        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tổ chức được giao, không phải người gửi thẻ (khác → 404). Tin không phải thẻ đơn (`ACTION_CARD_ORDER`) → 409; thẻ đã xử lý hoặc vừa bị người khác xử lý → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tổ chức được giao, không phải người gửi thẻ (khác → 404). Tin không phải thẻ đơn (`ACTION_CARD_ORDER`) → 409; thẻ đã xử lý hoặc vừa bị người khác xử lý → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định.",
         "tags": [
           "Chat nội bộ"
         ],
@@ -91245,10 +91362,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -91372,7 +91485,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -91625,138 +91737,164 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "processed": {
-                      "type": "number"
-                    },
-                    "remindersSent": {
-                      "type": "number"
-                    },
-                    "roundsAdvanced": {
-                      "type": "number"
-                    },
-                    "graceCommitted": {
-                      "type": "number"
-                    },
-                    "pages": {
-                      "type": "number"
-                    },
-                    "stuckJobsFailed": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "storageLifecycle": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "idempotencyKeysPurged": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "piiEncrypted": {
+                    "data": {
                       "anyOf": [
                         {
                           "type": "object",
-                          "propertyNames": {
-                            "type": "string"
+                          "properties": {
+                            "processed": {
+                              "type": "number"
+                            },
+                            "remindersSent": {
+                              "type": "number"
+                            },
+                            "roundsAdvanced": {
+                              "type": "number"
+                            },
+                            "graceCommitted": {
+                              "type": "number"
+                            },
+                            "pages": {
+                              "type": "number"
+                            },
+                            "stuckJobsFailed": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "storageLifecycle": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            "idempotencyKeysPurged": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "piiEncrypted": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {
+                                    "type": "number"
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "quotationsExpired": {
+                              "type": "number"
+                            },
+                            "subscriptions": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            "complete": {
+                              "type": "boolean"
+                            },
+                            "productProposals": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            "deliveryReminders": {
+                              "type": "object",
+                              "properties": {
+                                "organizations": {
+                                  "type": "number"
+                                },
+                                "pushed": {
+                                  "type": "number"
+                                },
+                                "failedOrganizations": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "organizations",
+                                "pushed",
+                                "failedOrganizations"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "sentDetails": {
+                              "type": "array",
+                              "items": {}
+                            },
+                            "errorCount": {
+                              "type": "number"
+                            },
+                            "errors": {
+                              "type": "array",
+                              "items": {}
+                            },
+                            "sweepAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
                           },
-                          "additionalProperties": {
-                            "type": "number"
-                          }
+                          "required": [
+                            "processed",
+                            "remindersSent",
+                            "roundsAdvanced",
+                            "graceCommitted",
+                            "pages",
+                            "stuckJobsFailed",
+                            "storageLifecycle",
+                            "idempotencyKeysPurged",
+                            "piiEncrypted",
+                            "quotationsExpired",
+                            "subscriptions",
+                            "complete",
+                            "deliveryReminders",
+                            "errorCount",
+                            "sweepAt"
+                          ],
+                          "additionalProperties": false
                         },
                         {
-                          "type": "null"
+                          "type": "object",
+                          "properties": {
+                            "skipped": {
+                              "type": "string"
+                            },
+                            "sweepAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "skipped",
+                            "sweepAt"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
-                    },
-                    "quotationsExpired": {
-                      "type": "number"
-                    },
-                    "subscriptions": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {
-                        "type": "number"
-                      }
-                    },
-                    "complete": {
-                      "type": "boolean"
-                    },
-                    "productProposals": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {
-                        "type": "number"
-                      }
-                    },
-                    "deliveryReminders": {
-                      "type": "object",
-                      "properties": {
-                        "organizations": {
-                          "type": "number"
-                        },
-                        "pushed": {
-                          "type": "number"
-                        },
-                        "failedOrganizations": {
-                          "type": "number"
-                        }
-                      },
-                      "required": [
-                        "organizations",
-                        "pushed",
-                        "failedOrganizations"
-                      ],
-                      "additionalProperties": false
-                    },
-                    "sentDetails": {
-                      "type": "array",
-                      "items": {}
-                    },
-                    "errorCount": {
-                      "type": "number"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {}
-                    },
-                    "sweepAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                     }
                   },
                   "required": [
-                    "ok",
-                    "processed",
-                    "remindersSent",
-                    "roundsAdvanced",
-                    "graceCommitted",
-                    "pages",
-                    "stuckJobsFailed",
-                    "storageLifecycle",
-                    "idempotencyKeysPurged",
-                    "piiEncrypted",
-                    "quotationsExpired",
-                    "subscriptions",
-                    "complete",
-                    "deliveryReminders",
-                    "errorCount",
-                    "sweepAt"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -100286,7 +100424,7 @@
       "get": {
         "operationId": "getOrganizationIdentity",
         "summary": "Định danh tổ chức của phiên, liên kết chuỗi, thành viên",
-        "description": "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`. Envelope cũ `{ success, data }`.",
+        "description": "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`.",
         "tags": [
           "Định danh tổ chức"
         ],
@@ -100314,10 +100452,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -100509,7 +100643,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -100965,7 +101098,7 @@
       "patch": {
         "operationId": "markInboxRead",
         "summary": "Đánh dấu một tin đã đọc",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Tin của người/tổ chức khác → 200 `success: false`, không đổi gì. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Tin của người/tổ chức khác → 200 `success: false`, không đổi gì.",
         "tags": [
           "Thông báo — hộp thư"
         ],
@@ -101003,16 +101136,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "id": {
-                      "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "read": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "read"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "id"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101039,7 +101181,7 @@
       "post": {
         "operationId": "markAllInboxRead",
         "summary": "Đánh dấu đã đọc toàn bộ",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực.",
         "tags": [
           "Thông báo — hộp thư"
         ],
@@ -101067,17 +101209,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "count": {
-                      "type": "number"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "count"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "count"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101206,7 +101352,7 @@
       "post": {
         "operationId": "setOrgHardLock",
         "summary": "Đặt khoá cứng một sự kiện × kênh",
-        "description": "Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101274,11 +101420,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "hardLock": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -101287,8 +101429,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "hardLock"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101319,7 +101460,7 @@
       "delete": {
         "operationId": "removeOrgHardLock",
         "summary": "Gỡ khoá cứng một sự kiện × kênh",
-        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101380,11 +101521,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "removed": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -101393,8 +101530,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "removed"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101519,7 +101655,7 @@
       "patch": {
         "operationId": "updateOrgNotificationPolicy",
         "summary": "Đặt chính sách sự kiện × kênh × vai",
-        "description": "`roleKey` = `*` áp mọi vai. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "`roleKey` = `*` áp mọi vai.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101597,11 +101733,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "updated": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -101610,8 +101742,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "updated"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101737,7 +101868,7 @@
       "patch": {
         "operationId": "updateNotificationPreference",
         "summary": "Bật/tắt một sự kiện × kênh cho tôi",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng (tầng Mẹ, ngành, chuỗi hoặc chính cửa hàng) → 403 với thân `{ error: \"chuỗi\", reason }` (ngoại lệ envelope). Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng (tầng Mẹ, ngành, chuỗi hoặc chính cửa hàng) → 422 `UNPROCESSABLE_ENTITY`, `details.violation = \"LOCKED_BY_UPPER\"` kèm `tier`, `reason`.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101807,11 +101938,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "updated": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -101820,8 +101947,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "updated"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101845,6 +101971,9 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
           }
         },
         "x-capability": "phiên đăng nhập"
@@ -102262,7 +102391,6 @@
       "patch": {
         "operationId": "updateStoreNotificationDefault",
         "summary": "Đặt mặc định cửa hàng (kèm khung giờ)",
-        "description": "Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -102338,11 +102466,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "updated": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -102351,8 +102475,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "updated"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -102487,7 +102610,7 @@
       "post": {
         "operationId": "setStoreHardLock",
         "summary": "Đặt khoá cứng một sự kiện × kênh",
-        "description": "Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -102555,11 +102678,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "hardLock": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -102568,8 +102687,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "hardLock"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -102600,7 +102718,7 @@
       "delete": {
         "operationId": "removeStoreHardLock",
         "summary": "Gỡ khoá cứng một sự kiện × kênh",
-        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -102661,11 +102779,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "removed": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -102674,8 +102788,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "removed"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -107398,13 +107511,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "closed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "closed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -112586,7 +112712,7 @@
       "delete": {
         "operationId": "archivePriceList",
         "summary": "Bỏ bảng giá khỏi danh sách",
-        "description": "Lịch sử phiên bản vẫn giữ. Trả 200 `{ ok: true }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`). Của tổ chức khác → 404.",
+        "description": "Lịch sử phiên bản vẫn giữ. Của tổ chức khác → 404.",
         "tags": [
           "Quy tắc giá & bảng giá"
         ],
@@ -112624,13 +112750,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "archived": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "archived"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -115105,7 +115244,7 @@
       "get": {
         "operationId": "getProductCopy",
         "summary": "Một bản dữ liệu bán hàng",
-        "description": "Mã năng lực kiểm ở use-case. Trả thẳng bản ghi (không bọc `{ data }`). Của tổ chức khác → 404.",
+        "description": "Mã năng lực kiểm ở use-case. Của tổ chức khác → 404.",
         "tags": [
           "Dữ liệu bán hàng sản phẩm"
         ],
@@ -115143,140 +115282,149 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "organization_id": {
-                      "type": "string"
-                    },
-                    "analysis_id": {
-                      "type": "string"
-                    },
-                    "product_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "raw": {
+                    "data": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "edited": {
-                      "anyOf": [
-                        {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "analysis_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "raw": {
                           "type": "object",
                           "propertyNames": {
                             "type": "string"
                           },
                           "additionalProperties": {}
                         },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approval_state": {
-                      "type": "string",
-                      "enum": [
-                        "PENDING",
-                        "APPROVED",
-                        "REJECTED"
-                      ]
-                    },
-                    "approved_by": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "approved_at": {
-                      "anyOf": [
-                        {
+                        "edited": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reject_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "latency_ms": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         },
-                        {
-                          "type": "null"
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         }
-                      ]
-                    },
-                    "profile_version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "reject_reason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "job_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "model_key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "provider": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cost_usd": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "latency_ms": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "analysis_id",
+                        "product_id",
+                        "raw",
+                        "edited",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "profile_version",
+                        "reject_reason",
+                        "job_id",
+                        "model_key",
+                        "provider",
+                        "cost_usd",
+                        "latency_ms",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "id",
-                    "organization_id",
-                    "analysis_id",
-                    "product_id",
-                    "raw",
-                    "edited",
-                    "approval_state",
-                    "approved_by",
-                    "approved_at",
-                    "profile_version",
-                    "reject_reason",
-                    "job_id",
-                    "model_key",
-                    "provider",
-                    "cost_usd",
-                    "latency_ms",
-                    "created_at",
-                    "updated_at"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -115376,140 +115524,149 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "organization_id": {
-                      "type": "string"
-                    },
-                    "analysis_id": {
-                      "type": "string"
-                    },
-                    "product_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "raw": {
+                    "data": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "edited": {
-                      "anyOf": [
-                        {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "analysis_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "raw": {
                           "type": "object",
                           "propertyNames": {
                             "type": "string"
                           },
                           "additionalProperties": {}
                         },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approval_state": {
-                      "type": "string",
-                      "enum": [
-                        "PENDING",
-                        "APPROVED",
-                        "REJECTED"
-                      ]
-                    },
-                    "approved_by": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "approved_at": {
-                      "anyOf": [
-                        {
+                        "edited": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reject_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "latency_ms": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         },
-                        {
-                          "type": "null"
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         }
-                      ]
-                    },
-                    "profile_version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "reject_reason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "job_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "model_key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "provider": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cost_usd": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "latency_ms": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "analysis_id",
+                        "product_id",
+                        "raw",
+                        "edited",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "profile_version",
+                        "reject_reason",
+                        "job_id",
+                        "model_key",
+                        "provider",
+                        "cost_usd",
+                        "latency_ms",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "id",
-                    "organization_id",
-                    "analysis_id",
-                    "product_id",
-                    "raw",
-                    "edited",
-                    "approval_state",
-                    "approved_by",
-                    "approved_at",
-                    "profile_version",
-                    "reject_reason",
-                    "job_id",
-                    "model_key",
-                    "provider",
-                    "cost_usd",
-                    "latency_ms",
-                    "created_at",
-                    "updated_at"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -115583,140 +115740,149 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "organization_id": {
-                      "type": "string"
-                    },
-                    "analysis_id": {
-                      "type": "string"
-                    },
-                    "product_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "raw": {
+                    "data": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "edited": {
-                      "anyOf": [
-                        {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "analysis_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "raw": {
                           "type": "object",
                           "propertyNames": {
                             "type": "string"
                           },
                           "additionalProperties": {}
                         },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approval_state": {
-                      "type": "string",
-                      "enum": [
-                        "PENDING",
-                        "APPROVED",
-                        "REJECTED"
-                      ]
-                    },
-                    "approved_by": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "approved_at": {
-                      "anyOf": [
-                        {
+                        "edited": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reject_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "latency_ms": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         },
-                        {
-                          "type": "null"
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         }
-                      ]
-                    },
-                    "profile_version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "reject_reason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "job_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "model_key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "provider": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cost_usd": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "latency_ms": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "analysis_id",
+                        "product_id",
+                        "raw",
+                        "edited",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "profile_version",
+                        "reject_reason",
+                        "job_id",
+                        "model_key",
+                        "provider",
+                        "cost_usd",
+                        "latency_ms",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "id",
-                    "organization_id",
-                    "analysis_id",
-                    "product_id",
-                    "raw",
-                    "edited",
-                    "approval_state",
-                    "approved_by",
-                    "approved_at",
-                    "profile_version",
-                    "reject_reason",
-                    "job_id",
-                    "model_key",
-                    "provider",
-                    "cost_usd",
-                    "latency_ms",
-                    "created_at",
-                    "updated_at"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -115802,140 +115968,149 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "organization_id": {
-                      "type": "string"
-                    },
-                    "analysis_id": {
-                      "type": "string"
-                    },
-                    "product_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "raw": {
+                    "data": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "edited": {
-                      "anyOf": [
-                        {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "analysis_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "raw": {
                           "type": "object",
                           "propertyNames": {
                             "type": "string"
                           },
                           "additionalProperties": {}
                         },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approval_state": {
-                      "type": "string",
-                      "enum": [
-                        "PENDING",
-                        "APPROVED",
-                        "REJECTED"
-                      ]
-                    },
-                    "approved_by": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "approved_at": {
-                      "anyOf": [
-                        {
+                        "edited": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reject_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "latency_ms": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         },
-                        {
-                          "type": "null"
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         }
-                      ]
-                    },
-                    "profile_version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "reject_reason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "job_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "model_key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "provider": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cost_usd": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "latency_ms": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "analysis_id",
+                        "product_id",
+                        "raw",
+                        "edited",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "profile_version",
+                        "reject_reason",
+                        "job_id",
+                        "model_key",
+                        "provider",
+                        "cost_usd",
+                        "latency_ms",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "id",
-                    "organization_id",
-                    "analysis_id",
-                    "product_id",
-                    "raw",
-                    "edited",
-                    "approval_state",
-                    "approved_by",
-                    "approved_at",
-                    "profile_version",
-                    "reject_reason",
-                    "job_id",
-                    "model_key",
-                    "provider",
-                    "cost_usd",
-                    "latency_ms",
-                    "created_at",
-                    "updated_at"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -116083,11 +116258,15 @@
       "get": {
         "operationId": "listProductImageSetBundles",
         "summary": "Gói bộ ảnh đa kênh có sẵn",
-        "description": "Danh mục tĩnh, không cần phiên (không đọc dữ liệu tổ chức).",
+        "description": "Danh mục tĩnh, không đọc dữ liệu tổ chức — cần đăng nhập (PO 12/11/2026; trước đó công khai).",
         "tags": [
           "Ảnh studio & bộ ảnh sản phẩm"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Danh mục",
@@ -116200,9 +116379,18 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       },
       "post": {
         "operationId": "createProductImageSetJob",
@@ -117268,11 +117456,15 @@
       "get": {
         "operationId": "listProductPhotoPresets",
         "summary": "Phông nền và tỉ lệ khung có sẵn cho ảnh studio",
-        "description": "Danh mục tĩnh, không cần phiên (không đọc dữ liệu tổ chức).",
+        "description": "Danh mục tĩnh, không đọc dữ liệu tổ chức — cần đăng nhập (PO 12/11/2026; trước đó công khai).",
         "tags": [
           "Ảnh studio & bộ ảnh sản phẩm"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Danh mục",
@@ -117358,9 +117550,18 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       },
       "post": {
         "operationId": "createProductPhotoJob",
@@ -120840,103 +121041,107 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "batch_id": {
-                      "type": "string"
-                    },
-                    "total_requested": {
-                      "type": "number"
-                    },
-                    "created_count": {
-                      "type": "number"
-                    },
-                    "updated_count": {
-                      "type": "number"
-                    },
-                    "skipped_count": {
-                      "type": "number"
-                    },
-                    "images_attached_count": {
-                      "type": "number"
-                    },
-                    "drive_links_updated_count": {
-                      "type": "number"
-                    },
-                    "failed_count": {
-                      "type": "number"
-                    },
-                    "created": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "code": {
-                            "type": "string"
-                          },
-                          "name": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "batch_id": {
+                          "type": "string"
+                        },
+                        "total_requested": {
+                          "type": "number"
+                        },
+                        "created_count": {
+                          "type": "number"
+                        },
+                        "updated_count": {
+                          "type": "number"
+                        },
+                        "skipped_count": {
+                          "type": "number"
+                        },
+                        "images_attached_count": {
+                          "type": "number"
+                        },
+                        "drive_links_updated_count": {
+                          "type": "number"
+                        },
+                        "failed_count": {
+                          "type": "number"
+                        },
+                        "created": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "code",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "updated": {
+                          "type": "array",
+                          "items": {
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "id",
-                          "code",
-                          "name"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "updated": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "skipped": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "failed": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "code": {
-                            "type": "string"
-                          },
-                          "error": {
+                        "skipped": {
+                          "type": "array",
+                          "items": {
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "code",
-                          "error"
-                        ],
-                        "additionalProperties": false
-                      }
+                        "failed": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "error": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "error"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "batch_id",
+                        "total_requested",
+                        "created_count",
+                        "updated_count",
+                        "skipped_count",
+                        "images_attached_count",
+                        "drive_links_updated_count",
+                        "failed_count",
+                        "created",
+                        "updated",
+                        "skipped",
+                        "failed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "batch_id",
-                    "total_requested",
-                    "created_count",
-                    "updated_count",
-                    "skipped_count",
-                    "images_attached_count",
-                    "drive_links_updated_count",
-                    "failed_count",
-                    "created",
-                    "updated",
-                    "skipped",
-                    "failed"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -130268,17 +130473,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "key": {
-                      "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok",
-                    "key"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -130882,7 +131091,7 @@
       "post": {
         "operationId": "moveToTrash",
         "summary": "Chuyển một mục vào thùng rác",
-        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Catalog thu hồi link, thẻ chào ẩn. Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Catalog thu hồi link, thẻ chào ẩn. Của tổ chức khác → 404.",
         "tags": [
           "Kho tệp & thùng rác"
         ],
@@ -130943,13 +131152,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "trashed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "trashed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -130985,7 +131207,7 @@
       "delete": {
         "operationId": "purgeFromTrash",
         "summary": "Xoá vĩnh viễn",
-        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). `type` bắt buộc, thiếu/sai → 400. Đang giữ pháp lý, ảnh đang được dùng hoặc sản phẩm đã có đơn → 409. Xoá tệp trên kho qua hàng đợi (outbox), ghi nhật ký kiểm toán. Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). `type` bắt buộc, thiếu/sai → 400. Đang giữ pháp lý, ảnh đang được dùng hoặc sản phẩm đã có đơn → 409. Xoá tệp trên kho qua hàng đợi (outbox), ghi nhật ký kiểm toán. Của tổ chức khác → 404.",
         "tags": [
           "Kho tệp & thùng rác"
         ],
@@ -131041,13 +131263,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -131080,7 +131315,7 @@
       "post": {
         "operationId": "restoreFromTrash",
         "summary": "Khôi phục từ thùng rác",
-        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Của tổ chức khác → 404.",
         "tags": [
           "Kho tệp & thùng rác"
         ],
@@ -131146,13 +131381,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "restored": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "restored"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -132113,13 +132361,30 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "template_key": {
+                          "type": "string"
+                        },
+                        "field_key": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "template_key",
+                        "field_key",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -137524,7 +137789,7 @@
       "patch": {
         "operationId": "toggleVoucherBatch",
         "summary": "Tạm dừng / mở lại cả đợt",
-        "description": "Trả `{ ok: true }` cũ. Của tổ chức khác → 404.",
+        "description": "Của tổ chức khác → 404.",
         "tags": [
           "Mã giảm giá"
         ],
@@ -137580,13 +137845,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "is_active": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "is_active"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }

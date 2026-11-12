@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { actionDone } from "./responses-actions"
 
 import { jobCreatedResponse } from "./responses-ai-studio"
 import { productRow } from "./responses-products"
@@ -158,4 +159,4 @@ export const boardResponse = z.strictObject({
   industryKey: opt(z.string()),
 })
 export const blockCreatedResponse = z.strictObject({ id: z.string(), success: z.literal(true) })
-export const successResponse = z.strictObject({ success: z.literal(true) })
+export const blockRemovedResponse = actionDone("deleted")

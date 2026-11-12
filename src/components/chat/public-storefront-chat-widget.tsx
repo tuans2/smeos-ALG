@@ -103,12 +103,13 @@ export function PublicStorefrontChatWidget({
         }),
       })
 
-      const data = await res.json().catch(() => ({}))
+      const body = await res.json().catch(() => ({}))
+      const reply = body.data
       const botMsg: WidgetMessage = {
         id: newMessageId("bot"),
         senderType: "ASSISTANT",
-        content: res.ok ? data.replyText : data.error || "Trợ lý tạm thời gián đoạn, vui lòng thử lại sau",
-        suggestedProducts: res.ok ? data.suggestedProducts || [] : [],
+        content: res.ok && reply ? reply.replyText : body.error?.message || "Trợ lý tạm thời gián đoạn, vui lòng thử lại sau",
+        suggestedProducts: res.ok && reply ? reply.suggestedProducts || [] : [],
       }
       setMessages((prev) => [...prev, botMsg])
     } catch (err) {

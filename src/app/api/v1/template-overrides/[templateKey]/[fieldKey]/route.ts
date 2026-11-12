@@ -8,6 +8,6 @@ export const DELETE = defineRoute({
   handler: async ({ ctx, params }) => {
       const { templateKey, fieldKey } = params as { templateKey: string; fieldKey: string }
       await removeTemplateOverride(ctx, templateKey, fieldKey)
-      return jsonResponse({ ok: true })
+      return jsonResponse({ data: { template_key: templateKey, field_key: fieldKey, deleted: true } })
   },
 })

@@ -59,8 +59,7 @@ export const integrationsSweepResponse = z.strictObject({
   credits: z.strictObject({ refundedJobs: z.number(), refundedCredit: z.number() }),
 })
 /** Mỗi tác vụ con hỏng riêng → `null`, lượt quét vẫn 200. `sentDetails`/`errors` chỉ khi có, tối đa vài dòng. */
-export const dispatchSweepResponse = z.strictObject({
-  ok: z.literal(true),
+const dispatchSweepResult = z.strictObject({
   processed: z.number(),
   remindersSent: z.number(),
   roundsAdvanced: z.number(),
@@ -80,4 +79,8 @@ export const dispatchSweepResponse = z.strictObject({
   errorCount: z.number(),
   errors: z.array(z.unknown()).optional(),
   sweepAt: timestamp,
+})
+/** Lượt trước còn giữ khoá quét → `{ data: { skipped, sweepAt } }`. */
+export const dispatchSweepResponse = z.strictObject({
+  data: z.union([dispatchSweepResult, z.strictObject({ skipped: z.string(), sweepAt: timestamp })]),
 })

@@ -155,8 +155,8 @@ export function PosterBannerClient() {
       })
 
       const data = await res.json().catch(() => null)
-      if (data?.success && data?.copy) {
-        setCopy(data.copy)
+      if (res.ok && data?.data?.copy) {
+        setCopy(data.data.copy)
       } else {
         const fallback = generateInstantBannerCopy({
           occasionKey,

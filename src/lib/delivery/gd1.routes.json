@@ -169,6 +169,7 @@
     "/api/v1/content-studio/products/[id]",
     "/api/v1/content-studio/products/[id]/sales-pitch",
     "/api/v1/content-studio/scans/[jobId]",
+    "/api/v1/coordinator/chain-partners",
     "/api/v1/coordinator/exceptions/[id]/resolve",
     "/api/v1/coordinator/orders",
     "/api/v1/coordinator/orders/[id]",

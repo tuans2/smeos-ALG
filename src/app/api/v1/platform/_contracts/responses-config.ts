@@ -154,7 +154,7 @@ export const notificationEventsResponse = data(
   )
 )
 export const channelActivationsResponse = data(z.record(z.string(), z.boolean()))
-export const channelActivationSavedResponse = z.strictObject({ success: z.literal(true), channel: z.string(), activated: z.boolean() })
+export const channelActivationSavedResponse = data(z.strictObject({ channel: z.string(), activated: z.boolean() }))
 
 const providerChannel = z.enum(["SMS", "ZALO", "PUSH"])
 const providerDefinition = z.strictObject({
@@ -180,8 +180,8 @@ export const channelProviderTestResponse = data(z.strictObject({ channel: z.stri
 
 const hardLock = z.strictObject({ eventKey: z.string(), channel: notifyChannel, enabled: z.boolean(), reason: z.string().optional() })
 export const hardLocksResponse = data(z.array(hardLock.extend({ tier: notifyTier, scopeId: z.string() })))
-export const hardLockSetResponse = z.strictObject({ success: z.literal(true), hardLock })
-export const hardLockRemovedResponse = z.strictObject({ success: z.literal(true), removed: z.strictObject({ eventKey: z.string(), channel: notifyChannel }) })
+export const hardLockSetResponse = data(hardLock)
+export const hardLockRemovedResponse = data(z.strictObject({ eventKey: z.string(), channel: notifyChannel }))
 
 export const eventVisibilityResponse = data(
   z.array(
@@ -194,10 +194,7 @@ export const eventVisibilityResponse = data(
     })
   )
 )
-export const eventVisibilitySavedResponse = z.strictObject({
-  success: z.literal(true),
-  updated: z.strictObject({ eventKey: z.string(), tier: z.enum(["INDUSTRY", "CHAIN", "STORE"]), visible: z.boolean() }),
-})
+export const eventVisibilitySavedResponse = data(z.strictObject({ eventKey: z.string(), tier: z.enum(["INDUSTRY", "CHAIN", "STORE"]), visible: z.boolean() }))
 
 const governanceMode = z.enum(["FORBID", "INHERIT_ONLY", "ALLOW_OWN"])
 /** Không bọc `data` — hợp đồng cũ của màn quản trị tích hợp. */
