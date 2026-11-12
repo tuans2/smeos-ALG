@@ -57,7 +57,7 @@ describe("chat — cách ly thẻ hành động và sổ credit kênh ngoài", (
   it("tổ chức khác bấm nút trên thẻ đơn → 404, thẻ và hội thoại không đổi", async () => {
     const { convId, cardId, payload } = await orderCard()
     const before = await prisma.internal_chat_messages.count({ where: { conversation_id: convId } })
-    const res = await cardAction(send(b, `/internal-chat/messages/${cardId}/action`, { action: "REJECT_ORDER", rejectedReason: "thử" }), ps(cardId))
+    const res = await cardAction(send(b, `/internal-chat/messages/${cardId}/action`, { action: "REJECT_ORDER", rejected_reason: "thử" }), ps(cardId))
     expect(res.status).toBe(404)
     const row = await prisma.internal_chat_messages.findUniqueOrThrow({ where: { id: cardId } })
     expect(row.action_payload).toEqual(payload)

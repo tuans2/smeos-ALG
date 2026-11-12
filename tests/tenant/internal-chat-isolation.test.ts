@@ -40,7 +40,7 @@ describe("cách ly tenant — chat nội bộ và điều phối đối tác", (
   }
 
   async function conversationOf(t: Tenant, orderId?: string): Promise<string> {
-    const res = await createConversation(withSession(`${BASE}/internal-chat/conversations`, t.token, { method: "POST", body: JSON.stringify({ conversationType: "ORDER_THREAD", ...(orderId ? { orderId } : {}) }) }))
+    const res = await createConversation(withSession(`${BASE}/internal-chat/conversations`, t.token, { method: "POST", body: JSON.stringify({ conversation_type: "ORDER_THREAD", ...(orderId ? { order_id: orderId } : {}) }) }))
     expect(res.status).toBe(200)
     return ((await readJson(res)) as { data: { id: string } }).data.id
   }
@@ -57,15 +57,15 @@ describe("cách ly tenant — chat nội bộ và điều phối đối tác", (
   it("không tự tham gia luồng đơn của tổ chức khác bằng orderId", async () => {
     const orderId = await orderOf(a)
     const convId = await conversationOf(a, orderId)
-    const res = await createConversation(withSession(`${BASE}/internal-chat/conversations`, b.token, { method: "POST", body: JSON.stringify({ conversationType: "ORDER_THREAD", orderId }) }))
+    const res = await createConversation(withSession(`${BASE}/internal-chat/conversations`, b.token, { method: "POST", body: JSON.stringify({ conversation_type: "ORDER_THREAD", order_id: orderId }) }))
     expect(res.status).toBe(404)
     expect(await prisma.internal_chat_participants.count({ where: { conversation_id: convId, user_id: b.userId } })).toBe(0)
   })
 
   it("không kéo người của tổ chức không liên kết vào hội thoại", async () => {
-    const res = await createConversation(withSession(`${BASE}/internal-chat/conversations`, a.token, { method: "POST", body: JSON.stringify({ conversationType: "CHAIN_PARTNER", targetOrganizationId: b.organizationId, targetUserId: b.userId }) }))
+    const res = await createConversation(withSession(`${BASE}/internal-chat/conversations`, a.token, { method: "POST", body: JSON.stringify({ conversation_type: "CHAIN_PARTNER", target_organization_id: b.organizationId, target_user_id: b.userId }) }))
     expect(res.status).toBe(404)
-    const ok = await createConversation(withSession(`${BASE}/internal-chat/conversations`, a.token, { method: "POST", body: JSON.stringify({ conversationType: "CHAIN_PARTNER", targetOrganizationId: partner.organizationId, targetUserId: partner.userId }) }))
+    const ok = await createConversation(withSession(`${BASE}/internal-chat/conversations`, a.token, { method: "POST", body: JSON.stringify({ conversation_type: "CHAIN_PARTNER", target_organization_id: partner.organizationId, target_user_id: partner.userId }) }))
     expect(ok.status).toBe(200)
   })
 

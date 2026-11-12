@@ -82,7 +82,7 @@ describe("cách ly tenant — thẻ đơn và tin nhắn chat nội bộ", () =>
     expect((await sendMessage(post(url, partner.token, { content: "x", attachments: ["https://la.example/anh.png"] }), params(conversationId))).status).toBe(400)
     expect((await sendMessage(post(url, partner.token, { content: "Chào chuỗi" }), params(conversationId))).status).toBe(200)
 
-    const platform = await createConversation(post(`${BASE}/internal-chat/conversations`, chain.token, { conversationType: "PLATFORM_TENANT" }))
+    const platform = await createConversation(post(`${BASE}/internal-chat/conversations`, chain.token, { conversation_type: "PLATFORM_TENANT" }))
     expect(platform.status).toBe(400)
   })
 
@@ -101,7 +101,7 @@ describe("cách ly tenant — thẻ đơn và tin nhắn chat nội bộ", () =>
 
   it("không gắn được đơn của tổ chức khác vào phòng của mình (thẻ đơn không bị đăng sang phòng lạ)", async () => {
     const orderId = await orderOf(chain)
-    const hijack = await createConversation(post(`${BASE}/internal-chat/conversations`, stranger.token, { conversationType: "ORDER_THREAD", orderId }))
+    const hijack = await createConversation(post(`${BASE}/internal-chat/conversations`, stranger.token, { conversation_type: "ORDER_THREAD", order_id: orderId }))
     expect(hijack.status).toBe(404)
     expect(await prisma.internal_chat_conversations.count({ where: { order_id: orderId } })).toBe(0)
 

@@ -48,7 +48,7 @@ describe("cách ly tenant — Tích hợp Đa Kênh Chat & Định giá M08 (P23
         method: "POST",
         body: JSON.stringify({
           channel: "STOREFRONT_CATALOG",
-          isEnabled: false,
+          is_enabled: false,
           config: {
             welcomeMessage: "Chào mừng bạn đến với Tiệm Hoa Alpha!",
             botName: "Bot Alpha",
@@ -94,7 +94,7 @@ describe("cách ly tenant — Tích hợp Đa Kênh Chat & Định giá M08 (P23
         method: "POST",
         body: JSON.stringify({
           channel: "FACEBOOK_MESSENGER",
-          isEnabled: true,
+          is_enabled: true,
           config: {
             fbPageId: "page_123_alpha",
             fbPageAccessToken: "EAAG_token_alpha",

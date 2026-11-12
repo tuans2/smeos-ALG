@@ -38,7 +38,7 @@ describe("cách ly tenant — phòng trao đổi theo đối tác", () => {
   })
 
   async function openedRoom(): Promise<string> {
-    const res = await open(chain.token, { partnerOrgId: partner.organizationId })
+    const res = await open(chain.token, { partner_org_id: partner.organizationId })
     expect(res.status).toBe(200)
     return ((await readJson(res)) as { data: { id: string } }).data.id
   }
@@ -47,7 +47,7 @@ describe("cách ly tenant — phòng trao đổi theo đối tác", () => {
     await linkPartner(chain, partner, { code: "P-01" })
     const fromChain = await openedRoom()
     const again = await openedRoom()
-    const fromStore = ((await readJson(await open(partner.token, { chainOrgId: chain.organizationId }))) as { data: { id: string } }).data.id
+    const fromStore = ((await readJson(await open(partner.token, { chain_org_id: chain.organizationId }))) as { data: { id: string } }).data.id
     expect(new Set([fromChain, again, fromStore]).size).toBe(1)
     expect(await prisma.internal_chat_conversations.count({ where: { counterpart_org_id: partner.organizationId } })).toBe(1)
 
@@ -67,7 +67,7 @@ describe("cách ly tenant — phòng trao đổi theo đối tác", () => {
 
     expect((await roomsOf(otherChain.token)).map((r) => r.id)).not.toContain(roomId)
     expect((await listMessages(withSession(messagesUrl(roomId), otherChain.token), params(roomId))).status).toBe(404)
-    expect((await open(otherChain.token, { partnerOrgId: partner.organizationId })).status).toBe(404)
+    expect((await open(otherChain.token, { partner_org_id: partner.organizationId })).status).toBe(404)
   })
 
   it("liên kết tạm dừng: cửa hàng vẫn đọc nhưng không gửi; chưa liên kết / chờ đồng ý: không mở được", async () => {
@@ -81,7 +81,7 @@ describe("cách ly tenant — phòng trao đổi theo đối tác", () => {
 
     const pendingStore = await createTenant("chodongy")
     await linkPartner(chain, pendingStore, { code: "P-02", status: "PENDING" })
-    expect((await open(chain.token, { partnerOrgId: pendingStore.organizationId })).status).toBe(404)
+    expect((await open(chain.token, { partner_org_id: pendingStore.organizationId })).status).toBe(404)
   })
 
   it("cửa hàng đồng ý lời mời → phòng trao đổi có sẵn cho cả hai bên", async () => {
@@ -97,7 +97,7 @@ describe("cách ly tenant — phòng trao đổi theo đối tác", () => {
   it("phòng chi nhánh: nhân viên gắn chi nhánh khác không thấy, không đọc; chi nhánh của tổ chức khác không mở được", async () => {
     const b1 = await prisma.branches.create({ data: { organization_id: chain.organizationId, code: "CN1", name: "Chi nhánh 1" } })
     const b2 = await prisma.branches.create({ data: { organization_id: chain.organizationId, code: "CN2", name: "Chi nhánh 2" } })
-    const res = await open(chain.token, { branchId: b1.id })
+    const res = await open(chain.token, { branch_id: b1.id })
     expect(res.status).toBe(200)
     const roomId = ((await readJson(res)) as { data: { id: string } }).data.id
 
@@ -106,6 +106,6 @@ describe("cách ly tenant — phòng trao đổi theo đối tác", () => {
     expect((await roomsOf(staffB2.token)).map((r) => r.id)).not.toContain(roomId)
     expect((await listMessages(withSession(messagesUrl(roomId), staffB2.token), params(roomId))).status).toBe(404)
 
-    expect((await open(otherChain.token, { branchId: b1.id })).status).toBe(404)
+    expect((await open(otherChain.token, { branch_id: b1.id })).status).toBe(404)
   })
 })

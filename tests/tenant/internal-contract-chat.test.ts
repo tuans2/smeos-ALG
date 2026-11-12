@@ -71,15 +71,15 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
   it("kênh và hạn mức chat công khai", async () => {
     await expectContract(await listChannels(get("/chat/channels")), 200, R.chatChannelsResponse, "chat-channels")
     await expectContract(
-      await configureChannel(send("/chat/channels", "POST", { channel: "STOREFRONT_CATALOG", isEnabled: true, config: { botName: "Trợ lý tiệm", zaloSecretKey: "bi-mat-123456" } })),
+      await configureChannel(send("/chat/channels", "POST", { channel: "STOREFRONT_CATALOG", is_enabled: true, config: { botName: "Trợ lý tiệm", zaloSecretKey: "bi-mat-123456" } })),
       200, R.chatChannelConfiguredResponse, "chat-channel-configure"
     )
     const limits = await expectContract(await getLimits(get("/chat/public-limits")), 200, R.publicChatLimitsResponse, "chat-limits")
     const current = limits.current as { perVisitor: number; perIp: number }
     const { PUBLIC_CHAT_LIMIT_TIERS } = await import("@/modules/chat-assistant/domain/public-chat-limit-request")
     const higher = PUBLIC_CHAT_LIMIT_TIERS.find((x) => x.perVisitor > current.perVisitor && x.perIp > current.perIp)!
-    await expectContract(await requestLimits(send("/chat/public-limits", "POST", { perVisitor: higher.perVisitor, perIp: higher.perIp, note: "Mùa cưới" })), 201, R.publicChatLimitRequestedResponse, "chat-limits-request")
-    expect((await requestLimits(send("/chat/public-limits", "POST", { perVisitor: higher.perVisitor, perIp: higher.perIp }))).status).toBe(409)
+    await expectContract(await requestLimits(send("/chat/public-limits", "POST", { per_visitor: higher.perVisitor, per_ip: higher.perIp, note: "Mùa cưới" })), 201, R.publicChatLimitRequestedResponse, "chat-limits-request")
+    expect((await requestLimits(send("/chat/public-limits", "POST", { per_visitor: higher.perVisitor, per_ip: higher.perIp }))).status).toBe(409)
   })
 
   it("khung chat công khai: trả lời theo slug; tiệm lạ 404 và thân sai 400 theo envelope lỗi chuẩn", async () => {
@@ -110,7 +110,7 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
     await makeChainOrganization(t)
     await linkPartner(t, partner, { code: "HD-01" })
 
-    const room = await expectContract(await createInternal(send("/internal-chat/conversations", "POST", { partnerOrgId: partner.organizationId })), 200, R.internalConversationResponse, "ichat-conv")
+    const room = await expectContract(await createInternal(send("/internal-chat/conversations", "POST", { partner_org_id: partner.organizationId })), 200, R.internalConversationResponse, "ichat-conv")
     const id = String((room.data as { id: string }).id)
     await expectContract(await listInternal(get("/internal-chat/conversations")), 200, R.internalConversationsResponse, "ichat-convs")
     await expectContract(await sendInternal(send(`/internal-chat/conversations/${id}/messages`, "POST", { content: "Chiều nay có đơn cho tiệm" }), ps(id)), 200, R.internalMessageResponse, "ichat-send")

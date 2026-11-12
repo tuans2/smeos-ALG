@@ -16073,7 +16073,7 @@
                       "EMBEDDED_WIDGET"
                     ]
                   },
-                  "isEnabled": {
+                  "is_enabled": {
                     "type": "boolean"
                   },
                   "config": {
@@ -16137,7 +16137,7 @@
                 },
                 "required": [
                   "channel",
-                  "isEnabled"
+                  "is_enabled"
                 ]
               }
             }
@@ -17839,12 +17839,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "perVisitor": {
+                  "per_visitor": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
                   },
-                  "perIp": {
+                  "per_ip": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
@@ -17862,8 +17862,8 @@
                   }
                 },
                 "required": [
-                  "perVisitor",
-                  "perIp"
+                  "per_visitor",
+                  "per_ip"
                 ]
               }
             }
@@ -89986,7 +89986,7 @@
       "post": {
         "operationId": "createInternalConversation",
         "summary": "Tạo hoặc lấy lại hội thoại nội bộ",
-        "description": "Thân `{ partnerOrgId }` / `{ chainOrgId }` / `{ branchId }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi).",
+        "description": "Thân `{ partner_org_id }` / `{ chain_org_id }` / `{ branch_id }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -90006,42 +90006,42 @@
                       {
                         "type": "object",
                         "properties": {
-                          "partnerOrgId": {
+                          "partner_org_id": {
                             "type": "string",
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                           }
                         },
                         "required": [
-                          "partnerOrgId"
+                          "partner_org_id"
                         ],
                         "additionalProperties": false
                       },
                       {
                         "type": "object",
                         "properties": {
-                          "chainOrgId": {
+                          "chain_org_id": {
                             "type": "string",
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                           }
                         },
                         "required": [
-                          "chainOrgId"
+                          "chain_org_id"
                         ],
                         "additionalProperties": false
                       },
                       {
                         "type": "object",
                         "properties": {
-                          "branchId": {
+                          "branch_id": {
                             "type": "string",
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                           }
                         },
                         "required": [
-                          "branchId"
+                          "branch_id"
                         ],
                         "additionalProperties": false
                       }
@@ -90050,7 +90050,7 @@
                   {
                     "type": "object",
                     "properties": {
-                      "conversationType": {
+                      "conversation_type": {
                         "type": "string",
                         "enum": [
                           "CHAIN_PARTNER",
@@ -90061,24 +90061,24 @@
                         "type": "string",
                         "maxLength": 200
                       },
-                      "targetOrganizationId": {
+                      "target_organization_id": {
                         "type": "string",
                         "format": "uuid",
                         "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       },
-                      "targetUserId": {
+                      "target_user_id": {
                         "type": "string",
                         "format": "uuid",
                         "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       },
-                      "orderId": {
+                      "order_id": {
                         "type": "string",
                         "format": "uuid",
                         "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       }
                     },
                     "required": [
-                      "conversationType"
+                      "conversation_type"
                     ]
                   }
                 ]
@@ -91331,7 +91331,7 @@
                       "REJECT_ORDER"
                     ]
                   },
-                  "rejectedReason": {
+                  "rejected_reason": {
                     "type": "string",
                     "maxLength": 500
                   }

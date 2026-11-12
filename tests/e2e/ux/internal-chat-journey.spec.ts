@@ -44,7 +44,7 @@ test("walkthrough: chuỗi giao đơn, cửa hàng nhận thẻ, nhắn tin, ả
   // Như GĐ3 khi liên kết ACTIVE: cửa hàng thành ứng viên bắn đơn của chuỗi
   await sql(`INSERT INTO branches (id, organization_id, code, name, accepts_dispatch, is_active, partner_org_id, province, updated_at) VALUES (gen_random_uuid()::text, $1, 'DT-HN-01', 'Tiệm Hoa Cầu Giấy', true, true, $2, 'Hà Nội', now())`, [chain.orgId, store.orgId])
 
-  const room = await chainPage.request.post("/api/v1/internal-chat/conversations", { headers, data: { partnerOrgId: store.orgId } })
+  const room = await chainPage.request.post("/api/v1/internal-chat/conversations", { headers, data: { partner_org_id: store.orgId } })
   expect(room.ok()).toBe(true)
   const roomId = ((await room.json()) as { data: { id: string } }).data.id
 
