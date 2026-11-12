@@ -24,7 +24,7 @@ describe("preset ALG — màu thương hiệu", () => {
     expect(v("primary")).toBe("#133D31")
     expect(v("bg")).toBe("#F0EFEF")
     expect(v("text")).toBe("#242C28")
-    expect(v("danger")).toBe("#9C3740")
+    expect(v("danger")).toBe("#97353E") // Brick Red #9C3740 làm đậm tối thiểu để đạt AA trên nền nhạt của chính nó
     expect(v("warning")).toBe("#E7C447")
     expect(v("success-border")).toBe("#93A87C")
     expect(v("info-border")).toBe("#9DB4D4")
@@ -41,6 +41,18 @@ describe("preset ALG — màu thương hiệu", () => {
     ["info", "surface"], ["info", "bg"], ["#FFFFFF", "info"], ["info-text", "info-bg"],
     ["selected-text", "selected"],
   ]
+  // Chữ màu trên nền nhạt 10–20% của chính nó (vd `text-success` + `bg-success/15`) — trên nền trắng và nền trang
+  const mix = (hex: string, base: string, t: number) =>
+    "#" + [1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * t + parseInt(base.slice(i, i + 2), 16) * (1 - t)).toString(16).padStart(2, "0")).join("")
+  const tinted: Array<[string, string]> = [["primary", "primary"], ["success", "success"], ["info", "info"], ["danger", "danger"], ["secondary-text", "secondary"], ["warning-text", "warning"], ["accent-text", "accent"]]
+  for (const [fg, tint] of tinted) {
+    it(`${fg} trên nền ${tint} nhạt 10–20% ≥ 4,5:1`, () => {
+      for (const t of [0.1, 0.15, 0.2]) for (const base of [v("surface"), v("bg")]) {
+        expect(contrast(v(fg), mix(v(tint), base, t)), `${fg} / ${tint} ${t * 100}% trên ${base}`).toBeGreaterThanOrEqual(4.5)
+      }
+    })
+  }
+
   for (const [fg, bg] of pairs) {
     it(`${fg} trên ${bg} ≥ 4,5:1`, () => {
       expect(contrast(v(fg), v(bg))).toBeGreaterThanOrEqual(4.5)
