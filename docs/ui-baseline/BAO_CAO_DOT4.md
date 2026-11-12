@@ -21,22 +21,33 @@ Nhánh `claude/fervent-pascal-ilhcgb`, 12/11/2026. Người giao việc duyệt 
 | D4-13 Nút tròn trống | Nguyên nhân gốc ở `Button`: icon co được → thêm `[&_svg]:shrink-0`; quét 7 màn không còn icon bị ép | 6581b3af |
 | D4-14 "Đang đọc dữ liệu biên lai…" | Tiệm tắt "AI đọc bill" (mặc định) thì không bao giờ có kết quả → câu hướng dẫn đối chiếu tay; quy tắc PO 14/10 giữ nguyên | 6581b3af |
 | D4-15 "Số âm" | Là dấu "~" đọc như dấu trừ → "Khoảng N bản ghi", "khoảng N giây" | 6581b3af |
-| D4-16 Lỗi 500 khi khoá PII chưa nạp | **Tách việc riêng** (đã tạo việc riêng cho tầng bảo mật dữ liệu từ Đợt 2) — chưa sửa | — |
+| D4-16 Lỗi 500 khi khoá PII chưa nạp | Nguyên nhân: hook ghép người nhận của `orders` giải mã `recipient` trước khi hook chung kịp nạp khoá. Sửa: chạy lệnh qua `readWithPiiKeys` (cùng đường nạp khoá sẵn có, không đổi cách lưu khoá, RLS hay hành vi chặn khi khoá thật sự mất). Test tenant mới đỏ khi chưa sửa, xanh khi sửa | aaabb823 |
 | D4-17 Hợp đồng coordinator lệch | Sinh lại, `check:schemas:coordinator` xanh | 6581b3af |
 | D4-18 Màu nhóm / biểu đồ | 10 màu nhóm và 8 màu biểu đồ theo brand kit ALG, có test tương phản | 5fcf462c |
+
+## 1b. Làm tiếp sau báo cáo đầu (người giao việc: "xử lý lần lượt các việc còn lại")
+
+| Việc | Kết quả | Commit |
+|---|---|---|
+| Lint UX còn 8 | **0**: trạng thái bước AI theo `TaskUiState`; bảng chọn vai dev bỏ listbox/option giả quanh nút thật (`role="group"` + `aria-pressed`); nền mờ ngăn kéo điều hướng không còn giả làm nút (Esc và nút Đóng vẫn đóng); trang gia công công khai được miễn R20 như các trang công khai khác. Phát hiện kèm: mở ngăn kéo trước đây không đưa tiêu điểm vào đâu (bộ chọn không khớp phần tử nào) → nay vào nút Đóng | ec1e2fb0 |
+| Chụp lại toàn kho | 949/949 ảnh, so với kho ALG: `SO_SANH_TRUOC_SAU_DOT4.md`, `so-sanh-dot4/` | (tài liệu) |
+| Đo axe lại 109 màn × 2 khổ | Serious 130 → 0, tương phản 6 → 0, tràn ngang 1 → 0. 5 nút nhãn lệch chữ hiển thị phát hiện khi đo lại đã sửa | 4b37541b |
 
 ## 2. Lỗi do đổi ALG phát hiện thêm và đã sửa
 - `text-accent` (vàng #E7C447) dùng làm màu chữ/icon trên nền sáng ở 22 chỗ (huy hiệu tầng chỉ 1,6:1) → `text-accent-text`.
 
 ## 3. Chỉ số
-- `lint:ux`: 23 → **8** vi phạm. Còn: 4 R14 (chuỗi trạng thái so sánh trực tiếp ở `journey-processing-state`, `upload-wizard`), 1 R20 (`<h1>` trang gia công công khai), 3 R18 ở shell (`architecture-nametag`, `superadmin-homepage-badge` dùng `role="option"`; `mobile-nav-drawer` dùng `role="button"`).
-- axe critical/serious trên các màn đã sửa: 0 (trừ những màn chưa đo lại toàn kho).
+- `lint:ux`: 23 → 8 → **0** vi phạm (baseline 0).
+- axe toàn kho đo lại (109 màn × 390/1280): critical 0, serious 130 → **0**, tương phản 6 → 0, tràn ngang 390px 1 → 0 (`SO_SANH_TRUOC_SAU_DOT4.md`).
 
-## 4. Cổng kiểm
-`npm test` 4953/4955 (2 ca `public-url` do `.env` local, có từ trước) · typecheck · `lint:ratchet` (không lỗi mới) · `lint:ux` (8, không tăng) · `check:docs` · `check:screen-contracts` · `check:template-ssot` · `check:schemas:*` xanh.
-**Chưa chạy lại** trong Đợt 4: `test:tenant` (lần đầy đủ gần nhất 276/276 trước Đợt 4; các thay đổi Đợt 4 là giao diện), e2e, CI GitHub, test worker Python. Chưa chụp lại toàn kho sau Đợt 4.
+## 4. Cổng kiểm (chạy lại sau toàn bộ Đợt 4)
+- `npm test` 4961/4963 — 2 ca `public-url` đỏ do `.env` local, có từ trước, không liên quan.
+- `test:tenant` **276/276 tệp, 1204/1204 ca** (có ca D4-16 mới) · `test:platform` 17/17 tệp, 55 ca — DB `smeos_test`.
+- Test worker Python: 494 ca đạt (venv riêng cài `workers/requirements.txt`).
+- typecheck · `lint:ratchet` (không lỗi mới) · `lint:ux` 0 · `check:docs` · `check:screen-contracts` 107/107 · `check:template-ssot` · `check:schemas:*` xanh.
+- `test:e2e:ux` trên dev server local: **trợ năng và hành trình xanh** (sau khi sửa `role="status"` cho khung tải ở Thẻ chào gửi nhanh — lỗi có sẵn trên `main`). **Hai ca so ảnh mẫu đỏ đúng dự kiến** (`dang-nhap`, `vai-tro`: khác 9–10% điểm ảnh vì màu và phông ALG); chạy với ảnh mẫu tạm thì 14/14 ca ảnh mốc chạy hết luồng, 13 ảnh khác mẫu cũ. Theo quy định repo, ảnh mẫu `*-linux.png` phải lấy từ ảnh `-actual.png` do runner CI chụp — **cần mở PR để CI chạy rồi cập nhật ảnh mẫu**; chưa làm vì chưa có yêu cầu mở PR.
 
 ## 5. Còn lại / ngoài phạm vi
-- D4-16 (tầng bảo mật dữ liệu).
-- 3 vi phạm R18 ở shell (`architecture-nametag`, `superadmin-homepage-badge`, `mobile-nav-drawer`) — khung điều hướng là UX khoá.
+- Ảnh mẫu e2e (`visual*.spec.ts-snapshots`) sinh lại từ CI khi mở PR.
+- CI trên GitHub (chỉ chạy với PR vào `main`).
 - Kiểm bằng trình đọc màn hình thật (NVDA/VoiceOver) và trên thiết bị thật.
