@@ -6,6 +6,7 @@ import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { productLoadError } from "@/lib/load-error-message"
 import { DetailLayout } from "@/components/layout/page-layout"
 import { PageHeader } from "@/components/ui/page-header"
 import { driveThumbProxySrc } from "@/components/greeting-card/drive-thumb-image"
@@ -67,7 +68,7 @@ export default function ProductDetailPage() {
         router.push("/dang-nhap" as never)
         return
       }
-      if (!res.ok) throw new Error(`Không tải được thông tin sản phẩm (${res.status})`)
+      if (!res.ok) throw new Error(productLoadError(res.status))
       const data = (await res.json()) as { product?: ProductDetail } | ProductDetail
       const p = "product" in data && data.product ? data.product : (data as ProductDetail)
       setProduct(p)
@@ -159,9 +160,7 @@ export default function ProductDetailPage() {
         )}
 
         {product === null ? (
-          <div className="py-4">
-            <SkeletonBlock lines={6} />
-          </div>
+          loi ? null : <div className="py-4"><SkeletonBlock lines={6} /></div>
         ) : (
           <div className="flex flex-col gap-4">
             <ProductProposalBanner productId={product.id} attributes={attrs} onChanged={napLai} />

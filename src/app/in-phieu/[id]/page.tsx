@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { orderPrintLoadError } from "@/lib/load-error-message"
 import { FloristTicketA6 } from "@/components/orders/print/florist-ticket-a6"
 import { RibbonBannerPrint } from "@/components/orders/print/ribbon-banner-print"
 import type { OrderPrintData } from "@/modules/orders/use-cases/get-order-printout"
@@ -19,7 +20,7 @@ export default function PrintOrderPage({ params, searchParams }: { params: Promi
 
   useEffect(() => {
     fetch(`/api/v1/orders/${id}/print`)
-      .then(async (r) => (r.ok ? ((await r.json()) as { print: OrderPrintData }) : Promise.reject(new Error(r.status === 401 ? "Vui lòng đăng nhập để in phiếu" : "Không tải được phiếu in"))))
+      .then(async (r) => (r.ok ? ((await r.json()) as { print: OrderPrintData }) : Promise.reject(new Error(orderPrintLoadError(r.status)))))
       .then((j) => setData(j.print))
       .catch((e: Error) => setError(e.message))
   }, [id])

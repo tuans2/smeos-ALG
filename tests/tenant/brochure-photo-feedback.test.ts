@@ -23,7 +23,7 @@ import { createTenant, type Tenant } from "../helpers/fixtures"
 const BASE = "http://localhost/api/v1/public/brochure/tracking"
 const DATE = new Date(Date.now() + 10 * 86_400_000).toISOString().slice(0, 10)
 const ORDER = {
-  customerName: "Khách Góp Ý", customerPhone: "0987650001", recipientName: "Người Nhận", recipientPhone: "0912340001",
+  customerName: "Khách Góp Ý", customerPhone: "0987 650 001", recipientName: "Người Nhận", recipientPhone: "0912 340 001",
   confirmedTerms: true, selectedPromotionId: "promo-free-card", deliveryDate: DATE, deliveryTimeSlot: "08:00 - 10:00", deliveryAddress: "1 Lê Lợi, Q1",
 }
 
