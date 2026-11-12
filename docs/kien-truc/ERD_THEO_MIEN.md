@@ -5,7 +5,7 @@ Sinh từ `prisma/schema.prisma` bởi `scripts/gen-erd.mjs` (kế hoạch DB, b
 (PK, FK, `organization_id`) và khoá ngoại tới bảng cha; bảng của miền khác chỉ hiện tên. Cột đầy đủ, ý nghĩa và quy tắc
 ở đặc tả `docs/dac-ta/07-database-specification.md`. `tests/unit/architecture/erd.test.ts` đỏ khi tệp này lệch schema.
 
-Tổng: 155 bảng, 10 miền.
+Tổng: 156 bảng, 10 miền.
 
 ## Tổ chức, người dùng, phân quyền
 
@@ -347,7 +347,7 @@ erDiagram
 
 ## Nền tảng và quản trị theo tầng
 
-Bảng: `platform_operators`, `platform_role_capabilities`, `platform_settings`, `platform_secrets`, `tenant_data_keys`, `platform_audit_logs`, `platform_access_logs`, `decision_registry`, `governance_decisions`, `audit_logs`, `reconciliation_findings`.
+Bảng: `platform_operators`, `platform_role_capabilities`, `platform_settings`, `platform_secrets`, `tenant_data_keys`, `platform_audit_logs`, `retention_policies`, `platform_access_logs`, `decision_registry`, `governance_decisions`, `audit_logs`, `reconciliation_findings`.
 
 ```mermaid
 erDiagram
@@ -371,6 +371,9 @@ erDiagram
   }
   platform_audit_logs {
     String id PK
+  }
+  retention_policies {
+    String category PK
   }
   platform_access_logs {
     String id PK

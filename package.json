@@ -40,6 +40,7 @@
     "pii:backfill": "tsx --env-file-if-exists=.env scripts/pii-backfill.ts",
     "db:not-valid": "tsx --env-file-if-exists=.env scripts/not-valid-constraints.ts",
     "tenant:purge": "tsx --env-file-if-exists=.env scripts/tenant-purge.ts",
+    "retention:sweep": "tsx --env-file-if-exists=.env scripts/retention-sweep.ts",
     "check:migrations": "node scripts/check-migrations.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ux": "playwright test tests/e2e/ux",

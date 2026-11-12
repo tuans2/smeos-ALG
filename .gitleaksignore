@@ -40,5 +40,6 @@ ccbec661ad7921774cb8376bbccf33c63f894139:tests/tenant/internal-contract-integrat
 # Khoá chủ PII giả của job e2e-ux trong CI (nhánh claude/trusting-ramanujan-f6y2cw, PR #18, 10/11/2026) — base64 của
 # chữ "ci-only-not-a-real-pii-key-32b!!", không phải bí mật thật (đã đọc tận mắt; PO duyệt thêm 10/11/2026, PR #23).
 895f80d2ff8558c4ff8527515e4092921a63c319:.github/workflows/ci.yml:generic-api-key:183
-# 12/11/2026: giá trị giả của SESSION_SECRET trong test parseEnv (nhánh claude/bold-meitner-nk07bd) — đã đọc tận mắt, không phải bí mật
+# Giá trị giả của test (nhánh claude/bold-meitner-nk07bd, 11/11/2026): `SESSION_SECRET` mẫu trong
+# tests/unit/lib/env-empty-values.test.ts, không phải bí mật thật (đã đọc tận mắt). CI tải mọi nhánh nên quét cả nhánh này.
 439e71d9f0efec341c97ca769f747bd14e221ebb:tests/unit/lib/env-empty-values.test.ts:generic-api-key:7
