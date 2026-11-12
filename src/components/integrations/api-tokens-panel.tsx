@@ -101,7 +101,8 @@ export function ApiTokensPanel() {
         ))}
         {/* Trang tài liệu chưa thuộc bản giao GD1 — ẩn khi bật giai đoạn (gatedLinks) */}
         {isHrefInPhase("/tich-hop/tai-lieu-api") && <Link
-          href="/tich-hop/tai-lieu-api"
+          // `as never`: bản cắt GD1 không có trang này nên typed routes không biết route (cùng cách các liên kết gatedLinks khác)
+          href={"/tich-hop/tai-lieu-api" as never}
           className="inline-flex min-h-8 items-center px-2 text-body-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Xem tài liệu API
