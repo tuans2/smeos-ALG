@@ -89844,13 +89844,30 @@
                         "recovered"
                       ],
                       "additionalProperties": false
+                    },
+                    "credits": {
+                      "type": "object",
+                      "properties": {
+                        "refundedJobs": {
+                          "type": "number"
+                        },
+                        "refundedCredit": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "refundedJobs",
+                        "refundedCredit"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
                     "events",
                     "health",
                     "orders",
-                    "social"
+                    "social",
+                    "credits"
                   ],
                   "additionalProperties": false
                 }

@@ -10,7 +10,7 @@ Bản nháp bàn giao 28/10/2026 — soạn từ mã nguồn (`render.yaml`, `pa
 | `smeos-worker-media` | worker (Python) | Xử lý ảnh/biến thể sản phẩm | `python -m media_ai.jobs.worker` |
 | `smeos-worker-video` | worker (Python) | Dựng video | `python -m media_ai.video.video_worker` |
 | `smeos-worker-vision` | worker (Python) | Phân tích ảnh sản phẩm | xem `render.yaml` |
-| `smeos-cron-dispatch-sweep` | cron, mỗi 5 phút | Nhắc việc điều phối chuỗi + kiểm sức khoẻ | gọi `POST /api/v1/internal/chain-dispatch-sweep` rồi `GET /api/v1/internal/health` (header `x-cron-secret`) |
+| `smeos-cron-dispatch-sweep` | cron, mỗi 5 phút | Nhắc việc điều phối chuỗi, kiểm sức khoẻ, sự kiện tích hợp, đăng bài đến hạn, hoàn credit tác vụ AI lỗi/bị huỷ | gọi `POST /api/v1/internal/chain-dispatch-sweep`, `GET /api/v1/internal/health`, rồi `POST /api/v1/internal/integrations-sweep` (header `x-cron-secret`). Hoàn credit chạy tay khi cần: `npm run hoan-credit` (idempotent) |
 | `smeos-postgres` | PostgreSQL 16 (`basic-256mb`) | Dữ liệu chính, mọi bảng tenant có `organization_id` | — |
 | `smeos-redis` | Key Value 256 MB | Bộ đếm giới hạn tần suất dùng chung | chỉ mạng nội bộ Render |
 
