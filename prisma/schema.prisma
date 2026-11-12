@@ -43,6 +43,12 @@ enum workspace_kind {
 
 /// ADR-016 D-S5 (S-3): vòng đời tổ chức. SUSPENDED: chặn mọi truy cập của thành viên, giữ dữ liệu. OFFBOARDING: chỉ xem
 /// (xuất bàn giao), xoá sau `offboarding_until`. DELETED: đã xoá theo sổ bảng-thuộc-tenant (S-3b).
+enum organization_isolation_tier {
+  SHARED
+  SHARED_PLUS
+  DEDICATED
+}
+
 enum organization_lifecycle_status {
   ACTIVE
   SUSPENDED
@@ -172,6 +178,8 @@ model organizations {
   lifecycle_changed_at DateTime?                     @db.Timestamptz(3)
   /// Hạn giữ dữ liệu khi rời nền tảng (theo hợp đồng); quá hạn thì xoá (S-3b) trừ khi có legal hold.
   offboarding_until    DateTime?                     @db.Timestamptz(3)
+  /// Mức cô lập (ADR-016 D-S2, bước S-5): gói thuê bao quyết định mức được phép (`isolation-tier.ts`).
+  isolation_tier       organization_isolation_tier   @default(SHARED)
   created_at           DateTime                      @default(now()) @db.Timestamptz(3)
   updated_at           DateTime                      @updatedAt @db.Timestamptz(3)
 
