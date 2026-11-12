@@ -10,7 +10,7 @@ import { createTenant, type Tenant } from "../helpers/fixtures"
  * Audit BL-36: migration chữa đơn giá 0 ₫ của đơn Điều phối cũ. Chỉ đơn `FLR-…` một dòng hàng 0 ₫; đơn nhiều dòng,
  * đơn nguồn khác, dòng đã có giá giữ nguyên; chạy lại không đổi gì thêm.
  */
-const SQL = readFileSync(join(process.cwd(), "prisma/migrations/20261112100000_coordinator_item_unit_price_backfill/migration.sql"), "utf8")
+const SQL = readFileSync(join(process.cwd(), "prisma/migrations/20261112120000_coordinator_item_unit_price_backfill/migration.sql"), "utf8")
 const DO_BLOCK = SQL.slice(SQL.indexOf("DO $$"))
 
 describe("chữa đơn giá dòng hàng đơn Điều phối cũ", () => {

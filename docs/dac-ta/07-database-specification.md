@@ -4739,3 +4739,46 @@ model social_post_attempts {
 Ca thử: `tests/tenant/social-publishing.test.ts` (kênh chưa kết nối → 409, chống trùng, giờ vàng, tổ chức khác → 404,
 cron đăng bằng khoá của tổ chức sở hữu bài, thử lại có giới hạn, hết hạn kết nối → dừng + EXPIRED),
 `src/modules/social-publishing/**/*.test.ts`.
+
+## 55. Sổ quyết toán tiền công đối tác — `partner_settlements` (12/11/2026)
+
+Audit BL-22, PO duyệt 12/11/2026. Migration `20261112110000_partner_settlements` (expand: chỉ thêm bảng, RLS theo tổ chức).
+Tiền công một nguồn: phí gia công lúc chi nhánh nhận đơn trừ khấu trừ (`order_coordinations.metadata.subcontract_dispatch.craftFee`),
+không có thì giá thoả thuận lúc giao xưởng; ghi vào `order_coordinations.partner_payout_vnd` khi đóng đơn (sửa khác phải có lý
+do, ghi `audit_logs`). Sổ chụp các đơn đối tác đã đóng trong kỳ (`closed_at`, ngày Việt Nam, gồm hai đầu, ≤ 92 ngày) vào
+`items`; `status` đi PENDING (Chờ đối soát) → RECONCILED (Đã đối soát) → PAID (Đã thanh toán) bằng cập nhật có điều kiện. Kỳ
+của một đối tác không chồng nhau (kiểm trong giao dịch lập sổ). Mã năng lực `R19`; sổ / đối tác của tổ chức khác → 404.
+
+```prisma
+model partner_settlements {
+  id                String    @id @default(uuid())
+  organization_id   String
+  partner_id        String
+  period_from       DateTime  @db.Date
+  period_to         DateTime  @db.Date
+  status            String    @default("PENDING") // PENDING · RECONCILED · PAID
+  order_count       Int
+  total_payout_vnd  Decimal   @db.Decimal(14, 2)
+  items             Json      // [{ orderId, code, closedAt, payoutVnd }]
+  note              String?
+  created_by        String
+  reconciled_by     String?
+  reconciled_at     DateTime? @db.Timestamptz(3)
+  paid_by           String?
+  paid_at           DateTime? @db.Timestamptz(3)
+  payment_reference String?
+  created_at        DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime  @updatedAt @db.Timestamptz(3)
+
+  @@unique([organization_id, partner_id, period_from])
+  @@index([organization_id, status])
+  @@index([partner_id])
+}
+```
+
+Dữ liệu cũ (BL-36): migration `20261112120000_coordinator_item_unit_price_backfill` chỉ đổi dữ liệu — đơn `FLR-…` có đúng một
+dòng hàng 0 ₫ được ghi đơn giá = (tổng đơn − VAT) / số lượng; chạy lại an toàn, báo số dòng đã sửa.
+
+Ca thử: `tests/tenant/partner-settlements.test.ts`, `tests/tenant/coordinator-unit-price-backfill.test.ts`,
+`tests/unit/coordinator/partner-payout.test.ts`.
+
