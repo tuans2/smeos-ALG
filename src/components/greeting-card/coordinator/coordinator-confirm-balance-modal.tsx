@@ -111,7 +111,7 @@ export function CoordinatorConfirmBalanceModal({
           <Button
             type="submit"
             disabled={busy}
-            className="bg-warning hover:bg-warning/90 text-white font-bold gap-1.5"
+            className="bg-warning hover:bg-warning/90 text-text font-bold gap-1.5"
           >
             <CheckCircle2 size={16} />
             {busy ? "Đang xử lý..." : "Xác nhận Đã Nhận Đủ Tiền"}

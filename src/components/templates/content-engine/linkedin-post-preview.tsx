@@ -121,7 +121,7 @@ export function LinkedInPreview({
             <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-[var(--color-linkedin)] text-white text-caption shadow-xs">
               👍
             </span>
-            <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-warning text-white text-caption shadow-xs">
+            <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-warning text-text text-caption shadow-xs">
               💡
             </span>
             <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-primary text-white text-caption shadow-xs">

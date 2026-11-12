@@ -240,7 +240,7 @@ export function ScheduledPulsePanel({
       <div className="rounded-2xl border border-warning-border/80 bg-gradient-to-br from-warning-bg/50 via-white to-primary-muted/40 p-5 shadow-sm space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warning text-white">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warning text-text">
               <Sparkles size={16} />
             </span>
             <div>

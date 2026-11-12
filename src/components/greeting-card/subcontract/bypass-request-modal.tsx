@@ -103,7 +103,7 @@ export function BypassRequestModal({
               type="submit"
               variant="secondary"
               disabled={submitting}
-              className="flex-1 h-10 text-caption font-extrabold bg-warning hover:bg-warning/90 text-white"
+              className="flex-1 h-10 text-caption font-extrabold bg-warning hover:bg-warning/90 text-text"
             >
               {submitting ? (
                 <>

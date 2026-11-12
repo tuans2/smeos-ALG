@@ -68,7 +68,7 @@ export function MissingInfoRequestCard({
           </Button>
         )}
         {onSendToSales && (
-          <Button size="sm" onClick={onSendToSales} className="bg-warning hover:bg-warning-text text-white h-8 text-caption gap-1 font-bold">
+          <Button size="sm" onClick={onSendToSales} className="bg-warning hover:bg-warning/90 text-text h-8 text-caption gap-1 font-bold">
             <Send size={13} />
             <span>Gửi Yêu Cầu Cho Sales Qua Zalo / Chat</span>
           </Button>

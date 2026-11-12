@@ -1,13 +1,18 @@
 import type { Metadata } from "next"
-import { Be_Vietnam_Pro } from "next/font/google"
+import localFont from "next/font/local"
 import "./globals.css"
 import { publicAppUrl } from "@/lib/public-url"
 
-const beVietnamPro = Be_Vietnam_Pro({
-  weight: ["400", "500", "600", "700", "800"],
-  subsets: ["latin", "vietnamese"],
+// Phông thương hiệu AVI Lotus Group: Google Sans (SIL OFL 1.1 — giấy phép kèm trong thư mục phông).
+// Bản biến thiên trục đậm 400–700, đã lọc Latin + tiếng Việt và nén woff2; tự lưu, không gọi CDN.
+const googleSans = localFont({
+  src: [
+    { path: "./fonts/google-sans/GoogleSans-Variable.woff2", weight: "400 700", style: "normal" },
+    { path: "./fonts/google-sans/GoogleSans-Italic-Variable.woff2", weight: "400 700", style: "italic" },
+  ],
   display: "swap",
   variable: "--font-sans",
+  fallback: ["ui-sans-serif", "system-ui", "sans-serif"],
 })
 
 const appUrl = publicAppUrl()
@@ -26,8 +31,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="vi" data-theme="moc-lan" data-density="comfortable">
-      <body className={`min-h-dvh bg-bg text-text antialiased ${beVietnamPro.variable}`}>
+    <html lang="vi" data-theme="alg" data-density="comfortable">
+      <body className={`min-h-dvh bg-bg text-text antialiased ${googleSans.variable} ${googleSans.className}`}>
         {/* UiSystemProvider nằm trong AppShell — nơi có theme máy chủ phân giải theo tầng */}
         {children}
       </body>

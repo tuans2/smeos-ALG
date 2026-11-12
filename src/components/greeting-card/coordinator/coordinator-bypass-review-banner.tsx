@@ -154,7 +154,7 @@ export function CoordinatorBypassReviewBanner({
                   size="sm"
                   disabled={isLoading}
                   onClick={() => handleDecision(stepKey, "APPROVE")}
-                  className="h-8 px-3 text-caption bg-warning hover:bg-warning/90 text-white font-bold"
+                  className="h-8 px-3 text-caption bg-warning hover:bg-warning/90 text-text font-bold"
                 >
                   {isLoading ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={13} />}
                   Chấp thuận Bỏ qua

@@ -7,7 +7,7 @@
  * - ColorMode: Light (v1 light mode only — ADR-011 D-UI-03)
  */
 
-export type UiPresetId = "moc-lan" | "modern-slate" | "pure-swiss"
+export type UiPresetId = "alg" | "moc-lan" | "modern-slate" | "pure-swiss"
 
 /** Scope xác định preset này dành cho platform nào */
 export type UiPresetScope = "saas-mother" | "chain-store" | "all"

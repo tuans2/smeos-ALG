@@ -231,7 +231,7 @@ export function StorageSidebar({
             type="button"
             onClick={() => setFilter("raw")}
             className={`text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-              filter === "raw" ? "bg-warning text-white font-bold hover:bg-warning" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
+              filter === "raw" ? "bg-warning text-text font-bold hover:bg-warning" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             Ảnh gốc ({rawAssets.length})

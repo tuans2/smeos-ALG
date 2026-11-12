@@ -328,7 +328,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                       <span className="text-caption font-bold text-text">{grp.title}</span>
                       <div
                         className={`h-3.5 w-3.5 rounded border flex items-center justify-center ${
-                          isSelected ? "border-warning bg-warning text-white" : "border-border"
+                          isSelected ? "border-warning bg-warning text-text" : "border-border"
                         }`}
                       >
                         {isSelected && <Check size={10} strokeWidth={3} />}

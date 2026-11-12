@@ -7,9 +7,60 @@ import type { PresetDefinition, UiPresetId, UiSystemConfig } from "./types"
  */
 
 export const DEFAULT_UI_CONFIG: UiSystemConfig = {
-  preset: "moc-lan",
+  preset: "alg",
   density: "comfortable",
   colorMode: "light",
+}
+
+export const PRESET_ALG: PresetDefinition = {
+  id: "alg",
+  name: "AVI Lotus Group",
+  tagline: "Xanh vườn thực vật, trắng mây mỏng",
+  description:
+    "Bộ nhận diện AVI Lotus Group: xanh Botanical Garden làm màu chủ đạo, nền trắng mây Wispy Clouds, chữ đen than Jet Set, phông Google Sans.",
+  isDefault: true,
+  scope: "all",
+  fontSans: '"Google Sans", ui-sans-serif, system-ui, sans-serif',
+  fontDisplay: "var(--font-sans)",
+  tokens: {
+    primary: "#133D31",
+    primaryDark: "#0C2920",
+    primaryMuted: "#E7ECEA",
+    primaryBorder: "#B8C5C1",
+    secondary: "#93A87C",
+    secondaryText: "#596B47",
+    accent: "#E7C447",
+    accentBg: "#FBF6E2",
+    bg: "#F0EFEF",
+    surface: "#FFFFFF",
+    surfaceAlt: "#E8E7E6",
+    border: "#DCDAD8",
+    text: "#242C28",
+    textMuted: "#5A6360",
+    warning: "#E7C447",
+    warningBg: "#FBF6E2",
+    danger: "#9C3740",
+    dangerBg: "#F7ECED",
+    success: "#5F714B",
+    successBg: "#EEF1EA",
+    info: "#476CA1",
+    infoBg: "#EFF3F8",
+    selected: "#E7ECEA",
+    selectedText: "#133D31",
+  },
+  radius: {
+    sm: "0.375rem", // 6px
+    md: "0.5rem", // 8px
+    lg: "0.75rem", // 12px
+    card: "0.75rem", // 12px
+    button: "0.5rem", // 8px
+    dialog: "0.75rem", // 12px
+  },
+  shadows: {
+    subtle: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    card: "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05)",
+    dialog: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+  },
 }
 
 export const PRESET_MOC_LAN: PresetDefinition = {
@@ -17,10 +68,10 @@ export const PRESET_MOC_LAN: PresetDefinition = {
   name: "Mộc Lan Artisan",
   tagline: "Ấm áp, thủ công & cảm xúc boutique",
   description:
-    "Bộ nhận diện chuẩn cho smeOS. Cánh hoa ngà kem, mận chín, lá xanh sage và nhuỵ đồng mùa thu. Tôn vinh tính thủ công và sự chu đáo.",
-  isDefault: true,
+    "Bộ nhận diện trước đây của nền tảng. Cánh hoa ngà kem, mận chín, lá xanh sage và nhuỵ đồng mùa thu. Tôn vinh tính thủ công và sự chu đáo.",
+  isDefault: false,
   scope: "all",
-  fontSans: '"Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif',
+  fontSans: '"Google Sans", ui-sans-serif, system-ui, sans-serif',
   fontDisplay: '"Fraunces", "Playfair Display", Georgia, serif',
   tokens: {
     primary: "#7A2E42",
@@ -71,7 +122,7 @@ export const PRESET_MODERN_SLATE: PresetDefinition = {
     "Phong cách công nghệ cao, dữ liệu số rõ ràng, độ tương phản tuyệt đối lấy cảm hứng từ Linear và Stripe. Tối ưu cho SaaS Mother, ChainOS và vận hành.",
   isDefault: false,
   scope: "all",
-  fontSans: '"Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif',
+  fontSans: '"Google Sans", ui-sans-serif, system-ui, sans-serif',
   tokens: {
     primary: "#1554E0",
     primaryDark: "#1D4ED8",
@@ -121,7 +172,7 @@ export const PRESET_PURE_SWISS: PresetDefinition = {
     "Phong cách Thụy Sĩ cổ điển: đơn sắc thanh lịch, không đổ bóng thừa, đường kẻ viền mảnh dẻ. Tôn vinh 100% hình ảnh sản phẩm.",
   isDefault: false,
   scope: "all",
-  fontSans: '"Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif',
+  fontSans: '"Google Sans", ui-sans-serif, system-ui, sans-serif',
   tokens: {
     primary: "#18181B",
     primaryDark: "#09090B",
@@ -164,6 +215,7 @@ export const PRESET_PURE_SWISS: PresetDefinition = {
 }
 
 export const UI_PRESETS: Record<UiPresetId, PresetDefinition> = {
+  alg: PRESET_ALG,
   "moc-lan": PRESET_MOC_LAN,
   "modern-slate": PRESET_MODERN_SLATE,
   "pure-swiss": PRESET_PURE_SWISS,
@@ -176,5 +228,5 @@ export function getUiPreset(id?: string | null): PresetDefinition {
   if (id && id in UI_PRESETS) {
     return UI_PRESETS[id as UiPresetId]
   }
-  return PRESET_MOC_LAN
+  return PRESET_ALG
 }

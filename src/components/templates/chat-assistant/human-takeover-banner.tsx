@@ -31,17 +31,17 @@ export function HumanTakeoverBanner({
           <div className="text-caption font-bold uppercase tracking-wider text-warning-text">
             Yêu cầu nhân viên can thiệp: {customerName}
           </div>
-          <div className="text-caption text-warning/90 mt-0.5">{reason}</div>
+          <div className="text-caption text-warning-text mt-0.5">{reason}</div>
         </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
         {onDismiss && (
-          <Button variant="ghost" size="sm" onClick={onDismiss} className="text-warning-text hover:text-warning/70 text-caption">
+          <Button variant="ghost" size="sm" onClick={onDismiss} className="text-warning-text hover:text-warning-text/80 text-caption">
             Bỏ qua
           </Button>
         )}
-        <Button size="sm" onClick={onAcceptTakeover} className="bg-warning hover:bg-warning/90 text-white gap-1.5 text-caption">
+        <Button size="sm" onClick={onAcceptTakeover} className="bg-warning hover:bg-warning/90 text-text gap-1.5 text-caption">
           <UserCheck size={14} />
           Nhận xử lý ngay
         </Button>

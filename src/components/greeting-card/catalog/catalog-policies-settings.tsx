@@ -234,7 +234,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
               >
                 <div className="flex items-center justify-between font-bold text-caption">
                   <span>{a.title}</span>
-                  <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${active ? "bg-warning border-warning text-white" : "border-border"}`}>
+                  <div className={`w-4 h-4 rounded-md border flex items-center justify-center ${active ? "bg-warning border-warning text-text" : "border-border"}`}>
                     {active && <Check size={12} />}
                   </div>
                 </div>

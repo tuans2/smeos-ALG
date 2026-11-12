@@ -196,7 +196,7 @@ export function CoordinatorCardDecisionBlocks({
               balanceVnd,
               proofUrl: order.payment_proof_balance_url ?? null,
             })}
-            className="h-9 text-body-sm font-extrabold gap-1.5 bg-warning hover:bg-warning/90 text-white w-full"
+            className="h-9 text-body-sm font-extrabold gap-1.5 bg-warning hover:bg-warning/90 text-text w-full"
           >
             <CheckCircle2 size={15} />
             Xác nhận Đã Nhận Đủ Tiền (Lần 2)

@@ -108,7 +108,7 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
                 totalCritical > 0
                   ? "bg-danger text-white shadow-xs"
                   : totalOverdue > 0
-                  ? "bg-warning text-white"
+                  ? "bg-warning text-text"
                   : hasReminders
                   ? "bg-primary text-white"
                   : "bg-surface-alt text-text-muted"
