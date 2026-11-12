@@ -2,7 +2,7 @@ import type { TenantContext } from "@/core/tenancy"
 import type { ITemplateOverrideRepository } from "../domain/repositories/template-override-repository.interface"
 import { getTemplateOverrideRepository } from "../infra/template-override-repository"
 
-/** `GET /template-overrides?templateKey=...` (nợ #99). */
+/** `GET /template-overrides?template_key=...` (nợ #99). */
 export function getTemplateOverrides(
   ctx: TenantContext,
   templateKey: string,

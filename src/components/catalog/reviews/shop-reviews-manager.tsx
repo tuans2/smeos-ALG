@@ -16,7 +16,7 @@ async function call<T>(url: string, init?: RequestInit): Promise<T> {
   return json.data as T
 }
 
-const toBody = (d: ReviewDraft) => JSON.stringify({ authorName: d.authorName, occasion: d.occasion || null, rating: d.rating, comment: d.comment })
+const toBody = (d: ReviewDraft) => JSON.stringify({ author_name: d.authorName, occasion: d.occasion || null, rating: d.rating, comment: d.comment })
 
 /**
  * Đánh giá khách thật do chủ tiệm nhập — hiện ở mục "Khách hàng nói gì" trên trang khách
@@ -96,7 +96,7 @@ export function ShopReviewsManager() {
                 </div>
                 <div className="flex shrink-0 gap-1">
                   <Button size="xs" variant="ghost" disabled={busy}
-                    onClick={() => run(() => call(`/api/v1/shop-reviews/${r.id}`, { method: "PATCH", body: JSON.stringify({ isVisible: !r.isVisible }) }))}>
+                    onClick={() => run(() => call(`/api/v1/shop-reviews/${r.id}`, { method: "PATCH", body: JSON.stringify({ is_visible: !r.isVisible }) }))}>
                     {r.isVisible ? <EyeOff size={14} aria-hidden="true" /> : <Eye size={14} aria-hidden="true" />}
                     <span className="ml-1">{r.isVisible ? "Ẩn" : "Hiện"}</span>
                   </Button>

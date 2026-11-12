@@ -25,6 +25,7 @@ import { NativeSelect } from "@/components/ui/select"
 import { OCCASION_REGISTER_LABELS, type OccasionRegisterValue } from "@/modules/organization/domain/occasion-rules"
 import { errorText } from "@/lib/error-text"
 
+import { snakeKeys } from "@/lib/case-keys"
 interface OccasionRow {
   id: string
   code: string
@@ -82,7 +83,7 @@ export function OccasionsSettingsForm() {
       const res = await fetch("/api/v1/occasions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: newCode, name: newName, register: newRegister, sortOrder: occasions.length + 1 }),
+        body: JSON.stringify(snakeKeys({ code: newCode, name: newName, register: newRegister, sortOrder: occasions.length + 1 })),
       })
       if (!res.ok) {
         const errJson = await res.json().catch(() => null)
@@ -108,7 +109,7 @@ export function OccasionsSettingsForm() {
       const res = await fetch(`/api/v1/occasions/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(patch),
+        body: JSON.stringify(snakeKeys(patch)),
       })
       if (!res.ok) {
         const errJson = await res.json().catch(() => null)

@@ -360,7 +360,7 @@ trước, `?limit=1..100` (mặc định 25), `?cursor=`. Chỉ đọc. Mỗi ha
 
 `/subscription` (checklist ALG 10.7): gói, kỳ hiện tại, trạng thái và hoá đơn của cửa hàng kèm mã VietQR (nội dung chuyển khoản = mã hoá đơn `TB…`). Gói `OVERDUE` (hoá đơn tới hạn chưa thu, PO Q9 không ân hạn) → mọi yêu cầu ghi của cửa hàng trả 402 `SUBSCRIPTION_OVERDUE`, yêu cầu đọc vẫn được. Hoá đơn kỳ sau sinh 7 ngày trước hết kỳ, nhắc `SUBSCRIPTION_RENEWAL_DUE` 7 ngày và 1 ngày trước hạn; quá hạn phát `SUBSCRIPTION_OVERDUE`; credit tặng theo gói cấp đầu tháng, phần tháng trước chưa dùng thu hồi (`EXPIRE`). Xét khi cửa hàng gửi yêu cầu, không cần lịch chạy nền. `POST /billing/sepay`: SePay báo giao dịch vào tài khoản nền tảng (`Authorization: Apikey …`; chưa cấu hình khoá → 404); khớp mã hoá đơn và đủ tiền → ghi đã thu, mã giao dịch SePay chống ghi trùng; không khớp để Console xác nhận tay.
 
-`/usage/limits` (checklist ALG 10.3, 9.7): kỳ hiện tại (YYYY-MM giờ Việt Nam), `credit { used, limit }` theo hạn mức nền tảng đặt và `ai { used, limit }` theo trần cửa hàng tự đặt (`PUT { aiMonthlyLimit: number | null }`, Điều hành). Hai hạn mức chặn ngay khi trừ credit: vượt → 422 `QUOTA_EXCEEDED`, số dư không bị trừ. Dùng tới 80% phát `USAGE_LIMIT_NEAR`, số dư dưới 20% lần nạp gần nhất phát `CREDIT_LOW` (mỗi loại một lần mỗi kỳ). Tin SMS/ZNS gửi khách trừ credit theo quy đổi của nền tảng (mặc định 0); gửi lỗi hoàn lại, hết credit thì bỏ qua tin.
+`/usage/limits` (checklist ALG 10.3, 9.7): kỳ hiện tại (YYYY-MM giờ Việt Nam), `credit { used, limit }` theo hạn mức nền tảng đặt và `ai { used, limit }` theo trần cửa hàng tự đặt (`PUT { ai_monthly_limit: number | null }`, Điều hành). Hai hạn mức chặn ngay khi trừ credit: vượt → 422 `QUOTA_EXCEEDED`, số dư không bị trừ. Dùng tới 80% phát `USAGE_LIMIT_NEAR`, số dư dưới 20% lần nạp gần nhất phát `CREDIT_LOW` (mỗi loại một lần mỗi kỳ). Tin SMS/ZNS gửi khách trừ credit theo quy đổi của nền tảng (mặc định 0); gửi lỗi hoàn lại, hết credit thì bỏ qua tin.
 
 ## 11. Integration API — máy gọi máy
 
@@ -565,7 +565,7 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | GET | `/short-links/:id/stats` | `J1` | `?days=1..90` (mặc định 30): tổng lượt quét, khách riêng (băm theo ngày), số lead, theo thiết bị, theo ngày (giờ VN) |
 | GET | `/leads` | `Q1` | Bước 4 — công cụ 21: khách để lại thông tin; `?status=NEW\|IN_PROGRESS\|WON\|LOST` (`CONTACTED` cũ → `IN_PROGRESS`, 31/10/2026), cursor + `limit` ≤ 100; kèm `counts` theo trạng thái |
 | POST | `/leads` | `Q2` | Đơn hàng đa nguồn §3.1 — Sale tự thêm khách tiềm năng `{ name, phone, message?, reason: WALK_IN\|QUOTE_REQUEST\|CONTACT, nextFollowUpAt? }`; nguồn `MANUAL`, người phụ trách = người nhập; tổ chức từ phiên → 201 `{ lead: { id } }` |
-| PATCH | `/leads/:id` | `Q3` | `{ status?, assigneeUserId? }` — người phụ trách phải là thành viên ACTIVE của tổ chức; lead tổ chức khác → 404; ghi `audit_logs` `lead.update` |
+| PATCH | `/leads/:id` | `Q3` | `{ status?, assignee_user_id? }` — người phụ trách phải là thành viên ACTIVE của tổ chức; lead tổ chức khác → 404; ghi `audit_logs` `lead.update` |
 
 **Chưa có:** `GET /catalog-links/:slug/qr` (ảnh PNG mã QR để in) ở core — `LocalBudd` tự sinh QR phía route của nó (`qrcode`, trỏ về `/c/:slug` của chính nó), core cũng có `src/core/media/qr-engine.ts` sinh QR phía giao diện, không qua endpoint. Xem **RS-7**.
 
@@ -652,7 +652,7 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/orders/:id/qc` | `R3` | Người kiểm kết luận; không đạt bắt buộc lý do; `REJECTED` mở sự cố `QC_FAILURE` |
 | POST | `/coordinator/orders/:id/delivery` | `R5` | Sự kiện giao; thành công bắt buộc ảnh POD hoặc tên người ký; thất bại mở sự cố |
 | GET | `/delivery/my-runs` | `R18` | Đơn đang giao có số điện thoại shipper trùng số của người đăng nhập (cùng tổ chức, cùng phạm vi chi nhánh): người nhận, SĐT, địa chỉ, khung giờ, lời thiệp — không giá, không ghi chú nội bộ, không người đặt · `phoneMissing: true` khi tài khoản chưa có số |
-| POST | `/delivery/my-runs/:id` | `R18` | `{ event, podAssetId?, recipientSignedName?, failureReason? }` — cùng luật giao của Điều phối (ảnh giao bắt buộc theo Cài đặt); đơn không giao cho mình → 404 |
+| POST | `/delivery/my-runs/:id` | `R18` | `{ event, pod_asset_id?, recipient_signed_name?, failure_reason? }` — cùng luật giao của Điều phối (ảnh giao bắt buộc theo Cài đặt); đơn không giao cho mình → 404 |
 | GET | `/coordinator/reminders` | `R1` | Mốc nhắc việc Điều phối đang bật của các đơn |
 | POST | `/coordinator/reminders/acknowledge` | `R3` | `{ orderId, milestone, action, snoozeMinutes?, note? }`; đơn của tổ chức khác → 404 |
 | GET · PUT | `/coordinator/settings/reminders` | `D1` (đọc) · `R12` (sửa) | Thời điểm nhắc việc cấp tổ chức (phút, 0–1440) (14/10/2026: sửa đòi `R12`) |
@@ -1051,8 +1051,8 @@ Endpoint mang khoá nhà cung cấp riêng của tổ chức. Quyết định D2
 | POST | `/content-engine/catalog-generate` | `J7` (PO 30/10/2026) | Writer→Critic qua `callCapability` (`content_generation`, `content_qa`) sinh badge/mô tả/CTA cho catalog. Nhận `productIds?` (≤ 50) để máy chủ tự đọc mô tả bán hàng đã duyệt (cần `H5`, thiếu thì bỏ qua). Chạy tại chỗ, **không trừ credit, không ghi `usage`, không có `Idempotency-Key`** |
 | POST | `/content-engine/landing-generate` | `J7` (PO 30/10/2026) | Như trên cho landing page (hero/story/perks/faq/lead), lấy ngữ cảnh từ hồ sơ kinh doanh + thương hiệu |
 | GET | `/shop-reviews` | `J1` | Danh sách đánh giá khách do chủ tiệm nhập (cả đang ẩn), mới nhất trước |
-| POST | `/shop-reviews` | `J1` | Thêm đánh giá: `authorName` (1–60), `occasion?` (≤ 60), `rating` (1–5), `comment` (5–500), `isVisible?` |
-| PATCH | `/shop-reviews/:id` | `J1` | Sửa nội dung (gửi đủ tên, sao, nhận xét) hoặc chỉ `isVisible`; tổ chức khác → 404 |
+| POST | `/shop-reviews` | `J1` | Thêm đánh giá: `author_name` (1–60), `occasion?` (≤ 60), `rating` (1–5), `comment` (5–500), `is_visible?` |
+| PATCH | `/shop-reviews/:id` | `J1` | Sửa nội dung (gửi đủ tên, sao, nhận xét) hoặc chỉ `is_visible`; tổ chức khác → 404 |
 | DELETE | `/shop-reviews/:id` | `J1` | Xoá vĩnh viễn (giao diện hỏi xác nhận); tổ chức khác → 404 |
 | POST | `/content-engine/rewrite` | một trong `F2`, `L2`, `L3` (PO 07/11/2026, nợ #170) | Viết lại MỘT câu ≤ 500 ký tự theo `field_type`/`style`, trả 3 gợi ý; parse lỗi thì trả gợi ý dựng sẵn (`fallback: true`) · Giới hạn 30 lần/10 phút mỗi người dùng và 200 lần/giờ mỗi tổ chức → 429 (audit API-02, 06/11/2026) · Trừ giá `content.rewrite` (1 credit) cho mỗi lượt AI trả gợi ý: giữ trước khi gọi AI, thiếu credit → 422 `QUOTA_EXCEEDED`; rơi về gợi ý dựng sẵn hoặc AI lỗi → hoàn lại; không gian trải nghiệm không trừ |
 
@@ -1088,7 +1088,7 @@ Các route dưới đây được thêm từ mốc chuyển sang ALG (`8c53b38`)
 | POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP. Từ 22/10/2026 **chờ superadmin duyệt**: trả `202`, không cấp phiên; lúc duyệt hệ thống sinh mật khẩu tạm để superadmin gửi cho khách. `industry_key` phải có trong danh mục ngành, `phone` đúng dạng số điện thoại, tên ≤ 120 ký tự → sai: 400 (rà soát cụm B) |
 | POST | `/business-profile/mock-data` | `F2` (hoặc `H4`/`N1`/`N12`) | Nạp hồ sơ và sản phẩm mẫu theo ngành `{ industry_key? }`, ghi đè hồ sơ hiện có. **Chỉ tổ chức dùng thử (`EXPERIENCE`)** — tiệm thật → 403 (PO 21/10/2026) |
 | GET | `/availability/board` | `L1` | `?month=YYYY-MM` — bảng khả dụng theo tháng (đặt phòng, khung giờ, tồn kho) |
-| POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ productId, checkInDate, checkOutDate, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |
+| POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ product_id, check_in_date, check_out_date, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |
 | DELETE | `/availability/blocks/:id` | `L3` | Bỏ chặn thủ công. Chỉ xoá được dòng không gắn đơn |
 | POST | `/public/brochure/:sendCode/check-availability` | — *(chủ phiên Thẻ chào)* | Kiểm khả dụng sản phẩm trên link chào. 120 lần/phút/IP |
 | POST | `/public/greeting-catalog/:id/check-availability` | — *(công khai)* | Kiểm khả dụng sản phẩm trên form đặt hàng của danh mục. 120 lần/phút/IP |
@@ -1242,19 +1242,19 @@ Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`. Mọi route có p
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/integrations` | `W1` | Tổng quan, danh mục theo tầng và gói, kết nối hiện có |
-| POST | `/integrations/connections` | `W2` | Kết nối bằng khoá `{ connectorKey, secret }`; máy chủ kiểm khoá với nhà cung cấp rồi mới lưu (đã mã hoá); 201 |
+| POST | `/integrations/connections` | `W2` | Kết nối bằng khoá `{ connector_key, secret }`; máy chủ kiểm khoá với nhà cung cấp rồi mới lưu (đã mã hoá); 201 |
 | DELETE | `/integrations/connections/:id` | `W2` | Ngắt kết nối, thu hồi phía nhà cung cấp nếu hỗ trợ, xoá khoá đã lưu |
 | POST | `/integrations/connections/:id/rotate` | `W3` | Đổi khoá — kiểm khoá mới trước khi thay |
 | POST | `/integrations/connections/:id/test` | `W3` | Kiểm tra kết nối ngay, cập nhật trạng thái |
 | GET | `/integrations/connections/:id/events` | `W1` | Nhật ký sự kiện, lọc `status`, `limit` tối đa 100 |
 | POST | `/integrations/events/:id/replay` | `W5` | Đưa sự kiện `FAILED`/`DEAD` về hàng chờ |
 | GET | `/integrations/governance` | `W4` | Chuỗi xem chế độ đặt cho cửa hàng thành viên theo từng đầu nối khoá được, kèm khoá tầng trên (`lockedByUpper`). Không phải chuỗi → 404 |
-| PUT | `/integrations/governance` | `W4` | `{ connectorKey, mode: FORBID \| INHERIT_ONLY \| ALLOW_OWN }`; phạm vi là chính chuỗi của phiên. Tầng trên đã khoá → 422 `violation: LOCKED_BY_UPPER`; cửa hàng → 422 `STORE_CANNOT_LOCK`; đầu nối chưa thực thi khoá → 422 `NOT_GOVERNABLE`. Báo cho cửa hàng thành viên, ghi audit |
+| PUT | `/integrations/governance` | `W4` | `{ connector_key, mode: FORBID \| INHERIT_ONLY \| ALLOW_OWN }`; phạm vi là chính chuỗi của phiên. Tầng trên đã khoá → 422 `violation: LOCKED_BY_UPPER`; cửa hàng → 422 `STORE_CANNOT_LOCK`; đầu nối chưa thực thi khoá → 422 `NOT_GOVERNABLE`. Báo cho cửa hàng thành viên, ghi audit |
 | GET | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | Tham số `scope` = `GLOBAL` hoặc `industry:<key>`; trả kèm danh sách ngành |
 | PUT | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | `{ scopeId, connectorKey, mode }`; ngành không đổi được khi Mẹ đã khoá (422). Ghi `platform_audit_logs` |
 | GET | `/integrations/connections/:id/sales` | `W1` | Kết nối kênh bán: tin đăng (tối đa 100) và 50 đơn gần nhất. Kết nối không phải kênh bán hoặc của tổ chức khác → 404 |
-| POST | `/integrations/connections/:id/sales/publish` | `W3` | `{ productIds }` 1–100. Sản phẩm thiếu dữ liệu (chưa mở bán/giá/ảnh) không đẩy lên kênh, ghi lý do; kênh từ chối → ghi lý do của kênh. Kết nối lỗi hoặc cấp trên khoá → 422. Ghi audit |
-| POST | `/integrations/connections/:id/sales/unpublish` | `W3` | `{ productIds }` 1–100 — gỡ tin đã đăng. Ghi audit |
+| POST | `/integrations/connections/:id/sales/publish` | `W3` | `{ product_ids }` 1–100. Sản phẩm thiếu dữ liệu (chưa mở bán/giá/ảnh) không đẩy lên kênh, ghi lý do; kênh từ chối → ghi lý do của kênh. Kết nối lỗi hoặc cấp trên khoá → 422. Ghi audit |
+| POST | `/integrations/connections/:id/sales/unpublish` | `W3` | `{ product_ids }` 1–100 — gỡ tin đã đăng. Ghi audit |
 | POST | `/integrations/connections/:id/sales/availability` | `W3` | Đẩy còn/hết hàng (theo trạng thái mở bán — chưa có số tồn, nợ #95) cho mọi tin đã đăng, lô 100 |
 | POST | `/public/integrations/:connector/:ref` | — *(chữ ký của đầu nối)* | Cổng webhook chung: giới hạn tần suất theo IP và theo `ref`, thân tối đa 256 KB, xác thực chữ ký → ghi nhật ký (chống trùng) → 200. Sai chữ ký/sai `ref`/kết nối đã ngắt đều trả cùng một 401 |
 | POST | `/internal/integrations-sweep` | — *(cron, header `x-cron-secret`)* | Xử lý tối đa 100 sự kiện đến hạn (sự kiện `order.*` của kênh bán → lấy chi tiết đơn qua API rồi nhập vào Đơn hàng, chống trùng), kiểm sức khoẻ tối đa 50 kết nối và kéo đơn dự phòng cho tối đa 20 kết nối kênh bán mỗi lượt (mỗi kết nối tối đa 30 phút/lần). Gọi sau cùng trong cron `smeos-cron-dispatch-sweep` 5 phút/lần |

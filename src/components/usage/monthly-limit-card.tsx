@@ -55,7 +55,7 @@ export function MonthlyLimitCard({ canSetAi }: { canSetAi: boolean }) {
       const res = await fetch("/api/v1/usage/limits", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ aiMonthlyLimit: aiDraft.trim() === "" ? null : Number(aiDraft) }),
+        body: JSON.stringify({ ai_monthly_limit: aiDraft.trim() === "" ? null : Number(aiDraft) }),
       })
       if (!res.ok) throw new Error("Không lưu được trần credit AI")
       setData(((await res.json()) as { data: Snapshot }).data)

@@ -3,6 +3,7 @@ import { validationFailed } from "@/core/http/errors"
 import { createManualBlock } from "@/modules/availability/use-cases/manage-manual-block"
 import { availabilityBlockBody } from "@/app/api/v1/_contracts/requests-product-extra"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * POST /api/v1/availability/blocks
@@ -15,13 +16,14 @@ export const POST = defineRoute({
     if (!parsed.success) {
       throw validationFailed({ issues: parsed.error.issues })
     }
+    const input = camelKeys(parsed.data)
 
     const id = await createManualBlock({
       organizationId: ctx.organizationId,
-      productId: parsed.data.productId,
-      checkInDate: parsed.data.checkInDate,
-      checkOutDate: parsed.data.checkOutDate,
-      note: parsed.data.note,
+      productId: input.productId,
+      checkInDate: input.checkInDate,
+      checkOutDate: input.checkOutDate,
+      note: input.note,
     })
 
     return jsonResponse({ id, success: true })

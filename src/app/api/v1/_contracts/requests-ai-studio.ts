@@ -18,8 +18,8 @@ export const cursorQuery = z.object({ limit: int.optional(), cursor: z.string().
 
 // jobs/batch
 export const jobBatchBody = z.object({
-  productId: z.string().trim().min(1, "Thiếu productId").max(64),
-  masterImageId: z.string().trim().min(1).max(64).optional(),
+  product_id: z.string().trim().min(1, "Thiếu productId").max(64),
+  master_image_id: z.string().trim().min(1).max(64).optional(),
   feature: z.string().trim().min(1, "Thiếu feature").max(64),
   capabilities: z.array(z.string().trim().min(1).max(32)).min(1, "Danh sách capabilities rỗng").max(50),
   module: z.string().trim().min(1, "Thiếu module").max(16),

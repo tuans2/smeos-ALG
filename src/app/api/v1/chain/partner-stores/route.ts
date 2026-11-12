@@ -9,6 +9,7 @@ import { registerPartnerStoreBody } from "@/app/api/v1/_contracts/requests-chain
 import { registerPartnerStore } from "@/modules/field-platform/use-cases/register-partner-store"
 import { validationFailed } from "@/core/http/errors"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const POST = defineRoute({
   auth: { kind: "tenant", capability: "F2" },
@@ -17,15 +18,16 @@ export const POST = defineRoute({
     if (!parsed.success) {
       throw validationFailed({ issues: parsed.error.issues })
     }
+    const input = camelKeys(parsed.data)
 
     const result = await registerPartnerStore({
       organizationId: ctx.organizationId,
-      name: parsed.data.name,
-      code: parsed.data.code,
-      address: parsed.data.address,
-      legalEntityId: parsed.data.legalEntityId,
-      fieldCeilings: parsed.data.fieldCeilings,
-      validUntil: parsed.data.validUntil,
+      name: input.name,
+      code: input.code,
+      address: input.address,
+      legalEntityId: input.legalEntityId,
+      fieldCeilings: input.fieldCeilings,
+      validUntil: input.validUntil,
     })
 
     return jsonResponse({ data: result }, { status: 201 })

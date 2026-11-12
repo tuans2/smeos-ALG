@@ -29,10 +29,10 @@ export const catalogGenerateBody = z.object({
 const PAGE_TYPES = LANDING_TYPE_OPTIONS.map((o) => o.type) as [string, ...string[]]
 
 export const landingGenerateBody = z.object({
-  occasionId: z.string().min(1),
-  occasionLabel: z.string().min(1),
-  archetypeId: z.string().optional(),
-  selectedProducts: z.array(
+  occasion_id: z.string().min(1),
+  occasion_label: z.string().min(1),
+  archetype_id: z.string().optional(),
+  selected_products: z.array(
     z.object({
       /** Chỉ để máy chủ tự đọc mô tả bán hàng đã duyệt của tenant — không nhận mô tả từ trình duyệt */
       id: z.string().min(1).max(64).optional(),
@@ -42,13 +42,13 @@ export const landingGenerateBody = z.object({
       category: z.string().nullable().optional(),
     })
   ).default([]),
-  userDirectives: z.string().optional(),
-  discountPercent: z.number().int().min(1).max(99).optional(),
+  user_directives: z.string().optional(),
+  discount_percent: z.number().int().min(1).max(99).optional(),
   usps: z.array(z.string()).optional(),
   guarantees: z.array(z.string()).optional(),
-  targetAudience: z.string().optional(),
-  designDirection: z.string().optional(),
-  pageType: z.enum(PAGE_TYPES).optional(),
+  target_audience: z.string().optional(),
+  design_direction: z.string().optional(),
+  page_type: z.enum(PAGE_TYPES).optional(),
 })
 
 // content-engine/rewrite/route.ts

@@ -62,11 +62,11 @@ describe("hợp đồng — ấn phẩm quảng cáo, trường dữ liệu, ghi
   })
 
   it("ghi đè mẫu, định danh tổ chức, proxy", async () => {
-    await expectContract(await putOverride(send("/template-overrides", "PUT", { templateFamily: "ST", templateKey: "sales_pitch_zalo", fieldKey: "greeting_line", value: "Chào anh/chị, Hoa Mẫu xin gửi mẫu hoa" })), 200, R.templateOverrideResponse, "override-put")
-    await expectContract(await listOverrides(get("/template-overrides?templateKey=sales_pitch_zalo")), 200, R.templateOverridesResponse, "overrides")
+    await expectContract(await putOverride(send("/template-overrides", "PUT", { template_family: "ST", template_key: "sales_pitch_zalo", field_key: "greeting_line", value: "Chào anh/chị, Hoa Mẫu xin gửi mẫu hoa" })), 200, R.templateOverrideResponse, "override-put")
+    await expectContract(await listOverrides(get("/template-overrides?template_key=sales_pitch_zalo")), 200, R.templateOverridesResponse, "overrides")
     expect((await listOverrides(get("/template-overrides"))).status).toBe(400)
-    expect((await putOverride(send("/template-overrides", "PUT", { templateFamily: "ST", templateKey: "khong-co", fieldKey: "x", value: "y" }))).status).toBe(400)
-    const params = { params: Promise.resolve({ templateKey: "sales_pitch_zalo", fieldKey: "greeting_line" }) }
+    expect((await putOverride(send("/template-overrides", "PUT", { template_family: "ST", template_key: "khong-co", field_key: "x", value: "y" }))).status).toBe(400)
+    const params = { params: Promise.resolve({ templateKey: "sales_pitch_zalo", field_key: "greeting_line" }) }
     // @release-strip
     await expectContract(await removeOverride(send("/template-overrides/sales_pitch_zalo/greeting_line", "DELETE"), params), 200, R.overrideRemovedResponse, "override-remove")
     expect((await removeOverride(send("/template-overrides/sales_pitch_zalo/greeting_line", "DELETE"), params)).status).toBe(404) // đã bỏ rồi

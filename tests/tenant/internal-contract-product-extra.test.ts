@@ -91,13 +91,13 @@ describe("hợp đồng — ảnh studio, bộ ảnh, đề xuất sửa sản p
   it("lịch khả dụng: bảng tháng, chặn ngày, bỏ chặn", async () => {
     const room = await prisma.products.create({ data: { organization_id: t.organizationId, code: "PHONG-1", name: "Phòng 1", status: "ACTIVE" } })
     await prisma.organizations.update({ where: { id: t.organizationId }, data: { industry_key: "HOMESTAY" } })
-    const created = await expectContract(await createBlock(send("/availability/blocks", "POST", { productId: room.id, checkInDate: "2026-12-01", checkOutDate: "2026-12-03", note: "Bảo trì" })), 200, R.blockCreatedResponse, "block-create")
+    const created = await expectContract(await createBlock(send("/availability/blocks", "POST", { product_id: room.id, check_in_date: "2026-12-01", check_out_date: "2026-12-03", note: "Bảo trì" })), 200, R.blockCreatedResponse, "block-create")
     await expectContract(await board(get("/availability/board?month=2026-12")), 200, R.boardResponse, "board")
     await expectContract(await board(get("/availability/board")), 200, R.boardResponse, "board-default")
     const id = String(created.id)
     expect((await removeBlock(send(`/availability/blocks/${id}`, "DELETE", undefined, other), ps(id))).status).toBe(404)
     await expectContract(await removeBlock(send(`/availability/blocks/${id}`, "DELETE"), ps(id)), 200, R.blockRemovedResponse, "block-remove")
-    expect((await createBlock(send("/availability/blocks", "POST", { productId: room.id, checkInDate: "1/12/2026", checkOutDate: "2026-12-03" }))).status).toBe(400)
+    expect((await createBlock(send("/availability/blocks", "POST", { product_id: room.id, check_in_date: "1/12/2026", check_out_date: "2026-12-03" }))).status).toBe(400)
   })
 
   it("đường lỗi đã mô tả trong OpenAPI", async () => {
@@ -118,7 +118,7 @@ describe("hợp đồng — ảnh studio, bộ ảnh, đề xuất sửa sản p
     expect(await st(rejectCr(send(`/product-change-requests/${crId}/reject`, "POST", { reason: "lại" }), ps(crId)))).toBe(422)
     expect(await st(approveCr(send(`/product-change-requests/${crId}/approve`, "POST", {}, other), ps(crId)))).toBe(404)
     const foreignRoom = await prisma.products.create({ data: { organization_id: other.organizationId, code: "PHONG-K", name: "Phòng khác", status: "ACTIVE" } })
-    expect(await st(createBlock(send("/availability/blocks", "POST", { productId: foreignRoom.id, checkInDate: "2026-12-05", checkOutDate: "2026-12-06" })))).toBe(404)
+    expect(await st(createBlock(send("/availability/blocks", "POST", { product_id: foreignRoom.id, check_in_date: "2026-12-05", check_out_date: "2026-12-06" })))).toBe(404)
   })
 })
 

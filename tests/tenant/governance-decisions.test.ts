@@ -101,7 +101,7 @@ describe("governance_decisions — đường ghi", () => {
     const put = (mode: string) =>
       putIntegration(withSession("http://localhost/api/v1/integrations/governance", chain.token, {
         method: "PUT",
-        body: JSON.stringify({ connectorKey: "zalo_oa", mode }),
+        body: JSON.stringify({ connector_key: "zalo_oa", mode }),
       }))
     for (const mode of ["FORBID", "INHERIT_ONLY", "ALLOW_OWN"]) expect((await put(mode)).status).toBe(200)
     expect((await history({ system: "integration" })).map((r) => r.value)).toEqual([{ mode: "FORBID" }, { mode: "INHERIT_ONLY" }, null])

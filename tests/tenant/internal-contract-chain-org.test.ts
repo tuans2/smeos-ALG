@@ -65,7 +65,7 @@ describe("hợp đồng — chi nhánh và chuỗi", () => {
 
   it("cửa hàng đối tác, tóm tắt dữ liệu, thư mục một cửa hàng; cửa hàng của chuỗi khác 404", async () => {
     const created = await expectContract(
-      await partnerStore(send(chain, "/chain/partner-stores", "POST", { name: "Tiệm đối tác Thủ Đức", code: "TD-01", legalEntityId: "0101234567", fieldCeilings: { business_name: "RAW", tax_code: "MASKED" } })),
+      await partnerStore(send(chain, "/chain/partner-stores", "POST", { name: "Tiệm đối tác Thủ Đức", code: "TD-01", legal_entity_id: "0101234567", field_ceilings: { business_name: "RAW", tax_code: "MASKED" } })),
       201, R.partnerStoreResponse, "chain-partner-store"
     )
     const storeId = String((created.data as { storeId: string }).storeId)

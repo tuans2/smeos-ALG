@@ -61,7 +61,7 @@ describe("chống đặt trùng phòng", () => {
     await new AvailabilityRepository().createBooking(span("2026-12-20", "2026-12-22"))
     const res = await createBlock(withSession("http://localhost/api/v1/availability/blocks", a.token, {
       method: "POST",
-      body: JSON.stringify({ productId, checkInDate: "2026-12-21", checkOutDate: "2026-12-23" }),
+      body: JSON.stringify({ product_id: productId, check_in_date: "2026-12-21", check_out_date: "2026-12-23" }),
     }))
     expect(res.status).toBe(409)
   })
