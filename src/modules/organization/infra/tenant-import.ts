@@ -16,6 +16,7 @@ type Tx = Prisma.TransactionClient
 const SOURCE_TABLES = new Set(TRANSFER_SOURCES.map((s) => s.table))
 
 export function verifyPackage(pkg: TenantPackage): string | null {
+  if (!pkg || typeof pkg !== "object" || !pkg.tables) return "Gói không đúng định dạng xuất tổ chức"
   if (pkg.format !== TENANT_PACKAGE_FORMAT || pkg.version !== 1) return "Gói không đúng định dạng xuất tổ chức"
   for (const [table, rows] of Object.entries(pkg.tables)) {
     if (!SOURCE_TABLES.has(table)) return `Gói có bảng lạ: ${table}`
@@ -42,47 +43,55 @@ function insertSql(table: string): string {
   return `INSERT INTO "${table}" SELECT r.* FROM ${src}`
 }
 
-export async function importTenant(pkg: TenantPackage): Promise<ImportResult> {
+/** Kiểm gói ở CSDL đích trong giao dịch: định dạng, checksum, phiên bản schema; trả có tổ chức ở đích hay chưa. */
+export async function checkTarget(tx: Tx, pkg: TenantPackage): Promise<boolean> {
   const bad = verifyPackage(pkg)
   if (bad) throw new Error(bad)
-  return prisma.$transaction(
-    async (tx) => {
-      await tx.$executeRawUnsafe(`SET LOCAL lock_timeout = '30s'`)
-      const target = await schemaVersion(tx)
-      if (target !== pkg.schemaVersion) throw new Error(`Khác phiên bản schema: gói ${pkg.schemaVersion}, CSDL đích ${target}`)
-      const [exists] = await tx.$queryRawUnsafe<Array<{ n: number }>>(`SELECT count(*)::int AS n FROM "organizations" WHERE id = $1`, pkg.organizationId)
-      if ((exists?.n ?? 0) > 0) throw new Error("Tổ chức đã có ở CSDL đích — xoá trước (khôi phục riêng) hoặc nhập vào CSDL khác")
+  await tx.$executeRawUnsafe(`SET LOCAL lock_timeout = '30s'`)
+  const target = await schemaVersion(tx)
+  if (target !== pkg.schemaVersion) throw new Error(`Khác phiên bản schema: gói ${pkg.schemaVersion}, CSDL đích ${target}`)
+  const [exists] = await tx.$queryRawUnsafe<Array<{ n: number }>>(`SELECT count(*)::int AS n FROM "organizations" WHERE id = $1`, pkg.organizationId)
+  return (exists?.n ?? 0) > 0
+}
 
-      const fks = await foreignKeyColumns(tx)
-      const loaded = new Set<string>()
-      const deferred: Array<{ table: string; column: string; rows: Row[] }> = []
-      const inserted: ImportResult["inserted"] = []
-      let skippedLinks = 0
-      for (const { table } of TRANSFER_SOURCES) {
-        const rows = pkg.tables[table] ?? []
-        if (rows.length > 0) {
-          const later = fks.filter((f) => f.table === table && SOURCE_TABLES.has(f.references) && (f.references === table || !loaded.has(f.references)))
-          const blocked = later.find((f) => !f.nullable)
-          if (blocked) throw new Error(`Không nhập được ${table}.${blocked.column}: trỏ tới ${blocked.references} chưa nhập`)
-          const columns = [...new Set(later.map((f) => f.column))]
-          const first = columns.length ? rows.map((r) => ({ ...r, ...Object.fromEntries(columns.map((c) => [c, null])) })) : rows
-          const n = await tx.$executeRawUnsafe(insertSql(table), JSON.stringify(first))
-          if (table === "organization_links") skippedLinks = rows.length - n
-          inserted.push({ table, rows: n })
-          for (const column of columns) deferred.push({ table, column, rows })
-        }
-        loaded.add(table)
-      }
-      for (const { table, column, rows } of deferred) {
-        const pk = await primaryKey(tx, table)
-        const on = pk.map((c) => `x."${c}" = r."${c}"`).join(" AND ")
-        await tx.$executeRawUnsafe(
-          `UPDATE "${table}" x SET "${column}" = r."${column}" FROM jsonb_populate_recordset(NULL::"${table}", $1::jsonb) r WHERE ${on} AND r."${column}" IS NOT NULL`,
-          JSON.stringify(rows),
-        )
-      }
-      return { inserted, skippedLinks }
-    },
-    { timeout: 30 * 60_000, maxWait: 30_000 },
-  )
+export const IMPORT_TX = { timeout: 30 * 60_000, maxWait: 30_000 }
+
+export async function importTenant(pkg: TenantPackage): Promise<ImportResult> {
+  return prisma.$transaction(async (tx) => {
+    if (await checkTarget(tx, pkg)) throw new Error("Tổ chức đã có ở CSDL đích — dùng khôi phục riêng (restore) hoặc nhập vào CSDL khác")
+    return importPackage(tx, pkg)
+  }, IMPORT_TX)
+}
+
+/** Ghi gói vào giao dịch đã kiểm (`checkTarget`) — tổ chức chưa có ở đích. */
+export async function importPackage(tx: Tx, pkg: TenantPackage): Promise<ImportResult> {
+  const fks = await foreignKeyColumns(tx)
+  const loaded = new Set<string>()
+  const deferred: Array<{ table: string; column: string; rows: Row[] }> = []
+  const inserted: ImportResult["inserted"] = []
+  let skippedLinks = 0
+  for (const { table } of TRANSFER_SOURCES) {
+    const rows = pkg.tables[table] ?? []
+    if (rows.length > 0) {
+      const later = fks.filter((f) => f.table === table && SOURCE_TABLES.has(f.references) && (f.references === table || !loaded.has(f.references)))
+      const blocked = later.find((f) => !f.nullable)
+      if (blocked) throw new Error(`Không nhập được ${table}.${blocked.column}: trỏ tới ${blocked.references} chưa nhập`)
+      const columns = [...new Set(later.map((f) => f.column))]
+      const first = columns.length ? rows.map((r) => ({ ...r, ...Object.fromEntries(columns.map((c) => [c, null])) })) : rows
+      const n = await tx.$executeRawUnsafe(insertSql(table), JSON.stringify(first))
+      if (table === "organization_links") skippedLinks = rows.length - n
+      inserted.push({ table, rows: n })
+      for (const column of columns) deferred.push({ table, column, rows })
+    }
+    loaded.add(table)
+  }
+  for (const { table, column, rows } of deferred) {
+    const pk = await primaryKey(tx, table)
+    const on = pk.map((c) => `x."${c}" = r."${c}"`).join(" AND ")
+    await tx.$executeRawUnsafe(
+      `UPDATE "${table}" x SET "${column}" = r."${column}" FROM jsonb_populate_recordset(NULL::"${table}", $1::jsonb) r WHERE ${on} AND r."${column}" IS NOT NULL`,
+      JSON.stringify(rows),
+    )
+  }
+  return { inserted, skippedLinks }
 }

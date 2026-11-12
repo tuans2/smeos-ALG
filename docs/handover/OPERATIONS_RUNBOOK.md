@@ -300,6 +300,16 @@ Lưu ý:
   giữ nguyên; liên kết tới tổ chức không có ở đích bị bỏ qua.
 - `scripts/handover-backup-engine.ts` vẫn giữ cho hai script dọn dữ liệu thử trước bàn giao (PO 11/11/2026).
 
+**Khôi phục riêng một tổ chức về một mốc (ADR-016 D-S4, mục tiêu ≤ 4 giờ):**
+
+1. Khôi phục PITR của nhà cung cấp ra một CSDL tạm tới mốc khách yêu cầu (ADR-015 D-O3); ghi giờ bắt đầu.
+2. Trỏ `DATABASE_URL` của Render shell tạm vào CSDL tạm, xuất tổ chức (bước 1 ở trên).
+3. Trên production: sao lưu, rồi `npm run tenant:transfer -- restore --file <tệp> --operator <email>` (kiểm), thêm
+   `--confirm` để chạy — một giao dịch: xoá dữ liệu hiện tại của tổ chức, nhập gói, chạy lại các yêu cầu xoá dữ liệu cá nhân
+   có sau mốc (khách đã xin xoá không "sống lại"); ghi `platform.organization_restored`.
+4. Chép tệp trong `files` nếu kho tệp cũng phải về mốc; xoá CSDL tạm và tệp gói. Ghi biên bản (giờ bắt đầu → xong) vào
+   `docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md`.
+
 ## 18. Tăng trưởng bảng — phân vùng / bản sao đọc theo ngưỡng (ADR-015 D-O6, 12/11/2026)
 
 1. Mỗi tháng (hoặc khi cảnh báo dung lượng D-O8): `npm run db:growth` trên Render shell của `smeos-web` — 10 bảng lớn
