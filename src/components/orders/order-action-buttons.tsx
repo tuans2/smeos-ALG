@@ -6,6 +6,7 @@ import { Ban } from "@/components/ui/icon-set/ban"
 import { Truck } from "@/components/ui/icon-set/truck"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
+import { isHrefOpen } from "@/lib/feature-lock"
 import { orderBookActions } from "@/modules/orders/domain/order-book-actions"
 import type { DeliveryStatus, OrderStatus } from "@/modules/orders/domain/order-types"
 
@@ -38,7 +39,7 @@ export function OrderActionButtons({ orderStatus, deliveryStatus, onPrint, onCan
           </Button>
         )}
       </div>
-      {actions.followInCoordinator && (
+      {actions.followInCoordinator && isHrefOpen("/dieu-phoi") && (
         <Link href="/dieu-phoi" className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-body-sm font-semibold text-primary-foreground hover:bg-primary/90">
           <Truck className="h-4 w-4" /> {dict.orders.actions.followInCoordinator}
         </Link>

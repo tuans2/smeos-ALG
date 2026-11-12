@@ -33,7 +33,7 @@ describe("luật đầu vào khi tạo đơn", () => {
 describe("createOrder áp luật Q11/Q12", () => {
   const ctx: TenantContext = { userId: "u", organizationId: "org-1", workspaceId: "ws", branchId: null, capabilities: new Set(["R2"]) }
   const items = [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 300_000 }]
-  const repo = () => ({ countTodayOrders: vi.fn().mockResolvedValue(0), create: vi.fn(async () => ({ id: "o", code: "DH" })) }) as unknown as IOrderRepository & { create: ReturnType<typeof vi.fn> }
+  const repo = () => ({ allocateOrderCodeNumber: vi.fn(async () => 1), create: vi.fn(async () => ({ id: "o", code: "DH" })) }) as unknown as IOrderRepository & { create: ReturnType<typeof vi.fn> }
   const run = (input: Parameters<typeof createOrder>[1], r = repo()) =>
     createOrder(ctx, input, r, vi.fn(), vi.fn(async () => []), vi.fn(async () => undefined), vi.fn())
 

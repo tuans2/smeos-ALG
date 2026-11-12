@@ -4,11 +4,8 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { CustomerMasterIndex, CustomerTier } from "../domain/customer-master-index"
 import { syncCustomerMetrics } from "./customer-metrics-repository"
 import { branchForNewCustomer, customerBranchWhere } from "./customer-branch-scope"
-import type {
-  ICustomerRepository,
-  CreateCustomerInput,
-  UpdateCustomerInput,
-} from "../domain/repositories/customer-repository.interface"
+import type { ICustomerRepository, ICustomerPageReader, CreateCustomerInput, UpdateCustomerInput } from "../domain/repositories/customer-repository.interface"
+import type { CustomerListFilters, CustomerPageAfter } from "../domain/repositories/customer-repository.interface"
 import { phoneEquals, phoneSearch } from "@/core/security/pii-lookup"
 
 export type { CreateCustomerInput, UpdateCustomerInput }
@@ -45,7 +42,15 @@ type CustomerRow = {
   }>
 }
 
-export class CustomerRepository implements ICustomerRepository {
+/** Quan hệ đọc kèm ở danh sách khách (hàm để `new Date()` tính lúc truy vấn). */
+const CUSTOMER_LIST_INCLUDE = () =>
+  ({
+    occasions: true,
+    consents: true,
+    vouchers: { where: { is_used: false, OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }] } },
+  }) satisfies Prisma.customersInclude
+
+export class CustomerRepository implements ICustomerRepository, ICustomerPageReader {
   async create(ctx: TenantContext, input: CreateCustomerInput): Promise<CustomerMasterIndex> {
     const fields = {
       branch_id: branchForNewCustomer(ctx), // D-58: chi nhánh của người tạo
@@ -153,15 +158,12 @@ export class CustomerRepository implements ICustomerRepository {
     return true
   }
 
-  async list(
-    ctx: TenantContext,
-    filters?: { tier?: CustomerTier | undefined; search?: string | undefined },
-    pagination?: { limit?: number | undefined; offset?: number | undefined }
-  ): Promise<{ items: CustomerMasterIndex[]; total: number }> {
-    const where: Prisma.customersWhereInput = {
+  /** Điều kiện chung của danh sách khách; `extra` nối vào `AND` để không đè `OR` của ô tìm. */
+  private async listWhere(ctx: TenantContext, filters?: CustomerListFilters, extra: Prisma.customersWhereInput[] = []): Promise<Prisma.customersWhereInput> {
+    return {
       organization_id: ctx.organizationId,
       status: "ACTIVE", // P-2: khách tiềm năng (link Thẻ chào chưa đặt) không hiện ở danh sách
-      AND: [await customerBranchWhere(ctx)], // phạm vi chi nhánh (T-5) — AND để không đè OR của ô tìm
+      AND: [await customerBranchWhere(ctx), ...extra], // phạm vi chi nhánh (T-5)
       ...(filters?.tier ? { tier: filters.tier } : {}),
       ...(filters?.search
         ? {
@@ -173,15 +175,33 @@ export class CustomerRepository implements ICustomerRepository {
           }
         : {}),
     }
+  }
+
+  async listPage(ctx: TenantContext, filters: CustomerListFilters, page: { take: number; after?: CustomerPageAfter | undefined }): Promise<CustomerMasterIndex[]> {
+    const after = page.after
+    const keyset: Prisma.customersWhereInput[] = after
+      ? [{ OR: [{ updated_at: { lt: new Date(after.updatedAt) } }, { updated_at: new Date(after.updatedAt), id: { lt: after.id } }] }]
+      : []
+    const rows = await prisma.customers.findMany({
+      where: await this.listWhere(ctx, filters, keyset),
+      include: CUSTOMER_LIST_INCLUDE(),
+      orderBy: [{ updated_at: "desc" }, { id: "desc" }],
+      take: page.take,
+    })
+    return rows.map((r) => this.mapToMasterIndex(r))
+  }
+
+  async list(
+    ctx: TenantContext,
+    filters?: { tier?: CustomerTier | undefined; search?: string | undefined },
+    pagination?: { limit?: number | undefined; offset?: number | undefined }
+  ): Promise<{ items: CustomerMasterIndex[]; total: number }> {
+    const where = await this.listWhere(ctx, filters)
 
     const [rows, total] = await Promise.all([
       prisma.customers.findMany({
         where,
-        include: {
-          occasions: true,
-          consents: true,
-          vouchers: { where: { is_used: false, OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }] } },
-        },
+        include: CUSTOMER_LIST_INCLUDE(),
         orderBy: { updated_at: "desc" },
         take: pagination?.limit ?? 50,
         skip: pagination?.offset ?? 0,
@@ -312,6 +332,10 @@ export class CustomerRepository implements ICustomerRepository {
 }
 
 let defaultCustomerRepository: ICustomerRepository | null = null
+
+export function getCustomerPageReader(): ICustomerPageReader {
+  return new CustomerRepository()
+}
 
 export function getCustomerRepository(): ICustomerRepository {
   if (!defaultCustomerRepository) {

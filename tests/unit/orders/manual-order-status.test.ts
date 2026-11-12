@@ -28,7 +28,7 @@ function order(partial: Partial<OrderRecord>): OrderRecord {
 
 function repoFor(existing: OrderRecord) {
   return {
-    countTodayOrders: vi.fn(), create: vi.fn(), findByCode: vi.fn(), list: vi.fn(), createAssignment: vi.fn(),
+    allocateOrderCodeNumber: vi.fn(), create: vi.fn(), findByCode: vi.fn(), list: vi.fn(), createAssignment: vi.fn(),
     findById: vi.fn().mockResolvedValue(existing),
     update: vi.fn(async (_org: string, _id: string, input: Partial<OrderRecord>) => ({ ...existing, ...input })),
     recordEvent: vi.fn().mockResolvedValue({}),

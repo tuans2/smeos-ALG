@@ -29,6 +29,7 @@ function mapPartner(p: partners): PartnerEntity {
     capacity_daily: p.capacity_daily,
     is_active: p.is_active,
     rating: Number(p.rating),
+    custom_fields: (p.custom_fields as Record<string, unknown> | null) ?? null,
     created_at: p.created_at,
     updated_at: p.updated_at,
   }
@@ -62,17 +63,18 @@ export class PartnerRepository implements IPartnerRepository {
         province: data.province,
         tier: data.tier,
         capacity_daily: data.capacityDaily,
+        ...(data.customFields ? { custom_fields: data.customFields as Prisma.InputJsonValue } : {}),
       }),
     })
     return mapPartner(row)
   }
 
-  async updatePartner(
-    ctx: TenantContext,
-    id: string,
-    data: Prisma.partnersUncheckedUpdateManyInput
-  ): Promise<void> {
-    await this.db.partners.updateMany({ where: scopedWhere(ctx, { id }), data })
+  async updatePartner(ctx: TenantContext, id: string, data: Parameters<IPartnerRepository["updatePartner"]>[2]): Promise<void> {
+    const { custom_fields, ...rest } = data
+    await this.db.partners.updateMany({
+      where: scopedWhere(ctx, { id }),
+      data: { ...rest, ...(custom_fields ? { custom_fields: custom_fields as Prisma.InputJsonValue } : {}) },
+    })
   }
 
   /** Đơn đang chạy của một đối tác hôm nay — để so với `capacity_daily`. */

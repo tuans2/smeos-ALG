@@ -7,6 +7,7 @@
  */
 import type { NotificationEventDefinition } from "./events/_contract"
 import { resolveRoleUx } from "@/modules/organization/domain/role-ux-catalog"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 export const MAX_RECIPIENTS_PER_EVENT = 50
 
@@ -51,3 +52,12 @@ export function fillDeepLink(template: string | null | undefined, vars: Record<s
   })
   return missing ? undefined : link
 }
+
+/**
+ * Tuyến đích đang khoá "Sắp ra mắt" (smeOS production) → bỏ link, tin vẫn gửi (audit N-05: không dẫn người nhận tới màn
+ * khoá). Khoá tắt — staging, bản giao GD1 — thì giữ nguyên link.
+ */
+export function openDeepLink(link: string | undefined, isOpen: (href: string) => boolean = (href) => isHrefOpen(href)): string | undefined {
+  return link && isOpen(link) ? link : undefined
+}
+

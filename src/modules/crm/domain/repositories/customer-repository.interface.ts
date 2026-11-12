@@ -48,6 +48,21 @@ export interface CustomerListPagination {
   offset?: number | undefined
 }
 
+/** Vị trí sau dòng cuối của trang trước, theo thứ tự `updated_at` giảm dần rồi `id` giảm dần. */
+export interface CustomerPageAfter {
+  updatedAt: string
+  id: string
+}
+
+/** Đọc danh sách khách theo con trỏ (đặc tả 06 §2) — lấy `take` dòng tiếp theo sau `after`. */
+export interface ICustomerPageReader {
+  listPage(
+    ctx: TenantContext,
+    filters: CustomerListFilters,
+    page: { take: number; after?: CustomerPageAfter | undefined }
+  ): Promise<CustomerMasterIndex[]>
+}
+
 export interface ICustomerRepository {
   create(ctx: TenantContext, input: CreateCustomerInput): Promise<CustomerMasterIndex>
   getById(ctx: TenantContext, id: string): Promise<CustomerMasterIndex | null>
