@@ -4,7 +4,7 @@
  * không mất đơn — nhân viên nối tay sau. Không bịa địa chỉ: sàn không trả người nhận thì để trống.
  */
 
-import type { ChannelOrder } from "@/core/ports/sales-channel-order-provider"
+import type { ChannelOrder, ChannelOrderPayment } from "@/core/ports/sales-channel-order-provider"
 import type { IngestOrderInput } from "@/modules/orders/domain/order-types"
 
 export const MAX_ITEMS_PER_CHANNEL_ORDER = 100
@@ -45,6 +45,15 @@ export function mapChannelOrder(
     },
     unmatchedSkus,
   }
+}
+
+/**
+ * Số tiền ghi vào sổ thu khi nhập đơn sàn (PO 12/11/2026, audit BL-34): đơn sàn đã thu → ghi đúng số khách trả, không
+ * vượt tổng đơn nội bộ; đơn thu hộ (COD) hoặc đầu nối không báo → 0 (thu khi giao như đơn thường). Thuần.
+ */
+export function channelPrepaidVnd(payment: ChannelOrderPayment | null | undefined, orderTotalVnd: number): number {
+  if (payment?.kind !== "PREPAID" || !Number.isFinite(payment.paidVnd)) return 0
+  return Math.max(0, Math.min(Math.round(payment.paidVnd), orderTotalVnd))
 }
 
 /** Chia lô theo giới hạn của kênh. */
