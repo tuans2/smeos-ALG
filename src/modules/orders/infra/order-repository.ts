@@ -7,6 +7,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { vnDayBounds } from "@/lib/vn-date"
 import { takeStock } from "./order-stock"
+import { clientItemMetadata } from "../domain/order-item-metadata"
 import { storedDeliveryAddress, upsertOrderRecipient } from "./order-recipient-repository"
 import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "./order-recipient-view"
 import type {
@@ -158,7 +159,7 @@ export class OrderRepository implements IOrderRepository {
             description: it.description ?? null,
             quantity: it.quantity,
             unit_price_vnd: it.unitPriceVnd,
-            metadata: (stock[i] ? { ...(it.metadata ?? {}), stock: stock[i] } : it.metadata) as unknown as Prisma.InputJsonValue ?? undefined,
+            metadata: (stock[i] ? { ...clientItemMetadata(it.metadata), stock: stock[i] } : clientItemMetadata(it.metadata)) as unknown as Prisma.InputJsonValue ?? undefined, // BL-19
           })),
         })
       }

@@ -13,6 +13,7 @@ import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositorie
 import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
 import { refundJob } from "@/modules/usage/use-cases/refund-job";
+import { aiFailureMessage } from "@/modules/usage/domain/ai-failure-message";
 
 import type { IMarketIntelligenceRepository } from "../domain/repositories/market-intelligence-repository.interface";
 import { getMarketIntelligenceRepository } from "../infra/market-intelligence-repository";
@@ -151,10 +152,10 @@ export async function analyzeProductVision(
   } catch (error) {
     const message = error instanceof Error ? error.message : "Lỗi không xác định";
     await jobRepo.finishInline(ctx, enq.job.id, { ok: false, error: message, now: new Date() });
-    await refundJob(ctx, enq.job.id).catch(() => undefined);
-    // Chi tiết (vd. khoá kho `org/<id>/…` khi thiếu tệp) chỉ vào log, không trả ra client (audit API §22)
+    const refunded = (await refundJob(ctx, enq.job.id).catch(() => null))?.refunded === true;
+    // Chi tiết (vd. khoá kho `org/<id>/…` khi thiếu tệp) chỉ vào log, không trả ra client (audit API §22, BL-33)
     log.error("market_intel.vision_extract_failed", { job_id: enq.job.id, reason: message });
-    throw new AppError("INTERNAL", "Vision AI chưa bóc tách được ảnh (đã hoàn credit) — vui lòng thử lại sau.");
+    throw new AppError("INTERNAL", aiFailureMessage("AI chưa nhận diện được ảnh", refunded));
   }
 }
 

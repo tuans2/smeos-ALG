@@ -28,6 +28,7 @@ import {
 import { axesAfterTransition } from "../domain/stage-transitions"
 import { getCoordinatorRepository, type CoordinatorRepository, type CoordinatorOrderRow } from "../infra/coordinator-repository"
 import type { DbClient } from "../infra/transaction"
+import { PendingPaymentRepository } from "../infra/pending-payment-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import {
   audit,
@@ -301,11 +302,13 @@ export async function cancelCoordinatorOrder(
       cancelled_reason: input.reason.trim(),
       resume_stage: null,
     })
-    await audit(ctx, tx, "coordinator.order.cancel", row.id, { stage: from }, { stage: "CANCELLED", reason: input.reason.trim() })
+    // Khoản thu Sale ghi còn chờ xác nhận không được duyệt vào đơn đã huỷ (audit BL-21)
+    const rejectedPending = await new PendingPaymentRepository(tx).rejectAllForOrder(ctx, row.id)
+    // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) trong cùng giao dịch huỷ — huỷ lỗi thì không hoàn (audit BL-26)
+    await returnStock(ctx.organizationId, row.id, tx)
+    await audit(ctx, tx, "coordinator.order.cancel", row.id, { stage: from }, { stage: "CANCELLED", reason: input.reason.trim(), rejectedPending })
     return row.id
   })
-  // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) — đánh dấu theo dòng nên gọi lại không hoàn hai lần
-  await returnStock(ctx.organizationId, orderId)
   await releaseLeadOfCancelledOrder(ctx.organizationId, orderId)
   return getOrderView(ctx, orderId)
 }

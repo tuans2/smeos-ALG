@@ -10,6 +10,7 @@ import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { readCreditPricing } from "@/modules/usage/infra/credit-pricing-store"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
+import { aiFailureMessage } from "@/modules/usage/domain/ai-failure-message"
 import { EXTRA_OPTION_FEATURE, type BrandOptionKind } from "../domain/option-rules"
 
 export interface PaidOptionUsage {
@@ -63,8 +64,8 @@ export async function runPaidOption<T>(
   } catch (error) {
     const message = error instanceof Error ? error.message : "Lỗi không xác định"
     await jobs.finishInline(ctx, enq.job.id, { ok: false, error: message, now: new Date() })
-    await refundJob(ctx, enq.job.id).catch(() => undefined)
+    const refunded = (await refundJob(ctx, enq.job.id).catch(() => null))?.refunded === true
     if (error instanceof AppError) throw error
-    throw new AppError("INTERNAL", "Chưa tạo được phương án mới — đã hoàn credit, vui lòng thử lại")
+    throw new AppError("INTERNAL", aiFailureMessage("Chưa tạo được phương án mới", refunded))
   }
 }

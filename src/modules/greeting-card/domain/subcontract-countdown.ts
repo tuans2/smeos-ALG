@@ -6,6 +6,11 @@
  * Clean Architecture — Pure TypeScript, độc lập với DB hay UI framework.
  */
 
+import { dayStartMs, slotEndMinutes } from "@/modules/orders/domain/delivery-slot"
+
+/** Mốc hiển thị khi khung giờ không nêu giờ cụ thể (10:00). */
+const DEFAULT_DEADLINE_MINUTES = 10 * 60
+
 export interface StepMilestoneDeadlines {
   /** Mốc thời gian giao hàng đích (Epoch ms) */
   deliveryTimestampMs: number | null
@@ -37,35 +42,9 @@ export function parseDeliveryTimestampMs(
   deliveryDate: string | null | undefined,
   deliveryTimeSlot: string | null | undefined
 ): number | null {
-  if (!deliveryDate) return null
-
-  let targetHour = 10
-  let targetMinute = 0
-
-  if (deliveryTimeSlot) {
-    const timeMatch = deliveryTimeSlot.match(/(\d{1,2}):?(\d{2})?\s*-\s*(\d{1,2}):?(\d{2})?/)
-    if (timeMatch) {
-      const hStr = timeMatch[3] ?? timeMatch[1] ?? "10"
-      targetHour = parseInt(hStr, 10)
-      targetMinute = parseInt(timeMatch[4] ?? "0", 10)
-    } else if (/(\d{1,2}):(\d{2})/.test(deliveryTimeSlot)) {
-      const [, h, m] = /(\d{1,2}):(\d{2})/.exec(deliveryTimeSlot) ?? []
-      targetHour = parseInt(h ?? "10", 10)
-      targetMinute = parseInt(m ?? "0", 10)
-    } else if (deliveryTimeSlot.includes("12h")) {
-      targetHour = 12
-    } else if (deliveryTimeSlot.includes("17h")) {
-      targetHour = 17
-    } else if (deliveryTimeSlot.includes("21h") || deliveryTimeSlot.includes("20h")) {
-      targetHour = 20
-    }
-  }
-
-  const cleanDate = deliveryDate.trim().split("T")[0]
-  const d = new Date(`${cleanDate}T00:00:00+07:00`)
-  if (Number.isNaN(d.getTime())) return null
-
-  return d.getTime() + (targetHour * 60 + targetMinute) * 60_000
+  // Bộ đọc khung giờ chung (audit BL-24); khung không nêu giờ → mốc hiển thị mặc định 10:00 như trước.
+  // Khoản trừ "giao trễ" KHÔNG dùng mốc mặc định này — xem `deliveryDeadlineMs` (`orders/domain/delivery-slot.ts`).
+  return dayStartMs(deliveryDate, slotEndMinutes(deliveryTimeSlot) ?? DEFAULT_DEADLINE_MINUTES)
 }
 
 /**

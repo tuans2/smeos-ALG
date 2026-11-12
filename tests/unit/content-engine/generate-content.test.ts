@@ -245,7 +245,11 @@ describe("generateContent", () => {
 
   it("lỗi bất ngờ trong lúc dựng brief: job FAILED và hoàn credit", async () => {
     vi.mocked(getContentBrief).mockRejectedValue(new Error("Không tìm thấy sản phẩm"))
-    await expect(generateContent(ctx, { channels: ["facebook"], idempotencyKey: "k7" })).rejects.toThrow(/hoàn credit/)
+    vi.mocked(refundJob).mockResolvedValueOnce({ refunded: true, creditHoanLai: 2, lyDo: "loi-ky-thuat" })
+    // Audit BL-33: câu cố định tiếng Việt, chỉ nói "đã hoàn" khi hoàn thật, không lộ lỗi gốc
+    await expect(generateContent(ctx, { channels: ["facebook"], idempotencyKey: "k7" })).rejects.toThrow("AI chưa viết được bài — đã hoàn credit, vui lòng thử lại.")
+    vi.mocked(getContentBrief).mockRejectedValue(new Error("Không tìm thấy sản phẩm"))
+    await expect(generateContent(ctx, { channels: ["facebook"], idempotencyKey: "k7b" })).rejects.toThrow(/credit sẽ được hoàn tự động/)
     expect(finishInline).toHaveBeenCalledWith(ctx, "job-1", expect.objectContaining({ ok: false }))
     expect(refundJob).toHaveBeenCalledWith(ctx, "job-1")
   })

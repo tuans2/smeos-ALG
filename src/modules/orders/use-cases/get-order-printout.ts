@@ -19,6 +19,7 @@ export interface OrderPrintData {
     phone: string
     address: string
   }
+  /** Lời chúc của đơn; rỗng khi đơn không có. */
   cardMessage: string
   items: Array<{
     name: string
@@ -62,11 +63,13 @@ export async function getOrderPrintout(
     recipientInfo: {
       name: recipient?.recipientName ?? "Khách lẻ",
       phone: recipient?.phone ?? "Chưa có",
-      address: fullAddress || "Nhận tại cửa hàng",
+      // Không bịa "Nhận tại cửa hàng" khi đơn thiếu địa chỉ — người giao hiểu nhầm là khách tự lấy (audit BL-37)
+      address: fullAddress || "Chưa có địa chỉ giao",
     },
-    cardMessage: order.cardMessage || "Không có lời nhắn thiệp",
+    // Rỗng khi đơn không có lời chúc — trước đây trả câu mặc định và băng rôn in to "KHÔNG CÓ LỜI NHẮN THIỆP" (BL-37)
+    cardMessage: order.cardMessage?.trim() ?? "",
     items: (order.items ?? []).map((it) => ({
-      name: it.description ?? "Sản phẩm tươi",
+      name: it.description ?? "Sản phẩm",
       quantity: it.quantity,
       price: it.unitPriceVnd,
       subtotal: it.quantity * it.unitPriceVnd,

@@ -149,7 +149,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
     e.preventDefault()
     setError(null)
     if (!recipientName.trim() || !phone.trim() || !street.trim()) {
-      setError("Chưa đủ thông tin giao hoa. Vui lòng nhập họ tên, số điện thoại và địa chỉ người nhận.")
+      setError("Chưa đủ thông tin giao hàng. Vui lòng nhập họ tên, số điện thoại và địa chỉ người nhận.")
       return
     }
     // Cùng luật với máy chủ (PO 07/11/2026, Q11–Q12) — báo sớm trước khi gửi
@@ -159,8 +159,9 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
       setError(firstDeliveryError)
       return
     }
-    if (items.some((it) => !it.description.trim() || it.unitPriceVnd <= 0)) {
-      setError("Đơn giá mỗi mục phải lớn hơn 0 ₫. Vui lòng kiểm tra lại tên hoa và giá tiền.")
+    // Cùng luật máy chủ: đơn giá nguyên, không âm; 0 ₫ = nháp chờ báo giá (audit BL-31 — trước đây form chặn 0 còn API nhận)
+    if (items.some((it) => !it.description.trim() || !Number.isInteger(it.unitPriceVnd) || it.unitPriceVnd < 0)) {
+      setError("Mỗi mục cần tên sản phẩm và đơn giá không âm (để 0 ₫ nếu chờ báo giá).")
       return
     }
     setLoading(true)
@@ -267,7 +268,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block font-semibold text-text">Người nhận *</label>
-            <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Họ và tên người nhận hoa" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} required />
+            <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Họ và tên người nhận" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} required />
           </div>
           <div>
             <label className="mb-1 block font-semibold text-text">Số điện thoại người nhận *</label>
@@ -276,7 +277,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         </div>
 
         <div>
-          <label className="mb-1 block font-semibold text-text">Địa chỉ giao hoa *</label>
+          <label className="mb-1 block font-semibold text-text">Địa chỉ giao hàng *</label>
           <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Số nhà, tên đường, phường/xã, tỉnh/thành phố" value={street} onChange={(e) => setStreet(e.target.value)} required />
         </div>
 
@@ -327,8 +328,8 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         </div>
 
         <div>
-          <label className="mb-1 block font-semibold text-text">Ghi chú cho thợ chế tác hoa</label>
-          <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Tông màu, giấy gói, hoa chính…" value={internalNote} onChange={(e) => setInternalNote(e.target.value)} />
+          <label className="mb-1 block font-semibold text-text">Ghi chú cho người làm hàng</label>
+          <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Màu sắc, cách gói, yêu cầu riêng…" value={internalNote} onChange={(e) => setInternalNote(e.target.value)} />
         </div>
       </form>
     </Dialog>

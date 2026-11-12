@@ -1,6 +1,7 @@
 import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { assertNotSelfApproval } from "@/modules/organization/use-cases/assert-not-self-approval"
+import { planPayment } from "@/modules/orders/workflow/standard-payment"
 
 import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import { PendingPaymentRepository } from "../infra/pending-payment-repository"
@@ -33,10 +34,12 @@ export async function decidePendingPayment(
     const paidBefore = Number(row.paid_vnd)
     const totalVnd = Number(row.total_vnd)
     const amount = Number(payment.amount_vnd)
-    if (approve && paidBefore + amount > totalVnd) throw unprocessable("Khoản này vượt số còn phải thu của đơn — từ chối và nhờ ghi lại đúng số")
+    // Một luật thu tiền với sổ đơn và ghi thu Điều phối (audit BL-05, BL-21): chặn đơn đã huỷ, thu vượt phần còn phải thu
+    const plan = approve ? planPayment({ totalVnd, paidVnd: paidBefore, status: row.status }, amount) : null
+    if (typeof plan === "string") throw unprocessable(approvalBlockMessage(plan))
 
     if (!(await pending.settle(ctx, payment.id, approve ? "CONFIRMED" : "REJECTED"))) throw conflict("Khoản này đã được xử lý")
-    if (approve && !(await pending.applyToOrder(ctx, row.id, paidBefore, paidBefore + amount, totalVnd - paidBefore - amount))) {
+    if (plan && !(await pending.applyToOrder(ctx, row.id, paidBefore, plan.paidAfter, plan.balanceAfter))) {
       throw conflict("Đơn vừa được ghi thu bởi người khác — tải lại")
     }
     await audit(
@@ -50,4 +53,13 @@ export async function decidePendingPayment(
     return row.id
   })
   return getOrderView(ctx, orderId)
+}
+
+/** Câu báo khi không duyệt được: vượt số còn phải thu thì hướng dẫn từ chối và ghi lại; còn lại dùng lý do của luật thu. */
+function approvalBlockMessage(reason: string): string {
+  if (reason === "Số tiền vượt phần còn phải thu" || reason === "Đơn đã thu đủ") {
+    return "Khoản này vượt số còn phải thu của đơn — từ chối và nhờ ghi lại đúng số"
+  }
+  if (reason === "Đơn đã huỷ") return "Đơn đã huỷ — không xác nhận thêm tiền vào đơn này, hãy từ chối khoản này"
+  return `${reason}.`
 }
