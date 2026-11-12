@@ -2146,7 +2146,10 @@
     "src/app/not-found.tsx",
     "src/app/global-error.tsx",
     "src/app/globals.css",
-    "prisma/seed.ts"
+    "prisma/seed.ts",
+    "src/app/fonts/google-sans/GoogleSans-Variable.woff2",
+    "src/app/fonts/google-sans/GoogleSans-Italic-Variable.woff2",
+    "src/app/fonts/google-sans/OFL.txt"
   ],
   "registryFiles": {
     "reason": "Bảng tra tiền tố route (quyền, bỏ qua RLS, danh sách route của chế độ giai đoạn), không phải lời gọi API — không dùng để dò phạm vi",
