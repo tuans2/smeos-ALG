@@ -115,9 +115,18 @@ describe("analyzeProductVision — Chặng 02 thu credit", () => {
   it("mọi nhà cung cấp hỏng: job FAILED + hoàn credit + lỗi rõ — không bịa dữ liệu", async () => {
     vi.mocked(enqueueJob).mockResolvedValue({ job, deduped: false, usage: { costCredit: 1, balanceAfter: 9 } } as never)
     vi.mocked(callCapability).mockResolvedValue({ kind: "khong_chay_duoc", reason: "HET_DUONG_DU_PHONG", attempts: [] } as never)
-    await expect(analyzeProductVision(ctx, { assetId: "asset-1" })).rejects.toThrow("[analyzeProductVision]")
+    // Audit BL-33: không còn tên hàm kỹ thuật hay lỗi thô của nhà cung cấp trong câu báo
+    await expect(analyzeProductVision(ctx, { assetId: "asset-1" })).rejects.toThrow("AI chưa nhận diện được ảnh — đã hoàn credit, vui lòng thử lại.")
     expect(finishInline).toHaveBeenCalledWith(ctx, "job-1", expect.objectContaining({ ok: false }))
     expect(refundJob).toHaveBeenCalledWith(ctx, "job-1")
+  })
+
+  it("lỗi đọc kho: câu lỗi trả client không chứa khoá kho nội bộ (audit API §22)", async () => {
+    vi.mocked(enqueueJob).mockResolvedValue({ job, deduped: false, usage: { costCredit: 1, balanceAfter: 9 } } as never)
+    vi.mocked(callCapability).mockRejectedValue(new Error("Không có tệp org/org-1/unfiled/a.jpg") as never)
+    const error = (await analyzeProductVision(ctx, { assetId: "asset-1" }).catch((e: unknown) => e)) as Error
+    expect(error.message).toContain("AI chưa nhận diện được ảnh")
+    expect(error.message).not.toContain("org/")
   })
 
   it("ảnh không thuộc tổ chức: 404 trước khi tạo job", async () => {

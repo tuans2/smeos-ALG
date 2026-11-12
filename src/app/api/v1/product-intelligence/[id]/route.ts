@@ -1,7 +1,5 @@
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { notFound } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { marketIntelligenceRepo } from "@/modules/market-intelligence/infra/market-intelligence-repository"
 import { AssetRepository } from "@/modules/assets/infra/asset-repository"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
@@ -14,6 +12,7 @@ import type {
   ProductPackaging,
   ProductInferredContext,
 } from "@/modules/market-intelligence/domain/product-intelligence-types"
+import { defineRoute } from "@/core/http/define-route"
 
 function buildFallbackReport(
   id: string,
@@ -141,38 +140,39 @@ function buildFallbackReport(
  * KHÔNG BAO GIỜ đọc một URL đã ký cũ từ DB (URL ký có hạn dùng, DB không lưu
  * URL nào cả — xem `product_analysis_runs` trong `schema.prisma`).
  */
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "V2")
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "V2" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    const run = await marketIntelligenceRepo.getProductAnalysisRun(ctx.organizationId, id)
 
-  const { id } = await context.params
-  const run = await marketIntelligenceRepo.getProductAnalysisRun(ctx.organizationId, id)
-
-  // Fallback: id có thể là product_analyses.id (luồng /tai-anh)
-  // — tìm kiếm trong product_analyses và dựng report từ raw data
-  if (!run) {
-    const analysis = await marketIntelligenceRepo.getProductAnalysisById(
-      ctx.organizationId,
-      id
-    )
-    if (analysis && analysis.raw) {
-      const productName = analysis.asset_id || analysis.id || "Sản phẩm"
-      const report = buildFallbackReport(id, productName, analysis.asset_id, analysis.raw as Record<string, unknown>)
-      return jsonResponse({ report })
+    // Fallback: id có thể là product_analyses.id (luồng /tai-anh)
+    // — tìm kiếm trong product_analyses và dựng report từ raw data
+    if (!run) {
+      const analysis = await marketIntelligenceRepo.getProductAnalysisById(
+        ctx.organizationId,
+        id
+      )
+      if (analysis && analysis.raw) {
+        // Tên sản phẩm đã gắn; chưa gắn sản phẩm thì tên chung — không lấy mã ảnh/UUID làm tên (audit API §32)
+        const productName = (analysis as { product?: { name: string } | null }).product?.name?.trim() || "Sản phẩm chưa đặt tên"
+        const report = buildFallbackReport(id, productName, analysis.asset_id, analysis.raw as Record<string, unknown>)
+        return jsonResponse({ report })
+      }
+      throw notFound()
     }
-    throw notFound()
-  }
 
-  const report = run.report as unknown as ProductIntelligenceReport
+    const report = run.report as unknown as ProductIntelligenceReport
 
-  try {
-    const asset = await new AssetRepository().findById(ctx, run.asset_id)
-    if (asset) {
-      report.imageUrl = await getStorageProvider().signedUrl(asset.storage_key, ASSET_VIEW_URL_TTL_SECONDS, "GET")
+    try {
+      const asset = await new AssetRepository().findById(ctx, run.asset_id)
+      if (asset) {
+        report.imageUrl = await getStorageProvider().signedUrl(asset.storage_key, ASSET_VIEW_URL_TTL_SECONDS, "GET")
+      }
+    } catch {
+      // Dự phòng an toàn — trả report với imageUrl rỗng còn hơn chặn cả lượt tra lại
     }
-  } catch {
-    // Dự phòng an toàn — trả report với imageUrl rỗng còn hơn chặn cả lượt tra lại
-  }
 
-  return jsonResponse({ report })
+    return jsonResponse({ report })
+  },
 })

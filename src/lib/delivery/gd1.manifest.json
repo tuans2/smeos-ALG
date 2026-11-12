@@ -2017,6 +2017,12 @@
       ]
     },
     {
+      "reason": "Tài liệu API cho đối tác (trang mới 11/11/2026, ARC-024) — chưa thuộc phạm vi GD1; PO chuyển sang mục 9.5 nếu muốn giao",
+      "pages": [
+        "/tich-hop/tai-lieu-api"
+      ]
+    },
+    {
       "reason": "Sáng tạo ảnh, video, nội dung",
       "pages": [
         "/creative-studio",
@@ -2168,6 +2174,7 @@
         "src/app/(app)/duyet/page.tsx → /creative-studio",
         "src/app/(app)/tai-anh/page.tsx → /creative-studio",
         "src/components/catalog/share-catalog-modal.tsx → /noi-dung",
+        "src/components/integrations/api-tokens-panel.tsx → /tich-hop/tai-lieu-api",
         "src/components/dashboard/crm-toolkit-grid.tsx → /hoi-thoai",
         "src/components/dashboard/crm-workspace.tsx → /hoi-thoai",
         "src/components/dashboard/customer-service-workspace.tsx → /hoi-thoai",

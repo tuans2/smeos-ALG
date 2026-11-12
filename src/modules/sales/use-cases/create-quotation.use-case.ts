@@ -1,6 +1,7 @@
 import { notFound, validationFailed } from "@/core/http/errors"
 import { assertWithinPriceBounds } from "@/modules/costing/use-cases/price-floor-guard"
 import { productLinesCeilingBase } from "../domain/quotation-price-bounds"
+import { assertQuotationDiscount } from "./quotation-discount-guard"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import {
   calculateQuotationTotals,
@@ -37,6 +38,7 @@ export async function createQuotationUseCase(
   ctx: TenantContext,
   input: CreateQuotationInput,
   repo: IQuotationRepository = getQuotationRepository(),
+  discountGuard: typeof assertQuotationDiscount = assertQuotationDiscount,
 ): Promise<Quotation> {
   const itemErr = validateQuotationItems(input.items)
   if (itemErr) {
@@ -59,6 +61,8 @@ export async function createQuotationUseCase(
     input.discountAmount ?? 0,
     input.shippingFee ?? 0,
   )
+  // Trần chiết khấu: 50% nền tảng, mức Sale tự quyết của tiệm (PO 12/11/2026, BL-28)
+  await discountGuard(ctx, subtotal, discountAmount)
   // Dưới sàn cần C10 (checklist ALG 3.4), vượt trần cần C9 (PO 07/11/2026, Q3)
   await assertWithinPriceBounds(
     ctx,

@@ -20,6 +20,7 @@
 import { parseDeliveryTimestampMs } from "@/modules/greeting-card/domain/subcontract-countdown"
 import { purgeExpiredIdempotencyKeys } from "@/core/idempotency/infra/idempotency-repository"
 import { publicAppUrl } from "@/lib/public-url"
+import { AppError } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth"
 import { ChainDispatchSweepQuery } from "@/modules/greeting-card/infra/chain-dispatch-sweep-query"
@@ -58,9 +59,7 @@ const MAX_REPORTED = 100
 
 export const POST = handle(async (request) => {
   // Bảo mật: xác thực cron secret header (production thiếu CRON_SECRET → luôn từ chối)
-  if (!isAuthorizedCronRequest(request)) {
-    return jsonResponse({ error: "Unauthorized" }, { status: 401 })
-  }
+  if (!isAuthorizedCronRequest(request)) throw new AppError("UNAUTHENTICATED", "Không được phép")
 
   const url = new URL(request.url)
   const forceStep = (forceStepAllowed() ? url.searchParams.get("forceStep") : null) as

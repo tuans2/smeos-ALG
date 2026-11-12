@@ -5,6 +5,7 @@ import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"
+import { CustomFieldsSection } from "./custom-fields-section"
 
 export interface PartnerCreateFormProps {
   onSuccess: () => void
@@ -21,6 +22,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
   const [address, setAddress] = useState("")
   const [tier, setTier] = useState<"STANDARD" | "PREFERRED" | "VIP">("STANDARD")
   const [capacity, setCapacity] = useState(15)
+  const [customFields, setCustomFields] = useState<Record<string, unknown>>({})
   const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -43,6 +45,7 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
           address: address.trim() || undefined,
           tier,
           capacityDaily: Number(capacity) || 10,
+          ...(Object.keys(customFields).length > 0 ? { customFields } : {}),
         }),
       })
       if (!res.ok) {
@@ -153,6 +156,9 @@ export function PartnerCreateForm({ onSuccess, onCancel, onError }: PartnerCreat
           className="h-8 text-caption"
         />
       </div>
+
+      {/* Trường tự tạo cho đối tác (Console → Trường dữ liệu) — chỉ hiện khi tổ chức đã tạo (audit L-09) */}
+      <CustomFieldsSection entity="PARTNER" values={customFields} onChange={setCustomFields} />
 
       <div className="flex justify-end gap-2 pt-1">
         <Button

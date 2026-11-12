@@ -49,11 +49,11 @@ const routeKey = (file: string) => path.relative(V1, path.dirname(file)).split(p
 /** Route hoặc handler cục bộ nó import (`./_handlers`) gọi `defineRoute(`. */
 function usesDefineRoute(file: string): boolean {
   const source = readFileSync(file, "utf8")
-  if (/\bdefineRoute\(/.test(source)) return true
+  if (/\bdefineRoute(<[^\n]*?>)?\(/.test(source)) return true
   for (const match of source.matchAll(/from "(\.[^"]+)"/g)) {
     const base = path.resolve(path.dirname(file), match[1] ?? "")
     const target = [`${base}.ts`, path.join(base, "index.ts")].find((candidate) => existsSync(candidate))
-    if (target && /\bdefineRoute\(/.test(readFileSync(target, "utf8"))) return true
+    if (target && /\bdefineRoute(<[^\n]*?>)?\(/.test(readFileSync(target, "utf8"))) return true
   }
   return false
 }

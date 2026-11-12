@@ -15,6 +15,8 @@ acceptance:
 
 # Screen Contract — Danh Bạ Chi Nhánh & Đối Tác Chuỗi (`/dieu-phoi/doi-tac`)
 
+> **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/dieu-phoi` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/dieu-phoi/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
+
 **Tuyến:** `/dieu-phoi/doi-tac` · **Tệp chính:** `src/app/(app)/dieu-phoi/doi-tac/page.tsx` · **Cập nhật:** 02/11/2026 · **Thẻ:** M4-02
 
 ## 1. Vai và mục đích

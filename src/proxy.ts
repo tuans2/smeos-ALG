@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 
+import { buildCsp, cspHeaderName, cspMode, newCspNonce } from "@/core/http/csp"
 import { log } from "@/core/observability/log"
 import { REQUEST_ID_HEADER, resolveRequestId } from "@/core/observability/request-id"
 import { activeDeliveryPhase, isRouteInPhase } from "@/lib/delivery/delivery-phase"
@@ -16,6 +17,9 @@ import { resolveCustomDomainRequest } from "@/modules/custom-domain/use-cases/re
  *
  * Chế độ giai đoạn bàn giao (`NEXT_PUBLIC_DELIVERY_PHASE=gd1`): trang và API ngoài phạm vi trả 404 như
  * không tồn tại. Không đặt biến thì không chặn gì (`src/lib/delivery/delivery-phase.ts`).
+ *
+ * CSP theo nonce (ARC-022 A6, `src/core/http/csp.ts`): nonce mới mỗi request, gắn vào CSP của request (Next.js đọc
+ * để gắn nonce cho script khi render) và của phản hồi; `CSP_MODE=report-only` tạm lùi về chỉ ghi nhận.
  */
 export async function proxy(request: NextRequest) {
   const requestId = resolveRequestId(request.headers.get(REQUEST_ID_HEADER))
@@ -49,8 +53,14 @@ export async function proxy(request: NextRequest) {
 
   const headers = new Headers(request.headers)
   headers.set(REQUEST_ID_HEADER, requestId)
+  const nonce = newCspNonce()
+  const csp = buildCsp(nonce)
+  headers.set("x-nonce", nonce)
+  // Next.js lấy nonce từ header CSP của REQUEST khi render; luôn đặt đúng tên này kể cả ở chế độ chỉ ghi nhận
+  headers.set("Content-Security-Policy", csp)
   const response = NextResponse.next({ request: { headers } })
   response.headers.set(REQUEST_ID_HEADER, requestId)
+  response.headers.set(cspHeaderName(cspMode()), csp)
   return response
 }
 

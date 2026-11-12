@@ -15,7 +15,7 @@ export const ORDER_OPERATIONS: OpenApiOperation[] = [
     description: "Lọc theo trạng thái, chi nhánh, khách, ngày giao (`delivery_from`/`delivery_to`), người bán; `limit` 1–100 (mặc định 50). Mới trước; phân trang con trỏ `cursor` = `next_cursor` của trang trước (hỏng → 400) — `{ data, next_cursor, meta: { total } }` (audit API-10, 09/11/2026; trước đó `{ orders, total }`).",
     ok: [200, { description: "Đơn kèm dòng hàng, phân công", schema: res.ordersResponse }], errors: [400] }),
   op(ORDERS, { method: "post", path: "/orders", operationId: "createOrder", summary: "Tạo đơn hàng", cap: "R2", body: req.createOrderBody,
-    description: "Header `Idempotency-Key` tuỳ chọn: gửi lại cùng khoá trả đúng đơn đã tạo (201, header `Idempotent-Replayed: true`). Khách/chi nhánh/sản phẩm của tổ chức khác → 404.",
+    description: "Header `Idempotency-Key` tuỳ chọn: gửi lại cùng khoá với cùng thân trả đúng đơn đã tạo (201, header `Idempotent-Replayed: true`); cùng khoá mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED` (`details.order_id`), không tạo đơn. Khách/chi nhánh/sản phẩm của tổ chức khác → 404.",
     ok: [201, { description: "Đơn đã tạo", schema: res.orderResponse }], errors: [...BODY_ERRORS, 404, 409, 422] }),
   op(ORDERS, { method: "get", path: "/orders/{id}", operationId: "getOrder", summary: "Chi tiết đơn kèm SLA", cap: "R1",
     ok: [200, { description: "Đơn và số đo SLA", schema: res.orderDetailResponse }], errors: [404] }),

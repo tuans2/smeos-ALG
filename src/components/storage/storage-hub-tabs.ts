@@ -18,6 +18,7 @@ import type { TabAction, TabItem, TabOverflowAction } from "@/components/ui/tab-
 import { LIBRARY_OPEN_HREF as OPEN_HREF, type LibraryType } from "@/modules/storage/domain/library"
 import type { TrashItemType } from "@/modules/storage/domain/trash-types"
 import { LIBRARY_CREATE_LABEL, LIBRARY_TAB_LABEL } from "./library/library-labels"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 /** Tab v1 + tab thư viện v2 (`lib:<type>`), Screen Contract `kho-du-lieu.md` §4. */
 export type LibraryTabId = `lib:${LibraryType}`
@@ -82,9 +83,12 @@ export function buildPrimaryActions(tab: StorageTab, h: Handlers): TabAction[] {
 export function buildOverflowActions(tab: StorageTab, h: Handlers): TabOverflowAction[] {
   const lib = libraryTypeOf(tab)
   if (lib) {
+    // Công cụ đích đang khoá "Sắp ra mắt" (production) thì không đưa nút mở (audit N-05)
     return [
       { id: "refresh-library", label: "Làm mới", icon: RefreshCw, onClick: h.refreshLibrary },
-      { id: "open-tool", label: `Mở ${LIBRARY_TAB_LABEL[lib].toLowerCase()} trong công cụ`, icon: ExternalLink, onClick: () => h.go(OPEN_HREF[lib]) },
+      ...(isHrefOpen(OPEN_HREF[lib])
+        ? [{ id: "open-tool", label: `Mở ${LIBRARY_TAB_LABEL[lib].toLowerCase()} trong công cụ`, icon: ExternalLink, onClick: () => h.go(OPEN_HREF[lib]) }]
+        : []),
     ]
   }
   if (tab === "raw") {
@@ -93,7 +97,7 @@ export function buildOverflowActions(tab: StorageTab, h: Handlers): TabOverflowA
       { id: "goto-tai-anh", label: "Chuyển tới trang Tải ảnh", icon: ExternalLink, onClick: () => h.go("/tai-anh") },
     ]
   }
-  if (tab === "approved") return [{ id: "go-approval-queue", label: "Đi tới Hàng chờ duyệt", icon: ExternalLink, onClick: () => h.go("/duyet") }]
+  if (tab === "approved" && isHrefOpen("/duyet")) return [{ id: "go-approval-queue", label: "Đi tới Hàng chờ duyệt", icon: ExternalLink, onClick: () => h.go("/duyet") }]
   return [{ id: "refresh-finalized", label: "Tải lại danh sách", icon: RefreshCw, onClick: h.refreshApproved }]
 }
 

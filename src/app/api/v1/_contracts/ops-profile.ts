@@ -22,7 +22,7 @@ export const PROFILE_OPERATIONS: OpenApiOperation[] = [
   op(PROFILE, { method: "get", path: "/brand-profile", operationId: "getBrandProfile", summary: "Hồ sơ thương hiệu", cap: "F1",
     description: "Thân không bọc `{ data }`.", ok: [200, { description: "Hồ sơ thương hiệu", schema: res.brandProfileResponse }] }),
   op(PROFILE, { method: "put", path: "/brand-profile", operationId: "putBrandProfile", summary: "Lưu hồ sơ thương hiệu", cap: "F2", body: req.putBrandProfileBody,
-    description: "`slogan` không gửi thì giữ giá trị đang lưu. `logo_asset_id` không được kiểm: mã lạ hoặc ảnh của tổ chức khác vẫn lưu (khi đó `logo_url` = `null`, không lộ ảnh) và hồ sơ bị tính là đã có logo (audit API §24).", ok: [200, { description: "Hồ sơ thương hiệu", schema: res.brandProfileResponse }], errors: BODY_ERRORS }),
+    description: "`slogan` không gửi thì giữ giá trị đang lưu. `logo_asset_id` mới (khác giá trị đang lưu, không phải đường dẫn) phải là ảnh trong kho của tổ chức — mã lạ hoặc ảnh của tổ chức khác → 404, không lưu.", ok: [200, { description: "Hồ sơ thương hiệu", schema: res.brandProfileResponse }], errors: [...BODY_ERRORS, 404] }),
   op(PROFILE, { method: "get", path: "/store/collection-transparency", operationId: "getStoreCollectionTransparency", summary: "Chuỗi đang thu thập dữ liệu gì của cửa hàng", cap: "F1",
     query: req.collectionTransparencyQuery,
     description: "Không gửi `storeId` → chi nhánh đang hoạt động đầu tiên; không có → danh sách rỗng. Chi nhánh của tổ chức khác hoặc mã lạ → 404.",

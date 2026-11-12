@@ -65,3 +65,20 @@ function defaultCursorOf<T>(row: T): CursorValue {
   }
   return { id }
 }
+
+/**
+ * Đọc một tham số số nguyên của query cho route CŨ (chưa dùng `defineRoute` + `pageQuery`): bỏ trống →
+ * `fallback`; không phải số nguyên hoặc ngoài [`min`, `max`] → 400 `details.<field>`. Trước đây các route
+ * này đưa thẳng `Number(...)`/`parseInt(...)` xuống Prisma, chữ thành `NaN` → 500 (audit API §15, §29).
+ */
+export function parseIntParam(
+  raw: string | null,
+  opts: { field: string; fallback: number; min: number; max: number }
+): number {
+  if (raw === null || raw.trim() === "") return opts.fallback
+  const value = /^-?\d+$/.test(raw.trim()) ? Number(raw.trim()) : Number.NaN
+  if (!Number.isSafeInteger(value) || value < opts.min || value > opts.max) {
+    throw validationFailed({ [opts.field]: `Phải là số nguyên từ ${opts.min} đến ${opts.max}` })
+  }
+  return value
+}

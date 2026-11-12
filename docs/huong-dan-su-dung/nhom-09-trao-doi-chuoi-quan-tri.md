@@ -9,7 +9,9 @@
 **Ai dùng:** mọi nhân sự làm đơn.
 
 - **Trong đơn Thẻ Chào:** mở khung trao đổi của đơn, nhắn cho người phụ trách; tin đã đọc được đánh dấu. Tin không xoá được để giữ lịch sử.
-- **Chat nội bộ** (Vận hành → **Trao đổi nội bộ**, `/tin-nhan`) — **Sắp ra mắt** trên bản chính thức.
+- **Chat nội bộ** (Vận hành → **Trao đổi nội bộ**, `/tin-nhan`) — **Sắp ra mắt** trên bản chính thức. Người gửi **sửa** hoặc **thu hồi**
+  được tin chữ, tin ảnh của chính mình trong 24 giờ kể từ lúc gửi; tin thu hồi hiện "Tin nhắn đã được thu hồi" với mọi người. Người
+  khác không sửa, không thu hồi được tin của bạn. Thẻ đơn gia công và tin hệ thống không sửa, không thu hồi được.
 
 ## 9.2 Hồ sơ thương hiệu
 
@@ -97,4 +99,8 @@ tạo. Điều hành và người được giao quản lý mọi chi nhánh th�
 
 ## 9.14 Đăng nhập một lần
 
-Đã đăng nhập smeOS thì mở các ứng dụng liên kết của hệ thống không phải đăng nhập lại. Mỗi lần mở, phiên liên kết có hiệu lực 15 phút.
+**Ai dùng:** Điều hành, Marketing (quyền đăng bài lên mạng xã hội).
+**Mở ở:** Công cụ → **Tạo nội dung** → **Đăng tự động**.
+
+Đăng bài chạy ngay trong smeOS: đã đăng nhập smeOS thì mở Đăng tự động để kết nối kênh, chọn bài và lên lịch, không phải đăng nhập lại,
+không mở ứng dụng nào khác. Khi có ứng dụng liên kết bên ngoài dùng chung đăng nhập, phiên liên kết có hiệu lực 15 phút.

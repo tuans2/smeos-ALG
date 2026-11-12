@@ -4,17 +4,13 @@
  * Body: { reason?: string }
  * Quyền H6 gác ở use-case `rejectProductCopy` (RS-9 18/09).
  */
-import { handle } from "@/core/http/response";
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
+import { defineRoute } from "@/core/http/define-route";
+import type { TenantContext } from "@/core/tenancy";
 import { rejectProductCopy } from "@/modules/product-copies/use-cases/approve-product-copy";
 import { getProductCopy } from "@/modules/product-copies/use-cases/get-product-copy";
 
-async function rejectHandler(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  const { ctx } = await requireTenantContext(request);
-  const { id } = await context.params;
+async function rejectHandler({ request, ctx, params }: { request: Request; ctx: TenantContext; params: Record<string, string> }) {
+  const { id } = params as { id: string };
 
   const body = await request.json().catch(() => ({}));
   const reason = body.reason ?? null;
@@ -30,6 +26,9 @@ async function rejectHandler(
   });
 }
 
-export const POST = handle(rejectHandler);
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "H6 kiểm ở use-case (rejectProductCopy)" },
+  handler: rejectHandler,
+});
 export const dynamic = "force-dynamic" as const;
 export const revalidate = 0 as const;

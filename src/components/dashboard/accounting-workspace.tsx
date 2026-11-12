@@ -21,6 +21,7 @@ import { formatCurrency, formatDateTime } from "@/lib/i18n/formatters"
 import { useSession } from "@/lib/session"
 
 import { NotSignedIn, getJson } from "./role-work-api"
+import { filterOpenHrefs } from "@/lib/feature-lock"
 
 interface BankEvent {
   id: string
@@ -87,7 +88,7 @@ export function AccountingWorkspace() {
           tips={["Giao dịch chưa khớp cần báo Điều hành xử lý", "Xuất Excel theo khoảng ngày để đối chiếu sổ", "Số liệu kinh doanh cập nhật theo đơn đã ghi nhận"]}
         />
         <div className="flex flex-wrap items-center gap-2">
-          {LINKS.map(({ href, label, icon: Icon }) => (
+          {filterOpenHrefs(LINKS, (l) => l.href).map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href as Route} className="flex items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text hover:bg-surface-alt">
               <Icon size={16} />{label}
             </Link>

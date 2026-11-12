@@ -5,9 +5,10 @@ import { vnDate } from "./report-period"
  * Thẻ "Hiệu năng kinh doanh" trên `/so-lieu` (audit BL-12, PO 07/11/2026 Q4) — luật thuần.
  * Số liệu lấy từ báo cáo theo kỳ phía máy chủ (`/api/v1/reports/orders|revenue|products`), không còn tính trên
  * 100 đơn đầu tiên ở trình duyệt. Định nghĩa KPI (một bảng, trùng `order-revenue-report.ts`):
- * - Giá trị đơn (chỉ số chính) = tổng giá trị các đơn chưa huỷ tạo trong kỳ.
+ * - Giá trị đơn (chỉ số chính) = tổng giá trị các đơn đã chốt (không Nháp, không huỷ) tạo trong kỳ (audit BL-30).
+ * - Đơn chờ chốt = đơn Nháp tạo trong kỳ (đơn catalog chưa thu, có thể tự huỷ) — hiện riêng, không cộng vào trên.
  * - Đã thu thực tế = khoản thu đã xác nhận trong kỳ (cọc + thu nốt) trừ hoàn tiền.
- * - Giá trị đơn trung bình = Giá trị đơn / số đơn chưa huỷ.
+ * - Giá trị đơn trung bình = Giá trị đơn / số đơn đã chốt.
  * - Tỷ lệ hoàn tất = đơn đã giao hoặc hoàn tất / tổng đơn tạo trong kỳ.
  * - Sản phẩm bán chạy = xếp theo giá trị dòng hàng của đơn chưa huỷ.
  */
@@ -34,7 +35,7 @@ export function rangePeriod(range: string, now: Date = new Date()): { from: stri
 }
 
 export interface OrderReportTotals { total: number; completed: number; cancelled: number; overdueOpen: number; completionRate: number | null }
-export interface RevenueReportTotals { expectedVnd: number; netCollectedVnd: number; collectionRate: number | null }
+export interface RevenueReportTotals { expectedVnd: number; netCollectedVnd: number; collectionRate: number | null; draftCount: number; draftVnd: number }
 export interface ProductReportRow { productId: string | null; name: string; quantity: number; valueVnd: number }
 
 export interface BusinessSummary {
@@ -46,6 +47,8 @@ export interface BusinessSummary {
   completedOrders: number
   cancelledOrders: number
   openOrders: number
+  draftOrders: number
+  draftValueVnd: number
   overdueOpenOrders: number
   completionRatePercent: number | null
   topProducts: ProductReportRow[]
@@ -58,16 +61,18 @@ export function summarizeBusiness(
   productsByValue: ProductReportRow[],
   aiCreditUsed = 0,
 ): BusinessSummary {
-  const notCancelled = orders.total - orders.cancelled
+  const confirmed = Math.max(0, orders.total - orders.cancelled - revenue.draftCount)
   return {
     orderValueVnd: revenue.expectedVnd,
     collectedVnd: revenue.netCollectedVnd,
     collectionRatePercent: revenue.collectionRate,
-    averageOrderValueVnd: notCancelled > 0 ? Math.round(revenue.expectedVnd / notCancelled) : 0,
+    averageOrderValueVnd: confirmed > 0 ? Math.round(revenue.expectedVnd / confirmed) : 0,
     totalOrders: orders.total,
     completedOrders: orders.completed,
     cancelledOrders: orders.cancelled,
-    openOrders: Math.max(0, notCancelled - orders.completed),
+    openOrders: Math.max(0, confirmed - orders.completed),
+    draftOrders: revenue.draftCount,
+    draftValueVnd: revenue.draftVnd,
     overdueOpenOrders: orders.overdueOpen,
     completionRatePercent: orders.completionRate,
     topProducts: productsByValue.slice(0, 5),
@@ -92,6 +97,8 @@ export function businessSummaryCsv(s: BusinessSummary, shopName: string, period:
     `Đơn đã giao hoặc hoàn tất,${s.completedOrders}`,
     `Đơn bị huỷ,${s.cancelledOrders}`,
     `Đơn đang xử lý,${s.openOrders}`,
+    `Đơn chờ chốt,${s.draftOrders}`,
+    `Giá trị đơn chờ chốt (VND),${s.draftValueVnd}`,
     `Tỷ lệ hoàn tất,${s.completionRatePercent ?? 0}%`,
     `Credit AI đã dùng,${s.aiCreditUsed}`,
     "",

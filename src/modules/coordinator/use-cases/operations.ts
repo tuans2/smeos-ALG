@@ -28,6 +28,7 @@ import {
 import { axesAfterTransition } from "../domain/stage-transitions"
 import { getCoordinatorRepository, type CoordinatorRepository, type CoordinatorOrderRow } from "../infra/coordinator-repository"
 import type { DbClient } from "../infra/transaction"
+import { PendingPaymentRepository } from "../infra/pending-payment-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import {
   audit,
@@ -41,6 +42,8 @@ import {
 } from "./shared"
 import { returnStock } from "@/modules/orders/infra/order-stock"
 import { releaseLeadOfCancelledOrder } from "@/modules/orders/infra/order-lead-link"
+import { resolveClosurePayout } from "../domain/partner-payout"
+import { orderReferencePayoutVnd } from "./partner-payout-source"
 
 function currentAxes(row: CoordinatorOrderRow) {
   return { status: row.status, productionStatus: row.production_status, deliveryStatus: row.delivery_status }
@@ -252,13 +255,16 @@ export async function recordQcInspection(
 export async function closeCoordinatorOrder(
   ctx: TenantContext,
   orderIdOrCode: string,
-  input: { partnerRating?: number | undefined; partnerPayoutVnd?: number | undefined; notes?: string | undefined },
+  input: { partnerRating?: number | undefined; partnerPayoutVnd?: number | undefined; payoutReason?: string | undefined; notes?: string | undefined },
   now = new Date()
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
     const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const facts = await repo.facts(ctx, row)
+    // Một nguồn tiền công (audit BL-22): tự điền số chuẩn, sửa khác thì phải ghi lý do
+    const payout = resolveClosurePayout({ referenceVnd: orderReferencePayoutVnd(row), inputVnd: input.partnerPayoutVnd, reason: input.payoutReason })
+    if (typeof payout === "string") throw new AppError("UNPROCESSABLE_ENTITY", payout, { field: "payoutReason" })
     ensureRule(
       checkClosure({
         stage: row.coordination!.stage,
@@ -271,7 +277,7 @@ export async function closeCoordinatorOrder(
     ensureTransition(row.coordination!.stage, "COMPLETED", facts)
     const closure = {
       partner_rating: input.partnerRating ?? null,
-      partner_payout_vnd: input.partnerPayoutVnd ?? null,
+      partner_payout_vnd: payout.payoutVnd,
       closure_notes: input.notes?.trim() || null,
       closed_by: ctx.userId,
       closed_at: now,
@@ -280,6 +286,7 @@ export async function closeCoordinatorOrder(
     await audit(ctx, tx, "coordinator.order.close", row.id, { stage: "DELIVERED" }, {
       stage: "COMPLETED",
       partnerPayoutVnd: closure.partner_payout_vnd,
+      ...(payout.overrideReason ? { payoutOverrideReason: payout.overrideReason } : {}),
       partnerRating: closure.partner_rating,
     })
     return row.id
@@ -301,11 +308,13 @@ export async function cancelCoordinatorOrder(
       cancelled_reason: input.reason.trim(),
       resume_stage: null,
     })
-    await audit(ctx, tx, "coordinator.order.cancel", row.id, { stage: from }, { stage: "CANCELLED", reason: input.reason.trim() })
+    // Khoản thu Sale ghi còn chờ xác nhận không được duyệt vào đơn đã huỷ (audit BL-21)
+    const rejectedPending = await new PendingPaymentRepository(tx).rejectAllForOrder(ctx, row.id)
+    // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) trong cùng giao dịch huỷ — huỷ lỗi thì không hoàn (audit BL-26)
+    await returnStock(ctx.organizationId, row.id, tx)
+    await audit(ctx, tx, "coordinator.order.cancel", row.id, { stage: from }, { stage: "CANCELLED", reason: input.reason.trim(), rejectedPending })
     return row.id
   })
-  // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) — đánh dấu theo dòng nên gọi lại không hoàn hai lần
-  await returnStock(ctx.organizationId, orderId)
   await releaseLeadOfCancelledOrder(ctx.organizationId, orderId)
   return getOrderView(ctx, orderId)
 }

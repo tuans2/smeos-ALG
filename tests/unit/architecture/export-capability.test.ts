@@ -14,7 +14,8 @@ describe("xuất dữ liệu ra Excel", () => {
 
   it.each(ROUTES)("%s đòi đúng R13 và không còn lối tắt quyền đọc", (route) => {
     const src = readFileSync(path.join(ROOT, route), "utf8")
-    expect(src).toContain('requireCapability(ctx, "R13")')
+    // Gọi thẳng hoặc khai trong defineRoute (`auth: { kind: "tenant", capability: "R13" }`)
+    expect(src).toMatch(/requireCapability\(ctx, "R13"\)|kind: "tenant", capability: "R13"/)
     expect(src).not.toMatch(/hasCapability\(/)
   })
 })

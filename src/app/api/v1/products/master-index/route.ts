@@ -4,19 +4,18 @@
  * Quyền: L1 (Xem sản phẩm).
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { listProductMasterIndex } from "@/modules/products/use-cases/get-product-master-index"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "L1")
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "L1" },
+  handler: async ({ request, ctx }) => {
+    const url = new URL(request.url)
+    const limitParam = url.searchParams.get("limit")
+    const limit = limitParam ? Number(limitParam) : 50
 
-  const url = new URL(request.url)
-  const limitParam = url.searchParams.get("limit")
-  const limit = limitParam ? Number(limitParam) : 50
-
-  const items = await listProductMasterIndex(ctx, Number.isNaN(limit) ? 50 : limit)
-  return jsonResponse({ items, count: items.length })
+    const items = await listProductMasterIndex(ctx, Number.isNaN(limit) ? 50 : limit)
+    return jsonResponse({ items, count: items.length })
+  },
 })

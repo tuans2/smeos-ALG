@@ -13,6 +13,7 @@ import { buildChainNav, CHAIN_NAV_ENTRIES } from "./nav-chain"
 import { buildStoreNav, STORE_NAV_ENTRIES } from "./nav-store"
 import { withIntegrations } from "./nav-integrations"
 import { withDeliveryPhase } from "./nav-phase"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 export * from "./nav-types"
 export * from "./nav-mother"
@@ -100,7 +101,8 @@ export function mobileSecondSlot(
     }
   }
 
-  if (tier === "CHAIN") {
+  // Điều phối đang khoá "Sắp ra mắt" (production) thì chuỗi dùng ô mặc định Đơn hàng (audit N-05)
+  if (tier === "CHAIN" && isHrefOpen("/dieu-phoi")) {
     return {
       href: "/dieu-phoi",
       label: "Điều phối",

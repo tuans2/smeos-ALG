@@ -3,15 +3,15 @@
  * Body `{ approve: boolean, note?, collectDueAt? }` — từ chối bắt buộc ghi lý do.
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { decideDeliverBeforePay } from "@/modules/orders/use-cases/deliver-before-pay"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request, context: { params: Promise<{ requestId: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R16")
-  const { requestId } = await context.params
-  const body = ((await request.json().catch(() => null)) ?? {}) as Record<string, unknown>
-  return jsonResponse(await decideDeliverBeforePay(ctx, requestId, { approve: body.approve, note: body.note, collectDueAt: body.collectDueAt }))
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "R16" },
+  handler: async ({ request, ctx, params }) => {
+    const { requestId } = params as { requestId: string }
+    const body = ((await request.json().catch(() => null)) ?? {}) as Record<string, unknown>
+    return jsonResponse(await decideDeliverBeforePay(ctx, requestId, { approve: body.approve, note: body.note, collectDueAt: body.collectDueAt }))
+  },
 })

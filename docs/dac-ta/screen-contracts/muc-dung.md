@@ -16,6 +16,8 @@ acceptance:
 
 # Screen Contract — Mức Dùng & Hạn Mức Credit Của Tiệm
 
+> **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/muc-dung` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/muc-dung/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
+
 **Tuyến:** `/muc-dung` · **Tệp chính:** `src/app/(app)/muc-dung/page.tsx`, `src/components/usage/monthly-limit-card.tsx`, `subscription-card.tsx` · **Cập nhật:** 05/11/2026 · **Thẻ:** T5.D7
 
 ## 1. Vai và mục đích

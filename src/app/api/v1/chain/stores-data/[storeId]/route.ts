@@ -4,24 +4,24 @@
  * Returns hierarchical domain folder data for a specific store.
  */
 
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getStoreFolderData } from "@/modules/field-platform/use-cases/get-store-folder-data"
 import { notFound } from "@/core/http/errors"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "F1")
-  const params = await (context as { params: Promise<{ storeId: string }> }).params
-  const storeId = params.storeId
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "F1" },
+  handler: async ({ ctx, params: routeParams }) => {
+    const params = routeParams as { storeId: string }
+    const storeId = params.storeId
 
-  const result = await getStoreFolderData(storeId, ctx.organizationId)
-  if (!result) {
-    throw notFound()
-  }
+    const result = await getStoreFolderData(storeId, ctx.organizationId)
+    if (!result) {
+      throw notFound()
+    }
 
-  return jsonResponse({ data: result })
+    return jsonResponse({ data: result })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

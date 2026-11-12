@@ -6,9 +6,9 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 
 | Mục | Giữ | Bị chặn hoặc bỏ |
 |---|---:|---:|
-| Trang | 90 | 26 |
-| API | 480 | 61 |
-| Tệp trong `src/` | 3539 | 658 |
+| Trang | 90 | 27 |
+| API | 490 | 61 |
+| Tệp trong `src/` | 3604 | 674 |
 
 ## Code trong phạm vi chạm vùng không giao
 
@@ -30,6 +30,7 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 | `src/components/dashboard/customer-service-workspace.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
 | `src/components/dashboard/store-growth-center.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
 | `src/components/dashboard/store-growth-center.tsx` | `/market-intelligence` | Ẩn khi không thuộc giai đoạn |
+| `src/components/integrations/api-tokens-panel.tsx` | `/tich-hop/tai-lieu-api` | Ẩn khi không thuộc giai đoạn |
 | `src/components/organization/ai-channels-settings-tab.tsx` | `/ket-noi` | Ẩn khi không thuộc giai đoạn |
 | `src/components/products/one-image-kit-dialog.tsx` | `/in-an` | Ẩn khi không thuộc giai đoạn |
 
@@ -44,28 +45,28 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `audio-studio` | 12/17 |
 | `catalog-studio` | 9/10 |
 | `chain-partnership` | 13/14 |
-| `chat-assistant` | 50/53 |
-| `content-engine` | 43/44 |
-| `coordinator` | 54/73 |
+| `chat-assistant` | 51/54 |
+| `content-engine` | 42/44 |
+| `coordinator` | 57/75 |
 | `creative-production` | 17/68 |
-| `crm` | 33/34 |
-| `field-platform` | 41/47 |
-| `greeting-card` | 283/287 |
-| `integration` | 20/23 |
+| `crm` | 40/41 |
+| `field-platform` | 41/46 |
+| `greeting-card` | 284/288 |
+| `integration` | 22/26 |
 | `integration-hub` | 34/35 |
-| `jobs` | 18/19 |
+| `jobs` | 19/20 |
 | `journey` | 6/17 |
 | `landing-page` | 4/7 |
 | `market-intelligence` | 16/30 |
 | `media` | 11/21 |
 | `notification` | 46/47 |
-| `organization` | 91/95 |
-| `platform` | 54/61 |
+| `organization` | 102/111 |
+| `platform` | 56/64 |
 | `print` | 6/8 |
 | `product-photo-studio` | 6/7 |
 | `products` | 69/73 |
 | `profiles` | 27/29 |
-| `sales` | 17/18 |
+| `sales` | 19/20 |
 | `templates` | 5/6 |
 | `toolkit` | 9/10 |
 | `video-studio` | 10/18 |

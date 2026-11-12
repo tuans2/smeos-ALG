@@ -15,17 +15,17 @@ export const DOMAINS = [
     "role_capabilities", "capability_overrides", "custom_domains", "business_profiles", "idempotency_keys",
   ]],
   ["Nền tảng và quản trị theo tầng", [
-    "platform_operators", "platform_role_capabilities", "platform_settings", "platform_secrets", "tenant_data_keys", "platform_audit_logs",
+    "platform_operators", "platform_role_capabilities", "platform_settings", "platform_secrets", "tenant_data_keys", "platform_audit_logs", "retention_policies",
     "platform_access_logs", "decision_registry", "governance_decisions", "audit_logs", "reconciliation_findings",
   ]],
   ["Khách hàng và bán hàng", [
-    "customers", "customer_consents", "customer_interactions", "customer_occasions", "customer_segments", "occasions", "leads",
+    "customers", "customer_consents", "data_subject_requests", "customer_interactions", "customer_occasions", "customer_segments", "occasions", "leads",
     "quotations", "quotation_items", "quotation_revisions", "vouchers", "voucher_batches", "voucher_redemptions", "pricing_rules",
     "shop_reviews",
   ]],
   ["Đơn hàng và điều phối", [
     "orders", "order_items", "order_recipients", "shared_order_access", "order_events", "order_payments", "order_assignments", "order_coordinations",
-    "order_exceptions", "order_qc_records", "order_info_requests", "order_change_requests", "order_approval_requests", "partners",
+    "order_exceptions", "order_qc_records", "order_info_requests", "order_change_requests", "order_approval_requests", "partners", "partner_settlements",
     "partner_marketplace_stores", "partner_marketplace_share_links", "product_bookings", "staff_notifications",
   ]],
   ["Thẻ chào", [

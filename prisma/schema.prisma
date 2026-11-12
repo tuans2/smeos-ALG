@@ -41,6 +41,21 @@ enum workspace_kind {
   PRODUCTION
 }
 
+/// ADR-016 D-S5 (S-3): vòng đời tổ chức. SUSPENDED: chặn mọi truy cập của thành viên, giữ dữ liệu. OFFBOARDING: chỉ xem
+/// (xuất bàn giao), xoá sau `offboarding_until`. DELETED: đã xoá theo sổ bảng-thuộc-tenant (S-3b).
+enum organization_isolation_tier {
+  SHARED
+  SHARED_PLUS
+  DEDICATED
+}
+
+enum organization_lifecycle_status {
+  ACTIVE
+  SUSPENDED
+  OFFBOARDING
+  DELETED
+}
+
 enum membership_status {
   INVITED
   ACTIVE
@@ -144,22 +159,29 @@ model sessions {
 }
 
 model organizations {
-  id               String            @id @default(uuid())
-  name             String
-  slug             String            @unique
-  type             organization_type @default(SINGLE)
-  credit_balance   Int               @default(0)
-  credit_plan      String?
-  settings         Json? // bảng công tắc cấp tổ chức, gồm cho_phep_tu_duyet
-  data_region      String?           @default("vn") // ADR-006: Vùng dữ liệu tenant
+  id                   String                        @id @default(uuid())
+  name                 String
+  slug                 String                        @unique
+  type                 organization_type             @default(SINGLE)
+  credit_balance       Int                           @default(0)
+  credit_plan          String?
+  settings             Json? // bảng công tắc cấp tổ chức, gồm cho_phep_tu_duyet
+  data_region          String?                       @default("vn") // ADR-006: Vùng dữ liệu tenant
   // SDAGF D-04 — legal hold cấp tổ chức: còn hạn thì không xoá vĩnh viễn dữ
   // liệu nào của tổ chức (asset, sản phẩm trong thùng rác, dọn bàn giao).
-  legal_hold_until DateTime?         @db.Timestamptz(3)
+  legal_hold_until     DateTime?                     @db.Timestamptz(3)
   /// ADR-012 D-T6 (T-6a): ngành của tổ chức → `industries.key`. Thay `settings.industry`; tới T-6c trigger
   /// `organizations_sync_industry_key` giữ cột này khớp `settings.industry` mỗi lần ghi settings.
-  industry_key     String?
-  created_at       DateTime          @default(now()) @db.Timestamptz(3)
-  updated_at       DateTime          @updatedAt @db.Timestamptz(3)
+  industry_key         String?
+  /// ADR-016 D-S5 (S-3): vòng đời tổ chức — Admin SaaS đổi (N2), kiểm ở `requireTenantContext`.
+  lifecycle_status     organization_lifecycle_status @default(ACTIVE)
+  lifecycle_changed_at DateTime?                     @db.Timestamptz(3)
+  /// Hạn giữ dữ liệu khi rời nền tảng (theo hợp đồng); quá hạn thì xoá (S-3b) trừ khi có legal hold.
+  offboarding_until    DateTime?                     @db.Timestamptz(3)
+  /// Mức cô lập (ADR-016 D-S2, bước S-5): gói thuê bao quyết định mức được phép (`isolation-tier.ts`).
+  isolation_tier       organization_isolation_tier   @default(SHARED)
+  created_at           DateTime                      @default(now()) @db.Timestamptz(3)
+  updated_at           DateTime                      @updatedAt @db.Timestamptz(3)
 
   industry industries? @relation(fields: [industry_key], references: [key], onUpdate: Cascade, onDelete: Restrict)
 
@@ -230,6 +252,7 @@ model organizations {
   voice_clones                                     voice_clones[]
   music_tracks                                     music_tracks[]
   partners                                         partners[]
+  partner_settlements                              partner_settlements[]
   order_coordinations                              order_coordinations[]
   order_qc_records                                 order_qc_records[]
   order_payments                                   order_payments[]
@@ -265,6 +288,7 @@ model organizations {
   notification_user_preferences                    notification_user_preferences[]
   notification_inbox                               notification_inbox[]
   push_subscriptions                               push_subscriptions[]
+  data_subject_requests                            data_subject_requests[]
   materials                                        materials[]
   material_price_history                           material_price_history[]
   product_recipes                                  product_recipes[]
@@ -2037,6 +2061,8 @@ model orders {
   source_session_id String? // greeting_sessions.id
   /// `Idempotency-Key` của `POST /api/v1/orders` (audit API-11, PO 07/11/2026): bấm đúp / gửi lại cùng khoá → trả đơn cũ.
   idempotency_key   String?
+  /// SHA-256 dạng chuẩn của thân đã kiểm (audit API-11, PO 11/11/2026): cùng khoá mà khác băm → 422. NULL ở đơn cũ.
+  idempotency_body_hash String?
   greeting_sessions greeting_sessions[]
 
   /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —
@@ -2306,6 +2332,7 @@ model customers {
 
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
   voucher_redemptions_by_customer_id voucher_redemptions[] @relation("fk_voucher_redemptions_customer_id")
+  data_subject_requests              data_subject_requests[]
 
   @@unique([organization_id, phone_hash]) // P-5c: một khách mỗi số (mọi cách viết) trong tổ chức
   @@unique([organization_id, code])
@@ -2690,6 +2717,72 @@ model platform_settings {
   updated_by String?
   updated_at DateTime @updatedAt @db.Timestamptz(3)
   created_at DateTime @default(now()) @db.Timestamptz(3)
+}
+
+enum retention_action {
+  DELETE
+  ANONYMIZE
+}
+
+/// Hạn lưu theo loại dữ liệu (ADR-014 D-P4, bước P-6) — một dòng mỗi loại; đổi mốc = sửa dòng, không sửa mã.
+/// Bảng nền tảng, không có `organization_id` (đặc tả 07 mục 1, cùng hạng `platform_settings`). Job hằng đêm đọc bảng
+/// này; `enforce = false` thì chỉ đếm số dòng quá hạn. Loại dữ liệu hợp lệ: `RETENTION_CATEGORIES`
+/// (`src/modules/organization/domain/retention-policy.ts`).
+model retention_policies {
+  category         String           @id
+  /// CHECK 1–600 tháng (migration `*_retention_policies`).
+  retention_months Int
+  action           retention_action
+  /// false = chỉ đếm (mặc định); true = xoá / ẩn danh thật. PO bật từng loại.
+  enforce          Boolean          @default(false)
+  last_run_at      DateTime?        @db.Timestamptz(3)
+  /// Số dòng quá hạn (chế độ đếm) hoặc đã xử lý (chế độ thực thi) ở lần chạy cuối.
+  last_run_rows    Int?
+  updated_by       String?
+  updated_at       DateTime         @default(now()) @updatedAt @db.Timestamptz(3)
+  created_at       DateTime         @default(now()) @db.Timestamptz(3)
+}
+
+enum data_subject_request_type {
+  EXPORT
+  ERASE
+  RECTIFY
+}
+
+enum data_subject_request_status {
+  RECEIVED
+  COMPLETED
+  REJECTED
+}
+
+/// Yêu cầu của khách về dữ liệu cá nhân của mình (ADR-014 D-P5, bước P-7): xuất, xoá (ẩn danh xuyên bảng), sửa.
+/// Không lưu dữ liệu cá nhân: `note` là ghi chú nghiệp vụ, `result` chỉ có số dòng theo bảng.
+model data_subject_requests {
+  id              String                      @id @default(uuid())
+  organization_id String
+  /// Khách yêu cầu; khách bị xoá hẳn (Q4) thì null, yêu cầu vẫn giữ làm bằng chứng.
+  customer_id     String?
+  type            data_subject_request_type
+  status          data_subject_request_status @default(RECEIVED)
+  /// `users.id` người tiếp nhận
+  received_by     String
+  received_at     DateTime                    @default(now()) @db.Timestamptz(3)
+  /// Hạn xử lý (`DSR_DUE_HOURS`, `src/modules/crm/domain/data-subject-request.ts`)
+  due_at          DateTime                    @db.Timestamptz(3)
+  note            String?
+  completed_by    String?
+  completed_at    DateTime?                   @db.Timestamptz(3)
+  /// Số dòng đã ẩn danh / xoá / xuất theo bảng — không chứa dữ liệu cá nhân
+  result          Json?
+  created_at      DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime                    @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  customer     customers?    @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -3453,9 +3546,44 @@ model partners {
 
   organization  organizations         @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   coordinations order_coordinations[]
+  settlements   partner_settlements[]
 
   @@unique([organization_id, code])
   @@index([organization_id, is_active])
+}
+
+/// Sổ quyết toán tiền công đối tác theo kỳ (PO 12/11/2026, audit BL-22). Chụp các đơn đối tác đã đóng trong kỳ
+/// (`order_coordinations.closed_at`, giờ Việt Nam) với tiền công lúc đóng đơn. `status`: PENDING (Chờ đối soát) →
+/// RECONCILED (Đã đối soát) → PAID (Đã thanh toán). Kỳ của một đối tác không chồng nhau (kiểm ở use-case). TENANT ISOLATION.
+model partner_settlements {
+  id                String    @id @default(uuid())
+  organization_id   String
+  partner_id        String
+  /// Ngày đầu / cuối kỳ (giờ Việt Nam, gồm cả hai đầu).
+  period_from       DateTime  @db.Date
+  period_to         DateTime  @db.Date
+  status            String    @default("PENDING")
+  order_count       Int
+  total_payout_vnd  Decimal   @db.Decimal(14, 2)
+  /// [{ orderId, code, closedAt, payoutVnd }] — chụp lúc lập sổ.
+  items             Json
+  note              String?
+  created_by        String
+  reconciled_by     String?
+  reconciled_at     DateTime? @db.Timestamptz(3)
+  paid_by           String?
+  paid_at           DateTime? @db.Timestamptz(3)
+  /// Mã giao dịch / số phiếu chi khi trả đối tác.
+  payment_reference String?
+  created_at        DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime  @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  partner      partners      @relation(fields: [partner_id], references: [id])
+
+  @@unique([organization_id, partner_id, period_from])
+  @@index([organization_id, status])
+  @@index([partner_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Hồ sơ điều phối tiến trình của từng đơn hàng. TENANT ISOLATION.

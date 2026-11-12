@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { chunk, mapChannelOrder } from "../sales-order-mapping"
+import { channelPrepaidVnd, chunk, mapChannelOrder } from "../sales-order-mapping"
 import { redactPayload } from "../redact-payload"
 
 const order = {
@@ -40,5 +40,16 @@ describe("Đơn kênh bán → đơn nội bộ", () => {
     const out = redactPayload({ orderId: "0912345678901", note: "gọi 0912345678" }) as Record<string, string>
     expect(out["orderId"]).toBe("0912345678901")
     expect(out["note"]).toBe("gọi [sđt]")
+  })
+})
+
+describe("tiền đơn sàn (audit BL-34)", () => {
+  it("đã trả trên sàn → ghi đúng số đã trả, không vượt tổng đơn; thu hộ / không rõ → 0", () => {
+    expect(channelPrepaidVnd({ kind: "PREPAID", paidVnd: 250_000.4 }, 300_000)).toBe(250_000)
+    expect(channelPrepaidVnd({ kind: "PREPAID", paidVnd: 350_000 }, 300_000)).toBe(300_000)
+    expect(channelPrepaidVnd({ kind: "PREPAID", paidVnd: Number.NaN }, 300_000)).toBe(0)
+    expect(channelPrepaidVnd({ kind: "COD", paidVnd: 300_000 }, 300_000)).toBe(0)
+    expect(channelPrepaidVnd(null, 300_000)).toBe(0)
+    expect(channelPrepaidVnd(undefined, 300_000)).toBe(0)
   })
 })

@@ -69,4 +69,49 @@ describe("tự huỷ đơn chưa thanh toán ngoài Thẻ chào", () => {
     await expireUnpaidOrders(now)
     expect(await statusOf(paid)).toBe("DRAFT")
   })
+
+  // PO 12/11/2026 (audit BL-26): đơn đang giữ tồn tự huỷ sau 2 giờ, mặc định bật ở mọi cửa hàng
+  describe("đơn đang giữ tồn", () => {
+    async function stockedOrder(t: Tenant, createdAt: Date) {
+      const product = await prisma.products.create({ data: { organization_id: t.organizationId, code: `SP-${backdate.length}-${Date.now()}`, name: "Bình gốm" } })
+      const branch = await prisma.branches.create({ data: { organization_id: t.organizationId, name: "Quận 1", code: `Q1-${Date.now()}` } })
+      await prisma.product_inventory.create({ data: { organization_id: t.organizationId, product_id: product.id, branch_id: branch.id, quantity_available: 5 } })
+      const o = await ingestOrder(t.ctx, { source: "CATALOG", branchId: branch.id, items: [{ productId: product.id, description: "Bình gốm", quantity: 2, unitPriceVnd: 300_000 }] })
+      backdate.push([o.id, createdAt])
+      return { orderId: o.id, productId: product.id }
+    }
+    const stockOf = async (productId: string) => (await prisma.product_inventory.findFirstOrThrow({ where: { product_id: productId } })).quantity_available
+
+    it("cửa hàng chưa bật gì: đơn giữ tồn quá 2 giờ tự huỷ và trả tồn; đơn thường thì không", async () => {
+      const held = await stockedOrder(off, hoursAgo(3))
+      const fresh = await stockedOrder(off, hoursAgo(1))
+      const plain = await order(off, "CATALOG", 500_000, hoursAgo(30))
+      await applyBackdate()
+      expect(await stockOf(held.productId)).toBe(3)
+
+      expect(await expireUnpaidOrders(now)).toEqual({ cancelled: 1, failed: 0 })
+      expect(await statusOf(held.orderId)).toBe("CANCELLED")
+      expect(await stockOf(held.productId)).toBe(5)
+      expect(await statusOf(fresh.orderId)).toBe("DRAFT")
+      expect(await statusOf(plain)).toBe("DRAFT")
+    })
+
+    it("tiệm tắt tự huỷ đơn giữ hàng → không huỷ", async () => {
+      await prisma.organizations.update({ where: { id: off.organizationId }, data: { settings: { [UNPAID_EXPIRY_SETTINGS_KEY]: { stockHoldEnabled: false } } } })
+      const held = await stockedOrder(off, hoursAgo(5))
+      await applyBackdate()
+      expect(await expireUnpaidOrders(now)).toEqual({ cancelled: 0, failed: 0 })
+      expect(await statusOf(held.orderId)).toBe("DRAFT")
+    })
+
+    it("có chuyển khoản chưa khớp đúng số tiền đến sau lúc đặt → không huỷ", async () => {
+      const held = await stockedOrder(off, hoursAgo(3))
+      await applyBackdate()
+      await prisma.greeting_payment_events.create({
+        data: { organization_id: off.organizationId, provider: "SEPAY", external_id: `tx-${Date.now()}`, amount_vnd: 600_000, content: "chuyen tien hoa", status: "UNMATCHED", created_at: hoursAgo(2) },
+      })
+      expect(await expireUnpaidOrders(now)).toEqual({ cancelled: 0, failed: 0 })
+      expect(await statusOf(held.orderId)).toBe("DRAFT")
+    })
+  })
 })

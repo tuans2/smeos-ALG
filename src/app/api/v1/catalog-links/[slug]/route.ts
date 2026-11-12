@@ -1,11 +1,10 @@
 import { z } from "zod"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { validationFailed, notFound } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getCatalogLinkBySlug } from "@/modules/catalog-links/use-cases/get-catalog-link"
 import { updateCatalogLink } from "@/modules/catalog-links/use-cases/update-catalog-link"
 import type { CatalogLinkFilters } from "@/modules/catalog-links/domain/catalog-link-rules"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * `GET /catalog-links/:slug` — CÔNG KHAI có chủ đích (khách quét QR, không
@@ -23,30 +22,29 @@ const patchSchema = z.object({
   filters: z.record(z.string(), z.unknown()).nullable().optional(),
 })
 
-export const GET = handle<[{ params: Promise<{ slug: string }> }]>(
-  async (request, context) => {
-    const { slug } = await context.params
-    const link = await getCatalogLinkBySlug(slug)
-    if (!link) throw notFound()
-    return jsonResponse(link)
-  }
-)
+export const GET = defineRoute({
+  auth: { kind: "custom", reason: "tra link catalog theo slug, không đòi phiên (có từ trước)" },
+  handler: async ({ params }) => {
+      const { slug } = params as { slug: string }
+      const link = await getCatalogLinkBySlug(slug)
+      if (!link) throw notFound()
+      return jsonResponse(link)
+  },
+})
 
-export const PATCH = handle<[{ params: Promise<{ slug: string }> }]>(
-  async (request, context) => {
-    const { ctx } = await requireTenantContext(request)
-    requireCapability(ctx, "J1")
+export const PATCH = defineRoute({
+  auth: { kind: "tenant", capability: "J1" },
+  handler: async ({ request, ctx, params }) => {
+      const { slug } = params as { slug: string }
+      const parsed = patchSchema.safeParse(await request.json().catch(() => null))
+      if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-    const { slug } = await context.params
-    const parsed = patchSchema.safeParse(await request.json().catch(() => null))
-    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+      const updateInput: { name?: string; description?: string | null; filters?: CatalogLinkFilters | null } = {}
+      if (parsed.data.name !== undefined) updateInput.name = parsed.data.name
+      if (parsed.data.description !== undefined) updateInput.description = parsed.data.description
+      if (parsed.data.filters !== undefined) updateInput.filters = parsed.data.filters
 
-    const updateInput: { name?: string; description?: string | null; filters?: CatalogLinkFilters | null } = {}
-    if (parsed.data.name !== undefined) updateInput.name = parsed.data.name
-    if (parsed.data.description !== undefined) updateInput.description = parsed.data.description
-    if (parsed.data.filters !== undefined) updateInput.filters = parsed.data.filters
-
-    const link = await updateCatalogLink(ctx, slug, updateInput)
-    return jsonResponse(link)
-  }
-)
+      const link = await updateCatalogLink(ctx, slug, updateInput)
+      return jsonResponse(link)
+  },
+})

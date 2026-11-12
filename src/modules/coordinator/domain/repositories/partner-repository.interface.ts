@@ -19,6 +19,8 @@ export interface PartnerEntity {
   capacity_daily: number
   is_active: boolean
   rating: number
+  /** Giá trị trường tự tạo (entity = PARTNER, audit L-09) — đã qua `applyCustomFields`. */
+  custom_fields: Record<string, unknown> | null
   created_at: Date
   updated_at: Date
 }
@@ -32,6 +34,7 @@ export interface CreatePartnerInput {
   province: string | null
   tier: string
   capacityDaily: number
+  customFields?: Record<string, unknown> | undefined
 }
 
 export interface IPartnerRepository {
@@ -52,6 +55,7 @@ export interface IPartnerRepository {
       capacity_daily: number
       is_active: boolean
       rating: number
+      custom_fields: Record<string, unknown>
     }>
   ): Promise<void>
   countActiveOrdersForPartner(ctx: TenantContext, partnerId: string): Promise<number>

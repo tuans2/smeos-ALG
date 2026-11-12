@@ -1,6 +1,6 @@
 /**
  * Ops Knowledge Base Registry & Query Engine.
- * Quản lý tập trung 10 Module Tri thức SSOT và cung cấp bộ máy tìm kiếm theo vai trò.
+ * Quản lý tập trung 11 Module Tri thức SSOT và cung cấp bộ máy tìm kiếm theo vai trò.
  */
 
 import type { OpsKnowledgeNode, OpsResponseStyle, OpsTargetRole } from "./schema"
@@ -14,6 +14,7 @@ import { NODE_07_QUET_ANH_AI } from "./node-07-quet-anh-ai"
 import { NODE_08_KHO_DU_LIEU } from "./node-08-kho-du-lieu"
 import { NODE_09_HO_SO_CUA_HANG } from "./node-09-ho-so-cua-hang"
 import { NODE_10_CAI_DAT_THANH_VIEN } from "./node-10-cai-dat-thanh-vien"
+import { NODE_11_KHACH_HANG_DU_LIEU } from "./node-11-khach-hang-du-lieu"
 
 export * from "./schema"
 export * from "./knowledge-graph"
@@ -29,6 +30,7 @@ export const OPS_KNOWLEDGE_BASE: OpsKnowledgeNode[] = [
   NODE_08_KHO_DU_LIEU,
   NODE_09_HO_SO_CUA_HANG,
   NODE_10_CAI_DAT_THANH_VIEN,
+  NODE_11_KHACH_HANG_DU_LIEU,
 ]
 
 /**

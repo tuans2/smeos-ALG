@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import { unsentMessage } from "./quotation-send"
 import { quotationApi } from "./quotation-api"
 import { QuotePreviewCard } from "./quote-preview-card"
 import { QuoteLineOptions } from "./quote-line-options"
@@ -69,11 +70,15 @@ export function CustomerQuoteBuilder({
   const effectiveDiscount = Math.max(0, Math.min(discountAmount, subtotal))
   const totalAmount = Math.max(0, subtotal - effectiveDiscount) + shippingFee
 
+  // Chữ gửi khách lấy từ báo giá ĐÃ LƯU (máy chủ đã kiểm sàn/trần, tính tổng) — không sao chép số tính tạm ở trình
+  // duyệt trước khi lưu (audit BL-31)
   const handleCopyText = () => {
-    const textLines = selectedProducts.map(
-      (p, idx) => `Mẫu ${idx + 1}: ${p.title} - ${formatCurrency(p.price)}\n${p.composition?.join(", ") || ""}`,
-    )
-    const summary = `BẢNG BÁO GIÁ SẢN PHẨM\n\n${textLines.join("\n\n")}\n\nTổng thanh toán: ${formatCurrency(totalAmount)}\nĐiều khoản: ${terms}`
+    if (!createdQuote) return
+    const textLines = createdQuote.items.map((it, idx) => {
+      const composition = selectedProducts.find((p) => p.id === it.productId)?.composition?.join(", ") || ""
+      return `Mẫu ${idx + 1}: ${it.name} - ${formatCurrency(it.unitPrice)}\n${composition}`
+    })
+    const summary = `BẢNG BÁO GIÁ SẢN PHẨM\n\n${textLines.join("\n\n")}\n\nTổng thanh toán: ${formatCurrency(createdQuote.totalAmount)}\nĐiều khoản: ${terms}`
     navigator.clipboard.writeText(summary)
     setCopiedText(true)
     setTimeout(() => setCopiedText(false), 2000)
@@ -100,7 +105,11 @@ export function CustomerQuoteBuilder({
         notes: notes || null,
       })
 
-      const sentQuote = await quotationApi.send(quote.id).catch(() => quote)
+      // Gửi lỗi thì vẫn giữ báo giá nháp đã lưu và báo rõ — trước đây lỗi bị nuốt, màn hình như đã gửi (audit BL-31)
+      const sentQuote = await quotationApi.send(quote.id).catch((err: unknown) => {
+        setErrorMsg(unsentMessage(err))
+        return quote
+      })
       setCreatedQuote(sentQuote)
       onQuotationCreated?.(sentQuote)
     } catch (err: unknown) {

@@ -3,26 +3,27 @@
  * `POST` (R3) — tạo yêu cầu tay: trường thiếu, hỏi ai, hạn (checklist ALG 4.14).
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { jsonResponse } from "@/core/http/response"
 import { createOrderInfoRequest, syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { createInfoRequestBody } from "@/app/api/v1/_contracts/requests-orders"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R1")
-  const { id } = await context.params
-  return jsonResponse({ data: await syncOrderInfoRequests(ctx, id) })
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "R1" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    return jsonResponse({ data: await syncOrderInfoRequests(ctx, id) })
+  },
 })
 
-export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R3")
-  const { id } = await context.params
-  const body = createInfoRequestBody.parse(await request.json())
-  const created = await createOrderInfoRequest(ctx, id, { ...body, dueAt: body.dueAt ? new Date(body.dueAt) : null, channel: body.channel ?? null })
-  return jsonResponse({ data: created }, { status: 201 })
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "R3" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const body = createInfoRequestBody.parse(await request.json())
+    const created = await createOrderInfoRequest(ctx, id, { ...body, dueAt: body.dueAt ? new Date(body.dueAt) : null, channel: body.channel ?? null })
+    return jsonResponse({ data: created }, { status: 201 })
+  },
 })
 
 export const dynamic = "force-dynamic"
