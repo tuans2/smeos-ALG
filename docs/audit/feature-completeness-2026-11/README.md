@@ -72,6 +72,13 @@ Không có chức năng ✅ nào ở lần 1 bị hạ bậc. Toàn bộ đườ
 | I-09 (9.14) | Thao tác | Từ smeOS mở ứng dụng liên kết | Đang đăng nhập smeOS, mở bước Đăng tự động (kết nối kênh, chọn bài, lên lịch) |
 | I-09 (9.14) | Kết quả mong đợi | Vào thẳng không đăng nhập lại; phiên liên kết hết hạn sau 15 phút | Vào thẳng, không phải đăng nhập lại; đăng bài chạy ngay trong smeOS, không mở ứng dụng ngoài. Thời hạn 15 phút của phiên liên kết cho ứng dụng ngoài được kiểm bằng test tự động, không chạy tay |
 
+**Đổi tên "Thẻ chào" → "Bộ sưu tập riêng" (N-03):** 23 ô ở sheet "Kịch bản" và 1 ô ở "Chuẩn bị", gồm:
+- tiêu đề và tên luồng D;
+- cột "Mở ở" của A–H (`Thẻ chào → …`, `Link Thẻ Chào …`);
+- A-08 (tên menu), B-11, G-06 (tên sheet trong file Excel xuất, theo `orders/use-cases/export-orders.ts:241`), G-07 (nhãn nguồn đơn, theo `orders/domain/order-source.ts:47`), J-11.
+
+Ô D-01 "Thẻ chào sản phẩm → Quản lý → Bộ sưu tập" đổi thành "Bộ sưu tập riêng → Quản lý → Bộ sưu tập", vì "Thẻ chào sản phẩm" giờ là bước 2 của Tạo nội dung. Tên tab trong trang (Gửi nhanh, Quản lý, Theo dõi đơn, Bán hàng, Điều hành, Điều phối, Hộp việc) không đổi. Tên chức năng và tên nhóm ở "Phủ 123 chức năng" không sửa.
+
 Căn cứ:
 - I-01: quyết định PO 09/11/2026 (`docs/plan/hoan-thien-chat-noi-bo.md` §10). Hành vi trong mã: `internal-chat/domain/message-change-policy.ts`, `components/internal-chat/message-actions.tsx`, `message-item.tsx`.
 - I-09: quyết định D-46 và `acceptanceNote` của mục 9.14 trong `gd1.manifest.json`. Ô "Tạo nội dung" nằm ở `components/dashboard/toolkit-module-detail.tsx`; quyền `J5` ở `core/rbac/capability-catalog.ts:202`.
@@ -113,7 +120,7 @@ Môi trường: CSDL cục bộ Postgres 16. `floraos` dựng bằng `db:deploy`
 |---|---|---|---|---|
 | N-01 | ⚠️ AC | AC I-01 (9.1) "không có cách xoá tin" ngược quyết định PO 09/11/2026 cho thu hồi tin trong 24 giờ | `internal-chat/domain/message-change-policy.ts`, `api/v1/internal-chat/messages/[id]/route.ts:32` | ✅ Đã sửa câu AC 12/11 (mục 2.2) |
 | N-02 | ⚠️ AC | AC I-09 (9.14) vẫn ghi "Từ smeOS mở ứng dụng liên kết", trong khi D-46 đã bỏ ứng dụng liên kết | `gd1.manifest.json` mục 9.14 `acceptanceNote`; `docs/plan/BANGIAO_GD1_123_CHUC_NANG.md` Bước 4 | ✅ Đã sửa câu AC 12/11 (mục 2.2). Cần báo ALG bản checklist mới |
-| N-03 | ℹ️ AC | Giao diện đổi tên "Thẻ chào" → **"Bộ sưu tập riêng"** và "Catalog" → **"Bộ sưu tập chung"** (PO 09/11/2026, D-66). 19 bước kịch bản vẫn ghi "Thẻ chào" ở cột "Mở ở"/"Thao tác"; I-10 ghi "Tạo catalog" | `src/modules/toolkit/domain/collection-names.ts` | Người nghiệm thu không tìm thấy mục theo tên trong kịch bản. Cần bảng đối chiếu tên hoặc sửa kịch bản |
+| N-03 | ℹ️ AC | Giao diện đổi tên "Thẻ chào" → **"Bộ sưu tập riêng"** và "Catalog" → **"Bộ sưu tập chung"** (PO 09/11/2026, D-66). 19 bước kịch bản vẫn ghi "Thẻ chào" ở cột "Mở ở"/"Thao tác"; I-10 ghi "Tạo catalog" | `src/modules/toolkit/domain/collection-names.ts` | 🟡 Phần "Thẻ chào" đã sửa 12/11: 23 ô ở sheet "Kịch bản" và 1 ô ở "Chuẩn bị" đổi sang "Bộ sưu tập riêng" (mục 2.2). Tên chức năng và tên nhóm ở "Phủ 123 chức năng"/"Tổng hợp" giữ nguyên vì là danh mục đã thống nhất với ALG. I-10 "Tạo catalog" chưa sửa |
 | N-04 | ℹ️ | Ba phát hiện nghiệp vụ chạm tới AC của danh mục vẫn chờ PO: BL-28 (trần chiết khấu mọi kênh, chạm 3.4/3.7), BL-29 (nhắc thu quá hạn chỉ một lần, chạm 4.26), BL-30 ("Giá trị đơn" gồm đơn Nháp, chạm 6.2). BL-35 (bộ máy duyệt thay đổi cấu hình trường không được dùng) cũng chờ PO | `docs/audit/business-logic-audit/BUSINESS_LOGIC_AUDIT_2026-11-11.md` | Các bước C-03, C-11, F-09, H-02 vẫn đạt với dữ liệu chuẩn bị trong kịch bản; rủi ro nằm ở trường hợp biên |
 
 ## 5. Phạm vi chưa xác minh
