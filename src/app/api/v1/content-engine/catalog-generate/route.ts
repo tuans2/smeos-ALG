@@ -1,12 +1,11 @@
 import { z } from "zod"
 
 import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
 import { getApprovedSellingNotes } from "@/modules/product-copies/use-cases/get-approved-selling-notes"
 import { executeGenerateCatalogContent } from "@/modules/content-engine/use-cases/generate-catalog-content.use-case"
+import { defineRoute } from "@/core/http/define-route"
 
 const requestSchema = z.object({
   collectionName: z.string().min(1),
@@ -18,38 +17,38 @@ const requestSchema = z.object({
   productIds: z.array(z.string().min(1).max(64)).max(50).optional(),
 })
 
-export const POST = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
+export const POST = defineRoute({
   // J7 — sinh nội dung AI cho landing/catalog (PO 30/10/2026, trả nợ #170)
-  requireCapability(ctx, "J7")
+  auth: { kind: "tenant", capability: "J7" },
+  handler: async ({ request, ctx }) => {
+    const body = await request.json().catch(() => null)
+    const parsed = requestSchema.safeParse(body)
+    if (!parsed.success) {
+      throw validationFailed({ issues: parsed.error.issues })
+    }
 
-  const body = await request.json().catch(() => null)
-  const parsed = requestSchema.safeParse(body)
-  if (!parsed.success) {
-    throw validationFailed({ issues: parsed.error.issues })
-  }
+    const [bizProfile, sellingNotes] = await Promise.all([
+      getBusinessProfile(ctx).catch(() => null),
+      // Thiếu quyền đọc dữ liệu bán hàng (H5) hoặc lỗi → viết như cũ
+      getApprovedSellingNotes(ctx, parsed.data.productIds ?? []).catch(() => new Map<string, string>()),
+    ])
+    const shopName = bizProfile?.display_name || "Tiệm Sản Phẩm"
 
-  const [bizProfile, sellingNotes] = await Promise.all([
-    getBusinessProfile(ctx).catch(() => null),
-    // Thiếu quyền đọc dữ liệu bán hàng (H5) hoặc lỗi → viết như cũ
-    getApprovedSellingNotes(ctx, parsed.data.productIds ?? []).catch(() => new Map<string, string>()),
-  ])
-  const shopName = bizProfile?.display_name || "Tiệm Sản Phẩm"
+    const result = await executeGenerateCatalogContent(
+      {
+        shopName,
+        collectionName: parsed.data.collectionName,
+        occasion: parsed.data.occasion,
+        productCount: parsed.data.productCount,
+        styleVariant: parsed.data.styleVariant,
+        userDirectives: parsed.data.userDirectives,
+        sellingNotes: [...sellingNotes.values()],
+      },
+      ctx
+    )
 
-  const result = await executeGenerateCatalogContent(
-    {
-      shopName,
-      collectionName: parsed.data.collectionName,
-      occasion: parsed.data.occasion,
-      productCount: parsed.data.productCount,
-      styleVariant: parsed.data.styleVariant,
-      userDirectives: parsed.data.userDirectives,
-      sellingNotes: [...sellingNotes.values()],
-    },
-    ctx
-  )
-
-  return jsonResponse({
-    data: result,
-  })
+    return jsonResponse({
+      data: result,
+    })
+  },
 })

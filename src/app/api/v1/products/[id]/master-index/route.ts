@@ -5,21 +5,20 @@
  */
 
 import { notFound } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getProductMasterIndex } from "@/modules/products/use-cases/get-product-master-index"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "L1")
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "L1" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    const masterIndex = await getProductMasterIndex(ctx, id)
 
-  const { id } = await context.params
-  const masterIndex = await getProductMasterIndex(ctx, id)
+    if (!masterIndex) {
+      throw notFound()
+    }
 
-  if (!masterIndex) {
-    throw notFound()
-  }
-
-  return jsonResponse({ item: masterIndex })
+    return jsonResponse({ item: masterIndex })
+  },
 })

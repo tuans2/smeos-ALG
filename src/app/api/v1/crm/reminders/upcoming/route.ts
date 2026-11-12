@@ -4,18 +4,17 @@
  * Quyền: Q7
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { scanUpcomingReminders } from "@/modules/crm/use-cases/scan-upcoming-reminders"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "Q7")
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "Q7" },
+  handler: async ({ request, ctx }) => {
+    const url = new URL(request.url)
+    const daysAhead = url.searchParams.get("days") ? Number(url.searchParams.get("days")) : 14
 
-  const url = new URL(request.url)
-  const daysAhead = url.searchParams.get("days") ? Number(url.searchParams.get("days")) : 14
-
-  const result = await scanUpcomingReminders(ctx, Number.isNaN(daysAhead) ? 14 : daysAhead)
-  return jsonResponse(result)
+    const result = await scanUpcomingReminders(ctx, Number.isNaN(daysAhead) ? 14 : daysAhead)
+    return jsonResponse(result)
+  },
 })

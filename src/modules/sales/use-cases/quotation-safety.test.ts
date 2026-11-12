@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest"
 
 // Giá sàn có test riêng (price-floor.test.ts, tests/tenant/below-floor.test.ts) — ở đây cô lập khỏi CSDL
 vi.mock("@/modules/costing/use-cases/price-floor-guard", () => ({ assertNotBelowFloor: vi.fn(async () => undefined), assertWithinPriceBounds: vi.fn(async () => undefined) }))
+vi.mock("@/modules/sales/use-cases/quotation-discount-guard", () => ({ assertQuotationDiscount: vi.fn(async () => undefined) }))
 import { AppError } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { OrderRecord } from "@/modules/orders/domain/order-types"

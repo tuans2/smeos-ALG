@@ -3,15 +3,15 @@
  * chào chưa đặt). Q1: xem thông tin khách hàng (cùng mã với `/api/v1/leads`).
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { listLeadQueue } from "@/modules/orders/use-cases/list-lead-queue"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "Q1")
-  return jsonResponse(await listLeadQueue(ctx))
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "Q1" },
+  handler: async ({ ctx }) => {
+    return jsonResponse(await listLeadQueue(ctx))
+  },
 })
 
 export const dynamic = "force-dynamic"

@@ -1,14 +1,14 @@
 /** `POST /api/v1/delivery/my-runs/:id` (R18) — shipper báo đã lấy hàng, đang giao, giao xong (kèm ảnh) hoặc thất bại. */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { jsonResponse } from "@/core/http/response"
 import { reportShipperRun } from "@/modules/coordinator/use-cases/shipper-runs"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { shipperRunEventBody } from "@/app/api/v1/_contracts/requests-marketing"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request, { params }: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R18")
-  const { id } = await params
-  return jsonResponse(await reportShipperRun(ctx, id, shipperRunEventBody.parse(await request.json())))
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "R18" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    return jsonResponse(await reportShipperRun(ctx, id, shipperRunEventBody.parse(await request.json())))
+  },
 })

@@ -3,16 +3,16 @@
  * Body `{ reason }`. Trong chính sách / hoả tốc / hạn mức → tự duyệt, đơn sang Điều phối; ngoài → chờ Điều hành.
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { requestDeliverBeforePay } from "@/modules/orders/use-cases/deliver-before-pay"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R2")
-  const { id } = await context.params
-  const body = ((await request.json().catch(() => null)) ?? {}) as Record<string, unknown>
-  const result = await requestDeliverBeforePay(ctx, id, { reason: typeof body.reason === "string" ? body.reason : undefined })
-  return jsonResponse(result, { status: 201 })
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "R2" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const body = ((await request.json().catch(() => null)) ?? {}) as Record<string, unknown>
+    const result = await requestDeliverBeforePay(ctx, id, { reason: typeof body.reason === "string" ? body.reason : undefined })
+    return jsonResponse(result, { status: 201 })
+  },
 })

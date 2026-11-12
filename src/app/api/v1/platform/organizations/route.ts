@@ -3,23 +3,27 @@
  * khoản chủ tiệm mật khẩu tạm và gói thuê bao — checklist ALG 9.10.
  * Xem đặc tả 06 mục 21 — ngoại lệ có chủ đích với Luật 2.
  */
-import { handle, jsonResponse } from "@/core/http/response"
-import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { jsonResponse } from "@/core/http/response"
 import { listOrganizations } from "@/modules/platform/use-cases/list-organizations"
 import { createOrganizationFromConsole } from "@/modules/platform/use-cases/create-organization"
 import { validationFailed } from "@/core/http/errors"
 import { createOrganizationBody } from "@/app/api/v1/platform/_contracts/requests"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const pctx = await requirePlatformContext(request)
-  return jsonResponse({ data: await listOrganizations(pctx) })
+export const GET = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ pctx }) => {
+    return jsonResponse({ data: await listOrganizations(pctx) })
+  },
 })
 
-export const POST = handle(async (request) => {
-  const pctx = await requirePlatformContext(request)
-  const parsed = createOrganizationBody.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-  return jsonResponse({ data: await createOrganizationFromConsole(pctx, parsed.data) }, { status: 201 })
+export const POST = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ request, pctx }) => {
+    const parsed = createOrganizationBody.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    return jsonResponse({ data: await createOrganizationFromConsole(pctx, parsed.data) }, { status: 201 })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

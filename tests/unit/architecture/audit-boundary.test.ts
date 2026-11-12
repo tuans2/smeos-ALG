@@ -68,7 +68,8 @@ const writeRoutes = routeFiles(API)
   .filter((file) => !key(file).startsWith("public/"))
   .filter((file) => {
     const source = readFileSync(file, "utf8")
-    return WRITE.test(source) && /\brequireTenantContext\(/.test(source)
+    // Tenant theo cách cũ (`requireTenantContext`) hoặc khai trong `defineRoute` (`auth: { kind: "tenant" … }`)
+    return WRITE.test(source) && (/\brequireTenantContext\(/.test(source) || /\bkind:\s*"tenant"/.test(source))
   })
 
 const debt = new Set(

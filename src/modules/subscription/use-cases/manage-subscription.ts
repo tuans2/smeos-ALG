@@ -61,7 +61,10 @@ export async function assignSubscription(pctx: PlatformContext, organizationId: 
     action: before ? "platform.subscription.update" : "platform.subscription.assign",
     entityType: "subscriptions", entityId: organizationId,
     before: before ? { plan: before.plan, cycle: before.cycle, priceVnd: before.price_vnd } : null,
-    after: { plan: input.plan, cycle: input.cycle, priceVnd: input.priceVnd, includedCreditsMonthly: input.includedCreditsMonthly, firstPeriodPaid: Boolean(input.firstPeriodPaid) },
+    after: {
+      plan: input.plan, cycle: input.cycle, priceVnd: input.priceVnd, includedCreditsMonthly: input.includedCreditsMonthly, firstPeriodPaid: Boolean(input.firstPeriodPaid),
+      ...(result.prorationInvoice ? { prorationInvoice: { code: result.prorationInvoice.code, amountVnd: result.prorationInvoice.amount_vnd } } : {}),
+    },
   })
   return result.sub
 }

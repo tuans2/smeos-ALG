@@ -75,6 +75,8 @@ export function validateDeliverBeforePaySettings(input: unknown): Record<string,
 }
 
 export interface DeliverBeforePayContext {
+  /** Đơn đã gắn khách (có hồ sơ khách để xét nợ). Không gắn → không tự duyệt bằng lối nào (PO 12/11/2026, BL-29). */
+  hasCustomer: boolean
   totalVnd: number
   paidVnd: number
   isUrgent: boolean
@@ -111,6 +113,8 @@ export function decideDeliverBeforePay(
   if (ctx.totalVnd <= 0) return { outcome: "QUOTE_FIRST" }
   if (ctx.paidVnd >= ctx.totalVnd) return { outcome: "ALREADY_PAID" }
   const s = parseDeliverBeforePaySettings(orgSettings)
+  // Chưa gắn khách thì không xét được nợ → Điều hành duyệt, kể cả hoả tốc và chính sách tiệm (PO 12/11/2026, BL-29)
+  if (!ctx.hasCustomer) return { outcome: "NEEDS_ADMIN", why: "Đơn chưa gắn khách hàng — gắn khách để xét công nợ" }
   // Xét nợ TRƯỚC mọi lối tự duyệt — kể cả chính sách tiệm và đơn hoả tốc (PO 07/11/2026, Q7; audit BL-15)
   if (ctx.customerHasOverdueDebt) return { outcome: "NEEDS_ADMIN", why: "Khách còn nợ quá hạn" }
   if (s.customerDebtCapVnd !== null && ctx.customerOpenDebtVnd + (ctx.totalVnd - ctx.paidVnd) > s.customerDebtCapVnd) {
@@ -119,7 +123,11 @@ export function decideDeliverBeforePay(
   if (withinShopPolicy(orgSettings, ctx)) {
     return { outcome: "AUTO_APPROVE", basis: "POLICY", label: "Trong chính sách thu tiền của tiệm (COD / thu sau)" }
   }
-  if (ctx.isUrgent) return { outcome: "AUTO_APPROVE", basis: "URGENT", label: "Đơn hoả tốc — Sale tự quyết" }
+  // Hoả tốc vẫn trong hạn mức Sale tự quyết (PO 12/11/2026, BL-29) — trước đây không giới hạn tiền
+  if (ctx.isUrgent) {
+    if (ctx.totalVnd > s.selfDecideMaxVnd) return { outcome: "NEEDS_ADMIN", why: "Đơn hoả tốc vượt hạn mức Sale tự quyết" }
+    return { outcome: "AUTO_APPROVE", basis: "URGENT", label: "Đơn hoả tốc — Sale tự quyết" }
+  }
   if (!s.allowSelfDecide) return { outcome: "NEEDS_ADMIN", why: "Tiệm chưa cho Sale tự quyết" }
   if (ctx.totalVnd > s.selfDecideMaxVnd) return { outcome: "NEEDS_ADMIN", why: "Tổng đơn vượt hạn mức Sale tự quyết" }
   if (ctx.customerCompletedOrders < s.minCompletedOrders) return { outcome: "NEEDS_ADMIN", why: "Khách chưa đủ số đơn hoàn tất" }

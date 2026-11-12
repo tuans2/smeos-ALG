@@ -2,11 +2,11 @@ import type { z } from "zod"
 
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
-import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
+import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
 import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency"
 import { requireIntegrationContext, type IntegrationContext } from "@/modules/integration/use-cases/resolve-integration-context"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { requireTenantContext, type ResolvedSession } from "@/modules/organization/use-cases/resolve-session"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 
 import { isAuthorizedCronRequest } from "./cron-auth"
@@ -24,12 +24,13 @@ import { handle } from "./response"
  */
 export type RouteAuth =
   /**
-   * Phiên người dùng + mã năng lực; mảng = có một trong các mã là đủ (vd. `["M4", "Q1"]`).
-   * `capability: null` chỉ cho dữ liệu của chính người gọi, kèm lý do.
+   * Phiên + mã năng lực. `capability: null` kèm lý do: dữ liệu của chính người gọi, hoặc quyền phụ thuộc dữ liệu gửi lên
+   * nên handler tự kiểm (vd. một trong F2/L2/L3) — lý do phải nói rõ mã nào.
    */
-  | { kind: "tenant"; capability: string | readonly [string, ...string[]] }
+  | { kind: "tenant"; capability: string }
   | { kind: "tenant"; capability: null; reason: string }
   | { kind: "platform"; capability: string }
+  | { kind: "platform"; capability: null; reason: string }
   /** Máy gọi máy (`/integration/*`) — trần 600/phút/token đã nằm trong `requireIntegrationContext`. */
   | { kind: "integration" }
   /** Không đăng nhập — bắt buộc `rateLimit` theo IP. */
@@ -47,7 +48,8 @@ type Per<A extends RouteAuth> = A extends { kind: "public" } ? "ip"
 
 export type RouteRateLimit<A extends RouteAuth> = { scope: string; limit: number; windowMs: number; per: Per<A> }
 
-type ActorOf<A extends RouteAuth> = A extends { kind: "tenant" } ? { ctx: TenantContext }
+/** `resolved`: người dùng + phiên đã xác thực (vd. `resolved.user.id`, `resolved.session.id`). */
+type ActorOf<A extends RouteAuth> = A extends { kind: "tenant" } ? { ctx: TenantContext; resolved: ResolvedSession }
   : A extends { kind: "platform" } ? { pctx: PlatformContext }
   : A extends { kind: "integration" } ? { ic: IntegrationContext }
   : Record<never, never>
@@ -69,7 +71,7 @@ type RouteSpec<A extends RouteAuth, B, Q, P> = {
   handler: (input: RouteInput<A, B, Q, P>) => Promise<Response>
 } & (A extends { kind: "public" } ? { rateLimit: RouteRateLimit<A> } : { rateLimit?: RouteRateLimit<A> })
 
-type Actor = { ctx?: TenantContext; pctx?: PlatformContext; ic?: IntegrationContext }
+type Actor = { ctx?: TenantContext; resolved?: ResolvedSession; pctx?: PlatformContext; ic?: IntegrationContext }
 
 export function defineRoute<A extends RouteAuth, B = undefined, Q = undefined, P = Record<string, string>>(
   spec: RouteSpec<A, B, Q, P>
@@ -100,13 +102,13 @@ export function defineRoute<A extends RouteAuth, B = undefined, Q = undefined, P
 async function authenticate(request: Request, auth: RouteAuth): Promise<Actor> {
   switch (auth.kind) {
     case "tenant": {
-      const { ctx } = await requireTenantContext(request)
-      if (auth.capability !== null) requireAnyCapability(ctx, auth.capability)
-      return { ctx }
+      const { ctx, resolved } = await requireTenantContext(request)
+      if (auth.capability !== null) requireCapability(ctx, auth.capability)
+      return { ctx, resolved }
     }
     case "platform": {
       const pctx = await requirePlatformContext(request)
-      requirePlatformCapability(pctx, auth.capability)
+      if (auth.capability !== null) requirePlatformCapability(pctx, auth.capability)
       return { pctx }
     }
     case "integration":
@@ -156,11 +158,4 @@ export function assertSnakeCaseKeys(schema: unknown, path: string): void {
   for (const child of [def.element, def.innerType, def.in, ...(def.options ?? [])]) {
     if (child) assertSnakeCaseKeys(child, path)
   }
-}
-
-/** Có một trong các mã là đủ; không có mã nào thì ném đúng lỗi của `requireCapability` cho mã đầu tiên. */
-function requireAnyCapability(ctx: TenantContext, capability: string | readonly [string, ...string[]]): void {
-  const codes = typeof capability === "string" ? [capability] : capability
-  if (codes.some((code) => hasCapability(ctx, code))) return
-  requireCapability(ctx, codes[0]!)
 }

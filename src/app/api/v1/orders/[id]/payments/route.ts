@@ -3,15 +3,15 @@
  * Body `{ amountVnd, method: BANK_TRANSFER|CASH|CARD|E_WALLET|COD, reference?, note? }`.
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { confirmOrderPayment } from "@/modules/orders/use-cases/confirm-order-payment"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R11")
-  const { id } = await context.params
-  const body = ((await request.json().catch(() => null)) ?? {}) as Record<string, unknown>
-  return jsonResponse(await confirmOrderPayment(ctx, id, body), { status: 201 })
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "R11" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const body = ((await request.json().catch(() => null)) ?? {}) as Record<string, unknown>
+    return jsonResponse(await confirmOrderPayment(ctx, id, body), { status: 201 })
+  },
 })
