@@ -959,6 +959,20 @@ documents:
     dependencies: ["docs/plan/BANGIAO_GD1_123_CHUC_NANG.md", "docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx"]
     supersedes: []
 
+
+  - id: "DOC-05-BANGIAO-GD1-UNG-VIEN-3"
+    path: "docs/audit/gd1-ung-vien-3/README.md"
+    title: "Ứng viên 3 của bản giao GD1 — cắt, dựng từ môi trường trắng và chạy kịch bản nghiệm thu — 12/11/2026"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Kết quả Bước 5–6 trên mốc 67c9ebed: cổng kiểm trên bản cắt dựng sạch, 64 bước nghiệm thu đã chạy, lỗi và điểm cần quyết định, checklist đã điền và ảnh"
+    status: "SUPPORTING"
+    authority: "Level 5"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/plan/BANGIAO_GD1_123_CHUC_NANG.md", "docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx"]
+    supersedes: []
   - id: "DOC-05-BANGIAO-GD1-PHAM-VI"
     path: "docs/plan/BANGIAO_GD1_PHAM_VI.md"
     title: "Phạm vi Giai đoạn 1 — 123 chức năng bàn giao ALG"

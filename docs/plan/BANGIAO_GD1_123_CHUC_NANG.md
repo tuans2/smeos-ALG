@@ -127,6 +127,8 @@ Hiện trạng đã đo:
 
 **Đã làm 11–12/11/2026, ba lượt, ứng viên cuối `gd1-rc-2026-11-12-3`:** dựng từ môi trường trắng chỉ theo README (qua được, kể cả tạo người vận hành đầu tiên); cổng kiểm trên bản cắt xanh (typecheck, unit 710/710 tệp, platform 19/19, tenant 271/271, pytest, build); quét rò rỉ sạch; 141/141 bước kịch bản đã chạy — 118 Đạt, 4 Đạt một phần, 19 chờ môi trường thật, 0 Không đạt; 25 lỗi phát hiện đã xử lý. Chi tiết: [`docs/audit/gd1-buoc6/`](../audit/gd1-buoc6/README.md).
 
+**Ứng viên 3 (12/11/2026, mốc `67c9ebed`):** bản cắt 5.408 tệp, 90 trang, 491 API; dựng từ thư mục trắng và qua mọi cổng (kiểm rò rỉ, typecheck, ESLint ratchet, UX lint, 3 cổng tài liệu, `npm test` 763 tệp, `test:platform` 20 tệp, `test:tenant` 294 tệp, build, pytest). Lỗi chặn cài đặt: `.env.example` của lớp phủ còn trỏ tài khoản CSDL cũ, lệch `docker-compose.yml` — đã sửa kèm test, nên tag ứng viên 3 lấy từ mốc `main` có commit sửa. Kịch bản nghiệm thu: 64/141 bước chạy — 44 Đạt, 18 Đạt một phần, 1 Không đạt (J-09), 1 chưa kết luận; 12/14 bước Không đạt của ứng viên 2 nay Đạt. Chi tiết và danh sách điểm cần quyết định: [`docs/audit/gd1-ung-vien-3/`](../audit/gd1-ung-vien-3/README.md).
+
 **Ghi chú 13/11/2026:** sau `gd1-rc-2026-11-12-3`, `main` đã nhận thêm PR #62, #65 (tạm dừng/rời hệ thống, xoá dữ liệu khách, danh sách việc chuyển giao) và các sửa của nhánh nghiệm thu này. Bản cắt `Alg_123Cn` (22:08 12/11) dựng từ `main` sau PR #64 nên không trùng mã với ứng viên đã nghiệm thu — cần cắt ứng viên mới từ `main` và chạy lại các bước liên quan trước khi giao.
 
 **Điểm duyệt:** bạn xác nhận mới tạo repo và giao cho ALG (hành động ra bên ngoài, không tự làm).
