@@ -12,8 +12,8 @@ import { ORDER_SOURCE_CODES } from "@/modules/orders/domain/order-source"
 
 // orders/route.ts
 export const createOrderBody = z.object({
-  branchId: z.string().optional(),
-  customerId: z.string().optional(),
+  branch_id: z.string().optional(),
+  customer_id: z.string().optional(),
   items: z.array(
     z.object({
       productId: z.string().optional(),
@@ -24,16 +24,16 @@ export const createOrderBody = z.object({
       metadata: z.record(z.string(), z.unknown()).optional(),
     })
   ).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm"),
-  pricingRuleRef: z.record(z.string(), z.unknown()).optional(),
-  cardMessage: z.string().optional(),
-  internalNote: z.string().optional(),
-  deliveryWindow: z
+  pricing_rule_ref: z.record(z.string(), z.unknown()).optional(),
+  card_message: z.string().optional(),
+  internal_note: z.string().optional(),
+  delivery_window: z
     .object({
       date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ngày giao dạng YYYY-MM-DD"),
       timeSlot: z.string().optional(),
     })
     .optional(),
-  deliveryAddress: z
+  delivery_address: z
     .object({
       recipientName: z.string(),
       phone: z.string(),
@@ -49,17 +49,17 @@ export const createOrderBody = z.object({
 // orders/[id]/route.ts
 export const patchOrderBody = z.object({
   status: z.enum(["DRAFT", "CONFIRMED", "PROCESSING", "DELIVERED", "COMPLETED", "CANCELLED"]).optional(),
-  productionStatus: z.enum(["WAITING", "ASSIGNED", "ARRANGING", "QUALITY_CHECK", "READY"]).optional(),
-  deliveryStatus: z.enum(["PENDING", "DISPATCHED", "DELIVERING", "DELIVERED", "FAILED"]).optional(),
-  cardMessage: z.string().optional(),
-  internalNote: z.string().optional(),
-  deliveryWindow: z
+  production_status: z.enum(["WAITING", "ASSIGNED", "ARRANGING", "QUALITY_CHECK", "READY"]).optional(),
+  delivery_status: z.enum(["PENDING", "DISPATCHED", "DELIVERING", "DELIVERED", "FAILED"]).optional(),
+  card_message: z.string().optional(),
+  internal_note: z.string().optional(),
+  delivery_window: z
     .object({
       date: z.string(),
       timeSlot: z.string().optional(),
     })
     .optional(),
-  deliveryAddress: z
+  delivery_address: z
     .object({
       recipientName: z.string(),
       phone: z.string(),
@@ -74,7 +74,7 @@ export const patchOrderBody = z.object({
 
 // orders/[id]/assign/route.ts
 export const assignOrderBody = z.object({
-  assigneeId: z.string().min(1, "Bắt buộc phải chọn nhân sự thực hiện"),
+  assignee_id: z.string().min(1, "Bắt buộc phải chọn nhân sự thực hiện"),
   difficulty: z.enum(["co_ban", "trung_binh", "kho", "vip"]).optional(),
 })
 
@@ -88,8 +88,8 @@ export const createInfoRequestBody = z.object({
   field: z.string().trim().min(1).max(64),
   label: z.string().trim().min(1).max(120),
   reason: z.string().trim().min(1).max(500),
-  requestedFrom: z.string().trim().min(1).max(200),
-  dueAt: z.string().datetime().nullish(),
+  requested_from: z.string().trim().min(1).max(200),
+  due_at: z.string().datetime().nullish(),
   channel: z.string().trim().max(40).nullish(),
 })
 
@@ -181,17 +181,11 @@ const quotationItemSchema = z.object({
 })
 export const createQuotationBody = z.object({
   lead_id: z.string().nullable().optional(),
-  leadId: z.string().nullable().optional(),
   customer_id: z.string().nullable().optional(),
-  customerId: z.string().nullable().optional(),
   asset_usage_id: z.string().nullable().optional(),
-  assetUsageId: z.string().nullable().optional(),
   valid_until: z.string().nullable().optional(),
-  validUntil: z.string().nullable().optional(),
   discount_amount: z.number().min(0).optional(),
-  discountAmount: z.number().min(0).optional(),
   shipping_fee: z.number().min(0).max(100_000_000).optional(),
-  shippingFee: z.number().min(0).max(100_000_000).optional(),
   terms: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
   items: z.array(quotationItemSchema).min(1, "Báo giá phải có ít nhất một sản phẩm"),
@@ -201,19 +195,16 @@ export const updateQuotationBody = z.object({
     .enum(["DRAFT", "SENT", "ACCEPTED", "REJECTED", "EXPIRED", "CONVERTED"])
     .optional(),
   valid_until: z.string().nullable().optional(),
-  validUntil: z.string().nullable().optional(),
   discount_amount: z.number().min(0).optional(),
-  discountAmount: z.number().min(0).optional(),
   shipping_fee: z.number().min(0).max(100_000_000).optional(),
-  shippingFee: z.number().min(0).max(100_000_000).optional(),
   terms: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
   items: z.array(quotationItemSchema).optional(),
 })
 export const listQuotationsQuery = z.object({
   status: z.enum(["DRAFT", "SENT", "ACCEPTED", "REJECTED", "EXPIRED", "CONVERTED"]).optional(),
-  leadId: z.string().optional(),
-  customerId: z.string().optional(),
+  lead_id: z.string().optional(),
+  customer_id: z.string().optional(),
   search: z.string().optional(),
   cursor: z.string().optional(),
   /** 1–100, mặc định 20. */

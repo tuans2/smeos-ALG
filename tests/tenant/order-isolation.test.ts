@@ -43,7 +43,7 @@ describe("cách ly tenant — đơn hàng và vận hành M10 (P22)", () => {
               unitPriceVnd: 550000,
             },
           ],
-          cardMessage: "Chúc mừng sinh nhật em yêu!",
+          card_message: "Chúc mừng sinh nhật em yêu!",
         }),
       })
     )
@@ -166,7 +166,7 @@ describe("cách ly tenant — đơn hàng và vận hành M10 (P22)", () => {
         method: "POST",
         body: JSON.stringify({
           items: [{ description: "Đơn in phiếu", quantity: 1, unitPriceVnd: 300000 }],
-          cardMessage: "Chúc bạn luôn vui vẻ",
+          card_message: "Chúc bạn luôn vui vẻ",
         }),
       })
     )

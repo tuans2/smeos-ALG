@@ -43,10 +43,10 @@ describe("cách ly tenant — thông báo đa tầng", () => {
   })
 
   it("notification_user_preferences / org_policies / store_defaults: ghi của A không lộ sang B", async () => {
-    const pref = { eventKey: "ORDER_RECEIVED", channel: "EMAIL", enabled: false }
+    const pref = { event_key: "ORDER_RECEIVED", channel: "EMAIL", enabled: false }
     expect((await patchPrefs(send(a, "preferences", "PATCH", pref))).status).toBe(200)
-    expect((await patchOrgPolicy(send(a, "org-policy", "PATCH", { ...pref, roleKey: "*" }))).status).toBe(200)
-    expect((await patchStoreDefaults(send(a, "store-defaults", "PATCH", { ...pref, roleKey: "*" }))).status).toBe(200)
+    expect((await patchOrgPolicy(send(a, "org-policy", "PATCH", { ...pref, role_key: "*" }))).status).toBe(200)
+    expect((await patchStoreDefaults(send(a, "store-defaults", "PATCH", { ...pref, role_key: "*" }))).status).toBe(200)
 
     for (const get of [getPrefs, getOrgPolicy, getStoreDefaults]) {
       const body = await readJson(await get(withSession(url("x"), b.token)))
@@ -59,9 +59,9 @@ describe("cách ly tenant — thông báo đa tầng", () => {
 
   it("AUD-015: khoá cứng cửa hàng của A không chặn tuỳ chọn của B và không lộ lý do", async () => {
     await postStoreLock(send(a, "store-hard-locks", "POST", {
-      eventKey: "ORDER_RECEIVED", channel: "EMAIL", enabled: false, reason: "ghi chú nội bộ của A",
+      event_key: "ORDER_RECEIVED", channel: "EMAIL", enabled: false, reason: "ghi chú nội bộ của A",
     }))
-    const res = await patchPrefs(send(b, "preferences", "PATCH", { eventKey: "ORDER_RECEIVED", channel: "EMAIL", enabled: true }))
+    const res = await patchPrefs(send(b, "preferences", "PATCH", { event_key: "ORDER_RECEIVED", channel: "EMAIL", enabled: true }))
     expect(res.status).toBe(200)
     expect(JSON.stringify(await readJson(res))).not.toContain("ghi chú nội bộ của A")
   })

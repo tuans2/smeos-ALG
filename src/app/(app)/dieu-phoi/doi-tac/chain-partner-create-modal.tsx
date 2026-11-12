@@ -64,14 +64,14 @@ export function ChainPartnerCreateModal({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            partnerStoreName,
-            partnerCode,
-            contactName,
-            contactPhone,
-            contactEmail,
+            partner_store_name: partnerStoreName,
+            partner_code: partnerCode,
+            contact_name: contactName,
+            contact_phone: contactPhone,
+            contact_email: contactEmail,
             address,
             province,
-            partnershipType: "SUBCONTRACTOR",
+            partnership_type: "SUBCONTRACTOR",
           }),
         })
         const json = await res.json()
@@ -90,8 +90,8 @@ export function ChainPartnerCreateModal({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             identifier: existingIdentifier,
-            partnerCode: existingPartnerCode,
-            partnershipType: "SUBCONTRACTOR",
+            partner_code: existingPartnerCode,
+            partnership_type: "SUBCONTRACTOR",
           }),
         })
         const json = await res.json().catch(() => ({}))

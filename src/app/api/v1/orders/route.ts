@@ -9,6 +9,7 @@ import type { OrderListCursor, OrderStatus, ProductionStatus, DeliveryStatus } f
 import { decodeCursor, encodeCursor } from "@/core/http/pagination"
 import { createOrderBody } from "@/app/api/v1/_contracts/requests-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /** `GET /api/v1/orders` (R1) — Danh sách đơn hàng, phân trang con trỏ `{ data, next_cursor, meta: { total } }` */
 export const GET = defineRoute({
@@ -76,7 +77,7 @@ export const POST = defineRoute({
       throw validationFailed({ "Idempotency-Key": `Tối đa ${ORDER_IDEMPOTENCY_KEY_MAX} ký tự` })
     }
     const body = await request.json()
-    const parsed = createOrderBody.parse(body)
+    const parsed = camelKeys(createOrderBody.parse(body))
 
     const { order, replayed } = await ingestOrderOnce(ctx, { ...parsed, source: "MANUAL" }, idempotencyKey)
     if (replayed) return jsonResponse({ order }, { status: 201, headers: { "Idempotent-Replayed": "true" } })

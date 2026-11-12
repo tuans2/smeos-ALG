@@ -33,7 +33,7 @@ export function ChainGovernanceSection() {
       const res = await fetch("/api/v1/integrations/governance", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ connectorKey, mode }),
+        body: JSON.stringify({ connector_key: connectorKey, mode }),
       })
       const body = (await res.json().catch(() => ({}))) as { items?: GovernanceItem[]; error?: { message?: string } }
       if (!res.ok) throw new Error(body.error?.message ?? "Không lưu được")

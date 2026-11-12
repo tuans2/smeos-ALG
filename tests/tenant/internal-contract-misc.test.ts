@@ -83,7 +83,7 @@ describe("hợp đồng — phiên, báo cáo, bản in, mã giảm giá, credit
   it("credit: lịch sử, tổng hợp tháng, hạn mức", async () => {
     await expectContract(await usage(get("/usage?limit=10")), 200, R.usageListResponse, "usage-list")
     await expectContract(await usageSummary(get("/usage/summary?period=2026-11")), 200, R.usageSummaryResponse, "usage-summary")
-    await expectContract(await putLimits(send("/usage/limits", "PUT", { aiMonthlyLimit: 500 })), 200, R.usageLimitsResponse, "usage-limits-put")
+    await expectContract(await putLimits(send("/usage/limits", "PUT", { ai_monthly_limit: 500 })), 200, R.usageLimitsResponse, "usage-limits-put")
     await expectContract(await limits(get("/usage/limits")), 200, R.usageLimitsResponse, "usage-limits")
   })
 
@@ -102,7 +102,7 @@ describe("hợp đồng — phiên, báo cáo, bản in, mã giảm giá, credit
   })
 
   it("bản in: kiểm trước khi in, tạo, danh sách, xem, xuất PDF", async () => {
-    await expectContract(await preflight(send("/print/preflight", "POST", { presetCode: "A5", imageWidthPx: 1800, imageHeightPx: 2500, colorMode: "RGB", hasQrCode: true, qrSizeMm: 25 })), 200, R.preflightResponse, "print-preflight")
+    await expectContract(await preflight(send("/print/preflight", "POST", { preset_code: "A5", image_width_px: 1800, image_height_px: 2500, color_mode: "RGB", has_qr_code: true, qr_size_mm: 25 })), 200, R.preflightResponse, "print-preflight")
     const created = await expectContract(
       await createRendition(send("/print/renditions", "POST", { sourceType: "greeting_card", presetCode: "A5", imageWidthPx: 1800, imageHeightPx: 2500 })),
       201, R.renditionResponse, "print-create"
@@ -111,7 +111,7 @@ describe("hợp đồng — phiên, báo cáo, bản in, mã giảm giá, credit
     await expectContract(await listRenditions(get("/print/renditions?preset_code=A5&limit=10")), 200, R.renditionsResponse, "print-list")
     // @release-strip
     await expectContract(await getRendition(get(`/print/renditions/${id}`), ps(id)), 200, R.renditionResponse, "print-get")
-    const pdf = await exportRendition(send(`/print/renditions/${id}/export`, "POST", { title: "Thiệp Tết", storeName: "Tiệm hoa" }), ps(id))
+    const pdf = await exportRendition(send(`/print/renditions/${id}/export`, "POST", { title: "Thiệp Tết", store_name: "Tiệm hoa" }), ps(id))
     await expectContract(pdf, 200, R.renditionExportResponse, "print-export")
     // @release-strip-end
   })

@@ -61,7 +61,9 @@ export const POST = defineRoute({
       const conversation = await openRoom(
         { chatRepo, linkPolicy: getChatLinkPolicy(), directory: new PrismaChatRoomDirectory() },
         { userId: ctx.userId, organizationId: ctx.organizationId, branchId: ctx.branchId },
-        room.data
+        "partner_org_id" in room.data ? { partnerOrgId: room.data.partner_org_id }
+          : "chain_org_id" in room.data ? { chainOrgId: room.data.chain_org_id }
+          : { branchId: room.data.branch_id }
       )
       return jsonResponse({ data: conversation })
     }
@@ -74,14 +76,14 @@ export const POST = defineRoute({
     }
 
     // Người được mời phải thuộc tổ chức mình hoặc đối tác/chuỗi đang liên kết; khác → 404
-    const { targetUserId, targetOrganizationId } = parsed.data
+    const { target_user_id: targetUserId, target_organization_id: targetOrganizationId } = parsed.data
     if (targetUserId && !(await isAllowedChatTarget(ctx.organizationId, targetOrganizationId ?? ctx.organizationId, targetUserId))) {
       throw notFound()
     }
 
     // Luồng theo đơn chỉ gắn với đơn của CHÍNH tổ chức — trước đây tổ chức khác gắn được mã đơn của chuỗi vào phòng
     // của mình, rồi lệnh gửi đơn của chuỗi (tra phòng theo mã đơn) đăng thẻ đơn sang phòng đó.
-    if (parsed.data.orderId && !(await getOrderRepository().findById(ctx.organizationId, parsed.data.orderId))) {
+    if (parsed.data.order_id && !(await getOrderRepository().findById(ctx.organizationId, parsed.data.order_id))) {
       throw notFound()
     }
 
@@ -92,11 +94,11 @@ export const POST = defineRoute({
       organizationId: ctx.organizationId,
       userId: ctx.userId,
       userRole: resolved.membership?.role_id ?? "member",
-      conversationType: parsed.data.conversationType,
+      conversationType: parsed.data.conversation_type,
       title: parsed.data.title,
-      targetOrganizationId: parsed.data.targetOrganizationId,
-      targetUserId: parsed.data.targetUserId,
-      orderId: parsed.data.orderId,
+      targetOrganizationId,
+      targetUserId,
+      orderId: parsed.data.order_id,
     })
 
     return jsonResponse({

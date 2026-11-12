@@ -167,10 +167,10 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
     setLoading(true)
     try {
       const body = JSON.stringify({
-        deliveryAddress: { recipientName, phone, street },
-        deliveryWindow: { date: deliveryDate, timeSlot },
-        cardMessage,
-        internalNote,
+        delivery_address: { recipientName, phone, street },
+        delivery_window: { date: deliveryDate, timeSlot },
+        card_message: cardMessage,
+        internal_note: internalNote,
         items: items.map((it) => ({
           productId: it.productId,
           description: it.description,

@@ -31,7 +31,7 @@ describe("báo giá: phiên bản, phí vận chuyển, lịch sử sửa", () =
   async function create() {
     const res = await createQuotation(withSession(BASE, a.token, {
       method: "POST",
-      body: JSON.stringify({ items: [{ name: "Bó hồng", variantLabel: "Lớn", qty: 1, unitPrice: 900_000 }], discountAmount: 100_000, shippingFee: 30_000 }),
+      body: JSON.stringify({ items: [{ name: "Bó hồng", variantLabel: "Lớn", qty: 1, unitPrice: 900_000 }], discount_amount: 100_000, shipping_fee: 30_000 }),
     }))
     expect(res.status).toBe(201)
     return (await readJson(res)).data as Q
@@ -52,7 +52,7 @@ describe("báo giá: phiên bản, phí vận chuyển, lịch sử sửa", () =
   it("sửa 2 lần → 2 phiên bản trước đọc lại đúng; đổi trạng thái không tạo phiên bản; tổ chức khác → 404", async () => {
     const q = await create()
     expect((await patch(a.token, q.id, { items: [{ name: "Bó hồng", variantLabel: "Lớn", qty: 2, unitPrice: 900_000 }] })).status).toBe(200)
-    expect((await patch(a.token, q.id, { shippingFee: 50_000 })).status).toBe(200)
+    expect((await patch(a.token, q.id, { shipping_fee: 50_000 })).status).toBe(200)
     expect((await patch(a.token, q.id, { status: "SENT" })).status).toBe(200)
 
     const { rows } = await revisions(a.token, q.id)
@@ -64,6 +64,6 @@ describe("báo giá: phiên bản, phí vận chuyển, lịch sử sửa", () =
     expect((await revisions(b.token, q.id)).status).toBe(404)
     expect(await prisma.quotation_revisions.count({ where: { organization_id: b.organizationId } })).toBe(0)
     expect(await prisma.quotation_revisions.count({ where: { organization_id: a.organizationId, quotation_id: q.id } })).toBe(2)
-    expect((await patch(b.token, q.id, { shippingFee: 0 })).status).toBe(404)
+    expect((await patch(b.token, q.id, { shipping_fee: 0 })).status).toBe(404)
   })
 })

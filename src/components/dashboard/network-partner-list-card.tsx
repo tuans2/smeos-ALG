@@ -5,12 +5,15 @@ import { Users } from "@/components/ui/icon-set/users"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PartnerStatementModal } from "@/components/coordinator/partner-statement-modal"
+import { useSession } from "@/lib/session"
 
 export type NetworkPartner = { id: string; code: string; name: string; phone?: string; district: string | null; province: string | null; capacityDaily: number; tier: string; isActive: boolean }
 
 /** Danh bạ xưởng đối tác trên Trung tâm mạng lưới; mỗi đối tác mở được bảng kê tiền công thật (audit BL-22). */
 export function NetworkPartnerListCard({ partners, onManage }: { partners: NetworkPartner[]; onManage: () => void }) {
   const [statementOf, setStatementOf] = useState<NetworkPartner | null>(null)
+  // Bảng kê cần R19 (Điều hành, Kế toán) — vai Điều phối không thấy nút để khỏi bấm vào lỗi quyền
+  const canSettle = useSession().can("R19")
   return (
     <Card className="p-5">
       <div className="mb-4 flex items-center justify-between">
@@ -41,9 +44,11 @@ export function NetworkPartnerListCard({ partners, onManage }: { partners: Netwo
               </div>
               <div className="flex items-center gap-2">
                 <span className="rounded-full bg-success-bg px-2 py-0.5 text-caption font-bold text-success">{p.tier}</span>
-                <Button type="button" variant="ghost" size="sm" onClick={() => setStatementOf(p)} className="text-caption">
-                  Bảng kê
-                </Button>
+                {canSettle && (
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setStatementOf(p)} className="text-caption">
+                    Bảng kê
+                  </Button>
+                )}
               </div>
             </div>
           ))}

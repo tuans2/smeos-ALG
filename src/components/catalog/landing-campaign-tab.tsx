@@ -19,9 +19,9 @@ import { LandingStepSetup } from "./landing-step-setup"
 import { LandingStepContentSettings } from "./landing-step-content-settings"
 import { LandingStepPreviewPane } from "./landing-step-preview-pane"
 import { LandingWizardNav } from "./landing-wizard-nav"
-
 import { buildLandingPublishBody } from "./landing-publish-payload"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
+import { snakeKeys } from "@/lib/case-keys"
 
 interface LandingCampaignTabProps {
   products: CatalogProduct[]
@@ -111,7 +111,7 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
       const res = await fetch("/api/v1/content-engine/landing-generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(snakeKeys({
           occasionId: matchedOccasion,
           occasionLabel: occObj?.label || matchedOccasion,
           archetypeId: selectedArchetype,
@@ -121,7 +121,7 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
           userDirectives: data.userDirectives || undefined,
           designDirection: selectedArchetype,
           pageType,
-        }),
+        })),
       }).catch(() => null)
 
       if (res && res.ok) {

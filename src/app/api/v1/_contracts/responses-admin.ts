@@ -75,6 +75,7 @@ export const subscriptionResponse = z.strictObject({
         status: z.string(),
         currentPeriodEnd: timestamp,
         includedCreditsMonthly: z.number(),
+        pendingChange: z.strictObject({ planLabel: z.string(), cycle: z.string(), priceVnd: z.number(), effectiveAt: timestamp }).nullable(),
       })
       .nullable(),
     invoices: z.array(
@@ -207,7 +208,7 @@ export const contentGuardResponse = z.strictObject({
   hasWarnings: z.boolean(),
   hardBlocks: z.array(match),
   warnings: z.array(match),
-  /** Chỉ khi `autoSanitize: true`. */
+  /** Chỉ khi `auto_sanitize: true`. */
   sanitizedText: z.string().optional(),
   /** Phong cách cấm lấy từ hồ sơ thương hiệu. */
   forbiddenStylesApplied: text,

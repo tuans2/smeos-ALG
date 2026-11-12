@@ -5,7 +5,8 @@ import { describe, expect, it } from "vitest"
 /**
  * Audit BL-22, BL-23 (11/11/2026) — `AGENT_RULES.md` §14 #24: màn thật không được gắn thành phần chạy bằng dữ liệu mẫu
  * cứng. "Sổ đối soát" đối tác hiện 3 dòng mẫu và nút "Đã thanh toán" chỉ đổi state trình duyệt; "Hiệu quả quảng cáo"
- * trên `/so-lieu` tính ROAS từ chiến dịch mẫu. Gỡ lối vào cho tới khi có nguồn dữ liệu thật.
+ * trên `/so-lieu` tính ROAS từ chiến dịch mẫu. Cả hai đã xoá (12/11/2026: sổ đối soát thay bằng bảng kê thật, báo cáo quảng
+ * cáo chờ nguồn dữ liệu thật); guard giữ lại để không ai dựng lại chúng trên dữ liệu mẫu.
  */
 const ROOT = process.cwd()
 const SCAN = ["src/app", "src/components"]

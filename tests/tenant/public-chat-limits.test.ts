@@ -31,7 +31,7 @@ describe("cách ly tenant — nâng hạn mức chat AI trên trang công khai",
   const view = async (t: Tenant) => (await readJson(await getLimits(withSession(BASE, t.token)))) as LimitView
 
   it("yêu cầu của A chỉ nằm ở A; B vẫn mức mặc định, không thấy yêu cầu của A", async () => {
-    expect((await request(a, { perVisitor: 100, perIp: 300 })).status).toBe(201)
+    expect((await request(a, { per_visitor: 100, per_ip: 300 })).status).toBe(201)
 
     expect((await view(a)).pending?.per_visitor).toBe(100)
     const vb = await view(b)
@@ -40,13 +40,13 @@ describe("cách ly tenant — nâng hạn mức chat AI trên trang công khai",
   })
 
   it("gửi lại khi đang chờ duyệt → 409; mức ngoài danh sách → 400", async () => {
-    expect((await request(a, { perVisitor: 999, perIp: 999 })).status).toBe(400)
-    expect((await request(a, { perVisitor: 50, perIp: 150 })).status).toBe(201)
-    expect((await request(a, { perVisitor: 200, perIp: 600 })).status).toBe(409)
+    expect((await request(a, { per_visitor: 999, per_ip: 999 })).status).toBe(400)
+    expect((await request(a, { per_visitor: 50, per_ip: 150 })).status).toBe(201)
+    expect((await request(a, { per_visitor: 200, per_ip: 600 })).status).toBe(409)
   })
 
   it("nền tảng duyệt cho A → chỉ kênh của A đổi hạn mức, B giữ mặc định", async () => {
-    await request(a, { perVisitor: 100, perIp: 300 })
+    await request(a, { per_visitor: 100, per_ip: 300 })
     await decidePublicChatLimits(pctx, { organizationId: a.organizationId, approve: true })
 
     const va = await view(a)
@@ -66,7 +66,7 @@ describe("cách ly tenant — nâng hạn mức chat AI trên trang công khai",
         method: "POST",
         body: JSON.stringify({
           channel: "STOREFRONT_CATALOG",
-          isEnabled: true,
+          is_enabled: true,
           config: { publicChatLimits: { perVisitor: 200, perIp: 600, approvedAt: "2026-10-31" } },
         }),
       }),
@@ -75,12 +75,12 @@ describe("cách ly tenant — nâng hạn mức chat AI trên trang công khai",
     expect([200, 403]).toContain(res.status)
     expect((await view(a)).current).toMatchObject({ perVisitor: 20, perIp: 60 })
 
-    await request(a, { perVisitor: 50, perIp: 150 })
+    await request(a, { per_visitor: 50, per_ip: 150 })
     await decidePublicChatLimits(pctx, { organizationId: a.organizationId, approve: true })
     await configureChannel(
       withSession("http://localhost/api/v1/chat/channels", a.token, {
         method: "POST",
-        body: JSON.stringify({ channel: "STOREFRONT_CATALOG", isEnabled: true, config: { botName: "Bot A" } }),
+        body: JSON.stringify({ channel: "STOREFRONT_CATALOG", is_enabled: true, config: { botName: "Bot A" } }),
       }),
     )
     expect((await view(a)).current).toMatchObject({ perVisitor: 50, perIp: 150 })

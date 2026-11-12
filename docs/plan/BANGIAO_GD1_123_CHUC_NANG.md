@@ -136,6 +136,8 @@ Kết quả trên bản dựng sạch (sau khi áp 4 sửa): kiểm rò rỉ s�
 
 **Kịch bản nghiệm thu trên bản cắt (6.3):** 84/141 bước đã chạy — 55 Đạt, 17 Không đạt, 12 chờ môi trường thật, 57 chưa chạy. Báo cáo, checklist đã điền và ảnh: [`docs/audit/gd1-buoc6/`](../audit/gd1-buoc6/README.md).
 
+**Thêm từ lần chạy đầu trên tag `gd1-rc-2026-11-11` (`21411f4f`):** README của lớp phủ thiếu `npm run seed:field-registry`, nên bản cài mới theo tài liệu bị `check:field-registry` báo thiếu 39 trường lõi — đã thêm bước đó vào README bản giao.
+
 Còn lại: chủ dự án chạy lại kịch bản nghiệm thu trên ứng viên mới (6.3), đọc lại danh sách tệp (6.4), rồi quyết định tạo repo giao ALG.
 
 **Điểm duyệt:** bạn xác nhận mới tạo repo và giao cho ALG (hành động ra bên ngoài, không tự làm).

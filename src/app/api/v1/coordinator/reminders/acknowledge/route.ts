@@ -4,6 +4,7 @@ import { PrismaDispatchReminderRepository } from "@/modules/coordinator/infra/pr
 import { acknowledgeCoordinatorReminder } from "@/modules/coordinator/use-cases/acknowledge-coordinator-reminder"
 import { acknowledgeReminderBody } from "@/app/api/v1/_contracts/requests-coordinator"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * `POST /api/v1/coordinator/reminders/acknowledge` (R3)
@@ -17,17 +18,18 @@ export const POST = defineRoute({
     if (!parsed.success) {
       throw validationFailed({ issues: parsed.error.issues })
     }
+    const input = camelKeys(parsed.data)
 
     const repository = new PrismaDispatchReminderRepository()
     const result = await acknowledgeCoordinatorReminder(
       {
         organizationId: ctx.organizationId,
-        orderId: parsed.data.orderId,
-        milestone: parsed.data.milestone,
-        action: parsed.data.action,
+        orderId: input.orderId,
+        milestone: input.milestone,
+        action: input.action,
         actorId: ctx.userId,
-        snoozeMinutes: parsed.data.snoozeMinutes,
-        note: parsed.data.note,
+        snoozeMinutes: input.snoozeMinutes,
+        note: input.note,
       },
       repository
     )

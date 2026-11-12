@@ -32,7 +32,7 @@
 
 ## 3. Đặt tên trường
 
-- **snake_case** cho mọi khoá JSON, query param và trường `details` (theo đặc tả 06: `organization_id`, `next_cursor`, `job_id`). Áp cho route mới; route cũ giữ nguyên trong `/v1`. *(Câu hỏi PO số 4 ở tài liệu 01.)*
+- **snake_case** cho mọi khoá JSON, query param và trường `details` (theo đặc tả 06: `organization_id`, `next_cursor`, `job_id`). Áp cho route mới. *(Câu hỏi PO số 4 ở tài liệu 01.)* **Sửa 12/11/2026 (PO D-69):** route nội bộ cũ cũng chuyển khoá thân/query sang snake_case, từng module một, route + lược đồ + phía gọi giao diện + test cùng commit (đợt 5, `01_API_ARCHITECTURE_AUDIT.md` §42). `/public/*`, `/integration/*` giữ nguyên trong `/v1` (đối tác ngoài) trừ khi PO duyệt riêng và báo trước 90 ngày.
 - Thời gian: ISO 8601 UTC (`2026-11-06T07:00:00Z`), khoá đuôi `_at`; ngày thuần đuôi `_date` (`YYYY-MM-DD`).
 - Tiền: số nguyên VND, khoá đuôi `_vnd` (đã dùng: `balance_vnd`).
 - Enum: `UPPER_SNAKE` như Prisma; liệt kê trong schema.

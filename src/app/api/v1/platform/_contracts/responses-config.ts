@@ -180,8 +180,9 @@ export const channelProviderTestResponse = data(z.strictObject({ channel: z.stri
 
 const hardLock = z.strictObject({ eventKey: z.string(), channel: notifyChannel, enabled: z.boolean(), reason: z.string().optional() })
 export const hardLocksResponse = data(z.array(hardLock.extend({ tier: notifyTier, scopeId: z.string() })))
-export const hardLockSetResponse = data(hardLock)
-export const hardLockRemovedResponse = data(z.strictObject({ eventKey: z.string(), channel: notifyChannel }))
+/** Lệnh ghi trả lại thân đã gửi (khoá snake_case, D-69). */
+export const hardLockSetResponse = data(z.strictObject({ event_key: z.string(), channel: notifyChannel, enabled: z.boolean(), reason: z.string().optional() }))
+export const hardLockRemovedResponse = data(z.strictObject({ event_key: z.string(), channel: notifyChannel }))
 
 export const eventVisibilityResponse = data(
   z.array(
@@ -194,7 +195,7 @@ export const eventVisibilityResponse = data(
     })
   )
 )
-export const eventVisibilitySavedResponse = data(z.strictObject({ eventKey: z.string(), tier: z.enum(["INDUSTRY", "CHAIN", "STORE"]), visible: z.boolean() }))
+export const eventVisibilitySavedResponse = data(z.strictObject({ event_key: z.string(), tier: z.enum(["INDUSTRY", "CHAIN", "STORE"]), visible: z.boolean() }))
 
 const governanceMode = z.enum(["FORBID", "INHERIT_ONLY", "ALLOW_OWN"])
 /** Không bọc `data` — hợp đồng cũ của màn quản trị tích hợp. */

@@ -106,7 +106,7 @@ describe("organization_links — quan hệ chuỗi → cửa hàng đối tác",
   it("loại BRANCH bị từ chối (ADR-012 D-T2) — không tạo liên kết", async () => {
     const res = await linkExisting(withSession("http://localhost/api/v1/coordinator/partners/link-existing", chainA.token, {
       method: "POST",
-      body: JSON.stringify({ identifier: store.organizationId, partnerCode: "A-01", partnershipType: "BRANCH" }),
+      body: JSON.stringify({ identifier: store.organizationId, partner_code: "A-01", partnership_type: "BRANCH" }),
     }))
     expect(res.status).toBe(400)
     expect(await links()).toHaveLength(0)

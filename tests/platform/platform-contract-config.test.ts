@@ -105,12 +105,12 @@ describe("hợp đồng — Console Vận hành Nền tảng: cấu hình", () =
     await expectContract(await patchChannel(send("/notification/channels", "PATCH", { channel: "EMAIL", activated: true })), 200, R.channelActivationSavedResponse, "channel-saved")
     await expectContract(await getChannels(get("/notification/channels")), 200, R.channelActivationsResponse, "channels")
     // @release-strip
-    await expectContract(await patchVisibility(send("/notification/visibility", "PATCH", { eventKey: "ORDER_RECEIVED", tier: "STORE", visible: true })), 200, R.eventVisibilitySavedResponse, "visibility-saved")
+    await expectContract(await patchVisibility(send("/notification/visibility", "PATCH", { event_key: "ORDER_RECEIVED", tier: "STORE", visible: true })), 200, R.eventVisibilitySavedResponse, "visibility-saved")
     await expectContract(await getVisibility(get("/notification/visibility")), 200, R.eventVisibilityResponse, "visibility")
     // @release-strip-end
-    await expectContract(await setLock(send("/notification/hard-locks", "POST", { eventKey: "ORDER_RECEIVED", channel: "EMAIL", enabled: true, reason: "Bắt buộc" })), 200, R.hardLockSetResponse, "hard-lock-set")
+    await expectContract(await setLock(send("/notification/hard-locks", "POST", { event_key: "ORDER_RECEIVED", channel: "EMAIL", enabled: true, reason: "Bắt buộc" })), 200, R.hardLockSetResponse, "hard-lock-set")
     await expectContract(await getLocks(get("/notification/hard-locks")), 200, R.hardLocksResponse, "hard-locks")
-    await expectContract(await removeLock(send("/notification/hard-locks", "DELETE", { eventKey: "ORDER_RECEIVED", channel: "EMAIL" })), 200, R.hardLockRemovedResponse, "hard-lock-removed")
+    await expectContract(await removeLock(send("/notification/hard-locks", "DELETE", { event_key: "ORDER_RECEIVED", channel: "EMAIL" })), 200, R.hardLockRemovedResponse, "hard-lock-removed")
   })
 
   it("quản trị tích hợp toàn sàn", async () => {

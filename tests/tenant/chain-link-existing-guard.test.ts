@@ -21,7 +21,7 @@ describe("POST coordinator/partners/link-existing — chặn liên kết một c
     linkExisting(
       withSession("http://localhost/api/v1/coordinator/partners/link-existing", tenant.token, {
         method: "POST",
-        body: JSON.stringify({ partnerCode: "DT-01", ...body }),
+        body: JSON.stringify({ partner_code: "DT-01", ...body }),
       })
     )
 

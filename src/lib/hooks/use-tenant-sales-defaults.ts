@@ -48,7 +48,7 @@ export function useTenantSalesDefaults(): TenantSalesDefaults | null {
   const [tenantGreetingLine, setTenantGreetingLine] = useState<string | null>(null)
   useEffect(() => {
     let cancelled = false
-    fetch("/api/v1/template-overrides?templateKey=sales_pitch_zalo")
+    fetch("/api/v1/template-overrides?template_key=sales_pitch_zalo")
       .then((res) => (res.ok ? res.json() : null))
       .then((json) => {
         if (cancelled || !json?.data) return

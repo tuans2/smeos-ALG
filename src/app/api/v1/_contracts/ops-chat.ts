@@ -64,7 +64,7 @@ export const CHAT_OPERATIONS: OpenApiOperation[] = [
     ok: [200, { description: "Hội thoại", schema: res.internalConversationsResponse }] }),
   op(IN, { method: "post", path: "/internal-chat/conversations", operationId: "createInternalConversation", summary: "Tạo hoặc lấy lại hội thoại nội bộ", cap: null,
     body: z.union([req.openInternalRoomBody, req.createInternalConversationBody]),
-    description: `Thân \`{ partnerOrgId }\` / \`{ chainOrgId }\` / \`{ branchId }\` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — \`PLATFORM_TENANT\` client không tự tạo được (→ 400). \`targetUserId\` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc \`orderId\` của tổ chức khác → 404. Sai lược đồ → 400 \`details.reason\` (một chuỗi).`,
+    description: `Thân \`{ partner_org_id }\` / \`{ chain_org_id }\` / \`{ branch_id }\` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — \`PLATFORM_TENANT\` client không tự tạo được (→ 400). \`targetUserId\` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc \`orderId\` của tổ chức khác → 404. Sai lược đồ → 400 \`details.reason\` (một chuỗi).`,
     ok: [200, { description: "Hội thoại", schema: res.internalConversationResponse }], errors: [...BODY_ERRORS, 404] }),
   op(IN, { method: "get", path: "/internal-chat/conversations/{id}/messages", operationId: "listInternalMessages", summary: "Tin nhắn của hội thoại nội bộ", cap: null,
     description: MEMBER, ok: [200, { description: "Tin nhắn", schema: res.internalMessagesResponse }], errors: [404] }),

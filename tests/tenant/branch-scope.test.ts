@@ -68,7 +68,7 @@ describe("cách ly dữ liệu theo chi nhánh", () => {
 
   it("nhân viên Q1 tạo đơn → đơn thuộc Q1 dù gửi chi nhánh khác", async () => {
     const res = await createOrder(withSession(`${BASE}/orders`, lan.token, {
-      method: "POST", body: JSON.stringify({ branchId: q3, items: [{ description: "Bó hồng", quantity: 1, unitPriceVnd: 400_000 }] }),
+      method: "POST", body: JSON.stringify({ branch_id: q3, items: [{ description: "Bó hồng", quantity: 1, unitPriceVnd: 400_000 }] }),
     }))
     expect(res.status).toBe(201)
     const id = ((await readJson(res)).order as { id: string }).id

@@ -34,9 +34,9 @@ export const rejectChangeRequestBody = z.object({ reason: z.string().trim().min(
 
 // availability/blocks/route.ts
 export const availabilityBlockBody = z.object({
-  productId: z.string().min(1).max(64),
-  checkInDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Định dạng YYYY-MM-DD"),
-  checkOutDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Định dạng YYYY-MM-DD"),
+  product_id: z.string().min(1).max(64),
+  check_in_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Định dạng YYYY-MM-DD"),
+  check_out_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Định dạng YYYY-MM-DD"),
   note: z.string().max(300).optional(),
 })
 

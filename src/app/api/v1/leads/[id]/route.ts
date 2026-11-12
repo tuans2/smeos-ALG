@@ -8,6 +8,7 @@ import { jsonResponse } from "@/core/http/response"
 import { updateLead } from "@/modules/acquisition/use-cases/manage-leads"
 import { updateLeadBody } from "@/app/api/v1/_contracts/requests-marketing"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const PATCH = defineRoute({
   auth: { kind: "tenant", capability: "Q3" },
@@ -15,6 +16,7 @@ export const PATCH = defineRoute({
     const { id } = params as { id: string }
     const parsed = updateLeadBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ body: "Dữ liệu không hợp lệ" })
-    return jsonResponse(await updateLead(ctx, id, parsed.data))
+    const input = camelKeys(parsed.data)
+    return jsonResponse(await updateLead(ctx, id, input))
   },
 })

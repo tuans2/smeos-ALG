@@ -19,6 +19,7 @@ import { PreflightChecklist } from "./preflight-checklist"
 import { PrintPreviewCanvas } from "./print-preview-canvas"
 import { PrintExportSuccess, PrintStepper } from "./print-workflow-parts"
 
+import { snakeKeys } from "@/lib/case-keys"
 export interface PrintWorkflowProps {
   initialPresetCode?: PrintPresetCode | undefined
   initialAssetCode?: string | undefined
@@ -65,13 +66,13 @@ export function PrintWorkflow({
       const res = await fetch("/api/v1/print/preflight", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(snakeKeys({
           presetCode,
           colorMode: "CMYK",
           hasQrCode: true,
           qrSizeMm: preset.minQrSizeMm,
           hasContentOutsideSafeZone: false,
-        }),
+        })),
       })
       if (res.ok) {
         const json = await res.json()
@@ -118,12 +119,12 @@ export function PrintWorkflow({
       const exportRes = await fetch(`/api/v1/print/renditions/${renditionId}/export`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(snakeKeys({
           title,
           subtitle,
           storeName,
           includeBleedMarks: true,
-        }),
+        })),
       })
 
       if (!exportRes.ok) {

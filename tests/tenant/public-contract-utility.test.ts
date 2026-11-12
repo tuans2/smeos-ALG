@@ -87,7 +87,7 @@ describe("hợp đồng — tiện ích & webhook công khai", () => {
 
   it("POST /integrations/{connector}/{ref} — nhận, trùng, sai chữ ký", async () => {
     const secret = "tenant-echo-secret-0123456789"
-    const created = await readJson(await connect(withSession("http://localhost/api/v1/integrations/connections", a.token, json({ connectorKey: "test_echo", secret }))))
+    const created = await readJson(await connect(withSession("http://localhost/api/v1/integrations/connections", a.token, json({ connector_key: "test_echo", secret }))))
     const ref = (created.connection as { connectionRef: string }).connectionRef
     const body = JSON.stringify({ id: "evt-hop-dong", type: "echo.ok" })
     const call = (sig: string) => inboundWebhook(new Request(`${BASE}/integrations/test_echo/${ref}`, { method: "POST", body, headers: { "x-echo-signature": sig } }), params({ connector: "test_echo", ref }))

@@ -68,20 +68,20 @@ export const addCustomDomainBody = z.object({ hostname: z.string().trim().min(1)
 
 // shop-reviews/route.ts
 export const createReviewBody = z.object({
-  authorName: z.string(),
+  author_name: z.string(),
   occasion: z.string().nullable().optional(),
   rating: z.number().int(),
   comment: z.string(),
-  isVisible: z.boolean().optional(),
+  is_visible: z.boolean().optional(),
 })
 
 // shop-reviews/[id]/route.ts
 export const patchReviewBody = z.object({
-  authorName: z.string().optional(),
+  author_name: z.string().optional(),
   occasion: z.string().nullable().optional(),
   rating: z.number().int().optional(),
   comment: z.string().optional(),
-  isVisible: z.boolean().optional(),
+  is_visible: z.boolean().optional(),
 })
 
 // short-links/route.ts

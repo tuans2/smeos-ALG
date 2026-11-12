@@ -40,7 +40,7 @@ export const TOOLS_OPERATIONS: OpenApiOperation[] = [
     description: "Chỉ giá trị đang bật; `keys` cách dấu phẩy, bỏ trống trả hết.", ok: [200, { description: "Danh mục", schema: res.fieldCatalogsResponse }] }),
 
   op(TPL, { method: "get", path: "/template-overrides", operationId: "listTemplateOverrides", summary: "Ghi đè của một mẫu", cap: "F1", query: req.templateOverridesQuery,
-    description: "Thiếu `templateKey` → 400. `next_cursor` luôn `null`.", ok: [200, { description: "Ghi đè", schema: res.templateOverridesResponse }], errors: [400] }),
+    description: "Thiếu `template_key` → 400. `next_cursor` luôn `null`.", ok: [200, { description: "Ghi đè", schema: res.templateOverridesResponse }], errors: [400] }),
   op(TPL, { method: "put", path: "/template-overrides", operationId: "setTemplateOverride", summary: "Ghi đè một trường của mẫu", cap: "F2", body: req.putTemplateOverrideBody,
     description: "Chỉ các cặp mẫu/trường đã có nơi đọc thật trong mã; khác → 400. Giá trị cắt khoảng trắng, quá độ dài → 400.", ok: [200, { description: "Ghi đè", schema: res.templateOverrideResponse }], errors: BODY_ERRORS }),
   op(TPL, { method: "delete", path: "/template-overrides/{templateKey}/{fieldKey}", operationId: "removeTemplateOverride", summary: "Bỏ ghi đè, về giá trị mặc định", cap: "F2",

@@ -360,7 +360,7 @@ trước, `?limit=1..100` (mặc định 25), `?cursor=`. Chỉ đọc. Mỗi ha
 
 `/subscription` (checklist ALG 10.7): gói, kỳ hiện tại, trạng thái và hoá đơn của cửa hàng kèm mã VietQR (nội dung chuyển khoản = mã hoá đơn `TB…`). Gói `OVERDUE` (hoá đơn tới hạn chưa thu, PO Q9 không ân hạn) → mọi yêu cầu ghi của cửa hàng trả 402 `SUBSCRIPTION_OVERDUE`, yêu cầu đọc vẫn được. Hoá đơn kỳ sau sinh 7 ngày trước hết kỳ, nhắc `SUBSCRIPTION_RENEWAL_DUE` 7 ngày và 1 ngày trước hạn; quá hạn phát `SUBSCRIPTION_OVERDUE`; credit tặng theo gói cấp đầu tháng, phần tháng trước chưa dùng thu hồi (`EXPIRE`). Xét khi cửa hàng gửi yêu cầu, không cần lịch chạy nền. `POST /billing/sepay`: SePay báo giao dịch vào tài khoản nền tảng (`Authorization: Apikey …`; chưa cấu hình khoá → 404); khớp mã hoá đơn và đủ tiền → ghi đã thu, mã giao dịch SePay chống ghi trùng; không khớp để Console xác nhận tay.
 
-`/usage/limits` (checklist ALG 10.3, 9.7): kỳ hiện tại (YYYY-MM giờ Việt Nam), `credit { used, limit }` theo hạn mức nền tảng đặt và `ai { used, limit }` theo trần cửa hàng tự đặt (`PUT { aiMonthlyLimit: number | null }`, Điều hành). Hai hạn mức chặn ngay khi trừ credit: vượt → 422 `QUOTA_EXCEEDED`, số dư không bị trừ. Dùng tới 80% phát `USAGE_LIMIT_NEAR`, số dư dưới 20% lần nạp gần nhất phát `CREDIT_LOW` (mỗi loại một lần mỗi kỳ). Tin SMS/ZNS gửi khách trừ credit theo quy đổi của nền tảng (mặc định 0); gửi lỗi hoàn lại, hết credit thì bỏ qua tin.
+`/usage/limits` (checklist ALG 10.3, 9.7): kỳ hiện tại (YYYY-MM giờ Việt Nam), `credit { used, limit }` theo hạn mức nền tảng đặt và `ai { used, limit }` theo trần cửa hàng tự đặt (`PUT { ai_monthly_limit: number | null }`, Điều hành). Hai hạn mức chặn ngay khi trừ credit: vượt → 422 `QUOTA_EXCEEDED`, số dư không bị trừ. Dùng tới 80% phát `USAGE_LIMIT_NEAR`, số dư dưới 20% lần nạp gần nhất phát `CREDIT_LOW` (mỗi loại một lần mỗi kỳ). Tin SMS/ZNS gửi khách trừ credit theo quy đổi của nền tảng (mặc định 0); gửi lỗi hoàn lại, hết credit thì bỏ qua tin.
 
 ## 11. Integration API — máy gọi máy
 
@@ -565,7 +565,7 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | GET | `/short-links/:id/stats` | `J1` | `?days=1..90` (mặc định 30): tổng lượt quét, khách riêng (băm theo ngày), số lead, theo thiết bị, theo ngày (giờ VN) |
 | GET | `/leads` | `Q1` | Bước 4 — công cụ 21: khách để lại thông tin; `?status=NEW\|IN_PROGRESS\|WON\|LOST` (`CONTACTED` cũ → `IN_PROGRESS`, 31/10/2026), cursor + `limit` ≤ 100; kèm `counts` theo trạng thái |
 | POST | `/leads` | `Q2` | Đơn hàng đa nguồn §3.1 — Sale tự thêm khách tiềm năng `{ name, phone, message?, reason: WALK_IN\|QUOTE_REQUEST\|CONTACT, nextFollowUpAt? }`; nguồn `MANUAL`, người phụ trách = người nhập; tổ chức từ phiên → 201 `{ lead: { id } }` |
-| PATCH | `/leads/:id` | `Q3` | `{ status?, assigneeUserId? }` — người phụ trách phải là thành viên ACTIVE của tổ chức; lead tổ chức khác → 404; ghi `audit_logs` `lead.update` |
+| PATCH | `/leads/:id` | `Q3` | `{ status?, assignee_user_id? }` — người phụ trách phải là thành viên ACTIVE của tổ chức; lead tổ chức khác → 404; ghi `audit_logs` `lead.update` |
 
 **Chưa có:** `GET /catalog-links/:slug/qr` (ảnh PNG mã QR để in) ở core — `LocalBudd` tự sinh QR phía route của nó (`qrcode`, trỏ về `/c/:slug` của chính nó), core cũng có `src/core/media/qr-engine.ts` sinh QR phía giao diện, không qua endpoint. Xem **RS-7**.
 
@@ -611,13 +611,13 @@ Nội dung nhắc mua sinh từ dịp và sản phẩm. Không endpoint nào g�
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công · `?delivery_from=&delivery_to=` (YYYY-MM-DD, theo `delivery_window.date` hoặc giờ hẹn đơn Điều phối, giờ Việt Nam; ngày sai định dạng bị bỏ qua) · `?sale_id=` (Sale phụ trách, hoặc người tạo khi đơn chưa gán Sale) · `?limit=` 1–100, mặc định 50, ngoài khoảng/không phải số nguyên → 400 (audit API-03, 06/11/2026) · Phân trang con trỏ: `?cursor=` = `next_cursor` của trang trước (mờ; hỏng → 400), mới trước — phản hồi `{ data, next_cursor, meta: { total } }`, `total` đếm cả danh sách đang lọc (audit API-10, PO 09/11/2026; trước đó `{ orders, total }` chỉ trang đầu) |
-| POST | `/orders` | `R2` | `customerId`, `branchId`, `items[].productId/variantId` của tổ chức khác → 404; đơn giá số nguyên ≥ 0, số lượng 1–999, `deliveryWindow.date` dạng `YYYY-MM-DD` (audit BL-13); dòng có `productId` với giá > 0 dưới giá sàn → 422 `BELOW_FLOOR` nếu người tạo không có `C10` (audit BL-07), vượt giá trần → 422 `ABOVE_CEILING` nếu không có `C9` (PO 07/11/2026, Q3); ngày giao trước hôm nay (giờ VN) hoặc SĐT người nhận không phải số Việt Nam → 400 (PO 07/11/2026, Q11–Q12); sản phẩm theo dõi tồn theo số lượng bị trừ tồn cùng giao dịch, không đủ → 409 (Q9) — huỷ đơn (`/orders/:id/cancel`, `/coordinator/orders/:id/cancel`) hoàn lại đúng một lần. Header `Idempotency-Key` (tuỳ chọn, ≤ 255 ký tự): gửi lại cùng khoá → trả đơn đã tạo, 201 + `Idempotent-Replayed: true`, không tạo đơn thứ hai (audit API-11, 07/11/2026); cùng khoá mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED` (`details.order_id`), so bằng băm thân lưu ở `orders.idempotency_body_hash` (PO 11/11/2026; đơn cũ chưa có băm vẫn trả lại như trước) |
-| GET · PATCH | `/orders/:id` | `R1` · `R3` | PATCH không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` → 422 (audit BL-01): xác nhận đi qua thu tiền/duyệt giao trước, hoàn tất qua Điều phối, huỷ qua `POST /orders/:id/cancel` · đơn đã sang Điều phối đổi `status`/`productionStatus`/`deliveryStatus` → 409, tiến độ đi qua `PATCH /coordinator/orders/:id/stage` (audit User Journey UJ-09) · đơn `COMPLETED`/`CANCELLED` chỉ sửa `internalNote`, trường khác → 409 |
+| POST | `/orders` | `R2` | `customer_id`, `branch_id`, `items[].productId/variantId` của tổ chức khác → 404; đơn giá số nguyên ≥ 0, số lượng 1–999, `delivery_window.date` dạng `YYYY-MM-DD` (audit BL-13); dòng có `productId` với giá > 0 dưới giá sàn → 422 `BELOW_FLOOR` nếu người tạo không có `C10` (audit BL-07), vượt giá trần → 422 `ABOVE_CEILING` nếu không có `C9` (PO 07/11/2026, Q3); ngày giao trước hôm nay (giờ VN) hoặc SĐT người nhận không phải số Việt Nam → 400 (PO 07/11/2026, Q11–Q12); sản phẩm theo dõi tồn theo số lượng bị trừ tồn cùng giao dịch, không đủ → 409 (Q9) — huỷ đơn (`/orders/:id/cancel`, `/coordinator/orders/:id/cancel`) hoàn lại đúng một lần. Header `Idempotency-Key` (tuỳ chọn, ≤ 255 ký tự): gửi lại cùng khoá → trả đơn đã tạo, 201 + `Idempotent-Replayed: true`, không tạo đơn thứ hai (audit API-11, 07/11/2026); cùng khoá mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED` (`details.order_id`), so bằng băm thân lưu ở `orders.idempotency_body_hash` (PO 11/11/2026; đơn cũ chưa có băm vẫn trả lại như trước) |
+| GET · PATCH | `/orders/:id` | `R1` · `R3` | PATCH không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` → 422 (audit BL-01): xác nhận đi qua thu tiền/duyệt giao trước, hoàn tất qua Điều phối, huỷ qua `POST /orders/:id/cancel` · đơn đã sang Điều phối đổi `status`/`production_status`/`delivery_status` → 409, tiến độ đi qua `PATCH /coordinator/orders/:id/stage` (audit User Journey UJ-09) · đơn `COMPLETED`/`CANCELLED` chỉ sửa `internal_note`, trường khác → 409 |
 | POST | `/orders/:id/assign` | `R4` | Người nhận việc phải là thành viên đang hoạt động của tổ chức (khác → 422); giao lại thu hồi phân công cũ |
 | GET | `/orders/my-work` | `R17` (`?scope=team`: `R4`) | Việc chế tác đang giao cho người đăng nhập, sắp theo giờ giao; công thức và ảnh mẫu, không có giá · `scope=team`: mọi việc trong phạm vi chi nhánh, kèm tên thợ |
 | POST | `/orders/:id/my-work` | `R17` | `{ action: START \| FINISH }` — nhận việc / báo xong; việc không giao cho mình → 404; sai bước → 422 |
 | GET | `/orders/:id/info-requests` | `R1` | Yêu cầu bổ sung thông tin của đơn; trước khi trả, đơn thiếu địa chỉ / SĐT người nhận / lời chúc (đơn có thiệp) tự sinh yêu cầu (hạn 2 giờ), đủ thông tin thì tự đóng `RECEIVED`, quá hạn → `OVERDUE` và nhắc người tạo (`ORDER_INFO_REQUEST_OVERDUE`) · cũng chạy sau `POST /orders`, `PATCH /orders/:id`, `POST /coordinator/orders` · tổ chức/chi nhánh khác → 404 |
-| POST | `/orders/:id/info-requests` | `R3` | `{ field, label, reason, requestedFrom, dueAt?, channel? }` tạo yêu cầu tay; đơn đã kết thúc → 422 |
+| POST | `/orders/:id/info-requests` | `R3` | `{ field, label, reason, requested_from, due_at?, channel? }` tạo yêu cầu tay; đơn đã kết thúc → 422 |
 | POST | `/orders/:id/info-requests/:requestId` | `R3` | `{ outcome: RECEIVED \| CANCELLED, note? }` — huỷ bắt buộc lý do (400); yêu cầu đã đóng → 409 |
 | GET | `/orders/info-requests` | `R1` | Mọi yêu cầu còn mở của tổ chức trong phạm vi chi nhánh, hạn gần nhất trước (việc "Thiếu thông tin" trong Hộp việc) |
 | PATCH | `/orders/:id/delivery-window` | `R21` | Body `{ date, time_slot?, reason }`. Bắt buộc lý do (≥ 3 ký tự); lịch sử đơn ghi trục `delivery_window` (giá trị cũ/mới, người, thời điểm), ghi `audit_logs`. Người không có `R3` chỉ đổi đơn mình tạo, đơn khác → 404; đơn Thẻ Chào → 409 (PO 11/11/2026) |
@@ -652,9 +652,9 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/orders/:id/qc` | `R3` | Người kiểm kết luận; không đạt bắt buộc lý do; `REJECTED` mở sự cố `QC_FAILURE` |
 | POST | `/coordinator/orders/:id/delivery` | `R5` | Sự kiện giao; thành công bắt buộc ảnh POD hoặc tên người ký; thất bại mở sự cố |
 | GET | `/delivery/my-runs` | `R18` | Đơn đang giao có số điện thoại shipper trùng số của người đăng nhập (cùng tổ chức, cùng phạm vi chi nhánh): người nhận, SĐT, địa chỉ, khung giờ, lời thiệp — không giá, không ghi chú nội bộ, không người đặt · `phoneMissing: true` khi tài khoản chưa có số |
-| POST | `/delivery/my-runs/:id` | `R18` | `{ event, podAssetId?, recipientSignedName?, failureReason? }` — cùng luật giao của Điều phối (ảnh giao bắt buộc theo Cài đặt); đơn không giao cho mình → 404 |
+| POST | `/delivery/my-runs/:id` | `R18` | `{ event, pod_asset_id?, recipient_signed_name?, failure_reason? }` — cùng luật giao của Điều phối (ảnh giao bắt buộc theo Cài đặt); đơn không giao cho mình → 404 |
 | GET | `/coordinator/reminders` | `R1` | Mốc nhắc việc Điều phối đang bật của các đơn |
-| POST | `/coordinator/reminders/acknowledge` | `R3` | `{ orderId, milestone, action, snoozeMinutes?, note? }`; đơn của tổ chức khác → 404 |
+| POST | `/coordinator/reminders/acknowledge` | `R3` | `{ order_id, milestone, action, snooze_minutes?, note? }`; đơn của tổ chức khác → 404 |
 | GET · PUT | `/coordinator/settings/reminders` | `D1` (đọc) · `R12` (sửa) | Thời điểm nhắc việc cấp tổ chức (phút, 0–1440) (14/10/2026: sửa đòi `R12`) |
 | GET · PUT | `/coordinator/templates/:id/reminders` | `R1` (đọc) · `R12` (sửa) | Ghi đè thời điểm nhắc theo mẫu hoa; mẫu của tổ chức khác → 404 |
 | GET | `/orders/entry-actions` | `R1` | Đơn hàng đa nguồn §3.2 — nút Đặt hàng / Liên hệ trên trang khách: `{ settings, sources: [{ code, label, effective }] }` |
@@ -725,7 +725,7 @@ Mỗi chỉ số trả kèm `nguon` và `den_ngay`. Dữ liệu kế thừa từ
 | POST | `/chat/conversations/:id/create-order` | `T3` | Chuyển hội thoại thành đơn nháp — M10 |
 | GET · POST | `/chat/channels` | GET: `W1` · POST: `T4` (kiểm ở use-case) | Cấu hình kênh. GET (danh sách kênh, khoá bí mật đã che) đòi `W1` — xem trong màn Tích hợp (PO 12/11/2026; trước đó chưa gác, RS-8); POST gọi `configure-chat-channel.ts`, use-case gác `T4` |
 | POST | `/chat/public/widget` | — *(công khai)* | Khung chat AI trên trang công khai do công cụ ALG tạo. Thân: `slug`, `surface` (`catalog` · `landing_page` · `store_profile` · `sales_link` · `greeting_catalog` · `business_card`; `landing_page` tính kênh `LANDING_PAGE`, còn lại `STOREFRONT_CATALOG`), `visitorId`, `message`. Trang bị tắt trong `config.publicSurfaces` → 404 (chủ tiệm bật/tắt từng loại trang qua `POST /chat/channels` → `config.publicSurfaces`, màn Kênh tích hợp; trang bị tắt không vẽ khung chat — `PublicChatSlot`). Giới hạn mặc định 20 tin/khách và 60 tin/IP mỗi 10 phút, tách theo tiệm; nâng chỉ khi nền tảng duyệt (`config.publicChatLimits.approvedAt`, trần 200/600) → 429. Chỉ cùng nguồn gốc — chưa mở CORS cho website ngoài; lỗi 500 không trả chi tiết nội bộ |
-| GET · POST | `/chat/public-limits` | GET: `W1` · POST: `T4` | Hạn mức chat AI trên trang công khai của tiệm phiên. GET: mức đang áp dụng (`current`) và yêu cầu chờ duyệt (`pending`). POST `{ perVisitor, perIp, note? }`: xin nâng — chỉ nhận mức chọn sẵn (50/150, 100/300, 200/600) và cao hơn mức hiện tại (400); đang có yêu cầu chờ → 409. Lưu ở `organizations.settings.pending_public_chat_limits`; Admin nền tảng duyệt qua `PATCH /platform/organizations/:id` |
+| GET · POST | `/chat/public-limits` | GET: `W1` · POST: `T4` | Hạn mức chat AI trên trang công khai của tiệm phiên. GET: mức đang áp dụng (`current`) và yêu cầu chờ duyệt (`pending`). POST `{ per_visitor, per_ip, note? }`: xin nâng — chỉ nhận mức chọn sẵn (50/150, 100/300, 200/600) và cao hơn mức hiện tại (400); đang có yêu cầu chờ → 409. Lưu ở `organizations.settings.pending_public_chat_limits`; Admin nền tảng duyệt qua `PATCH /platform/organizations/:id` |
 | GET · POST | `/chat/webhooks/facebook` | — *(chữ ký nền tảng)* | |
 | POST | `/chat/webhooks/zalo` | — *(chữ ký nền tảng)* | |
 
@@ -1051,8 +1051,8 @@ Endpoint mang khoá nhà cung cấp riêng của tổ chức. Quyết định D2
 | POST | `/content-engine/catalog-generate` | `J7` (PO 30/10/2026) | Writer→Critic qua `callCapability` (`content_generation`, `content_qa`) sinh badge/mô tả/CTA cho catalog. Nhận `productIds?` (≤ 50) để máy chủ tự đọc mô tả bán hàng đã duyệt (cần `H5`, thiếu thì bỏ qua). Chạy tại chỗ, **không trừ credit, không ghi `usage`, không có `Idempotency-Key`** |
 | POST | `/content-engine/landing-generate` | `J7` (PO 30/10/2026) | Như trên cho landing page (hero/story/perks/faq/lead), lấy ngữ cảnh từ hồ sơ kinh doanh + thương hiệu |
 | GET | `/shop-reviews` | `J1` | Danh sách đánh giá khách do chủ tiệm nhập (cả đang ẩn), mới nhất trước |
-| POST | `/shop-reviews` | `J1` | Thêm đánh giá: `authorName` (1–60), `occasion?` (≤ 60), `rating` (1–5), `comment` (5–500), `isVisible?` |
-| PATCH | `/shop-reviews/:id` | `J1` | Sửa nội dung (gửi đủ tên, sao, nhận xét) hoặc chỉ `isVisible`; tổ chức khác → 404 |
+| POST | `/shop-reviews` | `J1` | Thêm đánh giá: `author_name` (1–60), `occasion?` (≤ 60), `rating` (1–5), `comment` (5–500), `is_visible?` |
+| PATCH | `/shop-reviews/:id` | `J1` | Sửa nội dung (gửi đủ tên, sao, nhận xét) hoặc chỉ `is_visible`; tổ chức khác → 404 |
 | DELETE | `/shop-reviews/:id` | `J1` | Xoá vĩnh viễn (giao diện hỏi xác nhận); tổ chức khác → 404 |
 | POST | `/content-engine/rewrite` | một trong `F2`, `L2`, `L3` (PO 07/11/2026, nợ #170) | Viết lại MỘT câu ≤ 500 ký tự theo `field_type`/`style`, trả 3 gợi ý; parse lỗi thì trả gợi ý dựng sẵn (`fallback: true`) · Giới hạn 30 lần/10 phút mỗi người dùng và 200 lần/giờ mỗi tổ chức → 429 (audit API-02, 06/11/2026) · Trừ giá `content.rewrite` (1 credit) cho mỗi lượt AI trả gợi ý: giữ trước khi gọi AI, thiếu credit → 422 `QUOTA_EXCEEDED`; rơi về gợi ý dựng sẵn hoặc AI lỗi → hoàn lại; không gian trải nghiệm không trừ |
 
@@ -1088,7 +1088,7 @@ Các route dưới đây được thêm từ mốc chuyển sang ALG (`8c53b38`)
 | POST | `/auth/instant-trial` | — *(công khai)* | Dùng thử không mật khẩu, kèm thu thập lead `{ name, phone, email, industry_key? }`. Tạo người dùng **mới**, tổ chức `EXPERIENCE` và dữ liệu mẫu theo ngành. Email đã có tài khoản → 409, không cấp phiên. Giới hạn 5 lần/giờ/IP. Từ 22/10/2026 **chờ superadmin duyệt**: trả `202`, không cấp phiên; lúc duyệt hệ thống sinh mật khẩu tạm để superadmin gửi cho khách. `industry_key` phải có trong danh mục ngành, `phone` đúng dạng số điện thoại, tên ≤ 120 ký tự → sai: 400 (rà soát cụm B) |
 | POST | `/business-profile/mock-data` | `F2` (hoặc `H4`/`N1`/`N12`) | Nạp hồ sơ và sản phẩm mẫu theo ngành `{ industry_key? }`, ghi đè hồ sơ hiện có. **Chỉ tổ chức dùng thử (`EXPERIENCE`)** — tiệm thật → 403 (PO 21/10/2026) |
 | GET | `/availability/board` | `L1` | `?month=YYYY-MM` — bảng khả dụng theo tháng (đặt phòng, khung giờ, tồn kho) |
-| POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ productId, checkInDate, checkOutDate, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |
+| POST | `/availability/blocks` | `L3` | Chặn ngày thủ công `{ product_id, check_in_date, check_out_date, note? }` (ngày `YYYY-MM-DD`, ngày ra không tính) |
 | DELETE | `/availability/blocks/:id` | `L3` | Bỏ chặn thủ công. Chỉ xoá được dòng không gắn đơn |
 | POST | `/public/brochure/:sendCode/check-availability` | — *(chủ phiên Thẻ chào)* | Kiểm khả dụng sản phẩm trên link chào. 120 lần/phút/IP |
 | POST | `/public/greeting-catalog/:id/check-availability` | — *(công khai)* | Kiểm khả dụng sản phẩm trên form đặt hàng của danh mục. 120 lần/phút/IP |
@@ -1152,14 +1152,14 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | GET | `/notification/events` | — (phiên tenant) | Danh mục sự kiện hiển thị cho tầng `?tier=` (mặc định `STORE`), đã áp ma trận hiển thị của SaaS Mother |
 | GET | `/notification/channels` | — (phiên tenant) | Trạng thái bật/tắt kênh toàn sàn (chỉ đọc) |
 | GET | `/ux-rollout-flags` | — (phiên tenant) | Khoá các cờ rollout giao diện đang bật cho tổ chức của phiên `{ enabled: string[] }` — không trả danh sách tổ chức |
-| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page` (≥ 1), `limit` (1–100, mặc định 20), `unreadOnly`; không phải số nguyên hoặc ngoài khoảng → 400 |
+| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page` (≥ 1), `limit` (1–100, mặc định 20), `unread_only`; không phải số nguyên hoặc ngoài khoảng → 400 |
 | PATCH | `/notification/inbox/:id/read` | — (của chính mình) | Đánh dấu đã đọc; tin của người/tổ chức khác → không đổi |
 | POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |
 | GET | `/notification/stream` | — (của chính mình) | SSE tin mới; ping 25 giây. Hub trong bộ nhớ tiến trình (AUD-007) |
 | GET · POST · DELETE | `/notification/push-subscriptions` | — (của chính mình) | Nhận Web Push trên trình duyệt này (checklist 4.30): `GET` trả khoá công khai VAPID khi tầng Mẹ đã bật kênh + số thiết bị của tôi (`?endpoint=` để biết trình duyệt này đã đăng ký chưa); `POST { endpoint, keys: { p256dh, auth } }` chỉ nhận endpoint https của dịch vụ đẩy thật (khác → 422), trần 30 lần / 10 phút / người; `DELETE { endpoint }` chỉ xoá thiết bị của chính mình |
-| GET · PATCH | `/notification/preferences` | — (của chính mình) | Tuỳ chọn theo sự kiện × kênh; sự kiện bị khoá cứng trong phạm vi của tổ chức → 403 |
-| GET · PATCH | `/notification/org-policy` | `F1` · `F2` | Chính sách tổ chức theo sự kiện × kênh × vai (`roleKey`, `*` = mọi vai) |
-| GET · PATCH | `/notification/store-defaults` | `F1` · `F2` | Mặc định cửa hàng theo vai, có khung giờ |
+| GET · PATCH | `/notification/preferences` | — (của chính mình) | Tuỳ chọn theo sự kiện × kênh (`event_key`, `channel`, `enabled`, `mute_until`); sự kiện bị khoá cứng trong phạm vi của tổ chức → 422 `LOCKED_BY_UPPER` |
+| GET · PATCH | `/notification/org-policy` | `F1` · `F2` | Chính sách tổ chức theo sự kiện × kênh × vai (`event_key`, `channel`, `role_key` — `*` = mọi vai, `priority_override`) |
+| GET · PATCH | `/notification/store-defaults` | `F1` · `F2` | Mặc định cửa hàng theo vai (`?role_key=`), có khung giờ (`schedule_start`, `schedule_end`) |
 | GET · POST · DELETE | `/notification/org-hard-locks` | `F1` · `F2` | Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên |
 | GET · POST · DELETE | `/notification/store-hard-locks` | `F1` · `F2` | Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên |
 | GET | `/platform/notification/events` | phiên nền tảng | Toàn bộ danh mục sự kiện |
@@ -1168,7 +1168,7 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | POST | `/platform/notification/providers/test` | `N2` | Gửi một tin thử: SMS / Zalo tới số điện thoại nhập vào; Web Push tới thiết bị chính người vận hành đã bật nhận tin; trả `{ success, error? }` (`NOT_CONFIGURED` khi chưa đăng ký) |
 | GET · PATCH | `/platform/notification/visibility` | đọc: phiên nền tảng · ghi: `N2` | Ma trận hiển thị sự kiện theo tầng |
 | GET · POST · DELETE | `/platform/notification/hard-locks` | đọc: phiên nền tảng · ghi: `N2` | Khoá cứng tầng `MOTHER` (`scope_id = "GLOBAL"`) |
-| PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlockedTools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |
+| PATCH | `/coordinator/partners/:id/tools` | `F2` | Chuỗi mở khoá công cụ cho cửa hàng đối tác: `{ unlocked_tools: string[] }` (mã `^[a-z0-9-]{1,64}$`, ≤ 200). `[]` = khoá hết, chưa cấu hình = mặc định. Chỉ ghi khoá `settings.unlocked_tools` bằng một câu lệnh. Quan hệ đối tác của chuỗi khác → 404 |
 
 ## 27. Đối tác chuỗi, chat nội bộ, dữ liệu chuỗi, ảnh sản phẩm (26–28/10/2026)
 
@@ -1190,7 +1190,7 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | POST | `/chain/links/:id/accept` | `F2` | Cửa hàng đồng ý lời mời → `ACTIVE` (đặt lại cạnh chính); quá hạn → 409; liên kết của tổ chức khác → 404; báo chuỗi (`CHAIN_PARTNER_RESPONDED`) |
 | POST | `/chain/links/:id/decline` | `F2` | Cửa hàng từ chối lời mời → `TERMINATED`; báo chuỗi |
 | POST | `/chain/links/:id/leave` | `F2` | `{ reason }` — cửa hàng tự rời chuỗi → `TERMINATED`; ghi `audit_logs`, báo chuỗi |
-| GET · POST | `/internal-chat/conversations` | `S1` | GET: phòng trong phạm vi tổ chức (và chi nhánh) hiện tại — phòng chuỗi mà tổ chức mình là bên kia hiện khi liên kết ACTIVE/SUSPENDED — kèm `counterpartName`, kèm `unreadCount` thật; `?type=` sai → 400. POST `{ partnerOrgId }` (chuỗi) · `{ chainOrgId }` (cửa hàng) · `{ branchId }` (chi nhánh của tổ chức mình): mở hoặc tạo lần đầu phòng của đúng cặp đó — liên kết phải ACTIVE/SUSPENDED, nhân viên gắn chi nhánh chỉ mở phòng chi nhánh mình, sai → 404. POST kiểu cũ: tạo/lấy hội thoại (`CHAIN_PARTNER` · `ORDER_THREAD`; `PLATFORM_TENANT` → 400); phòng 1-1 có sẵn thì dùng lại; `orderId` không thuộc tổ chức mình hoặc `targetUserId` ngoài tổ chức/đối tác liên kết → 404 |
+| GET · POST | `/internal-chat/conversations` | `S1` | GET: phòng trong phạm vi tổ chức (và chi nhánh) hiện tại — phòng chuỗi mà tổ chức mình là bên kia hiện khi liên kết ACTIVE/SUSPENDED — kèm `counterpartName`, kèm `unreadCount` thật; `?type=` sai → 400. POST `{ partner_org_id }` (chuỗi) · `{ chain_org_id }` (cửa hàng) · `{ branch_id }` (chi nhánh của tổ chức mình): mở hoặc tạo lần đầu phòng của đúng cặp đó — liên kết phải ACTIVE/SUSPENDED, nhân viên gắn chi nhánh chỉ mở phòng chi nhánh mình, sai → 404. POST kiểu cũ: tạo/lấy hội thoại (`CHAIN_PARTNER` · `ORDER_THREAD`; `PLATFORM_TENANT` → 400); phòng 1-1 có sẵn thì dùng lại; `orderId` không thuộc tổ chức mình hoặc `targetUserId` ngoài tổ chức/đối tác liên kết → 404 |
 | GET · POST | `/internal-chat/conversations/:id/messages` | `S1` | GET: trang tin **mới nhất** (`?limit=` 1–100, mặc định 50; `?before=<nextCursor>` lấy trang cũ hơn; trả `nextCursor`, hết = `null`); chỉ trang mới nhất mới đánh dấu đã đọc. POST: chỉ `{ content }` tin chữ ≤ 4 000 ký tự — trường khác (`actionPayload`, `attachments`, loại ≠ `TEXT`) → 400. Ngoài phạm vi phòng → 404; cửa hàng có liên kết tạm dừng chỉ đọc (gửi → 404) |
 | POST | `/internal-chat/conversations/:id/images` | `S1` | multipart `files` (1–5 ảnh) + `caption`: kiểm byte thật (JPG/PNG/WebP, ≤ 10 MB/ảnh — quá → 413), cùng cổng quyền gửi như tin chữ (ngoài phòng / liên kết tạm dừng → 404), lưu `org/<tổ chức chủ phòng>/chat-<phòng>/…`, tạo một tin `IMAGE`; trả `{ data }` (201). Khi đọc phòng, `attachments` của tin ảnh là URL ký GET 1 giờ, chỉ cho khoá đúng thư mục phòng; giới hạn 20 lần/phút/người |
 | PATCH | `/internal-chat/conversations/:id/mute` | `S1` | `{ muted }` — tắt / bật thông báo "tin nhắn mới" của phòng cho chính mình (ai đọc được phòng đều đổi được; ngoài phòng → 404). Thẻ mời nhận đơn gia công vẫn báo |
@@ -1198,7 +1198,7 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | GET | `/internal-chat/stream` | `S1` | SSE: `event: room` `{ conversationId }` khi phòng trong phạm vi tổ chức (và chi nhánh) của phiên có tin mới — không mang nội dung, trình duyệt đọc lại qua API; ping 25 giây, đóng sau 30 phút để trình duyệt nối lại; nhiều instance qua Redis pub/sub khi có `REDIS_URL` |
 | GET | `/internal-chat/stats` | `S1` | `{ data: { days: 30, invites_in_chat, partner_claims, partner_stores } }` — 30 ngày của tổ chức người xem (chuỗi): lời mời đơn đăng vào Trao đổi nội bộ, đơn cửa hàng đối tác đã nhận, số cửa hàng đối tác trong vòng bắn đơn; không có cửa hàng đối tác → 0. Danh sách phòng (`GET /internal-chat/conversations`) phía chuỗi kèm `activeOrderCount` cho phòng cửa hàng đối tác |
 | GET | `/internal-chat/unread` | `S1` | `{ data: { unread_count } }` — tổng tin chưa đọc của người xem trong tối đa 100 phòng gần nhất (số đếm cạnh mục menu "Trao đổi nội bộ") |
-| POST | `/internal-chat/messages/:id/action` | `S1` + `S2` | Nhận / từ chối thẻ đơn (`rejectedReason` ≤ 500). Chỉ tổ chức `assignedPartnerOrgId`, không phải người gửi, thẻ còn `PENDING_ACCEPT`; sai quyền → 404, đã xử lý → 409. Gộp trạng thái vào thẻ, giữ mã đơn / giá / ảnh |
+| POST | `/internal-chat/messages/:id/action` | `S1` + `S2` | Nhận / từ chối thẻ đơn (`rejected_reason` ≤ 500). Chỉ tổ chức `assignedPartnerOrgId`, không phải người gửi, thẻ còn `PENDING_ACCEPT`; sai quyền → 404, đã xử lý → 409. Gộp trạng thái vào thẻ, giữ mã đơn / giá / ảnh |
 | GET | `/noi-bo/identity` | `F1` | Danh tính nội bộ của phiên, kèm tên + email thành viên (gác `F1` như `GET /members` từ 11/11/2026, trước đó mọi vai đọc được); lỗi không trả chi tiết/stack · Lỗi theo envelope chung: chưa đăng nhập/phiên bị thay → 401, không có tổ chức → 404 (trước 06/11/2026 mọi lỗi ra 500 `IDENTITY_ERROR` — audit API-04) |
 | POST | `/organizations/current/language-unlock-request` | `F2` | Xin mở thêm ngôn ngữ |
 | GET | `/platform/orgs-data` | `N1` | Trung tâm dữ liệu xuyên tổ chức |
@@ -1242,19 +1242,19 @@ Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md`. Mọi route có p
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/integrations` | `W1` | Tổng quan, danh mục theo tầng và gói, kết nối hiện có |
-| POST | `/integrations/connections` | `W2` | Kết nối bằng khoá `{ connectorKey, secret }`; máy chủ kiểm khoá với nhà cung cấp rồi mới lưu (đã mã hoá); 201 |
+| POST | `/integrations/connections` | `W2` | Kết nối bằng khoá `{ connector_key, secret }`; máy chủ kiểm khoá với nhà cung cấp rồi mới lưu (đã mã hoá); 201 |
 | DELETE | `/integrations/connections/:id` | `W2` | Ngắt kết nối, thu hồi phía nhà cung cấp nếu hỗ trợ, xoá khoá đã lưu |
 | POST | `/integrations/connections/:id/rotate` | `W3` | Đổi khoá — kiểm khoá mới trước khi thay |
 | POST | `/integrations/connections/:id/test` | `W3` | Kiểm tra kết nối ngay, cập nhật trạng thái |
 | GET | `/integrations/connections/:id/events` | `W1` | Nhật ký sự kiện, lọc `status`, `limit` tối đa 100 |
 | POST | `/integrations/events/:id/replay` | `W5` | Đưa sự kiện `FAILED`/`DEAD` về hàng chờ |
 | GET | `/integrations/governance` | `W4` | Chuỗi xem chế độ đặt cho cửa hàng thành viên theo từng đầu nối khoá được, kèm khoá tầng trên (`lockedByUpper`). Không phải chuỗi → 404 |
-| PUT | `/integrations/governance` | `W4` | `{ connectorKey, mode: FORBID \| INHERIT_ONLY \| ALLOW_OWN }`; phạm vi là chính chuỗi của phiên. Tầng trên đã khoá → 422 `violation: LOCKED_BY_UPPER`; cửa hàng → 422 `STORE_CANNOT_LOCK`; đầu nối chưa thực thi khoá → 422 `NOT_GOVERNABLE`. Báo cho cửa hàng thành viên, ghi audit |
+| PUT | `/integrations/governance` | `W4` | `{ connector_key, mode: FORBID \| INHERIT_ONLY \| ALLOW_OWN }`; phạm vi là chính chuỗi của phiên. Tầng trên đã khoá → 422 `violation: LOCKED_BY_UPPER`; cửa hàng → 422 `STORE_CANNOT_LOCK`; đầu nối chưa thực thi khoá → 422 `NOT_GOVERNABLE`. Báo cho cửa hàng thành viên, ghi audit |
 | GET | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | Tham số `scope` = `GLOBAL` hoặc `industry:<key>`; trả kèm danh sách ngành |
 | PUT | `/platform/integrations/governance` | `N16` *(phiên vận hành)* | `{ scopeId, connectorKey, mode }`; ngành không đổi được khi Mẹ đã khoá (422). Ghi `platform_audit_logs` |
 | GET | `/integrations/connections/:id/sales` | `W1` | Kết nối kênh bán: tin đăng (tối đa 100) và 50 đơn gần nhất. Kết nối không phải kênh bán hoặc của tổ chức khác → 404 |
-| POST | `/integrations/connections/:id/sales/publish` | `W3` | `{ productIds }` 1–100. Sản phẩm thiếu dữ liệu (chưa mở bán/giá/ảnh) không đẩy lên kênh, ghi lý do; kênh từ chối → ghi lý do của kênh. Kết nối lỗi hoặc cấp trên khoá → 422. Ghi audit |
-| POST | `/integrations/connections/:id/sales/unpublish` | `W3` | `{ productIds }` 1–100 — gỡ tin đã đăng. Ghi audit |
+| POST | `/integrations/connections/:id/sales/publish` | `W3` | `{ product_ids }` 1–100. Sản phẩm thiếu dữ liệu (chưa mở bán/giá/ảnh) không đẩy lên kênh, ghi lý do; kênh từ chối → ghi lý do của kênh. Kết nối lỗi hoặc cấp trên khoá → 422. Ghi audit |
+| POST | `/integrations/connections/:id/sales/unpublish` | `W3` | `{ product_ids }` 1–100 — gỡ tin đã đăng. Ghi audit |
 | POST | `/integrations/connections/:id/sales/availability` | `W3` | Đẩy còn/hết hàng (theo trạng thái mở bán — chưa có số tồn, nợ #95) cho mọi tin đã đăng, lô 100 |
 | POST | `/public/integrations/:connector/:ref` | — *(chữ ký của đầu nối)* | Cổng webhook chung: giới hạn tần suất theo IP và theo `ref`, thân tối đa 256 KB, xác thực chữ ký → ghi nhật ký (chống trùng) → 200. Sai chữ ký/sai `ref`/kết nối đã ngắt đều trả cùng một 401 |
 | POST | `/internal/integrations-sweep` | — *(cron, header `x-cron-secret`)* | Xử lý tối đa 100 sự kiện đến hạn (sự kiện `order.*` của kênh bán → lấy chi tiết đơn qua API rồi nhập vào Đơn hàng, chống trùng), kiểm sức khoẻ tối đa 50 kết nối và kéo đơn dự phòng cho tối đa 20 kết nối kênh bán mỗi lượt (mỗi kết nối tối đa 30 phút/lần). Gọi sau cùng trong cron `smeos-cron-dispatch-sweep` 5 phút/lần |
@@ -1281,10 +1281,10 @@ Kế hoạch: `docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/03_KE
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/quotations` | `R15` hoặc `Q1` | Lọc `status`, `leadId`, `customerId`, `search`; cursor + `limit` ≤ 100; kèm `counts` |
+| GET | `/quotations` | `R15` hoặc `Q1` | Lọc `status`, `lead_id`, `customer_id`, `search`; cursor + `limit` ≤ 100; kèm `counts` |
 | POST | `/quotations` | `R15` | Tạo báo giá nháp, mã nội bộ `BG-xxxx`, token công khai ngẫu nhiên 256 bit |
 | GET | `/quotations/:id` | `R15` hoặc `Q1` | |
-| PATCH | `/quotations/:id` | `R15` | Báo giá đã chuyển thành đơn không sửa được · nhận `shippingFee` và `items[].variantLabel`; tổng = tạm tính − ưu đãi + phí vận chuyển |
+| PATCH | `/quotations/:id` | `R15` | Báo giá đã chuyển thành đơn không sửa được · nhận `shipping_fee` và `items[].variantLabel`; tổng = tạm tính − ưu đãi + phí vận chuyển |
 | POST | `/quotations/:id/send` | `R15` | Sang `SENT`; lead gắn kèm sang `QUOTATION_SENT` |
 | GET | `/quotations/:id/revisions` | `R15` | Các phiên bản trước của báo giá, mới nhất trước: `{ version, snapshot, createdBy, createdAt }`; mỗi lần sửa nội dung (dòng, ưu đãi, phí vận chuyển, hạn, điều khoản, ghi chú) lưu ảnh chụp bản trước đó, đổi trạng thái không lưu · báo giá tổ chức khác → 404 |
 | POST | `/quotations/:id/convert` | `R15` | Tạo đơn nguồn `QUOTATION` qua cổng nhận đơn chung; hai lệnh đồng thời chỉ một lệnh tạo đơn |

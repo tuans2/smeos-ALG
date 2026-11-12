@@ -58,9 +58,9 @@ describe("hợp đồng — đơn hàng và báo giá", () => {
       await createOrder(
         send_("/orders", "POST", {
           items: [{ description: "Giỏ hoa", quantity: 2, unitPriceVnd: 450_000 }],
-          cardMessage: "Chúc mừng sinh nhật",
-          deliveryWindow: { date: "2026-12-01", timeSlot: "9-11h" },
-          deliveryAddress: { recipientName: "Chị Lan", phone: "0900000000", street: "12 Lê Lợi", district: "Quận 1" },
+          card_message: "Chúc mừng sinh nhật",
+          delivery_window: { date: "2026-12-01", timeSlot: "9-11h" },
+          delivery_address: { recipientName: "Chị Lan", phone: "0900000000", street: "12 Lê Lợi", district: "Quận 1" },
         })
       ),
       201,
@@ -70,13 +70,13 @@ describe("hợp đồng — đơn hàng và báo giá", () => {
     const id = (created.order as { id: string }).id
     await expectContract(await listOrders(get("/orders?limit=10")), 200, R.ordersResponse, "orders")
     await expectContract(await getOrder(get(`/orders/${id}`), ps({ id })), 200, R.orderDetailResponse, "order-detail")
-    await expectContract(await patchOrder(send_(`/orders/${id}`, "PATCH", { internalNote: "Gói giấy kraft" }), ps({ id })), 200, R.orderResponse, "order")
-    await expectContract(await assign(send_(`/orders/${id}/assign`, "POST", { assigneeId: t.userId, difficulty: "kho" }), ps({ id })), 200, R.orderResponse, "order")
+    await expectContract(await patchOrder(send_(`/orders/${id}`, "PATCH", { internal_note: "Gói giấy kraft" }), ps({ id })), 200, R.orderResponse, "order")
+    await expectContract(await assign(send_(`/orders/${id}/assign`, "POST", { assignee_id: t.userId, difficulty: "kho" }), ps({ id })), 200, R.orderResponse, "order")
     await expectContract(await events(get(`/orders/${id}/events`), ps({ id })), 200, R.orderEventsResponse, "order-events")
     await expectContract(await print(get(`/orders/${id}/print`), ps({ id })), 200, R.printResponse, "print")
     await expectContract(await orderInfoRequests(get(`/orders/${id}/info-requests`), ps({ id })), 200, R.infoRequestsResponse, "info-requests")
     const info = await expectContract(
-      await createInfoRequest(send_(`/orders/${id}/info-requests`, "POST", { field: "giftNote", label: "Ghi chú quà", reason: "Khách chưa chốt", requestedFrom: "Khách" }), ps({ id })),
+      await createInfoRequest(send_(`/orders/${id}/info-requests`, "POST", { field: "giftNote", label: "Ghi chú quà", reason: "Khách chưa chốt", requested_from: "Khách" }), ps({ id })),
       201,
       R.infoRequestResponse,
       "info-request"
@@ -149,7 +149,7 @@ describe("hợp đồng — đơn hàng và báo giá", () => {
 
   it("báo giá: tạo, liệt kê, đọc, sửa, phiên bản, gửi, chuyển thành đơn", async () => {
     const created = await expectContract(
-      await createQuotation(send_("/quotations", "POST", { items: [{ name: "Lẵng hoa khai trương", qty: 1, unitPrice: 1_500_000 }], shippingFee: 50_000, notes: "Giao sáng" })),
+      await createQuotation(send_("/quotations", "POST", { items: [{ name: "Lẵng hoa khai trương", qty: 1, unitPrice: 1_500_000 }], shipping_fee: 50_000, notes: "Giao sáng" })),
       201,
       R.quotationResponse,
       "quotation"
@@ -158,7 +158,7 @@ describe("hợp đồng — đơn hàng và báo giá", () => {
     await expectContract(await listQuotations(get("/quotations?limit=5")), 200, R.quotationsResponse, "quotations")
     await expectContract(await getQuotation(get(`/quotations/${id}`), ps({ id })), 200, R.quotationResponse, "quotation")
     await expectContract(
-      await patchQuotation(send_(`/quotations/${id}`, "PATCH", { discountAmount: 100_000, items: [{ name: "Lẵng hoa khai trương", variantLabel: "Size lớn", qty: 1, unitPrice: 1_800_000 }] }), ps({ id })),
+      await patchQuotation(send_(`/quotations/${id}`, "PATCH", { discount_amount: 100_000, items: [{ name: "Lẵng hoa khai trương", variantLabel: "Size lớn", qty: 1, unitPrice: 1_800_000 }] }), ps({ id })),
       200,
       R.quotationResponse,
       "quotation"

@@ -24,6 +24,7 @@ import { useSession } from "@/lib/session"
 
 import { NotSignedIn, addressLine, getJson, postJson } from "./role-work-api"
 
+import { snakeKeys } from "@/lib/case-keys"
 interface Run {
   orderId: string
   code: string
@@ -79,7 +80,7 @@ export function ShipperRunsHome() {
     setBusyId(orderId)
     setError(null)
     try {
-      await postJson(`/api/v1/delivery/my-runs/${orderId}`, body)
+      await postJson(`/api/v1/delivery/my-runs/${orderId}`, snakeKeys(body))
       setFailing(null)
       await load()
     } catch (e) {

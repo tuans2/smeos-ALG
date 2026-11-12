@@ -38,7 +38,7 @@ describe("cách ly tenant — khoá tích hợp theo tầng (Trung tâm Tích h�
   })
 
   it("chuỗi A khoá chỉ áp cho cửa hàng của chuỗi A; phạm vi ghi là chính chuỗi trong phiên", async () => {
-    const res = await put(chainA, { connectorKey: "facebook_messenger", mode: "FORBID" })
+    const res = await put(chainA, { connector_key: "facebook_messenger", mode: "FORBID" })
     expect(res.status).toBe(200)
     expect(await availabilityOf(storeA, "facebook_messenger")).toBe("LOCKED_BY_UPPER")
     expect(await availabilityOf(storeB, "facebook_messenger")).not.toBe("LOCKED_BY_UPPER")
@@ -55,14 +55,14 @@ describe("cách ly tenant — khoá tích hợp theo tầng (Trung tâm Tích h�
 
   it("cửa hàng không đọc/không đặt được khoá cho tầng dưới", async () => {
     expect((await getGovernance(withSession(`${BASE}/governance`, storeA.token))).status).toBe(404)
-    expect((await put(storeA, { connectorKey: "facebook_messenger", mode: "FORBID" })).status).toBe(422)
+    expect((await put(storeA, { connector_key: "facebook_messenger", mode: "FORBID" })).status).toBe(422)
     expect(await prisma.governance_decisions.count({ where: { system: "integration" } })).toBe(0)
   })
 
   it("chuỗi cho phép lại → cửa hàng thành viên hết bị khoá; không còn khoá hiện hành (dòng gỡ giữ lịch sử)", async () => {
-    await put(chainA, { connectorKey: "zalo_oa", mode: "INHERIT_ONLY" })
+    await put(chainA, { connector_key: "zalo_oa", mode: "INHERIT_ONLY" })
     expect(await availabilityOf(storeA, "zalo_oa")).toBe("INHERITED")
-    await put(chainA, { connectorKey: "zalo_oa", mode: "ALLOW_OWN" })
+    await put(chainA, { connector_key: "zalo_oa", mode: "ALLOW_OWN" })
     expect(await availabilityOf(storeA, "zalo_oa")).not.toBe("INHERITED")
     expect(await currentDecisions(prisma, { systems: ["integration"] })).toEqual([])
   })

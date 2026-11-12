@@ -36,7 +36,7 @@ export const POST = defineRoute({
 
     const result = await configureChatChannel(ctx, {
       channel: parsed.data.channel as SupportedChatChannel,
-      isEnabled: parsed.data.isEnabled,
+      isEnabled: parsed.data.is_enabled,
       config: parsed.data.config,
     })
 

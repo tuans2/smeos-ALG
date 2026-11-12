@@ -10,12 +10,15 @@ import { useSession } from "@/lib/session"
 import { OrdersPanel, RevenuePanel } from "@/components/reporting/order-revenue-panels"
 import { PerformancePanel, ProductsPanel } from "@/components/reporting/product-performance-panels"
 import { CashflowPanel } from "@/components/reporting/cashflow-panel"
+import { PartnerPayoutPanel } from "@/components/reporting/partner-payout-panel"
 import type { PeriodState } from "@/components/reporting/report-fetch"
 
 const TABS = [
   { id: "orders", label: "Đơn hàng" }, { id: "revenue", label: "Doanh thu" }, { id: "products", label: "Sản phẩm" },
-  { id: "performance", label: "Hiệu suất" }, { id: "cashflow", label: "Dòng tiền" },
+  { id: "performance", label: "Hiệu suất" }, { id: "cashflow", label: "Dòng tiền" }, { id: "partners", label: "Tiền công đối tác" },
 ] as const
+/** Tab cần thêm mã riêng ngoài R20 — bảng kê tiền công đối tác cần R19 (audit BL-22). */
+const TAB_CAPABILITY: Partial<Record<(typeof TABS)[number]["id"], string>> = { partners: "R19" }
 type Tab = (typeof TABS)[number]["id"]
 const GRANULARITY = [{ id: "day", label: "Ngày" }, { id: "week", label: "Tuần" }, { id: "month", label: "Tháng" }] as const
 
@@ -38,7 +41,7 @@ export default function BaoCaoPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 p-4 md:p-6">
-      <PageHeader title="Báo cáo theo kỳ" description="Đơn hàng, doanh thu, sản phẩm, hiệu suất và dòng tiền trong khoảng thời gian bạn chọn" />
+      <PageHeader title="Báo cáo theo kỳ" description="Đơn hàng, doanh thu, sản phẩm, hiệu suất, dòng tiền và tiền công đối tác trong khoảng thời gian bạn chọn" />
       <div className="flex flex-wrap items-end gap-2 rounded-2xl border border-border bg-surface p-3">
         <label className="flex flex-col gap-1 text-caption text-text">Từ ngày
           <Input type="date" value={draft.from} onChange={(e) => setDraft({ ...draft, from: e.target.value })} className="h-9" aria-label="Từ ngày" />
@@ -54,7 +57,7 @@ export default function BaoCaoPage() {
         <Button type="button" size="sm" onClick={() => setPeriod(draft)} disabled={!draft.from || !draft.to || draft.from > draft.to}>Xem báo cáo</Button>
       </div>
       <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Loại báo cáo">
-        {TABS.map((t) => (
+        {TABS.filter((t) => !TAB_CAPABILITY[t.id] || can(TAB_CAPABILITY[t.id]!)).map((t) => (
           <Button key={t.id} type="button" size="sm" role="tab" aria-selected={tab === t.id} variant={tab === t.id ? "secondary" : "outline"} onClick={() => setTab(t.id)}>{t.label}</Button>
         ))}
       </div>
@@ -64,6 +67,7 @@ export default function BaoCaoPage() {
         {tab === "products" && <ProductsPanel period={period} />}
         {tab === "performance" && <PerformancePanel period={period} />}
         {tab === "cashflow" && <CashflowPanel period={period} />}
+        {tab === "partners" && can("R19") && <PartnerPayoutPanel period={period} />}
       </div>
     </div>
   )

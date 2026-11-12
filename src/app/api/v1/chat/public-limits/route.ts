@@ -21,7 +21,8 @@ export const POST = defineRoute({
   handler: async ({ request: req, ctx }) => {
     const parsed = publicChatLimitRequestBody.safeParse(await req.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    const pending = await requestPublicChatLimits(ctx, parsed.data)
+    const { per_visitor: perVisitor, per_ip: perIp, note } = parsed.data
+    const pending = await requestPublicChatLimits(ctx, { perVisitor, perIp, note })
     return jsonResponse({ pending }, { status: 201 })
   },
 })

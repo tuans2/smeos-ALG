@@ -90,10 +90,10 @@ describe("hợp đồng — khách hàng & marketing", () => {
   })
 
   it("dịp bán hàng", async () => {
-    const created = await expectContract(await createOccasion(send("/occasions", "POST", { code: "KHAI_TRUONG", name: "Khai trương", sortOrder: 5 })), 201, R.occasionResponse, "occasion-create")
+    const created = await expectContract(await createOccasion(send("/occasions", "POST", { code: "KHAI_TRUONG", name: "Khai trương", sort_order: 5 })), 201, R.occasionResponse, "occasion-create")
     const id = String((created.occasion as { id: string }).id)
     await expectContract(await listOccasions(get("/occasions")), 200, R.occasionsResponse, "occasions")
-    await expectContract(await patchOccasion(send(`/occasions/${id}`, "PATCH", { isActive: false }), ps(id)), 200, R.occasionResponse, "occasion-patch")
+    await expectContract(await patchOccasion(send(`/occasions/${id}`, "PATCH", { is_active: false }), ps(id)), 200, R.occasionResponse, "occasion-patch")
     expect((await patchOccasion(send(`/occasions/${id}`, "PATCH", {}), ps(id))).status).toBe(400)
   })
 

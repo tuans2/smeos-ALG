@@ -44,9 +44,9 @@ export const PATCH = defineRoute({
     const data = parsed.data
     const updated = await updateQuotationUseCase(ctx, id, {
       status: data.status as QuotationStatus | undefined,
-      validUntil: data.validUntil ?? data.valid_until,
-      discountAmount: data.discountAmount ?? data.discount_amount,
-      shippingFee: data.shippingFee ?? data.shipping_fee,
+      validUntil: data.valid_until,
+      discountAmount: data.discount_amount,
+      shippingFee: data.shipping_fee,
       terms: data.terms,
       notes: data.notes,
       items: data.items

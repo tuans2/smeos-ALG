@@ -105,7 +105,7 @@ describe("hợp đồng — tác vụ AI, phân tích ảnh, âm thanh, video", 
     await expectContract(await getJob(get(`/jobs/${randomUUID()}`), ps(randomUUID())), 404, null)
 
     const product = await expectContract(await productsPost(send("/products", "POST", { code: "AI0001", name: "Bó hoa", status: "ACTIVE" })), 201, null)
-    const body = { productId: product.id, feature: "vision.analyze", capabilities: ["AIC-11"], module: "M01" }
+    const body = { product_id: product.id, feature: "vision.analyze", capabilities: ["AIC-11"], module: "M01" }
     await expectContract(await batchJob(send("/jobs/batch", "POST", body, true)), 202, R.jobCreatedResponse, "jobs-batch")
   })
 

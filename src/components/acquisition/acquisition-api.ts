@@ -29,6 +29,7 @@ export interface ShortLinkStats {
 }
 
 import type { LeadStatus } from "@/modules/acquisition/domain/lead-rules"
+import { snakeKeys } from "@/lib/case-keys"
 export type { LeadStatus }
 
 export interface LeadItem {
@@ -69,7 +70,7 @@ export const acquisitionApi = {
   linkStats: (id: string, days: number) => call<ShortLinkStats>(`/api/v1/short-links/${id}/stats?days=${days}`),
   listLeads: (status?: string, cursor?: string) =>
     call<Page<LeadItem> & { counts: Record<string, number> }>(`/api/v1/leads?limit=50${status ? `&status=${status}` : ""}${cursor ? `&cursor=${cursor}` : ""}`),
-  updateLead: (id: string, body: { status?: LeadStatus | string; assigneeUserId?: string | null }) => call<LeadItem>(`/api/v1/leads/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
+  updateLead: (id: string, body: { status?: LeadStatus | string; assigneeUserId?: string | null }) => call<LeadItem>(`/api/v1/leads/${id}`, { method: "PATCH", body: JSON.stringify(snakeKeys(body)) }),
   brandProfile: () => call<{ primary_color: string | null; logo_url: string | null }>("/api/v1/brand-profile"),
 }
 

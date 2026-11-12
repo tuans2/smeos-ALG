@@ -52,7 +52,7 @@ describe("PATCH /orders/:id/delivery-window", () => {
 
   it("Điều hành đổi giờ ở sửa đơn (R3) cũng ghi lịch sử", async () => {
     const id = await orderBy(sale.userId)
-    const res = await patchOrder(withSession(`http://localhost/api/v1/orders/${id}`, a.token, { method: "PATCH", body: JSON.stringify({ deliveryWindow: { date: "2026-12-03", timeSlot: "08:00 - 10:00" } }) }), params(id))
+    const res = await patchOrder(withSession(`http://localhost/api/v1/orders/${id}`, a.token, { method: "PATCH", body: JSON.stringify({ delivery_window: { date: "2026-12-03", timeSlot: "08:00 - 10:00" } }) }), params(id))
     expect(res.status).toBe(200)
     expect(await windowEvents(id)).toMatchObject([{ from_value: "2026-12-01 14:00 - 16:00", to_value: "2026-12-03 08:00 - 10:00", actor_id: a.userId }])
   })

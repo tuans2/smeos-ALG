@@ -5,7 +5,7 @@ import { creditPeriod } from "@/modules/usage/domain/monthly-limit"
 import { runInBackground } from "@/core/runtime/background"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 import { formatCurrency, formatDate } from "@/lib/i18n/formatters"
-import { claimPlanCreditPeriod, claimReminder, ensureInvoice, findPendingInvoices, findSubscription, markActive, markOverdue } from "../infra/subscription-repository"
+import { applyDuePendingChange, claimPlanCreditPeriod, claimReminder, ensureInvoice, findPendingInvoices, findSubscription, markActive, markOverdue } from "../infra/subscription-repository"
 import { expiringPlanCredit, renewalOpensAt, reminderDue, type SubscriptionCycle } from "../domain/subscription-rules"
 import type { DbClient } from "@/modules/organization/infra/db-client"
 
@@ -18,19 +18,24 @@ import type { DbClient } from "@/modules/organization/infra/db-client"
 export interface SubscriptionState { readOnly: boolean }
 
 export async function checkSubscription(organizationId: string, now: Date = new Date()): Promise<SubscriptionState> {
-  const sub = await findSubscription(organizationId)
+  let sub = await findSubscription(organizationId)
   if (!sub || sub.status === "CANCELLED") return { readOnly: false }
+  // Hạ gói chờ áp đã tới kỳ → áp trước khi xét credit tặng và hoá đơn (audit BL-27)
+  if (sub.pending_change && (await runInTransaction((tx) => applyDuePendingChange(tx, sub!.id, now)))) {
+    sub = (await findSubscription(organizationId))!
+  }
+  const current = sub
   const period = creditPeriod(now)
-  const quiet = sub.status === "ACTIVE" && now < renewalOpensAt(sub.current_period_end)
-    && (sub.included_credits_monthly === 0 || sub.plan_credit_period === period)
+  const quiet = current.status === "ACTIVE" && now < renewalOpensAt(current.current_period_end)
+    && (current.included_credits_monthly === 0 || current.plan_credit_period === period)
   if (quiet) return { readOnly: false }
 
   const notices: Array<{ eventKey: string; title: string; message: string }> = []
   const readOnly = await runInTransaction(async (tx) => {
-    if (now >= renewalOpensAt(sub.current_period_end)) {
-      await ensureInvoice(tx, { ...sub, cycle: sub.cycle as SubscriptionCycle }, sub.current_period_end)
+    if (now >= renewalOpensAt(current.current_period_end)) {
+      await ensureInvoice(tx, { ...current, cycle: current.cycle as SubscriptionCycle }, current.current_period_end)
     }
-    const pending = await findPendingInvoices(sub.id, tx)
+    const pending = await findPendingInvoices(current.id, tx)
     for (const inv of pending) {
       for (const days of [7, 1] as const) {
         if (inv.due_at > now && reminderDue(inv.due_at, days, now) && (await claimReminder(tx, inv.id, days))) {
@@ -42,12 +47,12 @@ export async function checkSubscription(organizationId: string, now: Date = new 
       }
     }
     const overdue = pending.some((inv) => inv.due_at <= now)
-    if (overdue && sub.status !== "OVERDUE") {
-      await markOverdue(tx, sub.id)
+    if (overdue && current.status !== "OVERDUE") {
+      await markOverdue(tx, current.id)
       notices.push({ eventKey: "SUBSCRIPTION_OVERDUE", title: "Gói dịch vụ quá hạn thanh toán", message: "Tài khoản đang ở chế độ chỉ xem. Thanh toán hoá đơn để mở lại ngay." })
     }
-    if (!overdue && sub.status === "OVERDUE") await markActive(tx, sub.id)
-    if (!overdue && sub.included_credits_monthly > 0 && sub.plan_credit_period !== period) await rollPlanCredits(tx, sub, period)
+    if (!overdue && current.status === "OVERDUE") await markActive(tx, current.id)
+    if (!overdue && current.included_credits_monthly > 0 && current.plan_credit_period !== period) await rollPlanCredits(tx, current, period)
     return overdue
   })
   if (notices.length > 0) {

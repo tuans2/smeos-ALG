@@ -35,3 +35,35 @@ export function splitOverpayment(surplusVnd: number, nextInvoiceAmountVnd: numbe
   const appliedVnd = Math.min(surplus, Math.max(0, nextInvoiceAmountVnd))
   return { appliedVnd, leftoverVnd: surplus - appliedVnd }
 }
+
+/** Hạ gói / đổi chu kỳ chờ áp từ kỳ sau (`subscriptions.pending_change`, PO 12/11/2026). */
+export interface PendingPlanChange {
+  plan: string
+  cycle: SubscriptionCycle
+  priceVnd: number
+  includedCreditsMonthly: number
+  /** ISO — hết kỳ lúc đổi; từ mốc này gói mới có hiệu lực. */
+  effectiveAt: string
+}
+
+export function parsePendingChange(raw: unknown): PendingPlanChange | null {
+  const r = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : null
+  if (!r) return null
+  const cycle = r.cycle === "MONTHLY" || r.cycle === "YEARLY" ? r.cycle : null
+  const n = (v: unknown) => (typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : null)
+  const price = n(r.priceVnd), credits = n(r.includedCreditsMonthly)
+  const at = typeof r.effectiveAt === "string" && !Number.isNaN(Date.parse(r.effectiveAt)) ? r.effectiveAt : null
+  if (typeof r.plan !== "string" || !cycle || price === null || credits === null || !at) return null
+  return { plan: r.plan, cycle, priceVnd: price, includedCreditsMonthly: credits, effectiveAt: at }
+}
+
+/** Tới lúc áp: đã qua mốc, hoặc kỳ hiện tại đã dời sang kỳ bắt đầu từ mốc (thu tiền kỳ sau sớm). */
+export function pendingChangeDue(p: PendingPlanChange, now: Date, currentPeriodStart: Date): boolean {
+  const at = Date.parse(p.effectiveAt)
+  return now.getTime() >= at || currentPeriodStart.getTime() >= at
+}
+
+/** Giá và chu kỳ của hoá đơn bắt đầu từ `periodStart`: kỳ từ mốc đổi trở đi theo gói chờ áp. */
+export function billingFor(sub: { priceVnd: number; cycle: SubscriptionCycle }, pending: PendingPlanChange | null, periodStart: Date) {
+  return pending && periodStart.getTime() >= Date.parse(pending.effectiveAt) ? { priceVnd: pending.priceVnd, cycle: pending.cycle } : sub
+}

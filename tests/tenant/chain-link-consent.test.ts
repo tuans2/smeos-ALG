@@ -36,7 +36,7 @@ describe("liên kết Chuỗi ↔ cửa hàng cần cửa hàng đồng ý", () 
     const res = await linkExisting(
       withSession("http://localhost/api/v1/coordinator/partners/link-existing", chain.token, {
         method: "POST",
-        body: JSON.stringify({ identifier: storeSlug, partnerCode: "DT-01" }),
+        body: JSON.stringify({ identifier: storeSlug, partner_code: "DT-01" }),
       })
     )
     expect(res.status).toBe(201)
