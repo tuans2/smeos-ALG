@@ -1,6 +1,6 @@
 import { jsonResponse } from "@/core/http/response"
 import { getOrder } from "@/modules/orders/use-cases/get-order"
-import { updateOrderProgress } from "@/modules/orders/use-cases/update-order-progress"
+import { editOrder } from "@/modules/orders/use-cases/edit-order"
 import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { patchOrderBody } from "@/app/api/v1/_contracts/requests-orders"
 import { defineRoute } from "@/core/http/define-route"
@@ -23,7 +23,7 @@ export const PATCH = defineRoute({
     const body = await request.json()
     const parsed = patchOrderBody.parse(body)
 
-    const updated = await updateOrderProgress(ctx, id, parsed)
+    const updated = await editOrder(ctx, id, parsed)
     // Bổ sung đủ thông tin → yêu cầu bổ sung tự đóng (checklist ALG 4.14)
     await syncOrderInfoRequests(ctx, id)
     return jsonResponse({ order: updated })
