@@ -155,7 +155,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 |---|---|---|
 | [ ] | I-6 [SCHEMA] Bật RLS chặn thật trên production (mốc theo câu trả lời ADR-013 §6). **Chuẩn bị 11/11/2026:** vá fail-open (audit DB-01) — truy vấn ngoài mọi ngữ cảnh trong tiến trình web không còn quyền hệ thống; trang/route server mở ngữ cảnh, gác bằng `db-context-entrypoints.test.ts`; điều kiện bật thêm 14 ngày không có log `kind=unclassified` (runbook §12) | Test "bỏ `scopedWhere` → 0 dòng" chạy trên CSDL thật |
 | [ ] | O-9 [VẬN HÀNH] Thử tải quy mô mục tiêu trên CSDL khôi phục PITR | Biên bản p95 đạt SLO |
-| [ ] | O-10 Dọn `generation_jobs` cũ; bản sao đọc / phân vùng nếu chạm ngưỡng | Theo ngưỡng ADR-015 D-O6 |
+| [x] | O-10 Dọn `generation_jobs` cũ; bản sao đọc / phân vùng nếu chạm ngưỡng — 12/11/2026: loại hạn lưu `finished_jobs` (job xong quá 30 ngày, mặc định chỉ đếm) + `npm run db:growth` báo bảng chạm ngưỡng 20 triệu dòng / 10 GB (runbook §18). Phân vùng / bản sao đọc thật chỉ làm khi chạm ngưỡng — hiện chưa bảng nào | `retention-finished-jobs.test.ts`, `db-growth.test.ts` |
 | [x] | P3-03 ERD theo miền sinh từ schema (`npm run gen:erd` → `docs/kien-truc/ERD_THEO_MIEN.md`, 10 miền), kiểm trong CI qua `npm test` | `tests/unit/architecture/erd.test.ts`: tệp sinh khớp schema, mỗi model đúng một miền |
 | [ ] | [PO] Quyết định lại kiểm thử bảo mật bên ngoài (D-26 hiện "không làm") cho khách enterprise | Ghi sổ quyết định |
 | [ ] | Gói bằng chứng: điền cột "Bằng chứng" của mục 1 cho DoD-1 → DoD-17 | PO ký nhận |

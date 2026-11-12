@@ -266,8 +266,9 @@ Migration tự kiểm lại; còn thì dừng, không đổi gì, bản cũ vẫ
 
 ## 16. Hạn lưu dữ liệu — `retention_policies` (ADR-014 D-P4, 11/11/2026)
 
-Job hằng đêm (1–5 giờ sáng giờ Việt Nam) trong `smeos-web`, đặc tả 07 §54. Sáu loại: `technical_logs`, `delivery_info`,
-`audit_logs`, `customer_conversations`, `customer_profiles`, `non_ledger_documents`. Mặc định **chỉ đếm** số dòng quá hạn — log
+Job hằng đêm (1–5 giờ sáng giờ Việt Nam) trong `smeos-web`, đặc tả 07 §54. Bảy loại: `technical_logs`, `delivery_info`,
+`audit_logs`, `customer_conversations`, `customer_profiles`, `non_ledger_documents`, `finished_jobs` (job sinh ảnh / nội
+dung đã xong quá 30 ngày). Mặc định **chỉ đếm** số dòng quá hạn — log
 `retention.policy_ran` (`enforced: false`, `rows`) và cột `last_run_rows`; chưa xoá gì.
 
 1. Xem số dòng quá hạn trên Render shell của `smeos-web`: `npm run retention:sweep` (chỉ đọc, in số dòng theo bảng).
@@ -298,3 +299,13 @@ Lưu ý:
 - Tổ chức đã có ở đích → từ chối (khôi phục riêng: xoá dữ liệu hiện tại theo D-S4 trước). Thành viên đã có (cùng id)
   giữ nguyên; liên kết tới tổ chức không có ở đích bị bỏ qua.
 - `scripts/handover-backup-engine.ts` vẫn giữ cho hai script dọn dữ liệu thử trước bàn giao (PO 11/11/2026).
+
+## 18. Tăng trưởng bảng — phân vùng / bản sao đọc theo ngưỡng (ADR-015 D-O6, 12/11/2026)
+
+1. Mỗi tháng (hoặc khi cảnh báo dung lượng D-O8): `npm run db:growth` trên Render shell của `smeos-web` — 10 bảng lớn
+   nhất và bảng chạm ngưỡng. Số dòng là ước tính của Postgres (chạy `ANALYZE <bảng>` nếu nghi lệch).
+2. "theo dõi" (≥ 70% của 20 triệu dòng / 10 GB): bật xoá thật cho loại hạn lưu tương ứng (§16) nếu PO đã duyệt mốc.
+3. "XÉT PHÂN VÙNG" (≥ ngưỡng): đề xuất migration SQL tay phân vùng theo tháng, Prisma vẫn đọc bảng cha; thử trên CSDL
+   khôi phục PITR trước (ADR-015 D-O4) và cần PO duyệt — không tự làm.
+4. Báo cáo chậm (p95 truy vấn báo cáo > 2 s, `pg_stat_statements`) → cân nhắc bản sao đọc `smeos_readonly` (ADR-013);
+   thêm dịch vụ / gói CSDL là quyết định của PO (đổi `render.yaml`).
