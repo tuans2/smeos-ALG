@@ -1,5 +1,7 @@
 # Screen Contract — Hệ thống Điều hướng Toàn cục (DesktopNav, BottomNav, NavModel)
 
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). BottomNav: ô "Duyệt"/"Việc của tôi" ẩn khi `/duyet` hoặc `/job` đang khoá; ô thứ hai của chuỗi về "Đơn hàng" khi `/dieu-phoi` khoá; nút giữa bỏ qua tuyến khoá trong `navPriority`. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
 **Tuyến:** Toàn hệ thống `(app)` · **Tệp chính:** `src/components/layout/nav-model.ts`, `desktop-nav.tsx`, `bottom-nav.tsx`, `src/app/(app)/them/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T3.1–T3.9
 
 ## 1. Vai và mục đích

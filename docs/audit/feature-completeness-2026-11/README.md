@@ -24,25 +24,24 @@ Có hai đích chạy, nên ma trận có hai cột trạng thái:
 
 | Trạng thái | Nghĩa | smeOS production (lần 1 → lần 2) | Bản giao GD1 |
 |---|---|---:|---:|
-| ✅ Hoàn thiện | Đủ UI + API + backend + DB (khi cần) + test; màn hình của AC mở | 105 → **108** | **123** |
-| 🔒 Có mã, khoá production | Mã đủ tầng, nhưng màn hình của AC bị khoá "Sắp ra mắt" | 13 → **15** | 0 |
+| ✅ Hoàn thiện | Đủ UI + API + backend + DB (khi cần) + test; màn hình của AC mở | 105 → **109** | **123** |
+| 🔒 Có mã, khoá production | Mã đủ tầng, nhưng màn hình của AC bị khoá "Sắp ra mắt" | 13 → **14** | 0 |
 | 🟡 Một phần | Thiếu một mắt xích, hoặc AC chỉ đạt một phần / lệch quyết định đã chốt | 5 → **0** | **0** |
 | 🎨 Chỉ có UI | Có giao diện, không có logic | 0 → 0 | 0 |
 | ❌ Chưa triển khai | Không có route, bảng hay màn hình | 0 → 0 | 0 |
 | 🐞 Lỗi | Chức năng trong danh mục chạy sai | 0 → 0 | 0 |
 
 Cả 123 chức năng đều có mã thật. Phần còn chưa xong:
-- **Trên smeOS production:** chỉ còn khoá "Sắp ra mắt" (15 chức năng).
+- **Trên smeOS production:** chỉ còn khoá "Sắp ra mắt" (14 chức năng).
 - **Trên bản giao GD1:** cả 123 chức năng đạt về mã. Hai câu AC từng lệch quyết định đã chốt (I-01 của 9.1, I-09 của 9.14) đã được sửa trong checklist ngày 12/11/2026 (mục 2.2).
 
-**🔒 Khoá trên smeOS production (15), mở trên bản giao GD1:**
+**🔒 Khoá trên smeOS production (14), mở trên bản giao GD1:**
 - 1.17 Nhật ký thao tác
 - 3.1 Quy tắc giá (`/gia`)
 - 4.11 Lịch sử đơn cùng khách (`/khach-hang`)
 - 4.12 Bảng điều phối rủi ro (`/dieu-phoi`)
 - 6.1, 6.2, 6.3, 6.5, 6.6 Báo cáo theo kỳ (`/bao-cao`)
 - 6.9 và 10.1 Sổ quỹ & credit (`/muc-dung`)
-- 8.1 Landing page (lối vào `/catalog`)
 - 9.1 Trao đổi nội bộ (`/tin-nhan`)
 - 9.6 Tác vụ nền (`/job`)
 - 9.7 Chính sách AI (`/cai-dat-ai`)
@@ -53,7 +52,7 @@ Cả 123 chức năng đều có mã thật. Phần còn chưa xong:
 |---|---|---|---|
 | 4.30 | 🟡 | ✅ | Tầng Mẹ đăng ký nhà cung cấp SMS (eSMS) / Zalo (ZNS) một lần (`PUT /api/v1/platform/notification/providers`, khối "Kênh liên lạc" ở `/van-hanh/thong-bao`); adapter gửi thật, thiếu cấu hình thì `NOT_CONFIGURED`. Web Push tự viết theo RFC 8291/VAPID (`push_subscriptions`). PR #30, #32 |
 | 4.32 | 🟡 | ✅ | Mốc M1/M2 được đẩy thành tin (sự kiện `DELIVERY_REMINDER_DUE`) trong cron 5 phút `chain-dispatch-sweep`, mỗi mốc một lần. Đổi mốc ở Cài đặt tiệm (mở). PR #30 |
-| 8.1 | 🟡 | 🔒 | Đổi cách xếp loại, mã không đổi: mã đủ tầng, chỉ lối vào AC (`/catalog`, nay là "Bộ sưu tập chung") bị khoá — cùng loại với 13 chức năng khoá khác. Bản giao GD1 mở |
+| 8.1 | 🟡 | ✅ | Mã đủ tầng. AC I-10 đã sửa sang lối vào hiện tại Công cụ → Quảng bá sản phẩm → Landing page (mục 2.2), không còn đi qua `/catalog` đang khoá |
 | 9.1 | 🟡 | 🔒 | Trao đổi nội bộ hoàn thiện, có test (PR #18); `/tin-nhan` nay có guard URL. AC I-01 đã sửa cho khớp quyết định thu hồi tin (mục 2.2). Còn lại chỉ là khoá "Sắp ra mắt"; bản giao GD1 mở |
 | 9.14 | 🟡 | ✅ | D-46: đăng bài chạy trong smeOS (module `social-publishing`). AC I-09 đã sửa sang Công cụ → Tạo nội dung → Đăng tự động (mục 2.2) |
 
@@ -78,6 +77,11 @@ Không có chức năng ✅ nào ở lần 1 bị hạ bậc. Toàn bộ đườ
 - A-08 (tên menu), B-11, G-06 (tên sheet trong file Excel xuất, theo `orders/use-cases/export-orders.ts:241`), G-07 (nhãn nguồn đơn, theo `orders/domain/order-source.ts:47`), J-11.
 
 Ô D-01 "Thẻ chào sản phẩm → Quản lý → Bộ sưu tập" đổi thành "Bộ sưu tập riêng → Quản lý → Bộ sưu tập", vì "Thẻ chào sản phẩm" giờ là bước 2 của Tạo nội dung. Tên tab trong trang (Gửi nhanh, Quản lý, Theo dõi đơn, Bán hàng, Điều hành, Điều phối, Hộp việc) không đổi. Tên chức năng và tên nhóm ở "Phủ 123 chức năng" không sửa.
+
+**I-10 (8.1):**
+- Vai: Marketing → **Điều hành** (có `J1`, `J7`; trang Chuẩn bị không có tài khoản Marketing).
+- Mở ở: "Công cụ → Tạo catalog → landing page" → **"Công cụ → Quảng bá sản phẩm → Landing page → Tạo landing mới"** (`promotion-hub/landing-panel.tsx`, PO 09/11/2026).
+- Thao tác và kết quả mong đợi giữ nguyên.
 
 Căn cứ:
 - I-01: quyết định PO 09/11/2026 (`docs/plan/hoan-thien-chat-noi-bo.md` §10). Hành vi trong mã: `internal-chat/domain/message-change-policy.ts`, `components/internal-chat/message-actions.tsx`, `message-item.tsx`.
@@ -105,13 +109,13 @@ Môi trường: CSDL cục bộ Postgres 16. `floraos` dựng bằng `db:deploy`
 |---|---|---|---|---|
 | L-01 | 🐞 | Mục menu "Trợ lý tối ưu" trỏ tới trang không tồn tại | ✅ Đã sửa 07/11 (`ebd7a6ea`, UJ-05) | Đã gỡ khỏi menu; `tests/unit/architecture/nav-href-exists.test.ts`. Còn sót ánh xạ chết `/cong-cu/toi-uu-he-thong` trong `nav-matrix.ts:78`, `tool-route-entitlement.ts:27` (không hiện trên màn hình) |
 | L-02 | 🐞 | Mục Console "Catalog toàn hệ thống" trỏ `/van-hanh/san-pham` không tồn tại | ✅ Đã sửa 07/11 (`ebd7a6ea`) | Không còn tham chiếu trong `src/` |
-| L-03 | ⚠️ | Tuyến khoá production chỉ bị làm mờ trên sidebar, không có `FeatureLockedGuard` | 🟡 Còn **10** tuyến (lần 1: 11) | `/tin-nhan` đã có guard. Còn: `/audit`, `/bao-cao`, `/dieu-phoi` (+`/doi-tac`), `/duyet`, `/job` (+`/[id]`), `/muc-dung`, `/so-lieu`, `/noi-bo/ket-noi`. Chỉ ảnh hưởng smeOS production; bản giao GD1 không khoá. PO vẫn cần chốt |
-| L-04 | 🐞 | `/cham-soc` nhóm "Tất cả khách" gọi `GET /api/v1/customers` không tồn tại, lỗi bị nuốt | ❌ Còn | `src/components/marketing-center/care/care-workflow.tsx:119`. `/cham-soc` không thuộc bản giao GD1 |
+| L-03 | ⚠️ | Tuyến khoá production chỉ bị làm mờ trên sidebar, không có `FeatureLockedGuard` | ✅ Đã sửa 12/11 | Thêm `layout.tsx` bọc `FeatureLockedGuard` cho `/audit`, `/bao-cao`, `/dieu-phoi` (+`/doi-tac`), `/duyet`, `/job` (+`/[id]`), `/muc-dung`, `/so-lieu`, `/noi-bo/ket-noi`. `tests/unit/architecture/locked-route-guard.test.ts` kiểm cả 23 tiền tố khoá. Chỉ ảnh hưởng smeOS production; bản giao GD1 không khoá. Hệ quả với các lối vào: N-05 (đã sửa) |
+| L-04 | 🐞 | `/cham-soc` nhóm "Tất cả khách" gọi `GET /api/v1/customers` không tồn tại, lỗi bị nuốt | ✅ Đã sửa 12/11 | Thêm `src/app/api/v1/customers/route.ts` (`defineRoute`, con trỏ, quyền `M4` hoặc `Q1` như khách theo nhóm; khai `capability: null` kèm lý do, handler tự kiểm — quy ước của `defineRoute` trên `main`); test `tests/tenant/customers-list-route.test.ts`. Màn vẫn nuốt lỗi tải (`catch {}`) — chưa sửa. `/cham-soc` không thuộc bản giao GD1 |
 | L-05 | 🐞 | Lưu "công cụ mở cho đối tác" gọi route không tồn tại | ✅ Đã sửa 11/11 (`36abda77`) | Gọi `PATCH /api/v1/coordinator/partners/:id/tools`; test `src/components/organization/__tests__/partner-tools-api.test.ts` |
-| L-06 | 🐞 nhẹ | Cờ đồng ý của khách gán cứng `false` (`// TODO`) | ❌ Còn | `src/components/dashboard/FeaturePicker.tsx:100` |
-| L-07 | ℹ️ | `DirectCrmNotificationConnector` trả `true` mà không làm gì | ❌ Còn (mã chết, chỉ được `connectors/index.ts` xuất lại) | `src/modules/coordinator/connectors/crm-notification-connector.ts:22` |
-| L-08 | ℹ️ | Phần AI còn chạy bằng luật/stub | ❌ Còn | `creative-production/adapters/narrative-ai-adapter.ts` (stub); `market-intelligence/adapters/google-trends-adapter.ts:221` (related topics trả rỗng); `gemini`/`replicate` vẫn ngoài `OPTIMIZE_ENHANCER_PROVIDERS`. Các tuyến này đều khoá hoặc không giao |
-| L-09 | ℹ️ | Trường do Console tự tạo chưa nối vào 17 mẫu/form | ❌ Còn | `src/app/(platform)/van-hanh/truong-du-lieu/_components/truong-tu-tao-tab.tsx:5` |
+| L-06 | 🐞 nhẹ | Cờ đồng ý của khách gán cứng `false` (`// TODO`) | ✅ Đã sửa 12/11 | Đồng ý là của từng khách, trang sản phẩm không có khách cụ thể: bỏ cờ cấp cửa hàng; `checkFeatureDependencies` không khoá "Tin nhắn nhắc mua lại (AI)" vì đồng ý mà kèm ghi chú "chỉ gửi cho khách đã đồng ý nhận tin". Khách chưa đồng ý vẫn bị loại lúc lập danh sách gửi (`projectMarketingAudience`, `projectOccasionReminder`). Test `src/lib/feature-catalog-consent.test.ts`. Chức năng này vẫn `coming_soon`, chưa có mã chạy phía máy chủ |
+| L-07 | ℹ️ | `DirectCrmNotificationConnector` trả `true` mà không làm gì | ✅ Đã xoá 12/11 | Xoá `src/modules/coordinator/connectors/crm-notification-connector.ts` và dòng xuất lại trong `connectors/index.ts`; không nơi nào dùng. Nợ #142 ghi phần chức năng còn thiếu (ZNS khi giao xong, cộng điểm CRM) |
+| L-08 | ℹ️ | Phần AI còn chạy bằng luật/stub | ⏸ Giữ nguyên theo quyết định chủ dự án 12/11 | (1) `creative-production/adapters/narrative-ai-adapter.ts`: stub chưa nơi nào gọi; `planNarrativeArc` chạy bằng luật. (2) `market-intelligence/adapters/google-trends-adapter.ts`: `getRelatedTopics` trả rỗng — đúng luật không bịa số khi chưa có nguồn. (3) Worker: `gemini`/`replicate` là stub lùi PIL, giữ trong registry để job cũ không đổi hành vi; đã ngoài `OPTIMIZE_ENHANCER_PROVIDERS`. Cả ba tuyến đều khoá hoặc không thuộc bản giao GD1. Làm AI thật hoặc thêm nhà cung cấp cần PO duyệt |
+| L-09 | ℹ️ | Trường do Console tự tạo chưa nối vào 17 mẫu/form | ✅ Đã sửa 12/11 | Rà lại: trường cho ĐƠN (`ORDER`) đã nối từ 26/09 (tạo đơn điều phối, `PATCH /coordinator/orders/:id/custom-fields`, form tiếp nhận, chi tiết đơn, phiếu thợ) — chú thích trong tab đã cũ. Còn thiếu ĐỐI TÁC (`PARTNER`): nay tạo/sửa đối tác kiểm giá trị qua `applyCustomFields`, lưu `partners.custom_fields`, trả `customFields` ở view; form tạo đối tác có phần nhập. Test `tests/tenant/partner-custom-fields.test.ts` |
 | L-10 | ℹ️ | Chặn giá dưới sàn chỉ có hiệu lực khi sản phẩm có công thức + giá vốn đầy đủ | 🟡 Có bản sửa, **chưa merge** | `src/modules/costing/use-cases/price-floor-guard.ts:27,36-38` trên `main`. Bản sửa `f0232f7c` nằm ở nhánh `claude/bold-meitner-nk07bd`. Trần chiết khấu mọi kênh chờ PO (BL-28) |
 
 ### 4.2 Phát hiện mới
@@ -120,8 +124,9 @@ Môi trường: CSDL cục bộ Postgres 16. `floraos` dựng bằng `db:deploy`
 |---|---|---|---|---|
 | N-01 | ⚠️ AC | AC I-01 (9.1) "không có cách xoá tin" ngược quyết định PO 09/11/2026 cho thu hồi tin trong 24 giờ | `internal-chat/domain/message-change-policy.ts`, `api/v1/internal-chat/messages/[id]/route.ts:32` | ✅ Đã sửa câu AC 12/11 (mục 2.2) |
 | N-02 | ⚠️ AC | AC I-09 (9.14) vẫn ghi "Từ smeOS mở ứng dụng liên kết", trong khi D-46 đã bỏ ứng dụng liên kết | `gd1.manifest.json` mục 9.14 `acceptanceNote`; `docs/plan/BANGIAO_GD1_123_CHUC_NANG.md` Bước 4 | ✅ Đã sửa câu AC 12/11 (mục 2.2). Cần báo ALG bản checklist mới |
-| N-03 | ℹ️ AC | Giao diện đổi tên "Thẻ chào" → **"Bộ sưu tập riêng"** và "Catalog" → **"Bộ sưu tập chung"** (PO 09/11/2026, D-66). 19 bước kịch bản vẫn ghi "Thẻ chào" ở cột "Mở ở"/"Thao tác"; I-10 ghi "Tạo catalog" | `src/modules/toolkit/domain/collection-names.ts` | 🟡 Phần "Thẻ chào" đã sửa 12/11: 23 ô ở sheet "Kịch bản" và 1 ô ở "Chuẩn bị" đổi sang "Bộ sưu tập riêng" (mục 2.2). Tên chức năng và tên nhóm ở "Phủ 123 chức năng"/"Tổng hợp" giữ nguyên vì là danh mục đã thống nhất với ALG. I-10 "Tạo catalog" chưa sửa |
+| N-03 | ℹ️ AC | Giao diện đổi tên "Thẻ chào" → **"Bộ sưu tập riêng"** và "Catalog" → **"Bộ sưu tập chung"** (PO 09/11/2026, D-66). 19 bước kịch bản vẫn ghi "Thẻ chào" ở cột "Mở ở"/"Thao tác"; I-10 ghi "Tạo catalog" | `src/modules/toolkit/domain/collection-names.ts` | ✅ Đã sửa 12/11 (mục 2.2): "Thẻ chào" ở 24 ô và I-10. Tên chức năng, tên nhóm ở "Phủ 123 chức năng"/"Tổng hợp" giữ nguyên vì là danh mục đã thống nhất với ALG |
 | N-04 | ℹ️ | Ba phát hiện nghiệp vụ chạm tới AC của danh mục vẫn chờ PO: BL-28 (trần chiết khấu mọi kênh, chạm 3.4/3.7), BL-29 (nhắc thu quá hạn chỉ một lần, chạm 4.26), BL-30 ("Giá trị đơn" gồm đơn Nháp, chạm 6.2). BL-35 (bộ máy duyệt thay đổi cấu hình trường không được dùng) cũng chờ PO | `docs/audit/business-logic-audit/BUSINESS_LOGIC_AUDIT_2026-11-11.md` | Các bước C-03, C-11, F-09, H-02 vẫn đạt với dữ liệu chuẩn bị trong kịch bản; rủi ro nằm ở trường hợp biên |
+| N-05 | ℹ️ | Sau khi sửa L-03, lối vào từ màn đang mở dẫn vào tuyến khoá sẽ mở màn "Sắp ra mắt" trên smeOS production | ✅ Đã sửa 12/11: khoá bật thì ẩn lối vào (`isHrefOpen`, `filterOpenHrefs` trong `src/lib/feature-lock.ts`) — thanh dưới trên điện thoại, nút "Theo dõi ở Điều phối", hàng chờ điều phối, link "màn Duyệt" trong Bộ nội dung từ 1 ảnh, thẻ việc của quản lý cửa hàng, lối tắt trang chủ Kế toán, nút và thẻ hành trình trang chủ chuỗi, nút ở Kho dữ liệu, nút "Theo dõi tiến trình"; thông báo vẫn gửi nhưng bỏ link tới tuyến khoá (`openDeepLink` trong `dispatchNotification`). Test: `src/lib/feature-lock-entry.test.ts`, `src/components/layout/locked-entries.test.ts`, `src/components/orders/__tests__/order-action-buttons-locked.test.tsx`, `notification-recipients.test.ts` | Khoá tắt (staging, bản giao GD1) không đổi gì |
 
 ## 5. Phạm vi chưa xác minh
 

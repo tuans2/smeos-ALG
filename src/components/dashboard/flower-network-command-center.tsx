@@ -23,6 +23,7 @@ import { PartnerManagementModal } from "@/components/coordinator/partner-managem
 import { NetworkPartnerListCard, type NetworkPartner } from "./network-partner-list-card"
 import { SlaMonitorModal } from "@/components/coordinator/sla-monitor-modal"
 import { PageHeader } from "@/components/ui/page-header"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 type Partner = NetworkPartner
 
@@ -41,6 +42,8 @@ async function layJson<T>(url: string): Promise<T | null> {
 export function FlowerNetworkCommandCenter() {
   const { orgName, userInitials, roleUx } = useSession()
   const router = useRouter()
+  // Bảng điều phối đang khoá "Sắp ra mắt" (production) thì ẩn nút dẫn tới đó (audit N-05)
+  const dispatchOpen = isHrefOpen("/dieu-phoi")
   const { announce } = useAnnounce()
 
   const [loading, setLoading] = useState(true)
@@ -132,16 +135,18 @@ export function FlowerNetworkCommandCenter() {
         }
         actions={
           <>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => router.push("/dieu-phoi" as never)}
-              className="flex items-center gap-1.5"
-            >
-              <Radio className="h-4 w-4 text-primary" />
-              <span>Tháp điều phối</span>
-            </Button>
+            {dispatchOpen && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => router.push("/dieu-phoi" as never)}
+                className="flex items-center gap-1.5"
+              >
+                <Radio className="h-4 w-4 text-primary" />
+                <span>Tháp điều phối</span>
+              </Button>
+            )}
             <UserMenu initials={userInitials || "ĐH"} />
           </>
         }
@@ -203,15 +208,11 @@ export function FlowerNetworkCommandCenter() {
                   Theo dõi 5 chặng hoàn tất từ tiếp nhận đơn đến phân xưởng, chế tác, duyệt chất lượng và giao hàng thành công.
                 </InfoTip>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => router.push("/dieu-phoi" as never)}
-                className="text-caption"
-              >
-                Mở bảng điều phối
-              </Button>
+              {dispatchOpen && (
+                <Button type="button" variant="outline" size="sm" onClick={() => router.push("/dieu-phoi" as never)} className="text-caption">
+                  Mở bảng điều phối
+                </Button>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">

@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils"
 import { mobileSecondSlot, NAV_ENTRIES, type NavEntry } from "./nav-model"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
+import { isHrefOpen } from "@/lib/feature-lock"
 import { requestOpenMobileNav } from "./mobile-nav-context"
 
 export function BottomNav() {
@@ -33,7 +34,7 @@ export function BottomNav() {
   if (hasH1) {
     centerAction = { href: "/tai-anh", label: "Tải ảnh", icon: Camera }
   } else {
-    const fallbackHref = roleUx?.navPriority.find((h) => h !== slot2.href && h !== "/") ?? "/san-pham"
+    const fallbackHref = roleUx?.navPriority.find((h) => h !== slot2.href && h !== "/" && isHrefOpen(h)) ?? "/san-pham"
     const fallbackEntry = NAV_ENTRIES.find((e) => e.href === fallbackHref)
     centerAction = {
       href: fallbackEntry?.href ?? "/san-pham",
@@ -102,8 +103,8 @@ export function BottomNav() {
         </span>
       </Link>
 
-      {/* 4. Duyệt hoặc Job */}
-      {canApprove ? (
+      {/* 4. Duyệt hoặc Job — ẩn khi tuyến đang khoá "Sắp ra mắt" (audit N-05) */}
+      {!isHrefOpen(canApprove ? "/duyet" : "/job") ? null : canApprove ? (
         (() => {
           const isDuyetActive = pathname === "/duyet" || pathname.startsWith("/duyet/")
           return (

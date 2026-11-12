@@ -2,8 +2,9 @@
 
 // Tab "Trường tự tạo" — quản trị nền tảng tạo trường hoàn toàn mới lúc
 // chạy (D13, Đặc tả trường §16.3) và tắt trường tự tạo không dùng nữa.
-// Chưa nối vào 17 template/form thật (ĐP-3 3.16) — trường tạo ở đây đã
-// lưu định nghĩa, nhưng CHƯA có nơi nhập/lưu giá trị trên đơn thật.
+// Giá trị được nhập và lưu ở: đơn điều phối (ORDER — form tiếp nhận, chi tiết
+// đơn, `PATCH /coordinator/orders/:id/custom-fields`) và đối tác gia công
+// (PARTNER — form tạo đối tác, `POST/PATCH /coordinator/partners`; audit L-09).
 
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
