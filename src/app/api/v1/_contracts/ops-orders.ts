@@ -38,7 +38,7 @@ export const ORDER_OPERATIONS: OpenApiOperation[] = [
     ok: [201, { description: "Yêu cầu đã tạo", schema: res.infoRequestResponse }], errors: [...BODY_ERRORS, 404, 409, 422] }),
   op(ORDERS, { method: "post", path: "/orders/{id}/info-requests/{requestId}", operationId: "closeOrderInfoRequest", summary: "Đóng yêu cầu bổ sung (đã nhận / huỷ)", cap: "R3",
     body: req.closeInfoRequestBody, description: "Huỷ bắt buộc ghi lý do (400); yêu cầu đã đóng → 409.",
-    ok: [200, { description: "Đã đóng", schema: res.okResponse }], errors: [...BODY_ERRORS, 404, 409, 422] }),
+    ok: [200, { description: "Đã đóng", schema: res.infoRequestClosedResponse }], errors: [...BODY_ERRORS, 404, 409, 422] }),
   op(ORDERS, { method: "get", path: "/orders/info-requests", operationId: "listOpenInfoRequests", summary: "Mọi yêu cầu bổ sung còn mở, hạn gần nhất trước", cap: "R1",
     ok: [200, { description: "Yêu cầu", schema: res.infoRequestsResponse }] }),
   op(ORDERS, { method: "get", path: "/orders/my-work", operationId: "listFloristWork", summary: "Việc chế tác đang giao", cap: "R17", query: req.floristQueueQuery,

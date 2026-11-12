@@ -4,6 +4,7 @@
  * Quyền gác ở use-case (RS-8/RS-9 18/09): getProductCopy = H5, updateProductCopy = H5.
  */
 import { defineRoute } from "@/core/http/define-route";
+import { jsonResponse } from "@/core/http/response";
 import type { TenantContext } from "@/core/tenancy";
 import { AppError } from "@/core/http/errors";
 import { getProductCopy } from "@/modules/product-copies/use-cases/get-product-copy";
@@ -14,10 +15,7 @@ async function getHandler({ ctx, params }: { ctx: TenantContext; params: Record<
   const { id } = params as { id: string };
 
   const copy = await getProductCopy(ctx, id);
-  return new Response(JSON.stringify(copy), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return jsonResponse({ data: copy });
 }
 
 async function patchHandler({ request, ctx, params }: { request: Request; ctx: TenantContext; params: Record<string, string> }) {
@@ -35,10 +33,7 @@ async function patchHandler({ request, ctx, params }: { request: Request; ctx: T
   await updateProductCopy(ctx, id, body.edited);
 
   const copy = await getProductCopy(ctx, id);
-  return new Response(JSON.stringify(copy), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return jsonResponse({ data: copy });
 }
 
 export const GET = defineRoute({

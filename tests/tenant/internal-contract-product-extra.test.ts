@@ -48,7 +48,8 @@ describe("hợp đồng — ảnh studio, bộ ảnh, đề xuất sửa sản p
   })
 
   it("ảnh studio: danh mục nền, tạo, xem, làm lại", async () => {
-    await expectContract(await photoCatalog(new Request(`${BASE}/product-photo`)), 200, R.photoCatalogResponse, "photo-catalog")
+    expect((await photoCatalog(new Request(`${BASE}/product-photo`))).status).toBe(401) // cần đăng nhập (PO 12/11/2026)
+    await expectContract(await photoCatalog(get("/product-photo")), 200, R.photoCatalogResponse, "photo-catalog")
     const created = await expectContract(await createPhoto(send("/product-photo", "POST", { asset_id: assetId }, t, true)), 201, R.jobCreatedResponse, "photo-create")
     const id = String(created.job_id)
     await expectContract(await getPhoto(get(`/product-photo/${id}`), ps(id)), 200, R.photoResultResponse, "photo-get")
@@ -64,7 +65,8 @@ describe("hợp đồng — ảnh studio, bộ ảnh, đề xuất sửa sản p
   })
 
   it("bộ ảnh: danh mục gói, tạo, xem", async () => {
-    await expectContract(await imageSetCatalog(new Request(`${BASE}/product-image-set`)), 200, R.imageSetCatalogResponse, "imageset-catalog")
+    expect((await imageSetCatalog(new Request(`${BASE}/product-image-set`))).status).toBe(401)
+    await expectContract(await imageSetCatalog(get("/product-image-set")), 200, R.imageSetCatalogResponse, "imageset-catalog")
     const created = await expectContract(await createImageSet(send("/product-image-set", "POST", { asset_id: assetId }, t, true)), 201, R.jobCreatedResponse, "imageset-create")
     const id = String(created.job_id)
     await expectContract(await getImageSet(get(`/product-image-set/${id}`), ps(id)), 200, R.imageSetResultResponse, "imageset-get")
@@ -94,7 +96,7 @@ describe("hợp đồng — ảnh studio, bộ ảnh, đề xuất sửa sản p
     await expectContract(await board(get("/availability/board")), 200, R.boardResponse, "board-default")
     const id = String(created.id)
     expect((await removeBlock(send(`/availability/blocks/${id}`, "DELETE", undefined, other), ps(id))).status).toBe(404)
-    await expectContract(await removeBlock(send(`/availability/blocks/${id}`, "DELETE"), ps(id)), 200, R.successResponse, "block-remove")
+    await expectContract(await removeBlock(send(`/availability/blocks/${id}`, "DELETE"), ps(id)), 200, R.blockRemovedResponse, "block-remove")
     expect((await createBlock(send("/availability/blocks", "POST", { productId: room.id, checkInDate: "1/12/2026", checkOutDate: "2026-12-03" }))).status).toBe(400)
   })
 

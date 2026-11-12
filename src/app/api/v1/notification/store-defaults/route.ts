@@ -33,6 +33,6 @@ export const PATCH = defineRoute({
       scheduleEnd: body.scheduleEnd ?? undefined,
     })
 
-    return jsonResponse({ success: true, updated: body })
+    return jsonResponse({ data: body })
   },
 })

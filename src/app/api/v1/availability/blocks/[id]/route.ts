@@ -14,7 +14,7 @@ export const DELETE = defineRoute({
     const removed = await removeManualBlock(ctx.organizationId, id)
     if (!removed) throw notFound()
 
-    return jsonResponse({ success: true })
+    return jsonResponse({ data: { id, deleted: true } })
   },
 })
 

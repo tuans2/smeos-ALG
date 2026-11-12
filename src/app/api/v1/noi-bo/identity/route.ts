@@ -27,10 +27,7 @@ export const GET = defineRoute({
     const identityData = await getOrganizationIdentity(ctx.organizationId)
     if (!identityData) throw notFound()
 
-    return jsonResponse({
-      success: true,
-      data: identityData,
-    })
+    return jsonResponse({ data: identityData })
   },
 })
 

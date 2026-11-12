@@ -41,10 +41,6 @@ export const POST = defineRoute({
       formats: data.target_formats as BannerAspectRatio[],
     })
 
-    return jsonResponse({
-      success: true,
-      qc: result.qc,
-      results: result.results,
-    })
+    return jsonResponse({ data: { qc: result.qc, results: result.results } })
   },
 })

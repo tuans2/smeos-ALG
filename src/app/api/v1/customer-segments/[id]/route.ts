@@ -63,7 +63,7 @@ export const DELETE = defineRoute({
       throw notFound()
     }
 
-    return jsonResponse({ success: true })
+    return jsonResponse({ data: { id, deleted: true } })
   },
 })
 

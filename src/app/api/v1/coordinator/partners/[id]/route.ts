@@ -12,6 +12,6 @@ export const PATCH = defineRoute({
     const { id } = params as { id: string }
     const body = await parseBody(request, updatePartnerSchema)
     const partner = await updatePartner(ctx, id, body)
-    return jsonResponse({ partner })
+    return jsonResponse({ data: partner })
   },
 })

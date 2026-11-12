@@ -17,6 +17,6 @@ export const POST = defineRoute({
     }
 
     await restoreFromTrash(ctx, { id, type: parsed.data.type })
-    return jsonResponse({ success: true })
+    return jsonResponse({ data: { id, restored: true } })
   },
 })

@@ -84,7 +84,7 @@ describe("hợp đồng — viết nội dung AI, xu hướng thị trường", 
     await expectContract(catalog, 200, R.catalogContentResponse, "catalog-generate")
     const rw = await rewrite(send("/content-engine/rewrite", "POST", { text: "Giao hoa nhanh trong 2 giờ", field_type: "guarantee", style: "concise" }))
     const rwBody = await expectContract(rw, 200, R.rewriteResponse, "rewrite")
-    expect(rwBody.fallback).toBe(true) // AI không chạy được → gợi ý dựng sẵn, không tính credit
+    expect((rwBody.data as { fallback?: boolean }).fallback).toBe(true) // AI không chạy được → gợi ý dựng sẵn, không tính credit
   })
 
   it("xu hướng thị trường: cơ hội, lượt nghiên cứu, sức khoẻ nguồn, đọc ảnh, phân tích sản phẩm", async () => {

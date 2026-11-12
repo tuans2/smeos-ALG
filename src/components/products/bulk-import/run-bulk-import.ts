@@ -48,6 +48,9 @@ export function toBatchItem(row: ParsedProductRow, imageAssetId: string | null) 
   }
 }
 
+/** `data` của `POST /products/batch-import`. */
+type ImportChunkResult = { created_count?: number; updated_count?: number; skipped_count?: number; images_attached_count?: number; drive_links_updated_count?: number; failed_count?: number; failed?: Array<{ code: string; error: string }> }
+
 /**
  * (1) tải ảnh đã khớp — lỗi ảnh không chặn sản phẩm; (2) gửi từng lô 250.
  * Một lô lỗi → dừng, nhưng kết quả vẫn giữ số đã lưu từ các lô trước và liệt kê mã chưa gửi.
@@ -74,14 +77,14 @@ export async function runBulkImport(rows: ParsedProductRow[], onProgress: (p: Im
     const chunk = items.slice(i, i + BATCH_CHUNK)
     const done = Math.min(i + chunk.length, items.length)
     onProgress({ current: done, total: items.length, phase: `Đang lưu sản phẩm (${done}/${items.length})...` })
-    let body: { created_count?: number; updated_count?: number; skipped_count?: number; images_attached_count?: number; drive_links_updated_count?: number; failed_count?: number; failed?: Array<{ code: string; error: string }> } | null = null
+    let body: ImportChunkResult | null = null
     try {
       const res = await fetch("/api/v1/products/batch-import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: chunk, skip_duplicates: true, overwrite_existing: true, overwrite_existing_images: true }),
       })
-      if (res.ok) body = await res.json()
+      if (res.ok) body = ((await res.json()) as { data: ImportChunkResult }).data
     } catch {
       body = null
     }

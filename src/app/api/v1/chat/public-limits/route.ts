@@ -9,7 +9,8 @@ import { defineRoute } from "@/core/http/define-route"
 
 /** Hạn mức chat công khai của tiệm phiên: xem mức hiện tại và gửi yêu cầu nâng (Admin nền tảng duyệt). */
 export const GET = defineRoute({
-  auth: { kind: "tenant", capability: null, reason: "CHƯA gác mã năng lực (có từ trước): đọc hạn mức chat công khai của chính tổ chức phiên" },
+  // Hiện trong bảng kênh chat của màn Tích hợp — cùng mã W1 (PO 12/11/2026)
+  auth: { kind: "tenant", capability: "W1" },
   handler: async ({ ctx }) => {
     return jsonResponse(await getPublicChatLimitStatus(ctx))
   },

@@ -42,8 +42,8 @@ export const POST = defineRoute({
 })
 
 export const GET = defineRoute({
-  auth: { kind: "custom", reason: "chỉ trả danh mục bộ ảnh tĩnh — không đọc dữ liệu, không đòi phiên (có từ trước)" },
-  handler: async ({  }) => {
+  auth: { kind: "tenant", capability: null, reason: "danh mục bộ ảnh tĩnh cho màn tạo ảnh — chỉ cần đăng nhập (PO 12/11/2026)" },
+  handler: async () => {
     return jsonResponse({
       bundles: IMAGE_SET_BUNDLES,
     })

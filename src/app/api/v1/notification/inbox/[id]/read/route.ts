@@ -10,6 +10,6 @@ export const PATCH = defineRoute({
     const { id } = params as { id: string }
 
     const success = await markInboxItemRead(id, resolved.user.id, ctx.organizationId)
-    return jsonResponse({ success, id })
+    return jsonResponse({ data: { id, read: success } })
   },
 })

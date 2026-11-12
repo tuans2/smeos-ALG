@@ -122,10 +122,12 @@ export const publicChatLimitsResponse = z.strictObject({
 export const publicChatLimitRequestedResponse = z.strictObject({ pending: pendingLimit })
 
 export const publicChatWidgetResponse = z.strictObject({
-  replyText: z.string(),
-  suggestedProducts: z.array(productCard),
-  conversationId: z.string(),
-  channel: CHANNEL,
+  data: z.strictObject({
+    replyText: z.string(),
+    suggestedProducts: z.array(productCard),
+    conversationId: z.string(),
+    channel: CHANNEL,
+  }),
 })
 
 // ── Chat nội bộ ─────────────────────────────────────────────────────────────
@@ -176,16 +178,14 @@ const internalMessage = z.strictObject({
     actionUrl: z.string().nullable(),
   }).optional(),
 })
-const legacy = <T extends z.ZodType>(schema: T) => z.strictObject({ success: z.literal(true), data: schema })
-export const internalConversationsResponse = z.strictObject({ success: z.literal(true), data: z.array(internalConversation), total: z.number() })
-export const internalConversationResponse = legacy(internalConversation)
+export const internalConversationsResponse = z.strictObject({ data: z.array(internalConversation), meta: z.strictObject({ total: z.number() }) })
+export const internalConversationResponse = z.strictObject({ data: internalConversation })
 export const internalMessagesResponse = z.strictObject({
-  success: z.literal(true),
   data: z.array(internalMessage),
   /** Con trỏ trang cũ hơn (`?before=`); null = hết */
-  nextCursor: z.string().nullable(),
+  next_cursor: z.string().nullable(),
 })
-export const internalMessageResponse = legacy(internalMessage)
+export const internalMessageResponse = z.strictObject({ data: internalMessage })
 /** Route `defineRoute` mới (GĐ7–8, sửa / thu hồi) trả envelope chuẩn `{ data }`. */
 export const internalMessageDataResponse = z.strictObject({ data: internalMessage })
 export const internalMessageDeletedResponse = z.strictObject({ data: z.strictObject({ id: z.string(), deleted: z.literal(true) }) })

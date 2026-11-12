@@ -1,3 +1,4 @@
+import { AppError } from "@/core/http/errors"
 import { jsonResponse } from "@/core/http/response"
 import { patchPreferenceSchema } from "@/app/api/v1/_contracts/requests-notification"
 import {
@@ -28,13 +29,12 @@ export const PATCH = defineRoute({
     const appliedLock = getLockForUserPreference(locks, body.eventKey, body.channel as NotifyChannel, { storeOrgId: ctx.organizationId })
 
     if (appliedLock) {
-      return jsonResponse(
-        {
-          error: `Sự kiện đã bị khóa cứng bởi tầng ${appliedLock.tier}`,
-          reason: appliedLock.reason,
-        },
-        { status: 403 }
-      )
+      // Cấp trên đã khoá — cùng mã với tích hợp/kênh bán (`LOCKED_BY_UPPER`)
+      throw new AppError("UNPROCESSABLE_ENTITY", `Sự kiện đã bị khóa cứng bởi tầng ${appliedLock.tier}`, {
+        violation: "LOCKED_BY_UPPER",
+        tier: appliedLock.tier,
+        reason: appliedLock.reason,
+      })
     }
 
     await updateUserNotificationPreference({
@@ -46,6 +46,6 @@ export const PATCH = defineRoute({
       muteUntil: body.muteUntil ? new Date(body.muteUntil) : undefined,
     })
 
-    return jsonResponse({ success: true, updated: body })
+    return jsonResponse({ data: body })
   },
 })

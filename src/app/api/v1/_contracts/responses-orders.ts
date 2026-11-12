@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { actionDone } from "./responses-actions"
 
 /**
  * Phản hồi đơn hàng `/api/v1/orders/*` và báo giá `/api/v1/quotations/*` (OpenAPI nội bộ, PO 07/11/2026). Sinh từ
@@ -161,7 +162,7 @@ const infoRequest = z.strictObject({
 })
 export const infoRequestsResponse = data(z.array(infoRequest))
 export const infoRequestResponse = data(infoRequest)
-export const okResponse = z.strictObject({ ok: z.literal(true) })
+export const infoRequestClosedResponse = actionDone("closed")
 
 export const quoteOrderResponse = z.strictObject({ orderId: z.string(), totalVnd: z.number() })
 export const orderVatResponse = data(

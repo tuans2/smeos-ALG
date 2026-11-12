@@ -22,6 +22,6 @@ export const POST = defineRoute({
     }
 
     await moveToTrash(ctx, parsed.data)
-    return jsonResponse({ success: true })
+    return jsonResponse({ data: { id: parsed.data.id, trashed: true } })
   },
 })

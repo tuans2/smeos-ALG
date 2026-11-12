@@ -76,12 +76,12 @@ describe("ảnh chính sản phẩm: cách ly asset giữa các cửa hàng", ()
         }),
       }))
 
-    const created = await readJson(await send(false))
+    const created = (await readJson(await send(false))).data as Record<string, number>
     expect(created.created_count).toBe(0)
     expect(created.failed_count).toBe(1)
 
     await new ProductRepository().create(a.ctx, { code: "SP-3", name: "Bó gốc", attributes: { price: 100 } })
-    const overwritten = await readJson(await send(true))
+    const overwritten = (await readJson(await send(true))).data as Record<string, number>
     expect(overwritten.failed_count).toBe(1)
     const row = await prisma.products.findFirstOrThrow({ where: { organization_id: a.organizationId, code: "SP-3" } })
     expect(row.name).toBe("Bó gốc")
