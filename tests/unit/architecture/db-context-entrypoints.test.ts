@@ -14,7 +14,7 @@ import { importSpecifiers, resolveImport } from "../../../scripts/release/trace-
  */
 const ROOT = process.cwd()
 const PRISMA = "src/core/tenancy/infra/prisma.ts"
-const WRAPPER = /\bhandle(<[^\n]*?>)?\(|\bdefineRoute\(|\bwithRequestDb\(|\basSystemDb\(|\bwithTenantDb\(/
+const WRAPPER = /\bhandle(<[^\n]*?>)?\(|\bdefineRoute(<[^\n]*?>)?\(|\bwithRequestDb\(|\basSystemDb\(|\bwithTenantDb\(/
 
 /** Hàm dùng chung tự mở ngữ cảnh bên trong — điểm vào chỉ gọi chúng thì không cần mở thêm. */
 const SELF_CONTEXT = new Set([

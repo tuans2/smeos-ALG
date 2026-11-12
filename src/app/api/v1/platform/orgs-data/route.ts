@@ -5,14 +5,16 @@
  * Yêu cầu PlatformContext với capability N1.
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { jsonResponse } from "@/core/http/response"
 import { getPlatformOrgsData } from "@/modules/platform/use-cases/get-platform-orgs-data"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const pctx = await requirePlatformContext(request)
-  const result = await getPlatformOrgsData(pctx)
-  return jsonResponse({ data: result })
+export const GET = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ pctx }) => {
+    const result = await getPlatformOrgsData(pctx)
+    return jsonResponse({ data: result })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

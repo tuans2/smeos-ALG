@@ -1,9 +1,8 @@
 import { validationFailed } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { rejectAnalysis } from "@/modules/products/use-cases/reject-analysis"
 import { rejectAnalysisBody } from "@/app/api/v1/_contracts/requests-ai-studio"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * `POST /vision/analyses/:id/reject` (`H3`). Cùng mã năng lực với duyệt —
@@ -14,14 +13,14 @@ import { rejectAnalysisBody } from "@/app/api/v1/_contracts/requests-ai-studio"
  * Thân yêu cầu không bắt buộc; `ly_do` nếu có thì vào `audit_logs`, chỗ duy
  * nhất còn giữ được câu trả lời cho "vì sao bản này bị bỏ".
  */
-export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "H3")
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "H3" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const body = await request.json().catch(() => null)
+    const parsed = rejectAnalysisBody.safeParse(body ?? {})
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const { id } = await context.params
-  const body = await request.json().catch(() => null)
-  const parsed = rejectAnalysisBody.safeParse(body ?? {})
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-
-  return jsonResponse(await rejectAnalysis(ctx, id, parsed.data.ly_do ?? null))
+    return jsonResponse(await rejectAnalysis(ctx, id, parsed.data.ly_do ?? null))
+  },
 })

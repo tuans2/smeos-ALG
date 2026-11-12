@@ -3,17 +3,13 @@
  * Duyệt dữ liệu bán hàng → ghi Product Master + audit_logs — H6
  * Quyền H6 gác ở use-case `approveProductCopy` (RS-9 18/09).
  */
-import { handle } from "@/core/http/response";
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
+import { defineRoute } from "@/core/http/define-route";
+import type { TenantContext } from "@/core/tenancy";
 import { approveProductCopy } from "@/modules/product-copies/use-cases/approve-product-copy";
 import { getProductCopy } from "@/modules/product-copies/use-cases/get-product-copy";
 
-async function approveHandler(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
-  const { ctx } = await requireTenantContext(request);
-  const { id } = await context.params;
+async function approveHandler({ ctx, params }: { ctx: TenantContext; params: Record<string, string> }) {
+  const { id } = params as { id: string };
 
   await approveProductCopy(ctx, id);
 
@@ -26,6 +22,9 @@ async function approveHandler(
   });
 }
 
-export const POST = handle(approveHandler);
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "H6 kiểm ở use-case (approveProductCopy)" },
+  handler: approveHandler,
+});
 export const dynamic = "force-dynamic" as const;
 export const revalidate = 0 as const;

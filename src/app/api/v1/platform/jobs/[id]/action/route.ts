@@ -4,15 +4,17 @@
  */
 
 import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { actOnFailedJob } from "@/modules/platform/use-cases/manage-failed-jobs"
-import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { failedJobActionBody } from "@/app/api/v1/platform/_contracts/requests"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request, { params }: { params: Promise<{ id: string }> }) => {
-  const pctx = await requirePlatformContext(request)
-  const parsed = failedJobActionBody.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-  const { id } = await params
-  return jsonResponse({ data: await actOnFailedJob(pctx, { jobId: id, action: parsed.data.action }) })
+export const POST = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ request, pctx, params }) => {
+    const parsed = failedJobActionBody.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const { id } = params as { id: string }
+    return jsonResponse({ data: await actOnFailedJob(pctx, { jobId: id, action: parsed.data.action }) })
+  },
 })

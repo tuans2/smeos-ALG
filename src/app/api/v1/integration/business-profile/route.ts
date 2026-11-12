@@ -1,10 +1,10 @@
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import {
   requireIntegrationClient,
-  requireIntegrationContext,
   toTenantContext,
 } from "@/modules/integration/use-cases/resolve-integration-context"
 import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-profile"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * `GET /integration/business-profile` (đặc tả 08 mục 4: "BusinessProfile |
@@ -15,9 +15,11 @@ import { getBusinessProfile } from "@/modules/profiles/use-cases/get-business-pr
  * Lời gọi thay mặt người dùng (`X-FloraOS-SSO`): gác bằng năng lực thật của
  * người đó thay vì bằng tên app, xem `requireIntegrationClient`.
  */
-export const GET = handle(async (request) => {
-  const ic = await requireIntegrationContext(request)
-  requireIntegrationClient(ic, "LOCALBUDD")
-  const ctx = await toTenantContext(ic)
-  return jsonResponse(await getBusinessProfile(ctx))
+export const GET = defineRoute({
+  auth: { kind: "integration" },
+  handler: async ({ ic }) => {
+    requireIntegrationClient(ic, "LOCALBUDD")
+    const ctx = await toTenantContext(ic)
+    return jsonResponse(await getBusinessProfile(ctx))
+  },
 })

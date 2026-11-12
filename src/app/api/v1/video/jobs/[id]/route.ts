@@ -1,16 +1,15 @@
-import { requireCapability } from "@/core/rbac/capabilities";
-import { handle, jsonResponse } from "@/core/http/response";
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
-import { GetVideoJobUseCase, videoViewUrl } from "@/modules/video-studio/use-cases/get-video-job";
+import { jsonResponse } from "@/core/http/response"
+import { GetVideoJobUseCase, videoViewUrl } from "@/modules/video-studio/use-cases/get-video-job"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request);
-  requireCapability(ctx, "I1");
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "I1" },
+  handler: async ({ ctx, params }) => {
+    const { id } = (params as { id: string });
+    const useCase = new GetVideoJobUseCase();
+    const job = await useCase.execute(ctx, id);
 
-  const { id } = await context.params;
-  const useCase = new GetVideoJobUseCase();
-  const job = await useCase.execute(ctx, id);
-
-  // `final_video_view_url`: URL ký có hạn để phát video trên giao diện.
-  return jsonResponse({ ...job, final_video_view_url: await videoViewUrl(ctx, job.final_video_url) });
+    // `final_video_view_url`: URL ký có hạn để phát video trên giao diện.
+    return jsonResponse({ ...job, final_video_view_url: await videoViewUrl(ctx, job.final_video_url) });
+  },
 });

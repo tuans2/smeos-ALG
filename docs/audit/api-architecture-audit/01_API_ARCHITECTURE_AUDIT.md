@@ -730,3 +730,37 @@ PO duyệt kế hoạch phần B theo đề xuất: Q1 xem sau đăng nhập, Q2
 
 **Việc của PO (B6):** gửi thông báo cho LocalBudd, SocialFlow và đối tác về hai thay đổi có hiệu lực 09/02/2027 (gỡ trường, 422 khoá trùng) kèm đường dẫn trang tài liệu. Muốn giao trang tài liệu cho khách GD1 thì thêm `/tich-hop/tai-lieu-api` vào mục 9.5 của `src/lib/delivery/gd1.manifest.json` (đổi phạm vi bàn giao — PO quyết).
 
+
+## 42. Kế hoạch trả nợ chuẩn API Contract v1.1 và đợt 1 (12/11/2026)
+
+Hiện trạng trước đợt 1: 541 route dưới `/api/v1`, 40 khai bằng `defineRoute`, **501** trong `route-contract-legacy.txt`; **65** mục envelope lệch trong `api-envelope-legacy.txt`. Hai danh sách chỉ được thu hẹp (`route-contract-ratchet.test.ts`).
+
+Ràng buộc quyết định thứ tự: `defineRoute` đòi khoá thân/query snake_case khi khai `body`/`query`. Nên "bọc" route cũ (khai `auth`, handler tự đọc thân như cũ) không đổi hợp đồng; còn khai lược đồ thân/query hay sửa envelope thì đổi hợp đồng với phía gọi.
+
+| Đợt | Phạm vi | Đổi hợp đồng? | Điều kiện |
+|---|---|---|---|
+| 1 | Bọc route mở đầu đúng mẫu `requireTenantContext` + `requireCapability` / `requirePlatformContext` + `requirePlatformCapability` / `requireIntegrationContext` bằng `defineRoute` (công cụ AST, thứ tự kiểm giữ nguyên) | Không | Ratchet + test kiến trúc + build |
+| 2 | Route còn lại ngoài Thẻ chào làm tay: gác quyền có điều kiện, `capability: null` (cần lý do), webhook/cron (`kind: "custom"`/`"cron"`), route `export async function`, tham số route kiểu riêng | Không | Từng module, kèm test route |
+| 3 | Thẻ chào (66 route): bọc như đợt 1–2 | Không | Luật B5: test khoá hành vi trước khi sửa (PO gỡ đóng băng D-47) |
+| 4 | Envelope nội bộ (`{ success }`, `{ ok }`, `{ error: "chuỗi" }`, `NextResponse.json`): sửa route **và** mọi chỗ gọi ở giao diện trong cùng commit | Có, nội bộ | Từng module; webhook do nhà cung cấp quy định thân phản hồi ở lại kèm lý do |
+| 5 | Khai lược đồ `body`/`query` vào `defineRoute`; route đang nhận khoá camelCase phải đổi sang snake_case | Có | Nội bộ: sửa phía gọi cùng commit. `/public/*`, `/integration/*`: PO duyệt, báo trước 90 ngày như ARC-024 |
+
+**Đợt 1 — đã làm (12/11/2026):** bọc **206 route** (501 → 295 còn trong danh sách; 246/541 route khai bằng `defineRoute`). Không đổi thân, query, envelope hay thứ tự lỗi; chỉ chuyển bước phiên + mã năng lực vào khai báo `auth`. 3 route `product-photo/*`, `product-image-set/[id]` để lại cho đợt 2 (biến `params` trùng tên).
+
+Sửa kèm, do đợt 1 làm lộ ra:
+- `tests/unit/architecture/audit-boundary.test.ts` chỉ nhận route tenant qua chuỗi `requireTenantContext(` — route ghi khai bằng `defineRoute` lọt khỏi kiểm tra ghi nhật ký kiểm toán. Nay nhận cả `kind: "tenant"`. Lộ ra 7 route `defineRoute` có sẵn chưa ghi kiểm toán, ghi vào `audit-boundary-debt.txt` kèm chú thích nguồn gốc (không phải nợ mới).
+- `tests/unit/architecture/export-capability.test.ts` nhận `R13` khai trong `defineRoute`.
+
+**Đợt 2 — đã làm (12/11/2026):** bọc thêm **198 route** ngoài Thẻ chào (295 → 99 còn trong danh sách; **442/541** route khai bằng `defineRoute`). Vẫn không đổi thân, query, envelope, thông báo lỗi hay thứ tự lỗi.
+- `defineRoute`: thêm `{ kind: "platform", capability: null, reason }` (đối xứng biến thể tenant) cho route nền tảng kiểm mã ở use-case; handler tenant nhận thêm `resolved` (người dùng + phiên) như `requireTenantContext` vốn trả. Test ở `tests/unit/core/http/define-route.test.ts`.
+- `capability: null` chỉ dùng kèm lý do kiểm được trong mã: mã handler tự kiểm (vd. "R4 (scope=team) hoặc R17"), hoặc hàm use-case có lời gọi gác quyền (vd. "R20 kiểm ở use-case (getCashflowReport → periodOrThrow)"). Lý do cũ ở `NO_CAPABILITY_GUARD` chuyển vào khai báo `auth` của route.
+- Route công khai/webhook mở đầu bằng `enforceRateLimit` theo IP → khai `rateLimit` (cùng lời gọi, cùng thứ tự); webhook, cron, URL ký, route chỉ cần phiên người dùng (`resolveSession`) → `kind: "custom"` kèm lý do. Cron giữ `custom` (handler tự kiểm `CRON_SECRET`) vì `kind: "cron"` trả thông báo lỗi khác.
+- Test kiến trúc (`route-contract-ratchet`, `route-capability-guard`, `db-context-entrypoints`) nhận cả `defineRoute<…>(` (khai kiểu tham số bắt-tất-cả).
+- Công cụ AST làm rơi chú thích đầu tệp và chú thích trên dòng kiểm quyền bị bỏ ở 14 tệp đợt 1–2a; đã khôi phục, đối chiếu từng tệp với `main`: không mất, không trùng chú thích.
+
+Còn lại 99 dòng: 66 `greeting-card/*` + 29 `public/*` của Thẻ chào (`brochure`, `greeting-catalog`, `subcontract`) + `internal/chain-dispatch-sweep` (349 dòng, thuộc Thẻ chào, bọc sẽ vượt 350 — tách tệp ở đợt 3) → **đợt 3**; 3 webhook/widget chat chạy `asSystemDb` ngoài `handle()` là **ngoại lệ lâu dài** (bọc sẽ đổi ngữ cảnh CSDL), ghi chú ngay trong `route-contract-legacy.txt`.
+
+Phát hiện ngoài phạm vi (có từ trước, chưa sửa — ghi rõ trong lý do `auth`, chờ PO):
+- `GET /chat/public-limits` và `GET /chat/channels` không kiểm mã năng lực (test gác quyền xét theo tệp nên lệnh ghi cùng tệp che mất).
+- `GET /catalog-links/[slug]` tra link catalog không cần phiên, không giới hạn tần suất.
+- `GET /product-photo`, `GET /product-image-set` trả danh mục tĩnh không cần phiên.

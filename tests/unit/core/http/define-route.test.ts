@@ -6,7 +6,8 @@ import { AppError } from "@/core/http/errors"
 
 const ctx = { organizationId: "org-a", workspaceId: "ws", userId: "u-1", branchId: null, capabilities: new Set(["L1"]) }
 let currentCtx = ctx
-const requireTenantContext = vi.fn(async () => ({ ctx: currentCtx }))
+const currentResolved = { user: { id: "u-1" }, session: { id: "s-1" } }
+const requireTenantContext = vi.fn(async () => ({ ctx: currentCtx, resolved: currentResolved }))
 vi.mock("@/modules/organization/use-cases/resolve-session", () => ({ requireTenantContext: () => requireTenantContext() }))
 vi.mock("@/modules/platform/use-cases/resolve-platform-session", () => ({
   requirePlatformContext: async () => ({ userId: "op-1", capabilities: new Set(["N1"]) }),
@@ -115,12 +116,25 @@ describe("defineRoute", () => {
     expect((await POST(req("/internal/x", { method: "POST" }))).status).toBe(401)
   })
 
+  it("tenant: handler nhận cả phiên đã xác thực (resolved)", async () => {
+    const route = defineRoute({ auth: { kind: "tenant", capability: null, reason: "của chính mình" }, handler: async ({ resolved }) => ok(resolved.session.id) })
+    expect(await (await route(req("/x"))).json()).toEqual({ data: "s-1" })
+  })
+
   it("platform: kiểm mã năng lực nền tảng", async () => {
     const allowed = defineRoute({ auth: { kind: "platform", capability: "N1" }, handler: async ({ pctx }) => ok(pctx.userId) })
     const denied = defineRoute({ auth: { kind: "platform", capability: "N12" }, handler: async () => ok(null) })
     expect(await (await allowed(req("/platform/x"))).json()).toEqual({ data: "op-1" })
     expect((await denied(req("/platform/x"))).status).toBe(403)
   })
+  it("platform: capability null chỉ đòi phiên nền tảng, kèm lý do", async () => {
+    const route = defineRoute({
+      auth: { kind: "platform", capability: null, reason: "mọi người dùng nền tảng" },
+      handler: async ({ pctx }) => ok(pctx.userId),
+    })
+    expect(await (await route(req("/platform/x"))).json()).toEqual({ data: "op-1" })
+  })
+
 
   it("trường camelCase ở thân/query → ném ngay lúc khai báo, kể cả lồng trong mảng/optional", () => {
     expect(() =>
