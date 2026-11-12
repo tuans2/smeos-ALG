@@ -37,7 +37,7 @@ export function ChannelFunnelStats() {
               onClick={() => setDays(p)}
               aria-pressed={days === p}
               className={`py-0 gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
-                days === p ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"
+                days === p ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-alt"
               }`}
             >
               {p} ngày
@@ -51,7 +51,7 @@ export function ChannelFunnelStats() {
       ) : isLoading || !rows ? (
         <div className="p-4 flex flex-col gap-2" aria-busy="true">
           {[0, 1].map((i) => (
-            <div key={i} className="h-8 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" />
+            <div key={i} className="h-8 rounded-lg bg-surface-alt animate-pulse motion-reduce:animate-none" />
           ))}
         </div>
       ) : rows.length === 0 ? (
@@ -61,7 +61,7 @@ export function ChannelFunnelStats() {
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-body-sm">
-            <thead className="bg-surface-muted text-text-muted text-caption uppercase border-b border-border">
+            <thead className="bg-surface-alt text-text-muted text-caption uppercase border-b border-border">
               <tr>
                 <th className="px-4 py-2.5">Kênh</th>
                 <th className="px-4 py-2.5 text-right">Khách xem</th>

@@ -74,7 +74,7 @@ export function CoordinatorConfirmBalanceModal({
                 width={320}
                 height={200}
                 unoptimized
-                className="w-full max-h-48 object-contain rounded-xl border border-border bg-surface-muted"
+                className="w-full max-h-48 object-contain rounded-xl border border-border bg-surface-alt"
               />
             </a>
             <p className="text-caption text-text-muted">Nhấp ảnh để xem kích thước đầy đủ.</p>

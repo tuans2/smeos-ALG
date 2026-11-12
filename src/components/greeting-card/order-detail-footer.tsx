@@ -221,7 +221,7 @@ export function OrderDetailFooter({
           </div>
         ) : (
           <div className="border-t border-border/60 pt-2">
-            <div className="rounded-xl border border-border/60 bg-surface-muted/50 px-3 py-1.5 text-center text-caption text-text-muted">
+            <div className="rounded-xl border border-border/60 bg-surface-alt/50 px-3 py-1.5 text-center text-caption text-text-muted">
               Link đang xem mẫu (chưa đặt đơn) · Đề xuất hủy/hoàn áp dụng khi khách đã gửi đơn hàng
             </div>
           </div>

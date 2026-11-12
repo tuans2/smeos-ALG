@@ -108,7 +108,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
           {BUCKETS.map((b) => (
             <Button variant="outline" key={b} type="button" aria-pressed={bucket === b} onClick={() => setBucket(bucket === b ? null : b)}
               className={`py-0 gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${
-                bucket === b ? "border-primary bg-primary text-white hover:bg-primary" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger hover:bg-danger-bg" : "border-border text-text-muted hover:bg-surface-muted"
+                bucket === b ? "border-primary bg-primary text-white hover:bg-primary" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger hover:bg-danger-bg" : "border-border text-text-muted hover:bg-surface-alt"
               }`}>
               {WORK_BUCKET_LABEL[b]} ({counts[b]})
             </Button>
@@ -149,7 +149,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
         <p role="alert" className="rounded-xl bg-danger-bg p-4 text-body-sm text-danger">{work.error.message}</p>
       ) : work.isLoading ? (
         <div className="flex flex-col gap-3" aria-busy="true">
-          {[0, 1].map((i) => <div key={i} className="h-48 animate-pulse motion-reduce:animate-none rounded-2xl bg-surface-muted" />)}
+          {[0, 1].map((i) => <div key={i} className="h-48 animate-pulse motion-reduce:animate-none rounded-2xl bg-surface-alt" />)}
         </div>
       ) : shown.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border p-8 text-center text-body-sm text-text-muted flex flex-col items-center gap-2">
@@ -231,7 +231,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
 
       <section className="overflow-hidden rounded-2xl border border-border bg-surface">
         <Button variant="ghost" type="button" aria-expanded={linksOpen} onClick={() => setLinksOpen((v) => !v)}
-          className="h-auto gap-0 flex w-full items-center justify-between p-4 text-left text-body font-extrabold text-text hover:bg-surface-muted">
+          className="h-auto gap-0 flex w-full items-center justify-between p-4 text-left text-body font-extrabold text-text hover:bg-surface-alt">
           Link đã gửi (thu hồi, mở lại)
           <ChevronDown size={18} aria-hidden="true" className={linksOpen ? "rotate-180" : ""} />
         </Button>

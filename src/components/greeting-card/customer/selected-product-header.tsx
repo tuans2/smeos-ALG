@@ -15,7 +15,7 @@ export function SelectedProductHeader({
 }) {
   const price = variant && variant.priceVnd > 0 ? variant.priceVnd : product.price
   return (
-    <div className="flex items-center gap-3.5 p-3 rounded-xl bg-surface-muted border border-border mb-5">
+    <div className="flex items-center gap-3.5 p-3 rounded-xl bg-surface-alt border border-border mb-5">
       <FlowerImage src={product.imageUrl} driveLink={product.driveLink} alt={product.name} sizes="64px" fallback="icon" className="w-16 h-16 rounded-lg shrink-0 border border-border" />
       <div className="flex-1 min-w-0">
         <div className="text-caption text-text-muted">Mẫu đã chọn:</div>

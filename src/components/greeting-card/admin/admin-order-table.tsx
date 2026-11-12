@@ -47,7 +47,7 @@ export function AdminOrderTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-body-sm">
-        <thead className="bg-surface-muted text-text-muted text-caption uppercase border-b border-border">
+        <thead className="bg-surface-alt text-text-muted text-caption uppercase border-b border-border">
           <tr>
             <th className="px-4 py-3">Mã đơn</th>
             <th className="px-4 py-3">Mẫu</th>
@@ -62,7 +62,7 @@ export function AdminOrderTable({
           {orders.map((o) => {
             const balance = Math.max(0, o.total_vnd - o.paid_vnd)
             const awaitingQuote = o.total_vnd <= 0 && o.status !== "CANCELLED"
-            const badge = STATUS_BADGE[o.status] ?? { label: o.status, className: "bg-surface-muted" }
+            const badge = STATUS_BADGE[o.status] ?? { label: o.status, className: "bg-surface-alt" }
             const cancellable = o.status !== "CANCELLED" && o.status !== "COMPLETED" && o.delivery_status !== "DELIVERED"
 
             const plan = readPaymentPlan(o.pricing_rule_ref)
@@ -127,7 +127,7 @@ export function AdminOrderTable({
             )
 
             return (
-              <tr key={o.id} data-focus-key={o.id} className="hover:bg-surface-muted/50 transition-colors">
+              <tr key={o.id} data-focus-key={o.id} className="hover:bg-surface-alt/50 transition-colors">
                 <td className="px-4 py-3">
                   <div className="font-mono font-bold text-primary">{o.code}</div>
                   <div className="text-caption text-text-muted">

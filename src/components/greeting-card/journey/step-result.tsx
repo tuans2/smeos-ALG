@@ -31,7 +31,7 @@ export function StepResult(props: StepResultProps) {
         </p>
       </div>
 
-      <div className="flex w-full max-w-xl flex-col gap-3 rounded-2xl border border-border bg-surface-muted p-4">
+      <div className="flex w-full max-w-xl flex-col gap-3 rounded-2xl border border-border bg-surface-alt p-4">
         <output className="block break-all rounded-xl border border-border bg-bg p-3 text-left font-mono text-body-sm text-text select-all">
           {props.shareUrl}
         </output>

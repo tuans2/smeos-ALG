@@ -71,7 +71,7 @@ export function OrderChangePanel({
   const decided = latest && latest.status !== "PENDING" ? latest : null
 
   return (
-    <section aria-labelledby="order-change-title" className="flex flex-col gap-3 rounded-xl border border-border bg-surface-muted p-4">
+    <section aria-labelledby="order-change-title" className="flex flex-col gap-3 rounded-xl border border-border bg-surface-alt p-4">
       <h3 id="order-change-title" className="text-body font-extrabold text-text">Thay đổi thông tin đơn</h3>
 
       {decided && (
@@ -102,7 +102,7 @@ export function OrderChangePanel({
           )}
         </div>
       ) : change.lockedReason ? (
-        <p className="rounded-xl bg-surface-muted p-3 text-body-sm text-text-muted">{change.lockedReason}</p>
+        <p className="rounded-xl bg-surface-alt p-3 text-body-sm text-text-muted">{change.lockedReason}</p>
       ) : editing ? (
         <OrderChangeForm
           orderCode={orderCode}

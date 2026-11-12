@@ -43,7 +43,7 @@ export function LanguageToggle({ activeLocales = ["vi", "en"], className = "" }:
             className={`py-0 inline-flex items-center gap-1 h-9 px-2.5 text-caption font-black uppercase tracking-wide transition-all ${
               isActive
                 ? "bg-primary text-white hover:bg-primary"
-                : "text-text-muted hover:bg-surface-muted hover:text-text"
+                : "text-text-muted hover:bg-surface-alt hover:text-text"
             }`}
           >
             <span className="text-title-sm leading-none">{meta.flag}</span>

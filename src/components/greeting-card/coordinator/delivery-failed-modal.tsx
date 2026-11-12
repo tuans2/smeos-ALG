@@ -62,7 +62,7 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
         <label className="sr-only" htmlFor="delivery-failed-note">Ghi chú</label>
         <Textarea id="delivery-failed-note" rows={2} maxLength={FAILURE_NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)}
           placeholder={reason === "OTHER" ? "Ghi rõ lý do (bắt buộc)" : "Ghi chú: đã gọi mấy cuộc, giờ nào, người nhận hẹn lại lúc nào…"}
-          className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          className="w-full rounded-xl border border-border bg-surface-alt p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
 
         <label className="flex min-h-11 items-start gap-2 text-body-sm text-text">
           <Checkbox checked={chargeFee} onCheckedChange={(checked) => setChargeFee((checked === true))} className="mt-1" />

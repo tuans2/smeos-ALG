@@ -34,7 +34,7 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
         <Button variant="outline"
           type="button"
           onClick={() => setOpen(true)}
-          className="py-0 inline-flex h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-3.5 text-body-sm font-semibold text-text hover:bg-surface-muted"
+          className="py-0 inline-flex h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-3.5 text-body-sm font-semibold text-text hover:bg-surface-alt"
         >
           <History size={16} aria-hidden="true" />
           Lịch sử đơn hàng ({orderCount})
@@ -72,7 +72,7 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
                       <div className="flex items-center gap-3 px-4 py-3">{body}</div>
                     ) : (
                       // Tải hẳn trang đích: mỗi đơn là một trang riêng, khách chủ động chọn → không tự chuyển đi
-                      <a href={familyHref(m.sendCode)} className="flex min-h-11 items-center gap-3 px-4 py-3 hover:bg-surface-muted">{body}</a>
+                      <a href={familyHref(m.sendCode)} className="flex min-h-11 items-center gap-3 px-4 py-3 hover:bg-surface-alt">{body}</a>
                     )}
                   </li>
                 )

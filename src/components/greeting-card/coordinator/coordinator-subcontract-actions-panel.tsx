@@ -259,7 +259,7 @@ function M3SetShipperAction({
       </Button>
 
       {open && (
-        <form onSubmit={submit} className="flex flex-col gap-2 p-3 rounded-xl border border-border bg-surface-muted">
+        <form onSubmit={submit} className="flex flex-col gap-2 p-3 rounded-xl border border-border bg-surface-alt">
           <Input
             required
             placeholder="Tên Shipper *"

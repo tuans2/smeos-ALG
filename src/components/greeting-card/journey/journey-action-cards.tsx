@@ -102,7 +102,7 @@ export function JourneyActionCards({
               <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
                 <BookOpen size={24} />
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-caption font-bold bg-surface-muted text-text-muted border border-border">
+              <span className="px-2.5 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border">
                 {catalogCount} Bộ sưu tập
               </span>
             </div>
@@ -192,7 +192,7 @@ export function JourneyActionCards({
               <div className="w-12 h-12 rounded-xl bg-success-bg text-success flex items-center justify-center group-hover:scale-105 transition-transform">
                 <ShieldCheck size={24} />
               </div>
-              <span className="px-2.5 py-0.5 rounded-full text-caption font-bold bg-surface-muted text-text-muted border border-border">
+              <span className="px-2.5 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border">
                 Điều hành
               </span>
             </div>

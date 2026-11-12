@@ -124,7 +124,7 @@ export function CoordinatorAcceptRejectModal({
               placeholder={defaultBranchName ? `Vd: Đã xác nhận với ${defaultBranchName}, xưởng đủ điều kiện thực hiện...` : "Vd: Đã kiểm tra kho nguyên liệu, đủ điều kiện thực hiện đơn..."}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full rounded-xl border border-border bg-surface-alt p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
             {autoMode && (
               <label className="flex items-center gap-2 text-body-sm text-text">
@@ -161,7 +161,7 @@ export function CoordinatorAcceptRejectModal({
               placeholder="Nhập hoặc chỉnh sửa lý do từ chối (bắt buộc)..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-danger/40"
+              className="w-full rounded-xl border border-border bg-surface-alt p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-danger/40"
             />
           </div>
         )}

@@ -99,7 +99,7 @@ export function BrochureLanguageSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (

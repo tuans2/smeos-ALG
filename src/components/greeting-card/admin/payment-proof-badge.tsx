@@ -26,7 +26,7 @@ export function PaymentProofBadge({
     return (
       <span
         title="Đang đọc dữ liệu từ ảnh bill..."
-        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-muted text-text-muted border border-border ${className}`}
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border ${className}`}
       >
         <Clock size={12} className="animate-spin motion-reduce:animate-none text-text-muted" aria-hidden="true" />
         <span>Đang đọc bill</span>
@@ -90,7 +90,7 @@ export function PaymentProofBadge({
   return (
     <span
       title="Không nhận diện được nội dung chữ/số trên ảnh"
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-muted text-text-muted border border-border ${className}`}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border ${className}`}
     >
       <span>Ảnh mờ / Không rõ</span>
     </span>

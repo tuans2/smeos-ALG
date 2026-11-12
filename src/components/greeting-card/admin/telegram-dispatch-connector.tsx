@@ -203,7 +203,7 @@ export function TelegramDispatchConnector() {
       <TelegramDirectChatGuide botUsername={bot?.username || "smeos_dieuphoi_bot"} linkCode={linkCode} />
 
       {/* Hướng dẫn 3 bước kết nối */}
-      <div className="p-4 rounded-xl bg-surface-muted border border-border flex flex-col gap-2.5">
+      <div className="p-4 rounded-xl bg-surface-alt border border-border flex flex-col gap-2.5">
         <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
           <MessageSquare size={16} className="text-primary" /> Hoặc dùng nhóm Telegram cho Chi nhánh trong 3 bước:
         </h4>
@@ -236,7 +236,7 @@ export function TelegramDispatchConnector() {
         </div>
 
         {recentChats.length === 0 ? (
-          <div className="p-4 text-center text-caption text-text-muted bg-surface-muted/50 rounded-xl border border-border border-dashed">
+          <div className="p-4 text-center text-caption text-text-muted bg-surface-alt/50 rounded-xl border border-border border-dashed">
             Chưa có nhóm nào gửi mã liên kết. Hãy thêm bot vào nhóm, gửi mã liên kết ở bước 2 rồi bấm quét lại.
           </div>
         ) : (

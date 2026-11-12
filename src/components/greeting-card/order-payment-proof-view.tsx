@@ -24,7 +24,7 @@ function ProofVerificationCard({
   const ext = analysis?.extracted
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 p-3 rounded-xl border border-border bg-surface-muted/60">
+    <div className="flex flex-col sm:flex-row gap-3 p-3 rounded-xl border border-border bg-surface-alt/60">
       {/* Thumbnail ảnh bill */}
       <div className="flex flex-col gap-1 items-start shrink-0">
         <span className="text-caption font-bold text-text-muted">{title}</span>

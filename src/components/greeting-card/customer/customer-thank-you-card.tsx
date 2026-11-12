@@ -57,7 +57,7 @@ export function CustomerThankYouCard({
             type="button"
             variant="outline"
             onClick={() => scrollTo(THANK_YOU_TARGET.details)}
-            className="h-11 w-full justify-center gap-2 rounded-xl border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-muted cursor-pointer"
+            className="h-11 w-full justify-center gap-2 rounded-xl border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-alt cursor-pointer"
           >
             <FileText size={16} className="text-primary" />
             <span>Xem lại thông tin đơn hàng</span>
@@ -68,7 +68,7 @@ export function CustomerThankYouCard({
             type="button"
             variant="secondary"
             onClick={() => scrollTo(THANK_YOU_TARGET.progress)}
-            className="h-11 w-full justify-center gap-2 rounded-xl text-body-sm font-bold text-text hover:bg-surface-muted cursor-pointer"
+            className="h-11 w-full justify-center gap-2 rounded-xl text-body-sm font-bold text-text hover:bg-surface-alt cursor-pointer"
           >
             <CheckCircle2 size={16} className="text-success" />
             <span>Theo dõi tiến độ & Bằng chứng</span>

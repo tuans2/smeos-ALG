@@ -54,7 +54,7 @@ export function TrackingSteps({
                   ? "bg-success text-white"
                   : isCurrent
                   ? "bg-primary text-white shadow-sm ring-4 ring-primary/20"
-                  : "bg-surface-muted text-text-muted border border-border"
+                  : "bg-surface-alt text-text-muted border border-border"
               }`}
             >
               <Icon size={16} aria-hidden="true" />

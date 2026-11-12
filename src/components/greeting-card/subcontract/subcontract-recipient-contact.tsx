@@ -17,7 +17,7 @@ export function SubcontractRecipientContact({
   if (!recipientName && !recipientPhone) return null
 
   return (
-    <div className="p-3 rounded-xl bg-surface-muted border border-border flex items-start gap-2.5">
+    <div className="p-3 rounded-xl bg-surface-alt border border-border flex items-start gap-2.5">
       <User size={16} className="text-primary mt-0.5 shrink-0" />
       <div className="flex-1">
         <span className="text-caption text-text-muted block">Thông tin liên hệ người nhận:</span>

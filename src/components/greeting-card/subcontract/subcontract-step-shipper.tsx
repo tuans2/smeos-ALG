@@ -127,7 +127,7 @@ export function SubcontractStepShipper({
         type="button"
         onClick={onActivate}
         disabled={!isUnlocked}
-        className="text-[length:inherit] h-auto font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
+        className="text-[length:inherit] h-auto font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-alt/30 hover:bg-surface-alt/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
         <div className="flex items-center gap-2.5">
           <div
@@ -138,8 +138,8 @@ export function SubcontractStepShipper({
                 : isActive
                 ? "bg-primary text-white ring-2 ring-primary/30"
                 : isUnlocked
-                ? "bg-surface-muted text-text border border-border"
-                : "bg-surface-muted text-text-muted/60 border border-border/40"
+                ? "bg-surface-alt text-text border border-border"
+                : "bg-surface-alt text-text-muted/60 border border-border/40"
             )}
           >
             {isCompleted ? <CheckCircle2 size={16} /> : !isUnlocked ? <Lock size={12} /> : "3"}
@@ -172,7 +172,7 @@ export function SubcontractStepShipper({
               </span>
             )
           ) : (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-muted text-text-muted text-caption font-bold">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-alt text-text-muted text-caption font-bold">
               <Lock size={12} /> Khóa
             </span>
           )}
@@ -211,7 +211,7 @@ export function SubcontractStepShipper({
         )}
 
         {!isUnlocked ? (
-          <div className="p-4 rounded-xl bg-surface-muted text-center flex flex-col items-center gap-2 text-text-muted">
+          <div className="p-4 rounded-xl bg-surface-alt text-center flex flex-col items-center gap-2 text-text-muted">
             <Lock size={24} className="opacity-50" />
             <p className="text-caption">
               Vui lòng tải ảnh kiểm định thành phẩm ở <strong>Bước 2</strong> để mở khóa bàn giao đơn hàng cho Shipper.

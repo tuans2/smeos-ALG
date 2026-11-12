@@ -51,7 +51,7 @@ export function CatalogHeartsPanel({ catalogId }: { catalogId: string }) {
                   <span className="truncate text-body-sm font-semibold text-text">{r.name}</span>
                   <span className="shrink-0 text-body-sm font-bold text-danger tabular-nums">♥ {r.hearts}</span>
                 </div>
-                <div className="mt-1 h-1.5 w-full rounded-full bg-surface-muted overflow-hidden">
+                <div className="mt-1 h-1.5 w-full rounded-full bg-surface-alt overflow-hidden">
                   <div className="h-full rounded-full bg-danger" style={{ width: `${max > 0 ? (r.hearts / max) * 100 : 0}%` }} />
                 </div>
                 <p className="mt-0.5 text-caption text-text-muted">

@@ -62,7 +62,7 @@ export function TrackingPaymentCard({
   }
 
   return (
-    <section aria-labelledby="tracking-payment-title" className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-muted border border-border">
+    <section aria-labelledby="tracking-payment-title" className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-alt border border-border">
       <h3 id="tracking-payment-title" className="flex items-center gap-2 text-text font-extrabold text-body">
         <Wallet size={18} className="text-primary" aria-hidden="true" /> Thanh toán
       </h3>

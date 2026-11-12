@@ -160,7 +160,7 @@ export function PendingCancellationPanel() {
           type="button"
           aria-label="Làm mới danh sách đề xuất hủy/hoàn"
           onClick={() => void mutate()}
-          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted"
+          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-alt"
         >
           <RefreshCw size={14} className={isLoading ? "animate-spin motion-reduce:animate-none" : ""} />
         </Button>

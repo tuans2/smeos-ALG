@@ -10,7 +10,7 @@ export function PaymentCheckPanel({ order }: { order: AdminOrder }) {
   const c = paymentCheckOf(order)
   const differs = c.listedPriceVnd === null || c.listedPriceVnd !== c.agreedTotalVnd
   return (
-    <div className="flex gap-3 rounded-xl border border-border bg-surface-muted p-3">
+    <div className="flex gap-3 rounded-xl border border-border bg-surface-alt p-3">
       <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-border bg-surface">
         <FlowerImage src={c.imageUrl} alt={c.productName} sizes="64px" fallback="icon" className="h-full w-full" />
       </div>

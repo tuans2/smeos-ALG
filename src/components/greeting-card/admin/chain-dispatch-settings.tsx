@@ -92,7 +92,7 @@ export function ChainDispatchSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (
@@ -132,7 +132,7 @@ export function ChainDispatchSettings() {
       )}
 
       {/* Bật/Tắt Cơ Chế Tự Động */}
-      <div className="flex items-center justify-between p-4 rounded-xl bg-surface-muted border border-border">
+      <div className="flex items-center justify-between p-4 rounded-xl bg-surface-alt border border-border">
         <div>
           <span className="text-body font-bold text-text block">
             Tự động chọn cửa hàng & phát lệnh (mặc định)
@@ -313,7 +313,7 @@ export function ChainDispatchSettings() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-          <div className="p-3 rounded-lg bg-surface-muted border border-border">
+          <div className="p-3 rounded-lg bg-surface-alt border border-border">
             <span className="text-caption font-bold text-text block mb-1">
               Nhắc chụp ảnh QC:
             </span>
@@ -323,7 +323,7 @@ export function ChainDispatchSettings() {
             <span className="text-caption text-text-muted block mt-0.5">trước giờ giao dự kiến</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-surface-muted border border-border">
+          <div className="p-3 rounded-lg bg-surface-alt border border-border">
             <span className="text-caption font-bold text-text block mb-1">
               Nhắc bàn giao Shipper:
             </span>
@@ -333,7 +333,7 @@ export function ChainDispatchSettings() {
             <span className="text-caption text-text-muted block mt-0.5">trước giờ giao dự kiến</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-surface-muted border border-border">
+          <div className="p-3 rounded-lg bg-surface-alt border border-border">
             <span className="text-caption font-bold text-text block mb-1">
               Cảnh báo vi phạm SLA:
             </span>

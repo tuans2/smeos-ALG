@@ -41,7 +41,7 @@ export function DashboardView({ qs }: { qs: string }) {
               {d.byStep.map((s) => (
                 <li key={s.stepId} className="grid grid-cols-[8rem_1fr_auto] items-center gap-2 text-caption">
                   <span className="truncate text-text">{s.title}</span>
-                  <span className="h-2 rounded-full bg-surface-muted"><span className="block h-2 rounded-full bg-primary" style={{ width: `${(s.count / max) * 100}%` }} /></span>
+                  <span className="h-2 rounded-full bg-surface-alt"><span className="block h-2 rounded-full bg-primary" style={{ width: `${(s.count / max) * 100}%` }} /></span>
                   <span className="text-text-muted">{s.count}{s.overdue > 0 && <span className="text-danger"> · {s.overdue} quá hạn</span>}</span>
                 </li>
               ))}

@@ -126,7 +126,7 @@ export function SubcontractStepClaim({
       <Button variant="ghost"
         type="button"
         onClick={onActivate}
-        className="text-[length:inherit] h-auto font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer"
+        className="text-[length:inherit] h-auto font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-alt/30 hover:bg-surface-alt/60 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5">
           <div
@@ -136,7 +136,7 @@ export function SubcontractStepClaim({
                 ? "bg-success text-white"
                 : isActive
                 ? "bg-primary text-white ring-2 ring-primary/30"
-                : "bg-surface-muted text-text border border-border"
+                : "bg-surface-alt text-text border border-border"
             )}
           >
             {isCompleted ? <CheckCircle2 size={16} /> : "1"}
@@ -187,7 +187,7 @@ export function SubcontractStepClaim({
 
         {/* Trạng thái bị chi nhánh khác nhận */}
         {isClaimedByOther && (
-          <div className="p-4 rounded-xl bg-surface-muted border border-border text-center flex flex-col items-center gap-2">
+          <div className="p-4 rounded-xl bg-surface-alt border border-border text-center flex flex-col items-center gap-2">
             <CheckCircle2 size={32} className="text-text-muted" />
             <h4 className="text-body font-bold text-text">Đơn hàng đã được tiếp nhận</h4>
             <p className="text-caption text-text-muted max-w-xs">
@@ -234,7 +234,7 @@ export function SubcontractStepClaim({
         )}
 
         {/* Chi tiết sản phẩm & Định mức nguyên vật liệu BOM */}
-        <div className="bg-surface-muted rounded-xl p-3.5 border border-border flex flex-col gap-3">
+        <div className="bg-surface-alt rounded-xl p-3.5 border border-border flex flex-col gap-3">
           <div className="flex items-center gap-3">
             {sampleSrc && !imageError ? (
               <img
@@ -297,7 +297,7 @@ export function SubcontractStepClaim({
           </div>
 
           {cardMessage && (
-            <div className="p-2.5 rounded-lg bg-surface-muted border border-border text-caption">
+            <div className="p-2.5 rounded-lg bg-surface-alt border border-border text-caption">
               <span className="font-bold text-text block mb-0.5">Lời chúc thiệp:</span>
               <span className="italic text-text-muted">&ldquo;{cardMessage}&rdquo;</span>
             </div>

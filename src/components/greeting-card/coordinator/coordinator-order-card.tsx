@@ -175,7 +175,7 @@ export function CoordinatorOrderCard({
               #{order.code}
             </span>
             {session?.send_code && (
-              <span className="text-caption px-2 py-0.5 rounded-md bg-surface-muted text-text-muted font-mono font-bold">
+              <span className="text-caption px-2 py-0.5 rounded-md bg-surface-alt text-text-muted font-mono font-bold">
                 {session.send_code}
               </span>
             )}
@@ -215,10 +215,10 @@ export function CoordinatorOrderCard({
             {product.name}
           </div>
           <div className="flex flex-wrap gap-2 mt-0.5">
-            <span className="text-caption px-2 py-0.5 rounded-full bg-surface-muted text-text-muted border border-border">
+            <span className="text-caption px-2 py-0.5 rounded-full bg-surface-alt text-text-muted border border-border">
               SX: {productionLabel(order.production_status, terms)}
             </span>
-            <span className="text-caption px-2 py-0.5 rounded-full bg-surface-muted text-text-muted border border-border">
+            <span className="text-caption px-2 py-0.5 rounded-full bg-surface-alt text-text-muted border border-border">
               {isStay ? "Tiến độ: " : "Ship: "}{deliveryLabel(order.delivery_status, orderTerms)}
             </span>
           </div>
@@ -232,7 +232,7 @@ export function CoordinatorOrderCard({
       />
 
       {/* Logistics */}
-      <div className="bg-surface-muted rounded-xl p-3 flex flex-col gap-2 text-body-sm text-text-muted">
+      <div className="bg-surface-alt rounded-xl p-3 flex flex-col gap-2 text-body-sm text-text-muted">
         <div className="flex items-center gap-2 rounded-lg bg-primary/10 border border-primary/20 px-3 py-1.5 text-body-sm font-extrabold text-primary">
           <Calendar size={16} className="text-primary shrink-0" />
           <span>{orderTerms.deliveryTimeLabel}: {timeSlot}{date ? ` · ${date}` : ""}</span>

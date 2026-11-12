@@ -172,7 +172,7 @@ export function BrochurePaymentView({
           href={vietQr.qrUrl}
           target="_blank"
           rel="noreferrer"
-          className="-mt-2 mb-5 inline-flex h-11 items-center justify-center rounded-xl border border-border px-4 text-body-sm font-semibold text-primary hover:bg-surface-muted"
+          className="-mt-2 mb-5 inline-flex h-11 items-center justify-center rounded-xl border border-border px-4 text-body-sm font-semibold text-primary hover:bg-surface-alt"
         >
           Mở ảnh QR để lưu vào máy
         </a>
@@ -181,7 +181,7 @@ export function BrochurePaymentView({
         </p>
 
         {/* Payment details list */}
-        <div className="w-full bg-surface-muted rounded-xl p-3.5 flex flex-col gap-2.5 text-body-sm text-left mb-5 border border-border">
+        <div className="w-full bg-surface-alt rounded-xl p-3.5 flex flex-col gap-2.5 text-body-sm text-left mb-5 border border-border">
           <div className="flex items-center justify-between">
             <span className="text-text-muted">Ngân hàng:</span>
             <span className="font-bold text-text">{vietQr.bankName}</span>

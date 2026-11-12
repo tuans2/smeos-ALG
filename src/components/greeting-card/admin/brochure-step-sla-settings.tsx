@@ -61,7 +61,7 @@ export function BrochureStepSlaSettings() {
       </div>
       <p className="text-caption text-text-muted">Quá thời gian mà bước chưa xong, đơn được đánh dấu kẹt và người phụ trách nhận thông báo.</p>
       {!draft ? (
-        <div className="h-24 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-24 rounded-lg bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <ul className="flex flex-col divide-y divide-border rounded-xl border border-border">
           {STEP_SLA_RULES.map((r) => {

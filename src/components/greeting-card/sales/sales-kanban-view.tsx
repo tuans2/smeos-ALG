@@ -27,7 +27,7 @@ interface Props {
 }
 
 const vnd = (n: number) => `${n.toLocaleString("vi-VN")}đ`
-const ACTION = "inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2 text-caption font-bold text-text hover:bg-surface-muted"
+const ACTION = "inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2 text-caption font-bold text-text hover:bg-surface-alt"
 
 /** Kanban của Sale: 9 cột = 9 bước của quy trình, phân tầng hiển thị theo thời gian. */
 export function SalesKanbanView({ items, now, onOpenNotes, showSale, doneHidden }: Props) {

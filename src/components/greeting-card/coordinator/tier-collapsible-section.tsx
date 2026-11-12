@@ -49,11 +49,11 @@ export function TierCollapsibleSection({
   const Icon = type === "DONE" ? CheckCircle2 : Calendar
   const label = type === "DONE" ? `${count} đơn đã giao trong 24 giờ` : `${count} đơn ca sau & đặt trước`
   return (
-    <div className="flex flex-col gap-1.5 rounded-xl border border-border bg-surface-muted/40 p-1.5 mt-1">
+    <div className="flex flex-col gap-1.5 rounded-xl border border-border bg-surface-alt/40 p-1.5 mt-1">
       <Button variant="ghost"
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="h-auto gap-0 flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-caption font-medium text-text-muted hover:bg-surface-muted transition-colors"
+        className="h-auto gap-0 flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-caption font-medium text-text-muted hover:bg-surface-alt transition-colors"
         aria-expanded={expanded}
       >
         <div className="flex items-center gap-1.5">

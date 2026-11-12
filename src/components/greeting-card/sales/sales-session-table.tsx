@@ -20,7 +20,7 @@ interface Props {
 }
 
 const ACTION_BTN =
-  "inline-flex items-center justify-center h-8 rounded-lg border border-border text-text-muted hover:bg-surface-muted hover:text-text disabled:opacity-40"
+  "inline-flex items-center justify-center h-8 rounded-lg border border-border text-text-muted hover:bg-surface-alt hover:text-text disabled:opacity-40"
 
 function formatDate(iso: string | null): string {
   return iso ? _formatDate(iso) : "Không hết hạn"
@@ -68,7 +68,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
       {error && <p role="alert" className="m-4 p-3 rounded-xl bg-danger-bg text-danger text-body-sm">{error}</p>}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-body-sm">
-          <thead className="bg-surface-muted text-text-muted text-caption uppercase border-b border-border">
+          <thead className="bg-surface-alt text-text-muted text-caption uppercase border-b border-border">
             <tr>
               <th className="px-4 py-3">Mã gửi</th>
               <th className="px-4 py-3">{ti("catalogTitle")}</th>
@@ -83,7 +83,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
               const badge = getSessionStatusBadge(row.status, ti("sampleProduct"))
               const active = row.link_state === "ACTIVE"
               return (
-                <tr key={row.id} className="hover:bg-surface-muted/50 transition-colors">
+                <tr key={row.id} className="hover:bg-surface-alt/50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="font-mono font-bold text-text">{row.send_code}</div>
                     <div className="text-caption text-text-muted">Hạn: {formatDate(row.expires_at)}</div>
@@ -97,7 +97,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                     {row.link_state === "REVOKED" ? (
                       <span className="px-2.5 py-1 rounded-full text-caption font-bold bg-danger-bg text-danger">Đã thu hồi</span>
                     ) : row.link_state === "EXPIRED" ? (
-                      <span className="px-2.5 py-1 rounded-full text-caption font-bold bg-surface-muted text-text-muted">Đã hết hạn</span>
+                      <span className="px-2.5 py-1 rounded-full text-caption font-bold bg-surface-alt text-text-muted">Đã hết hạn</span>
                     ) : (
                       <span className={`px-2.5 py-1 rounded-full text-caption font-bold ${badge.className}`}>{badge.label}</span>
                     )}

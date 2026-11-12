@@ -126,7 +126,7 @@ export function CoordinatorBypassReviewBanner({
                 </span>
               </div>
 
-              <div className="p-2 rounded bg-surface-muted text-caption text-text-muted italic border-l-2 border-warning">
+              <div className="p-2 rounded bg-surface-alt text-caption text-text-muted italic border-l-2 border-warning">
                 &ldquo;{req.reason || "Lý do bất khả kháng"}&rdquo;
               </div>
 

@@ -31,7 +31,7 @@ export function StepCountdownBadge({
           ? "bg-danger-bg text-danger border border-danger/30 animate-pulse motion-reduce:animate-none"
           : isUrgent
           ? "bg-warning-bg text-warning-text border border-warning/30"
-          : "bg-surface-muted text-text-muted border border-border",
+          : "bg-surface-alt text-text-muted border border-border",
         className
       )}
       title={`Hạn hoàn thành: ${targetTimeStr || "Đang tính"}`}

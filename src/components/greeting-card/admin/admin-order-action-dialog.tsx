@@ -278,7 +278,7 @@ export function AdminOrderActionDialog({
             disabled={busy || isBlocked}
             className={
               isBlocked
-                ? "bg-surface-muted text-text-muted cursor-not-allowed"
+                ? "bg-surface-alt text-text-muted cursor-not-allowed"
                 : type === "collect" || type === "quote"
                 ? "bg-success hover:bg-success/90 text-white"
                 : "bg-danger hover:bg-danger/90 text-white"

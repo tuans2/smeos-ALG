@@ -72,7 +72,7 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
 
         {/* Ngày Check-in & Check-out */}
         <div className="grid grid-cols-2 gap-3 py-1">
-          <div className="flex flex-col gap-1 p-2.5 rounded-lg bg-surface-muted border border-border/50">
+          <div className="flex flex-col gap-1 p-2.5 rounded-lg bg-surface-alt border border-border/50">
             <div className="flex items-center gap-1.5 text-caption font-bold text-text-muted">
               <Calendar size={14} className="text-primary" /> Nhận phòng (Check-in)
             </div>
@@ -84,7 +84,7 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
             </span>
           </div>
 
-          <div className="flex flex-col gap-1 p-2.5 rounded-lg bg-surface-muted border border-border/50">
+          <div className="flex flex-col gap-1 p-2.5 rounded-lg bg-surface-alt border border-border/50">
             <div className="flex items-center gap-1.5 text-caption font-bold text-text-muted">
               <Calendar size={14} className="text-primary" /> Trả phòng (Check-out)
             </div>

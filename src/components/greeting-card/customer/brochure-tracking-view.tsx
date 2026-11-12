@@ -229,7 +229,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       )}
 
       {!isHomestayStay && productPhotos.length > 0 && (
-        <section className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-muted border border-border">
+        <section className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-alt border border-border">
           <div className="flex items-center justify-between">
             <h3 className="flex items-center gap-2 text-text font-extrabold text-body">
               <Camera size={18} className="text-primary" aria-hidden="true" />
@@ -271,7 +271,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
         </section>
       )}
       {recipientPhotos.length > 0 && (
-        <section className="flex flex-col gap-2 p-4 rounded-2xl bg-surface-muted border border-border">
+        <section className="flex flex-col gap-2 p-4 rounded-2xl bg-surface-alt border border-border">
           <h3 className="flex items-center gap-2 text-text font-extrabold text-body">
             <Camera size={18} className="text-success" aria-hidden="true" />
             Ảnh {getIndustryOrderTerms(order.industryKey).recipientShortLabel}
@@ -316,7 +316,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       )}
 
       {/* Order Details Summary */}
-      <div id={THANK_YOU_TARGET.details} className="flex flex-col gap-2 text-body-sm text-text-muted bg-surface-muted p-4 rounded-xl border border-border">
+      <div id={THANK_YOU_TARGET.details} className="flex flex-col gap-2 text-body-sm text-text-muted bg-surface-alt p-4 rounded-xl border border-border">
         <div className="flex justify-between gap-3">
           <span className="shrink-0">Người nhận:</span>
           <span className="font-bold text-text text-right break-words">{order.recipientName}</span>

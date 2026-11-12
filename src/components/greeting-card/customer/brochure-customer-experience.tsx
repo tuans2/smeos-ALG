@@ -228,7 +228,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       </p>
     )}
     {family.redirecting && (
-      <p role="status" className="bg-surface-muted px-4 py-2 text-center text-body-sm text-text">
+      <p role="status" className="bg-surface-alt px-4 py-2 text-center text-body-sm text-text">
         Đang mở đơn bạn đang làm dở…
       </p>
     )}
@@ -236,7 +236,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       <OrderHistorySheet members={family.members} currentSendCode={session.sendCode} />
     )}
     {contactNote && (
-      <p role="status" className="bg-surface-muted px-4 py-2 text-center text-body-sm text-text">
+      <p role="status" className="bg-surface-alt px-4 py-2 text-center text-body-sm text-text">
         {contactNote}
       </p>
     )}

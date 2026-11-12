@@ -51,7 +51,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
       title={title ?? thread.data?.data.label ?? "Trao đổi nội bộ"}
       onClose={onClose}
       leading={onBack && (
-        <Button variant="ghost" type="button" onClick={onBack} className="py-0 gap-0 inline-flex h-11 items-center rounded-full px-3 text-body-sm font-bold text-primary hover:bg-surface-muted">
+        <Button variant="ghost" type="button" onClick={onBack} className="py-0 gap-0 inline-flex h-11 items-center rounded-full px-3 text-body-sm font-bold text-primary hover:bg-surface-alt">
           ‹ Hộp việc
         </Button>
       )}
@@ -62,7 +62,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
         {thread.error ? (
           <p role="alert" className="rounded-xl bg-danger-bg p-3 text-body-sm text-danger">{(thread.error as Error).message}</p>
         ) : thread.isLoading ? (
-          [0, 1, 2].map((i) => <div key={i} className={`h-16 w-3/4 animate-pulse motion-reduce:animate-none rounded-2xl bg-surface-muted ${i % 2 ? "self-end" : ""}`} />)
+          [0, 1, 2].map((i) => <div key={i} className={`h-16 w-3/4 animate-pulse motion-reduce:animate-none rounded-2xl bg-surface-alt ${i % 2 ? "self-end" : ""}`} />)
         ) : messages.length === 0 ? (
           <p className="py-10 text-center text-body-sm text-text-muted">Chưa có trao đổi nào. Chọn người nhận và gửi tin đầu tiên bên dưới.</p>
         ) : (
@@ -140,7 +140,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
                 )
               )}
               <div className="flex items-center gap-2">
-                {m.stepKey !== "GENERAL" && <span className="rounded-full bg-surface-muted px-2 text-caption text-text-muted">{m.stepTitle}</span>}
+                {m.stepKey !== "GENERAL" && <span className="rounded-full bg-surface-alt px-2 text-caption text-text-muted">{m.stepTitle}</span>}
                 {!m.mine && m.kind === "MESSAGE" && (
                   <Button variant="ghost" type="button" onClick={() => setReplyTo({ id: m.id, senderName: m.senderName })}
                     className="py-0 inline-flex h-9 items-center gap-1 rounded-lg px-2 text-caption font-bold text-primary hover:bg-primary/10">

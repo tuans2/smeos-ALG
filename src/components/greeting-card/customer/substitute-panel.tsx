@@ -44,7 +44,7 @@ export function SubstitutePanel({
     const last = substitute.history[0]
     if (!last?.choiceLabel) return null
     return (
-      <div role="status" className="rounded-2xl border border-border bg-surface-muted p-4 flex flex-col gap-1 text-body-sm">
+      <div role="status" className="rounded-2xl border border-border bg-surface-alt p-4 flex flex-col gap-1 text-body-sm">
         <p className="font-bold text-text flex items-center gap-2"><Shuffle size={16} aria-hidden="true" /> Đổi sản phẩm</p>
         <p className="text-text">
           {last.choiceLabel}{last.chosenName ? `: ${last.chosenName}` : ""} <span className="text-text-muted">· {when(last.answeredAt)}</span>

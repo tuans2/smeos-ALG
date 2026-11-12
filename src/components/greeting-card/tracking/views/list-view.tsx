@@ -59,7 +59,7 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
       <ViewState loading={list.isLoading} error={list.error} empty={!list.isLoading && list.items.length === 0}>
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
           <table className="w-full text-left text-body-sm">
-            <thead className="border-b border-border bg-surface-muted text-caption text-text-muted">
+            <thead className="border-b border-border bg-surface-alt text-caption text-text-muted">
               <tr>
                 {cols.map((c) => {
                   const f = view === "list" ? SORTABLE[c.id] : undefined
@@ -78,7 +78,7 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
             </thead>
             <tbody className="divide-y divide-border">
               {list.items.map((i) => (
-                <tr key={i.id} data-focus-key={i.orderId ?? i.sessionId} className="hover:bg-surface-muted">
+                <tr key={i.id} data-focus-key={i.orderId ?? i.sessionId} className="hover:bg-surface-alt">
                   {cols.map((c, n) => (
                     <td key={c.id} className="px-3 py-2 align-top">
                       {n === 0 ? <Button variant="ghost" type="button" onClick={() => onOpen(i)} className="text-[length:inherit] h-auto p-0 justify-start gap-0 text-left font-semibold text-primary hover:underline">{cell(c.id, i)}</Button> : cell(c.id, i)}
@@ -89,7 +89,7 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
                       <Button variant="outline"
                         type="button"
                         onClick={() => onDetail(i)}
-                        className="h-auto gap-0 rounded-lg border border-border px-2 py-1 text-caption font-semibold text-text hover:bg-surface-muted hover:text-primary"
+                        className="h-auto gap-0 rounded-lg border border-border px-2 py-1 text-caption font-semibold text-text hover:bg-surface-alt hover:text-primary"
                       >
                         Chi tiết
                       </Button>

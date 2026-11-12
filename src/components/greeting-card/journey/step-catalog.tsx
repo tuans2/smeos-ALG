@@ -148,7 +148,7 @@ export function StepCatalog(props: StepCatalogProps) {
       )}
 
       {selectedId && (
-        <div className="rounded-2xl border border-border bg-surface-muted p-4 sm:p-5">
+        <div className="rounded-2xl border border-border bg-surface-alt p-4 sm:p-5">
           <CatalogProductPicker catalogId={selectedId} compact onItemCountChange={props.onItemCountChange} readOnly={props.readOnly === true} />
         </div>
       )}
