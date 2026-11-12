@@ -11,11 +11,19 @@ export type RetentionAction = (typeof RETENTION_ACTIONS)[number]
  * - `technical_logs`: `job_events`, thông báo trong ứng dụng, `link_events`, sự kiện catalog — xoá.
  * - `delivery_info`: người nhận, điện thoại, địa chỉ giao trên đơn đã hoàn tất hoặc huỷ — ẩn danh, giữ thông tin VAT.
  * - `audit_logs`: `audit_logs`, `platform_audit_logs`, `platform_access_logs` — xoá.
+ * - `customer_conversations`: hội thoại khách (xoá tin nhắn, giữ vỏ), lead không thành đơn, phiên Thẻ chào không đặt —
+ *   ẩn danh sau lần tương tác cuối.
+ * - `customer_profiles`: hồ sơ khách không có hoạt động nào — ẩn danh (giữ đơn, phiếu thu, hoá đơn VAT).
+ * - `non_ledger_documents`: báo giá, đơn huỷ chưa thu đồng nào — xoá.
+ * Chứng từ ghi sổ 10 năm chưa làm (PO 12/11/2026: chờ pháp lý xác nhận mốc).
  */
 export const RETENTION_CATEGORIES = {
   technical_logs: "DELETE",
   delivery_info: "ANONYMIZE",
   audit_logs: "DELETE",
+  customer_conversations: "ANONYMIZE",
+  customer_profiles: "ANONYMIZE",
+  non_ledger_documents: "DELETE",
 } as const satisfies Record<string, RetentionAction>
 export type RetentionCategory = keyof typeof RETENTION_CATEGORIES
 

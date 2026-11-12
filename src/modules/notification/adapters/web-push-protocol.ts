@@ -28,20 +28,30 @@ export interface VapidKeys {
 const RECORD_SIZE = 4096
 const b64u = (buf: Buffer) => buf.toString("base64url")
 const fromB64u = (s: string) => Buffer.from(s, "base64url")
+const P256_SCALAR_BYTES = 32
+
+/**
+ * `ECDH.getPrivateKey()` bỏ các byte 0 ở đầu (~1/256 khoá có 31 byte); JWK `d` của P-256 phải đủ 32 byte
+ * (RFC 7518 §6.2.2.1). Đệm trái về 32 byte; dài hơn 32 byte → `null`. Khoá 31 byte đã lưu trước bản sửa vẫn dùng được.
+ */
+function padPrivateKey(priv: Buffer): Buffer | null {
+  if (priv.length === 0 || priv.length > P256_SCALAR_BYTES) return null
+  return priv.length === P256_SCALAR_BYTES ? priv : Buffer.concat([Buffer.alloc(P256_SCALAR_BYTES - priv.length), priv])
+}
 
 /** Sinh cặp khoá VAPID mới (tầng Mẹ tạo một lần). */
 export function generateVapidKeys(): { publicKey: string; privateKey: string } {
   const ecdh = createECDH("prime256v1")
   ecdh.generateKeys()
-  return { publicKey: b64u(ecdh.getPublicKey()), privateKey: b64u(ecdh.getPrivateKey()) }
+  return { publicKey: b64u(ecdh.getPublicKey()), privateKey: b64u(padPrivateKey(ecdh.getPrivateKey())!) }
 }
 
 /** Kiểm cặp khoá VAPID khớp nhau và đúng độ dài — tránh lưu khoá hỏng rồi mọi lần gửi đều bị từ chối. */
 export function vapidKeysValid(publicKey: string, privateKey: string): boolean {
   try {
     const pub = fromB64u(publicKey)
-    const priv = fromB64u(privateKey)
-    if (pub.length !== 65 || pub[0] !== 0x04 || priv.length !== 32) return false
+    const priv = padPrivateKey(fromB64u(privateKey))
+    if (pub.length !== 65 || pub[0] !== 0x04 || !priv) return false
     const ecdh = createECDH("prime256v1")
     ecdh.setPrivateKey(priv)
     return ecdh.getPublicKey().equals(pub)
@@ -52,8 +62,10 @@ export function vapidKeysValid(publicKey: string, privateKey: string): boolean {
 
 function vapidSigningKey(keys: VapidKeys) {
   const pub = fromB64u(keys.publicKey)
+  const priv = padPrivateKey(fromB64u(keys.privateKey))
+  if (!priv) throw new Error("Khoá riêng VAPID không hợp lệ")
   return createPrivateKey({
-    key: { kty: "EC", crv: "P-256", d: keys.privateKey, x: b64u(pub.subarray(1, 33)), y: b64u(pub.subarray(33, 65)) },
+    key: { kty: "EC", crv: "P-256", d: b64u(priv), x: b64u(pub.subarray(1, 33)), y: b64u(pub.subarray(33, 65)) },
     format: "jwk",
   })
 }
