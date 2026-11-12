@@ -35,7 +35,7 @@ export function CrmToolkitGrid() {
           onClick={() => router.push("/hoi-thoai" as Route)}
           className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent-text">
             <MessageSquare size={20} aria-hidden="true" />
           </div>
           <div className="min-w-0 flex-1">

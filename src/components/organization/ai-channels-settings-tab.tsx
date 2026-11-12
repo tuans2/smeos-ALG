@@ -18,7 +18,7 @@ export function AiChannelsSettingsTab() {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div className="p-5 rounded-2xl border border-border bg-surface shadow-xs flex flex-col justify-between">
         <div>
-          <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-3">
+          <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent-text flex items-center justify-center mb-3">
             <Cpu size={18} />
           </div>
           <h3 className="text-body-sm font-bold text-text">Thiết Lập Trợ Lý AI</h3>

@@ -27,7 +27,7 @@ export function LandingTemplatePerks({
         return <ShieldCheck size={18} className="text-success" />
       case "gift":
       default:
-        return <Gift size={18} className="text-accent" />
+        return <Gift size={18} className="text-accent-text" />
     }
   }
 

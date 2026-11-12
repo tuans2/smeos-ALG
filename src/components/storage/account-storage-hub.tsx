@@ -658,7 +658,7 @@ export function AccountStorageHub({
                       onClick={() => handleSelectApproved(item, "m01b")}
                       className="flex-1 text-caption h-8 gap-1 border-border font-semibold text-text hover:text-primary"
                     >
-                      <Sparkles size={13} className="text-accent" />
+                      <Sparkles size={13} className="text-accent-text" />
                       Tạo bài giới thiệu
                     </Button>
                     <Button variant="primary"

@@ -156,7 +156,7 @@ export default function MucDungPage() {
         </div>
 
         <div className="p-5 rounded-2xl border border-border bg-surface flex items-center gap-4">
-          <div className="h-12 w-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+          <div className="h-12 w-12 rounded-xl bg-accent/10 text-accent-text flex items-center justify-center shrink-0">
             <Activity size={24} />
           </div>
           <div>

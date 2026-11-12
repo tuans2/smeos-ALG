@@ -47,7 +47,7 @@ export default function ThuVienManHinhPage() {
         <KpiTile
           label="Bao phủ Screen Contract"
           value={`${catalog.coveragePercent}%`}
-          icon={<ShieldCheck className="h-5 w-5 text-accent" />}
+          icon={<ShieldCheck className="h-5 w-5 text-accent-text" />}
           description={`${catalog.coveredV2} v2 chuẩn · ${catalog.coveredV1} v1 · ${catalog.exempt} miễn trừ`}
         />
       </div>

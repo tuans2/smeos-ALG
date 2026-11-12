@@ -1,27 +1,18 @@
 {
   "summary": {
-    "app/(app)": {
-      "R18": 1
-    },
     "app/subcontract": {
       "R20": 1
     },
     "components/catalog": {
       "R14": 3
     },
-    "components/dashboard": {
-      "R18": 1
-    },
     "components/layout": {
       "R18": 3
-    },
-    "components/templates": {
-      "R18": 2
     },
     "components/upload": {
       "R14": 1
     }
   },
-  "total": 12,
-  "updatedAt": "2026-11-12T07:42:31.913Z"
+  "total": 8,
+  "updatedAt": "2026-11-12T07:53:51.522Z"
 }

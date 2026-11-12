@@ -124,13 +124,11 @@ export function VideoPlayerCard({
             loop
           />
         ) : effectivePoster ? (
+          // Ảnh bìa chỉ để xem; phát/tạm dừng bằng nút "Phát video" 48px ở giữa khung (Đợt 4, D4-09)
           <img
-              role="button"
-              tabIndex={0}
             src={effectivePoster}
             alt={productName}
-            className="h-full w-full object-cover cursor-pointer"
-            onClick={handleTogglePlay}
+            className="h-full w-full object-cover"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-meta text-white/70">Chưa có video</div>

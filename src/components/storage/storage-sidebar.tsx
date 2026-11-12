@@ -374,7 +374,7 @@ export function StorageSidebar({
                     className="relative z-10 text-caption h-7 gap-1 px-1 font-semibold hover:text-primary border-border"
                     title="Sinh câu từ bán hàng Sinh dữ liệu bán hàng"
                   >
-                    <Sparkles size={11} className="text-accent" />
+                    <Sparkles size={11} className="text-accent-text" />
                     Sinh Copy (Sinh dữ liệu bán hàng)
                   </Button>
                   <Button variant="secondary"

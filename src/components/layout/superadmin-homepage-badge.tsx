@@ -34,15 +34,15 @@ const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
   },
   NETWORK_JOURNEY_HOME: {
     label: "Network Home",
-    color: "bg-accent/10 text-accent border-accent/20",
+    color: "bg-accent/10 text-accent-text border-accent/20",
   },
   CONTROL_TOWER: {
     label: "Tháp điều phối đơn",
-    color: "bg-accent/10 text-accent border-accent/20",
+    color: "bg-accent/10 text-accent-text border-accent/20",
   },
   FLOWER_NETWORK_COMMAND_CENTER: {
     label: "Flower Network",
-    color: "bg-accent/10 text-accent border-accent/20",
+    color: "bg-accent/10 text-accent-text border-accent/20",
   },
   STORE_JOURNEY_HOME: {
     label: "Store Home",

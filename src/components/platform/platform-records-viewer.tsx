@@ -31,7 +31,7 @@ const DOMAIN_META: Record<
 > = {
   catalog: { label: "Danh mục sản phẩm", icon: Package, color: "text-success" },
   orders: { label: "Đơn hàng", icon: ShoppingCart, color: "text-info" },
-  members: { label: "Thành viên", icon: Users, color: "text-accent" },
+  members: { label: "Thành viên", icon: Users, color: "text-accent-text" },
   branches: { label: "Chi nhánh", icon: Building2, color: "text-warning-text" },
   customers: { label: "Khách hàng", icon: UserCircle, color: "text-danger" },
   jobs: { label: "AI Jobs", icon: Cpu, color: "text-primary" },

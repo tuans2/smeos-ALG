@@ -98,7 +98,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: `ChainOS • ${industryShort}`,
         title: `Hệ điều hành Mạng lưới Chuỗi`,
         badgeClass:
-          "bg-accent/10 text-accent border-accent/20",
+          "bg-accent/10 text-accent-text border-accent/20",
       }
     }
 
