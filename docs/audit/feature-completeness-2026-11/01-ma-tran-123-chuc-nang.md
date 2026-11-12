@@ -70,7 +70,7 @@
 | 3.1 | Cấu hình quy tắc giá 4 nhóm (Thưởng/Sàn/Trần) | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/pricing-rules`; trang `/gia` | `/gia` khoá production (có guard) — AC C-02 không chạy được trên smeOS production |
 | 3.2 | Bộ tính giá tự động (hoa + phí cắm + phụ phí) | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `greeting-card/use-cases/brochure-quote.ts` |  |
 | 3.3 | Tính giá vốn thực tế (nguyên liệu + bao bì + thợ) | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `/tinh-gia/gia-von`, `/tinh-gia/nguyen-lieu`; `costing/domain/cost-calculator` |  |
-| 3.4 | Kiểm soát cảnh báo & chặn giá dưới sàn | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `costing/use-cases/price-floor-guard.ts` (C10) | Chỉ chặn khi sản phẩm có công thức + giá vốn đủ (L-10, BL-28). Bản sửa "sàn từ giá vốn đã biết" ở nhánh `claude/bold-meitner-nk07bd` (`f0232f7c`), **chưa merge**; trần chiết khấu mọi kênh chờ PO (BL-28) |
+| 3.4 | Kiểm soát cảnh báo & chặn giá dưới sàn | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `costing/use-cases/price-floor-guard.ts` (C10) | Sàn tính từ phần giá vốn đã có, kể cả khi thiếu tiền công/đơn giá (L-10, sửa 12/11; báo rõ giá vốn chưa đủ). Mẫu chưa có công thức thì chưa có sàn. Trần chiết khấu báo giá theo BL-28 (PO 12/11) |
 | 3.5 | Quản lý ưu đãi, mã giảm giá, miễn phí ship | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `/uu-dai/ma-giam-gia`; `vouchers/batches` |  |
 | 3.6 | Phụ phí 6 kiểu dáng, hệ số ngày lễ 1.3x & VAT | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `craft-fee-for-product.ts`, `order-vat.ts`, hệ số lễ |  |
 | 3.7 | Đề xuất & duyệt giảm giá sâu trình Điều hành | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `greeting-card/use-cases/discount-requests.ts` |  |
