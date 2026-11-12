@@ -56,6 +56,28 @@ Thực hiện Bước 6 của [kế hoạch bàn giao](../../plan/BANGIAO_GD1_12
 | 19 | Thiết bị bị thay phiên không có câu báo lý do; trang duyệt ảnh của khách không có nút góp ý; tab Nhận thanh toán không hiện mã VietQR mẫu | — | A-02, E-10, A-15 |
 | 20 | Giao diện: thanh tab Cài đặt tiệm bị ép trong cột hẹp; nhiều ô ở Hồ sơ cửa hàng không có tên truy cập (Hotline, Email, Địa chỉ, Website, Fanpage); nhãn tiêu chí đè dòng dưới ở danh sách sẵn sàng; vai "Experience User" tên tiếng Anh; `/san-pham` có hai vùng `main` | — | A-03, B-08 |
 
+### Xử lý lỗi
+
+Các lỗi dưới đây đã sửa trên mã smeOS, mỗi lỗi kèm test chặn tái phát; bản cắt kế tiếp lấy từ mốc chứa các commit này.
+
+| # | Cách xử lý | Commit |
+|---|---|---|
+| 1–4 | Lệnh `gan-van-hanh-nen-tang` duyệt luôn tài khoản đang chờ; biến môi trường để trống được coi là chưa đặt (app và worker); README của bản giao thêm `seed:field-registry` và bước tạo người vận hành đầu tiên | `439e71d9` |
+| 5 | Thẻ kết nối trỏ tới trang ngoài phạm vi bản giao bị ẩn | `f7c69d8d` |
+| 6 | Cửa hàng tạo từ Console được nạp danh sách dịp mặc định như cửa hàng tự đăng ký | `e84d0a30` |
+| 7 | Nhóm Quản trị tiệm gác theo quyền quản trị (`F2`, `R5`, `A3`, `F4`, `F5`), không theo `F1`; màn Hồ sơ cửa hàng, Cài đặt tiệm, Đội ngũ chặn khi mở thẳng; email nhân viên chỉ hiện với người có quyền quản lý nhân sự. Sale giữ `F1` để đọc tên người bán trên đơn | `745ee58a` |
+| 8 | Vai Quản lý sản phẩm có thêm `G2` (tải ảnh), `H1` (nhận diện ảnh), `H5` (nội dung bán hàng); nhập lô `H3` giữ trần cứng Điều hành | `999f6d03` |
+| 9 | Form Tạo sản phẩm mở với dòng công thức trống (chữ gợi ý thay giá trị thật), trạng thái mặc định Bản nháp | `6aba2d82` |
+| 10 | Giá sàn tính từ phần giá vốn đã có; báo giá dưới sàn cần Điều hành duyệt kể cả khi giá vốn chưa đủ dữ liệu | `f0232f7c` |
+| 11 | Tiến trình định kỳ 5 phút sẵn có tự hoàn credit tác vụ AI lỗi; `hoan-credit` dùng chung phần xử lý | `82367cdc` |
+| 12 | Câu "tự động duyệt" chỉ hiện khi cửa hàng bật tự duyệt, kèm đúng số phút đã đặt | `9563b2dd` |
+| 13 | Mẫu Tạm ngưng, Lưu trữ không hiện trên link khách | `ee672448` |
+| 14 | Ô Mã ưu đãi chỉ hiện khi cửa hàng bật nhận mã giảm giá | `fb4947cb` |
+| 16 | Ảnh chụp mẫu của đơn Thẻ Chào mang theo công thức sản phẩm, đề xuất thay hoa đọc được thành phần | `c1b54f27` |
+| 18 | Mã quyền mới `R21` (Đổi giờ giao kèm lý do) cho Điều hành, Điều phối, Sale; nút "Đổi giờ giao" trong chi tiết đơn; lịch sử đơn ghi giá trị cũ → mới, người đổi, lý do; Sale chỉ đổi đơn mình tạo | `61f3dd8b` |
+
+Lỗi 15, 17, 19, 20 và hai mục chưa kết luận ở trên xử lý ở lượt sau.
+
 Ba bước D-09, D-12, C-10 chạy lại sau khi khai cài đặt đúng định dạng của các form (khu vực giao `fee_vnd`, ngày lễ `max_orders`/`surcharge_vnd`, kiểu dáng theo mã của ngành) — lượt đầu ghi cài đặt sai định dạng nên kết quả lượt đầu không dùng.
 
 Chưa kết luận, cần kiểm tiếp: mẫu khai giá theo phiên bản (Nhỏ/Vừa/Lớn) hiện "Liên hệ" trên link khách khi bảng giá ghi qua API; đơn Thẻ Chào chưa có đường vào danh sách "Đơn cần giao" của Shipper (danh sách đọc `order_coordinations`).
@@ -213,6 +235,6 @@ Console: đăng ký và duyệt cửa hàng, tạo tổ chức kèm gói và m�
 ## 7. Việc tiếp theo
 
 1. Sửa lỗi 1–4 rồi dựng lại từ môi trường trắng chỉ theo README.
-2. Sửa lỗi 6–18, chạy lại các bước Không đạt.
+2. Cắt lại từ mốc đã sửa, chạy lại các bước Không đạt; sửa lỗi 15, 17, 19, 20.
 3. Chạy 57 bước chưa chạy, ưu tiên Luồng F (giao hàng), G (đơn nguồn khác, chuỗi, SePay), H (báo cáo), S (cách ly và quyền).
 4. Dựng staging có khoá thật để chạy các bước AI, Zalo ZNS/SMS, SePay, Telegram, tên miền riêng.
