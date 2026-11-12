@@ -77,7 +77,7 @@ describe("tồn kho theo số lượng", () => {
   it("audit BL-20: tạo đơn ở Điều phối trừ tồn; thiếu hàng → 409; huỷ ở Điều phối → hoàn", async () => {
     await prisma.product_inventory.create({ data: { organization_id: a.organizationId, product_id: productId, branch_id: branchId, quantity_available: 1 } })
     const body = {
-      productId, customer_name: "Nguyễn Văn An", recipient_name: "Trần Thị Bình", recipient_phone: "0901 234 567",
+      product_id: productId, customer_name: "Nguyễn Văn An", recipient_name: "Trần Thị Bình", recipient_phone: "0901 234 567",
       delivery_address: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" }, delivery_target_time: "17:00",
       delivery_target_at: new Date(Date.now() + 6 * 3600_000).toISOString(), product_title: "Bình gốm", unit_price_vnd: 300_000, flowers: [],
     }
