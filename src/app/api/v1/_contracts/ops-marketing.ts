@@ -44,7 +44,7 @@ export const MARKETING_OPERATIONS: OpenApiOperation[] = [
   op(CRM, { method: "patch", path: "/customer-segments/{id}", operationId: "updateCustomerSegment", summary: "Sửa nhóm khách", cap: "M4", body: req.updateCustomerSegmentInputSchema,
     description: `${FIELD_MAP} ${NF}`, ok: [200, { description: "Nhóm khách", schema: res.segmentResponse }], errors: [...BODY_ERRORS, 404] }),
   op(CRM, { method: "delete", path: "/customer-segments/{id}", operationId: "deleteCustomerSegment", summary: "Xoá nhóm khách", cap: "M4", description: NF,
-    ok: [200, { description: "Đã xoá", schema: res.successResponse }], errors: [404] }),
+    ok: [200, { description: "Đã xoá", schema: res.segmentDeletedResponse }], errors: [404] }),
   op(CRM, { method: "get", path: "/customer-segments/{id}/customers", operationId: "listSegmentCustomers", summary: "Khách thuộc nhóm", cap: "M4 hoặc Q1", query: req.segmentCustomersQuery,
     description: `${PAGE} ${NF}`, ok: [200, { description: "Khách", schema: res.segmentCustomersResponse }], errors: [400, 404] }),
   op(CRM, { method: "get", path: "/customer-interactions", operationId: "listCustomerInteractions", summary: "Nhật ký tương tác khách", cap: "Q1", query: req.interactionsQuery,

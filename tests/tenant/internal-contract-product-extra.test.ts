@@ -94,7 +94,7 @@ describe("hợp đồng — ảnh studio, bộ ảnh, đề xuất sửa sản p
     await expectContract(await board(get("/availability/board")), 200, R.boardResponse, "board-default")
     const id = String(created.id)
     expect((await removeBlock(send(`/availability/blocks/${id}`, "DELETE", undefined, other), ps(id))).status).toBe(404)
-    await expectContract(await removeBlock(send(`/availability/blocks/${id}`, "DELETE"), ps(id)), 200, R.successResponse, "block-remove")
+    await expectContract(await removeBlock(send(`/availability/blocks/${id}`, "DELETE"), ps(id)), 200, R.blockRemovedResponse, "block-remove")
     expect((await createBlock(send("/availability/blocks", "POST", { productId: room.id, checkInDate: "1/12/2026", checkOutDate: "2026-12-03" }))).status).toBe(400)
   })
 

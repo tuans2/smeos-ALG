@@ -22,7 +22,7 @@ describe("GET /api/v1/noi-bo/identity", () => {
   it("giữ hình dạng { success, data } mà trang Kết nối đang đọc", async () => {
     const res = await get()
     expect(res.status).toBe(200)
-    expect(await res.json()).toEqual({ success: true, data: { id: "org-a", name: "Tiệm A" } })
+    expect(await res.json()).toEqual({ data: { id: "org-a", name: "Tiệm A" } })
   })
 
   it("phiên bị thay → 401 SESSION_SUPERSEDED, không phải 500", async () => {

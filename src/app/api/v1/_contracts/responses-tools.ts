@@ -107,11 +107,10 @@ const override = z.strictObject({
 })
 export const templateOverridesResponse = z.strictObject({ data: z.array(override), next_cursor: z.null() })
 export const templateOverrideResponse = z.strictObject({ override })
-export const okResponse = z.strictObject({ ok: z.literal(true) })
+export const overrideRemovedResponse = z.strictObject({ data: z.strictObject({ template_key: z.string(), field_key: z.string(), deleted: z.literal(true) }) })
 
-/** Envelope cũ `{ success, data }`. `members`: thành viên đang hoạt động (tên, email) — tối đa 100. */
+/** `members`: thành viên đang hoạt động (tên, email) — tối đa 100. */
 export const identityResponse = z.strictObject({
-  success: z.literal(true),
   data: z.strictObject({
     organization: z.strictObject({
       id: z.string(),

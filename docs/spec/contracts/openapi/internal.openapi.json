@@ -5301,13 +5301,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -6471,13 +6484,22 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "logged_out": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "logged_out"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -7006,13 +7028,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -11897,7 +11932,7 @@
       "post": {
         "operationId": "applyIndustryMockData",
         "summary": "Nạp dữ liệu mẫu theo ngành (không gian trải nghiệm)",
-        "description": "Chỉ tổ chức loại không gian trải nghiệm — tổ chức thường → 403. Mã ngành lạ → 400. Trả envelope cũ `{ success: true, data }`.",
+        "description": "Chỉ tổ chức loại không gian trải nghiệm — tổ chức thường → 403. Mã ngành lạ → 400.",
         "tags": [
           "Hồ sơ cửa hàng"
         ],
@@ -11940,10 +11975,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -11970,7 +12001,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -63404,13 +63434,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -67373,13 +67416,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -87079,7 +87135,7 @@
       "delete": {
         "operationId": "revokeIntegrationToken",
         "summary": "Thu hồi token ngay",
-        "description": "Không xoá bản ghi. Trả `{ ok: true }` cũ. Token của tổ chức khác → 404.",
+        "description": "Không xoá bản ghi. Token của tổ chức khác → 404.",
         "tags": [
           "Token tích hợp & SSO"
         ],
@@ -87117,13 +87173,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "revoked": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "revoked"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -87856,7 +87925,7 @@
       "delete": {
         "operationId": "disconnectIntegration",
         "summary": "Ngắt kết nối",
-        "description": "Mã năng lực kiểm ở use-case. Thu hồi phía nhà cung cấp nếu hỗ trợ, xoá khoá đã lưu. Trả `{ ok: true }` cũ. Kết nối của tổ chức khác hoặc đã ngắt → 404. Kết nối của tích hợp quản lý ở phân hệ khác (`managed`) → 422.",
+        "description": "Mã năng lực kiểm ở use-case. Thu hồi phía nhà cung cấp nếu hỗ trợ, xoá khoá đã lưu. Kết nối của tổ chức khác hoặc đã ngắt → 404. Kết nối của tích hợp quản lý ở phân hệ khác (`managed`) → 422.",
         "tags": [
           "Trung tâm Tích hợp — kết nối"
         ],
@@ -87894,13 +87963,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "disconnected": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "disconnected"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -88698,7 +88780,7 @@
       "post": {
         "operationId": "unpublishFromSalesChannel",
         "summary": "Gỡ tin đã đăng",
-        "description": "Mã năng lực kiểm ở use-case. Ghi nhật ký kiểm toán. Trả `{ ok: true }` cũ. Kết nối không phải kênh bán, đã ngắt hoặc của tổ chức khác → 404; kết nối đang lỗi/hết hạn hoặc cấp trên đã khoá kênh → 422.",
+        "description": "Mã năng lực kiểm ở use-case. Ghi nhật ký kiểm toán. Kết nối không phải kênh bán, đã ngắt hoặc của tổ chức khác → 404; kết nối đang lỗi/hết hạn hoặc cấp trên đã khoá kênh → 422.",
         "tags": [
           "Trung tâm Tích hợp — kênh bán"
         ],
@@ -88761,13 +88843,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "unpublished": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "unpublished"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -88979,7 +89074,7 @@
       "post": {
         "operationId": "replayIntegrationEvent",
         "summary": "Đưa sự kiện lỗi về hàng chờ",
-        "description": "Mã năng lực kiểm ở use-case. Chỉ sự kiện `FAILED`/`DEAD` — khác hoặc của tổ chức khác → 404; đầu nối không xử lý lại được → 422. Trả `{ ok: true }` cũ.",
+        "description": "Mã năng lực kiểm ở use-case. Chỉ sự kiện `FAILED`/`DEAD` — khác hoặc của tổ chức khác → 404; đầu nối không xử lý lại được → 422.",
         "tags": [
           "Trung tâm Tích hợp — kết nối"
         ],
@@ -89017,13 +89112,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "replayed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "replayed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -99914,7 +100022,7 @@
       "get": {
         "operationId": "getOrganizationIdentity",
         "summary": "Định danh tổ chức của phiên, liên kết chuỗi, thành viên",
-        "description": "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`. Envelope cũ `{ success, data }`.",
+        "description": "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`.",
         "tags": [
           "Định danh tổ chức"
         ],
@@ -99942,10 +100050,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -100137,7 +100241,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -106535,13 +106638,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "closed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "closed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -111723,7 +111839,7 @@
       "delete": {
         "operationId": "archivePriceList",
         "summary": "Bỏ bảng giá khỏi danh sách",
-        "description": "Lịch sử phiên bản vẫn giữ. Trả 200 `{ ok: true }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`). Của tổ chức khác → 404.",
+        "description": "Lịch sử phiên bản vẫn giữ. Của tổ chức khác → 404.",
         "tags": [
           "Quy tắc giá & bảng giá"
         ],
@@ -111761,13 +111877,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "archived": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "archived"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -129405,17 +129534,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "key": {
-                      "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok",
-                    "key"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -130019,7 +130152,7 @@
       "post": {
         "operationId": "moveToTrash",
         "summary": "Chuyển một mục vào thùng rác",
-        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Catalog thu hồi link, thẻ chào ẩn. Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Catalog thu hồi link, thẻ chào ẩn. Của tổ chức khác → 404.",
         "tags": [
           "Kho tệp & thùng rác"
         ],
@@ -130080,13 +130213,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "trashed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "trashed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -130122,7 +130268,7 @@
       "delete": {
         "operationId": "purgeFromTrash",
         "summary": "Xoá vĩnh viễn",
-        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). `type` bắt buộc, thiếu/sai → 400. Đang giữ pháp lý, ảnh đang được dùng hoặc sản phẩm đã có đơn → 409. Xoá tệp trên kho qua hàng đợi (outbox), ghi nhật ký kiểm toán. Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). `type` bắt buộc, thiếu/sai → 400. Đang giữ pháp lý, ảnh đang được dùng hoặc sản phẩm đã có đơn → 409. Xoá tệp trên kho qua hàng đợi (outbox), ghi nhật ký kiểm toán. Của tổ chức khác → 404.",
         "tags": [
           "Kho tệp & thùng rác"
         ],
@@ -130178,13 +130324,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -130217,7 +130376,7 @@
       "post": {
         "operationId": "restoreFromTrash",
         "summary": "Khôi phục từ thùng rác",
-        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Trả envelope cũ `{ success: true }`. Của tổ chức khác → 404.",
+        "description": "Mã năng lực kiểm ở use-case theo loại mục (`G3` · `L4` · `A3` · `B6` — đặc tả 06 mục Thùng rác). Của tổ chức khác → 404.",
         "tags": [
           "Kho tệp & thùng rác"
         ],
@@ -130283,13 +130442,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "restored": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "restored"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -131250,13 +131422,30 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "template_key": {
+                          "type": "string"
+                        },
+                        "field_key": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "template_key",
+                        "field_key",
+                        "deleted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -136661,7 +136850,7 @@
       "patch": {
         "operationId": "toggleVoucherBatch",
         "summary": "Tạm dừng / mở lại cả đợt",
-        "description": "Trả `{ ok: true }` cũ. Của tổ chức khác → 404.",
+        "description": "Của tổ chức khác → 404.",
         "tags": [
           "Mã giảm giá"
         ],
@@ -136717,13 +136906,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "is_active": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "is_active"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }

@@ -68,7 +68,7 @@ describe("hợp đồng — ấn phẩm quảng cáo, trường dữ liệu, ghi
     expect((await putOverride(send("/template-overrides", "PUT", { templateFamily: "ST", templateKey: "khong-co", fieldKey: "x", value: "y" }))).status).toBe(400)
     const params = { params: Promise.resolve({ templateKey: "sales_pitch_zalo", fieldKey: "greeting_line" }) }
     // @release-strip
-    await expectContract(await removeOverride(send("/template-overrides/sales_pitch_zalo/greeting_line", "DELETE"), params), 200, R.okResponse, "override-remove")
+    await expectContract(await removeOverride(send("/template-overrides/sales_pitch_zalo/greeting_line", "DELETE"), params), 200, R.overrideRemovedResponse, "override-remove")
     expect((await removeOverride(send("/template-overrides/sales_pitch_zalo/greeting_line", "DELETE"), params)).status).toBe(404) // đã bỏ rồi
     // @release-strip-end
     expect((await bannerSave(send("/ad-banner-poster/save", "POST", { title: "x", asset_type_code: "BANNER", image_data: "aGVsbG8=" }))).status).toBe(400) // không phải PNG

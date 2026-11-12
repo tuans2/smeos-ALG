@@ -41,5 +41,5 @@ export const PRODUCT_EXTRA_OPERATIONS: OpenApiOperation[] = [
   op(AV, { method: "post", path: "/availability/blocks", operationId: "createAvailabilityBlock", summary: "Chặn ngày thủ công", cap: "L3", body: req.availabilityBlockBody,
     description: "Ngày `YYYY-MM-DD`, ngày ra không tính. Sai → 400.", ok: [200, { description: "Đã chặn", schema: res.blockCreatedResponse }], errors: BODY_ERRORS }),
   op(AV, { method: "delete", path: "/availability/blocks/{id}", operationId: "removeAvailabilityBlock", summary: "Bỏ chặn thủ công", cap: "L3",
-    description: `Chỉ xoá được dòng không gắn đơn. ${NF}`, ok: [200, { description: "Đã bỏ chặn", schema: res.successResponse }], errors: [404] }),
+    description: `Chỉ xoá được dòng không gắn đơn. ${NF}`, ok: [200, { description: "Đã bỏ chặn", schema: res.blockRemovedResponse }], errors: [404] }),
 ]

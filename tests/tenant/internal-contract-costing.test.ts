@@ -96,6 +96,6 @@ describe("hợp đồng — tính giá, quy tắc giá, bảng giá", () => {
     await expectContract(await getList(get(`/price-lists/${id}`), ps(id)), 200, R.priceListDocumentResponse, "price-list-document")
     await expectContract(await putList(send(`/price-lists/${id}`, "PUT", { name: "Bảng giá Tết (sửa)", show_peak_price: false }), ps(id)), 200, R.priceListResponse, "price-list-put")
     await expectContract(await toggleList(send(`/price-lists/${id}`, "PATCH", { active: false }), ps(id)), 200, R.priceListResponse, "price-list-toggle")
-    await expectContract(await archiveList(send(`/price-lists/${id}`, "DELETE"), ps(id)), 200, R.okResponse, "price-list-delete")
+    await expectContract(await archiveList(send(`/price-lists/${id}`, "DELETE"), ps(id)), 200, R.priceListArchivedResponse, "price-list-delete")
   })
 })
