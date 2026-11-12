@@ -67,7 +67,7 @@ Hai thành phần dữ liệu mẫu đã xoá: `partner-settlement-modal.tsx` (t
 | BL-04 | Đã sửa (đồng bộ Điều phối, chặn huỷ đơn đã giao) | `cancel-order.ts:55-64`. Tiền đã thu: giữ cơ chế hoàn riêng (PO Q1) |
 | BL-05 | Đã sửa | `record-payment.ts:57-59` dùng `planPayment`; CHECK ở `migrations/20261108000000_orders_money_integrity`. **Còn sót** ở duyệt khoản chờ → BL-21 |
 | BL-06 | Đã sửa theo PO Q2 | `standard-payment.ts:12` khớp cả `FLR-…` |
-| BL-07 | **Một phần** | `create-order.ts:58-66` có sàn/trần cho đơn nhập tay; **tạo đơn Điều phối không có** → BL-20 |
+| BL-07 | Đã sửa (đợt 2 khép phần còn lại ở BL-20) | `create-order.ts:58-66` sàn/trần cho đơn nhập tay; đơn tạo ở Điều phối qua cùng bộ chặn `assertWithinPriceBounds` (`create-coordinator-order.ts`, BL-20) |
 | BL-08 | Đã sửa | `requests-orders.ts:14-45` không còn `voucherId`; Thẻ chào trần chung 50% `brochure-pricing.ts:247` |
 | BL-09 | Đã sửa | `standard-payment-repository.ts:67-78` con trỏ; `collect-due-repository.ts:24` lọc trong truy vấn |
 | BL-10 | Đã sửa | `create-order.ts:92-112` thử lại có trần; ngày VN `vnCalendarDate` |

@@ -504,6 +504,12 @@
                   ],
                   "additionalProperties": false
                 },
+                "assemblySteps": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "warningTags": {
                   "type": "array",
                   "items": {

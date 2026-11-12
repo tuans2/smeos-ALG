@@ -75,9 +75,9 @@ export function PartnerCard({ partner, onToggleStatus, onOpenSettlement }: Partn
               size="sm"
               onClick={() => onOpenSettlement(partner)}
               className="text-caption gap-1.5 text-text-muted hover:text-primary hover:border-primary/30"
-              title="Đối soát tài chính & tiền công gia công"
+              title="Bảng kê tiền công và sổ quyết toán"
             >
-              Sổ đối soát
+              Bảng kê
             </Button>
           )}
           <Button
