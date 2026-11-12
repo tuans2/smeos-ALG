@@ -4,6 +4,7 @@
  */
 
 import { notFound, unprocessable } from "@/core/http/errors"
+import { deductionTermsOf } from "../domain/craft-fee-deduction-terms"
 import type { CraftComplexity } from "@/modules/organization/domain/industry-plugin-contract"
 import { bomMaterialCostVnd } from "@/modules/products/domain/bom"
 
@@ -116,5 +117,6 @@ export function resolveDispatchCraftFee(
     lines: suggestion.lines,
     ...(outside ? { overrideApprovedBy: approver.actorId } : {}),
     deductions: [],
+    deductionTerms: deductionTermsOf(suggestion.policy), // điều kiện chi nhánh nhận (BL-24)
   }
 }

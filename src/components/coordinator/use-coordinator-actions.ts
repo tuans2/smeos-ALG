@@ -128,7 +128,7 @@ export function useCoordinatorActions({
     }
   }
 
-  const onCloseOrder = async (input: { partnerRating?: number; partnerPayoutVnd?: number; notes?: string }) => {
+  const onCloseOrder = async (input: { partnerRating?: number; partnerPayoutVnd?: number; payoutReason?: string; notes?: string }) => {
     if (!selectedOrder) return
     const order = await coordinatorApi.close(selectedOrder.id, input)
     applyUpdate(order)

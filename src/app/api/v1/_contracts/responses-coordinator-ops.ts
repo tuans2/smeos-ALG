@@ -170,3 +170,22 @@ export const dispatchToChatResponse = z.strictObject({
     }),
   }),
 })
+
+/** Sổ quyết toán tiền công đối tác (audit BL-22). */
+const partnerSettlement = z.strictObject({
+  id: z.string(), partnerId: z.string(), from: z.string(), to: z.string(), status: z.enum(["PENDING", "RECONCILED", "PAID"]),
+  orderCount: z.number(), totalPayoutVnd: z.number(), note: z.string().nullable(), createdAt: timestamp,
+  reconciledAt: timestamp.nullable(), paidAt: timestamp.nullable(), paymentReference: z.string().nullable(),
+})
+export const partnerSettlementResponse = data(partnerSettlement)
+export const partnerStatementResponse = data(
+  z.strictObject({
+    partner: z.strictObject({ id: z.string(), name: z.string(), code: z.string() }),
+    period: z.strictObject({ from: z.string(), to: z.string() }),
+    orderCount: z.number(),
+    totalPayoutVnd: z.number(),
+    missingPayoutCount: z.number(),
+    lines: z.array(z.strictObject({ orderId: z.string(), code: z.string(), closedAt: timestamp, payoutVnd: z.number().nullable() })),
+    settlements: z.array(partnerSettlement),
+  })
+)

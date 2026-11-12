@@ -102,6 +102,26 @@ describe("cách ly tenant — yêu cầu duyệt giao trước thu sau, báo gi�
     expect(await prisma.order_events.count({ where: { organization_id: b.organizationId } })).toBe(0)
   })
 
+  // PO 12/11/2026 (audit BL-29): nhắc lại sau 2 ngày, tối đa 3 lần
+  it("quá hạn thu: nhắc lại sau 2 ngày, dừng sau lần 3", async () => {
+    await prisma.order_approval_requests.create({
+      data: {
+        organization_id: a.organizationId, order_id: orderId, kind: "DELIVER_BEFORE_PAY", status: "APPROVED", reason: "Khách công ty",
+        requested_by: a.userId, collect_due_at: new Date(Date.now() - 60_000),
+      },
+    })
+    const notify = async () => 1
+    const day = 24 * 3_600_000
+    const t0 = Date.now()
+    expect((await remindCollectDue(new Date(t0), undefined, notify as never)).reminded).toBe(1)
+    expect((await remindCollectDue(new Date(t0 + day), undefined, notify as never)).reminded).toBe(0)
+    // `order_events` chỉ thêm dòng (ADR-013 D-I4) — mô phỏng thời gian trôi bằng mốc quét ở tương lai
+    expect(await remindCollectDue(new Date(t0 + 3 * day), undefined, notify as never)).toMatchObject({ reminded: 1, escalated: 0 })
+    expect(await remindCollectDue(new Date(t0 + 6 * day), undefined, notify as never)).toMatchObject({ reminded: 1, escalated: 1 })
+    expect((await remindCollectDue(new Date(t0 + 9 * day), undefined, notify as never)).reminded).toBe(0)
+    expect(await prisma.order_events.count({ where: { order_id: orderId, actor_id: "system:collect-due" } })).toBe(3)
+  })
+
   // Audit BL-09 (06/11/2026): lọc "đã nhắc" sau `take` → khi trang đầu toàn đơn đã nhắc, đơn mới không bao giờ lọt vào.
   it("quá hạn thu: đơn đã nhắc không chiếm chỗ trang — đơn quá hạn mới vẫn được lấy", async () => {
     const second = (await ingestOrder(a.ctx, { source: "MANUAL", items: [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 500_000 }] })).id

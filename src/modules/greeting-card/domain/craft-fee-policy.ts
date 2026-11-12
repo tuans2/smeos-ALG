@@ -55,6 +55,10 @@ export interface CraftFeePolicy {
   /** Khấu trừ khi giao trễ / bị khiếu nại (% phí đã chốt). Mặc định 0% — PO 22/10/2026. */
   lateDeliveryDeductionPercent: number
   complaintDeductionPercent: number
+  /** Công tắc áp dụng khấu trừ (PO 12/11/2026, audit BL-24). Tắt → không trừ đơn nào, kể cả đơn đang làm. */
+  deductionsEnabled: boolean
+  /** Ân hạn trước khi tính giao trễ (phút, 0–60, mặc định 15). */
+  lateGraceMinutes: number
 }
 
 export interface CraftFeeInput {
@@ -111,6 +115,8 @@ export function defaultCraftFeePolicy(spec: IndustryCraftFeeSpec): CraftFeePolic
     coordinatorAdjustPercent: 20,
     lateDeliveryDeductionPercent: 0,
     complaintDeductionPercent: 0,
+    deductionsEnabled: true,
+    lateGraceMinutes: 15,
   }
 }
 
@@ -163,6 +169,8 @@ export function parseCraftFeePolicy(raw: unknown, spec: IndustryCraftFeeSpec): C
     coordinatorAdjustPercent: num(r.coordinatorAdjustPercent, d.coordinatorAdjustPercent, 0, 100),
     lateDeliveryDeductionPercent: num(r.lateDeliveryDeductionPercent, d.lateDeliveryDeductionPercent, 0, 100),
     complaintDeductionPercent: num(r.complaintDeductionPercent, d.complaintDeductionPercent, 0, 100),
+    deductionsEnabled: r.deductionsEnabled !== false,
+    lateGraceMinutes: num(r.lateGraceMinutes, d.lateGraceMinutes, 0, 60),
   }
 }
 

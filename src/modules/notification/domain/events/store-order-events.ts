@@ -310,6 +310,19 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
       { roleKey: "store_admin", channels: ["APP_INBOX"], priority: "NORMAL", dispatchMode: "BROADCAST" },
     ],
   },
+  // PO 12/11/2026 (audit BL-29): nợ quá hạn đã nhắc Sale 3 lần mà chưa thu → Điều hành xử lý
+  {
+    key: "ORDER_COLLECT_DUE_ESCALATED",
+    label: "Nợ quá hạn cần Điều hành xử lý",
+    description: "Khi đơn giao trước, thu sau đã nhắc Sale 3 lần mà vẫn chưa thu được tiền",
+    group: "PAYMENT",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "AlertTriangle",
+    deepLinkTemplate: "/don-hang",
+    roleDefaults: [{ roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" }],
+  },
   // Checklist ALG 4.14 — yêu cầu bổ sung thông tin đơn quá hạn chưa có câu trả lời
   {
     key: "ORDER_INFO_REQUEST_OVERDUE",

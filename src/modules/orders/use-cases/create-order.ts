@@ -28,7 +28,9 @@ export async function createOrder(
     throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc sản phẩm.")
   }
 
-  const deliveryErrors = newOrderDeliveryErrors({ deliveryDate: input.deliveryWindow?.date, recipientPhone: input.deliveryAddress?.phone })
+  // Đơn sàn: sàn thường che một phần SĐT người nhận → không kiểm định dạng (audit BL-34, PO 12/11/2026)
+  const recipientPhone = input.source === "CHANNEL" ? undefined : input.deliveryAddress?.phone
+  const deliveryErrors = newOrderDeliveryErrors({ deliveryDate: input.deliveryWindow?.date, recipientPhone })
   if (Object.keys(deliveryErrors).length > 0) {
     throw validationFailed({
       ...(deliveryErrors.deliveryDate ? { "deliveryWindow.date": deliveryErrors.deliveryDate } : {}),

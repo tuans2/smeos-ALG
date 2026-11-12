@@ -54,6 +54,12 @@ describe("báo cáo đơn và doanh thu", () => {
     ], p)
     expect(r.totals).toMatchObject({ expectedVnd: 900_000, collectedVnd: 400_000, refundedVnd: 50_000, netCollectedVnd: 350_000 })
   })
+
+  it("audit BL-30: đơn Nháp không vào dự kiến, đếm riêng đơn chờ chốt", () => {
+    const r = buildRevenueReport([...orders, order({ status: "DRAFT", totalVnd: 700_000 })], [], p)
+    expect(r.totals).toMatchObject({ expectedVnd: 900_000, draftCount: 1, draftVnd: 700_000 })
+    expect(r.series.reduce((n, s) => n + s.expectedVnd, 0)).toBe(900_000)
+  })
 })
 
 describe("sản phẩm, hiệu suất, dòng tiền", () => {
