@@ -156,7 +156,8 @@ export const GET = handle(async (request, context: { params: Promise<{ id: strin
       id
     )
     if (analysis && analysis.raw) {
-      const productName = analysis.asset_id || analysis.id || "Sản phẩm"
+      // Tên sản phẩm đã gắn; chưa gắn sản phẩm thì tên chung — không lấy mã ảnh/UUID làm tên (audit API §32)
+      const productName = (analysis as { product?: { name: string } | null }).product?.name?.trim() || "Sản phẩm chưa đặt tên"
       const report = buildFallbackReport(id, productName, analysis.asset_id, analysis.raw as Record<string, unknown>)
       return jsonResponse({ report })
     }

@@ -6,7 +6,7 @@ import {
   updateUserNotificationPreference,
 } from "@/modules/notification/use-cases/manage-user-preferences"
 import { listHardLocks } from "@/modules/notification/use-cases/manage-hard-locks"
-import { getAppliedHardLock } from "@/modules/notification/domain/cascading-policy"
+import { getLockForUserPreference } from "@/modules/notification/domain/cascading-policy"
 import type { NotifyChannel } from "@/modules/notification/domain/events/_contract"
 
 export const GET = handle(async (request) => {
@@ -19,17 +19,10 @@ export const PATCH = handle(async (request) => {
   const { ctx, resolved } = await requireTenantContext(request)
   const body = patchPreferenceSchema.parse(await request.json())
 
-  // Kiểm tra xem event có bị Hard Lock bởi Mother / Chain / Store không
-  const locks = await listHardLocks({
-    eventKey: body.eventKey,
-  })
-  const appliedLock = getAppliedHardLock(
-    locks,
-    body.eventKey,
-    body.channel as NotifyChannel,
-    "STORE",
-    { storeOrgId: ctx.organizationId }
-  )
+  // Khoá cứng Mother / Ngành / Chuỗi / Cửa hàng — kể cả khoá tầng cửa hàng (audit API §15: trước đây bỏ qua, tuỳ
+  // chọn lưu được nhưng không có hiệu lực vì luật gửi vẫn áp khoá đó)
+  const locks = await listHardLocks({ eventKey: body.eventKey })
+  const appliedLock = getLockForUserPreference(locks, body.eventKey, body.channel as NotifyChannel, { storeOrgId: ctx.organizationId })
 
   if (appliedLock) {
     return jsonResponse(

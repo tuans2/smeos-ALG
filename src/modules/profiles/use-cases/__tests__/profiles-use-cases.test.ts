@@ -106,6 +106,23 @@ describe("profiles: Brand Profile use-cases with DI", () => {
     expect(result.primary_color).toBe("#0000FF")
     expect(mockBrandRepo.upsert).toHaveBeenCalledTimes(1)
   })
+
+  it("logo_asset_id mới không có trong kho của tổ chức → 404, không lưu (audit API §24)", async () => {
+    vi.mocked(mockBrandRepo.upsert).mockClear()
+    vi.mocked(mockBrandRepo.current).mockResolvedValue(null)
+    const assetRepo = { findById: vi.fn().mockResolvedValue(null) } as unknown as IAssetRepository
+    await expect(putBrandProfile(ctx, { logo_asset_id: "anh-cua-to-chuc-khac" }, mockBrandRepo, assetRepo)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(assetRepo.findById).toHaveBeenCalledWith(ctx, "anh-cua-to-chuc-khac")
+    expect(mockBrandRepo.upsert).not.toHaveBeenCalled()
+  })
+
+  it("logo là đường dẫn, hoặc không đổi so với đang lưu → không kiểm kho", async () => {
+    const assetRepo = { findById: vi.fn() } as unknown as IAssetRepository
+    vi.mocked(mockBrandRepo.current).mockResolvedValue({ logo_asset_id: "logo-cu" } as never)
+    await putBrandProfile(ctx, { logo_asset_id: "https://cdn.vi-du.test/logo.png" }, mockBrandRepo, assetRepo).catch(() => undefined)
+    await putBrandProfile(ctx, { logo_asset_id: "logo-cu" }, mockBrandRepo, assetRepo).catch(() => undefined)
+    expect(assetRepo.findById).not.toHaveBeenCalled()
+  })
 })
 
 describe("profiles: Business Profile use-cases with DI", () => {

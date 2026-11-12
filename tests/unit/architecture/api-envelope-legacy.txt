@@ -29,8 +29,6 @@ string-error	src/app/api/dev/role-override/route.ts
 string-error	src/app/api/v1/chat/public/widget/route.ts
 string-error	src/app/api/v1/chat/webhooks/facebook/route.ts
 string-error	src/app/api/v1/chat/webhooks/zalo/route.ts
-string-error	src/app/api/v1/internal/chain-dispatch-sweep/route.ts
-string-error	src/app/api/v1/internal/health/route.ts
 string-error	src/app/api/v1/notification/preferences/route.ts
 string-error	src/app/api/v1/public/zalo-oa/webhook/route.ts
 success-envelope	src/app/api/v1/ad-banner-poster/copy/route.ts

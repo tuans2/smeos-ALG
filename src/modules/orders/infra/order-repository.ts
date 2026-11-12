@@ -133,6 +133,7 @@ export class OrderRepository implements IOrderRepository {
           owner_sale_id: input.ownerSaleId ?? null,
           lead_id: input.leadId ?? null,
           idempotency_key: input.idempotencyKey ?? null,
+          idempotency_body_hash: input.idempotencyBodyHash ?? null,
           events: {
             create: {
               axis: "order",
@@ -187,12 +188,12 @@ export class OrderRepository implements IOrderRepository {
     return row ? mapPrismaOrder(row) : null
   }
 
-  async findByIdempotencyKey(organizationId: string, key: string): Promise<OrderRecord | null> {
+  async findByIdempotencyKey(organizationId: string, key: string): Promise<{ order: OrderRecord; bodyHash: string | null } | null> {
     const row = await prisma.orders.findUnique({
       where: { organization_id_idempotency_key: { organization_id: organizationId, idempotency_key: key } },
       include: { items: true, events: true },
     })
-    return row ? mapPrismaOrder(row) : null
+    return row ? { order: mapPrismaOrder(row), bodyHash: row.idempotency_body_hash } : null
   }
 
   async findByCode(organizationId: string, code: string): Promise<OrderRecord | null> {

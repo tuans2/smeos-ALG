@@ -2060,6 +2060,8 @@ model orders {
   source_session_id String? // greeting_sessions.id
   /// `Idempotency-Key` của `POST /api/v1/orders` (audit API-11, PO 07/11/2026): bấm đúp / gửi lại cùng khoá → trả đơn cũ.
   idempotency_key   String?
+  /// SHA-256 dạng chuẩn của thân đã kiểm (audit API-11, PO 11/11/2026): cùng khoá mà khác băm → 422. NULL ở đơn cũ.
+  idempotency_body_hash String?
   greeting_sessions greeting_sessions[]
 
   /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —

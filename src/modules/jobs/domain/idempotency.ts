@@ -33,8 +33,12 @@ function canonical(value: unknown): unknown {
  * `KEY_REUSE_ALLOWED`.
  */
 export function samePayload(stored: unknown, incoming: unknown): boolean {
-  const normalize = (value: unknown) => JSON.stringify(canonical(JSON.parse(JSON.stringify(value ?? null))))
-  return normalize(stored) === normalize(incoming)
+  return canonicalJson(stored) === canonicalJson(incoming)
+}
+
+/** Chuỗi JSON dạng chuẩn (khoá sắp xếp, bỏ `undefined`) — để so hoặc băm thân yêu cầu. */
+export function canonicalJson(value: unknown): string {
+  return JSON.stringify(canonical(JSON.parse(JSON.stringify(value ?? null))))
 }
 
 /**

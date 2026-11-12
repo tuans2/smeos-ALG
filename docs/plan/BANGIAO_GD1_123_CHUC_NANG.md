@@ -102,7 +102,7 @@ Hiện trạng đã đo:
   - 4.32 — đẩy tin xong 11/11/2026: sự kiện `DELIVERY_REMINDER_DUE` (người điều phối + quản lý cửa hàng, deep link `/dieu-phoi`), bước quét trong cron 5 phút `chain-dispatch-sweep` dùng lại luật của thanh nhắc, chỉ M1/M2 vừa tới trong 30 phút, mỗi mốc một lần (`idempotency_keys`), không đổi lược đồ. Test: `src/modules/coordinator/domain/__tests__/delivery-reminder-push.test.ts`, `use-cases/__tests__/push-delivery-reminders.test.ts`, `tests/tenant/delivery-reminder-push.test.ts`. Tin này đi cả Web Push khi kênh đã bật.
 - Nhánh đã merge vào `main` ngày 11/11/2026 theo yêu cầu của chủ dự án (PR #26); việc tiếp theo đi trên cùng nhánh, PR mới.
 - Việc gốc: mở 13 chức năng đang khoá; xử lý 5 chức năng làm một phần (4.30, 4.32, 8.1, 9.1, 9.14); sửa lỗi audit thuộc phạm vi (L-05 nút Lưu ở `/dieu-phoi/doi-tac` — xong 11/11/2026: hộp thoại gọi đúng `PATCH /api/v1/coordinator/partners/:id/tools`, test `src/components/organization/__tests__/partner-tools-api.test.ts`).
-- 9.14: đăng bài đã chạy ngay trong smeOS (D-46), không còn ứng dụng liên kết. Nghiệm thu mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên 15 phút kiểm bằng test. Cần báo ALG đổi câu chữ bước I-09.
+- 9.14: đăng bài đã chạy ngay trong smeOS (D-46), không còn ứng dụng liên kết. Nghiệm thu mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên 15 phút kiểm bằng test. Câu chữ bước I-09 đã sửa trong checklist ngày 12/11/2026 (`docs/audit/feature-completeness-2026-11/README.md` mục 2.2); cần gửi ALG bản checklist mới.
 - Gỡ phần còn gọi SocialFlow/LocalBudd khỏi bản giao — xong 11/11/2026: khối bài đăng ở trang chủ (`marketing-workspace.tsx`) và route proxy ra khỏi bản cắt; biến `SOCIALFLOW_URL`, `LOCALBUDD_URL` bỏ khỏi `src/lib/env.ts` của bản cắt (`@release-strip`); chữ trên màn hình đổi theo chức năng ("Ứng dụng đăng bài", "Ứng dụng quảng bá địa phương") ở cả smeOS. Test trong `tests/unit/release/trace-phase.test.ts` chặn tên cũ quay lại giao diện được giao. Giá trị enum `integration_client` (`SOCIALFLOW`, `LOCALBUDD`) trong lược đồ giữ nguyên — đổi cần duyệt lược đồ.
 - Mỗi đầu việc: code + test + tài liệu trong một commit; Thẻ chào và Catalog phải có test khoá hành vi trước khi sửa.
 - Việc có ảnh do người dùng tải lên đi theo quyết định Q12 trong `KE_HOACH_HOAN_THIEN_54_CHUC_NANG.md`; phát sinh khác thì hỏi bạn.
@@ -124,6 +124,17 @@ Hiện trạng đã đo:
 2. Chạy đủ cổng trong "Kiểm chứng" bên dưới.
 3. Chạy lại kịch bản nghiệm thu trên bản cắt, ghi người chạy và ngày.
 4. Quét rò rỉ lần cuối, có người đọc lại danh sách file.
+
+**Đã làm 11/11/2026 trên tag `gd1-rc-2026-11-11-2` (`4d1fb65d`):** dựng từ thư mục trắng chỉ theo README của bản giao (`cp .env.example .env` + 3 khoá, Postgres thay cho `docker compose`, `npm ci`, `prisma generate`, `db:deploy`, `db:seed`, `build`, `start`). Phát hiện và đã sửa ở smeOS (cần ứng viên mới):
+
+1. `db:seed` và server không lên: ô để trống trong `.env.example` (`STORAGE_DELETE_PAYLOADS=`, `STORAGE_SIGNING_SECRET=`) bị `src/lib/env.ts` từ chối → ô trống nay coi như chưa đặt; test `src/lib/env-example.test.ts` nạp cả hai `.env.example`.
+2. Tài khoản đầu tiên kẹt "chờ duyệt" (chưa có ai duyệt) → `npm run gan-van-hanh-nen-tang` duyệt luôn tài khoản đang chờ khi gán quyền (`src/modules/platform/use-cases/grant-platform-operator.ts`, test `tests/platform/grant-platform-operator.test.ts`); README thêm bước tạo người vận hành đầu tiên.
+3. README thiếu `npm run db:test:setup` trước `test:tenant` → đã thêm.
+4. `npm test` / `test:tenant` đỏ trên máy dựng theo README vì đọc `.env` của máy (`NEXT_PUBLIC_APP_URL`, `CRON_SECRET`, `OPENAI_API_KEY` trống) → `tests/setup.ts` và `tests/unit/core/public-url.test.ts` ép về giá trị CI dùng.
+
+Kết quả trên bản dựng sạch (sau khi áp 4 sửa): kiểm rò rỉ sạch; typecheck, ESLint ratchet, UX lint, `check:docs`; `npm test` 699 tệp; `test:platform` 18 tệp; `test:tenant` 266 tệp (4 ca đỏ do mục 4, chạy lại đạt); `build`; người vận hành đầu tiên đăng nhập và mở Console; `pytest` worker đạt (Python 3.13); E2E 30/31 — ca đỏ còn lại là ảnh mốc `/khach-hang` 390px lệch 8% điểm ảnh do phông chữ máy dựng hẹp hơn máy CI (hai nút nằm cùng hàng), CI cùng commit xanh. Ghi chú: E2E trên bản build production cần `ALLOW_LOCAL_STORAGE=true` (đã ghi trong `.env.example`).
+
+Còn lại: chủ dự án chạy lại kịch bản nghiệm thu trên ứng viên mới (6.3), đọc lại danh sách tệp (6.4), rồi quyết định tạo repo giao ALG.
 
 **Điểm duyệt:** bạn xác nhận mới tạo repo và giao cho ALG (hành động ra bên ngoài, không tự làm).
 

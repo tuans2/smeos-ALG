@@ -1,4 +1,5 @@
 import { handle, jsonResponse } from "@/core/http/response"
+import { withoutSunsetFields } from "@/modules/integration/domain/integration-field-sunset"
 import {
   requireIntegrationContext,
   toTenantContext,
@@ -20,5 +21,12 @@ export const GET = handle(async (request, context: { params: Promise<{ id: strin
   // trỏ về đúng máy chủ core mà engine ngoài vừa gọi tới, kể cả sau khi Nhóm C
   // dựng proxy và ba app về chung một origin.
   const origin = new URL(request.url).origin
-  return jsonResponse(await getMasterImage(ctx, id, { origin }))
+  const image = await getMasterImage(ctx, id, { origin })
+  // `storage_key`/`thumb_key` tự bỏ từ 09/02/2027 — đối tác dùng `url` ký sẵn (ARC-024)
+  const now = new Date()
+  return jsonResponse({
+    ...image,
+    master: withoutSunsetFields("masterImageAsset", image.master, now),
+    ratios: image.ratios.map((ratio) => withoutSunsetFields("masterImageAsset", ratio, now)),
+  })
 })

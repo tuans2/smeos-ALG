@@ -2,6 +2,7 @@ import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { handle, jsonResponse } from "@/core/http/response"
+import { withoutSunsetFields } from "@/modules/integration/domain/integration-field-sunset"
 import {
   requireIntegrationContext,
   toTenantContext,
@@ -32,6 +33,6 @@ export const PATCH = handle<[{ params: Promise<{ slug: string }> }]>(
     if (parsed.data.filters !== undefined) updateInput.filters = parsed.data.filters
 
     const link = await updateCatalogLink(ctx, slug, updateInput)
-    return jsonResponse(link)
+    return jsonResponse(withoutSunsetFields("catalogLink", link, new Date()))
   }
 )
