@@ -82,7 +82,7 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
     expect((await requestLimits(send("/chat/public-limits", "POST", { perVisitor: higher.perVisitor, perIp: higher.perIp }))).status).toBe(409)
   })
 
-  it("khung chat công khai: trả lời theo slug; tiệm lạ 404 và thân sai 400 với lỗi dạng chuỗi", async () => {
+  it("khung chat công khai: trả lời theo slug; tiệm lạ 404 và thân sai 400 theo envelope lỗi chuẩn", async () => {
     // Tiệm hết credit → trợ lý trả câu mời chờ nhân viên (vẫn 200, cùng hình dạng). Nhánh còn credit: `chat-p1-fixes.test.ts`.
     await prisma.organizations.update({ where: { id: other.organizationId }, data: { credit_balance: 0 } })
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: other.organizationId }, select: { slug: true } })
@@ -91,7 +91,7 @@ describe("hợp đồng — trợ lý AI và chat nội bộ", () => {
     const missing = await visit({ slug: "khong-co-tiem-nay", visitorId: "khach-1", message: "Xin chào" })
     expect([missing.status, ((await readJson(missing)).error as { code: string }).code]).toEqual([404, "NOT_FOUND"])
     const bad = await visit({ slug: org.slug })
-    expect([bad.status, typeof (await readJson(bad)).error]).toEqual([400, "string"])
+    expect([bad.status, ((await readJson(bad)).error as { code: string }).code]).toEqual([400, "VALIDATION_FAILED"])
   })
 
   // @release-strip

@@ -58,7 +58,7 @@ describe("batch-import — bù ảnh cho mã đã có", () => {
     const assetId = await seedAsset(a.ctx)
 
     const res = await importItems(a, [{ code: "BST-Basic-BO-001", image_asset_id: assetId }])
-    const body = await readJson(res)
+    const body = (await readJson(res)).data as Record<string, number>
     expect(body.skipped_count).toBe(1)
     expect(body.images_attached_count).toBe(1)
     expect((await mainImages(a, "BST-Basic-BO-001")).map((i) => i.asset_id)).toEqual([assetId])
@@ -69,7 +69,7 @@ describe("batch-import — bù ảnh cho mã đã có", () => {
     await importItems(a, [{ code: "SP-1", image_asset_id: first }])
     const second = await seedAsset(a.ctx)
 
-    const body = await readJson(await importItems(a, [{ code: "SP-1", image_asset_id: second }]))
+    const body = (await readJson(await importItems(a, [{ code: "SP-1", image_asset_id: second }]))).data as Record<string, number>
     expect(body.images_attached_count).toBe(0)
     expect((await mainImages(a, "SP-1")).map((i) => i.asset_id)).toEqual([first])
   })
@@ -94,8 +94,8 @@ describe("batch-import — bù ảnh cho mã đã có", () => {
     await send("WEB-1", web)
     await send("DRV-1", "https://drive.google.com/drive/folders/1AbCdEfGhIjKlMnOpQrStUvWx")
 
-    expect((await readJson(await send("WEB-1", drive))).drive_links_updated_count).toBe(1)
-    expect((await readJson(await send("DRV-1", drive))).drive_links_updated_count).toBe(0)
+    expect(((await readJson(await send("WEB-1", drive))).data as Record<string, number>).drive_links_updated_count).toBe(1)
+    expect(((await readJson(await send("DRV-1", drive))).data as Record<string, number>).drive_links_updated_count).toBe(0)
     const link = async (code: string) =>
       ((await prisma.products.findFirstOrThrow({ where: { organization_id: a.organizationId, code } })).attributes as Record<string, unknown>).drive_link
     expect(await link("WEB-1")).toBe(drive)
@@ -137,7 +137,7 @@ describe("batch-import — bù ảnh cho mã đã có", () => {
       }),
     }))
 
-    const body = await readJson(res)
+    const body = (await readJson(res)).data as Record<string, number>
     expect(body.updated_count).toBe(1)
 
     const updatedProduct = await prisma.products.findFirstOrThrow({
