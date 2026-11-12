@@ -9,15 +9,15 @@ Danh sách 114 trang không đổi so với lần 1. "Dữ liệu thật" nghĩa
 - Cột "smeOS production": "Khoá" theo `LOCKED_ROUTE_PREFIXES` (chỉ áp khi `NEXT_PUBLIC_APP_ENV=production`); "Không chạy" theo `UNAVAILABLE_ROUTE_PREFIXES` (áp ở mọi bản build production).
 - Cột "Bản giao GD1": theo `gd1.routes.json`. Trang không giao trả 404 khi bật chế độ giai đoạn, và bị cắt khỏi bản giao.
 
-Cả hai mục điều hướng trỏ tới trang không tồn tại ở lần 1 (L-01, L-02) đã được gỡ ngày 07/11 (`ebd7a6ea`). `tests/unit/architecture/nav-href-exists.test.ts` chặn lỗi này tái phát.
+Từ 12/11/2026 mọi tuyến khoá đều có guard URL (L-03 đã sửa; `tests/unit/architecture/locked-route-guard.test.ts`). Cả hai mục điều hướng trỏ tới trang không tồn tại ở lần 1 (L-01, L-02) đã được gỡ ngày 07/11 (`ebd7a6ea`). `tests/unit/architecture/nav-href-exists.test.ts` chặn lỗi này tái phát.
 
 | Nhóm | Tuyến | smeOS production | Bản giao GD1 | Dữ liệu | Ghi chú |
 |---|---|---|---|---|---|
 | Cửa hàng | / | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /audit | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật |  |
+| Cửa hàng | /audit | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /bang-gia | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /bang-gia/[id] | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /bao-cao | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật |  |
+| Cửa hàng | /bao-cao | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /bao-gia | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /bo-may | 🔒 Khoá (có guard URL) | — Không giao (Tri thức, bộ máy AI, mục phụ) | Dữ liệu thật |  |
 | Cửa hàng | /cai-dat | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
@@ -39,11 +39,11 @@ Cả hai mục điều hướng trỏ tới trang không tồn tại ở lần 1
 | Cửa hàng | /cong-cu/poster-banner | ✅ Mở | — Không giao (Sáng tạo ảnh, video, nội dung) | Dữ liệu thật |  |
 | Cửa hàng | /creative-studio | 🔒 Khoá (có guard URL) | — Không giao (Sáng tạo ảnh, video, nội dung) | Dữ liệu thật |  |
 | Cửa hàng | /cua-hang | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /dieu-phoi | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /dieu-phoi/doi-tac | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật | L-05 đã sửa 11/11 (`36abda77`): hộp thoại gọi `PATCH /api/v1/coordinator/partners/:id/tools` |
+| Cửa hàng | /dieu-phoi | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
+| Cửa hàng | /dieu-phoi/doi-tac | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật | L-05 đã sửa 11/11 (`36abda77`): hộp thoại gọi `PATCH /api/v1/coordinator/partners/:id/tools` |
 | Cửa hàng | /don-hang | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /du-lieu | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /duyet | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật |  |
+| Cửa hàng | /duyet | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /gia | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /ho-so | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /ho-so/danh-thiep | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
@@ -51,8 +51,8 @@ Cả hai mục điều hướng trỏ tới trang không tồn tại ở lần 1
 | Cửa hàng | /hoi-thoai | 🔒 Khoá (có guard URL) | — Không giao (Hội thoại đa kênh và kết nối ứng dụng ngoài) | Dữ liệu thật |  |
 | Cửa hàng | /hoi-thoai/kenh-tich-hop | 🔒 Khoá (có guard URL) | — Không giao (Hội thoại đa kênh và kết nối ứng dụng ngoài) | Chuyển hướng |  |
 | Cửa hàng | /in-an | ✅ Mở | — Không giao (Sáng tạo ảnh, video, nội dung) | Dữ liệu thật |  |
-| Cửa hàng | /job | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /job/[id] | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật |  |
+| Cửa hàng | /job | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
+| Cửa hàng | /job/[id] | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /ket-noi | ⛔ Không chạy trên production | — Không giao (Hội thoại đa kênh và kết nối ứng dụng ngoài) | Dữ liệu thật | Còn đi qua proxy SocialFlow — production không cấu hình |
 | Cửa hàng | /khach-hang | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /kho-du-lieu | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
@@ -60,8 +60,8 @@ Cả hai mục điều hướng trỏ tới trang không tồn tại ở lần 1
 | Cửa hàng | /landing-page | ✅ Mở | ✅ Giao | Chuyển hướng |  |
 | Cửa hàng | /lich-dang | ⛔ Không chạy trên production | — Không giao (Nghiên cứu thị trường và thu hút khách) | Dữ liệu thật | Còn đi qua proxy SocialFlow — production không cấu hình |
 | Cửa hàng | /market-intelligence | ⛔ Không chạy trên production | — Không giao (Nghiên cứu thị trường và thu hút khách) | Dữ liệu thật | Worker nghiên cứu thị trường chưa triển khai trên Render |
-| Cửa hàng | /muc-dung | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /noi-bo/ket-noi | 🔒 Khoá sidebar — gõ URL vẫn vào | — Không giao (Hội thoại đa kênh và kết nối ứng dụng ngoài) | Dữ liệu thật |  |
+| Cửa hàng | /muc-dung | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
+| Cửa hàng | /noi-bo/ket-noi | 🔒 Khoá (có guard URL) | — Không giao (Hội thoại đa kênh và kết nối ứng dụng ngoài) | Dữ liệu thật |  |
 | Cửa hàng | /noi-dung | 🔒 Khoá (có guard URL) | — Không giao (Sáng tạo ảnh, video, nội dung) | Dữ liệu thật |  |
 | Cửa hàng | /quang-ba/chien-dich | ✅ Mở | — Không giao (Nghiên cứu thị trường và thu hút khách) | Dữ liệu thật |  |
 | Cửa hàng | /san-pham | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
@@ -71,7 +71,7 @@ Cả hai mục điều hướng trỏ tới trang không tồn tại ở lần 1
 | Cửa hàng | /san-pham/kha-dung | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /san-pham/nhap-hang-loat | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /san-pham/tao-moi | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /so-lieu | 🔒 Khoá sidebar — gõ URL vẫn vào | ✅ Giao | Dữ liệu thật |  |
+| Cửa hàng | /so-lieu | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /tai-anh | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /the-chao | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /them | ✅ Mở | — Không giao (Tri thức, bộ máy AI, mục phụ) | Dữ liệu thật |  |
