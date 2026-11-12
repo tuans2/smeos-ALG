@@ -17,11 +17,12 @@
  * { job_id: string, status: JobStatus, usage: { cost_credit: number, balance_after: number } }
  */
 
-import { handle, jsonResponse } from "@/core/http/response";
+import { jsonResponse } from "@/core/http/response";
+import { defineRoute } from "@/core/http/define-route";
+import type { TenantContext } from "@/core/tenancy";
 import { AppError, validationFailed } from "@/core/http/errors";
 import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
 import { getJobFeatureForModule, type ModuleKey } from "@/lib/feature-catalog";
 import { jobBatchBody } from "@/app/api/v1/_contracts/requests-ai-studio";
 
@@ -39,8 +40,7 @@ const MODULE_RUN_CAPABILITY: Record<string, string> = {
 
 // Audit API-05: trước đây thân chỉ ép kiểu, mảng `capabilities` không giới hạn.
 
-async function batchJobHandler(request: Request) {
-  const { ctx } = await requireTenantContext(request);
+async function batchJobHandler({ request, ctx }: { request: Request; ctx: TenantContext }) {
 
   const parsed = jobBatchBody.safeParse(await request.json().catch(() => null));
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues });
@@ -102,7 +102,10 @@ async function batchJobHandler(request: Request) {
   );
 }
 
-export const POST = handle(batchJobHandler);
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "quyền chạy theo module kiểm trong handler (ctx.capabilities, bảng mã theo module)" },
+  handler: batchJobHandler,
+});
 
 export const dynamic = "force-dynamic" as const;
 export const revalidate = 0 as const;

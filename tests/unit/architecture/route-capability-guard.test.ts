@@ -20,32 +20,17 @@ const API = path.join(ROOT, "src/app/api/v1")
  * NO_CAPABILITY_GUARD, và `src/core/http/define-route.ts` thực thi nó.
  */
 const GUARD =
-  /\b(requireCapability|hasCapability|requireExecutiveRole|requirePlatformCapability|requirePlatformContext|requireIntegrationContext|requireIntegrationClient|defineRoute)\(|\bcapabilities\.has\(/
+  /\b(requireCapability|hasCapability|requireExecutiveRole|requirePlatformCapability|requirePlatformContext|requireIntegrationContext|requireIntegrationClient)\(|\bdefineRoute(<[^\n]*?>)?\(|\bcapabilities\.has\(/
 
 
 /** Route không gọi gác quyền nào — có chủ đích hoặc đang là nợ. */
 const NO_CAPABILITY_GUARD: Record<string, string> = {
-  // Có chủ đích: chưa có phiên/tổ chức, hoặc gác bằng cơ chế khác.
-  "auth/login": "đăng nhập — chưa có phiên",
-  "auth/signup": "đăng ký — chưa có phiên",
-  "auth/instant-trial": "dùng thử tức thì không cần mật khẩu — chưa có phiên",
   "internal/chain-dispatch-sweep": "cron nội bộ, không có phiên — gác bằng CRON_SECRET (isAuthorizedCronRequest)",
-  "internal/health": "sức khoẻ chi tiết cho cron/vận hành, không có phiên — gác bằng CRON_SECRET (isAuthorizedCronRequest)",
-  "auth/logout": "đăng xuất phiên của chính mình",
-  "auth/me": "đọc phiên của chính mình",
-  "auth/session-status": "kiểm phiên của chính mình còn sống (cảnh báo đăng nhập nơi khác)",
-  "organizations": "liệt kê tổ chức mà người dùng là thành viên",
-  "session/organization": "đổi tổ chức — kiểm memberships trong use-case (đặc tả 06 mục 2)",
-  "sso/refresh": "làm mới phiên SSO của chính mình",
+  // Có chủ đích: chưa có phiên/tổ chức, hoặc gác bằng cơ chế khác.
   "chat/webhooks/facebook": "webhook nhà cung cấp — xác thực bằng chữ ký",
   "chat/webhooks/zalo": "webhook nhà cung cấp — xác thực bằng chữ ký",
-  "storage/[...key]": "URL ký sẵn — verifyStorageSignature",
-  "billing/sepay": "webhook SePay của tài khoản nhận tiền thuê bao nền tảng — không có phiên, gác bằng khoá SEPAY_PLATFORM_API_KEY (checklist ALG 10.7)",
   "chat/public/widget": "khung chat AI trên trang công khai do công cụ SMEOS tạo — tổ chức suy từ slug, giới hạn tần suất (đặc tả 06 mục 17)",
-  "media/background-removal": "đã đóng ở P24 — luôn trả 409",
   // Thông báo của CHÍNH người dùng — truy vấn luôn lọc theo user + tổ chức của phiên.
-  "notification/stream": "luồng SSE tin của chính mình",
-  "notification/channels": "chỉ đọc trạng thái bật kênh toàn sàn",
 }
 
 function routeFiles(dir: string): string[] {

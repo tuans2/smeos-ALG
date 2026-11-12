@@ -10,13 +10,15 @@
  *
  * @module api/platform/notification
  */
-import { handle, jsonResponse } from "@/core/http/response"
-import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { jsonResponse } from "@/core/http/response"
 import { getAllNotificationEvents } from "@/modules/notification/domain/events"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  await requirePlatformContext(request)
-  // Trả toàn bộ events — Mother thấy tất cả (không lọc theo tier visibility)
-  const events = getAllNotificationEvents()
-  return jsonResponse({ data: events })
+export const GET = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "chỉ đọc danh mục sự kiện tĩnh — mọi người vận hành nền tảng" },
+  handler: async ({  }) => {
+    // Trả toàn bộ events — Mother thấy tất cả (không lọc theo tier visibility)
+    const events = getAllNotificationEvents()
+    return jsonResponse({ data: events })
+  },
 })

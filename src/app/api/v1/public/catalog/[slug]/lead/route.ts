@@ -7,11 +7,12 @@
 
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { clientIp, enforceRateLimit } from "@/core/http/rate-limit"
 import { issuesToDetails, rejectBotSubmission } from "@/modules/greeting-card/contracts/public-order-schema"
 import { LEAD_MESSAGE_MAX, LEAD_NAME_MAX } from "@/modules/acquisition/domain/lead-rules"
 import { captureCatalogLead } from "@/modules/acquisition/use-cases/capture-lead"
+import { defineRoute } from "@/core/http/define-route"
 
 const utmField = z.string().max(100).optional()
 
@@ -27,15 +28,18 @@ const bodySchema = z.object({
   website: z.string().max(200).optional(),
 })
 
-export const POST = handle<[{ params: Promise<{ slug: string }> }]>(async (request, context) => {
-  await enforceRateLimit(request, { scope: "catalog-lead", limit: 10, windowMs: 10 * 60_000 })
-  const { slug } = await context.params
-  const parsed = bodySchema.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed(issuesToDetails(parsed.error.issues))
-  rejectBotSubmission(parsed.data)
-  const { website: _bot, ...input } = parsed.data
-  const result = await captureCatalogLead(slug, input, clientIp(request))
-  return jsonResponse(result, { status: 201 })
+export const POST = defineRoute({
+  auth: { kind: "public" },
+  rateLimit: { scope: "catalog-lead", limit: 10, windowMs: 10 * 60_000, per: "ip" },
+  handler: async ({ request, params }) => {
+    const { slug } = params as { slug: string }
+    const parsed = bodySchema.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed(issuesToDetails(parsed.error.issues))
+    rejectBotSubmission(parsed.data)
+    const { website: _bot, ...input } = parsed.data
+    const result = await captureCatalogLead(slug, input, clientIp(request))
+    return jsonResponse(result, { status: 201 })
+  },
 })
 
 export const dynamic = "force-dynamic"

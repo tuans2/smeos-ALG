@@ -1,5 +1,5 @@
 import { AppError } from "@/core/http/errors"
-import { handle } from "@/core/http/response"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * `POST /api/v1/media/background-removal` — **đã đóng ở P24**.
@@ -27,9 +27,12 @@ import { handle } from "@/core/http/response"
  * tới URL này cần một câu trả lời đọc được, chứ không phải một trang 404 để
  * người ta ngồi đoán.
  */
-export const POST = handle(async () => {
-  throw new AppError(
-    "CONFLICT",
-    "Endpoint đã đóng. Dùng POST /api/v1/media/variants (năng lực I4) — biến thể marketing nay chạy qua hàng đợi job, có tổ chức, có credit và có cổng duyệt."
-  )
+export const POST = defineRoute({
+  auth: { kind: "custom", reason: "endpoint đã đóng — luôn trả 409, không đọc dữ liệu" },
+  handler: async ({  }) => {
+    throw new AppError(
+      "CONFLICT",
+      "Endpoint đã đóng. Dùng POST /api/v1/media/variants (năng lực I4) — biến thể marketing nay chạy qua hàng đợi job, có tổ chức, có credit và có cổng duyệt."
+    )
+  },
 })

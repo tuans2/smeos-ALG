@@ -750,3 +750,17 @@ Ràng buộc quyết định thứ tự: `defineRoute` đòi khoá thân/query s
 Sửa kèm, do đợt 1 làm lộ ra:
 - `tests/unit/architecture/audit-boundary.test.ts` chỉ nhận route tenant qua chuỗi `requireTenantContext(` — route ghi khai bằng `defineRoute` lọt khỏi kiểm tra ghi nhật ký kiểm toán. Nay nhận cả `kind: "tenant"`. Lộ ra 7 route `defineRoute` có sẵn chưa ghi kiểm toán, ghi vào `audit-boundary-debt.txt` kèm chú thích nguồn gốc (không phải nợ mới).
 - `tests/unit/architecture/export-capability.test.ts` nhận `R13` khai trong `defineRoute`.
+
+**Đợt 2 — đã làm (12/11/2026):** bọc thêm **198 route** ngoài Thẻ chào (295 → 99 còn trong danh sách; **442/541** route khai bằng `defineRoute`). Vẫn không đổi thân, query, envelope, thông báo lỗi hay thứ tự lỗi.
+- `defineRoute`: thêm `{ kind: "platform", capability: null, reason }` (đối xứng biến thể tenant) cho route nền tảng kiểm mã ở use-case; handler tenant nhận thêm `resolved` (người dùng + phiên) như `requireTenantContext` vốn trả. Test ở `tests/unit/core/http/define-route.test.ts`.
+- `capability: null` chỉ dùng kèm lý do kiểm được trong mã: mã handler tự kiểm (vd. "R4 (scope=team) hoặc R17"), hoặc hàm use-case có lời gọi gác quyền (vd. "R20 kiểm ở use-case (getCashflowReport → periodOrThrow)"). Lý do cũ ở `NO_CAPABILITY_GUARD` chuyển vào khai báo `auth` của route.
+- Route công khai/webhook mở đầu bằng `enforceRateLimit` theo IP → khai `rateLimit` (cùng lời gọi, cùng thứ tự); webhook, cron, URL ký, route chỉ cần phiên người dùng (`resolveSession`) → `kind: "custom"` kèm lý do. Cron giữ `custom` (handler tự kiểm `CRON_SECRET`) vì `kind: "cron"` trả thông báo lỗi khác.
+- Test kiến trúc (`route-contract-ratchet`, `route-capability-guard`, `db-context-entrypoints`) nhận cả `defineRoute<…>(` (khai kiểu tham số bắt-tất-cả).
+- Công cụ AST làm rơi chú thích đầu tệp và chú thích trên dòng kiểm quyền bị bỏ ở 14 tệp đợt 1–2a; đã khôi phục, đối chiếu từng tệp với `main`: không mất, không trùng chú thích.
+
+Còn lại 99 dòng: 66 `greeting-card/*` + 29 `public/*` của Thẻ chào (`brochure`, `greeting-catalog`, `subcontract`) + `internal/chain-dispatch-sweep` (349 dòng, thuộc Thẻ chào, bọc sẽ vượt 350 — tách tệp ở đợt 3) → **đợt 3**; 3 webhook/widget chat chạy `asSystemDb` ngoài `handle()` là **ngoại lệ lâu dài** (bọc sẽ đổi ngữ cảnh CSDL), ghi chú ngay trong `route-contract-legacy.txt`.
+
+Phát hiện ngoài phạm vi (có từ trước, chưa sửa — ghi rõ trong lý do `auth`, chờ PO):
+- `GET /chat/public-limits` và `GET /chat/channels` không kiểm mã năng lực (test gác quyền xét theo tệp nên lệnh ghi cùng tệp che mất).
+- `GET /catalog-links/[slug]` tra link catalog không cần phiên, không giới hạn tần suất.
+- `GET /product-photo`, `GET /product-image-set` trả danh mục tĩnh không cần phiên.
