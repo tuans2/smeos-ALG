@@ -16,6 +16,8 @@ acceptance:
 
 # Screen Contract — Nhật Ký Kiểm Toán Tổ Chức
 
+> **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/audit` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/audit/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
+
 **Tuyến:** `/audit` · **Tệp chính:** `src/app/(app)/audit/page.tsx`, `src/components/audit/platform-access-tab.tsx` · **Cập nhật:** 07/11/2026 (tab truy cập của nền tảng, D-60) · **Thẻ:** T5.D8
 
 ## 1. Vai và mục đích
@@ -83,6 +85,7 @@ acceptance:
 |---|---|---|---|---|
 | Tuyến `/audit` đang `COMING_SOON` | Triển khai màn hình thật | Nối endpoint `GET /api/v1/audit-logs` gác `G9` | Cung cấp khả năng giám sát tuân thủ cho Điều hành (T5.D8) | `audit/page.tsx` |
 | Xem dữ liệu payload JSON | Đối chiếu trước sau trực quan | Dùng `Dialog` Base-UI chia 2 cột Before / After | Giúp Điều hành dễ dàng nhận biết sự thay đổi | `audit/page.tsx` |
+| Thẻ nhật ký 390px tràn ngang với mã hành động dài | Không tràn ngang | Hàng cho xuống dòng, nhãn ngắt chữ | RESP-01 (đo sau đổi ALG) | `audit/page.tsx` |
 
 ## 13. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

@@ -96,6 +96,13 @@ describe("Ops Copilot Knowledge Base & Adaptive Persona Engine (10 Chức Năng 
       expect(match?.routePath).toBe("/cai-dat/thanh-vien")
       expect(match?.topicTitle).toContain("Cấp Tài Khoản Nhân Viên")
     })
+
+    it("Chức năng 11: Khách hàng ('/khach-hang') — khách xin xoá / bản sao dữ liệu cá nhân", () => {
+      const match = queryOpsKnowledge("Khách xin xoá dữ liệu cá nhân của mình thì làm thế nào?")
+      expect(match).not.toBeNull()
+      expect(match?.moduleIndex).toBe(11)
+      expect(match?.routePath).toBe("/khach-hang")
+    })
   })
 
   describe("2. Bộ 4 Phong cách phản hồi thích ứng (Adaptive Persona Styles)", () => {
@@ -108,7 +115,7 @@ describe("Ops Copilot Knowledge Base & Adaptive Persona Engine (10 Chức Năng 
       })
 
       expect(res.appliedStyle).toBe("CONSULTANT")
-      expect(res.replyText).toContain("[Cố vấn Vận hành smeOS]")
+      expect(res.replyText).toContain("[Cố vấn Vận hành ALG]")
       expect(res.replyText).toContain("Khuyến nghị quản trị")
       expect(res.targetRoute).toBe("/cai-dat/thanh-vien")
     })
@@ -171,6 +178,7 @@ describe("Ops Copilot Knowledge Base & Adaptive Persona Engine (10 Chức Năng 
       expect(res.replyText).toContain("2. **Đơn Hàng")
       expect(res.replyText).toContain("3. **Bộ sưu tập riêng")
       expect(res.replyText).toContain("10. **Cài Đặt & Thành Viên")
+      expect(res.replyText).toContain("11. **Khách Hàng")
     })
   })
 })

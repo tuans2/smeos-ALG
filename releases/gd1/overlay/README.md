@@ -1,4 +1,4 @@
-# smeOS — bản giao Giai đoạn 1
+# ALG — bản giao Giai đoạn 1
 
 Nền tảng quản trị và vận hành cho doanh nghiệp vừa và nhỏ, gồm ba tầng: Nền tảng (SaaS Mother), Chuỗi (ChainOS) và Cửa hàng (StoreOS), với 123 chức năng trong `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`.
 
@@ -29,11 +29,25 @@ npm ci
 npx prisma generate
 npm run db:deploy
 npm run db:seed
-npm run seed:field-registry   # nạp danh mục trường của nền tảng (`npm run check:field-registry` để đối chiếu)
+npm run seed:field-registry   # danh mục trường dữ liệu nền tảng (đơn hàng, đối tác); `npm run check:field-registry` để đối chiếu
 npm run dev               # http://localhost:3200
 ```
 
+Người vận hành đầu tiên (hệ thống mới chưa có ai để duyệt đăng ký): đăng ký một tài khoản ở `/dang-nhap` → "Đăng ký mới", rồi chạy
+
+```bash
+npm run gan-van-hanh-nen-tang -- --email=<địa chỉ vừa đăng ký>
+```
+
+Lệnh gán đủ quyền Console Vận hành (`/van-hanh`) và duyệt luôn tài khoản đó. Từ đây người vận hành duyệt các đăng ký khác ở `/van-hanh/dang-ky`.
+
 Worker: `npm run worker:vision`, `npm run worker:media` (cần Python 3.11+, `pip install -r workers/requirements.txt`).
+
+Người vận hành nền tảng đầu tiên (Console `/van-hanh`):
+
+1. Mở `/dang-nhap?che-do=dang-ky`, đăng ký tài khoản của người vận hành (tài khoản ở trạng thái chờ duyệt).
+2. Chạy `npm run gan-van-hanh-nen-tang -- --email=<email vừa đăng ký>`: cấp đủ mã vận hành và duyệt tài khoản.
+3. Đăng nhập rồi vào `/van-hanh`. Các cửa hàng sau đó tạo ở Console → Tổ chức, hoặc duyệt ở Console → Đăng ký.
 
 ## Kiểm tra trước khi đưa mã lên
 
@@ -44,7 +58,7 @@ npm run build
 cd workers && python -m pytest tests -q
 ```
 
-`npm run test:tenant` và `npm run test:platform` xoá sạch dữ liệu và chỉ chạy trên cơ sở dữ liệu có tên kết thúc bằng `_test`.
+`npm run test:tenant` và `npm run test:platform` xoá sạch dữ liệu và chỉ chạy trên cơ sở dữ liệu có tên kết thúc bằng `_test` (`DATABASE_URL_TEST`). Dựng cơ sở dữ liệu này một lần sau `docker compose up -d`: `npm run db:test:setup`.
 
 ## CI và triển khai
 

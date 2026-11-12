@@ -146,7 +146,7 @@ describe("hợp đồng — tác vụ AI, phân tích ảnh, âm thanh, video", 
     const up = await expectContract(await uploadTrack(form("/audio/music-tracks", fd)), 201, R.musicTrackResponse, "audio-track-upload")
     await expectContract(await listTracks(get("/audio/music-tracks")), 200, R.musicTracksResponse, "audio-tracks")
     const trackId = String((up.track as { track_id: string }).track_id)
-    await expectContract(await deleteTrack(send(`/audio/music-tracks/${trackId}`, "DELETE"), ps(trackId)), 200, R.okResponse, "audio-track-delete")
+    await expectContract(await deleteTrack(send(`/audio/music-tracks/${trackId}`, "DELETE"), ps(trackId)), 200, R.musicTrackDeletedResponse, "audio-track-delete")
     const sys = MUSIC_CATALOG[0]?.trackId ?? ""
     const play = await playSystemTrack(get(`/audio/music-tracks/system/${sys}`), { params: Promise.resolve({ trackId: sys }) })
     expect([200, 404]).toContain(play.status) // tệp nhạc hệ thống có thể chưa có trong kho thử

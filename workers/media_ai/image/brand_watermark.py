@@ -1,6 +1,6 @@
 """Đóng dấu thương hiệu của CHÍNH tiệm hoa lên biến thể marketing — M04b.
 
-Bản trước vẽ cứng chuỗi "FloraOS Tiệm Hoa" lên mọi ảnh của mọi tổ chức. Với
+Bản trước vẽ cứng chuỗi "ALG Tiệm Hoa" lên mọi ảnh của mọi tổ chức. Với
 một nền tảng đa tenant thì đó không phải một thiếu sót nhỏ: nó đóng tên nhà
 cung cấp phần mềm lên hàng của người bán, và người bán không có cách nào gỡ.
 

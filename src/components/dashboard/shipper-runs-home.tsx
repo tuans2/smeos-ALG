@@ -117,7 +117,7 @@ export function ShipperRunsHome() {
         title={orgName}
         actions=<UserMenu initials={userInitials} />
       />
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
         <FeatureGuidanceCard
           id="shipper_runs_guidance"
           badgeLabel="ĐƠN CẦN GIAO"
@@ -160,7 +160,7 @@ export function ShipperRunsHome() {
             </div>
           </Card>
         ))}
-      </main>
+      </div>
     </div>
   )
 }

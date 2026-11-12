@@ -4,36 +4,36 @@
  * T2: Tạo hội thoại mới
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { MAX_PAGE_LIMIT, parseIntParam } from "@/core/http/pagination"
+import { jsonResponse } from "@/core/http/response"
 import { listConversations } from "@/modules/chat-assistant/use-cases/list-conversations"
 import { createConversation } from "@/modules/chat-assistant/use-cases/create-conversation"
 import type { ChatChannel } from "@/modules/chat-assistant/domain/chat-types"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "T1")
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "T1" },
+  handler: async ({ request, ctx }) => {
+    const url = new URL(request.url)
+    const status = url.searchParams.get("status") || "ACTIVE"
+    const limit = parseIntParam(url.searchParams.get("limit"), { field: "limit", fallback: 50, min: 1, max: MAX_PAGE_LIMIT })
 
-  const url = new URL(request.url)
-  const status = url.searchParams.get("status") || "ACTIVE"
-  const limit = url.searchParams.get("limit") ? Number(url.searchParams.get("limit")) : 50
-
-  const items = await listConversations(ctx, status, limit)
-  return jsonResponse({ items, count: items.length })
+    const items = await listConversations(ctx, status, limit)
+    return jsonResponse({ items, count: items.length })
+  },
 })
 
-export const POST = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "T2")
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "T2" },
+  handler: async ({ request, ctx }) => {
+    const body = await request.json()
+    const conversation = await createConversation(
+      ctx,
+      body.title || "Hội thoại tư vấn hoa",
+      (body.channel as ChatChannel) || "WEB_WIDGET",
+      body.customerId || undefined
+    )
 
-  const body = await request.json()
-  const conversation = await createConversation(
-    ctx,
-    body.title || "Hội thoại tư vấn hoa",
-    (body.channel as ChatChannel) || "WEB_WIDGET",
-    body.customerId || undefined
-  )
-
-  return jsonResponse({ conversation }, { status: 201 })
+    return jsonResponse({ conversation }, { status: 201 })
+  },
 })

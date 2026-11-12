@@ -1,13 +1,13 @@
-# Bộ tính năng FloraOS — đối chiếu với mã thật
+# Bộ tính năng ALG — đối chiếu với mã thật
 
 > [!NOTE]
 > **TÀI LIỆU KHẢO SÁT LỊCH SỬ (HISTORICAL AUDIT SNAPSHOT — 11/09/2026)**  
 > Tệp này ghi nhận ảnh chụp hiện trạng đối chiếu tính năng tại thời điểm ngày 11/09/2026 khi tiến hành rà soát 3 repo và mở rộng Tuyến B & Tuyến C.  
-> **Nguồn sự thật duy nhất (OSOT)** cho hiện trạng đang chạy thực tế của toàn bộ nền tảng FloraOS core nằm tại: [`docs/kien-truc/TRANG_THAI.md`](TRANG_THAI.md).
+> **Nguồn sự thật duy nhất (OSOT)** cho hiện trạng đang chạy thực tế của toàn bộ nền tảng ALG core nằm tại: [`docs/kien-truc/TRANG_THAI.md`](TRANG_THAI.md).
 
 **Cấp:** hồ sơ đối chiếu, phụ trợ cho Level 1. Không thắng về nội dung kỹ thuật.
 **Ngày soát:** 2026-09-11
-**Căn cứ:** `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` · `../dac-ta/00-PRD.md` · `../dac-ta/02-function-catalog.md` · `../dac-ta/Checklist_Thuc_Thi.md` · `TRANG_THAI.md` · `UNIFIED_SHELL.md` · `DOT_3_NOI_SOCIALFLOW.md` · bản đồ trạng thái tám module ngày 09/11
+**Căn cứ:** `ALG_SAAS_TARGET_ARCHITECTURE_V2.md` · `../dac-ta/00-PRD.md` · `../dac-ta/02-function-catalog.md` · `../dac-ta/Checklist_Thuc_Thi.md` · `TRANG_THAI.md` · `UNIFIED_SHELL.md` · `DOT_3_NOI_SOCIALFLOW.md` · bản đồ trạng thái tám module ngày 09/11
 
 Tệp này trả lời đúng một câu hỏi: **bộ tính năng hoàn chỉnh cần những gì, phần nào đã nằm trong mã, phần nào còn phải xây.** Nội dung đích của từng hạng mục nằm ở tài liệu kiến trúc và bộ đặc tả; ở đây chỉ có trạng thái và ranh giới.
 
@@ -106,7 +106,7 @@ Video Studio (P17, M04c) đã nghiệm thu hoàn thành 100%, chuyển trạng t
 
 ### 2.4 AI Content Engine — M07
 
-**Quyết định PO 25/09/2026 (P27):** bảng dưới đây mô tả pipeline 6 agent (`scout/planner/creator/reviewer/publisher/analyst`) của `SocialFlow` — đây là pipeline đăng tin công nghệ (HackerNews/GitHub → LinkedIn/X/Discord/Reddit) thừa kế từ dự án gốc, **không đọc Product Master, không có logic ngành hoa, không dùng chung với `/api/m07/generate`**. FloraOS sẽ KHÔNG nâng cấp pipeline này cho hoa; việc sinh nội dung ngành hoa được xây mới trong `floraos-core` (chuỗi Strategist→Writer→Critic→Rewriter, đọc Product Master/Master Image/kịch bản Chặng 05 thật) — xem `docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 12 (dòng M07) và kế hoạch project claude.ai `claude/ke-hoach-content-engine-core-25-09-2026.md`. `SocialFlow` giữ lại phần đăng bài (§2.5) và chỉ nhận bài đã duyệt từ core.
+**Quyết định PO 25/09/2026 (P27):** bảng dưới đây mô tả pipeline 6 agent (`scout/planner/creator/reviewer/publisher/analyst`) của `SocialFlow` — đây là pipeline đăng tin công nghệ (HackerNews/GitHub → LinkedIn/X/Discord/Reddit) thừa kế từ dự án gốc, **không đọc Product Master, không có logic ngành hoa, không dùng chung với `/api/m07/generate`**. FloraOS sẽ KHÔNG nâng cấp pipeline này cho hoa; việc sinh nội dung ngành hoa được xây mới trong `floraos-core` (chuỗi Strategist→Writer→Critic→Rewriter, đọc Product Master/Master Image/kịch bản Chặng 05 thật) — xem `docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` mục 12 (dòng M07) và kế hoạch project claude.ai `claude/ke-hoach-content-engine-core-25-09-2026.md`. `SocialFlow` giữ lại phần đăng bài (§2.5) và chỉ nhận bài đã duyệt từ core.
 
 | Tính năng | Trạng thái | Nằm ở đâu |
 |---|---|---|
@@ -210,7 +210,7 @@ Nền AI không thêm tính năng nào. Nó đặt lại cách mười ba đơn 
 
 ### 3.1 Bốn chỗ tài liệu nền AI va vào quyết định đã chốt
 
-Bốn chỗ dưới đây là khuyến nghị hợp lý ở mức tổng quát nhưng va vào một quyết định đã chốt của FloraOS. Cả bốn xử theo quyết định đã chốt, và lý do ghi lại ở đây để không ai mở lại mà không biết vì sao.
+Bốn chỗ dưới đây là khuyến nghị hợp lý ở mức tổng quát nhưng va vào một quyết định đã chốt của ALG. Cả bốn xử theo quyết định đã chốt, và lý do ghi lại ở đây để không ai mở lại mà không biết vì sao.
 
 | Khuyến nghị | Va vào | Xử |
 |---|---|---|
@@ -284,7 +284,7 @@ Bốn nhóm còn lại — M09 khách hàng, M10 đơn hàng, M08 hội thoại,
 | 4 | "Marketing Creative Engine ngoài phạm vi" | Đã đóng theo D8 — M04b vào MVP |
 | 5 | `D1` mang hai nghĩa ở hai chỗ: worker đơn tenant (Level 1, PRD, lộ trình) và đa tenant thật (đặc tả 08, Unified Shell, mã đã chạy) | Đã đóng — giữ nghĩa đa tenant thật, ghi thành D1-b ở Level 1, PRD, `Roadmap.md`, `TRANG_THAI.md` |
 | 6 | `UNIFIED_SHELL.md` mục B3 ghi SSO SocialFlow "chưa bắt đầu"; mã thật đã có `sso_auth.py` chạy trên hơn 50 route với 32/32 test qua | Đã đóng — B3 sửa theo mã, phần còn lại trỏ về Đợt 3 nhóm E |
-| 7 | `M04` (Level 2) xếp Giai đoạn 2 Video vào M04a trong core; phân bổ hiện hành đặt video ở `SocialFlow` thành M04c | Đã đóng — mục A của `M04_FLORAOS_PRODUCT_IMAGE_OPTIMIZER_FULL.md` ghi phân bổ ba đơn vị; nội dung kỹ thuật Giai đoạn 2 giữ nguyên và đọc như đặc tả M04c |
+| 7 | `M04` (Level 2) xếp Giai đoạn 2 Video vào M04a trong core; phân bổ hiện hành đặt video ở `SocialFlow` thành M04c | Đã đóng — mục A của `M04_ALG_PRODUCT_IMAGE_OPTIMIZER_FULL.md` ghi phân bổ ba đơn vị; nội dung kỹ thuật Giai đoạn 2 giữ nguyên và đọc như đặc tả M04c |
 | 8 | Integration API chỉ có đường đọc; bốn bảng còn lại của `LocalBudd` chặn vì thiếu đường ghi | Còn mở — ba đường ghi đã đặc tả (D12), chưa có mã. P15 |
 | 9 | `Roadmap.md` ghi "P0 xong, đang ở trước P1" trong khi P8 đã xong và P9 đợt một đã nghiệm thu | Đã đóng — trạng thái sửa theo `Checklist_Thuc_Thi.md` |
 | 10 | `HARVEST_MANIFEST.md` còn ghi câu hỏi D1 là câu hỏi mở | Đã đóng — đánh dấu đã chốt, giữ câu hỏi gốc làm hồ sơ |

@@ -1,4 +1,4 @@
-# Lộ trình Enterprise Readiness — SMEOS
+# Lộ trình Enterprise Readiness — ALG
 
 Nội bộ (không vào bản giao khách). Lập 30/10/2026 từ 8 chuẩn đã đối chiếu code + chuẩn 09/10. Mỗi hạng mục khi làm: **một nhánh, một PR**, kèm test/gate, cập nhật cột trạng thái trong `smeos/*.md` cùng commit. Ký hiệu: **PO** = cần Product Owner quyết trước khi làm (dependency, nhà cung cấp, schema, CI, `render.yaml`, chi phí).
 

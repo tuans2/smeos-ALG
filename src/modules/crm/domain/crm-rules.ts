@@ -54,7 +54,12 @@ export function deriveCustomerLifecycleStage(
   const diffMs = now.getTime() - lastOrderDate.getTime()
   const daysSinceLastOrder = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)))
 
-  const isHighValue = totalSpentVnd >= 5_000_000 || orderCount >= 5
+  // Khách giá trị cao = hạng Vàng trở lên. Hạng đã tính theo ngưỡng NGÀNH của tiệm (Q6) nên dùng hạng khi có; chưa có
+  // hạng thì so ngưỡng Vàng mặc định — trước đây cứng 5 tr / 5 đơn của ngành hoa cho mọi ngành (audit BL-31)
+  const gold = DEFAULT_CUSTOMER_TIER_THRESHOLDS.GOLD
+  const isHighValue = metrics.tier
+    ? metrics.tier === "GOLD" || metrics.tier === "VIP"
+    : totalSpentVnd >= gold.spentVnd || orderCount >= gold.orders
 
   if (isHighValue) {
     if (daysSinceLastOrder <= 90) return "RETAIN"

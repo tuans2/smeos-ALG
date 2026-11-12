@@ -1,6 +1,6 @@
 /**
  * Kiểu dữ liệu điều hướng hệ thống (Navigation Types SSOT)
- * Chuẩn hóa theo đặc tả SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md
+ * Chuẩn hóa theo đặc tả ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md
  */
 
 import type { RoleUxDefinition } from "@/modules/organization/domain/role-ux-catalog"

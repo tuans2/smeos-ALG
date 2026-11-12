@@ -1,12 +1,11 @@
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { jsonResponse } from "@/core/http/response"
 import { summarizeAiRequests } from "@/modules/ai-governance/use-cases/list-ai-requests"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
-
 import { readFilter } from "../filter"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "U3")
-  return jsonResponse(await summarizeAiRequests(ctx, readFilter(request.url)))
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "U3" },
+  handler: async ({ request, ctx }) => {
+    return jsonResponse(await summarizeAiRequests(ctx, readFilter(request.url)))
+  },
 })

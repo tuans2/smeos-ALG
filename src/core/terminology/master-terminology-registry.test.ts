@@ -10,7 +10,7 @@ import {
 describe("Master Terminology SSOT (Core)", () => {
   it("trả về đúng bộ thuật ngữ của Tầng 1: SaaS Mother", () => {
     const terms = getTierTerminology("TIER_1_SAAS")
-    expect(terms.platformName).toContain("smeOS")
+    expect(terms.platformName).toContain("ALG")
     expect(terms.platformAdminTitle).toBe("Quản trị viên nền tảng")
     expect(terms.tenantEntityTitle).toBe("Tổ chức doanh nghiệp")
     expect(terms.tenantIsolationTitle).toBe("Cách ly an toàn dữ liệu tổ chức")

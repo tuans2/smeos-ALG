@@ -11,7 +11,7 @@ import type {
 } from "../domain/greeting-card-types"
 import { loadPublicSession } from "./brochure-session-access"
 import { linkAvailability } from "../domain/greeting-card-rules"
-import { collectImageAssetIds, toCatalogProduct } from "./brochure-product-mapper"
+import { collectImageAssetIds, forCustomer, toCatalogProduct } from "./brochure-product-mapper"
 import { applyPriceVisibility, readPriceVisibility } from "../domain/price-visibility"
 import { toPublicCatalogFilters } from "../domain/greeting-template-registry"
 import type { ShopContact } from "../domain/shop-contact"
@@ -20,6 +20,7 @@ import { parsePaymentPolicy, resolveTrackingTriggerPolicy, type TrackingTriggerP
 import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
 import type { EntryActions } from "@/modules/orders/domain/entry-actions"
 import { brochureEntryActions } from "../domain/brochure-entry-actions"
+import { isHiddenFromCustomer } from "../domain/product-availability"
 
 export type CustomerBrochureView = {
   status: "ACTIVE"
@@ -35,6 +36,8 @@ export type CustomerBrochureView = {
   payment: BrochurePaymentInstructions | null
   /** Cơ chế kích hoạt bước tiếp theo (PAYMENT_ONLY hoặc PAYMENT_OR_COORDINATOR). */
   trackingTriggerPolicy?: TrackingTriggerPolicy
+  /** Số phút tự duyệt chuyển khoản có ảnh bill khi tiệm bật; null = chỉ Điều hành duyệt */
+  autoApprovePaymentMinutes?: number | null
   /** Nút "Đặt hàng" / "Liên hệ" chủ cửa hàng bật cho Bộ sưu tập riêng */
   entryActions: EntryActions
 }
@@ -67,11 +70,13 @@ export async function getGreetingCatalogForCustomer(
   // Trình duyệt thật của khách gọi `markBrochureOpened` sau khi trang chạy (máy quét không chạy JS).
   const status = session.status as GreetingSessionStatus
 
-  const urls = await repo.getAssetsStorageMap(session.organization_id, collectImageAssetIds(session.catalog.items))
+  // Mẫu Tạm ngưng / Lưu trữ không hiện cho khách (2.3); mẫu tạm hết hàng vẫn hiện, đánh dấu không đặt được
+  const items = session.catalog.items.filter((item) => !isHiddenFromCustomer(item.product))
+  const urls = await repo.getAssetsStorageMap(session.organization_id, collectImageAssetIds(items))
   // Mẫu tạm hết hàng vẫn hiện (đánh dấu `available: false`) để khách xem mẫu tương tự / hỏi tiệm;
   // chọn và đặt mẫu hết hàng bị chặn ở máy chủ (`resolveOrderableProduct`).
   const visibility = readPriceVisibility(session.organization?.settings)
-  const products = session.catalog.items.map((item) => applyPriceVisibility(toCatalogProduct(item, urls), visibility))
+  const products = items.map((item) => forCustomer(applyPriceVisibility(toCatalogProduct(item, urls), visibility)))
   const shop = await repo.getShopProfile(session.organization_id)
   const contact = (await getShopContact(session.organization_id)) ?? {
     name: shop.name, phone: shop.phone, zaloUrl: null, address: null, logoUrl: null,
@@ -113,6 +118,7 @@ export async function getGreetingCatalogForCustomer(
     order,
     payment,
     trackingTriggerPolicy,
+    autoApprovePaymentMinutes: paymentPolicy.autoApprovePaymentWithProof ? (paymentPolicy.autoApprovePaymentWithProofMinutes ?? 15) : null,
     entryActions: brochureEntryActions(session.organization?.settings),
   }
 }

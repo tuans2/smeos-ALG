@@ -29,7 +29,6 @@ export const businessProfileResponse = z
   })
   .nullable()
 export const mockDataResponse = z.strictObject({
-  success: z.literal(true),
   data: z.strictObject({ industryKey: z.string(), industryName: z.string(), businessName: z.string(), productsCount: z.number() }),
 })
 /** Không bọc `{ data }`. `logo_url` là URL ký có hạn của ảnh logo. */

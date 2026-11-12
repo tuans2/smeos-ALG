@@ -11,6 +11,7 @@ import { CoordinatorConfirmBalanceModal } from "./coordinator/coordinator-confir
 import { CoordinatorConfirmDepositModal } from "./coordinator/coordinator-confirm-deposit-modal"
 import type { OrderDetailModalTarget, BrochureOrderDetailModalProps } from "./brochure-order-detail-modal"
 import { useApi } from "./greeting-api"
+import { paymentProgress } from "@/modules/orders/domain/payment-progress"
 
 /** Footer action bar + cancellation proposal modal — tách riêng khỏi BrochureOrderDetailModal để tuân thủ giới hạn SRP 350 dòng. */
 export function OrderDetailFooter({
@@ -55,7 +56,7 @@ export function OrderDetailFooter({
 
   const totalVnd = target.totalVnd ?? 0
   const paidVnd = target.paidVnd ?? 0
-  const isDepositOrder = paidVnd > 0 && paidVnd < totalVnd
+  const isDepositOrder = paymentProgress(totalVnd, paidVnd) === "DEPOSIT"
   const balanceVnd = Math.max(0, totalVnd - paidVnd)
   const hasBalanceProofOrReport = Boolean(target.paymentProofBalanceUrl || target.customerReportedPaid)
   const hasDepositProofOrReport = Boolean(target.paymentProofUrl || target.customerReportedPaid)
@@ -106,7 +107,7 @@ export function OrderDetailFooter({
 
         {needsBalanceConfirmation && (
           <div className="flex flex-col gap-2 p-3 rounded-xl border-2 border-dashed border-warning/50 bg-warning-bg/40 mb-1">
-            <p className="text-body-sm font-bold text-warning text-center flex items-center justify-center gap-1.5">
+            <p className="text-body-sm font-bold text-warning-text text-center flex items-center justify-center gap-1.5">
               <Banknote size={16} />
               Khách đã chuyển khoản Lần 2 — Chờ Xác nhận để mở Giao Ship
             </p>
@@ -132,7 +133,7 @@ export function OrderDetailFooter({
               variant="warning"
               size="sm"
               onClick={() => setShowConfirmBalanceModal(true)}
-              className="h-9 text-body-sm font-extrabold gap-1.5 bg-warning hover:bg-warning/90 text-white w-full"
+              className="h-9 text-body-sm font-extrabold gap-1.5 bg-warning hover:bg-warning/90 text-text w-full"
             >
               <CheckCircle2 size={15} />
               Xác nhận Đã Nhận Đủ Tiền (Lần 2)
@@ -221,7 +222,7 @@ export function OrderDetailFooter({
           </div>
         ) : (
           <div className="border-t border-border/60 pt-2">
-            <div className="rounded-xl border border-border/60 bg-surface-muted/50 px-3 py-1.5 text-center text-caption text-text-muted">
+            <div className="rounded-xl border border-border/60 bg-surface-alt/50 px-3 py-1.5 text-center text-caption text-text-muted">
               Link đang xem mẫu (chưa đặt đơn) · Đề xuất hủy/hoàn áp dụng khi khách đã gửi đơn hàng
             </div>
           </div>

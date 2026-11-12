@@ -94,7 +94,7 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
               <span className="px-2 py-0.5 rounded bg-surface-alt text-text text-caption font-black uppercase border border-border">
                 BƯỚC 5 • KIỂM ĐỊNH QC
               </span>
-              <h3 className="text-body font-extrabold text-text">Kiểm Định Chất Lượng (T14)</h3>
+              <h3 className="text-body font-extrabold text-text">Kiểm Định Chất Lượng</h3>
             </div>
           </div>
         </div>

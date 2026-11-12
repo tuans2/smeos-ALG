@@ -20,6 +20,7 @@ import { readCreditPricing } from "@/modules/usage/infra/credit-pricing-store"
 import { recordProviderCost } from "@/modules/usage/infra/provider-cost-repository"
 import { expectedPayment, parsePaymentPolicy } from "../domain/brochure-payment-policy"
 import { policyForOrder } from "../domain/payment-plan"
+import { paymentProgress } from "@/modules/orders/domain/payment-progress"
 
 export const NOTIFY_SECRET_PURPOSE = "greeting-card-notify"
 
@@ -114,7 +115,7 @@ export async function notifyOrderEvent(
   const base = publicBaseUrl()
   const paid = Number(order.paid_vnd)
   const total = Number(order.total_vnd)
-  const isBalanceDue = paid > 0 && paid < total && (event === "READY" || event === "DELIVERED")
+  const isBalanceDue = paymentProgress(total, paid) === "DEPOSIT" && (event === "READY" || event === "DELIVERED")
   const isDueEvent = DUE_EVENTS.has(event) || isBalanceDue
 
   const params: NotifyParams = {

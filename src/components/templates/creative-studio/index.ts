@@ -1,5 +1,5 @@
 /**
- * smeOS Template Library — Studio Sáng tạo (Creative Studio M04)
+ * ALG Template Library — Studio Sáng tạo (Creative Studio M04)
  */
 
 export * from "./creative-guidance-card"

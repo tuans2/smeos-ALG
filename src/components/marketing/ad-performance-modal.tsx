@@ -130,7 +130,7 @@ export function AdPerformanceModal({ isOpen, onClose }: AdPerformanceModalProps)
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
           <div className="flex items-center gap-2 text-body-sm font-bold text-text">
             <Sparkles className="h-4 w-4 text-primary" />
-            <span>Đề xuất Phân bổ Ngân sách Thông minh (smeOS AI Insights)</span>
+            <span>Đề xuất Phân bổ Ngân sách Thông minh (ALG AI Insights)</span>
           </div>
           <ul className="space-y-1.5 pl-5 list-disc text-caption text-text">
             {summary.aiRecommendations.map((rec, i) => (

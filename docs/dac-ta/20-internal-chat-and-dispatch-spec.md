@@ -19,10 +19,10 @@ chủ yếu diễn ra qua các kênh bên ngoài (Zalo, Telegram, Messenger...).
 - **Rủi ro rò rỉ dữ liệu khách hàng**: Thông tin người nhận, địa chỉ bị sao chép tùy tiện trên các nhóm chat cá nhân.
 
 ### 1.2 Mục tiêu module
-Xây dựng phân hệ **Internal Chat (Chat nội bộ thời gian thực)** nằm ngay trong ứng dụng web (`smeOS`):
+Xây dựng phân hệ **Internal Chat (Chat nội bộ thời gian thực)** nằm ngay trong ứng dụng web (`ALG`):
 - **Phân cấp luồng giao tiếp rõ ràng**: Hỗ trợ 2 phạm vi chính: `PLATFORM_TENANT` (SaaS - Khách hàng) và `CHAIN_PARTNER` (Chuỗi - Đối tác/Chi nhánh).
 - **Chat hướng hành động (Actionable Business Cards)**: Không chỉ chat văn bản mà còn gửi trực tiếp Thẻ đơn hàng (Order Card), Thẻ duyệt QC (QC Card), Thẻ điều phối shipper. Người nhận có thể bấm "Nhận đơn", "Từ chối", "Tải ảnh mẫu" ngay trong khung chat.
-- **Bảo mật & Cách ly Đa Tenant tuyệt đối**: Đúng chuẩn quy tắc kiến trúc smeOS (bảo vệ phân quyền, tenant isolation, không lộ dữ liệu chéo giữa các đối tác).
+- **Bảo mật & Cách ly Đa Tenant tuyệt đối**: Đúng chuẩn quy tắc kiến trúc ALG (bảo vệ phân quyền, tenant isolation, không lộ dữ liệu chéo giữa các đối tác).
 
 ---
 

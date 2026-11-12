@@ -34,7 +34,7 @@ export async function verifyQcPhotoWithAi(input: VerifyQcPhotoInput): Promise<Ve
   const industry = getIndustryPlugin(input.industryKey ?? (await industryOf(input.organizationId)))
   const productName = JSON.stringify(input.productName.slice(0, 200))
   // Tiêu chí theo ngành của tiệm (đa ngành) — trước 22/10/2026 prompt chỉ nói tới loài hoa (rà soát cụm H)
-  const prompt = `Bạn là Chuyên gia Kiểm định Chất lượng (Quality Control Inspector) của nền tảng smeOS, ngành ${industry.identity.name}.
+  const prompt = `Bạn là Chuyên gia Kiểm định Chất lượng (Quality Control Inspector) của nền tảng ALG, ngành ${industry.identity.name}.
 Nhiệm vụ: đối chiếu khắt khe Ảnh mẫu gốc với ${industry.terminology.completedProductPhoto.toLowerCase()} do cửa hàng chụp gửi lên.
 
 Thông tin đơn hàng:

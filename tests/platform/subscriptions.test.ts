@@ -77,6 +77,8 @@ describe("thuê bao trên Console", () => {
     expect(res.status).toBe(201)
     const created = ((await readJson(res)) as { data: { organizationId: string; temporaryPassword: string } }).data
     expect((await createOrg(withSession(`${BASE}/organizations`, op.token, json("POST", body)))).status).toBe(409)
+    // Có danh mục dịp mặc định như cửa hàng tự đăng ký (1.7)
+    expect(await prisma.occasions.count({ where: { organization_id: created.organizationId, is_active: true } })).toBeGreaterThan(0)
 
     const user = await prisma.users.findUniqueOrThrow({ where: { email: "chu-tiem@vi-du.test" } })
     expect(user.must_change_password).toBe(true)

@@ -4,6 +4,7 @@
  * người phụ trách bước đó nhận thông báo. Pure TypeScript.
  */
 import type { TrackingPipelineStepId } from "./tracking-pipeline-types"
+import { dayStartMs, slotEndMinutes } from "@/modules/orders/domain/delivery-slot"
 
 export const STEP_SLA_SETTINGS_KEY = "brochure_step_sla"
 export type StepOwner = "SALE" | "ADMIN" | "COORDINATOR"
@@ -116,34 +117,9 @@ export function calculateExpectedStepTimeline(
 } | null {
   if (!deliveryDate) return null
 
-  // Tìm giờ giao đích
-  let targetHour = 10
-  let targetMinute = 0
-
-  if (deliveryTimeSlot) {
-    const timeMatch = deliveryTimeSlot.match(/(\d{1,2}):?(\d{2})?\s*-\s*(\d{1,2}):?(\d{2})?/)
-    if (timeMatch) {
-      const hStr = timeMatch[3] ?? timeMatch[1] ?? "10"
-      targetHour = parseInt(hStr, 10)
-      targetMinute = parseInt(timeMatch[4] ?? "0", 10)
-    } else if (/(\d{1,2}):(\d{2})/.test(deliveryTimeSlot)) {
-      // Giờ cụ thể khách nhập ("Giờ cụ thể: 15:30")
-      const [, h, m] = /(\d{1,2}):(\d{2})/.exec(deliveryTimeSlot) ?? []
-      targetHour = parseInt(h ?? "10", 10)
-      targetMinute = parseInt(m ?? "0", 10)
-    } else if (deliveryTimeSlot.includes("12h")) {
-      targetHour = 12
-    } else if (deliveryTimeSlot.includes("17h")) {
-      targetHour = 17
-    } else if (deliveryTimeSlot.includes("21h") || deliveryTimeSlot.includes("20h")) {
-      targetHour = 20
-    }
-  }
-
-  const d = new Date(`${deliveryDate}T00:00:00+07:00`)
-  if (Number.isNaN(d.getTime())) return null
-
-  const deliveryEndMs = d.getTime() + (targetHour * 60 + targetMinute) * 60_000
+  // Giờ giao đích — bộ đọc khung giờ chung (audit BL-24); không nêu giờ → 10:00 như trước
+  const deliveryEndMs = dayStartMs(deliveryDate, slotEndMinutes(deliveryTimeSlot) ?? 10 * 60)
+  if (deliveryEndMs === null) return null
 
   const deliverMinutes = slaConfig.STEP_8_DELIVERING?.minutes ?? 60
   const qcMinutes = slaConfig.STEP_7_READY_QC?.minutes ?? 20

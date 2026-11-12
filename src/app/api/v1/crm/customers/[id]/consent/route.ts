@@ -5,29 +5,28 @@
  */
 
 import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { updateCustomerConsent } from "@/modules/crm/use-cases/update-customer-consent"
 import { CONSENT_CHANNELS } from "@/app/api/v1/_contracts/requests-crm"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "Q9")
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "Q9" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const body = await request.json()
 
-  const { id } = await context.params
-  const body = await request.json()
+    if (!CONSENT_CHANNELS.includes(body.channel)) {
+      throw validationFailed({ channel: `Kênh phải thuộc: ${CONSENT_CHANNELS.join(", ")}` })
+    }
 
-  if (!CONSENT_CHANNELS.includes(body.channel)) {
-    throw validationFailed({ channel: `Kênh phải thuộc: ${CONSENT_CHANNELS.join(", ")}` })
-  }
+    const consent = await updateCustomerConsent(
+      ctx,
+      id,
+      body.channel,
+      Boolean(body.granted)
+    )
 
-  const consent = await updateCustomerConsent(
-    ctx,
-    id,
-    body.channel,
-    Boolean(body.granted)
-  )
-
-  return jsonResponse({ consent })
+    return jsonResponse({ consent })
+  },
 })

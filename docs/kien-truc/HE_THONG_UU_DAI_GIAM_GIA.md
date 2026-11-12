@@ -1,7 +1,7 @@
 # Hệ thống Ưu đãi · Mã giảm giá · Bảng giá — nghiên cứu, hiện trạng và lộ trình
 
 > Level 3 SUPPORTING · `DRAFT` chờ PO duyệt · 30/10/2026 · phạm vi: Bước 3 "Quảng bá sản phẩm" (công cụ #61, #65, #66).
-> Kiến trúc gốc: `.agents/standards/smeos/01-tier-governance.md` (ma trận 4 tầng). API: đặc tả 06 · lược đồ: đặc tả 07.
+> Kiến trúc gốc: `.agents/standards/alg/01-tier-governance.md` (ma trận 4 tầng). API: đặc tả 06 · lược đồ: đặc tả 07.
 
 ## 1. Nguyên tắc: một hệ thống, hai nơi hiển thị
 

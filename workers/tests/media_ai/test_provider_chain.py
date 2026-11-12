@@ -114,7 +114,7 @@ def test_imagen_scene_dung_canh_ghi_bo_qua_trung_thuc():
         SceneRequest(chu_the_png=buf.getvalue(), ratio="4:3", rong=40, cao=30, scene_prompt="bàn gỗ", seed=3)
     )
     assert kq.anh.size == (40, 30)
-    assert "tach_nen:floraos" in kq.bo_qua and "seed" in kq.bo_qua
+    assert "tach_nen:alg" in kq.bo_qua and "seed" in kq.bo_qua
     assert ImagenSceneProvider.nang_luc.tach_nen is False and ImagenSceneProvider.nang_luc.dung_canh is True
 
 

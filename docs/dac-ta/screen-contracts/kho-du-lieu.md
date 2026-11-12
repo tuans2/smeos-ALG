@@ -15,6 +15,8 @@ acceptance:
 
 # Screen Contract — Kho Dữ Liệu (Thư viện tập trung) — v2
 
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Nút "Đi tới Hàng chờ duyệt" (tab Đã duyệt) và "Mở … trong công cụ" (tab thư viện) ẩn khi tuyến đích đang khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
 **Tuyến:** `/kho-du-lieu` · **Tệp chính:** `src/app/(app)/kho-du-lieu/page.tsx` · **Thành phần:** `src/components/storage/account-storage-hub.tsx` · **Cập nhật:** 29/10/2026 · **Trạng thái:** v2 đã duyệt 29/10/2026 — đang dựng (§13a) · **v1:** 27/09/2026, thẻ T5.D6 (3 tab + thùng rác)
 
 > PO 29/10/2026: (1) mở rộng Kho dữ liệu, không tạo màn mới; (2) dùng tab; (3) tầng chuỗi xem toàn bộ của chuỗi và các chi nhánh, có phân loại riêng; (4) có Screen Contract + cập nhật SSOT (`docs/production-feature-map/Tài liệu kỹ thuật gốc hiện tại/08-kho-du-lieu.md`).

@@ -97,7 +97,6 @@ export function FeaturePicker({
   const depContext = useMemo(() => ({
     hasApprovedAnalysis,
     hasApprovedMasterImage,
-    hasCustomerConsent: false, // TODO: check actual consent
   }), [hasApprovedAnalysis, hasApprovedMasterImage]);
 
   // Selected features array
@@ -243,7 +242,7 @@ export function FeaturePicker({
                   <span className={cn(
                     "font-bold",
                     costWarning === "danger" && "text-danger",
-                    costWarning === "warning" && "text-warning",
+                    costWarning === "warning" && "text-warning-text",
                     costWarning === "safe" && "text-secondary-text"
                   )}>
                     {costWarning === "danger" && "⚠ Hết credit — "}
@@ -341,7 +340,7 @@ function CreditEstimateBadge({
   const bgClass = warning === "danger" ? "bg-danger-bg" : 
                   warning === "warning" ? "bg-warning-bg" : "bg-success-bg";
   const textClass = warning === "danger" ? "text-danger" : 
-                    warning === "warning" ? "text-warning" : "text-primary";
+                    warning === "warning" ? "text-warning-text" : "text-primary";
 
   return (
     <Button variant="ghost"
@@ -510,7 +509,7 @@ function ModuleAccordion({
   isExpanded: boolean;
   onToggleExpand: () => void;
   userCapabilities: string[];
-  depContext: { hasApprovedAnalysis: boolean; hasApprovedMasterImage: boolean; hasCustomerConsent: boolean };
+  depContext: { hasApprovedAnalysis: boolean; hasApprovedMasterImage: boolean };
 }) {
   const visibleFeatures = getVisibleFeaturesByModule(group.module);
   const selectedCount = visibleFeatures.filter(f => selectedFeatures.has(f.key)).length;
@@ -595,7 +594,7 @@ function FeatureCard({
   userCanRun: boolean;
 }) {
   const enabled = userCanRun && depCheck.canRun;
-  const showTooltip = !enabled || feature.status === "coming_soon";
+  const showTooltip = !enabled || feature.status === "coming_soon" || Boolean(depCheck.reason);
 
   return (
     <TooltipProvider>
@@ -636,7 +635,7 @@ function FeatureCard({
                   </Badge>
                   <Badge tone="neutral" className={cn("text-caption h-4 px-1.5", 
                     feature.privacyFloor === "SENSITIVE" && "border-danger/30 text-danger",
-                    feature.privacyFloor === "SHOP" && "border-warning/30 text-warning",
+                    feature.privacyFloor === "SHOP" && "border-warning/30 text-warning-text",
                     feature.privacyFloor === "PUBLIC" && "border-success/30 text-success"
                   )}>
                     {feature.privacyFloor}
@@ -656,7 +655,7 @@ function FeatureCard({
             </div>
 
             {!enabled && depCheck.reason && (
-              <div className="absolute bottom-full left-0 right-0 mb-1.5 px-2.5 py-1.5 rounded-lg bg-warning-bg text-caption text-warning text-center">
+              <div className="absolute bottom-full left-0 right-0 mb-1.5 px-2.5 py-1.5 rounded-lg bg-warning-bg text-caption text-warning-text text-center">
                 {depCheck.reason}
               </div>
             )}
@@ -665,7 +664,7 @@ function FeatureCard({
         {showTooltip && (
           <TooltipContent side="top" align="center" className="max-w-xs p-2.5 text-caption">
             {!userCanRun && <p>❌ Bạn thiếu quyền: <code className="font-mono">{feature.rbacRun}</code></p>}
-            {!depCheck.canRun && depCheck.reason && <p>⏸ {depCheck.reason}</p>}
+            {depCheck.reason && <p>{depCheck.canRun ? "" : "⏸ "}{depCheck.reason}</p>}
             {feature.status === "coming_soon" && <p>🚧 Tính năng đang phát triển, chưa thể sử dụng</p>}
             {feature.creditCost && <p>💰 Chi phí ước tính: {feature.creditCost} credits (D14 placeholder)</p>}
           </TooltipContent>

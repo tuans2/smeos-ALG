@@ -173,7 +173,7 @@ export function ProfileJourneyWorkspace({
           <div className="group rounded-2xl border border-border bg-surface p-5 shadow-xs transition-all hover:border-primary hover:shadow-md flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent-text">
                   <Palette size={20} />
                 </div>
                 {hasLogo && hasColors && (

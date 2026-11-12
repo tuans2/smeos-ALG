@@ -43,7 +43,7 @@ export function BrochureDefaultOwnerSettings() {
         <h3 className="text-title-sm font-extrabold text-text">Người phụ trách link cũ</h3>
       </div>
       <p className="text-caption text-text-muted">
-        Link sao chép trong smeOS luôn thuộc người đã bấm sao chép. Đơn đến từ link đã gửi hoặc đã đăng trước đây giao cho người này.
+        Link sao chép trong ALG luôn thuộc người đã bấm sao chép. Đơn đến từ link đã gửi hoặc đã đăng trước đây giao cho người này.
       </p>
       <label className="flex flex-col gap-1 text-body-sm">
         <span className="sr-only">Người phụ trách link cũ</span>

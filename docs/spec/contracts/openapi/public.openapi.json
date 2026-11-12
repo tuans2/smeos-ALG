@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SMEOS Public API",
+    "title": "ALG Public API",
     "version": "1.0.0",
     "description": "Endpoint không cần đăng nhập. Tổ chức luôn suy từ mã gửi / slug / token / khoá webhook phía máy chủ, không nhận từ thân yêu cầu. Mọi route có giới hạn tần suất (header `RateLimit-*`, 429 kèm `Retry-After`). Lỗi theo envelope `Error`, trừ vài webhook ghi rõ ở từng operation."
   },
@@ -781,6 +781,18 @@
                       "enum": [
                         "PAYMENT_ONLY",
                         "PAYMENT_OR_COORDINATOR"
+                      ]
+                    },
+                    "autoApprovePaymentMinutes": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
                       ]
                     },
                     "entryActions": {
@@ -2612,67 +2624,71 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "snapshot": {
+                    "data": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "code": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "price": {
-                          "type": "number"
-                        },
-                        "imageUrl": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "driveLink": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "flowersSummary": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "selectedAt": {
-                          "type": "string"
+                        "snapshot": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "code": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "price": {
+                              "type": "number"
+                            },
+                            "imageUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "driveLink": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "description": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "flowersSummary": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "selectedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "code",
+                            "name",
+                            "price",
+                            "imageUrl",
+                            "selectedAt"
+                          ],
+                          "additionalProperties": false
                         }
                       },
                       "required": [
-                        "id",
-                        "code",
-                        "name",
-                        "price",
-                        "imageUrl",
-                        "selectedAt"
+                        "snapshot"
                       ],
                       "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "snapshot"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -3038,6 +3054,7 @@
                               "type": "string",
                               "enum": [
                                 "PENDING",
+                                "FEEDBACK",
                                 "APPROVED",
                                 "NONE",
                                 "AUTO_APPROVED"
@@ -4675,6 +4692,7 @@
                               "type": "string",
                               "enum": [
                                 "PENDING",
+                                "FEEDBACK",
                                 "APPROVED",
                                 "NONE",
                                 "AUTO_APPROVED"
@@ -6100,17 +6118,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "message": {
-                      "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "approved": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "approved"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "message"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -6509,6 +6536,116 @@
                         "choice",
                         "choiceLabel",
                         "answeredAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/brochure/tracking/{code}/photo-feedback": {
+      "post": {
+        "operationId": "trackingPhotoFeedback",
+        "summary": "Khách góp ý ảnh thành phẩm",
+        "description": "Chỉ chủ link của đơn, khi ảnh đang chờ duyệt. Góp ý dừng đồng hồ tự duyệt, chặn giao tới khi tiệm gửi lại ảnh. Đã đồng ý / quá giờ / đã góp ý / đơn huỷ → 409. 10 lần/10 phút/IP.",
+        "tags": [
+          "Thẻ chào — theo dõi đơn"
+        ],
+        "security": [
+          {
+            "brochureOwner": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "link",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đã gửi góp ý",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "const": "FEEDBACK"
+                        }
+                      },
+                      "required": [
+                        "status"
                       ],
                       "additionalProperties": false
                     }
@@ -7867,13 +8004,22 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accepted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "accepted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -11252,7 +11398,9 @@
                   "CAPABILITY_DENIED",
                   "ENTITLEMENT_REQUIRED",
                   "PASSWORD_CHANGE_REQUIRED",
+                  "CROSS_ORIGIN_REJECTED",
                   "SUBSCRIPTION_OVERDUE",
+                  "ORGANIZATION_INACTIVE",
                   "NOT_FOUND",
                   "CONFLICT",
                   "PAYLOAD_TOO_LARGE",

@@ -1,3 +1,4 @@
+import { assertOrganizationLifecycle } from "@/modules/organization/use-cases/assert-organization-lifecycle"
 import { AppError, unauthenticated } from "@/core/http/errors"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
@@ -22,7 +23,7 @@ import { verifySsoToken } from "@/modules/sso/infra/sso-jwt"
  * - `token` — máy gọi máy (`integration_tokens`, `YC-T8`). Không có người
  *   dùng đứng sau, nên `capabilities` rỗng và phạm vi là chính tập route này.
  * - `sso` — thay mặt một người đang đăng nhập (JWT `floraos_sso`, header
- *   `X-FloraOS-SSO`). Có người dùng thật, nên `capabilities` là năng lực THẬT
+ *   `X-ALG-SSO`). Có người dùng thật, nên `capabilities` là năng lực THẬT
  *   của người đó trong tổ chức đó, và mọi use-case tái dùng tự cắt đúng phần
  *   người ấy không được xem.
  *
@@ -58,6 +59,7 @@ export async function requireIntegrationContext(
   // Tra khoá tích hợp chưa biết tổ chức → quyền hệ thống; xong thì gắn tổ chức của khoá (RLS, checklist ALG 1.18)
   const resolved = await asSystemDb("integration-auth", () => resolveIntegration(request, tokenRepo))
   bindTenantDb(resolved.organizationId)
+  await assertOrganizationLifecycle(resolved.organizationId, request.method) // ADR-016 D-S5
   await enforceRateLimit(request, integrationRateLimit(resolved))
   return resolved
 }

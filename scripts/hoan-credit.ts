@@ -1,11 +1,9 @@
-import type { TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
-import { refundJob } from "@/modules/usage/use-cases/refund-job"
+import { refundFinishedJobs } from "@/modules/usage/use-cases/refund-finished-jobs"
 
 // Hoàn credit cho lượt chạy khách không nhận được kết quả — ba diện ở
 // `usage/domain/refund-policy.ts`: Guard từ chối, bị huỷ, lỗi kỹ thuật.
-// Chạy định kỳ ngoài request HTTP, ví dụ cron mỗi 5 phút (dòng crontab,
+// Cron 5 phút đã chạy lượt này trong /api/v1/internal/integrations-sweep; lệnh này để chạy bằng tay (dòng crontab,
 // KHÔNG đặt trong khối /** */ — "*" liền "/" đóng khối sớm):
 //
 //   (mỗi-5-phút) cd /path/floraos-core && npm run hoan-credit
@@ -20,33 +18,9 @@ import { refundJob } from "@/modules/usage/use-cases/refund-job"
 const SO_JOB_MOI_LUOT = 200
 
 async function main(): Promise<void> {
-  const jobs = await new GenerationJobRepository().listRefundable(SO_JOB_MOI_LUOT)
-  if (jobs.length === 0) return
-
-  let daHoan = 0
-  let tongCredit = 0
-  for (const job of jobs) {
-    // Ngữ cảnh dựng từ chính dòng job, không từ tham số nào — cùng luật với
-    // worker ("`organization_id` chỉ lấy từ dòng job").
-    const ctx: TenantContext = {
-      organizationId: job.organization_id,
-      workspaceId: job.workspace_id,
-      userId: job.user_id,
-      branchId: job.branch_id,
-      capabilities: new Set<string>(),
-    }
-    const ketQua = await refundJob(ctx, job.id)
-    if (ketQua.refunded) {
-      daHoan += 1
-      tongCredit += ketQua.creditHoanLai
-      console.log(
-        `Hoàn ${ketQua.creditHoanLai} credit cho job ${job.id} ` +
-          `(tổ chức ${job.organization_id}, diện ${ketQua.lyDo})`
-      )
-    }
-  }
-
-  if (daHoan > 0) console.log(`Đã hoàn ${tongCredit} credit cho ${daHoan} lượt chạy`)
+  const { refunds, refundedJobs, refundedCredit } = await refundFinishedJobs(SO_JOB_MOI_LUOT)
+  for (const r of refunds) console.log(`Hoàn ${r.credit} credit cho job ${r.jobId} (tổ chức ${r.organizationId}, diện ${r.reason})`)
+  if (refundedJobs > 0) console.log(`Đã hoàn ${refundedCredit} credit cho ${refundedJobs} lượt chạy`)
 }
 
 main()

@@ -100,7 +100,7 @@ export function OrderChangeForm({
           <h3 className="text-body font-extrabold text-text">Yêu cầu thay đổi thông tin</h3>
           <p className="text-caption text-text-muted">Sửa ô bạn muốn đổi rồi gửi. Cửa hàng xác nhận xong, đơn mới được cập nhật.</p>
         </div>
-        <Button variant="ghost" type="button" onClick={onClose} aria-label="Đóng" className="text-[length:inherit] h-auto font-[inherit] gap-0 p-2 rounded-lg text-text-muted hover:bg-surface-muted"><X size={18} /></Button>
+        <Button variant="ghost" type="button" onClick={onClose} aria-label="Đóng" className="text-[length:inherit] h-auto font-[inherit] gap-0 p-2 rounded-lg text-text-muted hover:bg-surface-alt"><X size={18} /></Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

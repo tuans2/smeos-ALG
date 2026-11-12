@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import {
   loadPublicChatSlot,
   type PublicPageKey,
@@ -11,11 +12,12 @@ interface PublicChatSlotProps {
 }
 
 /**
- * Khung chat AI cho trang công khai do công cụ SMEOS tạo. Máy chủ quyết định có vẽ
+ * Khung chat AI cho trang công khai do công cụ ALG tạo. Máy chủ quyết định có vẽ
  * hay không (kênh bật + chủ tiệm không tắt loại trang này); tắt thì không vẽ gì.
  */
 export async function PublicChatSlot({ pageKey, surface }: PublicChatSlotProps) {
-  const slot = await loadPublicChatSlot(pageKey, surface)
+  // Server Component tự tải (React vẽ sau khi trang trả về, ngoài ngữ cảnh của trang): quyền hệ thống, tra theo mã trang
+  const slot = await asSystemDb("component:public-chat-slot", () => loadPublicChatSlot(pageKey, surface))
   if (!slot) return null
   return <PublicStorefrontChatWidget shopSlug={slot.shopSlug} shopName={slot.shopName} surface={slot.surface} />
 }

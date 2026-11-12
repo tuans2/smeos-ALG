@@ -749,7 +749,9 @@
       "pages": [
         "/don-hang"
       ],
-      "apis": [],
+      "apis": [
+        "/api/v1/orders/[id]/delivery-window"
+      ],
       "scenarios": [
         "E-14"
       ]
@@ -1785,7 +1787,7 @@
       "scenarios": [
         "I-09"
       ],
-      "acceptanceNote": "Đăng bài đã chạy ngay trong smeOS (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động."
+      "acceptanceNote": "Đăng bài đã chạy ngay trong ALG (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động."
     },
     {
       "id": "10.1",
@@ -2015,6 +2017,12 @@
       ]
     },
     {
+      "reason": "Tài liệu API cho đối tác (trang mới 11/11/2026, ARC-024) — chưa thuộc phạm vi GD1; PO chuyển sang mục 9.5 nếu muốn giao",
+      "pages": [
+        "/tich-hop/tai-lieu-api"
+      ]
+    },
+    {
       "reason": "Sáng tạo ảnh, video, nội dung",
       "pages": [
         "/creative-studio",
@@ -2140,7 +2148,10 @@
     "src/app/not-found.tsx",
     "src/app/global-error.tsx",
     "src/app/globals.css",
-    "prisma/seed.ts"
+    "prisma/seed.ts",
+    "src/app/fonts/google-sans/GoogleSans-Variable.woff2",
+    "src/app/fonts/google-sans/GoogleSans-Italic-Variable.woff2",
+    "src/app/fonts/google-sans/OFL.txt"
   ],
   "registryFiles": {
     "reason": "Bảng tra tiền tố route (quyền, bỏ qua RLS, danh sách route của chế độ giai đoạn), không phải lời gọi API — không dùng để dò phạm vi",
@@ -2166,6 +2177,7 @@
         "src/app/(app)/duyet/page.tsx → /creative-studio",
         "src/app/(app)/tai-anh/page.tsx → /creative-studio",
         "src/components/catalog/share-catalog-modal.tsx → /noi-dung",
+        "src/components/integrations/api-tokens-panel.tsx → /tich-hop/tai-lieu-api",
         "src/components/dashboard/crm-toolkit-grid.tsx → /hoi-thoai",
         "src/components/dashboard/crm-workspace.tsx → /hoi-thoai",
         "src/components/dashboard/customer-service-workspace.tsx → /hoi-thoai",
@@ -2287,7 +2299,7 @@
         ]
       },
       {
-        "reason": "Công cụ phát hành và bàn giao nội bộ của smeOS",
+        "reason": "Công cụ phát hành và bàn giao nội bộ của ALG",
         "paths": [
           "scripts/release/",
           "scripts/handover-",

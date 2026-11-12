@@ -1,6 +1,6 @@
-# Screen Contracts — Hồ sơ Hợp đồng Giao diện FloraOS
+# Screen Contracts — Hồ sơ Hợp đồng Giao diện ALG
 
-Thư mục này chứa các bản hợp đồng giao diện (Screen Contracts) chi tiết cho từng màn hình trong hệ thống FloraOS, tuân thủ đặc tả tại `docs/dac-ta/03a-ux-constitution.md` (Level 3, CANONICAL) và kế hoạch thực thi `docs/kien-truc/KE_HOACH_NANG_CAP_UIUX.md`.
+Thư mục này chứa các bản hợp đồng giao diện (Screen Contracts) chi tiết cho từng màn hình trong hệ thống ALG, tuân thủ đặc tả tại `docs/dac-ta/03a-ux-constitution.md` (Level 3, CANONICAL) và kế hoạch thực thi `docs/kien-truc/KE_HOACH_NANG_CAP_UIUX.md`.
 
 ---
 

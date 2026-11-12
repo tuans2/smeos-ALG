@@ -11,6 +11,7 @@ import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { NativeSelect } from "@/components/ui/select"
+import { requestKey, type HeldKey } from "@/components/content-studio/request-key"
 import { errorText } from "@/lib/error-text"
 import { vnTodayIso } from "@/lib/vn-date"
 import { newOrderDeliveryErrors } from "@/modules/orders/domain/order-input-rules"
@@ -58,8 +59,8 @@ interface ItemRow {
 
 export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: CreateOrderModalProps) {
   const [loading, setLoading] = useState(false)
-  // Một khoá cho mỗi lần soạn đơn: thử lại sau lỗi mạng/hết giờ không tạo đơn thứ hai (audit API-11)
-  const idempotencyKey = useRef<string | null>(null)
+  // Khoá giữ qua lần thử lại CÙNG nội dung (lỗi mạng/hết giờ không tạo đơn thứ hai); sửa đơn → khoá mới (audit API-11)
+  const idempotencyKey = useRef<HeldKey | null>(null)
   const [masterProducts, setMasterProducts] = useState<ProductMasterIndex[]>([])
   const [selectedProductId, setSelectedProductId] = useState<string>("")
   const [recipientName, setRecipientName] = useState("")
@@ -148,7 +149,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
     e.preventDefault()
     setError(null)
     if (!recipientName.trim() || !phone.trim() || !street.trim()) {
-      setError("Chưa đủ thông tin giao hoa. Vui lòng nhập họ tên, số điện thoại và địa chỉ người nhận.")
+      setError("Chưa đủ thông tin giao hàng. Vui lòng nhập họ tên, số điện thoại và địa chỉ người nhận.")
       return
     }
     // Cùng luật với máy chủ (PO 07/11/2026, Q11–Q12) — báo sớm trước khi gửi
@@ -158,36 +159,34 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
       setError(firstDeliveryError)
       return
     }
-    if (items.some((it) => !it.description.trim() || it.unitPriceVnd <= 0)) {
-      setError("Đơn giá mỗi mục phải lớn hơn 0 ₫. Vui lòng kiểm tra lại tên hoa và giá tiền.")
+    // Cùng luật máy chủ: đơn giá nguyên, không âm; 0 ₫ = nháp chờ báo giá (audit BL-31 — trước đây form chặn 0 còn API nhận)
+    if (items.some((it) => !it.description.trim() || !Number.isInteger(it.unitPriceVnd) || it.unitPriceVnd < 0)) {
+      setError("Mỗi mục cần tên sản phẩm và đơn giá không âm (để 0 ₫ nếu chờ báo giá).")
       return
     }
     setLoading(true)
-    idempotencyKey.current ??= crypto.randomUUID()
     try {
-      const res = await fetch("/api/v1/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey.current },
-        body: JSON.stringify({
-          deliveryAddress: { recipientName, phone, street },
-          deliveryWindow: { date: deliveryDate, timeSlot },
-          cardMessage,
-          internalNote,
-          items: items.map((it) => ({
-            productId: it.productId,
-            description: it.description,
-            quantity: Number(it.quantity),
-            unitPriceVnd: Number(it.unitPriceVnd),
-            metadata:
-              it.sampleImageUrl || it.bomFlowers?.length
-                ? { sampleImageUrl: it.sampleImageUrl, bomSummary: it.bomSummary, flowers: it.bomFlowers, wrapStyle: it.wrapStyle, ribbon: it.ribbon }
-                : undefined,
-          })),
-        }),
+      const body = JSON.stringify({
+        deliveryAddress: { recipientName, phone, street },
+        deliveryWindow: { date: deliveryDate, timeSlot },
+        cardMessage,
+        internalNote,
+        items: items.map((it) => ({
+          productId: it.productId,
+          description: it.description,
+          quantity: Number(it.quantity),
+          unitPriceVnd: Number(it.unitPriceVnd),
+          metadata:
+            it.sampleImageUrl || it.bomFlowers?.length
+              ? { sampleImageUrl: it.sampleImageUrl, bomSummary: it.bomSummary, flowers: it.bomFlowers, wrapStyle: it.wrapStyle, ribbon: it.ribbon }
+              : undefined,
+        })),
       })
+      idempotencyKey.current = requestKey(idempotencyKey.current, body, () => crypto.randomUUID())
+      const res = await fetch("/api/v1/orders", { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey.current.key }, body })
       if (!res.ok) {
-        const data = await res.json() as { message?: string }
-        throw new Error(data.message ?? "Chưa tạo được đơn hàng do lỗi hệ thống. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.")
+        const data = await res.json().catch(() => ({})) as { error?: { message?: string } }
+        throw new Error(data.error?.message ?? "Chưa tạo được đơn hàng do lỗi hệ thống. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.")
       }
       idempotencyKey.current = null
       onSuccess()
@@ -201,7 +200,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
 
   const dialogTitle = (
     <span className="flex items-center gap-2">
-      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary-subtle text-primary">
+      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary-muted text-primary">
         <Sparkles className="h-3.5 w-3.5" />
       </span>
       Tạo đơn hàng mới
@@ -269,7 +268,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block font-semibold text-text">Người nhận *</label>
-            <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Họ và tên người nhận hoa" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} required />
+            <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Họ và tên người nhận" value={recipientName} onChange={(e) => setRecipientName(e.target.value)} required />
           </div>
           <div>
             <label className="mb-1 block font-semibold text-text">Số điện thoại người nhận *</label>
@@ -278,7 +277,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         </div>
 
         <div>
-          <label className="mb-1 block font-semibold text-text">Địa chỉ giao hoa *</label>
+          <label className="mb-1 block font-semibold text-text">Địa chỉ giao hàng *</label>
           <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Số nhà, tên đường, phường/xã, tỉnh/thành phố" value={street} onChange={(e) => setStreet(e.target.value)} required />
         </div>
 
@@ -314,7 +313,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
                 <Input type="number" min="1" className="w-16 rounded-md border border-border bg-surface px-2 py-1.5 text-center text-body-sm" value={it.quantity} onChange={(e) => updateItem(idx, "quantity", Math.max(1, parseInt(e.target.value) || 1))} />
                 <Input type="number" step="10000" min="0" className="w-32 rounded-md border border-border bg-surface px-2 py-1.5 text-right text-body-sm" placeholder="Đơn giá (₫)" value={it.unitPriceVnd} onChange={(e) => updateItem(idx, "unitPriceVnd", parseInt(e.target.value) || 0)} />
                 {items.length > 1 && (
-                  <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(idx)} aria-label="Xóa dòng" className="flex h-9 w-9 p-0 items-center justify-center rounded-md text-text-muted hover:bg-surface-raised hover:text-danger">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(idx)} aria-label="Xóa dòng" className="flex h-9 w-9 p-0 items-center justify-center rounded-md text-text-muted hover:bg-surface hover:text-danger">
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 )}
@@ -329,8 +328,8 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         </div>
 
         <div>
-          <label className="mb-1 block font-semibold text-text">Ghi chú cho thợ chế tác hoa</label>
-          <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Tông màu, giấy gói, hoa chính…" value={internalNote} onChange={(e) => setInternalNote(e.target.value)} />
+          <label className="mb-1 block font-semibold text-text">Ghi chú cho người làm hàng</label>
+          <Input type="text" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Màu sắc, cách gói, yêu cầu riêng…" value={internalNote} onChange={(e) => setInternalNote(e.target.value)} />
         </div>
       </form>
     </Dialog>

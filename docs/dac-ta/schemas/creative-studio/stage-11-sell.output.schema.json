@@ -3,7 +3,7 @@
   "$id": "stage-11-sell.output.schema.json",
   "title": "Chặng 11 — SELL: AI Chat Sales tư vấn chốt đơn — Đầu ra",
   "description": "Hội thoại toàn tiệm và số đơn của sản phẩm trong gói kể từ lúc duyệt.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "11",
     "stage": 11,
     "code": "SELL",

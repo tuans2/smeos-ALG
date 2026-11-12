@@ -4,7 +4,7 @@ import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-
 import { ProductImageSetEntry } from "@/components/product-image-set/product-image-set-entry"
 
 export const metadata = {
-  title: "Tạo bộ ảnh sản phẩm từ một ảnh gốc | smeOS",
+  title: "Tạo bộ ảnh sản phẩm từ một ảnh gốc | ALG",
   description: "Sinh trọn gói ảnh đa tỉ lệ, đa góc cạnh và đa phong cách đồng bộ từ một ảnh duy nhất",
 }
 

@@ -6,6 +6,10 @@ import type { OrderPrintData } from "@/modules/orders/use-cases/get-order-printo
  */
 export function RibbonBannerPrint({ data }: { data: OrderPrintData }) {
   const lines = data.cardMessage.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+  // Đơn chưa có lời chúc → báo trên màn hình, không in câu thay thế lên băng rôn (audit BL-37)
+  if (lines.length === 0) {
+    return <p className="text-body-sm text-text-muted" role="status">Đơn {data.orderCode} chưa có lời chúc — bổ sung lời chúc rồi mới in băng rôn.</p>
+  }
   return (
     <article className="flex flex-col gap-6 text-text">
       <style>{"@page { size: A4 landscape; margin: 10mm; } @media print { .no-print { display: none !important; } }"}</style>

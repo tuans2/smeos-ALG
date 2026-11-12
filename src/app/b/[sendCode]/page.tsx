@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { getDictionary, translate } from "@/lib/i18n/server"
 import { Metadata } from "next"
 import { PublicChatSlot } from "@/components/chat/public-chat-slot"
@@ -22,7 +23,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { sendCode } = await params
-  const data = await getGreetingCatalogForCustomer(sendCode)
+  const data = await asSystemDb("page:/b", () => getGreetingCatalogForCustomer(sendCode))
 
   if (data.status === "UNAVAILABLE") {
     return {
@@ -68,7 +69,7 @@ export default async function PublicBrochurePage({ params, searchParams }: PageP
   const { sendCode } = await params
   // Phiên thuộc trình duyệt đã mở đầu tiên: người nhận link chuyển tiếp không thấy lựa chọn / đơn
   // của người trước. Dữ liệu phiên chỉ được dựng ra HTML sau khi đã xác định là chủ phiên.
-  const data = await getGreetingCatalogForCustomer(sendCode)
+  const data = await asSystemDb("page:/b", () => getGreetingCatalogForCustomer(sendCode))
   if (data.status === "NOT_FOUND") {
     return (
       <LinkUnavailable
@@ -80,10 +81,12 @@ export default async function PublicBrochurePage({ params, searchParams }: PageP
   // Link hết hạn / đóng: báo ngay cho mọi người mở, không cần nhận chủ phiên
   if (data.status === "UNAVAILABLE") return <UnavailableLink reason={data.reason} shop={data.shop} />
 
-  const viewer = await brochureViewer(sendCode, {
-    ownerToken: (await cookies()).get(ownerCookieName(sendCode))?.value ?? null,
-    staffOrganizationId: await staffOrganizationId(await headers()),
-  })
+  const ownerToken = (await cookies()).get(ownerCookieName(sendCode))?.value ?? null
+  const requestHeaders = await headers()
+  // Trang công khai tra theo mã gửi (ngoài `handle()`): quyền hệ thống, như /api/v1/public/
+  const viewer = await asSystemDb("page:/b", async () =>
+    brochureViewer(sendCode, { ownerToken, staffOrganizationId: await staffOrganizationId(requestHeaders) }),
+  )
   if (viewer?.viewer === "OTHER") {
     const justCreated = (await searchParams)?.[FRESH_SESSION_PARAM] !== undefined
     const action = otherViewerAction({ hasOrder: !!data.order, shareCode: viewer.shareCode, justCreated })

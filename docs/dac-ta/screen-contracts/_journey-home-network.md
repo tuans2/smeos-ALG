@@ -1,5 +1,7 @@
 # Screen Contract — Trang chủ Hành trình Quản trị Mạng lưới Điện hoa (Network Journey Home)
 
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Thẻ hành trình có `primaryHref` trỏ tới tuyến khoá (Điều phối, Khách hàng) bị ẩn; nút "Tháp điều phối" và "Mở bảng điều phối" của `FlowerNetworkCommandCenter` ẩn khi `/dieu-phoi` khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
 **Tuyến:** `/` · **Tệp chính:** `src/components/dashboard/network-journey-home.tsx` · **Cập nhật:** 30/09/2026 · **Thẻ:** J1–J7
 
 ## 1. Vai và mục đích
@@ -49,15 +51,17 @@ nút nổi: 1/3 · khối chính: 2/5 · nhóm thông tin: 3/7
 
 ## 10. Dữ liệu và quyền
 - Nguồn sự thật: `NETWORK_JOURNEYS` trong `journey-catalog.ts`
+- Thẻ "Chi nhánh Mạng lưới" (`NetworkPartnerListCard`): mỗi đối tác có nút **Bảng kê** mở `PartnerStatementModal` — `GET /api/v1/coordinator/partners/:id/statement`, lập sổ `POST …/settlements`, đối soát / ghi đã thanh toán `POST /api/v1/coordinator/partner-settlements/:id/reconcile|pay`, mã `R19` (Điều hành, Kế toán). Danh sách đơn ẩn sau nút "Xem N đơn" (Progressive Disclosure)
 
 ## 11. Component
 - Dùng lại: `ChoiceGrid`, `ActionCard`, `JourneyShell`, `FlowerNetworkCommandCenter`
-- Tạo mới: `NetworkJourneyHome`
+- Tạo mới: `NetworkJourneyHome`, `NetworkPartnerListCard`, `PartnerStatementModal` (thay `PartnerSettlementModal` chạy bằng dữ liệu mẫu — đã xoá)
 
 ## 12. Ma trận quyết định
 | Hiện tại | Mục tiêu | Quyết định | Lý do | Bằng chứng |
 |---|---|---|---|---|
 | Control Tower direct | Journey Home wrapper | Thêm ChoiceGrid bọc trước | Phân định rõ tác vụ điều phối vs quản trị mạng lưới | Đã PO duyệt 30/09 |
+| "Sổ đối soát" đối tác chạy bằng 3 dòng mẫu, "Đã thanh toán" chỉ đổi state trình duyệt | Bảng kê + sổ quyết toán thật | Tiền công một nguồn (phí gia công sau khấu trừ / giá thoả thuận), sổ `partner_settlements` Chờ đối soát → Đã đối soát → Đã thanh toán | Người dùng tưởng đã chốt quyết toán | PO 12/11/2026, audit BL-22 |
 
 ## 13. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

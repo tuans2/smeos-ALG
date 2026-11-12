@@ -11,22 +11,24 @@
  * Lỗi đi qua `handle()` (audit API-04): trước đây `try/catch` bọc cả `requireTenantContext`, nên
  * chưa đăng nhập / phiên bị thay trả 500 `IDENTITY_ERROR` thay vì 401, và lỗi máy chủ không tới
  * error tracker. `handle()` vẫn không trả chi tiết/stack ra client.
+ *
+ * Gác `F1` (audit API §31, 11/11/2026): phản hồi có tên + email thành viên — cùng dữ liệu với
+ * `GET /members` (`F1`); trước đây mọi vai, kể cả Shipper, đều đọc được.
  */
 
 import { notFound } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getOrganizationIdentity } from "@/modules/organization/infra/identity-query"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  const identityData = await getOrganizationIdentity(ctx.organizationId)
-  if (!identityData) throw notFound()
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "F1" },
+  handler: async ({ ctx }) => {
+    const identityData = await getOrganizationIdentity(ctx.organizationId)
+    if (!identityData) throw notFound()
 
-  return jsonResponse({
-    success: true,
-    data: identityData,
-  })
+    return jsonResponse({ data: identityData })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

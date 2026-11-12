@@ -1,6 +1,6 @@
 /**
  * Đề xuất sửa mẫu chính thức — giai đoạn 3 quản trị danh mục
- * (`docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md` mục 6). Thuần TS.
+ * (`docs/dac-ta/ALG_PRODUCT_CATALOG_GOVERNANCE_SPEC.md` mục 6). Thuần TS.
  */
 
 /** Trường nội dung đề xuất sửa được. Trạng thái bán và khả dụng đi đường vận hành riêng. */

@@ -5,7 +5,7 @@ Sinh từ `prisma/schema.prisma` bởi `scripts/gen-erd.mjs` (kế hoạch DB, b
 (PK, FK, `organization_id`) và khoá ngoại tới bảng cha; bảng của miền khác chỉ hiện tên. Cột đầy đủ, ý nghĩa và quy tắc
 ở đặc tả `docs/dac-ta/07-database-specification.md`. `tests/unit/architecture/erd.test.ts` đỏ khi tệp này lệch schema.
 
-Tổng: 155 bảng, 10 miền.
+Tổng: 159 bảng, 10 miền.
 
 ## Tổ chức, người dùng, phân quyền
 
@@ -100,6 +100,7 @@ erDiagram
   customer_occasions
   customer_segments
   customers
+  data_subject_requests
   field_config_overrides
   field_definitions
   generation_jobs
@@ -137,6 +138,7 @@ erDiagram
   order_approval_requests
   order_assignments
   order_change_requests
+  order_code_sequences
   order_coordinations
   order_events
   order_exceptions
@@ -146,6 +148,7 @@ erDiagram
   order_qc_records
   order_recipients
   orders
+  partner_settlements
   partners
   platform_access_logs
   platform_operators
@@ -235,6 +238,7 @@ erDiagram
   organizations ||--o{ customer_occasions : "organization_id"
   organizations ||--o{ customer_segments : "organization_id"
   organizations ||--o{ customers : "organization_id"
+  organizations ||--o{ data_subject_requests : "organization_id"
   organizations ||--o{ field_config_overrides : "organization_id"
   organizations ||--o{ generation_jobs : "organization_id"
   organizations ||--o{ greeting_catalog_events : "organization_id"
@@ -272,6 +276,7 @@ erDiagram
   organizations ||--o{ order_approval_requests : "organization_id"
   organizations ||--o{ order_assignments : "organization_id"
   organizations ||--o{ order_change_requests : "organization_id"
+  organizations ||--o{ order_code_sequences : "organization_id"
   organizations ||--o{ order_coordinations : "organization_id"
   organizations ||--o{ order_events : "organization_id"
   organizations ||--o{ order_exceptions : "organization_id"
@@ -283,6 +288,7 @@ erDiagram
   organizations ||--o{ orders : "organization_id"
   organizations ||--o{ organization_links : "child_org_id"
   organizations ||--o{ organization_links : "parent_org_id"
+  organizations ||--o{ partner_settlements : "organization_id"
   organizations ||--o{ partners : "organization_id"
   organizations ||--o{ platform_access_logs : "organization_id"
   organizations ||--o{ pricing_rules : "organization_id"
@@ -347,7 +353,7 @@ erDiagram
 
 ## Nền tảng và quản trị theo tầng
 
-Bảng: `platform_operators`, `platform_role_capabilities`, `platform_settings`, `platform_secrets`, `tenant_data_keys`, `platform_audit_logs`, `platform_access_logs`, `decision_registry`, `governance_decisions`, `audit_logs`, `reconciliation_findings`.
+Bảng: `platform_operators`, `platform_role_capabilities`, `platform_settings`, `platform_secrets`, `tenant_data_keys`, `platform_audit_logs`, `retention_policies`, `platform_access_logs`, `decision_registry`, `governance_decisions`, `audit_logs`, `reconciliation_findings`.
 
 ```mermaid
 erDiagram
@@ -371,6 +377,9 @@ erDiagram
   }
   platform_audit_logs {
     String id PK
+  }
+  retention_policies {
+    String category PK
   }
   platform_access_logs {
     String id PK
@@ -402,7 +411,7 @@ erDiagram
 
 ## Khách hàng và bán hàng
 
-Bảng: `customers`, `customer_consents`, `customer_interactions`, `customer_occasions`, `customer_segments`, `occasions`, `leads`, `quotations`, `quotation_items`, `quotation_revisions`, `vouchers`, `voucher_batches`, `voucher_redemptions`, `pricing_rules`, `shop_reviews`.
+Bảng: `customers`, `customer_consents`, `data_subject_requests`, `customer_interactions`, `customer_occasions`, `customer_segments`, `occasions`, `leads`, `quotations`, `quotation_items`, `quotation_revisions`, `vouchers`, `voucher_batches`, `voucher_redemptions`, `pricing_rules`, `shop_reviews`.
 
 ```mermaid
 erDiagram
@@ -412,6 +421,11 @@ erDiagram
     String branch_id FK
   }
   customer_consents {
+    String id PK
+    String organization_id FK
+    String customer_id FK
+  }
+  data_subject_requests {
     String id PK
     String organization_id FK
     String customer_id FK
@@ -501,6 +515,7 @@ erDiagram
   branches |o--o{ customers : "branch_id"
   branches |o--o{ pricing_rules : "branch_id"
   customers |o--o{ chat_conversations : "customer_id"
+  customers |o--o{ data_subject_requests : "customer_id"
   customers |o--o{ greeting_sessions : "customer_id"
   customers |o--o{ leads : "customer_id"
   customers |o--o{ orders : "customer_id, organization_id"
@@ -521,6 +536,7 @@ erDiagram
   organizations ||--o{ customer_occasions : "organization_id"
   organizations ||--o{ customer_segments : "organization_id"
   organizations ||--o{ customers : "organization_id"
+  organizations ||--o{ data_subject_requests : "organization_id"
   organizations ||--o{ leads : "organization_id"
   organizations ||--o{ occasions : "organization_id"
   organizations ||--o{ pricing_rules : "organization_id"
@@ -542,7 +558,7 @@ erDiagram
 
 ## Đơn hàng và điều phối
 
-Bảng: `orders`, `order_items`, `order_recipients`, `shared_order_access`, `order_events`, `order_payments`, `order_assignments`, `order_coordinations`, `order_exceptions`, `order_qc_records`, `order_info_requests`, `order_change_requests`, `order_approval_requests`, `partners`, `partner_marketplace_stores`, `partner_marketplace_share_links`, `product_bookings`, `staff_notifications`.
+Bảng: `orders`, `order_code_sequences`, `order_items`, `order_recipients`, `shared_order_access`, `order_events`, `order_payments`, `order_assignments`, `order_coordinations`, `order_exceptions`, `order_qc_records`, `order_info_requests`, `order_change_requests`, `order_approval_requests`, `partners`, `partner_settlements`, `partner_marketplace_stores`, `partner_marketplace_share_links`, `product_bookings`, `staff_notifications`.
 
 ```mermaid
 erDiagram
@@ -554,6 +570,10 @@ erDiagram
     String voucher_id FK
     String source_session_id FK
     String lead_id FK
+  }
+  order_code_sequences {
+    String organization_id PK,FK
+    String prefix PK
   }
   order_items {
     String id PK
@@ -621,6 +641,11 @@ erDiagram
     String id PK
     String organization_id FK
   }
+  partner_settlements {
+    String id PK
+    String organization_id FK
+    String partner_id FK
+  }
   partner_marketplace_stores {
     String id PK
   }
@@ -686,6 +711,7 @@ erDiagram
   organizations ||--o{ order_approval_requests : "organization_id"
   organizations ||--o{ order_assignments : "organization_id"
   organizations ||--o{ order_change_requests : "organization_id"
+  organizations ||--o{ order_code_sequences : "organization_id"
   organizations ||--o{ order_coordinations : "organization_id"
   organizations ||--o{ order_events : "organization_id"
   organizations ||--o{ order_exceptions : "organization_id"
@@ -695,11 +721,13 @@ erDiagram
   organizations ||--o{ order_qc_records : "organization_id"
   organizations ||--o{ order_recipients : "organization_id"
   organizations ||--o{ orders : "organization_id"
+  organizations ||--o{ partner_settlements : "organization_id"
   organizations ||--o{ partners : "organization_id"
   organizations ||--o{ product_bookings : "organization_id"
   organizations ||--o{ shared_order_access : "organization_id"
   organizations ||--o{ staff_notifications : "organization_id"
   partners |o--o{ order_coordinations : "partner_id"
+  partners ||--o{ partner_settlements : "partner_id"
   product_variants |o--o{ order_items : "variant_id"
   products |o--o{ order_items : "product_id"
   products ||--o{ product_bookings : "product_id"

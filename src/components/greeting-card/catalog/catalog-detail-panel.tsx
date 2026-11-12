@@ -91,7 +91,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             type="button"
             onClick={onBack}
             aria-label="Quay lại danh sách bộ sưu tập"
-            className="text-[length:inherit] h-auto font-[inherit] gap-0 p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
+            className="text-[length:inherit] h-auto font-[inherit] gap-0 p-2 rounded-xl border border-border hover:bg-surface-alt transition-colors text-text-muted hover:text-text"
           >
             <ArrowLeft size={16} />
           </Button>
@@ -244,7 +244,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                 key={item.id}
                 className="bg-surface rounded-xl border border-border overflow-hidden flex flex-col hover:border-primary/30 hover:shadow-md transition-all duration-200 group"
               >
-                <div className="aspect-square bg-surface-muted relative overflow-hidden">
+                <div className="aspect-square bg-surface-alt relative overflow-hidden">
                   <FlowerImage src={item.product.masterImageUrl} driveLink={item.product.driveLink} alt={item.product.name} sizes="(max-width: 640px) 50vw, 200px" fallback="icon" className="w-full h-full" />
                   <div className="absolute top-2 left-2">
                     <span className="w-6 h-6 rounded-full bg-black/50 text-white text-caption font-bold flex items-center justify-center">

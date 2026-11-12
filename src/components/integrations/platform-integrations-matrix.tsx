@@ -24,7 +24,7 @@ export function PlatformIntegrationsMatrix() {
   return (
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-6">
       <PageHeader title="Tích hợp" description="Danh mục dịch vụ bên ngoài và vai trò của từng tầng với mỗi dịch vụ." />
-      <div className="overflow-x-auto rounded-xl border border-border">
+      <div role="region" tabIndex={0} aria-label="Danh mục tích hợp" className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full min-w-[720px] text-body-sm">
           <thead className="bg-surface-alt text-left text-text">
             <tr>

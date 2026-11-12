@@ -1,11 +1,11 @@
-# 17 — Phương án thay thế SocialFlow: đưa đăng bài mạng xã hội về SMEOS
+# 17 — Phương án thay thế SocialFlow: đưa đăng bài mạng xã hội về ALG
 
-> Quyết định PO 01/11/2026: **D-46 = a** — SMEOS không phụ thuộc SocialFlow nữa; chuyển phần chức năng đang dùng về `smeOS`.
-> Repo SocialFlow **không truy cập được** trong phiên. Phạm vi dưới đây dựng từ (1) mọi chỗ `smeOS` đang gọi SocialFlow, (2) đặc tả M07/P18 và quyết định D11 trong tài liệu `smeOS`. Chi tiết API của Facebook, Instagram, Zalo, TikTok, LinkedIn **phải đối chiếu tài liệu chính thức hiện hành của nhà cung cấp** khi thực hiện; kế hoạch này không khẳng định chi tiết API.
+> Quyết định PO 01/11/2026: **D-46 = a** — ALG không phụ thuộc SocialFlow nữa; chuyển phần chức năng đang dùng về `ALG`.
+> Repo SocialFlow **không truy cập được** trong phiên. Phạm vi dưới đây dựng từ (1) mọi chỗ `ALG` đang gọi SocialFlow, (2) đặc tả M07/P18 và quyết định D11 trong tài liệu `ALG`. Chi tiết API của Facebook, Instagram, Zalo, TikTok, LinkedIn **phải đối chiếu tài liệu chính thức hiện hành của nhà cung cấp** khi thực hiện; kế hoạch này không khẳng định chi tiết API.
 
-## 1. Hiện trạng: SMEOS đang dùng gì của SocialFlow
+## 1. Hiện trạng: ALG đang dùng gì của SocialFlow
 
-| # | Chức năng | Nơi gọi trong `smeOS` | Endpoint SocialFlow | Ghi chú |
+| # | Chức năng | Nơi gọi trong `ALG` | Endpoint SocialFlow | Ghi chú |
 |---|---|---|---|---|
 | F1 | Danh sách bài, trạng thái, lỗi, link bài | `src/app/(app)/lich-dang/page.tsx`, `components/dashboard/marketing-workspace.tsx` | `GET api/m07/posts` | Trường: `id, title, content, platform, channel_label, status, scheduled_time, created_at, media_paths, post_url, error_message` |
 | F2 | Lên lịch hàng loạt | Lịch đăng | `POST api/m07/posts/batch-schedule` | `{ ids, scheduled_time }` |
@@ -127,7 +127,7 @@ Có thể **gộp một kết nối Meta** cho cả chat Messenger (đang có) v
 1. SocialFlow không chạy trên production (thiếu `SOCIALFLOW_URL`) → **không cần chạy song song**; bật kênh mới theo tổ chức bằng cờ (`ux-rollout-flags`).
 2. Tài khoản MXH **không chuyển được** (mật khẩu/phiên) → mỗi tiệm kết nối lại bằng OAuth; màn `/ket-noi` hướng dẫn.
 3. Lịch sử bài: theo S-3.
-4. Sau S-14, `smeOS` không còn mã gọi SocialFlow; khi P2-G2 (LocalBudd) cũng xong thì gỡ proxy, SSO liên-app, token tích hợp (P2-G4).
+4. Sau S-14, `ALG` không còn mã gọi SocialFlow; khi P2-G2 (LocalBudd) cũng xong thì gỡ proxy, SSO liên-app, token tích hợp (P2-G4).
 
 ## 6. Rủi ro
 

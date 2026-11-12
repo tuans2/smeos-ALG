@@ -42,7 +42,7 @@ export const STUDIO_OPERATIONS: OpenApiOperation[] = [
     description: "Header `Idempotency-Key` bắt buộc (thiếu → 400); gửi lại cùng khoá không tạo bài thứ hai. `mode`: `NOW` · `AUTO` (giờ vàng) · `AT` (kèm `scheduled_at`). Chưa có bài đã duyệt cho kênh → 400; lượt bài chưa duyệt hoặc kênh chưa kết nối → 409. 30 lần/phút/người → 429. Lượt bài của tổ chức khác → 404.",
     ok: [201, { description: "Bài đã lên lịch", schema: res.postsScheduledResponse }], errors: [...BODY_ERRORS, 404, 409, 429] }),
   op(SOCIAL, { method: "post", path: "/social-publishing/posts/{id}/cancel", operationId: "cancelSocialPost", summary: "Huỷ bài đang chờ", cap: "J5",
-    description: `Chỉ bài \`QUEUED\`; đã bắt đầu đăng → 409. ${NF}`, ok: [200, { description: "Bài", schema: res.postResponse }], errors: [404, 409] }),
+    description: `Chỉ bài \`QUEUED\`; đã bắt đầu đăng → 409. Huỷ bài cuối cùng còn lại của lượt bài nguồn (mọi bài đều \`CANCELED\`) → lượt về \`APPROVED\` để sửa / duyệt lại. ${NF}`, ok: [200, { description: "Bài", schema: res.postResponse }], errors: [404, 409] }),
   op(SOCIAL, { method: "post", path: "/social-publishing/posts/{id}/retry", operationId: "retrySocialPost", summary: "Thử lại bài đăng thất bại", cap: "J5",
     description: `Chỉ bài \`FAILED\` (khác → 409); đăng ở lượt cron kế tiếp, cấp lại đủ 5 lượt. 30 lần/phút/người → 429. ${NF}`, ok: [200, { description: "Bài", schema: res.postResponse }], errors: [404, 409, 429] }),
 ]

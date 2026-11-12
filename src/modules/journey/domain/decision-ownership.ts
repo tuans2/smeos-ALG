@@ -1,6 +1,6 @@
 /**
  * Decision Ownership & Definition SSOT
- * FloraOS Core — Final Hardening Patch v2.3 / PATCH P2 (Mục 11.5)
+ * ALG Core — Final Hardening Patch v2.3 / PATCH P2 (Mục 11.5)
  */
 
 export type DecisionOwnership = 'USER' | 'SYSTEM' | 'SHARED'

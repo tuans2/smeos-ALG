@@ -170,7 +170,7 @@ export function CoordinatorReminderSettingsModal({
               <div className="p-3.5 rounded-xl border border-border bg-surface-alt/30 space-y-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-caption font-bold text-warning uppercase">
+                    <span className="text-caption font-bold text-warning-text uppercase">
                       Bắt đầu chế tác
                     </span>
                     <h4 className="text-body-sm font-bold text-text">
@@ -236,7 +236,7 @@ export function CoordinatorReminderSettingsModal({
               <div className="p-3.5 rounded-xl border border-border bg-surface-alt/30 space-y-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-caption font-bold text-warning uppercase">
+                    <span className="text-caption font-bold text-warning-text uppercase">
                       Shipper lấy hàng
                     </span>
                     <h4 className="text-body-sm font-bold text-text">

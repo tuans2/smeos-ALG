@@ -73,7 +73,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-border bg-surface-muted/60 text-caption font-extrabold text-text uppercase tracking-wider">
+              <tr className="border-b border-border bg-surface-alt/60 text-caption font-extrabold text-text uppercase tracking-wider">
                 <th scope="col" className="py-3 px-4">Hạng mục chính sách & Quy tắc vận hành</th>
                 <th scope="col" className="py-3 px-3 text-center w-28">Bật</th>
                 <th scope="col" className="py-3 px-3 text-center w-28">Tắt</th>
@@ -171,7 +171,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
 
               {/* 5. TỰ ĐỘNG HỦY & HOÀN TIỀN KHI ĐIỀU PHỐI TỪ CHỐI */}
               <PolicyRow
-                icon={<AlertTriangle size={17} className="text-warning" />}
+                icon={<AlertTriangle size={17} className="text-warning-text" />}
                 title="Tự động hủy & hoàn tiền khi Điều phối từ chối"
                 description="Khi xưởng hết nguyên liệu/quá tải, Điều phối báo từ chối. Quá thời gian quy định sẽ tự hủy & tạo lệnh hoàn tiền."
                 isOn={Boolean(policy.cancellationApprovalTimeoutMinutes && policy.cancellationApprovalTimeoutMinutes <= 120)}

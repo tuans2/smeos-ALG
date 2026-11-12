@@ -59,7 +59,7 @@ export function PaymentPolicySection() {
         <h3 className="text-title-sm font-extrabold text-text">Chính sách thanh toán & giao hàng</h3>
       </div>
       {!policy ? (
-        <div className="h-40 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-40 rounded-2xl bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <PolicyMatrixTable
           policy={policy}

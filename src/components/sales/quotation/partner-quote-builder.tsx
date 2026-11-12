@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input"
 import { InlineError } from "@/components/ui/inline-error"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import { QUOTATION_STATUS_LABELS } from "@/modules/sales/domain/quotation"
+import { unsentMessage } from "./quotation-send"
 import { quotationApi } from "./quotation-api"
 import type { ProductItem, QuotationRecord } from "./quotation-types"
 
@@ -61,7 +62,13 @@ export function PartnerQuoteBuilder({
         terms: "Thanh toán khi hoàn thành bàn giao và kiểm tra chất lượng.",
       })
 
-      const finalQuote = isSend ? await quotationApi.send(quote.id).catch(() => quote) : quote
+      // Gửi lỗi thì giữ phiếu nháp đã lưu và báo rõ, không nuốt lỗi (audit BL-31)
+      const finalQuote = isSend
+        ? await quotationApi.send(quote.id).catch((err: unknown) => {
+            setErrorMsg(unsentMessage(err))
+            return quote
+          })
+        : quote
       setCreatedQuote(finalQuote)
       onQuotationCreated?.(finalQuote)
     } catch (err: unknown) {

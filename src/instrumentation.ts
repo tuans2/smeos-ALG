@@ -18,7 +18,9 @@ export async function register(): Promise<void> {
     setErrorTracker(initSentryErrorTracker(dsn))
   }
   // Bộ quét nền đi qua mọi tổ chức → quyền hệ thống; hẹn giờ giữ ngữ cảnh lúc tạo (RLS, checklist ALG 1.18)
-  const { asSystemDb } = await import("@/core/tenancy/db-context")
+  const { asSystemDb, markWebProcess } = await import("@/core/tenancy/db-context")
+  // Truy vấn ngoài mọi ngữ cảnh trong tiến trình web không được quyền hệ thống (audit DB-01, chuẩn bị I-6)
+  markWebProcess()
   const { startBackgroundSweep } = await import("@/modules/greeting-card/use-cases/background-sweep-scheduler")
   asSystemDb("sweep:greeting-card", startBackgroundSweep)
   // Đơn quá hạn thanh toán → lead cứu đơn (Đơn hàng đa nguồn, PO 31/10/2026) — chỉ đọc sự kiện huỷ.
@@ -33,6 +35,9 @@ export async function register(): Promise<void> {
   // Khách có đơn vừa đổi → tính lại chi tiêu thực thu và hạng theo ngành (PO 07/11/2026, Q6).
   const { startCustomerMetricsSweep } = await import("@/modules/crm/use-cases/customer-metrics-scheduler")
   asSystemDb("sweep:customer-metrics", startCustomerMetricsSweep)
+  // Hạn lưu theo loại dữ liệu mỗi đêm (ADR-014 D-P4) — mặc định chỉ đếm; xoá/ẩn danh khi PO bật từng loại.
+  const { startRetentionSweep } = await import("@/modules/organization/use-cases/retention-scheduler")
+  asSystemDb("sweep:retention", startRetentionSweep)
 }
 
 /** Lỗi máy chủ không ai bắt → log có cấu trúc (rà soát 21/10/2026, giai đoạn 3 — quan trắc). */

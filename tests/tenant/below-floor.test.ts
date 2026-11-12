@@ -105,6 +105,22 @@ describe("chặn giá dưới sàn", () => {
     expect((await quote(a.token, orderId, floorVnd - 1000)).status).toBe(200)
   })
 
+  it("mẫu chưa gắn độ phức tạp (thiếu tiền công): sàn tính từ phần giá vốn đã có, Sale dưới mức đó bị chặn kèm lời nhắc; trần không áp (PO 11/11/2026)", async () => {
+    await prisma.products.update({ where: { id: productId }, data: { attributes: { price: 500000 } as never } })
+    const cost = await readJson(await getCost(withSession(`${BASE}/costing/products/${productId}/cost`, a.token), params({ productId })))
+    const partial = (cost.data as { cost: { totalVnd: number; complete: boolean } }).cost
+    expect(partial.complete).toBe(false)
+    const partialFloor = Math.ceil(partial.totalVnd / 1000) * 1000
+    expect(partialFloor).toBeGreaterThan(0)
+    const orderId = await draftOrder()
+    const low = await quote(sale.token, orderId, partialFloor - 1000)
+    expect(low.status).toBe(422)
+    const err = (await readJson(low)).error as { message: string; details: { reason: string; floorVnd: number } }
+    expect(err.details).toMatchObject({ reason: "BELOW_FLOOR", floorVnd: partialFloor })
+    expect(err.message).toContain("giá vốn của mẫu chưa đủ dữ liệu")
+    expect((await quote(sale.token, orderId, partialFloor * 10)).status).toBe(200)
+  })
+
   it("Sale lập báo giá bán hàng dưới sàn → 422; Điều hành lập được", async () => {
     const body = JSON.stringify({ items: [{ productId, name: "Bó hồng", qty: 2, unitPrice: floorVnd - 5000 }] })
     expect((await createQuotation(withSession(`${BASE}/quotations`, sale.token, { method: "POST", body }))).status).toBe(422)

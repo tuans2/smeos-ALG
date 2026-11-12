@@ -25,6 +25,8 @@ describe("sổ nhà cung cấp kênh liên lạc — Console tầng Mẹ", () =>
 
   beforeAll(async () => {
     await resetDatabase()
+    // `platform_secrets` không nằm trong danh sách `resetDatabase` dọn — xoá cấu hình kênh của lượt chạy trước
+    await prisma.platform_secrets.deleteMany({ where: { key: { startsWith: "notification_provider:" } } })
     op = await createTenant("van-hanh-kenh")
     thieuQuyen = await createTenant("van-hanh-thieu-n2")
     shop = await createTenant("tiem-kenh")

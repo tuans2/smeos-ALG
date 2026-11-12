@@ -3,6 +3,7 @@
 import React from "react"
 import { CheckCircle2, Clock, XCircle, ShieldCheck, Sparkles } from "@/components/ui/icons"
 import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+import { paymentProgress } from "@/modules/orders/domain/payment-progress"
 
 export interface OrderParallelStagesProps {
   isPaid?: boolean
@@ -35,8 +36,9 @@ export function OrderParallelStagesCard({
   const isAccepted = !isRejected && (productionStatus !== "WAITING" || orderStatus === "CONFIRMED" || orderStatus === "PROCESSING")
 
   const hasMoney = paidVnd > 0 || legacyIsPaid === true
-  const isFullyPaid = (totalVnd > 0 && paidVnd >= totalVnd) || (legacyIsPaid && totalVnd <= 0)
-  const isDeposit = totalVnd > 0 && paidVnd > 0 && paidVnd < totalVnd
+  const progress = paymentProgress(totalVnd, paidVnd)
+  const isFullyPaid = (totalVnd > 0 && progress === "PAID") || (legacyIsPaid && totalVnd <= 0)
+  const isDeposit = progress === "DEPOSIT"
 
   const ot = getIndustryOrderTerms(industryKey)
 
@@ -69,7 +71,7 @@ export function OrderParallelStagesCard({
             ? `Cửa hàng đã nhận ${paidVnd.toLocaleString("vi-VN")} đ tiền cọc. Phần còn lại ${(totalVnd - paidVnd).toLocaleString("vi-VN")} đ thanh toán sau khi duyệt thành phẩm.`
             : hasMoney
             ? "Cửa hàng đã nhận đủ tiền chuyển khoản thành công."
-            : "Thời gian xác nhận trong vòng 15’ (tối đa). Hệ thống tự động duyệt sau 15’ khi có ảnh bill."}
+            : "Cửa hàng đang đối soát chuyển khoản và sẽ xác nhận sớm."}
         </p>
       </div>
 

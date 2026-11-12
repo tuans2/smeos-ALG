@@ -1,67 +1,69 @@
 import { notFound, validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getCustomerSegmentUseCase } from "@/modules/crm/use-cases/get-customer-segment.use-case"
 import {
   updateCustomerSegmentUseCase,
   updateCustomerSegmentInputSchema,
 } from "@/modules/crm/use-cases/update-customer-segment.use-case"
 import { deleteCustomerSegmentUseCase } from "@/modules/crm/use-cases/delete-customer-segment.use-case"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
-  if (!hasCapability(ctx, "M4") && !hasCapability(ctx, "Q1")) {
-    requireCapability(ctx, "M4")
-  }
-
-  const { id } = await (context as { params: Promise<{ id: string }> }).params
-  const segment = await getCustomerSegmentUseCase(ctx, id)
-  if (!segment) {
-    throw notFound()
-  }
-
-  return jsonResponse({ data: segment })
-})
-
-export const PATCH = handle(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "M4")
-
-  const { id } = await (context as { params: Promise<{ id: string }> }).params
-
-  const raw = await request.json().catch(() => null)
-  if (!raw || typeof raw !== "object") {
-    throw validationFailed({ body: "Dữ liệu yêu cầu không hợp lệ" })
-  }
-
-  const parsed = updateCustomerSegmentInputSchema.safeParse(raw)
-  if (!parsed.success) {
-    const details: Record<string, string> = {}
-    for (const issue of parsed.error.issues) {
-      details[issue.path.join(".")] = issue.message
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "quyền kiểm trong handler: M4, Q1" },
+  handler: async ({ ctx, params }) => {
+    if (!hasCapability(ctx, "M4") && !hasCapability(ctx, "Q1")) {
+      requireCapability(ctx, "M4")
     }
-    throw validationFailed(details)
-  }
 
-  const updated = await updateCustomerSegmentUseCase(ctx, id, parsed.data)
-  if (!updated) {
-    throw notFound()
-  }
+    const { id } = params as { id: string }
+    const segment = await getCustomerSegmentUseCase(ctx, id)
+    if (!segment) {
+      throw notFound()
+    }
 
-  return jsonResponse({ data: updated })
+    return jsonResponse({ data: segment })
+  },
 })
 
-export const DELETE = handle(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "M4")
+export const PATCH = defineRoute({
+  auth: { kind: "tenant", capability: "M4" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
 
-  const { id } = await (context as { params: Promise<{ id: string }> }).params
-  const ok = await deleteCustomerSegmentUseCase(ctx, id)
-  if (!ok) {
-    throw notFound()
-  }
+    const raw = await request.json().catch(() => null)
+    if (!raw || typeof raw !== "object") {
+      throw validationFailed({ body: "Dữ liệu yêu cầu không hợp lệ" })
+    }
 
-  return jsonResponse({ success: true })
+    const parsed = updateCustomerSegmentInputSchema.safeParse(raw)
+    if (!parsed.success) {
+      const details: Record<string, string> = {}
+      for (const issue of parsed.error.issues) {
+        details[issue.path.join(".")] = issue.message
+      }
+      throw validationFailed(details)
+    }
+
+    const updated = await updateCustomerSegmentUseCase(ctx, id, parsed.data)
+    if (!updated) {
+      throw notFound()
+    }
+
+    return jsonResponse({ data: updated })
+  },
+})
+
+export const DELETE = defineRoute({
+  auth: { kind: "tenant", capability: "M4" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    const ok = await deleteCustomerSegmentUseCase(ctx, id)
+    if (!ok) {
+      throw notFound()
+    }
+
+    return jsonResponse({ data: { id, deleted: true } })
+  },
 })
 

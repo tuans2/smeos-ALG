@@ -85,7 +85,7 @@ export function CancelFloristOrderModal({
             size="sm"
             onClick={handleConfirm}
             disabled={submitting}
-            className="bg-danger hover:bg-danger-dark text-white font-bold"
+            className="bg-danger hover:bg-danger-text text-white font-bold"
           >
             {submitting ? "Đang xử lý..." : "Xác nhận hủy đơn"}
           </Button>

@@ -2,7 +2,7 @@ import * as React from "react"
 import type { Icon as PhosphorIcon, IconWeight } from "@phosphor-icons/react"
 
 /**
- * Bộ icon chuẩn SMEOS (Phosphor, PO 30/10/2026) — giữ tên kiểu lucide để thay
+ * Bộ icon chuẩn ALG (Phosphor, PO 30/10/2026) — giữ tên kiểu lucide để thay
  * `from "@/components/ui/icons"` bằng `from "@/components/ui/icons"` mà không đổi chỗ dùng.
  * Mặc định nét `regular`; `strokeWidth ≥ 2.5` → `bold`; có `fill` → `fill`.
  * Ô icon lớn dùng `IconTile` (`app-icon.tsx`). Icon mới: thêm vào đây, không import lucide.

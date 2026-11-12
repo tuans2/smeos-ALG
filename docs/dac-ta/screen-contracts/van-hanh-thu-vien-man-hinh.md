@@ -20,8 +20,8 @@ acceptance:
 
 ## 1. Vai & Mục đích
 - **Vai chính (03b):** `platform_admin`.
-- **Phạm vi dữ liệu:** `platform` (Danh mục toàn bộ các màn hình giao diện trong toàn bộ hệ thống smeOS).
-- **Mục tiêu chính:** Cung cấp trung tâm đối soát, kiểm tra trực tiếp và phân loại 100% màn hình thực tế trong hệ sinh thái đa tenant smeOS. Dữ liệu được quét tự động và cập nhật tức thì theo mã nguồn.
+- **Phạm vi dữ liệu:** `platform` (Danh mục toàn bộ các màn hình giao diện trong toàn bộ hệ thống ALG).
+- **Mục tiêu chính:** Cung cấp trung tâm đối soát, kiểm tra trực tiếp và phân loại 100% màn hình thực tế trong hệ sinh thái đa tenant ALG. Dữ liệu được quét tự động và cập nhật tức thì theo mã nguồn.
 - **Câu hỏi cốt lõi:** "Hệ thống hiện có bao nhiêu màn hình, phân bố theo tầng thế nào và làm sao click vào kiểm tra trực tiếp từng màn hình?"
 - **Mật độ thông tin (Density):** `compact`
 

@@ -1,4 +1,4 @@
-# Sổ tay vận hành smeOS (bàn giao)
+# Sổ tay vận hành ALG (bàn giao)
 
 Bản nháp bàn giao 28/10/2026 — soạn từ mã nguồn (`render.yaml`, `package.json`, `.env.example`, `CLAUDE.md`) và kết quả audit (`docs/audit/`). Mục đánh dấu **[CẦN XÁC NHẬN]** chưa có bằng chứng trong repo; chủ sản phẩm điền trước khi giao cho khách.
 
@@ -10,7 +10,7 @@ Bản nháp bàn giao 28/10/2026 — soạn từ mã nguồn (`render.yaml`, `pa
 | `smeos-worker-media` | worker (Python) | Xử lý ảnh/biến thể sản phẩm | `python -m media_ai.jobs.worker` |
 | `smeos-worker-video` | worker (Python) | Dựng video | `python -m media_ai.video.video_worker` |
 | `smeos-worker-vision` | worker (Python) | Phân tích ảnh sản phẩm | xem `render.yaml` |
-| `smeos-cron-dispatch-sweep` | cron, mỗi 5 phút | Nhắc việc điều phối chuỗi + kiểm sức khoẻ | gọi `POST /api/v1/internal/chain-dispatch-sweep` rồi `GET /api/v1/internal/health` (header `x-cron-secret`) |
+| `smeos-cron-dispatch-sweep` | cron, mỗi 5 phút | Nhắc việc điều phối chuỗi, kiểm sức khoẻ, sự kiện tích hợp, đăng bài đến hạn, hoàn credit tác vụ AI lỗi/bị huỷ | gọi `POST /api/v1/internal/chain-dispatch-sweep`, `GET /api/v1/internal/health`, rồi `POST /api/v1/internal/integrations-sweep` (header `x-cron-secret`). Hoàn credit chạy tay khi cần: `npm run hoan-credit` (idempotent) |
 | `smeos-postgres` | PostgreSQL 16 (`basic-256mb`) | Dữ liệu chính, mọi bảng tenant có `organization_id` | — |
 | `smeos-redis` | Key Value 256 MB | Bộ đếm giới hạn tần suất dùng chung | chỉ mạng nội bộ Render |
 
@@ -156,22 +156,41 @@ và worker (`workers/shared/rls.py`) đặt `app.org_id` theo tổ chức của 
 | `audit` (mặc định của blueprint) | Chính sách cho qua mọi dòng | Đặt ngữ cảnh; ghi log `db.rls.unscoped_query` khi request chưa gắn tổ chức chạm bảng thuộc tổ chức (`kind=pending`) hoặc truy vấn chạy ngoài request (`kind=unclassified`), kèm bảng và đường dẫn |
 | `enforce` | Truy vấn sai tổ chức trả 0 dòng; ghi sai tổ chức bị từ chối | Như `audit` |
 
-**Chuyển sang `enforce`:** khi 14 ngày liền không có log `db.rls.unscoped_query` `kind=pending` trên production. Đặt
+**Truy vấn ngoài mọi ngữ cảnh (11/11/2026, audit DB-01):** trong tiến trình web, truy vấn không nằm trong request (`handle()`),
+`withRequestDb` (trang server có phiên), `asSystemDb` (trang công khai, bộ quét nền) hay `withTenantDb` **không có quyền hệ
+thống** — ở `enforce` thấy 0 dòng bảng thuộc tổ chức (fail-closed). Script và công cụ ngoài web vẫn chạy như hệ thống (dùng
+`smeos_system` khi có I-1). Test `tests/unit/architecture/db-context-entrypoints.test.ts` đỏ nếu trang/route mới chạm CSDL mà
+không mở ngữ cảnh. Log `kind=unclassified` của `smeos-web` là chỗ còn sót (vd. callback nhận tin Redis) — sửa trước khi bật.
+
+**Chuyển sang `enforce`:** khi 14 ngày liền không có log `db.rls.unscoped_query` `kind=pending` hay `kind=unclassified` của
+`smeos-web` trên production. Đặt
 `DB_RLS_MODE=enforce` ở `smeos-web` và 3 worker cùng lúc (Render → Environment), deploy lại. Theo dõi lỗi 404/rỗng dữ liệu 24 giờ đầu.
 
 **Tắt khẩn cấp:** đặt lại `audit` (hoặc `off`) và deploy — không cần migration, có hiệu lực ngay khi tiến trình khởi động lại.
 
 **Tài khoản CSDL theo vai (ADR-013 D-I1):** chạy `scripts/db/create-roles.sql` một lần bằng tài khoản chủ sở hữu, đặt mật khẩu
 từng vai (`ALTER ROLE … PASSWORD`), rồi thay `DATABASE_URL` của từng dịch vụ trên Render (khoá `sync: false`):
-`smeos-web` → `smeos_app`, 3 worker → `smeos_worker`, script vận hành và bộ quét ngoài app → `smeos_system` (bỏ qua RLS),
-báo cáo/điều tra → `smeos_readonly` (luôn chặn theo tổ chức). Bước migration (pre-deploy) giữ tài khoản chủ sở hữu. Trước khi thay
-cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `smeos_app`.
+`smeos-web` → `alg_app`, 3 worker → `alg_worker`, script vận hành và bộ quét ngoài app → `alg_system` (bỏ qua RLS),
+báo cáo/điều tra → `alg_readonly` (luôn chặn theo tổ chức). Bước migration (pre-deploy) giữ tài khoản chủ sở hữu. Trước khi thay
+cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `alg_app`.
+
+Script cũng đặt giới hạn truy vấn
+(ADR-015 D-O5): 15 s cho `alg_app`, 120 s cho vai khác, giao dịch bỏ ngỏ 60 s — có hiệu lực ở kết nối mới (khởi động lại
+dịch vụ); chạy lại script an toàn.
+
+**Đổi tên vai `smeos_*` → `alg_*` (đổi thương hiệu ALG, 12/11/2026)** — chỉ cho CSDL đã tạo vai bằng bản cũ của
+`create-roles.sql`. Làm trong một khung bảo trì ngắn vì dịch vụ đăng nhập bằng tên cũ sẽ hỏng ngay sau bước 2:
+1. Chuẩn bị sẵn `DATABASE_URL` mới cho từng dịch vụ (chỉ đổi phần user `smeos_*` → `alg_*`, mật khẩu giữ nguyên).
+2. `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/db/rename-roles-to-alg.sql` bằng tài khoản chủ sở hữu. Script báo
+   từng vai; vai nào báo "mật khẩu MD5 đã bị xoá" thì đặt lại `ALTER ROLE alg_… PASSWORD '…'` (SCRAM giữ nguyên).
+3. Thay `DATABASE_URL` trên Render cho web, 3 worker, cron, rồi deploy lại; kiểm `/van-hanh` (worker còn sống) và đăng nhập.
+Quyền, BYPASSRLS và `app.rls_mode` đi theo vai khi đổi tên; chính sách RLS không tham chiếu tên vai.
 
 **Nhật ký bất biến (ADR-013 D-I4, migration `20261106130000_append_only_logs`):** `audit_logs`, `platform_audit_logs`,
 `order_events`, `job_events`, `usage` không sửa được; xoá (kể cả xoá đơn hàng kéo theo `order_events`) chỉ được trong giao
 dịch đã đặt lý do purge — trong mã dùng `setPurgeReason(tx, …)` (`src/core/tenancy/infra/purge-reason.ts`), trong psql dùng
 `BEGIN; SELECT set_config('app.purge_reason', 'tenant_offboarding', true); …; COMMIT;`. `create-roles.sql` thu quyền
-UPDATE/DELETE của `smeos_app`/`smeos_worker` trên năm bảng này. Script dọn tenant (`handover-clean-tenant.ts`,
+UPDATE/DELETE của `alg_app`/`alg_worker` trên năm bảng này. Script dọn tenant (`handover-clean-tenant.ts`,
 `clean-siin-store-orders.ts`) đã đặt lý do; script mới xoá đơn hàng hay job phải làm như vậy.
 
 Bảng mới có `organization_id`: chạy `node scripts/gen-rls-policies.mjs` để sinh SQL chính sách vào migration của bảng đó —
@@ -244,21 +263,85 @@ Migration tự kiểm lại; còn thì dừng, không đổi gì, bản cũ vẫ
 được bản P-5d-1 (bản P-5c còn đọc `*_enc`).
 
 
-## 15. Người vận hành đầu tiên trên một bản cài mới
+## 15. Vòng đời tổ chức — tạm ngưng, rời nền tảng, xoá (ADR-016 D-S5, 11/11/2026)
 
-Phát hiện khi chạy Bước 6 bàn giao GD1 (11/11/2026) trên bản cài trắng. Ba việc dưới đây phải làm **đúng thứ tự**,
-và việc thứ ba hiện chưa có công cụ trong bản giao:
+`organizations.lifecycle_status` (đặc tả 07 §53). Admin SaaS (`N2`) đổi qua `PATCH /api/v1/platform/organizations/:id`:
 
-1. Đăng ký một tài khoản như người dùng thường (`/dang-ky`, hoặc `POST /api/v1/auth/signup`). Theo chốt của chủ dự án
-   ngày 22/10/2026, mọi tài khoản tự đăng ký bắt đầu ở `PENDING` và **chưa đăng nhập được**.
-2. Gán vai vận hành nền tảng cho chính tài khoản đó:
-   `npm run gan-van-hanh-nen-tang -- --email=<email>` (mặc định gán đủ `N1`–`N20`).
-3. Duyệt tài khoản đó. Người duyệt bình thường là superadmin nền tảng (`N13`) ở Console `/van-hanh/dang-ky` — nhưng
-   trên bản cài mới chưa có ai đăng nhập được, nên **lần đầu tiên phải duyệt thẳng trong cơ sở dữ liệu**:
+- `SUSPENDED` — thành viên và khoá tích hợp không vào được (403 `ORGANIZATION_INACTIVE`), dữ liệu giữ nguyên. Mở lại:
+  `ACTIVE`.
+- `OFFBOARDING` (kèm `offboarding_until` theo hợp đồng) — chỉ xem, để khách xuất dữ liệu bàn giao.
+- Quá `offboarding_until`, không còn legal hold → xoá hẳn trên Render shell của `smeos-web`:
+  1. Sao lưu CSDL.
+  2. `npm run tenant:purge -- --org <id> --operator <email>` — chỉ đọc, in số dòng sẽ xoá theo từng bảng.
+  3. Thêm `--confirm` để xoá. Giữ chứng từ ghi sổ và nhật ký, ẩn danh khách trên chứng từ; tổ chức chuyển `DELETED`; tệp
+     ảnh vào hàng đợi xoá kho; một dòng `platform_audit_logs`.
 
-```sql
-UPDATE users SET approval_status = 'APPROVED', approval_decided_at = now() WHERE email = '<email>';
-```
+## 16. Hạn lưu dữ liệu — `retention_policies` (ADR-014 D-P4, 11/11/2026)
 
-Bỏ bước 3 thì đăng nhập trả `403 ACCOUNT_PENDING` dù vai vận hành đã gán xong — không phải lỗi cấu hình.
-Từ người vận hành thứ hai trở đi không cần SQL: người đầu tiên duyệt họ ở `/van-hanh/dang-ky`.
+Job hằng đêm (1–5 giờ sáng giờ Việt Nam) trong `smeos-web`, đặc tả 07 §54. Bảy loại: `technical_logs`, `delivery_info`,
+`audit_logs`, `customer_conversations`, `customer_profiles`, `non_ledger_documents`, `finished_jobs` (job sinh ảnh / nội
+dung đã xong quá 30 ngày). Mặc định **chỉ đếm** số dòng quá hạn — log
+`retention.policy_ran` (`enforced: false`, `rows`) và cột `last_run_rows`; chưa xoá gì.
+
+1. Xem số dòng quá hạn trên Render shell của `smeos-web`: `npm run retention:sweep` (chỉ đọc, in số dòng theo bảng).
+2. Bật thực thi một loại (sau khi kế toán/pháp lý của khách xác nhận mốc, và đã sao lưu):
+   `UPDATE retention_policies SET enforce = true, updated_by = '<email người vận hành>' WHERE category = '<loại>';`
+   Đổi mốc: sửa `retention_months` (1–600). Đêm sau job xoá / ẩn danh thật; muốn chạy ngay:
+   `npm run retention:sweep -- --run`.
+3. Tổ chức đang legal hold (`organizations.legal_hold_until` ở tương lai) không bị xoá / ẩn danh gì.
+4. Tắt job khẩn cấp: biến môi trường `RETENTION_SWEEP=off` rồi khởi động lại dịch vụ; hoặc đặt `enforce = false`.
+5. Dữ liệu đã xoá vẫn còn trong bản sao lưu tới hết hạn giữ bản sao lưu (ADR-015); khôi phục từ bản cũ thì chạy lại
+   job.
+
+## 17. Xuất / nhập toàn bộ dữ liệu một tổ chức (ADR-016 D-S3, 12/11/2026)
+
+Dùng khi: chuyển khách sang triển khai riêng (`DEDICATED`), bàn giao dữ liệu khi khách rời nền tảng, khôi phục riêng một
+tổ chức (D-S4). Chạy trên Render shell của `smeos-web`; người vận hành cần mã `N2`; mỗi lần ghi `platform_audit_logs`.
+
+1. Xuất: `npm run tenant:transfer -- export --org <id> --out /tmp/<id>.json --operator <email>` — in số dòng từng bảng và
+   số tệp trong kho cần chép riêng (danh sách ở `files` của gói).
+2. Kiểm gói ở CSDL đích: `npm run tenant:transfer -- import --file <tệp> --operator <email>` — kiểm định dạng, checksum
+   từng bảng, phiên bản schema (migration cuối) phải trùng.
+3. Sao lưu CSDL đích, rồi thêm `--confirm` để nhập (một giao dịch; lỗi giữa chừng thì không ghi gì).
+4. Chép tệp trong `files` sang kho của đích (cùng khoá).
+
+Lưu ý:
+- Gói chứa dữ liệu cá nhân dạng bản mã và băm mật khẩu thành viên — lưu như bản sao lưu, xoá sau khi dùng.
+- CSDL đích phải dùng **cùng** `PII_ENCRYPTION_KEY` (khoá dữ liệu của tổ chức đi theo gói, được bọc bằng khoá chủ).
+- Tổ chức đã có ở đích → từ chối (khôi phục riêng: xoá dữ liệu hiện tại theo D-S4 trước). Thành viên đã có (cùng id)
+  giữ nguyên; liên kết tới tổ chức không có ở đích bị bỏ qua.
+- `scripts/handover-backup-engine.ts` vẫn giữ cho hai script dọn dữ liệu thử trước bàn giao (PO 11/11/2026).
+
+**Khôi phục riêng một tổ chức về một mốc (ADR-016 D-S4, mục tiêu ≤ 4 giờ):**
+
+1. Khôi phục PITR của nhà cung cấp ra một CSDL tạm tới mốc khách yêu cầu (ADR-015 D-O3); ghi giờ bắt đầu.
+2. Trỏ `DATABASE_URL` của Render shell tạm vào CSDL tạm, xuất tổ chức (bước 1 ở trên).
+3. Trên production: sao lưu, rồi `npm run tenant:transfer -- restore --file <tệp> --operator <email>` (kiểm), thêm
+   `--confirm` để chạy — một giao dịch: xoá dữ liệu hiện tại của tổ chức, nhập gói, chạy lại các yêu cầu xoá dữ liệu cá nhân
+   có sau mốc (khách đã xin xoá không "sống lại"); ghi `platform.organization_restored`.
+4. Chép tệp trong `files` nếu kho tệp cũng phải về mốc; xoá CSDL tạm và tệp gói. Ghi biên bản (giờ bắt đầu → xong) vào
+   `docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md`.
+
+## 18. Tăng trưởng bảng — phân vùng / bản sao đọc theo ngưỡng (ADR-015 D-O6, 12/11/2026)
+
+1. Mỗi tháng (hoặc khi cảnh báo dung lượng D-O8): `npm run db:growth` trên Render shell của `smeos-web` — 10 bảng lớn
+   nhất và bảng chạm ngưỡng. Số dòng là ước tính của Postgres (chạy `ANALYZE <bảng>` nếu nghi lệch).
+2. "theo dõi" (≥ 70% của 20 triệu dòng / 10 GB): bật xoá thật cho loại hạn lưu tương ứng (§16) nếu PO đã duyệt mốc.
+3. "XÉT PHÂN VÙNG" (≥ ngưỡng): đề xuất migration SQL tay phân vùng theo tháng, Prisma vẫn đọc bảng cha; thử trên CSDL
+   khôi phục PITR trước (ADR-015 D-O4) và cần PO duyệt — không tự làm.
+4. Báo cáo chậm (p95 truy vấn báo cáo > 2 s, `pg_stat_statements`) → cân nhắc bản sao đọc `smeos_readonly` (ADR-013);
+   thêm dịch vụ / gói CSDL là quyết định của PO (đổi `render.yaml`).
+
+## 19. Người vận hành đầu tiên trên một bản cài mới
+
+Phát hiện khi chạy Bước 6 bàn giao GD1 (11/11/2026) trên bản cài trắng: mọi tài khoản tự đăng ký bắt đầu ở `PENDING`
+và chưa đăng nhập được (chốt của chủ dự án 22/10/2026), mà người duyệt lại phải là superadmin nền tảng — bản cài mới
+chưa có ai. Hai bước, đúng thứ tự:
+
+1. Đăng ký một tài khoản như người dùng thường (`/dang-ky`, hoặc `POST /api/v1/auth/signup`).
+2. `npm run gan-van-hanh-nen-tang -- --email=<email>` — gán đủ `N1`–`N20` **và duyệt luôn** tài khoản đang chờ
+   (`grantPlatformOperator`, `tests/platform/first-operator-bootstrap.test.ts`). Không cần `UPDATE users` bằng tay.
+
+Tài khoản đã bị từ chối khi duyệt đăng ký thì công cụ không mở lại. Từ người vận hành thứ hai trở đi không cần công cụ
+này: người đầu tiên duyệt họ ở `/van-hanh/dang-ky`. Đăng nhập trả `403 ACCOUNT_PENDING` nghĩa là bước 2 chưa chạy, không
+phải lỗi cấu hình.

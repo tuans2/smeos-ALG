@@ -19,6 +19,7 @@ import { OrderInfoRequests } from "./order-info-requests"
 import { OrderVatSection } from "./order-vat-section"
 import { useI18n } from "@/lib/i18n"
 import { useToast } from "@/components/ui/toast"
+import { OrderDeliveryWindowEditor } from "./order-delivery-window-editor"
 import type { OrderItemRecord, OrderRecord, OrderSlaCalculation } from "@/modules/orders/domain/order-types"
 import { DELIVERY_STATUS_LABELS, PRODUCTION_STATUS_LABELS } from "@/modules/orders/domain/order-status-labels"
 
@@ -115,7 +116,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
   const productNameText = items.map((it) => it?.description).filter(Boolean).join(", ") || sampleProductTitle
 
   const tabNav = (
-    <div className="flex gap-2 px-5 pt-2 sm:px-6 text-caption font-semibold bg-surface-raised/30">
+    <div className="flex gap-2 px-5 pt-2 sm:px-6 text-caption font-semibold bg-surface/30">
       {([
         { key: "overview", label: "Tổng quan & Điều hành", icon: <Layers className="h-3.5 w-3.5" /> },
         { key: "florist", label: `${makerTitle} (Ẩn giá)`, icon: <Flower2 className="h-3.5 w-3.5" /> },
@@ -173,7 +174,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
           <div className="space-y-6">
             {activeTab === "overview" && (
               <>
-                <div className="flex items-center justify-between rounded-lg border border-border bg-surface-raised p-4">
+                <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-4">
                   <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-text-muted" />
                     <div>
@@ -196,8 +197,9 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   <div className="rounded-lg border border-border p-4 space-y-2">
                     <div className="font-bold text-text">Thời gian &amp; Trạng thái</div>
                     <div className="text-text-muted text-caption">Hẹn giao: <span className="font-semibold text-text">{order.deliveryWindow?.date} ({order.deliveryWindow?.timeSlot})</span></div>
+                    {order.source !== "BROCHURE" && <OrderDeliveryWindowEditor orderId={order.id} current={order.deliveryWindow} onChanged={() => { onUpdated(); onClose() }} />}
                     <div className="text-text-muted text-caption">Sản xuất: <span className="font-semibold text-info">{PRODUCTION_STATUS_LABELS[order.productionStatus]}</span></div>
-                    <div className="text-text-muted text-caption">Vận chuyển: <span className="font-semibold text-warning">{DELIVERY_STATUS_LABELS[order.deliveryStatus]}</span></div>
+                    <div className="text-text-muted text-caption">Vận chuyển: <span className="font-semibold text-warning-text">{DELIVERY_STATUS_LABELS[order.deliveryStatus]}</span></div>
                   </div>
                 </div>
 
@@ -213,7 +215,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                         <div className="font-bold text-text">{(it.quantity * it.unitPriceVnd).toLocaleString("vi-VN")} đ</div>
                       </div>
                     ))}
-                    <div className="flex items-center justify-between bg-surface-raised p-3 font-bold text-body-sm">
+                    <div className="flex items-center justify-between bg-surface p-3 font-bold text-body-sm">
                       <span>Tổng tiền:</span>
                       <span className="text-primary">{order.totalVnd.toLocaleString("vi-VN")} đ</span>
                     </div>
@@ -221,7 +223,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                 </div>
 
                 {order.cardMessage && (
-                  <div className="rounded-lg border border-warning/30 bg-warning-bg/70 p-3 text-caption text-warning">
+                  <div className="rounded-lg border border-warning/30 bg-warning-bg/70 p-3 text-caption text-warning-text">
                     <span className="font-bold">💌 Lời nhắn thiệp: </span>{order.cardMessage}
                   </div>
                 )}
@@ -235,8 +237,8 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   <div className="space-y-1.5 max-h-36 overflow-y-auto rounded-lg border border-border p-3 text-caption">
                     {order.events?.map((ev) => (
                       <div key={ev.id} className="flex items-center justify-between border-b border-border/50 pb-1.5 last:border-none">
-                        <span className="font-mono text-text-muted">{new Date(ev.createdAt).toLocaleTimeString("vi-VN")} — [{ev.axis.toUpperCase()}]</span>
-                        <span className="font-semibold text-text">{ev.toValue}</span>
+                        <span className="font-mono text-text-muted">{new Date(ev.createdAt).toLocaleTimeString("vi-VN")} — {ev.axis === "delivery_window" ? "Đổi giờ giao" : `[${ev.axis.toUpperCase()}]`}</span>
+                        <span className="font-semibold text-text">{ev.axis === "delivery_window" ? `${ev.fromValue ?? "—"} → ${ev.toValue}` : ev.toValue}</span>
                         <span className="text-text-muted italic">{ev.reason ?? ""}</span>
                       </div>
                     ))}
@@ -266,7 +268,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
 
             {activeTab === "delivery" && (
               <div className="space-y-4">
-                <div className="rounded-lg bg-warning-bg/70 border border-warning/30 p-3 text-caption text-warning">
+                <div className="rounded-lg bg-warning-bg/70 border border-warning/30 p-3 text-caption text-warning-text">
                   ℹ️ <strong>Phiếu giao vận A6:</strong> Chuẩn hóa thông tin người nhận, lời nhắn thiệp và số tiền COD.
                 </div>
                 <DeliveryReceiptCard

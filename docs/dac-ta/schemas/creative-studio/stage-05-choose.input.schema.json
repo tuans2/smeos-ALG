@@ -3,7 +3,7 @@
   "$id": "stage-05-choose.input.schema.json",
   "title": "Chặng 05 — CHOOSE: Chọn định hướng & kịch bản sản xuất tổng — Đầu vào",
   "description": "Chủ tiệm chọn chủ đề, mode (CREATIVE 5 cảnh / AUTHENTIC 3 cảnh) và nền tảng; AI viết ScenePlan v2 qua job. Trùng Idempotency-Key trả kịch bản cũ, không trừ credit.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "05",
     "stage": 5,
     "code": "CHOOSE",

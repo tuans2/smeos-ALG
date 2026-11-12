@@ -126,7 +126,7 @@ export function SubcontractStepClaim({
       <Button variant="ghost"
         type="button"
         onClick={onActivate}
-        className="text-[length:inherit] h-auto font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer"
+        className="text-[length:inherit] h-auto font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-alt/30 hover:bg-surface-alt/60 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5">
           <div
@@ -136,7 +136,7 @@ export function SubcontractStepClaim({
                 ? "bg-success text-white"
                 : isActive
                 ? "bg-primary text-white ring-2 ring-primary/30"
-                : "bg-surface-muted text-text border border-border"
+                : "bg-surface-alt text-text border border-border"
             )}
           >
             {isCompleted ? <CheckCircle2 size={16} /> : "1"}
@@ -159,7 +159,7 @@ export function SubcontractStepClaim({
               <CheckCircle2 size={12} /> Đã chốt sản xuất
             </span>
           ) : dispatchStatus === "CLAIMED_GRACE" ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning text-caption font-bold">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/20 text-warning-text text-caption font-bold">
               <Clock size={12} /> Kiểm tra kho: {formatGraceCountdown(graceSeconds)}
             </span>
           ) : (
@@ -187,7 +187,7 @@ export function SubcontractStepClaim({
 
         {/* Trạng thái bị chi nhánh khác nhận */}
         {isClaimedByOther && (
-          <div className="p-4 rounded-xl bg-surface-muted border border-border text-center flex flex-col items-center gap-2">
+          <div className="p-4 rounded-xl bg-surface-alt border border-border text-center flex flex-col items-center gap-2">
             <CheckCircle2 size={32} className="text-text-muted" />
             <h4 className="text-body font-bold text-text">Đơn hàng đã được tiếp nhận</h4>
             <p className="text-caption text-text-muted max-w-xs">
@@ -200,10 +200,10 @@ export function SubcontractStepClaim({
         {dispatchStatus === "CLAIMED_GRACE" && isMyClaim && (
           <div className="p-4 rounded-xl bg-warning-bg border border-warning/30 flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-body-sm font-bold text-warning flex items-center gap-1.5">
+              <span className="text-body-sm font-bold text-warning-text flex items-center gap-1.5">
                 <Clock size={16} /> Thời gian kiểm tra kho hoa & nguyên liệu:
               </span>
-              <span className="font-mono text-title font-black text-warning">
+              <span className="font-mono text-title font-black text-warning-text">
                 {formatGraceCountdown(graceSeconds)}
               </span>
             </div>
@@ -234,7 +234,7 @@ export function SubcontractStepClaim({
         )}
 
         {/* Chi tiết sản phẩm & Định mức nguyên vật liệu BOM */}
-        <div className="bg-surface-muted rounded-xl p-3.5 border border-border flex flex-col gap-3">
+        <div className="bg-surface-alt rounded-xl p-3.5 border border-border flex flex-col gap-3">
           <div className="flex items-center gap-3">
             {sampleSrc && !imageError ? (
               <img
@@ -297,7 +297,7 @@ export function SubcontractStepClaim({
           </div>
 
           {cardMessage && (
-            <div className="p-2.5 rounded-lg bg-surface-muted border border-border text-caption">
+            <div className="p-2.5 rounded-lg bg-surface-alt border border-border text-caption">
               <span className="font-bold text-text block mb-0.5">Lời chúc thiệp:</span>
               <span className="italic text-text-muted">&ldquo;{cardMessage}&rdquo;</span>
             </div>
@@ -305,7 +305,7 @@ export function SubcontractStepClaim({
 
           {specialNotes && (
             <div className="p-2.5 rounded-lg bg-warning-bg/50 border border-warning/20 text-caption">
-              <span className="font-bold text-warning block mb-0.5">Ghi chú đặc biệt:</span>
+              <span className="font-bold text-warning-text block mb-0.5">Ghi chú đặc biệt:</span>
               <span className="text-text">{specialNotes}</span>
             </div>
           )}

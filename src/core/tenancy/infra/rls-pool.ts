@@ -2,7 +2,7 @@ import pg from "pg"
 
 import { log } from "@/core/observability/log"
 import { TENANT_SCOPED_TABLES } from "../generated/tenant-table-registry"
-import { currentDbContext, type DbContext } from "../db-context"
+import { currentDbContext, failsClosedOutsideContext, type DbContext } from "../db-context"
 
 /**
  * Pool kết nối đặt ngữ cảnh tổ chức cho Row Level Security (ADR-013 D-I3, checklist ALG 1.18).
@@ -16,9 +16,9 @@ export type RlsMode = "off" | "audit" | "enforce"
 
 interface RlsSettings { orgId: string; system: string; mode: string }
 
-const APPLIED = Symbol("smeos.rls.applied")
-const WATCHED = Symbol("smeos.rls.watched")
-const CTX = Symbol("smeos.rls.ctx")
+const APPLIED = Symbol("alg.rls.applied")
+const WATCHED = Symbol("alg.rls.watched")
+const CTX = Symbol("alg.rls.ctx")
 type TrackedClient = pg.PoolClient & { [APPLIED]?: string; [WATCHED]?: boolean; [CTX]?: DbContext | undefined }
 
 const TENANT_TABLES = new Set(TENANT_SCOPED_TABLES)
@@ -34,9 +34,12 @@ export function tenantTablesIn(sql: string): string[] {
   return [...found]
 }
 
-/** Biến phiên tương ứng một ngữ cảnh. Chưa phân loại (ngoài request) chạy như hệ thống cho tới khi được gắn. */
-export function rlsSettingsFor(ctx: DbContext | undefined, mode: RlsMode): RlsSettings {
-  if (!ctx) return { orgId: "", system: "on", mode }
+/**
+ * Biến phiên tương ứng một ngữ cảnh. Chưa phân loại (ngoài mọi ngữ cảnh): trong tiến trình web không có quyền hệ
+ * thống — `enforce` chặn (fail-closed, audit DB-01); ngoài web (script, test) chạy như hệ thống.
+ */
+export function rlsSettingsFor(ctx: DbContext | undefined, mode: RlsMode, failClosed = failsClosedOutsideContext()): RlsSettings {
+  if (!ctx) return { orgId: "", system: failClosed ? "" : "on", mode }
   if (ctx.kind === "system") return { orgId: "", system: "on", mode }
   if (ctx.kind === "tenant" && ctx.organizationId) return { orgId: ctx.organizationId, system: "", mode }
   return { orgId: "", system: "", mode }
@@ -49,10 +52,13 @@ let auditSink: (e: RlsAuditEvent) => void = defaultAuditSink
 const seen = new Map<string, number>()
 const AUDIT_INTERVAL_MS = 10 * 60_000
 
-/** `DB_RLS_AUDIT_FILE` (chỉ khi rà soát: test, staging): ghi mọi sự kiện request-chưa-gắn-tổ-chức ra tệp, không hạn mức. */
+/**
+ * `DB_RLS_AUDIT_FILE` (chỉ khi rà soát: test, staging): ghi mọi sự kiện request-chưa-gắn-tổ-chức ra tệp, không hạn mức;
+ * trong tiến trình web ghi cả truy vấn ngoài mọi ngữ cảnh (sẽ bị chặn ở `enforce`).
+ */
 function appendAuditFile(e: RlsAuditEvent): void {
   const file = process.env["DB_RLS_AUDIT_FILE"]
-  if (!file || e.kind !== "pending") return
+  if (!file || (e.kind !== "pending" && !failsClosedOutsideContext())) return
   void import("node:fs").then((fs) => fs.appendFileSync(file, `${JSON.stringify(e)}\n`)).catch(() => undefined)
 }
 

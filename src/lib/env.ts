@@ -15,14 +15,21 @@ const optionalUrl = z.preprocess(
   z.string().url().optional()
 )
 
-const schema = z.object({
+/**
+ * Ô để trống trong `.env` ("BIEN=") nghĩa là chưa đặt — như bỏ hẳn dòng. Không có bước này, mọi biến chọn-một
+ * (`z.enum(...).optional()`) mà `.env.example` để trống làm tiến trình không lên (Bước 6 bàn giao GD1:
+ * `STORAGE_DELETE_PAYLOADS=`, `STORAGE_SIGNING_SECRET=` chặn `npm run db:seed` trên máy dựng mới theo README).
+ */
+const unsetIfEmpty = <T extends z.ZodType>(inner: T) => z.preprocess((v) => (v === "" ? undefined : v), inner)
+
+export const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   // Số kết nối tối đa của pool web (ADR-015 D-O5). Tổng mọi dịch vụ phải ≤ 70% giới hạn kết nối của gói
   // CSDL — bảng ngân sách ở docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md. Thiếu = 10.
   DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(100).default(10),
   // Row Level Security theo tổ chức (ADR-013, checklist ALG 1.18): off = không đặt ngữ cảnh; audit = đặt
   // `app.org_id` cho từng kết nối và ghi log truy vấn lẽ ra bị chặn; enforce = CSDL chặn truy vấn sai tổ chức.
-  DB_RLS_MODE: z.enum(["off", "audit", "enforce"]).default("off"),
+  DB_RLS_MODE: unsetIfEmpty(z.enum(["off", "audit", "enforce"]).default("off")),
   SESSION_SECRET: z.string().min(16),
   // P7 — khoá ký token máy gọi máy (YC-T8). Tách khỏi SESSION_SECRET: xoay
   // khoá của người dùng và của engine ngoài là hai việc vận hành độc lập,
@@ -41,10 +48,10 @@ const schema = z.object({
   PII_ENCRYPTION_KEY: z.string().optional(),
   // Khoá ký URL kho tệp (`/api/v1/storage/...`, SDAGF D-07). Tách khỏi
   // SESSION_SECRET để xoay độc lập; thiếu thì lùi về SESSION_SECRET.
-  STORAGE_SIGNING_SECRET: z.string().min(16).optional(),
+  STORAGE_SIGNING_SECRET: unsetIfEmpty(z.string().min(16).optional()),
   // Xoá payload trên kho khi xoá vĩnh viễn asset (SDAGF P1-3). Chỉ bật
   // ("enabled") sau khi kho đã có bản sao lưu (D-06); thiếu = tắt.
-  STORAGE_DELETE_PAYLOADS: z.enum(["enabled", "disabled"]).optional(),
+  STORAGE_DELETE_PAYLOADS: unsetIfEmpty(z.enum(["enabled", "disabled"]).optional()),
   OPENAI_API_KEY: z.string().optional(),
   // Khoá webhook SePay của tài khoản nhận tiền thuê bao nền tảng (checklist ALG 10.7). Thiếu thì
   // đối soát tự động tắt; Console vẫn xác nhận tay được.
@@ -66,7 +73,7 @@ const schema = z.object({
   STORAGE_ACCESS_KEY: z.string().optional(),
   STORAGE_SECRET_KEY: z.string().optional(),
   /** "true" = cho production chạy bằng đĩa cục bộ (chỉ CI / máy thử) — xem modules/assets/domain/storage-config.ts. */
-  ALLOW_LOCAL_STORAGE: z.enum(["true", "false"]).optional(),
+  ALLOW_LOCAL_STORAGE: unsetIfEmpty(z.enum(["true", "false"]).optional()),
   // Redis dùng chung (giới hạn tần suất endpoint công khai). Trống → đếm
   // trong bộ nhớ từng instance (chỉ phù hợp dev/một instance).
   REDIS_URL: optionalUrl,
@@ -99,7 +106,16 @@ const schema = z.object({
     .default(true),
 })
 
-const parsed = schema.safeParse(process.env)
+/**
+ * Biến để trống (`KHOA=` trong `.env`, hoặc nền tảng đặt "") nghĩa là chưa đặt — đúng như `.env.example` mô tả.
+ * Không có bước này thì `cp .env.example .env` làm app dừng vì các biến tuỳ chọn có ràng buộc độ dài/giá trị.
+ * Biến bắt buộc để trống vẫn báo thiếu.
+ */
+export function parseEnv(source: Record<string, string | undefined>) {
+  return envSchema.safeParse(Object.fromEntries(Object.entries(source).map(([key, value]) => [key, value === "" ? undefined : value])))
+}
+
+const parsed = parseEnv(process.env)
 
 if (!parsed.success) {
   const thieu = parsed.error.issues.map((i) => i.path.join(".")).join(", ")

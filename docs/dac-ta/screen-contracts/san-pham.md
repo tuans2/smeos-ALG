@@ -17,6 +17,8 @@ acceptance:
 
 # Screen Contract — Danh sách & Chi tiết Sản phẩm (`/san-pham`, `/san-pham/[id]`)
 
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Hộp thoại "Bộ nội dung từ 1 ảnh": câu dẫn "Mở màn Duyệt" ẩn khi `/duyet` đang khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
 **Tuyến:** `/san-pham`, `/san-pham/[id]` · **Tệp chính:** `src/app/(app)/san-pham/page.tsx` (máy chủ tải trang đầu), `src/app/(app)/san-pham/san-pham-client.tsx`, `src/app/(app)/san-pham/[id]/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.B1
 
 ## 1. Vai và mục đích
@@ -79,3 +81,7 @@ acceptance:
 | Dữ liệu | PASS | Kết nối API Products thật |
 | Quyền | PASS | Gating theo L1, L3 |
 | Nhất quán | PASS | 100% token Semantic và font token |
+
+## Thay đổi Đợt 4 (12/11/2026)
+
+- `ProductThumb` bắt lỗi tải ảnh → ô "Chưa có ảnh" (không để chữ thay thế đè nhãn, ST-01). Nhãn trạng thái tách khỏi nút ảnh để tên nút khớp chữ hiển thị (WCAG 2.5.3, D4-10).

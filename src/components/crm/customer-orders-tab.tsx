@@ -56,7 +56,7 @@ export function CustomerOrdersTab({ customerId }: { customerId: string }) {
             </span>
             <span className="text-right">
               <span className="block font-bold text-text">{formatCurrency(o.totalVnd)}</span>
-              {o.balanceVnd > 0 && o.status !== "CANCELLED" && <span className="block text-warning">còn {formatCurrency(o.balanceVnd)}</span>}
+              {o.balanceVnd > 0 && o.status !== "CANCELLED" && <span className="block text-warning-text">còn {formatCurrency(o.balanceVnd)}</span>}
             </span>
           </Button>
         </li>

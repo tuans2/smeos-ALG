@@ -67,7 +67,7 @@ export function PresetSelector({
                     aria-pressed={isSelected}
                     className={`p-3 h-auto rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer whitespace-normal w-full ${
                       isSelected
-                        ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"
+                        ? "border-primary bg-primary-muted ring-1 ring-primary shadow-xs"
                         : "border-border bg-surface hover:border-primary/40"
                     }`}
                   >
@@ -102,7 +102,7 @@ export function PresetSelector({
                     aria-pressed={isSelected}
                     className={`py-2 px-3 h-auto rounded-xl border text-center transition-all cursor-pointer whitespace-normal ${
                       isSelected
-                        ? "border-primary bg-primary-subtle font-semibold text-primary ring-1 ring-primary"
+                        ? "border-primary bg-primary-muted font-semibold text-primary ring-1 ring-primary"
                         : "border-border bg-surface text-text hover:border-primary/40 text-caption"
                     }`}
                   >

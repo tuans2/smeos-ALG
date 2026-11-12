@@ -66,7 +66,7 @@ export function VariantStepPicker({ dimensions, variants, value, onChange, error
           </div>
         )
       })}
-      <div className="flex items-center gap-3 rounded-lg bg-surface-muted/60 p-2" aria-live="polite">
+      <div className="flex items-center gap-3 rounded-lg bg-surface-alt/60 p-2" aria-live="polite">
         {matched?.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element -- ảnh phiên bản do tiệm tải, kích thước nhỏ
           <img src={matched.imageUrl} alt={matched.name} className="h-14 w-14 rounded-lg object-cover" />

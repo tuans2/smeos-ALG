@@ -2,8 +2,10 @@ import { randomUUID } from "node:crypto"
 
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
-import { notFound, validationFailed } from "@/core/http/errors"
+import { AppError, notFound, validationFailed } from "@/core/http/errors"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
+import { planChangeBlockedReason } from "@/modules/organization/domain/isolation-tier"
+import { isolationTierOf } from "@/modules/organization/infra/organization-lifecycle-repository"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 import { cancelSubscriptionRows, findSubscription, listInvoices, markInvoicePaid, upsertSubscription } from "../infra/subscription-repository"
@@ -17,6 +19,13 @@ import { isPlanCode, type SubscriptionCycle } from "../domain/subscription-rules
  */
 
 export const MAX_PRICE_VND = 1_000_000_000
+
+/** Đổi / huỷ gói làm mức cô lập hiện tại không còn được phép → 422 (ADR-016 D-S2, PO 12/11/2026). */
+async function assertTierStillAllowed(organizationId: string, nextPlan: string | null): Promise<void> {
+  const tier = await isolationTierOf(organizationId)
+  const blocked = tier ? planChangeBlockedReason(tier, nextPlan) : null
+  if (blocked) throw new AppError("UNPROCESSABLE_ENTITY", blocked)
+}
 
 export async function getOrganizationSubscription(pctx: PlatformContext, organizationId: string) {
   requirePlatformCapability(pctx, "N1")
@@ -41,6 +50,7 @@ export async function assignSubscription(pctx: PlatformContext, organizationId: 
     throw validationFailed({ includedCreditsMonthly: "Credit tặng mỗi tháng là số nguyên không âm" })
   }
   if (!(await new OrganizationRepository().findById(organizationId))) throw notFound()
+  await assertTierStillAllowed(organizationId, input.plan)
   const before = await findSubscription(organizationId)
   const result = await runInTransaction(async (tx) => {
     const r = await upsertSubscription(tx, organizationId, { ...input, actorId: pctx.userId, now: new Date() })
@@ -51,7 +61,10 @@ export async function assignSubscription(pctx: PlatformContext, organizationId: 
     action: before ? "platform.subscription.update" : "platform.subscription.assign",
     entityType: "subscriptions", entityId: organizationId,
     before: before ? { plan: before.plan, cycle: before.cycle, priceVnd: before.price_vnd } : null,
-    after: { plan: input.plan, cycle: input.cycle, priceVnd: input.priceVnd, includedCreditsMonthly: input.includedCreditsMonthly, firstPeriodPaid: Boolean(input.firstPeriodPaid) },
+    after: {
+      plan: input.plan, cycle: input.cycle, priceVnd: input.priceVnd, includedCreditsMonthly: input.includedCreditsMonthly, firstPeriodPaid: Boolean(input.firstPeriodPaid),
+      ...(result.prorationInvoice ? { prorationInvoice: { code: result.prorationInvoice.code, amountVnd: result.prorationInvoice.amount_vnd } } : {}),
+    },
   })
   return result.sub
 }
@@ -60,6 +73,7 @@ export async function cancelSubscription(pctx: PlatformContext, organizationId: 
   requirePlatformCapability(pctx, "N19")
   const sub = await findSubscription(organizationId)
   if (!sub) throw notFound()
+  await assertTierStillAllowed(organizationId, null)
   await runInTransaction((tx) => cancelSubscriptionRows(tx, sub.id))
   await recordPlatformAuditLog(pctx, { action: "platform.subscription.cancel", entityType: "subscriptions", entityId: organizationId, before: { status: sub.status }, after: { status: "CANCELLED" } })
 }

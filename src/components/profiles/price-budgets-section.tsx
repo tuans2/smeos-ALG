@@ -95,7 +95,7 @@ export function PriceBudgetsSection() {
         dưới giá “Đến”; để trống “Đến” nghĩa là không giới hạn.
       </p>
       {!budgets ? (
-        <div className="h-20 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-20 rounded-lg bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <div className="flex flex-col gap-3 text-body-sm">
           {budgets.map((b, i) => (

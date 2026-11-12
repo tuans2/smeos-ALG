@@ -243,7 +243,8 @@ export function QuotePreviewCard({
             variant="outline"
             size="sm"
             onClick={onCopyText}
-            disabled={selectedProducts.length === 0}
+            disabled={!createdQuote}
+            title={createdQuote ? undefined : "Lưu báo giá trước rồi sao chép"}
             className="flex items-center justify-center gap-1.5"
           >
             {copiedText ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}

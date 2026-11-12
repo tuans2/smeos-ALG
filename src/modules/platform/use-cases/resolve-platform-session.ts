@@ -1,5 +1,6 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { AppError, unauthenticated } from "@/core/http/errors"
-import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
+import { readSessionCookie } from "@/core/http/cookies"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { isUsable } from "@/modules/organization/domain/session-policy"
 import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
@@ -28,7 +29,7 @@ import { PlatformOperatorRepository, getPlatformOperatorRepository } from "@/mod
  * thực".
  */
 export async function requirePlatformContext(request: Request): Promise<PlatformContext> {
-  const token = readCookie(request, SESSION_COOKIE)
+  const token = readSessionCookie(request)
   if (!token) throw unauthenticated()
 
   const session = await getSessionRepository().findByTokenHash(hashSessionToken(token))
@@ -38,7 +39,7 @@ export async function requirePlatformContext(request: Request): Promise<Platform
   if (!user) throw unauthenticated()
 
   // Quyền vận hành CHỈ đến từ `platform_operators` — ở mọi môi trường (P0-04, ARC-003). Trước đây
-  // ngoài production, email đuôi `@dev.com` hoặc cookie `smeos_dev_role` tự có mã N: môi trường thử
+  // ngoài production, email đuôi `@dev.com` hoặc cookie `alg_dev_role` tự có mã N: môi trường thử
   // nào mở ra Internet cũng thành console xuyên tổ chức cho người lạ. Máy dev cấp quyền bằng seed
   // dev (`prisma/seed/sync-siin-store.ts`) hoặc `npm run gan-van-hanh-nen-tang`.
   const operator = await getPlatformOperatorRepository().findActiveByUserId(user.id)
@@ -54,7 +55,8 @@ export async function requirePlatformContext(request: Request): Promise<Platform
 /** Dùng khi ngữ cảnh nền tảng là tuỳ chọn (chưa có nơi dùng ở P25a). */
 export async function resolvePlatformSession(request: Request): Promise<PlatformContext | null> {
   try {
-    return await requirePlatformContext(request)
+    // Gọi từ layout Console (Server Component, ngoài `handle()`): tra phiên và quyền vận hành bằng quyền hệ thống
+    return await asSystemDb("platform:session", () => requirePlatformContext(request))
   } catch {
     return null
   }

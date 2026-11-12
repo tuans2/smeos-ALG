@@ -62,7 +62,7 @@ describe("dispatch-subcontract-order & handle-subcontract-claim use-cases", () =
     deliveryTime: "15:00 20/10/2026",
     deliveryLocation: { latitude: 10.776, longitude: 106.702 },
     subcontractPriceVnd: 450_000,
-    baseUrl: "https://demo.smeos.vn",
+    baseUrl: "https://demo.avilotusgroup.com",
   }
 
   it("executeAutomatedChainDispatch gửi lời mời tới Top N chi nhánh và lưu trạng thái OPEN", async () => {

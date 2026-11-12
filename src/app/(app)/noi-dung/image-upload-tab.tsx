@@ -222,7 +222,7 @@ export function ImageUploadTab({
             {!selectedFile ? (
               <span className="text-warning-text font-semibold">Hãy chọn ảnh sản phẩm ở trên.</span>
             ) : selectedChannels.length === 0 ? (
-              <span className="text-warning font-semibold">⚠️ Vui lòng chọn ít nhất 1 kênh ở Bước 2.</span>
+              <span className="text-warning-text font-semibold">⚠️ Vui lòng chọn ít nhất 1 kênh ở Bước 2.</span>
             ) : (
               <span>
                 AI sẽ phân tích ảnh → khởi tạo thông số sản phẩm → sinh bài cho{" "}

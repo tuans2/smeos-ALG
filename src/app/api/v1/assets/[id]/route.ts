@@ -1,22 +1,21 @@
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { deleteAsset } from "@/modules/assets/use-cases/delete-asset"
 import { getAsset } from "@/modules/assets/use-cases/get-asset"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "G1")
-
-  const { id } = await context.params
-  return jsonResponse({ asset: await getAsset(ctx, id) })
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "G1" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    return jsonResponse({ asset: await getAsset(ctx, id) })
+  },
 })
 
-export const DELETE = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "G3")
-
-  const { id } = await context.params
-  await deleteAsset(ctx, id)
-  return new Response(null, { status: 204 })
+export const DELETE = defineRoute({
+  auth: { kind: "tenant", capability: "G3" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    await deleteAsset(ctx, id)
+    return new Response(null, { status: 204 })
+  },
 })

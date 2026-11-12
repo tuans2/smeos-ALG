@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { pageQuery } from "@/core/http/pagination"
 
 import {
   CUSTOMER_INTERACTION_CHANNELS,
@@ -33,11 +34,11 @@ export const createCampaignSchema = z.object({
 // campaigns/[id]/route.ts
 export const updateCampaignSchema = z.object({
   name: z.string().min(1).max(150).optional(),
-  objective: z.enum(["AWARENESS", "LEAD", "SALE", "RETENTION"]).optional(),
+  objective: z.enum(CAMPAIGN_OBJECTIVES).optional(),
   occasion_code: z.string().nullable().optional(),
   starts_at: z.string().nullable().optional(),
   ends_at: z.string().nullable().optional(),
-  status: z.enum(["DRAFT", "ACTIVE", "PAUSED", "COMPLETED", "ARCHIVED"]).optional(),
+  status: z.enum(CAMPAIGN_STATUSES).optional(),
 })
 
 // delivery/my-runs/[id]/route.ts
@@ -86,6 +87,8 @@ export const leadsQuery = z.object({ status: z.string().optional(), limit: int.o
 export const campaignsQuery = z.object({ status: z.enum(CAMPAIGN_STATUSES).optional(), objective: z.enum(CAMPAIGN_OBJECTIVES).optional(), limit: int.optional(), cursor: z.string().optional() })
 export const segmentsQuery = z.object({ kind: z.enum(CUSTOMER_SEGMENT_KINDS).optional(), search: z.string().optional(), ...page })
 export const segmentCustomersQuery = z.object({ search: z.string().optional(), ...page })
+/** `GET /customers` (route `defineRoute`, phân trang con trỏ — đặc tả 06 §2). */
+export const customersQuery = z.object({ ...pageQuery, search: z.string().trim().min(1).max(100).optional() })
 export const interactionsQuery = z.object({
   customer_id: z.string().optional(),
   channel: z.enum(CUSTOMER_INTERACTION_CHANNELS).optional(),

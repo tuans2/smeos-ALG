@@ -101,10 +101,10 @@ export function MessageThread({ conversation, messages, state, online, sendError
       </div>
 
       {!online && (
-        <p role="status" className="px-4 py-2 text-caption bg-warning-subtle text-warning-text">{t("chat.thread.offline")}</p>
+        <p role="status" className="px-4 py-2 text-caption bg-warning-bg text-warning-text">{t("chat.thread.offline")}</p>
       )}
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-muted/30" aria-live="polite" aria-label={t("chat.thread.messagesLabel")}>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-alt/30" aria-live="polite" aria-label={t("chat.thread.messagesLabel")}>
         {state === "loading" && messages.length === 0 ? (
           <SkeletonBlock lines={6} label={t("chat.thread.loading")} />
         ) : state === "forbidden" ? (

@@ -1,10 +1,10 @@
 # Đề xuất chuẩn API Contract v1.1 và OpenAPI (06/11/2026)
 
-> Trạng thái: **DRAFT — chờ PO duyệt**. Khi được duyệt, phần quy ước (§1–§8) chuyển vào đặc tả 06 §2
+> Trạng thái: **ĐÃ DUYỆT** (PO 07/11/2026, đợt 3–6; xem `01_API_ARCHITECTURE_AUDIT.md` §8–§13, §36–§37). Phần quy ước (§1–§8) đã chuyển vào đặc tả 06 §2
 > (`docs/dac-ta/06-api-specification.md`, SSOT) và skill `api-development`; tài liệu này không tự thành SSOT.
 > Căn cứ: `01_API_ARCHITECTURE_AUDIT.md` (mã phát hiện `API-xx`).
 
-**Quyết định PO 07/11/2026 (đợt 3).** (1) `limit` mặc định **25**; (2) route mới **snake_case**; (3) lỗi validation **giữ `details.issues`** — phần `details.fields` ở §4–§5 dưới đây KHÔNG áp dụng, để sau; (4) bật ratchet: route mới bắt buộc `defineRoute`, cấm envelope lệch. Đã thực thi: `src/core/http/define-route.ts`, `src/core/http/pagination.ts`, `src/core/http/contract-responses.ts`, `tests/unit/architecture/route-contract-ratchet.test.ts`; quy ước chép vào đặc tả 06 §2 và skill `api-development`. Phần còn là đề xuất: idempotency gắn băm thân (§7), version/deprecation (§8), OpenAPI (§9), các gate ở §10 ngoài hai ratchet trên.
+**Quyết định PO 07/11/2026 (đợt 3).** (1) `limit` mặc định **25**; (2) route mới **snake_case**; (3) lỗi validation **giữ `details.issues`** — phần `details.fields` ở §4–§5 dưới đây KHÔNG áp dụng, để sau; (4) bật ratchet: route mới bắt buộc `defineRoute`, cấm envelope lệch. Đã thực thi: `src/core/http/define-route.ts`, `src/core/http/pagination.ts`, `src/core/http/contract-responses.ts`, `tests/unit/architecture/route-contract-ratchet.test.ts`; quy ước chép vào đặc tả 06 §2 và skill `api-development`. Phần còn là đề xuất: idempotency gắn băm thân (§7), version/deprecation (§8), OpenAPI (§9), các gate ở §10 ngoài hai ratchet trên. **Cập nhật 11/11/2026:** §8 (sổ `DEPRECATIONS`, header `Deprecation`/`Sunset`) và §9 (OpenAPI 3.1 cho cả bốn bề mặt, `npm run check:openapi` gác qua `npm test`) đã thực thi; §7 áp cho job nội bộ (422 `IDEMPOTENCY_KEY_REUSED`), chưa áp cho `/integration/jobs` và `POST /orders`; `details.fields` (§4–§5) vẫn để sau.
 
 **Nguyên tắc áp dụng.** Chuẩn chỉ **bắt buộc cho route mới và route đang được sửa**; route cũ chuyển dần qua ratchet (như `lint:ratchet`). Không đổi path/hình dạng phản hồi của route đang chạy trong `/v1` — thay đổi phá vỡ chỉ qua §8. Không cần thêm dependency: zod 4 có sẵn `z.toJSONSchema`.
 
@@ -119,8 +119,8 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 - **Không phá vỡ** trong `/v1`: thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở *phản hồi* (client phải bỏ qua giá trị lạ), nới validation.
 - **Phá vỡ** (đổi/xoá trường, đổi kiểu, siết validation, đổi mã trạng thái/lỗi, đổi ngữ nghĩa) → endpoint mới song song hoặc `/v2` theo họ tài nguyên.
-- Endpoint sắp gỡ: header `Deprecation: @<unix-time>` + `Sunset: <HTTP-date>` + `Link: <…>; rel="successor-version"`; tối thiểu **90 ngày** cho `/integration/*` và webhook ra ngoài, 30 ngày cho API nội bộ chỉ giao diện SMEOS gọi. Ghi lịch gỡ trong đặc tả 06 và changelog OpenAPI.
-- Giao diện SMEOS và API phát hành cùng nhau nên route nội bộ được đổi nhanh hơn, nhưng vẫn qua ratchet để không vỡ tab đang mở (phiên dài, `session-status` 15 giây).
+- Endpoint sắp gỡ: header `Deprecation: @<unix-time>` + `Sunset: <HTTP-date>` + `Link: <…>; rel="successor-version"`; tối thiểu **90 ngày** cho `/integration/*` và webhook ra ngoài, 30 ngày cho API nội bộ chỉ giao diện ALG gọi. Ghi lịch gỡ trong đặc tả 06 và changelog OpenAPI.
+- Giao diện ALG và API phát hành cùng nhau nên route nội bộ được đổi nhanh hơn, nhưng vẫn qua ratchet để không vỡ tab đang mở (phiên dài, `session-status` 15 giây).
 
 ## 9. OpenAPI Specification
 
@@ -145,7 +145,7 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 ```yaml
 openapi: 3.1.0
-info: { title: SMEOS Integration API, version: 1.1.0 }
+info: { title: ALG Integration API, version: 1.1.0 }
 servers: [{ url: /api/v1 }]
 components:
   securitySchemes:

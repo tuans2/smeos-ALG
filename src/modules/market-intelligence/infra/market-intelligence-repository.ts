@@ -320,7 +320,7 @@ export class MarketIntelligenceRepository implements IMarketIntelligenceReposito
 
   async getProductAnalysisById(organizationId: string, id: string) {
     return this.db.product_analyses.findFirst({
-      where: { organization_id: organizationId, id },
+      where: { organization_id: organizationId, id }, include: { product: { select: { name: true } } },
     })
   }
 

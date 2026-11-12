@@ -54,6 +54,12 @@ describe("decideApproval", () => {
     expect(d).toMatchObject({ ok: false, kind: "CONFLICT" })
   })
 
+  it("trạng thái lạ → CONFLICT, thông điệp không lộ mã trạng thái (audit User Journey R2-10)", () => {
+    const d = decideApproval({ status: "ARCHIVED", generatedPosts: generated, existingApproved: null })
+    expect(d).toMatchObject({ ok: false, kind: "CONFLICT" })
+    expect(d.ok ? "" : d.reason).not.toMatch(/[A-Z_]{4,}/)
+  })
+
   it("kênh không có trong lượt sinh, kênh lặp, bài rỗng — VALIDATION", () => {
     const base = { status: "DRAFT", generatedPosts: generated, existingApproved: null }
     expect(decideApproval({ ...base, requested: [{ channel: "tiktok" }] })).toMatchObject({ ok: false, kind: "VALIDATION" })

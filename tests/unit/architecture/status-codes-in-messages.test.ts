@@ -15,6 +15,8 @@ const FILES = [
   "src/modules/sales/use-cases/convert-quotation-to-order.use-case.ts",
   "src/modules/sales/use-cases/send-quotation.use-case.ts",
   "src/modules/coordinator/domain/stage-transitions.ts",
+  // Audit User Journey R2-10 (12/11/2026): "hiện: ${stage}" lộ mã bước điều phối
+  "src/modules/coordinator/use-cases/operations.ts",
 ]
 
 describe("thông điệp lỗi không lộ mã trạng thái", () => {
@@ -24,7 +26,7 @@ describe("thông điệp lỗi không lộ mã trạng thái", () => {
     const strings = messages.flatMap((m) => [...m.matchAll(/(["`])((?:\\.|(?!\1).)*)\1/g)].map((s) => s[2] ?? ""))
     const leaks = strings.filter(
       (s) => /\b(PENDING|PROCESSING|COMPLETED|FAILED|CANCELLED|APPROVED|REJECTED|SENT|ACCEPTED|EXPIRED|CONVERTED)\b/.test(s) ||
-        /\$\{[^}]*\.(status|approval_state|stage)\}/.test(s) || /\/api\/|POST \//.test(s)
+        /\$\{(?:[^}]*\.)?(status|approval_state|stage)\}/.test(s) || /\/api\/|POST \//.test(s)
     )
     expect(leaks).toEqual([])
   })

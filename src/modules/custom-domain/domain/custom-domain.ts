@@ -10,9 +10,15 @@ export type CustomDomainStatus = "PENDING" | "VERIFIED" | "LOCKED"
 export type CertificateStatus = "NOT_REQUESTED" | "REQUESTED" | "MANUAL" | "FAILED"
 
 export const MAX_DOMAINS_PER_ORGANIZATION = 3
-/** Tên bản ghi TXT đặt trước tên miền: `_smeos-verify.<tên miền>` */
-export const VERIFY_RECORD_PREFIX = "_smeos-verify"
-export const VERIFY_VALUE_PREFIX = "smeos-verify="
+/** Tên bản ghi TXT đặt trước tên miền: `_alg-verify.<tên miền>` */
+export const VERIFY_RECORD_PREFIX = "_alg-verify"
+export const VERIFY_VALUE_PREFIX = "alg-verify="
+/**
+ * Tiền tố trước khi đổi tên sang ALG (12/11/2026). Tên miền đang chờ xác minh mà chủ tiệm đã thêm bản ghi cũ
+ * vẫn xác minh được; tên miền đã xác minh không bao giờ bị kiểm lại nên không bị ảnh hưởng.
+ */
+export const LEGACY_VERIFY_RECORD_PREFIX = "_smeos-verify"
+export const LEGACY_VERIFY_VALUE_PREFIX = "smeos-verify="
 
 export const DOMAIN_STATUS_LABEL: Record<CustomDomainStatus, string> = {
   PENDING: "Chờ xác minh",
@@ -61,14 +67,18 @@ export function verificationRecordName(hostname: string): string {
   return `${VERIFY_RECORD_PREFIX}.${hostname}`
 }
 
+export function legacyVerificationRecordName(hostname: string): string {
+  return `${LEGACY_VERIFY_RECORD_PREFIX}.${hostname}`
+}
+
 export function verificationRecordValue(token: string): string {
   return `${VERIFY_VALUE_PREFIX}${token}`
 }
 
-/** Bản ghi TXT khớp khi một chuỗi (ghép các đoạn) đúng `smeos-verify=<mã>`. */
+/** Bản ghi TXT khớp khi một chuỗi (ghép các đoạn) đúng `alg-verify=<mã>` (hoặc tiền tố cũ `smeos-verify=`). */
 export function txtRecordsMatch(records: readonly (readonly string[])[], token: string): boolean {
-  const expected = verificationRecordValue(token)
-  return records.some((chunks) => chunks.join("").trim() === expected)
+  const expected = [verificationRecordValue(token), `${LEGACY_VERIFY_VALUE_PREFIX}${token}`]
+  return records.some((chunks) => expected.includes(chunks.join("").trim()))
 }
 
 export interface DnsInstruction {

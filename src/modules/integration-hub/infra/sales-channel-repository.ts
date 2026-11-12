@@ -9,6 +9,9 @@ import type { ListingStatus, ListingView, ChannelOrderView } from "../domain/int
 
 export type { ListingStatus, ListingView, ChannelOrderView }
 
+/** Lượt nhập đơn đang chạy quá ngần này coi như đã chết — cho lượt sau nhận lại. */
+export const STALE_IMPORT_CLAIM_MS = 15 * 60_000
+
 export class SalesChannelRepository {
   async listListings(ctx: TenantContext, connectionId: string, productIds?: readonly string[]): Promise<ListingView[]> {
     const rows = await prisma.sales_channel_listings.findMany({
@@ -43,6 +46,20 @@ export class SalesChannelRepository {
     })
   }
 
+  /**
+   * Tồn theo số lượng của các sản phẩm (PO Q9): sản phẩm có dòng `product_inventory` với `quantity_available` khác rỗng
+   * là đang theo dõi; trả tổng số còn của mọi chi nhánh. Sản phẩm không theo dõi không có trong kết quả.
+   */
+  async trackedStock(ctx: TenantContext, productIds: readonly string[]): Promise<Map<string, number>> {
+    if (productIds.length === 0) return new Map()
+    const rows = await prisma.product_inventory.groupBy({
+      by: ["product_id"],
+      where: scopedWhere(ctx, { product_id: { in: [...productIds] }, quantity_available: { not: null } }),
+      _sum: { quantity_available: true },
+    })
+    return new Map(rows.map((r) => [r.product_id, r._sum?.quantity_available ?? 0]))
+  }
+
   async listOrders(ctx: TenantContext, connectionId: string, limit: number): Promise<ChannelOrderView[]> {
     const rows = await prisma.sales_channel_orders.findMany({
       where: scopedWhere(ctx, { connection_id: connectionId }),
@@ -70,9 +87,14 @@ export class SalesChannelRepository {
       return true
     } catch (err) {
       if ((err as { code?: string }).code === "P2002") {
-        // Lượt trước lỗi giữa chừng → cho nhận lại; đã IMPORTED → trùng.
+        // Lượt trước lỗi giữa chừng → cho nhận lại; đã IMPORTED → trùng. Lượt trước chết khi đang nhập (kẹt IN_PROGRESS quá
+        // hạn) cũng nhận lại — trước đây bị coi là "đã nhận" và đơn sàn mất lặng lẽ (audit BL-34)
+        const staleBefore = new Date(Date.now() - STALE_IMPORT_CLAIM_MS)
         const res = await prisma.sales_channel_orders.updateMany({
-          where: { connection_id: connectionId, external_order_id: externalOrderId, status: "FAILED", NOT: { error_code: "IN_PROGRESS" } },
+          where: {
+            connection_id: connectionId, external_order_id: externalOrderId, status: "FAILED",
+            OR: [{ NOT: { error_code: "IN_PROGRESS" } }, { error_code: "IN_PROGRESS", updated_at: { lt: staleBefore } }],
+          },
           data: { error_code: "IN_PROGRESS" },
         })
         return res.count === 1

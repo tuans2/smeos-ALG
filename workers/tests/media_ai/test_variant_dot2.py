@@ -1,6 +1,6 @@
 """Đợt 2 nâng cấp chất lượng ảnh biến thể (25/09/2026) — phong cách + phương án.
 
-- `style` là Ý ĐỊNH FloraOS; adapter Stability dịch sang `style_preset`, giá trị
+- `style` là Ý ĐỊNH ALG; adapter Stability dịch sang `style_preset`, giá trị
   lạ không bao giờ được gửi thẳng (enum lạ = HTTP 400) mà ghi `bo_qua`.
 - Phông cục bộ không làm được phong cách → nói thật (`bo_qua`).
 - Hằng `PHONG_CACH` khớp `VARIANT_STYLES` phía TS (test TS đọc file này).

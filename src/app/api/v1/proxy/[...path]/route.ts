@@ -15,7 +15,7 @@
  * mọi route khác trong repo (xem `handle()` ở `core/http/response.ts`).
  */
 
-import { handle } from "@/core/http/response"
+import { defineRoute } from "@/core/http/define-route"
 import { AppError } from "@/core/http/errors"
 import { callProxy, toProxyError } from "@/modules/proxy/use-cases/proxy-request"
 import { isAllowedProxyPath, proxyCapabilityFor, type ProxyClient } from "@/modules/proxy/domain/proxy-rules"
@@ -33,11 +33,10 @@ function toResponse(res: { status: number; headers: Record<string, string>; body
   return new Response(res.body, { status: res.status, headers })
 }
 
-async function proxyHandler(
-  request: Request,
-  context: { params: Promise<{ path: string[] }> }
-) {
-  const { path: pathParts } = await context.params
+type PathParams = { path: string[] }
+
+async function proxyHandler({ request, params }: { request: Request; params: PathParams }) {
+  const { path: pathParts } = params
   const url = new URL(request.url)
   const clientParam = url.searchParams.get("client")
   if (!clientParam || (clientParam !== "SOCIALFLOW" && clientParam !== "LOCALBUDD")) {
@@ -65,11 +64,18 @@ async function proxyHandler(
   return toResponse(res)
 }
 
-export const GET = handle(proxyHandler)
-export const POST = handle(proxyHandler)
-export const PUT = handle(proxyHandler)
-export const PATCH = handle(proxyHandler)
-export const DELETE = handle(proxyHandler)
+/** Kiểm `client`/đường dẫn trước (400/404), rồi phiên + mã năng lực theo đường dẫn — giữ thứ tự lỗi cũ. */
+const PROXY_AUTH = {
+  kind: "custom",
+  reason: "phiên tổ chức + mã năng lực theo đường dẫn (proxyCapabilityFor) kiểm trong handler, sau khi kiểm đường dẫn",
+} as const
+const route = defineRoute<typeof PROXY_AUTH, undefined, undefined, PathParams>({ auth: PROXY_AUTH, handler: proxyHandler })
+
+export const GET = route
+export const POST = route
+export const PUT = route
+export const PATCH = route
+export const DELETE = route
 
 export const dynamic = "force-dynamic" as const
 export const revalidate = 0 as const

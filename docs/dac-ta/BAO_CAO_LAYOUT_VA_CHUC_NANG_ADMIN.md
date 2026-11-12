@@ -5,16 +5,16 @@
 > **Hệ thống áp dụng:** FloraOS Core (`floraos-core`)  
 > **Tài liệu tham chiếu SSOT:**  
 > - Hiến pháp Role UX: [`docs/dac-ta/03b-role-ux.md`](03b-role-ux.md)  
-> - Hợp đồng thực thi Role UX: [`docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md`](../kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md)  
+> - Hợp đồng thực thi Role UX: [`docs/kien-truc/ALG_ROLE_UX_EXECUTION_CONTRACT.md`](../kien-truc/ALG_ROLE_UX_EXECUTION_CONTRACT.md)  
 > - Danh mục vai trong mã nguồn: [`src/modules/organization/domain/role-ux-catalog.ts`](../../src/modules/organization/domain/role-ux-catalog.ts)  
 > - Kế hoạch Console Vận hành: [`docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md`](../kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md)  
-> - Kiến trúc mục tiêu FloraOS SaaS V2: [`docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`](../kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md)  
+> - Kiến trúc mục tiêu ALG SaaS V2: [`docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md`](../kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md)  
 
 ---
 
-## 1. TỔNG QUAN KIẾN TRÚC PHÂN CẤP QUẢN TRỊ TRONG FLORAOS
+## 1. TỔNG QUAN KIẾN TRÚC PHÂN CẤP QUẢN TRỊ TRONG ALG
 
-Trong hệ sinh thái FloraOS, quản trị được thiết kế theo 3 nguyên tắc phân tầng chặt chẽ:
+Trong hệ sinh thái ALG, quản trị được thiết kế theo 3 nguyên tắc phân tầng chặt chẽ:
 
 1. **Vai trải nghiệm (Role UX) ≠ Vai phân quyền (RBAC Roles) ≠ Mã năng lực (Capabilities):**
    - **Mã năng lực (`capabilities`):** Quyết định người dùng *được phép* thao tác gì (ẩn/hiện nút bấm, kiểm soát tính hợp lệ phía API máy chủ).
@@ -116,8 +116,8 @@ Bố cục bất đối xứng 2 cột chuẩn Responsive (`lg:grid lg:grid-cols
 
 ## 4. CHI TIẾT CHAIN_ADMIN (QUẢN TRỊ CHUỖI & MẠNG LƯỚI GIAO HOA)
 
-### 4.1. Bản chất Kiến trúc & Hiện trạng trong FloraOS
-Trong mô hình Chuỗi cửa hàng ([`FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` §11.3](../kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md#L395-L403)), cơ cấu tổ chức gồm:
+### 4.1. Bản chất Kiến trúc & Hiện trạng trong ALG
+Trong mô hình Chuỗi cửa hàng ([`ALG_SAAS_TARGET_ARCHITECTURE_V2.md` §11.3](../kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md#L395-L403)), cơ cấu tổ chức gồm:
 ```text
 Tổ chức Chuỗi (Chain Organization)
 ├── Trung tâm Vận hành Điều hành (Central Operations)
@@ -180,7 +180,7 @@ Theo thiết kế chuẩn hóa cho tổ chức CHAIN, layout trung tâm gồm 4 
 ## 6. KẾT LUẬN & ĐỀ XUẤT HÀNH ĐỘNG
 
 1. **Về mặt kỹ thuật và phân lập dữ liệu:**
-   - Hệ thống FloraOS đã hoàn tất phân lập chặt chẽ giữa `platform_admin` (console vận hành độc lập) và người dùng cửa hàng.
+   - Hệ thống ALG đã hoàn tất phân lập chặt chẽ giữa `platform_admin` (console vận hành độc lập) và người dùng cửa hàng.
    - Không có sự chồng lấn hay rò rỉ dữ liệu chéo giữa các tenant (`tenant isolation` 100%).
 2. **Lộ trình hoàn thiện Giao diện Chuỗi (`chain_admin`):**
    - Hiện tại, nếu tổ chức được thiết lập là `CHAIN`, hệ thống vẫn hoạt động ổn định nhờ cơ chế fallback sang `store_manager`.

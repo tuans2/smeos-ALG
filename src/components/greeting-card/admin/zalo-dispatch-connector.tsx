@@ -111,7 +111,7 @@ export function ZaloDispatchConnector() {
                 <Button variant="outline"
                   type="button"
                   onClick={() => copy(b.linkCode)}
-                  className="h-auto font-mono text-body-sm font-bold px-3 py-1.5 rounded-lg bg-surface-muted border border-border inline-flex items-center gap-1.5 shrink-0 hover:bg-surface-muted"
+                  className="h-auto font-mono text-body-sm font-bold px-3 py-1.5 rounded-lg bg-surface-alt border border-border inline-flex items-center gap-1.5 shrink-0 hover:bg-surface-alt"
                   aria-label={`Sao chép mã liên kết của ${b.name}`}
                 >
                   {b.linkCode}

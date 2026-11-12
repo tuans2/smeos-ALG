@@ -161,8 +161,9 @@ export async function callContentEngineMarketing(
   if (!res) return []
   // Hết credit / thiếu quyền → ném lỗi kèm câu báo (nơi gọi hiện ra); lỗi khác vẫn trả rỗng như trước
   if (!res.ok) return emptyUnlessRewriteBlocked(res)
-  const data = (await res.json().catch(() => null)) as { suggestions?: unknown } | null
-  return Array.isArray(data?.suggestions) ? data.suggestions : []
+  const body = (await res.json().catch(() => null)) as { data?: { suggestions?: unknown } } | null
+  const suggestions = body?.data?.suggestions
+  return Array.isArray(suggestions) ? suggestions : []
 }
 
 /**

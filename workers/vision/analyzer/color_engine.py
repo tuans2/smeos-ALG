@@ -334,7 +334,7 @@ def extract_palette(image_path, k=8, max_side=240):
             valid_clusters.append({'lab': tam, 'ratio': ratio, 'count': dem})
 
     valid_clusters.sort(key=lambda x: x['count'], reverse=True)
-    if os.getenv("FLORAOS_DEBUG_MAU"):
+    if os.getenv("ALG_DEBUG_MAU") or os.getenv("FLORAOS_DEBUG_MAU"):  # tên cũ vẫn nhận
         for vc in valid_clusters:
             c_rgb = lab_to_rgb(vc['lab'].reshape(1, 3))
             print("  cụm màu RGB:", c_rgb, "tỷ lệ:", round(vc['ratio'], 4))

@@ -249,7 +249,7 @@ export function AudioWorkspace() {
 
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-caption text-text-muted">
-          {firstProblem ? <span className="text-warning">{firstProblem}</span> : <>Tổng ~{Math.round(totalDuration)}s · {spec.label}</>}
+          {firstProblem ? <span className="text-warning-text">{firstProblem}</span> : <>Tổng ~{Math.round(totalDuration)}s · {spec.label}</>}
         </p>
         <Button onClick={handleCreate} disabled={loading || polling || Boolean(firstProblem)} className="gap-2">
           {loading ? (
@@ -262,7 +262,7 @@ export function AudioWorkspace() {
         </Button>
       </div>
       {spec.music !== "none" && effectiveMusic && musicLicenseOk === false && (
-        <p className="text-caption text-warning">Bài nhạc đang chọn chưa có hồ sơ giấy phép thương mại.</p>
+        <p className="text-caption text-warning-text">Bài nhạc đang chọn chưa có hồ sơ giấy phép thương mại.</p>
       )}
       {error && (
         <Card className="border-danger/30 bg-danger/10 p-4 flex items-center gap-3">
@@ -295,7 +295,7 @@ export function AudioWorkspace() {
           onApprove={() => navigateToArea("d")}
           metrics={[
             { label: "Tác vụ", value: spec.label },
-            { label: "Thời lượng", value: `~${Math.round(totalDuration)}s` },
+            { label: "Thời lượng", value: `khoảng ${Math.round(totalDuration)} giây` },
             { label: "Nhạc nền", value: audioJob?.music_track_name ?? (effectiveMusic ? "Đã chọn" : "Không") },
             { label: "Giọng đọc", value: taskType === "VOICE_CLONE" ? "Giọng nhân bản" : spec.needsVoice ? selectedVoice?.displayName ?? "—" : "Không" },
           ]}

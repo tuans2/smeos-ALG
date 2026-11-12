@@ -77,7 +77,7 @@ export function EvidenceTimelineDiagram({
 
   function handleCopyEvidence() {
     const lines: string[] = [
-      `=== BẰNG CHỨNG ĐỐI SOÁT ĐƠN HÀNG SMEOS ===`,
+      `=== BẰNG CHỨNG ĐỐI SOÁT ĐƠN HÀNG ALG ===`,
       `Mã đơn: #${orderCode || "---"}`,
       `${orderTerms.customerRoleLabel}: ${customerName || "---"} (${customerPhone || "---"})`,
       `${orderTerms.recipientRoleLabel}: ${recipientName || "---"} (${recipientPhone || "---"})`,
@@ -96,7 +96,7 @@ export function EvidenceTimelineDiagram({
       }
     }
     lines.push(``)
-    lines.push(`Hệ thống đối soát xác nhận tự động · smeOS Core`)
+    lines.push(`Hệ thống đối soát xác nhận tự động · ALG Core`)
     void navigator.clipboard.writeText(lines.join("\n")).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)

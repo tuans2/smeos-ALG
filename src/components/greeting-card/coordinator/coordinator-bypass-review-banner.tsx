@@ -89,7 +89,7 @@ export function CoordinatorBypassReviewBanner({
   return (
     <div className="w-full flex flex-col gap-2 p-3.5 rounded-xl bg-warning-bg border-2 border-warning-border text-text">
       <div className="flex items-center gap-2 text-warning-text font-bold text-body-sm">
-        <ShieldAlert size={18} className="text-warning animate-pulse motion-reduce:animate-none shrink-0" />
+        <ShieldAlert size={18} className="text-warning-text animate-pulse motion-reduce:animate-none shrink-0" />
         <span>Yêu Cầu Bỏ Qua Bằng Chứng Cần Phê Duyệt</span>
       </div>
 
@@ -126,7 +126,7 @@ export function CoordinatorBypassReviewBanner({
                 </span>
               </div>
 
-              <div className="p-2 rounded bg-surface-muted text-caption text-text-muted italic border-l-2 border-warning">
+              <div className="p-2 rounded bg-surface-alt text-caption text-text-muted italic border-l-2 border-warning">
                 &ldquo;{req.reason || "Lý do bất khả kháng"}&rdquo;
               </div>
 
@@ -154,7 +154,7 @@ export function CoordinatorBypassReviewBanner({
                   size="sm"
                   disabled={isLoading}
                   onClick={() => handleDecision(stepKey, "APPROVE")}
-                  className="h-8 px-3 text-caption bg-warning hover:bg-warning/90 text-white font-bold"
+                  className="h-8 px-3 text-caption bg-warning hover:bg-warning/90 text-text font-bold"
                 >
                   {isLoading ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={13} />}
                   Chấp thuận Bỏ qua

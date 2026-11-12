@@ -24,10 +24,13 @@ export function isPlanCode(v: unknown): v is SubscriptionPlanCode {
   return typeof v === "string" && (SUBSCRIPTION_PLANS as readonly string[]).includes(v)
 }
 
-/** Cộng một kỳ; ngày 31 sang tháng ngắn hơn thì lùi về ngày cuối tháng. */
-export function addCycle(from: Date, cycle: SubscriptionCycle): Date {
+/**
+ * Cộng một kỳ; ngày neo (mặc định ngày của `from`) rơi vào tháng ngắn hơn thì lùi về ngày cuối tháng. Truyền ngày neo
+ * của hoá đơn đầu tiên để kỳ sau quay lại đúng ngày đó (31/01 → 28/02 → 31/03), không neo vĩnh viễn ngày 28 (BL-27).
+ */
+export function addCycle(from: Date, cycle: SubscriptionCycle, anchorDay: number = from.getUTCDate()): Date {
   const d = new Date(from.getTime())
-  const day = d.getUTCDate()
+  const day = Math.min(31, Math.max(1, Math.floor(anchorDay)))
   d.setUTCDate(1)
   if (cycle === "YEARLY") d.setUTCFullYear(d.getUTCFullYear() + 1)
   else d.setUTCMonth(d.getUTCMonth() + 1)

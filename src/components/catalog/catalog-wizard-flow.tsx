@@ -189,7 +189,7 @@ export function CatalogWizardFlow({
   const brandProfile: BrandProfile = useMemo(() => ({
     brandId: organization?.id || "brand",
     name: currentShopName,
-    slogan: "Bộ Sưu Tập Tuyển Chọn • smeOS 2026",
+    slogan: "Bộ Sưu Tập Tuyển Chọn • ALG 2026",
     brandColors: { primary: "#9A3412" },
     contacts: {
       phone: business?.phone || null,

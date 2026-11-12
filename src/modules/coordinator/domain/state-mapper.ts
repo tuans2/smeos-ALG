@@ -1,5 +1,5 @@
 /**
- * State Mapper 2 chiều giữa Coordinator Operational Stage và 3 trục CSDL orders (FloraOS Core).
+ * State Mapper 2 chiều giữa Coordinator Operational Stage và 3 trục CSDL orders (ALG Core).
  * Bảo đảm backward compatibility 100% — Module M10 cũ không bị ảnh hưởng.
  */
 

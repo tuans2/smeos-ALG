@@ -80,7 +80,7 @@ export function CoordinatorConfirmDepositModal({
                 width={320}
                 height={200}
                 unoptimized
-                className="w-full max-h-48 object-contain rounded-xl border border-border bg-surface-muted"
+                className="w-full max-h-48 object-contain rounded-xl border border-border bg-surface-alt"
               />
             </a>
             <p className="text-caption text-text-muted">Nhấp ảnh để xem kích thước đầy đủ.</p>
@@ -88,7 +88,7 @@ export function CoordinatorConfirmDepositModal({
         )}
 
         {!proofUrl && (
-          <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 text-caption text-warning">
+          <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 text-caption text-warning-text">
             Khách chưa tải ảnh bill. Hãy đối soát tài khoản ngân hàng trực tiếp trước khi xác nhận.
           </div>
         )}

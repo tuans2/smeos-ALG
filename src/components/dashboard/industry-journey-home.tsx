@@ -1,5 +1,7 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
@@ -18,7 +20,7 @@ import { INDUSTRY_REGISTRY } from "@/modules/organization/domain/industries"
 import { useI18n } from "@/lib/i18n"
 import { Badge } from "@/components/ui/badge"
 
-const STORAGE_KEY_EXPERT_MODE = "smeos_expert_mode_industry"
+const STORAGE_KEY_EXPERT_MODE = "alg_expert_mode_industry"
 
 export function IndustryJourneyHome() {
   const router = useRouter()

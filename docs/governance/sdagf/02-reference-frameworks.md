@@ -16,7 +16,7 @@ Dùng các nguồn tham chiếu bên ngoài để xây dựng SDAGF. Không ngu�
 - URL: https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/saas-lens.html
 - Dùng cho: kiến trúc SaaS, tenant isolation, vận hành và các đặc thù multi-tenant.
 - Áp dụng: đánh giá nguyên tắc tenant-aware resource/data access.
-- Lưu ý: có các khuyến nghị gắn với AWS; chỉ dùng nguyên tắc phù hợp, không mặc định SMEOS phải chạy AWS.
+- Lưu ý: có các khuyến nghị gắn với AWS; chỉ dùng nguyên tắc phù hợp, không mặc định ALG phải chạy AWS.
 
 ### AWS Well-Architected Framework
 - URL: https://docs.aws.amazon.com/wellarchitected/
@@ -52,7 +52,7 @@ Dùng các nguồn tham chiếu bên ngoài để xây dựng SDAGF. Không ngu�
 
 ## Quy tắc sử dụng nguồn tham chiếu
 
-Mỗi control của SMEOS nên có:
+Mỗi control của ALG nên có:
 - `control_id`
 - yêu cầu nội bộ
 - nguồn tham chiếu và phiên bản/ngày truy cập nếu đã xác minh
@@ -61,7 +61,7 @@ Mỗi control của SMEOS nên có:
 - bằng chứng chấp nhận
 - mức độ nghiêm trọng nếu không đạt
 
-Không sao chép nguyên văn tài liệu tiêu chuẩn có bản quyền. Ghi nhận tóm tắt, nguồn tham chiếu và cách SMEOS diễn giải.
+Không sao chép nguyên văn tài liệu tiêu chuẩn có bản quyền. Ghi nhận tóm tắt, nguồn tham chiếu và cách ALG diễn giải.
 
 ## Quy tắc cập nhật
 

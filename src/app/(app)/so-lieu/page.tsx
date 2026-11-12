@@ -3,13 +3,11 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
-import { TrendingUp } from "@/components/ui/icon-set/trending-up"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { DashboardLayout } from "@/components/layout/page-layout"
 import { PageHeader } from "@/components/ui/page-header"
-import { AdPerformanceModal } from "@/components/marketing/ad-performance-modal"
 import { AnalyticsMetricsPhase } from "@/components/analytics/analytics-metrics-phase"
 import { AnalyticsExplainPhase } from "@/components/analytics/analytics-explain-phase"
 import { AnalyticsLearningPhase } from "@/components/analytics/analytics-learning-phase"
@@ -27,7 +25,6 @@ export default function AnalyticsPage() {
   const { can, orgName } = useSession()
   const [phase, setPhase] = useState<"metrics" | "explain" | "learning" | "saved">("metrics")
   const [selectedRange, setSelectedRange] = useState("Tháng này")
-  const [adModalOpen, setAdModalOpen] = useState(false)
 
   const [usageLoading, setUsageLoading] = useState(true)
   const [usage, setUsage] = useState<UsageSummary | null>(null)
@@ -147,7 +144,7 @@ export default function AnalyticsPage() {
           backHref="/"
           backLabel="Trang chủ"
           title="Báo cáo kinh doanh"
-          tip="Số liệu bán hàng, mức dùng và hiệu quả quảng cáo của cửa hàng."
+          tip="Số liệu bán hàng và mức dùng của cửa hàng."
           actions={
             <div className="flex flex-wrap gap-2">
               {can("R20") && (
@@ -155,14 +152,6 @@ export default function AnalyticsPage() {
                   Báo cáo theo kỳ
                 </Button>
               )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setAdModalOpen(true)}
-                className="flex items-center gap-1.5 text-caption font-semibold text-primary border-primary/30 hover:bg-primary/5"
-              >
-                <TrendingUp size={14} /> Hiệu quả quảng cáo
-              </Button>
             </div>
           }
         />
@@ -227,11 +216,6 @@ export default function AnalyticsPage() {
           />
         )}
       </div>
-
-      <AdPerformanceModal
-        isOpen={adModalOpen}
-        onClose={() => setAdModalOpen(false)}
-      />
     </DashboardLayout>
   )
 }

@@ -7,6 +7,7 @@ import { verifyPassword } from "@/modules/organization/infra/password-hasher"
 import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
 import { hashSessionToken, newSessionToken } from "@/modules/organization/infra/session-token"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
+import { assertOrganizationLifecycle } from "./assert-organization-lifecycle"
 import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
 
 export type LogInInput = { email: string; password: string }
@@ -42,6 +43,8 @@ export async function logIn(input: LogInInput): Promise<LogInResult> {
   // Tổ chức đang hoạt động của phiên chọn phía máy chủ, không nhận từ client.
   // Người dùng đổi nó về sau qua `POST /session/organization`.
   const membership = await memberships.findFirstActiveForUser(user.id)
+  // Tổ chức tạm ngưng / đã đóng → không đăng nhập (ADR-016 D-S5); đang rời nền tảng vẫn vào xem được
+  if (membership) await assertOrganizationLifecycle(membership.organization_id, "GET")
 
   const now = new Date()
   const token = newSessionToken()

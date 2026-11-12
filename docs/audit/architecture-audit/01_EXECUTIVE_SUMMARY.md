@@ -1,4 +1,4 @@
-# 01 — Tóm tắt điều hành: Audit kiến trúc SMEOS
+# 01 — Tóm tắt điều hành: Audit kiến trúc ALG
 
 > Loại tài liệu: báo cáo audit (chỉ đọc, không sửa mã). Ngày audit: 31/10/2026.
 > Commit được audit: `c27f39e1` (HEAD của `main`, "Merge pull request #95").
@@ -7,7 +7,7 @@
 
 ## 1. Kết luận một câu
 
-SMEOS có **lõi kiến trúc đa tenant và phân quyền được thiết kế tốt và có kiểm thử thật**, nhưng **chưa sẵn sàng production thương mại, enterprise hay bàn giao khách hàng**: cổng chất lượng bắt buộc không chạy trên mã đang nằm ở `main` (và `main` tự deploy), mô hình 4 tầng mới hoàn thiện 2,5/4 tầng, kiến trúc tích hợp bị phân mảnh, và vận hành (môi trường, sao lưu, khôi phục, lưu trữ) chưa được kiểm chứng.
+ALG có **lõi kiến trúc đa tenant và phân quyền được thiết kế tốt và có kiểm thử thật**, nhưng **chưa sẵn sàng production thương mại, enterprise hay bàn giao khách hàng**: cổng chất lượng bắt buộc không chạy trên mã đang nằm ở `main` (và `main` tự deploy), mô hình 4 tầng mới hoàn thiện 2,5/4 tầng, kiến trúc tích hợp bị phân mảnh, và vận hành (môi trường, sao lưu, khôi phục, lưu trữ) chưa được kiểm chứng.
 
 ## 2. Điểm trưởng thành theo 15 miền (0–5)
 
@@ -91,11 +91,11 @@ Tổng: **43 phát hiện** — 2 P0, 13 P1, 24 P2, 4 P3 (39 cấp repo, 4 cấp
 
 | GĐ | Công việc | Trạng thái | Tài liệu |
 |---|---|---|---|
-| 1 | Repository Discovery | ✅ `smeOS` | `02`, `07` |
-| 2 | Architecture Inventory | ✅ `smeOS` | `02`, `12` (As-Is) |
+| 1 | Repository Discovery | ✅ `ALG` | `02`, `07` |
+| 2 | Architecture Inventory | ✅ `ALG` | `02`, `12` (As-Is) |
 | 3 | Audit chi tiết 15 nhóm | ✅ | `03`, `05`, `06`, `07` |
 | 4 | Audit nhất quán xuyên 4 tầng | ✅ | `13` |
-| 5 | Gap & Risk | ✅ `smeOS` + điểm tiếp giáp hệ sinh thái | `04`, `08`, `14` |
+| 5 | Gap & Risk | ✅ `ALG` + điểm tiếp giáp hệ sinh thái | `04`, `08`, `14` |
 | 6 | Target Architecture | ✅ đề xuất, **chờ PO duyệt** | `09` |
 | 7 | Báo cáo tổng thể + roadmap | ✅ | `01`, `10`, `11` |
 

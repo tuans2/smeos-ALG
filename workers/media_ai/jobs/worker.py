@@ -70,6 +70,11 @@ STORAGE_ROOT = REPO_ROOT / "var" / "storage"
 
 def notify_channel_for(feature: str) -> str:
     """Mirror của `notifyChannelFor` (`postgres-queue-provider.ts`)."""
+    return "alg_job_" + re.sub(r"[^a-zA-Z0-9_]", "_", feature)
+
+
+def legacy_notify_channel_for(feature: str) -> str:
+    """Kênh tên cũ trước khi đổi tên ALG (12/11/2026) — vẫn nghe để không lỡ tín hiệu từ web chưa cập nhật."""
     return "floraos_job_" + re.sub(r"[^a-zA-Z0-9_]", "_", feature)
 
 
@@ -497,16 +502,15 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
 
     while not co.dung:
         try:
-            with psycopg.connect(cleaned_url, autocommit=True, application_name="smeos-worker:media") as conn:
+            with psycopg.connect(cleaned_url, autocommit=True, application_name="alg-worker:media") as conn:
                 set_db_context(conn, None)  # nhận job đi qua mọi tổ chức — quyền hệ thống (RLS)
                 print(f"[media] Worker {FEATURE} đã kết nối CSDL, đang lắng nghe...", flush=True)
                 backoff = 1.0
                 with conn.cursor() as cur:
-                    cur.execute(f"LISTEN {channel}")
-                    cur.execute(f"LISTEN {variant_channel}")
-                    cur.execute(f"LISTEN {variant_cloud_channel}")
-                    for optional_feature, _, _ in optional_jobs:
-                        cur.execute(f"LISTEN {notify_channel_for(optional_feature)}")
+                    features = [FEATURE, variant_feature, variant_cloud_feature, *(f for f, _, _ in optional_jobs)]
+                    for feature in features:
+                        cur.execute(f"LISTEN {notify_channel_for(feature)}")
+                        cur.execute(f"LISTEN {legacy_notify_channel_for(feature)}")
 
                 while not co.dung:
                     # Thứ tự ưu tiên là thứ tự người dùng chờ: M04a đứng trước M04b vì

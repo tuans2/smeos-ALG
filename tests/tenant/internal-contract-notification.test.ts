@@ -87,19 +87,17 @@ describe("hợp đồng — thông báo", () => {
     await expectContract(await storeDefaults(get("/store-defaults?roleKey=owner")), 200, R.preferencesResponse, "notif-store")
   })
 
-  it("khoá cứng tầng chuỗi và cửa hàng; tuỳ chọn bị khoá → 403 envelope cũ", async () => {
+  it("khoá cứng tầng chuỗi và cửa hàng; tuỳ chọn bị khoá → 422 LOCKED_BY_UPPER", async () => {
     for (const [lock, list, unlock, tier] of [[orgLock, orgLocks, orgUnlock, "org"], [storeLock, storeLocks, storeUnlock, "store"]] as const) {
       await expectContract(await lock(send(`/${tier}-hard-locks`, "POST", { eventKey, channel: "SMS", enabled: false, reason: "Tiệm không dùng SMS" })), 200, R.hardLockSetResponse, `notif-${tier}-lock`)
       const locks = await expectContract(await list(get(`/${tier}-hard-locks`)), 200, R.hardLocksResponse, `notif-${tier}-locks`)
       expect((locks.data as unknown[]).length).toBe(1)
       const pref = await patchPrefs(send("/preferences", "PATCH", { eventKey, channel: "SMS", enabled: true }))
-      if (tier === "org") {
-        expect(pref.status).toBe(403)
-        expect(typeof (await readJson(pref)).error).toBe("string")
-      } else {
-        // Phát hiện (audit API §15): route chỉ xét khoá của tầng TRÊN `STORE`, nên khoá tầng cửa hàng không chặn ở đây.
-        expect(pref.status).toBe(200)
-      }
+      // Cả khoá tầng chuỗi lẫn tầng cửa hàng đều chặn tuỳ chọn cá nhân (audit API §15 — trước đây khoá cửa hàng lọt qua)
+      expect(pref.status).toBe(422)
+      const err = (await readJson(pref)).error as { code: string; details: { violation: string } }
+      expect(err.code).toBe("UNPROCESSABLE_ENTITY")
+      expect(err.details.violation).toBe("LOCKED_BY_UPPER")
       await expectContract(await unlock(send(`/${tier}-hard-locks`, "DELETE", { eventKey, channel: "SMS" })), 200, R.hardLockRemovedResponse, `notif-${tier}-unlock`)
       // Gỡ lần hai (không còn khoá) vẫn 200.
       expect((await unlock(send(`/${tier}-hard-locks`, "DELETE", { eventKey, channel: "SMS" }))).status).toBe(200)

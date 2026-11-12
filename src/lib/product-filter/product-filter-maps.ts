@@ -1,5 +1,5 @@
 /**
- * SSOT Maps — Bảng ánh xạ chuẩn hoá cho hệ thống Lọc & Tìm kiếm FloraOS
+ * SSOT Maps — Bảng ánh xạ chuẩn hoá cho hệ thống Lọc & Tìm kiếm ALG
  *
  * Đây là nguồn sự thật duy nhất (SSOT) cho tất cả mapping giữa:
  *   - Nhãn UI tiếng Việt ↔ Mã DB tiếng Anh

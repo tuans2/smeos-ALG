@@ -40,3 +40,11 @@ ccbec661ad7921774cb8376bbccf33c63f894139:tests/tenant/internal-contract-integrat
 # Khoá chủ PII giả của job e2e-ux trong CI (nhánh claude/trusting-ramanujan-f6y2cw, PR #18, 10/11/2026) — base64 của
 # chữ "ci-only-not-a-real-pii-key-32b!!", không phải bí mật thật (đã đọc tận mắt; PO duyệt thêm 10/11/2026, PR #23).
 895f80d2ff8558c4ff8527515e4092921a63c319:.github/workflows/ci.yml:generic-api-key:183
+# Giá trị giả của test (nhánh claude/bold-meitner-nk07bd, 11/11/2026): `SESSION_SECRET` mẫu trong
+# tests/unit/lib/env-empty-values.test.ts, không phải bí mật thật (đã đọc tận mắt). CI tải mọi nhánh nên quét cả nhánh này.
+439e71d9f0efec341c97ca769f747bd14e221ebb:tests/unit/lib/env-empty-values.test.ts:generic-api-key:7
+# Báo nhầm (nhánh claude/fervent-pascal-ilhcgb, 12/11/2026): tên khoá lưu trình duyệt (trạng thái thu gọn menu) trong
+# src/components/layout/nav-storage.ts dòng 12 — tên biến có chữ "Key", không phải bí mật (đã đọc tận mắt).
+4e7ba0de870c316043d8e39ebcb50bb1d8c4679e:src/components/layout/nav-storage.ts:generic-api-key:12
+# Cùng báo nhầm trên, lặp lại trong dòng chú thích .gitleaksignore của nhánh claude/exciting-keller-eoif17 (commit 87134b04).
+87134b04819aa1ae35c488b289aea2533af2fe77:.gitleaksignore:generic-api-key:46

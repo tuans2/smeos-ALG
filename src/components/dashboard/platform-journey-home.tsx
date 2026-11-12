@@ -1,5 +1,7 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
@@ -18,7 +20,7 @@ import {
   type PlatformSystemHealth,
 } from "./platform-overview-metrics"
 
-const STORAGE_KEY_EXPERT_MODE = "smeos_expert_mode_platform"
+const STORAGE_KEY_EXPERT_MODE = "alg_expert_mode_platform"
 const LEGACY_STORAGE_KEY_EXPERT_MODE = "floraos_expert_mode_platform"
 
 interface PlatformJourneyHomeProps {

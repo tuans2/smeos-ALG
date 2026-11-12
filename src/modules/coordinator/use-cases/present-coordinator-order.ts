@@ -25,6 +25,8 @@ import type { CoordinatorOrderRow } from "../infra/coordinator-repository"
 import { loadEffectiveFieldConfigs } from "@/modules/field-platform/use-cases/get-effective-field-config"
 import { findMissingRequiredFields } from "@/modules/field-platform/domain/stage-transitions"
 import { buildOrderFieldValueLookup } from "./field-value-lookup"
+import { paymentProgress } from "@/modules/orders/domain/payment-progress"
+import { orderReferencePayoutVnd } from "./partner-payout-source"
 
 const IMAGE_URL_TTL_SECONDS = 3600
 
@@ -32,15 +34,11 @@ const IMAGE_URL_TTL_SECONDS = 3600
  * ĐP-4a (26/09/2026, PO D2), §2.15.7 — suy ra, không lưu tay.
  * REFUNDED: có ít nhất một dòng REFUND và tổng thực thu hiện tại = 0.
  */
-function derivePaymentStatus(
-  paidVnd: number,
-  totalVnd: number,
-  hasRefund: boolean
-): "UNPAID" | "PARTIALLY_PAID" | "PAID" | "REFUNDED" {
+function derivePaymentStatus(paidVnd: number, totalVnd: number, hasRefund: boolean): "UNPAID" | "PARTIALLY_PAID" | "PAID" | "REFUNDED" {
   if (hasRefund && paidVnd <= 0) return "REFUNDED"
-  if (paidVnd <= 0) return "UNPAID"
-  if (paidVnd < totalVnd) return "PARTIALLY_PAID"
-  return "PAID"
+  const progress = paymentProgress(totalVnd, paidVnd)
+  if (progress === "PAID") return "PAID"
+  return progress === "DEPOSIT" ? "PARTIALLY_PAID" : "UNPAID"
 }
 
 /**
@@ -427,12 +425,9 @@ export async function presentCoordinatorOrders(
       unitPriceVnd: Number(r.total_vnd),
       paidVnd: Number(r.paid_vnd),
       balanceVnd: Number(r.balance_vnd),
-      paymentStatus: derivePaymentStatus(
-        Number(r.paid_vnd),
-        Number(r.total_vnd),
-        r.payments.some((p) => p.kind === "REFUND")
-      ),
-      partnerPayoutVnd: c.partner_payout_vnd === null ? null : Number(c.partner_payout_vnd),
+      paymentStatus: derivePaymentStatus(Number(r.paid_vnd), Number(r.total_vnd), r.payments.some((p) => p.kind === "REFUND")),
+      // Chưa đóng: số chuẩn (phí gia công còn trả / số thoả thuận, audit BL-22); đã đóng: số đã ghi lúc đóng
+      partnerPayoutVnd: c.closed_at ? (c.partner_payout_vnd === null ? null : Number(c.partner_payout_vnd)) : orderReferencePayoutVnd(r),
       partnerRating: c.partner_rating,
       closureNotes: c.closure_notes,
       closedAt: iso(c.closed_at),

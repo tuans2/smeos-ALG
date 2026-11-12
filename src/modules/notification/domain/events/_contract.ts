@@ -4,7 +4,7 @@
  * File này định nghĩa tất cả types & interfaces cần thiết để một tầng
  * tự khai báo sự kiện thông báo của mình.
  *
- * THIẾT KẾ ĐỘC LẬP: File này không import bất kỳ module nào trong smeOS.
+ * THIẾT KẾ ĐỘC LẬP: File này không import bất kỳ module nào trong ALG.
  * Khi tách repo, copy file này sang repo mới là đủ để hoạt động.
  *
  * @module notification/domain/events

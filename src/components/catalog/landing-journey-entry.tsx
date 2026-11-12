@@ -34,7 +34,7 @@ export function LandingJourneyEntry({ onSelectMode }: LandingJourneyEntryProps) 
             <div className="text-title font-extrabold text-text">AI làm cho tôi</div>
             <p className="text-body-sm text-text-muted leading-relaxed">
               Bạn chỉ cần đưa ảnh hoa, link video hoặc ghi chú ngắn.
-              smeOS phân tích, tạo tiêu đề, chọn sản phẩm và xuất bản toàn bộ.
+              ALG phân tích, tạo tiêu đề, chọn sản phẩm và xuất bản toàn bộ.
             </p>
           </div>
 

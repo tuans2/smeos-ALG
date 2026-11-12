@@ -1,10 +1,9 @@
 import { validationFailed } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { produceCreative } from "@/modules/creative-production/use-cases/produce-creative"
 import { produceAuthentic } from "@/modules/creative-production/use-cases/produce-authentic"
 import { produceBody } from "@/app/api/v1/_contracts/requests-creative"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * `POST /api/v1/creative-production/produce` — Sản xuất nội dung Creative Production.
@@ -14,20 +13,20 @@ import { produceBody } from "@/app/api/v1/_contracts/requests-creative"
  *
  * Năng lực: `I1` (sáng tạo nội dung đa phương tiện).
  */
-export const POST = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "I1")
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "I1" },
+  handler: async ({ request, ctx }) => {
+    const parsed = produceBody.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const parsed = produceBody.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    // `organizationId` CHỈ từ phiên máy chủ (AGENTS.md, Arch §2.5) — không nhận
+    // từ body (23/09/2026; trước đó nhận rồi so khớp).
+    const brief = { ...parsed.data.brief, organizationId: ctx.organizationId }
 
-  // `organizationId` CHỈ từ phiên máy chủ (AGENTS.md, Arch §2.5) — không nhận
-  // từ body (23/09/2026; trước đó nhận rồi so khớp).
-  const brief = { ...parsed.data.brief, organizationId: ctx.organizationId }
+    const result = brief.mode === "CREATIVE"
+      ? produceCreative({ brief })
+      : produceAuthentic({ brief })
 
-  const result = brief.mode === "CREATIVE"
-    ? produceCreative({ brief })
-    : produceAuthentic({ brief })
-
-  return jsonResponse(result, { status: 201 })
+    return jsonResponse(result, { status: 201 })
+  },
 })

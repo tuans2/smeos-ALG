@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { SUNSET_FIELDS, SUNSET_NOTE } from "@/modules/integration/domain/integration-field-sunset"
+
 /**
  * Lược đồ PHẢN HỒI của Integration API (audit API đợt 4, PO 07/11/2026) — mô tả đúng JSON mà route trả
  * hôm nay (bản ghi use-case qua `JSON.stringify`: `Date` → chuỗi ISO), kể cả vài khoá camelCase cũ
@@ -10,12 +12,27 @@ const timestamp = z.iso.datetime()
 const json = z.unknown()
 const jsonRecord = z.record(z.string(), z.unknown()).nullable()
 
+/**
+ * Trường SẮP GỠ (ARC-024, PO 11/11/2026): tuỳ chọn (vắng từ ngày gỡ) và `deprecated` trong OpenAPI. Danh sách lấy từ
+ * `SUNSET_FIELDS` — `integration-openapi.test.ts` đối chiếu để lược đồ và máy chủ bỏ đúng cùng một bộ trường.
+ */
+const sunset = <T extends z.ZodType>(schema: T) => schema.optional().meta({ deprecated: true, description: SUNSET_NOTE })
+function withSunset<S extends z.ZodRawShape>(shape: S, fields: readonly string[]): S {
+  const out = { ...shape } as unknown as Record<string, z.ZodType>
+  for (const key of fields) {
+    if (!(key in out)) throw new Error(`Trường sắp gỡ "${key}" không có trong lược đồ`)
+    out[key] = sunset(out[key]!)
+  }
+  // Kiểu tĩnh giữ như cũ (trường vẫn có tới ngày gỡ); lược đồ chạy thật đánh dấu tuỳ chọn + deprecated
+  return out as unknown as S
+}
+
 export const capabilitiesCheckResponse = z.strictObject({
   /** Mã năng lực hợp lệ đã hỏi → có/không. Mã không có trong catalog bị bỏ qua. */
   granted: z.record(z.string(), z.boolean()),
 })
 
-export const assetResponse = z.strictObject({
+export const assetResponse = z.strictObject(withSunset({
   id: z.string(),
   organization_id: z.string(),
   product_id: z.string().nullable(),
@@ -52,7 +69,7 @@ export const assetResponse = z.strictObject({
   purge_after: timestamp.nullable(),
   legal_hold_until: timestamp.nullable(),
   updated_at: timestamp,
-})
+}, SUNSET_FIELDS.asset))
 
 export const contentMetricsResponse = z.strictObject({
   id: z.string(),
@@ -70,7 +87,7 @@ export const contentMetricsResponse = z.strictObject({
   updated_at: timestamp,
 })
 
-export const generationJobResponse = z.strictObject({
+export const generationJobResponse = z.strictObject(withSunset({
   id: z.string(),
   organization_id: z.string(),
   workspace_id: z.string(),
@@ -95,7 +112,7 @@ export const generationJobResponse = z.strictObject({
   completed_at: timestamp.nullable(),
   cancelled_at: timestamp.nullable(),
   updated_at: timestamp,
-})
+}, SUNSET_FIELDS.job))
 
 export const createJobResponse = z.strictObject({
   job: generationJobResponse,
@@ -104,7 +121,7 @@ export const createJobResponse = z.strictObject({
   usage: z.strictObject({ costCredit: z.number().int(), balanceAfter: z.number().int().nullable() }),
 })
 
-export const usageResponse = z.strictObject({
+export const usageResponse = z.strictObject(withSunset({
   id: z.string(),
   organization_id: z.string(),
   workspace_id: z.string(),
@@ -117,7 +134,7 @@ export const usageResponse = z.strictObject({
   status: z.string(),
   metadata: json,
   created_at: timestamp,
-})
+}, SUNSET_FIELDS.usage))
 
 const productPricing = z.strictObject({
   partner_tier_bonus: z.record(z.string(), z.number()),
@@ -159,7 +176,7 @@ export const listProductsResponse = z.strictObject({
   next_cursor: z.string().nullable(),
 })
 
-const integrationAsset = z.strictObject({
+const integrationAsset = z.strictObject(withSunset({
   id: z.string(),
   version: z.number().int(),
   storage_key: z.string(),
@@ -171,7 +188,7 @@ const integrationAsset = z.strictObject({
   height: z.number().int().nullable(),
   aspect_ratio: z.string().nullable(),
   created_at: timestamp,
-})
+}, SUNSET_FIELDS.masterImageAsset))
 
 export const masterImageResponse = z.strictObject({ master: integrationAsset, ratios: z.array(integrationAsset) })
 
@@ -217,7 +234,7 @@ export const businessProfileResponse = z
   .nullable()
 
 /** Bản ghi đầy đủ — `POST /integration/catalog-links` trả nguyên dòng vừa tạo. */
-export const catalogLinkRecord = z.strictObject({
+export const catalogLinkRecord = z.strictObject(withSunset({
   id: z.string(),
   organization_id: z.string(),
   slug: z.string(),
@@ -232,7 +249,7 @@ export const catalogLinkRecord = z.strictObject({
   trashed_at: timestamp.nullable(),
   purge_after: timestamp.nullable(),
   updated_at: timestamp,
-})
+}, SUNSET_FIELDS.catalogLink))
 
 /** Dạng đọc lại (liệt kê, sau khi sửa): không có `organization_id`, `trashed_at`, `purge_after`. */
 export const catalogLinkView = catalogLinkRecord.omit({ organization_id: true, trashed_at: true, purge_after: true })

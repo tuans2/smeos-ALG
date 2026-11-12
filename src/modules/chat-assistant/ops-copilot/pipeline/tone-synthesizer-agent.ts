@@ -51,8 +51,8 @@ function purifyDevJargon(text: string): string {
 // ---------------------------------------------------------------------------
 
 function buildSystemPrompt(): string {
-  return `Bạn là Trợ lý Vận hành smeOS — nhân viên hỗ trợ nội bộ của cửa hàng.
-Nhiệm vụ: Trả lời câu hỏi của chủ tiệm / nhân viên về cách sử dụng phần mềm smeOS.
+  return `Bạn là Trợ lý Vận hành ALG — nhân viên hỗ trợ nội bộ của cửa hàng.
+Nhiệm vụ: Trả lời câu hỏi của chủ tiệm / nhân viên về cách sử dụng phần mềm ALG.
 
 QUY TẮC BẮT BUỘC:
 - Viết hoàn toàn bằng tiếng Việt, ấm áp, lịch sự như đồng nghiệp thân thiện.
@@ -86,7 +86,7 @@ Hãy trả lời thân thiện, thừa nhận chưa rõ và gợi ý người d�
     : ""
 
   return `Người dùng hỏi: "${intent.rawQuery}"
-Tính năng: ${facts.topicTitle ?? facts.moduleTitle ?? "smeOS"}
+Tính năng: ${facts.topicTitle ?? facts.moduleTitle ?? "ALG"}
 Tóm tắt: ${facts.summary}
 
 Các bước thực hiện:
@@ -102,10 +102,10 @@ Hãy trả lời câu hỏi trên theo đúng thông tin trên bằng ngôn ng�
 function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): PolishedDraft {
   if (facts.isOverview && facts.overviewItems) {
     const greeting = intent.userRole !== "ALL"
-      ? `Dạ em là smeOS Ops Copilot — Trợ lý vận hành đồng hành cùng anh/chị (${intent.userRole})!`
-      : "Dạ em là smeOS Ops Copilot — Trợ lý vận hành nền tảng smeOS của cửa hàng!"
+      ? `Dạ em là ALG Ops Copilot — Trợ lý vận hành đồng hành cùng anh/chị (${intent.userRole})!`
+      : "Dạ em là ALG Ops Copilot — Trợ lý vận hành nền tảng ALG của cửa hàng!"
 
-    const bodyText = `${greeting} Em có thể hướng dẫn anh/chị thao tác 10 chức năng chính của tiệm:\n\n` +
+    const bodyText = `${greeting} Em có thể hướng dẫn anh/chị thao tác 11 chức năng chính của tiệm:\n\n` +
       `1. **Trang Chủ:** Xem việc cần làm đầu ngày, theo dõi đơn tồn và hạn mức AI.\n` +
       `2. **Đơn Hàng & Xưởng:** Quản lý tiến độ đơn, in phiếu chế tác giấu giá và phiếu giao cho shipper.\n` +
       `3. **Bộ sưu tập riêng:** Tạo link xem hoa gửi Zalo cho khách và nhận cọc tự động qua mã QR.\n` +
@@ -115,7 +115,8 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
       `7. **Quét Ảnh Hoa AI & Phân tích hoa:** Nhận diện nguyên liệu, đếm cành và soạn sẵn tin nhắn Zalo chốt đơn.\n` +
       `8. **Kho Dữ Liệu:** Lưu trữ ảnh hoa của tiệm và quản lý thùng rác 30 ngày.\n` +
       `9. **Hồ Sơ Cửa Hàng:** Cài đặt thông tin tiệm, logo và số tài khoản ngân hàng nhận tiền cọc.\n` +
-      `10. **Cài Đặt & Thành Viên:** Cấp tài khoản nhân viên dùng ngay trong 10 giây và phân quyền.\n\n` +
+      `10. **Cài Đặt & Thành Viên:** Cấp tài khoản nhân viên dùng ngay trong 10 giây và phân quyền.\n` +
+      `11. **Khách Hàng — Dữ Liệu Cá Nhân:** Xuất bản sao, sửa hoặc xoá dữ liệu khi khách yêu cầu.\n\n` +
       `Anh/chị đang cần hỗ trợ thao tác phần nào ạ?`
 
     return { greeting, bodyText, targetRoute: "/", actionLabel: "Khám Phá Các Chức Năng" }
@@ -182,7 +183,7 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
 
   switch (intent.style) {
     case "CONSULTANT": {
-      greeting = `**[Cố vấn Vận hành smeOS]**`
+      greeting = `**[Cố vấn Vận hành ALG]**`
       bodyText = `${greeting} Hướng dẫn **${facts.topicTitle}**:\n\n` +
         `${stepsText}${primaryCaveat}${crossModuleBlock}\n\n` +
         `💡 *Khuyến nghị quản trị:* Thực hiện đúng các bước trên để tối ưu thời gian và đối soát.`

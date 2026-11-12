@@ -23,7 +23,7 @@ function hasFlag(name: string): boolean {
 
 async function main(): Promise<void> {
   console.log("================================================================================")
-  console.log("🚑 [FLORAOS] KHỞI ĐỘNG QUY TRÌNH KHÔI PHỤC DỮ LIỆU (DISASTER RECOVERY)")
+  console.log("🚑 [ALG] KHỞI ĐỘNG QUY TRÌNH KHÔI PHỤC DỮ LIỆU (DISASTER RECOVERY)")
   console.log("================================================================================")
 
   const filePath = getArg("file")

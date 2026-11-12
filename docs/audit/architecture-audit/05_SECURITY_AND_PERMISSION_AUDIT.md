@@ -10,7 +10,7 @@
 | ARC-002 | **P0** | Tài khoản production (gồm superadmin nền tảng) dùng mật khẩu seed nằm trong lịch sử repo công khai; mật khẩu CSDL lộ qua ảnh chụp — chưa xoay | `docs/kien-truc/HO_SO_BAN_GIAO.md` §6 (ô chưa tích) | NV (cần PO xác nhận) |
 | ARC-003 | P1 | `requirePlatformContext` cấp `N1…N8, N12` cho user có email đuôi `@dev.com`, hoặc cho bất kỳ ai gửi cookie `smeos_dev_role` chứa `platform_admin`, khi `NODE_ENV !== "production"`. Đăng ký tài khoản là công khai | `src/modules/platform/use-cases/resolve-platform-session.ts` dòng 41–63; `src/app/api/dev/role-override/route.ts` | V (production an toàn vì `render.yaml` đặt `NODE_ENV=production`) |
 | ARC-004 | P1 | Build production bỏ qua lỗi TypeScript | `next.config.ts` `ignoreBuildErrors: true` | V |
-| ARC-022 | P2 | CSP chỉ `Report-Only`; không có token CSRF hay kiểm `Origin` cho request ghi (dựa vào `SameSite=Lax` + JSON) | `next.config.ts`; grep `csrf`/`sec-fetch-site` không ra cơ chế | V |
+| ARC-022 | ~~P2~~ **Đã đóng 12/11/2026** (kiểm Origin 11/11; CSP nonce chặn thật — D-68) | ~~CSP chỉ `Report-Only`~~; không có token CSRF hay kiểm `Origin` cho request ghi (dựa vào `SameSite=Lax` + JSON) | `next.config.ts`; grep `csrf`/`sec-fetch-site` không ra cơ chế | V |
 | ARC-009 | P1 | Worker Python gọi thẳng OpenAI/fal/Stability/Replicate → sàn riêng tư, lọc giấy phép của cổng AI không áp | `workers/media_ai/providers/*`, `workers/vision/providers/openai_*.py` | PV (chưa đọc hết logic chính sách trong worker) |
 | ARC-011 | P1 | Chưa có cơ chế đồng ý, hạn lưu, xoá dữ liệu cá nhân khách cuối (Nghị định 13/2023); `staff_notifications.recipient_info` không hạn lưu | TRANG_THAI §5 D13; HO_SO_BAN_GIAO §6 | V (theo tài liệu) |
 | ARC-025 | P2 | Route `content-engine/rewrite` chưa gác mã năng lực (nợ #170); 3 route chat nội bộ gác bằng "là người tham gia" trong use-case | `tests/unit/architecture/route-capability-guard.test.ts` `NO_CAPABILITY_GUARD` | V |
@@ -152,6 +152,6 @@ Theo HO_SO_BAN_GIAO §6: production chỉ có **một** người vận hành (`t
 2. ARC-002: xoay mật khẩu seed + CSDL, xác nhận; tạo tài khoản vận hành thứ hai, tách mã N theo nhiệm vụ.
 3. ARC-003: xoá nhánh `@dev.com`/cookie trong `requirePlatformContext`, hoặc gác bằng cờ tường minh `ALLOW_DEV_PLATFORM_BYPASS=true` kèm kiểm `NODE_ENV === "development"`; thêm test platform cho cả hai đường.
 4. ARC-004: bỏ `ignoreBuildErrors`.
-5. ARC-022: chuyển CSP sang chặn sau khi đủ báo cáo; thêm kiểm `Origin`/`Sec-Fetch-Site` cho route ghi có cookie.
+5. ~~ARC-022: chuyển CSP sang chặn; thêm kiểm `Origin` cho route ghi có cookie~~ — xong 11–12/11/2026 (`origin-guard.ts`, `csp.ts`).
 6. ARC-009: đưa lời gọi nhà cung cấp của worker qua một chính sách chung (đọc `ai_policies`/giấy phép từ DB trước khi gọi, hoặc proxy qua cổng TS).
 7. Thuê pentest độc lập trước khi ký khách (đã có trong HO_SO_BAN_GIAO).

@@ -77,11 +77,11 @@ export function SlaMonitorPanel({ orders, onSelectOrder }: SlaMonitorPanelProps)
         </Card>
 
         <Card className="p-3.5 border-warning/40 bg-warning-bg/40">
-          <div className="flex items-center gap-2 text-caption text-warning font-semibold">
+          <div className="flex items-center gap-2 text-caption text-warning-text font-semibold">
             <AlertTriangle size={14} className="shrink-0" />
             <span>Sắp trễ (&lt;30p)</span>
           </div>
-          <div className="mt-1 text-display font-extrabold text-warning">
+          <div className="mt-1 text-display font-extrabold text-warning-text">
             {summary.nearBreachCount}
           </div>
           <div className="text-caption text-text-muted mt-0.5">
@@ -114,7 +114,7 @@ export function SlaMonitorPanel({ orders, onSelectOrder }: SlaMonitorPanelProps)
             {summary.partnerStats.map((p) => (
               <div
                 key={p.partnerName}
-                className="flex items-center justify-between p-2.5 rounded-lg border border-border/70 bg-surface-raised"
+                className="flex items-center justify-between p-2.5 rounded-lg border border-border/70 bg-surface"
               >
                 <div>
                   <div className="font-semibold text-body-sm text-text">{p.partnerName}</div>
@@ -156,7 +156,7 @@ export function SlaMonitorPanel({ orders, onSelectOrder }: SlaMonitorPanelProps)
               variant={filter === "NEAR_BREACH" ? "primary" : "outline"}
               size="sm"
               onClick={() => setFilter("NEAR_BREACH")}
-              className="h-7 text-caption px-2.5 text-warning"
+              className="h-7 text-caption px-2.5 text-warning-text"
             >
               Sắp trễ ({summary.nearBreachCount})
             </Button>

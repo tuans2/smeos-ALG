@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Readiness Score Engine (§8.2)
+ * ALG Inputs Architecture v2.1 — Readiness Score Engine (§8.2)
  *
  * Implements the 5-component weighted readiness score (0-100):
  * - Completeness (40%): % of required fields populated for stage

@@ -1,7 +1,7 @@
 /**
  * Domain Solver: Thuật toán đối soát phù hợp thị trường (Product Trend Fit),
  * Khuyến nghị Cải tiến (KEEP/IMPROVE/TEST), và Bộ sinh 10 Chủ đề Nội dung Cụ thể.
- * Tuân thủ mục 12-19 của tài liệu FloraOS-Intelligence-Engine_FINAL_v2.0.md.
+ * Tuân thủ mục 12-19 của tài liệu ALG-Intelligence-Engine_FINAL_v2.0.md.
  * Thuần TypeScript — Zero external dependencies.
  *
  * CẬP NHẬT 21/09/2026 (trả nợ kỹ thuật #115 — chốt bởi Tony: "Phải nối với dữ liệu thật"):

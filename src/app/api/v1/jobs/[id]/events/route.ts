@@ -1,10 +1,8 @@
 import { notFound } from "@/core/http/errors"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle } from "@/core/http/response"
 import { getJobEvents } from "@/modules/jobs/use-cases/get-job-events"
 import { GenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { isTerminalStatus } from "@/modules/jobs/domain/job-rules"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { defineRoute } from "@/core/http/define-route"
 
 const POLL_INTERVAL_MS = 1000
 const MAX_STREAM_MS = 15 * 60 * 1000 // trần một kết nối — cùng ngưỡng YC-J10
@@ -29,68 +27,68 @@ function sseFrame(event: string, id: number, data: unknown): string {
  * trình duyệt), dừng khi job vào trạng thái cuối, client ngắt kết nối, hoặc
  * quá ${MAX_STREAM_MS}ms.
  */
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "G4")
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "G4" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const url = new URL(request.url)
+    const lastEventIdHeader = request.headers.get("last-event-id") ?? url.searchParams.get("after")
+    const afterSeq = lastEventIdHeader ? Number(lastEventIdHeader) || 0 : 0
 
-  const { id } = await context.params
-  const url = new URL(request.url)
-  const lastEventIdHeader = request.headers.get("last-event-id") ?? url.searchParams.get("after")
-  const afterSeq = lastEventIdHeader ? Number(lastEventIdHeader) || 0 : 0
+    const jobRepo = new GenerationJobRepository()
+    const initialJob = await jobRepo.findById(ctx, id)
+    if (!initialJob) throw notFound()
 
-  const jobRepo = new GenerationJobRepository()
-  const initialJob = await jobRepo.findById(ctx, id)
-  if (!initialJob) throw notFound()
+    let cursor = afterSeq
+    const startedAt = Date.now()
 
-  let cursor = afterSeq
-  const startedAt = Date.now()
+    const stream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        const encoder = new TextEncoder()
+        const send = (event: string, seq: number, data: unknown) =>
+          controller.enqueue(encoder.encode(sseFrame(event, seq, data)))
 
-  const stream = new ReadableStream<Uint8Array>({
-    async start(controller) {
-      const encoder = new TextEncoder()
-      const send = (event: string, seq: number, data: unknown) =>
-        controller.enqueue(encoder.encode(sseFrame(event, seq, data)))
-
-      let closed = false
-      const onAbort = () => {
-        closed = true
-      }
-      request.signal.addEventListener("abort", onAbort)
-
-      try {
-        while (!closed) {
-          const events = await getJobEvents(ctx, id, cursor)
-          for (const event of events) {
-            send(event.event, event.seq, event.payload)
-            cursor = event.seq
-          }
-
-          const job = await jobRepo.findById(ctx, id)
-          if (!job || isTerminalStatus(job.status)) {
-            cursor += 1
-            send("done", cursor, { status: job?.status ?? "CANCELLED", result: job?.result ?? null })
-            break
-          }
-
-          if (Date.now() - startedAt > MAX_STREAM_MS) break
-          await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
+        let closed = false
+        const onAbort = () => {
+          closed = true
         }
-      } finally {
-        request.signal.removeEventListener("abort", onAbort)
-        controller.close()
-      }
-    },
-    cancel() {
-      // Client đóng kết nối — vòng lặp trong `start` tự thoát qua `onAbort`.
-    },
-  })
+        request.signal.addEventListener("abort", onAbort)
 
-  return new Response(stream, {
-    status: 200,
-    headers: {
-      "content-type": "text/event-stream; charset=utf-8",
-      "cache-control": "no-cache, no-transform",
-      connection: "keep-alive",
-    },
-  })
+        try {
+          while (!closed) {
+            const events = await getJobEvents(ctx, id, cursor)
+            for (const event of events) {
+              send(event.event, event.seq, event.payload)
+              cursor = event.seq
+            }
+
+            const job = await jobRepo.findById(ctx, id)
+            if (!job || isTerminalStatus(job.status)) {
+              cursor += 1
+              send("done", cursor, { status: job?.status ?? "CANCELLED", result: job?.result ?? null })
+              break
+            }
+
+            if (Date.now() - startedAt > MAX_STREAM_MS) break
+            await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
+          }
+        } finally {
+          request.signal.removeEventListener("abort", onAbort)
+          controller.close()
+        }
+      },
+      cancel() {
+        // Client đóng kết nối — vòng lặp trong `start` tự thoát qua `onAbort`.
+      },
+    })
+
+    return new Response(stream, {
+      status: 200,
+      headers: {
+        "content-type": "text/event-stream; charset=utf-8",
+        "cache-control": "no-cache, no-transform",
+        connection: "keep-alive",
+      },
+    })
+  },
 })

@@ -14,7 +14,7 @@ interface OrderReport {
   series: Array<{ bucket: string; total: number; completed: number; cancelled: number; late: number }>
 }
 interface RevenueReport {
-  totals: { expectedVnd: number; collectedVnd: number; refundedVnd: number; netCollectedVnd: number; collectionRate: number | null }
+  totals: { expectedVnd: number; collectedVnd: number; refundedVnd: number; netCollectedVnd: number; collectionRate: number | null; draftCount: number; draftVnd: number }
   series: Array<{ bucket: string; expectedVnd: number; netCollectedVnd: number }>
   orders?: Array<{ id: string; code: string; status: string; totalVnd: number; paidVnd: number }>
 }
@@ -67,7 +67,11 @@ export function RevenuePanel({ period }: { period: PeriodState }) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatTile label="Dự kiến" value={formatCurrency(t.expectedVnd)} tip="Tổng giá trị đơn chưa huỷ tạo trong kỳ" />
+        <StatTile
+          label="Dự kiến"
+          value={formatCurrency(t.expectedVnd)}
+          tip={t.draftCount > 0 ? `Đơn đã chốt tạo trong kỳ; chưa tính ${t.draftCount} đơn chờ chốt (${formatCurrency(t.draftVnd)})` : "Tổng giá trị đơn đã chốt tạo trong kỳ"}
+        />
         <StatTile label="Thực thu" value={formatCurrency(t.netCollectedVnd)} tip="Khoản thu đã xác nhận trong kỳ, trừ hoàn tiền" />
         <StatTile label="Đã hoàn" value={formatCurrency(t.refundedVnd)} />
         <StatTile label="Tỷ lệ thu" value={pct(t.collectionRate)} />

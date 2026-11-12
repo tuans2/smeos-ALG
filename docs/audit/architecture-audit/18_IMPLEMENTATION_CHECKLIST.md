@@ -71,7 +71,7 @@ không sinh check nào thì không deploy. Ruleset `main` ở P0-03 vẫn nên b
 ### P0-03 Cấu hình GitHub/Render — **[TAY]**
 - [x] ~~**[PO]** Thêm secret `RENDER_DEPLOY_HOOK_*` vào GitHub~~ — không còn cần (P0-02 đổi cơ chế)
 - [ ] **[PO]** Ruleset `main`: bắt buộc PR, 5 check xanh, chặn force push — lớp phòng vệ thứ hai (chặn *merge* bản đỏ); cổng deploy do Render thực thi qua `autoDeployTrigger: checksPass`
-- [ ] **[PO]** Chuyển repo `smeOS` sang riêng tư (D-22)
+- [ ] **[PO]** Chuyển repo `ALG` sang riêng tư (D-22)
 - [ ] **[PO]** Xác nhận Render deploy từ `smeOS`, rồi archive `floraos-core` (D-37)
 - [ ] Lưu ảnh chụp cấu hình vào runbook
 

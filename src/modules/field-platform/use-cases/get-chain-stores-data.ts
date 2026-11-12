@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Get Chain Stores Data Summary
+ * ALG Inputs Architecture v2.1 — Get Chain Stores Data Summary
  *
  * Fetches all branches/stores for an organization and returns summary
  * statistics for the store card tiles in /du-lieu.

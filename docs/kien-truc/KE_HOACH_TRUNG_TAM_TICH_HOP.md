@@ -162,7 +162,7 @@ Thứ tự từ rủi ro thấp đến cao. Mỗi connector là một WP, đi qu
 | 4.1 | Mở rộng port: `SalesChannelCatalogProvider` (đã có), thêm mới `OrderSyncProvider` (`pullOrders(cursor)`, `ackOrder`, `updateFulfillment`) và `InventorySyncProvider` (`pushStock(items≤100)`) trong `src/core/ports/` |
 | 4.2 | Bảng ánh xạ (cần PO duyệt schema): `sales_channel_listings` (product/variant ↔ listing id ngoài, trạng thái, lỗi) và `sales_channel_orders` (đơn ngoài ↔ đơn nội bộ, khoá idempotency là mã đơn ngoài) |
 | 4.3 | Đơn từ sàn được nhập vào `orders` qua use-case hiện có với `source=<channel>`; không tạo lối ghi riêng |
-| 4.4 | Tồn kho: một chiều SMEOS → sàn (SMEOS là nguồn sự thật); đẩy theo sự kiện thay đổi tồn kho và đối soát toàn bộ mỗi đêm |
+| 4.4 | Tồn kho: một chiều ALG → sàn (ALG là nguồn sự thật); đẩy theo sự kiện thay đổi tồn kho và đối soát toàn bộ mỗi đêm |
 | 4.5 | Giao diện: tab "Kênh bán hàng" gồm ánh xạ sản phẩm (chọn sản phẩm → đẩy lên kênh), danh sách lỗi listing, đơn đồng bộ gần nhất |
 
 ### 4B. Từng sàn (mỗi sàn khoảng 2 tuần, đi qua checklist mục 7 của đề xuất)

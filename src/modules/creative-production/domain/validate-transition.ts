@@ -13,7 +13,7 @@
  * lưu trữ thật. Từ nay Creative Studio luôn tự resolve ảnh hiển thị qua
  * `GET /api/v1/assets/:id/view-url`, không tin `sourceImageUrl` truyền qua URL.
  *
- * IO Spec: `docs/dac-ta/FLORAOS_CREATIVE_STUDIO_IO_SPEC.md` mục 2.1.
+ * IO Spec: `docs/dac-ta/ALG_CREATIVE_STUDIO_IO_SPEC.md` mục 2.1.
  *
  * Thuần TypeScript — Zero external dependencies.
  */

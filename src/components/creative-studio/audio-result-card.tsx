@@ -81,20 +81,20 @@ export function AudioResultCard({
         )}
       </h3>
       {queuedTooLong && (
-        <p className="mb-3 text-meta text-warning">
+        <p className="mb-3 text-meta text-warning-text">
           Chưa hệ thống nào nhận tác vụ này. Kiểm tra terminal đang chạy <code>npm run worker:media</code> (hoặc{" "}
           <code>npm run dev:all</code>) — nếu nó được bật trước khi cập nhật mã, hãy tắt và chạy lại. Tác vụ vẫn nằm
           trong hàng đợi, không cần tạo lại.
         </p>
       )}
       {stage === "COMPLETED" && audioJob?.provider_fallback && (
-        <p className="mb-2 rounded border border-warning/30 bg-warning/10 px-2 py-1 text-meta text-warning">
+        <p className="mb-2 rounded border border-warning/30 bg-warning/10 px-2 py-1 text-meta text-warning-text">
           {PROVIDER_LABEL[audioJob.provider_key ?? ""] ?? audioJob.provider_key} lỗi — giọng đã được đọc bằng{" "}
           {PROVIDER_LABEL[audioJob.provider_used ?? ""] ?? audioJob.provider_used} (cùng giọng trong danh mục).
         </p>
       )}
       {stage === "COMPLETED" && audioJob?.music_fallback && (
-        <p className="mb-2 rounded border border-warning/30 bg-warning/10 px-2 py-1 text-meta text-warning">
+        <p className="mb-2 rounded border border-warning/30 bg-warning/10 px-2 py-1 text-meta text-warning-text">
           Không sinh được nhạc AI ({audioJob.music_fallback_reason ?? "nhà cung cấp lỗi"}) — đã dùng bài dự phòng{" "}
           {audioJob.music_track_name ?? ""}; phần credit nhạc được hoàn.
         </p>
@@ -148,7 +148,7 @@ export function AudioResultCard({
         </div>
         <div className="bg-surface p-3 rounded-lg border border-success/20">
           <p className="text-caption text-text-muted">Chi phí</p>
-          <p className="font-bold text-warning font-mono">
+          <p className="font-bold text-warning-text font-mono">
             {audioJob ? (audioJob.refunded ? "đã hoàn" : `${audioJob.credits_cost} credit`) : "—"}
           </p>
         </div>

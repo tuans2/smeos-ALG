@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Policy Definition & Rules
+ * ALG Inputs Architecture v2.1 — Policy Definition & Rules
  *
  * Implements Policy Registry contracts, 4 merge modes:
  * - OVERRIDE: Nearest scope wins (subject to constraints and locks)

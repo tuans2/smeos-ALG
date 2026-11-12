@@ -1,9 +1,10 @@
+import "@/lib/brand-storage-migration"
 /**
  * Infrastructure cho module Journey.
  * Hỗ trợ lưu trữ trạng thái hành trình phía client (sessionStorage/localStorage).
  */
 
-const JOURNEY_STATE_STORAGE_KEY_PREFIX = "smeos_journey_state_"
+const JOURNEY_STATE_STORAGE_KEY_PREFIX = "alg_journey_state_"
 const LEGACY_JOURNEY_STATE_STORAGE_KEY_PREFIX = "floraos_journey_state_"
 
 export const journeyStorage = {

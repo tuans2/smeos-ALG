@@ -3,7 +3,7 @@
 ## 1. Cấu trúc repository
 
 ```
-smeOS/
+ALG/
 ├── src/
 │   ├── app/            Next.js App Router — (app) 73 trang, (platform) 22, (auth) 1, công khai 8; api/ 440 route
 │   ├── components/     45 thư mục theo miền + ui/ (design system)
@@ -55,7 +55,7 @@ smeOS/
 |---|---|---|
 | Hiến pháp | `docs/00-DOCUMENTATION-CONSTITUTION.md` (145 dòng) | Quy tắc quản trị tài liệu, cấp độ ưu tiên |
 | Sổ đăng ký | `docs/00-DOCUMENTATION-REGISTRY.yaml` (82 mục, `total_documents: 75` ghi trong tệp — lệch 7) | Tra SSOT theo miền; mọi đường dẫn đã kiểm còn tồn tại |
-| Level 1 | `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`, `TRANG_THAI.md` (1.290 dòng) | Kiến trúc đích; trạng thái |
+| Level 1 | `ALG_SAAS_TARGET_ARCHITECTURE_V2.md`, `TRANG_THAI.md` (1.290 dòng) | Kiến trúc đích; trạng thái |
 | Đặc tả | `docs/dac-ta/00–22` + schema JSON | PRD → API → CSDL → tích hợp; 06/07 kiểm tự động |
 | Kế hoạch/kiến trúc miền | `docs/kien-truc/` 43 tệp | Nhiều `KE_HOACH_*` (kế hoạch) lẫn với SSOT |
 | ADR | `docs/adr/` 15 | Quyết định kiến trúc |
@@ -65,7 +65,7 @@ smeOS/
 | Người dùng | `docs/production-feature-map/` | Hướng dẫn cho vai Điều hành |
 | Lưu trữ | `docs/archive/` | historical, merged, drafts, guides |
 
-Chỉ 82/417 tệp `.md` nằm trong sổ đăng ký (~20%); phần còn lại không có trạng thái (CANONICAL/ARCHIVED…) chính thức. Có bản sao lưu thủ công (`FLORAOS_STORE_13_USER_JOURNEYS_DETAIL_SPEC_BACKUP.md`). Tài liệu mang tên cũ "FloraOS" song song tên mới "SMEOS" — thương hiệu chưa thống nhất trong tài liệu.
+Chỉ 82/417 tệp `.md` nằm trong sổ đăng ký (~20%); phần còn lại không có trạng thái (CANONICAL/ARCHIVED…) chính thức. Có bản sao lưu thủ công (`ALG_STORE_13_USER_JOURNEYS_DETAIL_SPEC_BACKUP.md`). Tài liệu mang tên cũ "ALG" song song tên mới "ALG" — thương hiệu chưa thống nhất trong tài liệu.
 
 ### Độ chính xác tài liệu so với mã
 

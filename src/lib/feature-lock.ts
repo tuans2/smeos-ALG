@@ -70,7 +70,7 @@ export function isFeatureLockEnabled(
  * `NEXT_PUBLIC_APP_ENV` (P0-06):
  * - `/market-intelligence`: worker nghiên cứu thị trường chưa được triển khai (D-20b).
  * - `/lich-dang`, `/ket-noi`: còn gọi SocialFlow qua proxy, production không cấu hình SocialFlow; mở lại
- *   khi đăng bài chạy ngay trong SMEOS (Workstream S, `docs/audit/architecture-audit/17_…`).
+ *   khi đăng bài chạy ngay trong ALG (Workstream S, `docs/audit/architecture-audit/17_…`).
  */
 export const UNAVAILABLE_ROUTE_PREFIXES: readonly string[] = ["/market-intelligence", "/lich-dang", "/ket-noi"]
 
@@ -96,4 +96,27 @@ export function isRouteLocked(
 
 export function isJourneyLocked(journeyId: string, enabled = isFeatureLockEnabled()): boolean {
   return enabled && LOCKED_JOURNEY_IDS.includes(journeyId)
+}
+
+/**
+ * Lối vào (link, nút, deep link thông báo) chỉ hiện khi tuyến đích không bị khoá — audit N-05: khoá bật thì ẩn lối vào
+ * thay vì đưa người dùng tới màn "Sắp ra mắt". Link ngoài (http…) và giá trị rỗng luôn coi là mở.
+ */
+export function isHrefOpen(
+  href: string | null | undefined,
+  enabled = isFeatureLockEnabled(),
+  unavailableEnabled = isUnavailableLockEnabled()
+): boolean {
+  if (!href || !href.startsWith("/")) return true
+  return !isRouteLocked(href, enabled, unavailableEnabled)
+}
+
+/** Giữ mục có lối vào còn mở (xem `isHrefOpen`). */
+export function filterOpenHrefs<T>(
+  items: readonly T[],
+  hrefOf: (item: T) => string | null | undefined,
+  enabled = isFeatureLockEnabled(),
+  unavailableEnabled = isUnavailableLockEnabled()
+): T[] {
+  return items.filter((item) => isHrefOpen(hrefOf(item), enabled, unavailableEnabled))
 }

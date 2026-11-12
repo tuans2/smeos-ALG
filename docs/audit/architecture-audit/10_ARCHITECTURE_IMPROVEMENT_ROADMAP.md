@@ -107,8 +107,8 @@
 
 | Kết quả cần có | Tài liệu | Trạng thái |
 |---|---|---|
-| As-Is Architecture | `12` (+ `02`, `03`) | Đủ cho `smeOS`; hệ sinh thái chưa |
-| Gap & Risk Assessment | `04`, `08`, `13`, `14` | Đủ cho `smeOS`; hệ sinh thái mới ở mức tiếp giáp |
+| As-Is Architecture | `12` (+ `02`, `03`) | Đủ cho `ALG`; hệ sinh thái chưa |
+| Gap & Risk Assessment | `04`, `08`, `13`, `14` | Đủ cho `ALG`; hệ sinh thái mới ở mức tiếp giáp |
 | To-Be Architecture | `09` | **Đề xuất — chờ PO duyệt**, đặc biệt 4 quyết định: tầng Ngành (2.4), mô hình Chuỗi → Cửa hàng (2.10), gói mặc định (2.9), phạm vi repo (2b.1) |
 
 Chỉ sau khi PO duyệt `09` và 4 quyết định trên mới lập kế hoạch implementation chi tiết và giao agent theo nhóm, đúng thứ tự phụ thuộc ở trên, mỗi nhóm có approval gate riêng.

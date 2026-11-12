@@ -1,12 +1,12 @@
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { materialHistory } from "@/modules/costing/use-cases/costing-service"
+import { defineRoute } from "@/core/http/define-route"
 
 /** `GET /costing/materials/:id/history` (`L5`) — lịch sử đơn giá, mới nhất trước. */
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "L5")
-  const { id } = await context.params
-  return jsonResponse({ data: await materialHistory(ctx, id) })
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "L5" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    return jsonResponse({ data: await materialHistory(ctx, id) })
+  },
 })

@@ -32,13 +32,13 @@ export class EmailNotificationAdapter implements INotificationChannelAdapter {
       const title = escapeNotificationHtml(payload.title)
       const link = safeHttpLink(payload.deepLink)
       const htmlContent = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #1a1a1a;">${title}</h2>
-          <p style="color: #4a4a4a; line-height: 1.6;">${escapeNotificationHtml(payload.message)}</p>
+        <div style="font-family: 'Google Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #242C28;">${title}</h2>
+          <p style="color: #5A6360; line-height: 1.6;">${escapeNotificationHtml(payload.message)}</p>
           ${
             link
               ? `<div style="margin-top: 24px;">
-                   <a href="${escapeNotificationHtml(link ?? "")}" style="background-color: #2563eb; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                   <a href="${escapeNotificationHtml(link ?? "")}" style="background-color: #133D31; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">
                      Xem chi tiết
                    </a>
                  </div>`
@@ -49,7 +49,7 @@ export class EmailNotificationAdapter implements INotificationChannelAdapter {
 
       await sendEmail({
         to: email,
-        subject: `[smeOS] ${payload.title}`,
+        subject: `[ALG] ${payload.title}`,
         html: htmlContent,
       })
 

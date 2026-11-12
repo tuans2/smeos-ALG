@@ -81,7 +81,7 @@ export async function getBrochureTracking(
     ? orderPhotoApproval(order, order.organization?.settings, storePolicy.productPhotoReviewMinutes, new Date())
     : null
   const photoApproval: {
-    status: "NONE" | "PENDING" | "APPROVED" | "AUTO_APPROVED"
+    status: "NONE" | "PENDING" | "FEEDBACK" | "APPROVED" | "AUTO_APPROVED"
     uploadedAt: string | null
     countdownMinutes: number
     approvedAt: string | null

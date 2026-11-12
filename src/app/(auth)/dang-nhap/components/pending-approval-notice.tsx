@@ -8,7 +8,7 @@ export function PendingApprovalNotice({ message, hint, onSwitchToLogin }: { mess
   return (
     <div className="flex flex-col gap-4" role="status">
       <div className="rounded-2xl border border-warning/30 bg-warning/10 p-4 flex items-start gap-3">
-        <div className="p-2 rounded-xl bg-warning/15 text-warning shrink-0">
+        <div className="p-2 rounded-xl bg-warning/15 text-warning-text shrink-0">
           <Clock size={18} />
         </div>
         <div className="text-body-sm">

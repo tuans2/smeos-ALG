@@ -15,13 +15,13 @@ describe("getRecentTelegramMessages", () => {
     const fetchFn = mockFetch({
       ok: true,
       result: [
-        { message: { chat: { id: -100, title: "Nhóm A", type: "supergroup" }, text: "@bot SMEOS-ABC" } },
-        { edited_message: { chat: { id: -200, title: "Nhóm B", type: "group" }, text: "SMEOS-XYZ" } },
+        { message: { chat: { id: -100, title: "Nhóm A", type: "supergroup" }, text: "@bot ALG-ABC" } },
+        { edited_message: { chat: { id: -200, title: "Nhóm B", type: "group" }, text: "ALG-XYZ" } },
       ],
     })
     const msgs = await getRecentTelegramMessages("t")
     expect(String((fetchFn.mock.calls[0] as unknown[])[0])).toContain("getUpdates?offset=-100&limit=100")
-    expect(msgs.map((m) => [m.chatId, m.text])).toEqual([["-100", "@bot SMEOS-ABC"], ["-200", "SMEOS-XYZ"]])
+    expect(msgs.map((m) => [m.chatId, m.text])).toEqual([["-100", "@bot ALG-ABC"], ["-200", "ALG-XYZ"]])
   })
 
   it("bot đang gắn webhook ở nơi khác → báo lỗi rõ ràng thay vì trả rỗng", async () => {

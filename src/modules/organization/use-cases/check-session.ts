@@ -1,4 +1,5 @@
 import { sessionSuperseded, unauthenticated } from "@/core/http/errors"
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { isUsable } from "@/modules/organization/domain/session-policy"
 import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
 import { hashSessionToken } from "@/modules/organization/infra/session-token"
@@ -11,6 +12,11 @@ import { sessionTokenFrom } from "./resolve-session"
  * lực, không dựng `TenantContext` như `resolveSession`.
  */
 export async function checkSession(request: Request): Promise<void> {
+  // Tra phiên theo mã băm — chưa biết tổ chức; cũng được gọi từ Server Component (ngoài `handle()`)
+  return asSystemDb("session:check", () => checkSessionUnscoped(request))
+}
+
+async function checkSessionUnscoped(request: Request): Promise<void> {
   const token = sessionTokenFrom(request)
   if (!token) throw unauthenticated()
 

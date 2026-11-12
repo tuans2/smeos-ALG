@@ -50,8 +50,8 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
       <div className="flex flex-col items-center gap-2 border-t border-border px-2 py-3">
         <Button variant="ghost"
           type="button"
-          title="smeOS Copilot (⌘K)"
-          aria-label="Mở smeOS Copilot"
+          title="ALG Copilot (⌘K)"
+          aria-label="Mở ALG Copilot"
           onClick={openCopilot}
           className={cn("font-[inherit] gap-0", 
             "flex h-10 w-10 items-center justify-center rounded-lg text-primary",
@@ -82,7 +82,7 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
           <Bot size={14} aria-hidden />
         </span>
         <span className="min-w-0 flex-1 truncate text-body-sm font-semibold text-text" title="Trợ lý AI 24/7">
-          smeOS Copilot
+          ALG Copilot
         </span>
         {/* Nền surface: text-muted trên surface-alt chỉ ~4,3:1 ở modern-slate/pure-swiss (< 4,5:1 AA) */}
         <kbd className="shrink-0 rounded border border-border bg-surface px-1.5 py-px font-mono text-caption text-text-muted">

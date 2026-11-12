@@ -13,7 +13,7 @@
 ## 1. Tổng quan Kiến trúc & Ranh giới Nghiệp vụ
 
 ### 1.1 Mô tả nghiệp vụ cốt lõi
-Nghiệp vụ Điều phối (**Chức năng 12 / Tháp Vận hành Control Tower**) là trung tâm điều hành hậu cần và sản xuất hoa tươi của FloraOS:
+Nghiệp vụ Điều phối (**Chức năng 12 / Tháp Vận hành Control Tower**) là trung tâm điều hành hậu cần và sản xuất hoa tươi của ALG:
 1. **Tiếp nhận & Chuẩn hóa đơn hàng (Sales Intake & Validation - P1)**: Tiếp nhận đơn từ Sales, Chatbot M08, Catalog Thẻ chào M06 hoặc nhập tay. Kiểm tra tính khả thi, ràng buộc địa chỉ giao hàng nhiều tầng (Street/Ward/District/City), snapshot định mức vật tư (**BOM**) từ Product Master Index, và tính toán hạn giao hàng theo cam kết dịch vụ (**SLA**).
 2. **Lập kế hoạch & Phân công xưởng/thợ cắm (Planning & Partner Assignment - P2/P3)**: Gợi ý xưởng ngoài hoặc thợ cắm nội bộ theo bán kính địa lý, năng lực tiếp nhận hàng ngày (`capacity_daily`), cấp bậc đối tác (`tier`), và chuyên môn.
 3. **Theo dõi Sản xuất & Kiểm định Chất lượng (Production Tracking & AI/Manual QC - P4/P5)**: Thợ cắm cập nhật tiến độ (0% $\rightarrow$ 100%), tải ảnh thành phẩm. Điều phối viên thực hiện kiểm định chất lượng: đối chiếu thành phẩm với ảnh mẫu, kiểm tra bảng màu, nơ/giấy gói, nội dung thiệp in (hỗ trợ AI Score & Critique). Đơn bắt buộc phải có lượt QC `PASSED` mới được xuất xưởng.

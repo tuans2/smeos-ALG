@@ -93,7 +93,7 @@ export function SceneGrid({
                     : `⚡ Sinh Cảnh ${scene.sceneIndex} (Studio cục bộ)`}
                 </Button>
                 {scene.fallbackReason && (
-                  <p className="mt-1.5 text-caption leading-snug text-warning">
+                  <p className="mt-1.5 text-caption leading-snug text-warning-text">
                     Nhà cung cấp AI không dựng được cảnh — đã dùng phông cục bộ: {scene.fallbackReason}
                   </p>
                 )}

@@ -11,7 +11,7 @@ import { MAX_LISTINGS_PER_PUSH } from "@/core/ports/sales-channel-catalog-provid
 import { MAX_AVAILABILITY_PER_PUSH } from "@/core/ports/sales-channel-order-provider"
 import { toChannelListing } from "@/modules/products/domain/channel-listing"
 import { findManifest } from "../domain/connector-catalog"
-import { chunk, mapChannelOrder } from "../domain/sales-order-mapping"
+import { channelInStock, channelPrepaidVnd, chunk, mapChannelOrder } from "../domain/sales-order-mapping"
 import { isUsable } from "../domain/connection-lifecycle"
 import { openCredential } from "../infra/credential-vault"
 import type { ConnectionRecord } from "../infra/connection-repository"
@@ -108,7 +108,7 @@ export async function unpublishProducts(
   await deps.audit(ctx, { action: "integration.sales.unpublish", entityType: "integration_connection", entityId: connection.id, after: { count: listings.length } })
 }
 
-/** Còn/hết hàng theo trạng thái mở bán của sản phẩm (chưa có số tồn — nợ #95) cho mọi tin đã đăng. */
+/** Còn/hết hàng cho mọi tin đã đăng: đang mở bán và — nếu sản phẩm theo dõi tồn theo số lượng — còn ít nhất 1 (BL-34). */
 export async function syncAvailability(ctx: TenantContext, connectionId: string, deps: SalesDeps = defaultSalesDeps()): Promise<number> {
   requireCapability(ctx, "W3")
   const { connection, sales } = await loadSalesConnection(ctx, connectionId, deps)
@@ -116,9 +116,10 @@ export async function syncAvailability(ctx: TenantContext, connectionId: string,
   const listings = (await deps.sales.listListings(ctx, connection.id)).filter((l) => l.status === "SYNCED" && l.externalId)
   const products = await deps.listProducts(ctx, { ids: listings.map((l) => l.productId) }, { limit: MAX_AVAILABILITY_PER_PUSH })
   const byId = new Map(products.map((p) => [p.id, p]))
+  const stock = await deps.sales.trackedStock(ctx, products.map((p) => p.id))
   const items = listings.flatMap((l) => {
     const p = byId.get(l.productId)
-    return p ? [{ externalId: l.externalId as string, sku: p.code, inStock: p.status === "ACTIVE" }] : []
+    return p ? [{ externalId: l.externalId as string, sku: p.code, inStock: channelInStock(p.status, stock.get(p.id)) }] : []
   })
   for (const batch of chunk(items, MAX_AVAILABILITY_PER_PUSH)) await sales.pushAvailability(credential, connection.config, batch)
   return items.length
@@ -141,10 +142,14 @@ export async function importChannelOrder(
     if (!order) throw new Error("ORDER_NOT_FOUND")
     const skus = order.items.flatMap((i) => (i.sellerSku ? [i.sellerSku] : []))
     const bySku = await deps.sales.productIdsBySkuSystem(connection.organizationId, skus)
-    const mapped = mapChannelOrder(order, bySku, findManifest(connection.connectorKey)?.label ?? "kênh bán")
+    const channelLabel = findManifest(connection.connectorKey)?.label ?? "kênh bán"
+    const mapped = mapChannelOrder(order, bySku, channelLabel)
     if (!mapped) throw new Error("EMPTY_ORDER")
     const systemCtx: TenantContext = { organizationId: connection.organizationId, workspaceId: "system", userId: "system", branchId: null, capabilities: new Set() }
     const created = await deps.createOrder(systemCtx, mapped.input)
+    // Sàn đã thu → ghi sổ thu ngay; thu hộ khi giao → không ghi (audit BL-34)
+    const prepaid = channelPrepaidVnd(order.payment, created.totalVnd)
+    if (prepaid > 0) await deps.recordPrepayment(systemCtx, { orderId: created.id, amountVnd: prepaid, externalOrderId, channelLabel })
     await deps.sales.finishOrderSystem(connection.id, externalOrderId, { orderId: created.id })
     return created.id
   } catch (err) {

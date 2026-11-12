@@ -10,7 +10,7 @@ export interface HealthProbes {
   databaseLatencyMs: () => Promise<number | null>
   redis: () => Promise<RedisState>
   jobBacklog: () => Promise<{ pendingTooLong: number; processingTooLong: number }>
-  /** Số kết nối đang mở của từng worker (`application_name` = `smeos-worker:<tên>`). */
+  /** Số kết nối đang mở của từng worker (`application_name` = `alg-worker:<tên>` (tên cũ `smeos-worker:<tên>` vẫn đếm)). */
   workers?: () => Promise<Record<string, number>>
 }
 

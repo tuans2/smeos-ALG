@@ -102,7 +102,7 @@ export function IndustrySelectSection({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-body-sm font-bold text-text">Lĩnh vực hoạt động / Ngành nghề</h3>
+              <h2 className="text-body-sm font-bold text-text">Lĩnh vực hoạt động / Ngành nghề</h2>
               <span className="text-caption font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                 {currentIndDef.name}
               </span>
@@ -221,7 +221,7 @@ export function IndustrySelectSection({
               <Lock size={14} className="text-text-muted shrink-0" />
               <span>Ngành nghề được khóa để bảo vệ toàn vẹn dữ liệu mẫu sản phẩm và catalog đã tạo.</span>
             </div>
-            <p className="text-caption text-text-muted shrink-0">Cần đổi ngành? Liên hệ quản trị viên smeOS.</p>
+            <p className="text-caption text-text-muted shrink-0">Cần đổi ngành? Liên hệ quản trị viên ALG.</p>
           </div>
         )}
 

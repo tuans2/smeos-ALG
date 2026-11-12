@@ -19,7 +19,7 @@ import type { StepBypassRequestInfo } from "@/components/greeting-card/subcontra
 import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 interface SubcontractPageData extends SubcontractClaimCardProps {
-  /** Cửa hàng đối tác có tài khoản smeOS — mở phòng Trao đổi nội bộ với chuỗi */
+  /** Cửa hàng đối tác có tài khoản ALG — mở phòng Trao đổi nội bộ với chuỗi */
   inAppChatUrl?: string | null | undefined
   craftFeeDeductions?: Array<{ amountVnd: number; reason: string }>
   craftFeePayableVnd?: number
@@ -78,7 +78,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-lg h-96 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none border border-border" />
+        <div className="w-full max-w-lg h-96 rounded-2xl bg-surface-alt animate-pulse motion-reduce:animate-none border border-border" />
       </div>
     )
   }
@@ -100,10 +100,10 @@ export default function SubcontractClaimPage({ params }: PageProps) {
   const orderData = data.data
 
   return (
-    <div className="min-h-screen bg-bg py-8 px-4 flex flex-col items-center justify-center">
+    <main className="min-h-screen bg-bg py-8 px-4 flex flex-col items-center justify-center">
       <header className="mb-6 text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary-dark text-caption font-bold mb-2">
-          <Shield size={14} /> Hệ Thống Điều Phối Chuỗi smeOS
+          <Shield size={14} /> Hệ Thống Điều Phối Chuỗi ALG
         </div>
         <h1 className="text-title-lg font-black text-text">
           Tiếp Nhận Đơn Hàng Gia Công
@@ -113,7 +113,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         </p>
         {orderData.inAppChatUrl?.startsWith("/tin-nhan") && (
           <p className="mt-3 text-caption text-text-muted max-w-sm mx-auto">
-            Cửa hàng đã có tài khoản smeOS —{" "}
+            Cửa hàng đã có tài khoản ALG —{" "}
             <a href={orderData.inAppChatUrl} className="font-semibold text-primary underline underline-offset-2">
               làm đơn trong Trao đổi nội bộ
             </a>{" "}
@@ -166,6 +166,6 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         onDelivered={() => mutate()}
         onBypassRequested={() => mutate()}
       />
-    </div>
+    </main>
   )
 }

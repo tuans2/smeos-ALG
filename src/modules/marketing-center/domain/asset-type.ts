@@ -1,7 +1,7 @@
 /**
  * Domain model cho danh mục loại Asset (Marketing & Sales Center).
  *
- * SSOT: `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/02_DANH_MUC_ASSET.md`.
+ * SSOT: `docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/02_DANH_MUC_ASSET.md`.
  * 6 Business Modules: brand, content, promotion, sales, care, print.
  * Mức sẵn sàng tính động từ công cụ: Sẵn ⇔ công cụ DONE và fit === FULL.
  */

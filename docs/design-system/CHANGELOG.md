@@ -1,8 +1,29 @@
-# smeOS Design System CHANGELOG
+# ALG Design System CHANGELOG
 
-Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ được ghi nhận tại đây theo chuẩn [Keep a Changelog](https://keepachangelog.com/vi/1.0.0/) và tuân thủ [Semantic Versioning](https://semver.org/lang/vi/).
+Tất cả các thay đổi đáng chú ý của ALG Design System sẽ được ghi nhận tại đây theo chuẩn [Keep a Changelog](https://keepachangelog.com/vi/1.0.0/) và tuân thủ [Semantic Versioning](https://semver.org/lang/vi/).
 
 ---
+
+## [1.4.0] - 2026-11-12
+
+### Thương hiệu ALG và component mới (Đợt 4)
+
+#### Đã thêm
+- `Slider` (`src/components/ui/slider.tsx`, có test): thanh trượt chuẩn bọc `@base-ui/react/slider` (không thêm phụ thuộc). Bắt buộc `aria-label`; `getValueText` cho chữ đọc ("27 km"); vùng điều khiển 24px, 44px khi cảm ứng. Thay 12 `<input type="range">` (lint R18); ô so sánh ảnh phủ toàn khung được miễn có lý do.
+- `TEXT_BUTTON_HIT_AREA` (`button.tsx`): nới vùng bấm nút chỉ có chữ bằng `::before` (25px chuột, 45px cảm ứng) mà không đổi kích thước hiển thị.
+- Preset `alg` (AVI Lotus Group) làm mặc định; phông Google Sans tự lưu.
+- Preset `alg`: 10 màu nhóm (`--color-tone-*`, ≥ 4,6:1 với icon trắng và trên nền nhạt 10%) và 8 màu biểu đồ (`--color-chart-*`, ≥ 3:1 trên nền) dựng từ brand kit ALG.
+
+#### Đã sửa
+- `Button`: icon không còn bị co khi nút có kích thước cố định cộng padding (`[&_svg]:shrink-0`).
+
+## [1.3.4] - 2026-11-11
+
+### Lint R24: lớp màu dùng token không tồn tại
+
+#### Đã thêm
+- Luật `R24` (`scripts/ux-lint/rules-tokens.ts`, có test): báo lớp `bg-/text-/border-…` thuộc họ màu hệ thống (`primary`, `secondary`, `accent`, `warning`, `danger`, `success`, `info`, `surface`) mà tên không có `--color-<tên>` trong `src/styles/tokens/*.css` hoặc `src/app/globals.css`. Tailwind không sinh CSS cho các lớp này nên phần tử không có màu (vd. `bg-surface-muted`, `bg-primary-subtle`).
+- Baseline ratchet tăng từ 28 lên 366: 338 vi phạm R24 có sẵn (nhiều nhất ở `components/greeting-card`, 209) được khoá lại, chỉ chặn lớp mới. Phương án xử lý nợ cũ chờ PO (`docs/ui-baseline/PHAN_TICH_LOP_MAU_KHONG_CO_TOKEN.md`).
 
 ## [1.3.3] - 2026-11-07
 
@@ -30,7 +51,7 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 - `npm run check:screen-contracts -- --check` trong job `web` của `ci.yml`; đỏ khi có trang thiếu contract hoặc chỉ có contract v1.
 
 #### Đã đổi
-- Bảng thuật ngữ duy nhất là `docs/dac-ta/ux-patterns/glossary.md`: gộp bảng khử thuật ngữ và động từ thao tác từ `SMEOS_UX_WRITING_GLOSSARY.md` (tài liệu đó chỉ còn giọng điệu và mẫu câu). Mâu thuẫn `Job` → "tác vụ" theo mã.
+- Bảng thuật ngữ duy nhất là `docs/dac-ta/ux-patterns/glossary.md`: gộp bảng khử thuật ngữ và động từ thao tác từ `ALG_UX_WRITING_GLOSSARY.md` (tài liệu đó chỉ còn giọng điệu và mẫu câu). Mâu thuẫn `Job` → "tác vụ" theo mã.
 - Lint R16 bắt thêm BOM, Master Index, PII, Control Tower, payload, tenant, M0–M5. 17 điểm có sẵn vào baseline ratchet (28 → 45).
 
 ## [1.3.1] - 2026-11-06
@@ -104,7 +125,7 @@ Số liệu đo ngày 03/11/2026; lệnh đo ở `13_RE_AUDIT_ENTERPRISE_REPORT.
 
 ### Milestone: Giai đoạn 3 — Enterprise Shell & Layout Architecture (S3-01 → S3-06)
 
-Đạt tiêu chuẩn **Commercial & Production Ready** toàn diện cho tầng Shell, Bố cục trang và Điều hướng của hệ thống smeOS theo quyết định kiến trúc `ADR-011` (D-UI-09, D-UI-10) và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
+Đạt tiêu chuẩn **Commercial & Production Ready** toàn diện cho tầng Shell, Bố cục trang và Điều hướng của hệ thống ALG theo quyết định kiến trúc `ADR-011` (D-UI-09, D-UI-10) và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
 
 ### Đã thêm & Nâng cấp (Added & Upgraded)
 - **Unified `AppShell` (S3-01)**:
@@ -126,7 +147,7 @@ Số liệu đo ngày 03/11/2026; lệnh đo ở `13_RE_AUDIT_ENTERPRISE_REPORT.
   - Tệp: `src/components/layout/floating-layer.tsx`.
   - Bộ điều phối các nút và widget nổi (Copilot, UI Studio Drawer, StageGateApprovalBar) theo độ ưu tiên (`priority`), tự động đệm cách đáy trên di động, triệt tiêu xung đột che khuất trên màn 360px - 430px (đóng phát hiện UI-F-02).
 - **Copilot Responsiveness & BottomSheet (S3-04)**:
-  - Tệp: `src/components/chat/floraos-global-copilot.tsx`.
+  - Tệp: `src/components/chat/alg-global-copilot.tsx`.
   - Trên màn hình nhỏ (`< sm`): hiển thị dạng `BottomSheet` toàn chiều rộng (`inset-x-0 bottom-0 rounded-t-2xl max-h-[85dvh]`) có tay cầm kéo và lớp nền mờ (backdrop), triệt tiêu hoàn toàn lỗi tràn 40px mép trái trên màn 360px (đóng phát hiện P1 UI-F-01).
   - Trên desktop (`>= sm`): hiển thị dạng cửa sổ nổi co giãn linh hoạt theo viewport (`max-h-[calc(100vh-5rem)]`).
   - Bổ sung `role="dialog"`, `aria-modal="true"`, phím tắt Escape để đóng, dọn sạch `console.error` và chuyển đổi 100% sang token ngữ nghĩa.
@@ -145,7 +166,7 @@ Số liệu đo ngày 03/11/2026; lệnh đo ở `13_RE_AUDIT_ENTERPRISE_REPORT.
 
 ### Milestone: Giai đoạn 2 — Enterprise Component Architecture (C2-00 → C2-17)
 
-Đạt tiêu chuẩn **Commercial & Production Ready** cho tầng thư viện Component của smeOS Design System theo quyết định kiến trúc `ADR-011` và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
+Đạt tiêu chuẩn **Commercial & Production Ready** cho tầng thư viện Component của ALG Design System theo quyết định kiến trúc `ADR-011` và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
 
 ### Đã thêm (Added)
 - **`Button` (C2-01)**:

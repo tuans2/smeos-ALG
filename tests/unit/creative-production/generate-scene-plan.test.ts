@@ -81,7 +81,8 @@ describe("generateScenePlan", () => {
   it("AI hỏng: job FAILED và hoàn credit", async () => {
     vi.mocked(enqueueJob).mockResolvedValue({ job, deduped: false, usage: { costCredit: 1, balanceAfter: 9 } } as never)
     vi.mocked(callCapability).mockResolvedValue({ kind: "khong_chay_duoc", reason: "KHONG_CO_MO_HINH_DU_DIEU_KIEN" } as never)
-    await expect(generateScenePlan(ctx, { brief, idempotencyKey: "k" })).rejects.toThrow(/hoàn credit/)
+    vi.mocked(refundJob).mockResolvedValueOnce({ refunded: true, creditHoanLai: 1, lyDo: "loi-ky-thuat" })
+    await expect(generateScenePlan(ctx, { brief, idempotencyKey: "k" })).rejects.toThrow("AI chưa viết được kịch bản bối cảnh — đã hoàn credit, vui lòng thử lại.")
     expect(finishInline).toHaveBeenCalledWith(ctx, "job-1", expect.objectContaining({ ok: false }))
     expect(refundJob).toHaveBeenCalledWith(ctx, "job-1")
   })

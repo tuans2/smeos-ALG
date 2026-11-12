@@ -1,6 +1,6 @@
 /**
  * Bộ ghép quy trình tự động (Workflow Composer) — Kiến trúc Journey-First.
- * Nguồn đặc tả: FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§7.2, §20)
+ * Nguồn đặc tả: ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§7.2, §20)
  *
  * Luật Clean Architecture: Thuần túy không import React, không import Prisma.
  */

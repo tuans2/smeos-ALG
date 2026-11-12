@@ -27,7 +27,7 @@ export type DeliveryStatus =
   | "DELIVERED"
   | "FAILED"
 
-export type OrderEventAxis = "order" | "production" | "delivery"
+export type OrderEventAxis = "order" | "production" | "delivery" | "delivery_window"
 
 export interface DeliveryWindow {
   date: string // YYYY-MM-DD
@@ -157,6 +157,8 @@ export interface CreateOrderInput {
   ownerSaleId?: string | null | undefined
   /** `Idempotency-Key` của client (`ingestOrderOnce`) — duy nhất trong tổ chức. */
   idempotencyKey?: string | null | undefined
+  /** Băm thân đã kiểm đi kèm khoá (`ingestOrderOnce`) — cùng khoá khác băm → 422. */
+  idempotencyBodyHash?: string | null | undefined
   /**
    * Ưu đãi / phí giao hàng tính trên CẢ ĐƠN (không phải dòng hàng) — hiện chỉ cổng chuyển báo giá truyền, không mở
    * cho API tạo đơn (audit hành trình Q1, gói UJ-08). Tổng đơn = tiền hàng − ưu đãi + phí giao.

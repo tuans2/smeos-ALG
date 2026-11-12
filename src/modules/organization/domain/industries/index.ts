@@ -1,5 +1,5 @@
 /**
- * industries/index.ts — Registry trung tâm của toàn bộ các ngành trên smeOS
+ * industries/index.ts — Registry trung tâm của toàn bộ các ngành trên ALG
  *
  * Để mở rộng một ngành mới trong tương lai:
  * 1. Tạo file mới trong thư mục này tuân thủ `IndustryPluginContract`

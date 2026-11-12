@@ -129,8 +129,10 @@ export const paymentDecisionBody = z.object({ approve: z.boolean(), note: z.stri
 /** Ảnh thành phẩm / ảnh giao hàng: JPG/PNG/WebP ≤ 10 MB (máy chủ đọc byte đầu, không tin `type`). */
 export const photoUploadForm = z.object({ file: z.file(), note: z.string().optional() })
 export const partnersQuery = z.object({
-  /** Có tham số → đối tác gia công của Điều phối (`1` = chỉ đang hoạt động, cần `R1`); không có → liên kết chuỗi (`F1`). */
+  /** `1` = chỉ đối tác gia công đang hoạt động. */
   active: z.enum(["0", "1"]).optional(),
+})
+export const chainPartnersQuery = z.object({
   status: z.enum(["PENDING", "ACTIVE", "SUSPENDED", "TERMINATED"]).optional(),
   province: z.string().optional(),
   q: z.string().optional(),

@@ -174,6 +174,8 @@ export const orderColumns = {
   source: z.string().nullable(),
   source_session_id: z.string().nullable(),
   idempotency_key: z.string().nullable(),
+  /** Băm thân `POST /orders` đi kèm khoá (audit API-11, 11/11/2026); NULL ở đơn không có khoá. */
+  idempotency_body_hash: z.string().nullable(),
   owner_sale_id: z.string().nullable(),
   lead_id: z.string().nullable(),
   workflow: z.string(),

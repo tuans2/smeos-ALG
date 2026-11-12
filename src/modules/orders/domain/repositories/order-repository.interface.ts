@@ -25,8 +25,11 @@ export interface PendingOrderEvent {
 }
 
 export interface IOrderRepository {
-  /** Đếm số đơn hàng tạo trong ngày của tenant để sinh mã đơn (Code sequence). */
-  countTodayOrders(organizationId: string, date?: Date): Promise<number>
+  /**
+   * Cấp số thứ tự kế tiếp cho mã đơn có tiền tố `prefix` (`orderCodePrefix`) — nguyên tử, hai lần gọi đồng thời không
+   * nhận cùng số (đặc tả 07 §57).
+   */
+  allocateOrderCodeNumber(organizationId: string, prefix: string): Promise<number>
 
   /** Tạo đơn hàng mới kèm items và event khởi tạo (transactional). */
   create(
@@ -40,8 +43,8 @@ export interface IOrderRepository {
   /** Tìm đơn hàng theo ID nội bộ, có kiểm soát cách ly theo tenant. */
   findById(organizationId: string, id: string): Promise<OrderRecord | null>
 
-  /** Đơn đã tạo bằng `Idempotency-Key` này trong tổ chức (cùng dạng phản hồi với `create`). */
-  findByIdempotencyKey(organizationId: string, key: string): Promise<OrderRecord | null>
+  /** Đơn đã tạo bằng `Idempotency-Key` này trong tổ chức (cùng dạng phản hồi với `create`) kèm băm thân đã lưu. */
+  findByIdempotencyKey(organizationId: string, key: string): Promise<{ order: OrderRecord; bodyHash: string | null } | null>
 
   /** Tìm đơn hàng theo mã đơn hiển thị (code), có kiểm soát cách ly theo tenant. */
   findByCode(organizationId: string, code: string): Promise<OrderRecord | null>

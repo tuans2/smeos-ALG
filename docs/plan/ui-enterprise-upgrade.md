@@ -1,4 +1,4 @@
-# Kế hoạch nâng cấp UI/UX SMEOS lên Enterprise Grade, Commercial & Production Ready
+# Kế hoạch nâng cấp UI/UX ALG lên Enterprise Grade, Commercial & Production Ready
 
 - Trạng thái: `ACTIVE` — lập 01/11/2026 · Quyết định nền: `docs/adr/ADR-011.md` · Đầu vào: `docs/audit/ui-architecture-audit/`.
 - Danh sách việc chi tiết (ID, tệp, gate, tiêu chí xong): `docs/plan/ui-enterprise-upgrade-backlog.md`.
@@ -39,7 +39,7 @@
 |---|---|---|---|
 | L1 Foundation | Token, theme, font | `src/styles/tokens/**`, `src/app/globals.css`, `src/lib/ui-system/**`, `src/app/layout.tsx` | Một agent tại một thời điểm |
 | L2 Components | Primitive & composite | `src/components/ui/**`, `docs/design-system/components/**` | Mỗi component một PR; khoá theo tệp |
-| L3 Shell & Layout | Shell, nav, layout, phần tử nổi | `src/components/layout/**`, `src/app/(app)/layout.tsx`, `src/app/(platform)/layout.tsx`, `src/components/chat/floraos-global-copilot.tsx` | — |
+| L3 Shell & Layout | Shell, nav, layout, phần tử nổi | `src/components/layout/**`, `src/app/(app)/layout.tsx`, `src/app/(platform)/layout.tsx`, `src/components/chat/alg-global-copilot.tsx` | — |
 | L4 Governance & QA | Lint, CI, script kiểm, tài liệu agent | `scripts/ux-lint/**`, `scripts/check-*`, `.github/**`, `tests/e2e/ux/**`, `CLAUDE.md`, `AGENTS.md`, `.agents/**`, `.claude/skills/ui-development/**`, `docs/design-system/README.md` | Đổi `CLAUDE.md` cần PO duyệt PR |
 | L5 Migration | Di trú màn theo module | `src/app/<tuyến>/**`, `src/components/<module>/**`, `docs/dac-ta/screen-contracts/<tuyến>.md` | Mỗi agent nhận **một module**; không chạm L1–L3 — thiếu gì thì mở yêu cầu cho lane đó |
 

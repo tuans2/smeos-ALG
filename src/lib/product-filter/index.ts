@@ -1,5 +1,5 @@
 /**
- * @/lib/product-filter — SSOT cho hệ thống Lọc & Tìm kiếm Sản phẩm FloraOS
+ * @/lib/product-filter — SSOT cho hệ thống Lọc & Tìm kiếm Sản phẩm ALG
  *
  * Import từ đây thay vì import trực tiếp từ file con.
  *

@@ -150,7 +150,7 @@ export function BrochureUserGuideModal() {
             {/* Footer */}
             <footer className="flex items-center justify-between border-t border-border bg-surface-alt p-4">
               <span className="text-caption text-text-muted">
-                Hệ thống Ấn phẩm & {ti("sampleProduct")} · Chuẩn hóa quy trình smeOS
+                Hệ thống Ấn phẩm & {ti("sampleProduct")} · Chuẩn hóa quy trình ALG
               </span>
               <Button type="button" onClick={() => setOpen(false)} className="h-9 px-5 text-caption font-bold">
                 Đã hiểu

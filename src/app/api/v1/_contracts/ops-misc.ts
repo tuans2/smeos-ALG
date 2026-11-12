@@ -29,7 +29,7 @@ export const MISC_OPERATIONS: OpenApiOperation[] = [
     description: `${OWN} Dồn dập → 429.`, ok: [200, { description: "Đã từ chối", schema: res.invitationDeclinedResponse }], errors: [404, 429] }),
   op(SESSION, { method: "post", path: "/session/organization", operationId: "switchOrganization", summary: "Đổi tổ chức đang hoạt động của phiên", cap: null, auth: "session",
     body: req.switchOrganizationBody,
-    description: "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Phát lại cookie `smeos_sso`.",
+    description: "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Phát lại cookie `alg_sso`.",
     ok: [200, { description: "Tổ chức mới", schema: res.switchOrganizationResponse }], errors: [...BODY_ERRORS, 404] }),
   op(SESSION, { method: "post", path: "/session/password", operationId: "changeOwnPassword", summary: "Tự đổi mật khẩu", cap: "A2", body: req.changePasswordBody,
     description: "Mật khẩu hiện tại sai hoặc mật khẩu mới chưa đủ mạnh → 400. Phiên đang dùng giữ nguyên, các máy khác bị đăng xuất. 10 lần/15 phút/IP → 429.",
@@ -58,7 +58,7 @@ export const MISC_OPERATIONS: OpenApiOperation[] = [
   op(VOUCHER, { method: "get", path: "/vouchers/batches/{id}", operationId: "getVoucherBatch", summary: "Một đợt kèm danh sách mã", cap: "Q8", description: NF,
     ok: [200, { description: "Đợt và mã", schema: res.voucherBatchResponse }], errors: [404] }),
   op(VOUCHER, { method: "patch", path: "/vouchers/batches/{id}", operationId: "toggleVoucherBatch", summary: "Tạm dừng / mở lại cả đợt", cap: "Q8", body: req.voucherBatchActiveBody,
-    description: `Trả \`{ ok: true }\` cũ. ${NF}`, ok: [200, { description: "Đã đổi", schema: res.okResponse }], errors: [...BODY_ERRORS, 404] }),
+    description: NF, ok: [200, { description: "Đã đổi", schema: res.voucherBatchToggledResponse }], errors: [...BODY_ERRORS, 404] }),
   op(VOUCHER, { method: "get", path: "/vouchers/batches/{id}/export", operationId: "exportVoucherCodes", summary: "Tải danh sách mã (CSV)", cap: "Q8",
     description: `Ghi nhật ký xuất dữ liệu. ${NF}`, ok: [200, { description: "Tệp CSV", contentType: "text/csv" }], errors: [404] }),
 

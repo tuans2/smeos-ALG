@@ -2,19 +2,19 @@ import { activationWarningsFor } from "@/modules/products/use-cases/get-product-
 import { validationFailed } from "@/core/http/errors"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getProduct } from "@/modules/products/use-cases/get-product"
 import { updateProduct } from "@/modules/products/use-cases/update-product"
 import { patchProductBody } from "@/app/api/v1/_contracts/requests-products"
+import { defineRoute } from "@/core/http/define-route"
 
 /** `GET /products/:id` (`L1`, đặc tả 06 mục 6) — M03, redaction theo `L5`. */
-export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "L1")
-
-  const { id } = await context.params
-  return jsonResponse(await getProduct(ctx, id))
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "L1" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    return jsonResponse(await getProduct(ctx, id))
+  },
 })
 
 /**
@@ -24,34 +24,34 @@ export const GET = handle(async (request, context: { params: Promise<{ id: strin
  * đặc tả 02 mục "Sản phẩm và giá — nhóm L". Không có route `/archive` riêng
  * trong đặc tả 06 nên chặn thêm ngay trong `PATCH` là chỗ duy nhất hợp lý.
  */
-export const PATCH = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "L3")
+export const PATCH = defineRoute({
+  auth: { kind: "tenant", capability: "L3" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const parsed = patchProductBody.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
 
-  const { id } = await context.params
-  const parsed = patchProductBody.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    if (parsed.data.status === "ARCHIVED") requireCapability(ctx, "L4")
+    // Giá vốn là dữ liệu giá: ghi cần `L5` như đọc (PO 30/10/2026).
+    if (parsed.data.cost_price_vnd !== undefined) requireCapability(ctx, "L5")
 
-  if (parsed.data.status === "ARCHIVED") requireCapability(ctx, "L4")
-  // Giá vốn là dữ liệu giá: ghi cần `L5` như đọc (PO 30/10/2026).
-  if (parsed.data.cost_price_vnd !== undefined) requireCapability(ctx, "L5")
+    const updated = await updateProduct(ctx, id, {
+      code: parsed.data.code,
+      name: parsed.data.name,
+      branchId: parsed.data.branch_id,
+      category: parsed.data.category,
+      shape: parsed.data.shape,
+      facing: parsed.data.facing,
+      container: parsed.data.container,
+      status: parsed.data.status,
+      attributes: parsed.data.attributes,
+      imageAssetId: parsed.data.image_asset_id,
+      availabilityConfig: parsed.data.availability_config,
+      commerce: pickCommerceInput(parsed.data),
+    })
 
-  const updated = await updateProduct(ctx, id, {
-    code: parsed.data.code,
-    name: parsed.data.name,
-    branchId: parsed.data.branch_id,
-    category: parsed.data.category,
-    shape: parsed.data.shape,
-    facing: parsed.data.facing,
-    container: parsed.data.container,
-    status: parsed.data.status,
-    attributes: parsed.data.attributes,
-    imageAssetId: parsed.data.image_asset_id,
-    availabilityConfig: parsed.data.availability_config,
-    commerce: pickCommerceInput(parsed.data),
-  })
-
-  // Mở bán khi chưa đủ điều kiện: vẫn lưu, trả kèm danh sách còn thiếu (checklist ALG 7.3, chỉ cảnh báo)
-  const warnings = parsed.data.status === "ACTIVE" ? (await activationWarningsFor(ctx, [id]))[0]?.missing ?? [] : []
-  return jsonResponse({ ...stripCostPrice(updated, hasCapability(ctx, "L5")), readiness_warnings: warnings })
+    // Mở bán khi chưa đủ điều kiện: vẫn lưu, trả kèm danh sách còn thiếu (checklist ALG 7.3, chỉ cảnh báo)
+    const warnings = parsed.data.status === "ACTIVE" ? (await activationWarningsFor(ctx, [id]))[0]?.missing ?? [] : []
+    return jsonResponse({ ...stripCostPrice(updated, hasCapability(ctx, "L5")), readiness_warnings: warnings })
+  },
 })

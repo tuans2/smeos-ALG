@@ -1,4 +1,4 @@
-# Hướng dẫn sử dụng smeOS
+# Hướng dẫn sử dụng ALG
 
 Bộ hướng dẫn thao tác cho nhân sự cửa hàng và đội vận hành nền tảng, gồm đủ 123 chức năng trong checklist bàn giao, chia theo 10
 nhóm. Mỗi chức năng có: dùng để làm gì, ai dùng được, mở ở đâu, các bước thao tác và lưu ý.

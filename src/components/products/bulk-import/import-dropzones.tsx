@@ -98,7 +98,7 @@ export function ImportDropzones({ excelFile, excelFileName, imageCount, isImport
           <div className="mt-3 flex items-start gap-2 rounded-lg bg-success-bg border border-success/30 px-3 py-2">
             <ShieldCheck size={14} className="text-success mt-0.5 shrink-0" />
             <p className="text-caption text-success font-medium leading-relaxed">
-              <span className="font-bold">Bảo mật tốt hơn link Google Drive:</span> Ảnh được lưu vào kho riêng của cửa hàng và bảo vệ bằng Signed URL tự hết hạn sau 24h — không ai truy cập được nếu không đăng nhập smeOS.
+              <span className="font-bold">Bảo mật tốt hơn link Google Drive:</span> Ảnh được lưu vào kho riêng của cửa hàng và bảo vệ bằng Signed URL tự hết hạn sau 24h — không ai truy cập được nếu không đăng nhập ALG.
             </p>
           </div>
         </div>

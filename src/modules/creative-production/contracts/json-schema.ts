@@ -49,7 +49,7 @@ function envelope(
       $id: file,
       title,
       description,
-      "x-floraos": {
+      "x-alg": {
         ...meta,
         generated: "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`.",
       },
@@ -99,8 +99,8 @@ export function buildCreativeStudioSchemaFiles(): GeneratedSchemaFile[] {
   const index: GeneratedSchemaFile = {
     file: "index.json",
     json: {
-      title: "FloraOS Creative Studio — hợp đồng input/output 14 chặng",
-      "x-floraos": {
+      title: "ALG Creative Studio — hợp đồng input/output 14 chặng",
+      "x-alg": {
         generated: "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`.",
         source: CONTRACTS_SOURCE_DIR,
       },

@@ -71,6 +71,7 @@ export function createProductSnapshot(
     driveLink: product.driveLink ?? null,
     description: product.description ?? null,
     flowersSummary: product.flowersSummary ?? null,
+    ...(product.recipe && product.recipe.length > 0 ? { flowers: product.recipe } : {}),
     selectedAt: timestamp,
   }
 }

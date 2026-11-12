@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SMEOS Integration API",
+    "title": "ALG Integration API",
     "version": "1.0.0",
-    "description": "Bề mặt máy gọi máy cho LocalBudd và SocialFlow (đặc tả 06 mục 11, đặc tả 08). Tổ chức luôn suy từ chứng thư — không endpoint nào nhận `organization_id` từ client. Giới hạn tần suất: 600 lần/60 giây cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức). Lỗi theo envelope `Error`."
+    "description": "Bề mặt máy gọi máy cho ứng dụng đối tác (LocalBudd, SocialFlow…). Tổ chức luôn suy từ chứng thư — không endpoint nào nhận `organization_id` từ client. Giới hạn tần suất: 600 lần/60 giây cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức). Lỗi theo envelope `Error`. **Thay đổi đã báo trước, áp từ 2027-02-09 00:00 UTC** (báo 2026-11-11): (1) máy chủ bỏ các trường đánh dấu `deprecated` khỏi phản hồi; (2) `POST /integration/jobs` gửi lại cùng `idempotency_key` mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED`."
   },
   "servers": [
     {
@@ -15,7 +15,7 @@
       "post": {
         "operationId": "integrationRegisterAsset",
         "summary": "Đăng ký asset dẫn xuất",
-        "description": "`parent_asset_id` phải là asset `APPROVED` cùng tổ chức; asset mới luôn `PENDING`; `storage_key` phải khớp tổ chức/sản phẩm/asset. `generated_flags` (`{ generative_fill_used, requires_reshoot_warning }`) bắt buộc với asset dẫn xuất (YC-A5) dù lược đồ ghi tuỳ chọn — thiếu → 400.",
+        "description": "`parent_asset_id` phải là asset `APPROVED` cùng tổ chức; asset mới luôn `PENDING`; `storage_key` phải khớp tổ chức/sản phẩm/asset. `generated_flags` (`{ generative_fill_used, requires_reshoot_warning }`) bắt buộc với asset dẫn xuất dù lược đồ ghi tuỳ chọn — thiếu → 400.",
         "tags": [
           "Asset"
         ],
@@ -24,7 +24,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -258,9 +258,13 @@
                       "maximum": 9007199254740991
                     },
                     "storage_key": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": "string"
                     },
                     "thumb_key": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
@@ -312,43 +316,60 @@
                       ]
                     },
                     "provider": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "model": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "model_version": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "pipeline_version": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
-                    "parameters": {},
+                    "parameters": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới."
+                    },
                     "prompt": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "input_sha256": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "output_sha256": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
@@ -368,6 +389,8 @@
                     },
                     "generated_flags": {},
                     "cost_usd": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "number",
                         "null"
@@ -382,6 +405,8 @@
                       ]
                     },
                     "approved_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
@@ -401,6 +426,8 @@
                     },
                     "metadata": {},
                     "created_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": "string"
                     },
                     "created_at": {
@@ -409,6 +436,8 @@
                       "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                     },
                     "trashed_at": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "anyOf": [
                         {
                           "type": "string",
@@ -421,6 +450,8 @@
                       ]
                     },
                     "purge_after": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "anyOf": [
                         {
                           "type": "string",
@@ -433,6 +464,8 @@
                       ]
                     },
                     "legal_hold_until": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "anyOf": [
                         {
                           "type": "string",
@@ -458,34 +491,18 @@
                     "kind",
                     "state",
                     "version",
-                    "storage_key",
-                    "thumb_key",
                     "mime_type",
                     "width",
                     "height",
                     "aspect_ratio",
                     "file_size",
-                    "provider",
-                    "model",
-                    "model_version",
-                    "pipeline_version",
-                    "parameters",
-                    "prompt",
-                    "input_sha256",
-                    "output_sha256",
                     "quality_score",
                     "identity_score",
                     "generated_flags",
-                    "cost_usd",
                     "approval_state",
-                    "approved_by",
                     "approved_at",
                     "metadata",
-                    "created_by",
                     "created_at",
-                    "trashed_at",
-                    "purge_after",
-                    "legal_hold_until",
                     "updated_at"
                   ],
                   "additionalProperties": false
@@ -526,7 +543,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "responses": {
@@ -740,7 +757,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "responses": {
@@ -902,7 +919,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1001,7 +1018,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1070,12 +1087,16 @@
                             ]
                           },
                           "revoked_by": {
+                            "deprecated": true,
+                            "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                             "type": [
                               "string",
                               "null"
                             ]
                           },
                           "created_by": {
+                            "deprecated": true,
+                            "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                             "type": "string"
                           },
                           "created_at": {
@@ -1097,8 +1118,6 @@
                           "filters",
                           "is_revoked",
                           "revoked_at",
-                          "revoked_by",
-                          "created_by",
                           "created_at",
                           "updated_at"
                         ],
@@ -1144,7 +1163,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1245,12 +1264,16 @@
                       ]
                     },
                     "revoked_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "created_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": "string"
                     },
                     "created_at": {
@@ -1259,6 +1282,8 @@
                       "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                     },
                     "trashed_at": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "anyOf": [
                         {
                           "type": "string",
@@ -1271,6 +1296,8 @@
                       ]
                     },
                     "purge_after": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "anyOf": [
                         {
                           "type": "string",
@@ -1297,11 +1324,7 @@
                     "filters",
                     "is_revoked",
                     "revoked_at",
-                    "revoked_by",
-                    "created_by",
                     "created_at",
-                    "trashed_at",
-                    "purge_after",
                     "updated_at"
                   ],
                   "additionalProperties": false
@@ -1344,7 +1367,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1444,12 +1467,16 @@
                       ]
                     },
                     "revoked_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "string",
                         "null"
                       ]
                     },
                     "created_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": "string"
                     },
                     "created_at": {
@@ -1471,8 +1498,6 @@
                     "filters",
                     "is_revoked",
                     "revoked_at",
-                    "revoked_by",
-                    "created_by",
                     "created_at",
                     "updated_at"
                   ],
@@ -1519,7 +1544,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1599,7 +1624,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1852,7 +1877,7 @@
       "post": {
         "operationId": "integrationCreateJob",
         "summary": "Tạo job thay mặt tổ chức",
-        "description": "Cùng đường kiểm hạn mức → ghi usage → tạo job như job nội bộ. Cùng `idempotency_key`, cùng `feature`/`payload` → trả job cũ với 200; cùng khoá mà thân khác hiện vẫn trả job cũ (máy chủ ghi cảnh báo) — sẽ đổi thành 422 `IDEMPOTENCY_KEY_REUSED` như API nội bộ sau thời gian báo trước (audit API-11); client nên tạo khoá mới cho mỗi yêu cầu mới.",
+        "description": "Cùng đường kiểm hạn mức → ghi usage → tạo job như job nội bộ. Cùng `idempotency_key`, cùng `feature`/`payload` → trả job cũ với 200; cùng khoá mà thân khác: **trước 09/02/2027** vẫn trả job cũ (máy chủ ghi cảnh báo); **từ 09/02/2027 (00:00 UTC)** trả 422 `IDEMPOTENCY_KEY_REUSED` (`details.job_id` = job của yêu cầu trước), không tạo job — thay đổi đã báo trước 90 ngày từ 11/11/2026. Mỗi yêu cầu mới dùng một khoá mới.",
         "tags": [
           "Job & mức dùng"
         ],
@@ -1861,7 +1886,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1930,15 +1955,21 @@
                           "type": "string"
                         },
                         "workspace_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": "string"
                         },
                         "branch_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "user_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": "string"
                         },
                         "product_id": {
@@ -1972,18 +2003,24 @@
                           ]
                         },
                         "job_group_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "request_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "run_after": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "anyOf": [
                             {
                               "type": "string",
@@ -2004,6 +2041,8 @@
                         "payload": {},
                         "output": {},
                         "error": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
@@ -2064,22 +2103,15 @@
                       "required": [
                         "id",
                         "organization_id",
-                        "workspace_id",
-                        "branch_id",
-                        "user_id",
                         "product_id",
                         "feature",
                         "status",
                         "stage",
                         "result",
                         "idempotency_key",
-                        "job_group_id",
-                        "request_id",
-                        "run_after",
                         "failure_kind",
                         "payload",
                         "output",
-                        "error",
                         "attempts",
                         "created_at",
                         "started_at",
@@ -2158,15 +2190,21 @@
                           "type": "string"
                         },
                         "workspace_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": "string"
                         },
                         "branch_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "user_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": "string"
                         },
                         "product_id": {
@@ -2200,18 +2238,24 @@
                           ]
                         },
                         "job_group_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "request_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
                           ]
                         },
                         "run_after": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "anyOf": [
                             {
                               "type": "string",
@@ -2232,6 +2276,8 @@
                         "payload": {},
                         "output": {},
                         "error": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
@@ -2292,22 +2338,15 @@
                       "required": [
                         "id",
                         "organization_id",
-                        "workspace_id",
-                        "branch_id",
-                        "user_id",
                         "product_id",
                         "feature",
                         "status",
                         "stage",
                         "result",
                         "idempotency_key",
-                        "job_group_id",
-                        "request_id",
-                        "run_after",
                         "failure_kind",
                         "payload",
                         "output",
-                        "error",
                         "attempts",
                         "created_at",
                         "started_at",
@@ -2392,7 +2431,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -2727,7 +2766,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -2771,12 +2810,16 @@
                           "maximum": 9007199254740991
                         },
                         "storage_key": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": "string"
                         },
                         "url": {
                           "type": "string"
                         },
                         "thumb_key": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                           "type": [
                             "string",
                             "null"
@@ -2824,9 +2867,7 @@
                       "required": [
                         "id",
                         "version",
-                        "storage_key",
                         "url",
-                        "thumb_key",
                         "mime_type",
                         "width",
                         "height",
@@ -2849,12 +2890,16 @@
                             "maximum": 9007199254740991
                           },
                           "storage_key": {
+                            "deprecated": true,
+                            "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                             "type": "string"
                           },
                           "url": {
                             "type": "string"
                           },
                           "thumb_key": {
+                            "deprecated": true,
+                            "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                             "type": [
                               "string",
                               "null"
@@ -2902,9 +2947,7 @@
                         "required": [
                           "id",
                           "version",
-                          "storage_key",
                           "url",
-                          "thumb_key",
                           "mime_type",
                           "width",
                           "height",
@@ -2952,7 +2995,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -3030,9 +3073,13 @@
                       "type": "string"
                     },
                     "workspace_id": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": "string"
                     },
                     "user_id": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": "string"
                     },
                     "job_id": {
@@ -3055,6 +3102,8 @@
                       "maximum": 9007199254740991
                     },
                     "cost_usd": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
                       "type": [
                         "number",
                         "null"
@@ -3063,7 +3112,10 @@
                     "status": {
                       "type": "string"
                     },
-                    "metadata": {},
+                    "metadata": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới."
+                    },
                     "created_at": {
                       "type": "string",
                       "format": "date-time",
@@ -3073,15 +3125,11 @@
                   "required": [
                     "id",
                     "organization_id",
-                    "workspace_id",
-                    "user_id",
                     "job_id",
                     "feature",
                     "quantity",
                     "cost_credit",
-                    "cost_usd",
                     "status",
-                    "metadata",
                     "created_at"
                   ],
                   "additionalProperties": false
@@ -3115,11 +3163,11 @@
         "scheme": "bearer",
         "description": "Token máy gọi máy cấp theo tổ chức (`/integration-tokens`)"
       },
-      "smeosSso": {
+      "algSso": {
         "type": "apiKey",
         "in": "header",
-        "name": "x-smeos-sso",
-        "description": "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-floraos-sso` vẫn nhận)"
+        "name": "x-alg-sso",
+        "description": "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-smeos-sso`, `x-floraos-sso` vẫn nhận)"
       }
     },
     "headers": {
@@ -3172,7 +3220,9 @@
                   "CAPABILITY_DENIED",
                   "ENTITLEMENT_REQUIRED",
                   "PASSWORD_CHANGE_REQUIRED",
+                  "CROSS_ORIGIN_REJECTED",
                   "SUBSCRIPTION_OVERDUE",
+                  "ORGANIZATION_INACTIVE",
                   "NOT_FOUND",
                   "CONFLICT",
                   "PAYLOAD_TOO_LARGE",
@@ -3220,7 +3270,7 @@
         }
       },
       "Error403": {
-        "description": "Thiếu mã năng lực hoặc token của app không được đọc tài nguyên này (`CAPABILITY_DENIED`)",
+        "description": "Thiếu mã năng lực hoặc token của app không được đọc tài nguyên này (`CAPABILITY_DENIED`); tổ chức tạm ngưng hoặc đang rời nền tảng (`ORGANIZATION_INACTIVE`)",
         "headers": {},
         "content": {
           "application/json": {

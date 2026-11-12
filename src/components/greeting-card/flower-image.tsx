@@ -63,7 +63,7 @@ export function FlowerImage({
         <span
           role="img"
           aria-label={`${alt} — chưa có ảnh`}
-          className="absolute inset-0 flex flex-col items-center justify-center bg-surface-muted text-text-muted"
+          className="absolute inset-0 flex flex-col items-center justify-center bg-surface-alt text-text-muted"
         >
           <Flower2 size={fallback === "full" ? 40 : 18} className="text-primary/40" />
           {fallback === "full" && <span className="text-caption mt-1.5">Hình ảnh đang cập nhật</span>}

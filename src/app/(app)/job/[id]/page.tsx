@@ -186,7 +186,7 @@ export default function JobDetailPage() {
         />
       </header>
 
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 max-w-3xl mx-auto w-full">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 max-w-3xl mx-auto w-full">
         {loi && (
           <div className="rounded-xl border border-danger/30 bg-danger-bg px-3.5 py-2.5 text-body-sm font-medium text-danger">
             {loi}
@@ -291,7 +291,7 @@ export default function JobDetailPage() {
             )}
           </div>
         )}
-      </main>
+      </div>
     </div>
   )
 }

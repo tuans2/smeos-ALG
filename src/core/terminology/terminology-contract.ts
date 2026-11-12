@@ -10,7 +10,7 @@
  * Zero architectural leaks: Domain thuần túy, không import Prisma/DB.
  */
 
-export type SmeOsTier =
+export type AlgTier =
   | "TIER_1_SAAS"      // SaaS Mother (Platform Governance)
   | "TIER_2_INDUSTRY"  // SaaS Ngành (Industry & Affiliate)
   | "TIER_3_CHAIN"     // ChainOS (Brand HQ & Multi-branch Control Tower)
@@ -20,7 +20,7 @@ export type SmeOsTier =
  * 🏛️ TẦNG 1: Thuật ngữ Chuẩn hóa Nền tảng SaaS Mẹ
  */
 export interface SaasMotherTerminology {
-  readonly platformName: string           // "smeOS — Nền tảng Điều hành Doanh nghiệp"
+  readonly platformName: string           // "ALG — Nền tảng Điều hành Doanh nghiệp"
   readonly platformAdminTitle: string     // "Quản trị viên nền tảng"
   readonly tenantEntityTitle: string      // "Tổ chức / Doanh nghiệp"
   readonly subscriptionPlanTitle: string  // "Gói giải pháp dịch vụ"
@@ -75,7 +75,7 @@ export interface StoreOsTerminology {
  * Tổng hợp toàn bộ Terminology của một Tier
  */
 export interface MasterTierTerminology {
-  readonly tier: SmeOsTier
+  readonly tier: AlgTier
   readonly name: string
   readonly description: string
   readonly terms: Record<string, string>

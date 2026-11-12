@@ -13,9 +13,9 @@
  */
 
 import { useMemo } from "react"
-import { type SmeOsTier, type TierTerminologyMap, getTierTerminology } from "@/core/terminology"
+import { type AlgTier, type TierTerminologyMap, getTierTerminology } from "@/core/terminology"
 
-export function useTierTerminology<T extends SmeOsTier>(tier: T): TierTerminologyMap[T] {
+export function useTierTerminology<T extends AlgTier>(tier: T): TierTerminologyMap[T] {
   return useMemo(() => getTierTerminology(tier), [tier])
 }
 

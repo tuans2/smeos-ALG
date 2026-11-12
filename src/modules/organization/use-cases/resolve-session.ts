@@ -1,6 +1,6 @@
 import { AppError, sessionSuperseded, unauthenticated } from "@/core/http/errors"
 import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
-import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
+import { readSessionCookie } from "@/core/http/cookies"
 import { bindRequestActor } from "@/core/observability/request-context"
 import type { TenantContext } from "@/core/tenancy"
 import { canSignIn } from "@/modules/organization/domain/account-approval"
@@ -15,6 +15,7 @@ import { UserRepository } from "@/modules/organization/infra/user-repository"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { checkSubscription } from "@/modules/subscription/use-cases/subscription-guard"
+import { assertOrganizationLifecycle } from "./assert-organization-lifecycle"
 import { lockedToolForPath, toolForPath, unlockedToolsFrom } from "@/modules/organization/domain/tool-route-entitlement"
 
 export type ResolvedSession = {
@@ -26,7 +27,7 @@ export type ResolvedSession = {
 }
 
 export function sessionTokenFrom(request: Request): string | null {
-  return readCookie(request, SESSION_COOKIE)
+  return readSessionCookie(request)
 }
 
 /**
@@ -147,6 +148,7 @@ export async function requireTenantContext(
   if (resolved.user.must_change_password && new URL(request.url).pathname !== PASSWORD_CHANGE_PATH) {
     throw new AppError("PASSWORD_CHANGE_REQUIRED", "Tài khoản đang dùng mật khẩu tạm — đổi mật khẩu trước khi tiếp tục")
   }
+  await assertOrganizationLifecycle(resolved.ctx.organizationId, request.method) // ADR-016 D-S5
   await assertToolUnlocked(request, resolved.ctx)
   await assertSubscriptionWritable(request, resolved.ctx)
   return { resolved, ctx: resolved.ctx }

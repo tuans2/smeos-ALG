@@ -3,7 +3,7 @@
   "$id": "stage-09-approve.output.schema.json",
   "title": "Chặng 09 — APPROVE: Chủ tiệm chốt duyệt — Đầu ra",
   "description": "Chỉ duyệt gói đã chạy QA; QA_REJECTED không duyệt được; QA_NEEDS_REVIEW cần xác nhận đã xem cảnh báo.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "09",
     "stage": 9,
     "code": "APPROVE",

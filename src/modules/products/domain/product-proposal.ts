@@ -1,6 +1,6 @@
 /**
  * Mẫu đề xuất — quản trị danh mục (PO chốt 23/10/2026,
- * `docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md`).
+ * `docs/dac-ta/ALG_PRODUCT_CATALOG_GOVERNANCE_SPEC.md`).
  *
  * Mẫu do người KHÔNG có `H3` (duyệt vào danh mục, trần cứng `dieu_hanh`) tạo
  * được dùng ngay, nhưng mang nhãn đề xuất trong `attributes.proposal` cho tới

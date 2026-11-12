@@ -62,7 +62,7 @@ Ba hình dạng, không cái nào khớp cái nào. Enum `catalog_link_state` m�
 
 Cả hai repo đều đặt `slug @unique` — nhưng trên hai cơ sở dữ liệu tách biệt, nên tính duy nhất không có thật ở phạm vi hệ thống. Đặc tả 07 §789 nói rõ vì sao điều đó quan trọng: *"`catalog_links.slug` unique **toàn cục**, không theo tổ chức: một liên kết công khai phải giải được khi chưa biết tổ chức nào sở hữu nó."* Hai tiệm ở hai repo có thể đúc cùng một slug.
 
-`LocalBudd/src/modules/catalog-links/infra/repository.ts` ghi thẳng vào Prisma cục bộ. Chỉ hai route đọc sang core (`[slug]/products`, `[slug]/filter-options`). Trong khi đó `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md:65` xếp `catalog_links` vào **thực thể lõi**, §463 ghi *"core giữ `catalog_links`"*, và `08-integration-specification.md:18` cũng liệt nó ở cột core. Luật *"engine ngoài không giữ bản sao entity lõi"* (V2 §71) đang bị phá, và không tài liệu nào ghi nhận việc đó.
+`LocalBudd/src/modules/catalog-links/infra/repository.ts` ghi thẳng vào Prisma cục bộ. Chỉ hai route đọc sang core (`[slug]/products`, `[slug]/filter-options`). Trong khi đó `ALG_SAAS_TARGET_ARCHITECTURE_V2.md:65` xếp `catalog_links` vào **thực thể lõi**, §463 ghi *"core giữ `catalog_links`"*, và `08-integration-specification.md:18` cũng liệt nó ở cột core. Luật *"engine ngoài không giữ bản sao entity lõi"* (V2 §71) đang bị phá, và không tài liệu nào ghi nhận việc đó.
 
 ### 1.4 `POST /integration/assets` — đặc tả và route mâu thuẫn trực diện
 
@@ -94,7 +94,7 @@ Ba endpoint Integration khác cũng chỉ có trên giấy: `GET /integration/ai
 | M06 Catalog & QR | `LocalBudd` | **cả hai** — core có `/c/[slug]`, `/api/v1/public/catalog/[slug]`, `catalog-links/*`; LocalBudd cũng có đủ bộ |
 | M08 Customer Chat | *"(chưa đặt tên)"* · *"Chưa bắt đầu"* | **`floraos-core`** — `src/modules/chat-assistant/`, `/api/v1/chat/*` (P23) |
 
-Mã thì thành thật hơn tài liệu: `SocialFlow/backend/m04b/routes.py:18-28` tự ghi *"Quyết định: khai tử, không vá — M04b thật … đã dựng xong trong floraos-core từ P24"*. Nhưng `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` — tài liệu Level-1 có hiệu lực — và **bảng "Bốn repo" ở chính TRANG_THAI §3** vẫn gán M04b/M04c cho SocialFlow và không nhắc M08 trong danh sách của core. TRANG_THAI §3 mâu thuẫn với TRANG_THAI §1.
+Mã thì thành thật hơn tài liệu: `SocialFlow/backend/m04b/routes.py:18-28` tự ghi *"Quyết định: khai tử, không vá — M04b thật … đã dựng xong trong floraos-core từ P24"*. Nhưng `ALG_SAAS_TARGET_ARCHITECTURE_V2.md` — tài liệu Level-1 có hiệu lực — và **bảng "Bốn repo" ở chính TRANG_THAI §3** vẫn gán M04b/M04c cho SocialFlow và không nhắc M08 trong danh sách của core. TRANG_THAI §3 mâu thuẫn với TRANG_THAI §1.
 
 Đây là mục cần sửa trước, vì mọi phiên làm việc mới đọc TRANG_THAI đầu tiên và sẽ lấy bảng §3 làm bản đồ.
 
@@ -249,7 +249,7 @@ Mục 1, 6 và 8 là sửa tài liệu, làm được ngay. Mục 2, 3, 4, 7 đ�
 | Enum — lệch giá trị / thiếu / thừa | 17 | **0** |
 | Cách ly tenant | 22 chỗ hở | **0** — xem mục 8, thực thi RS-2 |
 
-Danh sách việc đã làm: bảng quyền sở hữu module ở `TRANG_THAI.md` mục 3 và `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 2 và 12.2 · bốn nhóm endpoint đổi tên trong đặc tả 06 · mục 19 M04c và mục 20 hạ tầng mới trong đặc tả 06 · ba câu mâu thuẫn về Luật 1 gộp thành một bảng chín ngoại lệ trong đặc tả 07 · 11 enum sinh lại từ lược đồ · 7 model thay bằng bản thật · `campaign_rollups` → `content_metrics` · `conversations` → `chat_conversations`/`chat_messages` · mục 20 sáu bảng bỏ sót trong đặc tả 07 · ba câu cũ về bộ máy Vision mặc định.
+Danh sách việc đã làm: bảng quyền sở hữu module ở `TRANG_THAI.md` mục 3 và `ALG_SAAS_TARGET_ARCHITECTURE_V2.md` mục 2 và 12.2 · bốn nhóm endpoint đổi tên trong đặc tả 06 · mục 19 M04c và mục 20 hạ tầng mới trong đặc tả 06 · ba câu mâu thuẫn về Luật 1 gộp thành một bảng chín ngoại lệ trong đặc tả 07 · 11 enum sinh lại từ lược đồ · 7 model thay bằng bản thật · `campaign_rollups` → `content_metrics` · `conversations` → `chat_conversations`/`chat_messages` · mục 20 sáu bảng bỏ sót trong đặc tả 07 · ba câu cũ về bộ máy Vision mặc định.
 
 **`npm run check:docs` là cách giữ cho nó không lệch lại.** `scripts/check-docs.mjs` đọc `src/app/api/v1/`, `prisma/schema.prisma` và `tests/tenant/` rồi đối chiếu ngược với hai tệp đặc tả. Nó chạy trong vài giây và nên vào CI cùng `test:tenant`.
 

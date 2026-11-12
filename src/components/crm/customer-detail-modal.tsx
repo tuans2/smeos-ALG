@@ -11,6 +11,7 @@ import type { CustomerMasterIndex } from "@/modules/crm/domain/customer-master-i
 import { useSession } from "@/lib/session"
 import { CustomerDetailTabs, type CustomerDetailTab } from "./customer-detail-tabs"
 import { CustomerOrdersTab } from "./customer-orders-tab"
+import { CustomerDataRequestsPanel } from "./customer-data-requests-panel"
 
 interface CustomerDetailModalProps {
   customerId: string | null
@@ -252,7 +253,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
                     data.occasions.map((o) => (
                       <div key={o.id} className="flex items-center justify-between rounded-lg border border-border p-3 text-caption">
                         <div className="flex items-center gap-2.5">
-                          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-subtle text-primary">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-muted text-primary">
                             <Gift className="h-3.5 w-3.5" />
                           </span>
                           <div>
@@ -273,7 +274,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
             {activeTab === "privacy" && (
               <div className="space-y-4">
                 <div className="rounded-lg bg-info-bg border border-info/30 p-3 text-caption text-info">
-                  🛡️ <strong>Chính sách bảo vệ người tiêu dùng:</strong> smeOS chỉ gửi tin nhắn nhắc nhở hoặc tiếp thị qua các kênh khách hàng đã đồng ý (Consent).
+                  🛡️ <strong>Chính sách bảo vệ người tiêu dùng:</strong> ALG chỉ gửi tin nhắn nhắc nhở hoặc tiếp thị qua các kênh khách hàng đã đồng ý (Consent).
                 </div>
 
                 <div className="divide-y divide-border rounded-xl border border-border">
@@ -305,6 +306,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
                     )
                   })}
                 </div>
+                <CustomerDataRequestsPanel customerId={customerId} code={data.code} onErased={() => { onUpdated(); void fetch(`/api/v1/crm/customers/${customerId}`).then((r) => r.json()).then((res) => setData(res.customer)) }} />
               </div>
             )}
           </div>

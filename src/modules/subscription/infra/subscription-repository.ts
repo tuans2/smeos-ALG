@@ -2,6 +2,7 @@ import { randomInt } from "node:crypto"
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { DbClient } from "@/modules/organization/infra/db-client"
+import { applyPlanChangeBilling } from "./plan-change-repository"
 import { addCycle, CODE_ALPHABET, formatInvoiceCode, INVOICE_CODE_LENGTH, type SubscriptionCycle } from "../domain/subscription-rules"
 
 /**
@@ -20,6 +21,12 @@ export function findSubscription(organizationId: string, db: DbClient = prisma) 
   return db.subscriptions.findUnique({ where: { organization_id: organizationId }, select: SUB_SELECT })
 }
 
+/** Gói đang hiệu lực của tổ chức (thuê bao chưa huỷ), hoặc `null` — dùng cho mức cô lập (ADR-016 D-S2). */
+export async function effectivePlanOf(organizationId: string, db: DbClient = prisma): Promise<string | null> {
+  const sub = await findSubscription(organizationId, db)
+  return sub && sub.status !== "CANCELLED" ? sub.plan : null
+}
+
 export function listInvoices(organizationId: string, take = 12) {
   return prisma.subscription_invoices.findMany({ where: { organization_id: organizationId }, orderBy: { period_start: "desc" }, take })
 }
@@ -28,12 +35,18 @@ export function findPendingInvoices(subscriptionId: string, db: DbClient = prism
   return db.subscription_invoices.findMany({ where: { subscription_id: subscriptionId, status: "PENDING" }, orderBy: { due_at: "asc" } })
 }
 
-async function uniqueCode(db: DbClient): Promise<string> {
+export async function uniqueCode(db: DbClient): Promise<string> {
   for (let i = 0; i < 10; i++) {
     const code = formatInvoiceCode(Array.from({ length: INVOICE_CODE_LENGTH }, () => randomInt(CODE_ALPHABET.length)))
     if (!(await db.subscription_invoices.findUnique({ where: { code }, select: { id: true } }))) return code
   }
   throw new Error("Không sinh được mã hoá đơn")
+}
+
+/** Ngày neo kỳ = ngày bắt đầu của hoá đơn đầu tiên (audit BL-27); chưa có hoá đơn → ngày của `fallback`. */
+export async function anchorDayOf(db: DbClient, subscriptionId: string, fallback: Date): Promise<number> {
+  const first = await db.subscription_invoices.findFirst({ where: { subscription_id: subscriptionId }, orderBy: { period_start: "asc" }, select: { period_start: true } })
+  return (first?.period_start ?? fallback).getUTCDate()
 }
 
 /** Hoá đơn cho một kỳ; đã có hoá đơn kỳ đó thì không tạo thêm (unique subscription_id + period_start). */
@@ -44,10 +57,11 @@ export async function ensureInvoice(
 ) {
   const existing = await db.subscription_invoices.findUnique({ where: { subscription_id_period_start: { subscription_id: sub.id, period_start: periodStart } } })
   if (existing) return existing
+  const anchor = await anchorDayOf(db, sub.id, periodStart)
   return db.subscription_invoices.create({
     data: {
       organization_id: sub.organization_id, subscription_id: sub.id, code: await uniqueCode(db),
-      period_start: periodStart, period_end: addCycle(periodStart, sub.cycle), amount_vnd: sub.price_vnd, due_at: periodStart,
+      period_start: periodStart, period_end: addCycle(periodStart, sub.cycle, anchor), amount_vnd: sub.price_vnd, due_at: periodStart,
     },
   })
 }
@@ -61,10 +75,14 @@ export interface UpsertSubscriptionInput {
   now: Date
 }
 
-/** Gán gói lần đầu (bắt đầu kỳ ngay, hoá đơn kỳ đầu hạn trả ngay) hoặc đổi gói (áp từ hoá đơn kỳ sau). */
+/**
+ * Gán gói lần đầu (bắt đầu kỳ ngay, hoá đơn kỳ đầu hạn trả ngay) hoặc đổi gói: nâng gói lập hoá đơn bù chênh lệch,
+ * hoá đơn kỳ sau đã sinh được sửa theo giá mới (`plan-change-repository.ts`, audit BL-27).
+ */
 export async function upsertSubscription(db: DbClient, organizationId: string, input: UpsertSubscriptionInput) {
   const existing = await findSubscription(organizationId, db)
   if (existing) {
+    const prorationInvoice = existing.status === "CANCELLED" ? null : await applyPlanChangeBilling(db, existing, input)
     const updated = await db.subscriptions.update({
       where: { organization_id: organizationId },
       data: {
@@ -73,7 +91,7 @@ export async function upsertSubscription(db: DbClient, organizationId: string, i
       },
       select: SUB_SELECT,
     })
-    return { sub: updated, firstInvoice: null }
+    return { sub: updated, firstInvoice: null, prorationInvoice }
   }
   const sub = await db.subscriptions.create({
     data: {
@@ -86,7 +104,7 @@ export async function upsertSubscription(db: DbClient, organizationId: string, i
     select: SUB_SELECT,
   })
   const firstInvoice = await ensureInvoice(db, sub, sub.current_period_start)
-  return { sub, firstInvoice }
+  return { sub, firstInvoice, prorationInvoice: null }
 }
 
 /**

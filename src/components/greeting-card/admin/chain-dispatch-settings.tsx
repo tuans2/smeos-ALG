@@ -1,5 +1,6 @@
 "use client"
 
+import { Slider } from "@/components/ui/slider"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react"
@@ -92,7 +93,7 @@ export function ChainDispatchSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (
@@ -132,7 +133,7 @@ export function ChainDispatchSettings() {
       )}
 
       {/* Bật/Tắt Cơ Chế Tự Động */}
-      <div className="flex items-center justify-between p-4 rounded-xl bg-surface-muted border border-border">
+      <div className="flex items-center justify-between p-4 rounded-xl bg-surface-alt border border-border">
         <div>
           <span className="text-body font-bold text-text block">
             Tự động chọn cửa hàng & phát lệnh (mặc định)
@@ -183,13 +184,13 @@ export function ChainDispatchSettings() {
             <label className="text-caption font-semibold text-text block mb-1">
               Số chi nhánh mời cùng lúc (Top N): <strong>{policy.topN} chi nhánh</strong>
             </label>
-            <input
-              type="range"
+            <Slider
+              aria-label="Số chi nhánh mời cùng lúc"
               min={1}
               max={10}
               value={policy.topN}
-              onChange={(e) => handleUpdate("topN", Number(e.target.value))}
-              className="w-full accent-primary cursor-pointer"
+              onValueChange={(v) => handleUpdate("topN", v)}
+              getValueText={(v) => `${v} chi nhánh`}
             />
           </div>
 
@@ -197,13 +198,13 @@ export function ChainDispatchSettings() {
             <label className="text-caption font-semibold text-text block mb-1">
               Thời gian chờ phản hồi mỗi vòng: <strong>{policy.claimTimeoutMinutes} phút</strong>
             </label>
-            <input
-              type="range"
+            <Slider
+              aria-label="Thời gian chờ phản hồi mỗi vòng"
               min={1}
               max={30}
               value={policy.claimTimeoutMinutes}
-              onChange={(e) => handleUpdate("claimTimeoutMinutes", Number(e.target.value))}
-              className="w-full accent-primary cursor-pointer"
+              onValueChange={(v) => handleUpdate("claimTimeoutMinutes", v)}
+              getValueText={(v) => `${v} phút`}
             />
           </div>
 
@@ -211,13 +212,13 @@ export function ChainDispatchSettings() {
             <label className="text-caption font-semibold text-text block mb-1">
               Thời hạn hủy sau khi nhận: <strong>{policy.cancellationGraceMinutes} phút</strong>
             </label>
-            <input
-              type="range"
+            <Slider
+              aria-label="Thời hạn hủy sau khi nhận"
               min={1}
               max={15}
               value={policy.cancellationGraceMinutes}
-              onChange={(e) => handleUpdate("cancellationGraceMinutes", Number(e.target.value))}
-              className="w-full accent-primary cursor-pointer"
+              onValueChange={(v) => handleUpdate("cancellationGraceMinutes", v)}
+              getValueText={(v) => `${v} phút`}
             />
           </div>
 
@@ -225,13 +226,13 @@ export function ChainDispatchSettings() {
             <label className="text-caption font-semibold text-text block mb-1">
               Bán kính quét tối đa: <strong>{policy.maxRadiusKm} km</strong>
             </label>
-            <input
-              type="range"
+            <Slider
+              aria-label="Bán kính quét tối đa"
               min={5}
               max={50}
               value={policy.maxRadiusKm}
-              onChange={(e) => handleUpdate("maxRadiusKm", Number(e.target.value))}
-              className="w-full accent-primary cursor-pointer"
+              onValueChange={(v) => handleUpdate("maxRadiusKm", v)}
+              getValueText={(v) => `${v} km`}
             />
           </div>
         </div>
@@ -247,14 +248,14 @@ export function ChainDispatchSettings() {
               <span>Khoảng cách gần người nhận:</span>
               <span className="font-bold text-primary">{policy.scoringWeights.distance}%</span>
             </div>
-            <input
-              type="range"
+            <Slider
+              aria-label="Trọng số khoảng cách gần người nhận"
               min={0}
               max={100}
               step={5}
               value={policy.scoringWeights.distance}
-              onChange={(e) => handleWeightChange("distance", Number(e.target.value))}
-              className="w-full accent-primary cursor-pointer"
+              onValueChange={(v) => handleWeightChange("distance", v)}
+              getValueText={(v) => `${v}%`}
             />
           </div>
 
@@ -263,14 +264,14 @@ export function ChainDispatchSettings() {
               <span>Điểm chất lượng KPI chi nhánh:</span>
               <span className="font-bold text-primary">{policy.scoringWeights.qualityScore}%</span>
             </div>
-            <input
-              type="range"
+            <Slider
+              aria-label="Trọng số điểm chất lượng chi nhánh"
               min={0}
               max={100}
               step={5}
               value={policy.scoringWeights.qualityScore}
-              onChange={(e) => handleWeightChange("qualityScore", Number(e.target.value))}
-              className="w-full accent-primary cursor-pointer"
+              onValueChange={(v) => handleWeightChange("qualityScore", v)}
+              getValueText={(v) => `${v}%`}
             />
           </div>
 
@@ -279,14 +280,14 @@ export function ChainDispatchSettings() {
               <span>Độ sẵn sàng (Ít việc dở dang):</span>
               <span className="font-bold text-primary">{policy.scoringWeights.workload}%</span>
             </div>
-            <input
-              type="range"
+            <Slider
+              aria-label="Trọng số độ sẵn sàng"
               min={0}
               max={100}
               step={5}
               value={policy.scoringWeights.workload}
-              onChange={(e) => handleWeightChange("workload", Number(e.target.value))}
-              className="w-full accent-primary cursor-pointer"
+              onValueChange={(v) => handleWeightChange("workload", v)}
+              getValueText={(v) => `${v}%`}
             />
           </div>
 
@@ -313,7 +314,7 @@ export function ChainDispatchSettings() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-          <div className="p-3 rounded-lg bg-surface-muted border border-border">
+          <div className="p-3 rounded-lg bg-surface-alt border border-border">
             <span className="text-caption font-bold text-text block mb-1">
               Nhắc chụp ảnh QC:
             </span>
@@ -323,7 +324,7 @@ export function ChainDispatchSettings() {
             <span className="text-caption text-text-muted block mt-0.5">trước giờ giao dự kiến</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-surface-muted border border-border">
+          <div className="p-3 rounded-lg bg-surface-alt border border-border">
             <span className="text-caption font-bold text-text block mb-1">
               Nhắc bàn giao Shipper:
             </span>
@@ -333,7 +334,7 @@ export function ChainDispatchSettings() {
             <span className="text-caption text-text-muted block mt-0.5">trước giờ giao dự kiến</span>
           </div>
 
-          <div className="p-3 rounded-lg bg-surface-muted border border-border">
+          <div className="p-3 rounded-lg bg-surface-alt border border-border">
             <span className="text-caption font-bold text-text block mb-1">
               Cảnh báo vi phạm SLA:
             </span>

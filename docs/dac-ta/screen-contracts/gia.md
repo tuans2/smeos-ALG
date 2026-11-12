@@ -16,7 +16,7 @@ acceptance:
 
 # Screen Contract — Tính giá sản phẩm (`/gia`)
 
-**Tuyến:** `/gia` · **Tệp chính:** `src/app/(app)/gia/page.tsx`, `pricing-calculator-card.tsx`, `pricing-rules-config-card.tsx`, `customer-tier-pricing-card.tsx` · **Cập nhật:** 05/11/2026 · **Thẻ:** T5.B6
+**Tuyến:** `/gia` · **Tệp chính:** `src/app/(app)/gia/page.tsx`, `pricing-calculator-card.tsx`, `pricing-rules-config-card.tsx`, `customer-tier-pricing-card.tsx`, `src/components/sales/quotation-discount-settings-card.tsx` · **Cập nhật:** 12/11/2026 · thêm thẻ "Giảm giá Sale được tự quyết trên báo giá" (mặc định 20%, tối đa 50%; vượt mức thì Điều hành lưu báo giá; sửa cần `F2` — audit BL-28) · **Thẻ:** T5.B6
 
 ## 1. Vai và mục đích
 - **Vai chính (03b):** `store_manager`, `florist`, `sales`.

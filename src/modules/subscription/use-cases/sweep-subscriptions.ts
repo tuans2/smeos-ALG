@@ -4,6 +4,8 @@ import { listSubscriptionsToCheck } from "../infra/subscription-sweep-query"
 import { checkSubscription } from "./subscription-guard"
 
 export const SUBSCRIPTION_SWEEP_BATCH = 200
+/** Trần số trang mỗi lượt quét (vòng lặp có giới hạn) — 200 × 25 = 5.000 thuê bao. */
+export const SUBSCRIPTION_SWEEP_MAX_PAGES = 25
 
 export interface SubscriptionSweepDeps {
   list: typeof listSubscriptionsToCheck
@@ -21,17 +23,26 @@ export async function sweepSubscriptions(
   deps: SubscriptionSweepDeps = { list: listSubscriptionsToCheck, check: checkSubscription },
 ): Promise<{ checked: number; failed: number } | null> {
   try {
-    const orgIds = await deps.list(now, creditPeriod(now), SUBSCRIPTION_SWEEP_BATCH)
+    const period = creditPeriod(now)
+    let after: Awaited<ReturnType<typeof listSubscriptionsToCheck>>[number]["cursor"] | undefined
+    let checked = 0
     let failed = 0
-    for (const organizationId of orgIds) {
-      try {
-        await deps.check(organizationId, now)
-      } catch (error) {
-        failed++
-        log.warn("sweep.subscription_failed", { organizationId, error: error instanceof Error ? error.message : String(error) })
+    // Đi hết các trang theo con trỏ (có trần) — thuê bao quá hạn lâu không chiếm mãi trang đầu (audit BL-27)
+    for (let page = 0; page < SUBSCRIPTION_SWEEP_MAX_PAGES; page += 1) {
+      const rows = await deps.list(now, period, SUBSCRIPTION_SWEEP_BATCH, after)
+      for (const { organizationId } of rows) {
+        checked++
+        try {
+          await deps.check(organizationId, now)
+        } catch (error) {
+          failed++
+          log.warn("sweep.subscription_failed", { organizationId, error: error instanceof Error ? error.message : String(error) })
+        }
       }
+      after = rows.at(-1)?.cursor
+      if (rows.length < SUBSCRIPTION_SWEEP_BATCH) break
     }
-    return { checked: orgIds.length, failed }
+    return { checked, failed }
   } catch (error) {
     log.error("sweep.subscriptions_failed", { error: error instanceof Error ? error.message : String(error) })
     return null

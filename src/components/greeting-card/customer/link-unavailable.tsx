@@ -34,7 +34,7 @@ export function LinkUnavailable({ shop, title, message, action }: {
               </a>
             )}
             {shop.phone && (
-              <a href={`tel:${shop.phone}`} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border text-body font-bold text-text hover:bg-surface-muted">
+              <a href={`tel:${shop.phone}`} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border text-body font-bold text-text hover:bg-surface-alt">
                 <Phone size={18} aria-hidden="true" />
                 Gọi {shop.phone}
               </a>

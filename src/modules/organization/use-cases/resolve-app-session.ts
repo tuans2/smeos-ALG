@@ -4,10 +4,11 @@ import type { MockSession } from "@/lib/mock-data"
 import { getNavHiddenOverride } from "@/modules/platform/infra/nav-matrix-store"
 import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
 import { canOverrideIndustryLock } from "@/modules/organization/domain/organization-settings-policy"
+import { asSystemDb, withTenantDb } from "@/core/tenancy/db-context"
 import { describeSession } from "./describe-session"
 import { resolveSession } from "./resolve-session"
 import { parseDevRoleOverride, applyDevRoleOverride, DEV_ROLE_COOKIE } from "@/lib/dev-role-override"
-import { TIER_PREVIEW_COOKIE, canUseTierPreview, parseTierPreview } from "@/modules/platform/domain/tier-preview"
+import { LEGACY_TIER_PREVIEW_COOKIE, TIER_PREVIEW_COOKIE, canUseTierPreview, parseTierPreview } from "@/modules/platform/domain/tier-preview"
 
 function readCookieValue(cookieHeader: string, name: string): string | null {
   const segment = cookieHeader.split(";").map((c) => c.trim()).find((c) => c.startsWith(`${name}=`))
@@ -46,17 +47,18 @@ export const resolveAppSession = cache(async function resolveAppSession(
   const resolved = await resolveSession(request).catch(() => null)
   if (!resolved || !resolved.ctx || !resolved.membership) return null
 
-  const described = await describeSession(resolved)
+  // Gọi từ Server Component (ngoài `handle()`): tự mở ngữ cảnh CSDL — đọc dữ liệu của tổ chức trong phiên (RLS)
+  const described = await withTenantDb(resolved.ctx.organizationId, () => describeSession(resolved))
 
-  const rawOrgName = described.organization?.name ?? "smeOS"
+  const rawOrgName = described.organization?.name ?? "ALG"
   const cleanOrgName = rawOrgName.replace(/\s*\(\s*dev\s*\)/gi, "").trim()
   const industry = described.organization?.industry ?? "FLORAL"
   // Quyền vượt khoá ngành lấy từ mã năng lực nền tảng (N1/N12), không từ đuôi email (rà soát H11)
-  const operator = await new PlatformOperatorRepository().findActiveByUserId(described.user.id)
+  const operator = await asSystemDb("session:platform-operator", () => new PlatformOperatorRepository().findActiveByUserId(described.user.id))
   const platformCapabilities = operator?.capabilityCodes ?? []
   const industryLocked = canOverrideIndustryLock(platformCapabilities) ? false : (described.organization?.industry_locked ?? false)
   // Ma trận điều hướng Admin SaaS ghi đè cho ngành này — đọc ở máy chủ, không đóng gói lúc build (M13)
-  const navHiddenKeys = await getNavHiddenOverride(industry)
+  const navHiddenKeys = await asSystemDb("session:nav-matrix", () => getNavHiddenOverride(industry))
 
   const session: MockSession = {
     userName: described.user.name ?? described.user.email,
@@ -88,7 +90,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
   // Người vận hành nền tảng (N1) xem trước tầng — chạy cả production. Kiểm
   // lại quyền ở mỗi request: thu hồi N1 thì cookie cũ hết tác dụng.
   if (canUseTierPreview(platformCapabilities)) {
-    const preview = parseTierPreview(readCookieValue(cookieHeader, TIER_PREVIEW_COOKIE))
+    const preview = parseTierPreview(readCookieValue(cookieHeader, TIER_PREVIEW_COOKIE) ?? readCookieValue(cookieHeader, LEGACY_TIER_PREVIEW_COOKIE))
     if (preview !== null) return { ...applyDevRoleOverride(session, preview), tierPreviewActive: true }
   }
 

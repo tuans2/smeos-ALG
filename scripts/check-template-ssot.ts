@@ -3,7 +3,7 @@
  *
  * P-Fix-6 (chống tái lệch / governance — KE_HOACH_HOAN_THIEN_TEMPLATE_SYSTEM.md).
  * Đối chiếu tên file .tsx thật trong `src/components/templates/` với tài
- * liệu SSOT `docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md`, để không lặp
+ * liệu SSOT `docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md`, để không lặp
  * lại tình trạng lệch tài liệu ↔ code đã phát hiện ở đợt audit P-Fix-5
  * (17-18/09/2026) — khi đó SSOT ghi sai đường dẫn thật của nhiều template
  * suốt một thời gian dài mà không ai phát hiện.
@@ -31,7 +31,7 @@ import { extname, join } from "node:path"
 
 const REPO_ROOT = join(__dirname, "..")
 const TEMPLATES_DIR = join(REPO_ROOT, "src/components/templates")
-const SSOT_PATH = join(REPO_ROOT, "docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md")
+const SSOT_PATH = join(REPO_ROOT, "docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md")
 
 function listTsxFiles(dir: string): string[] {
   const out: string[] = []
@@ -108,7 +108,7 @@ function main(): void {
 
   if (hasDrift) {
     console.error(
-      "\nSửa: cập nhật docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md hoặc cấu trúc thư mục thật cho khớp, rồi chạy lại `npm run check:template-ssot`."
+      "\nSửa: cập nhật docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md hoặc cấu trúc thư mục thật cho khớp, rồi chạy lại `npm run check:template-ssot`."
     )
     process.exit(1)
   }

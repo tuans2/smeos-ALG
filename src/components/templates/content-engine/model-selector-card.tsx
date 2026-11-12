@@ -165,7 +165,7 @@ export function ModelSelectorCard({
         <div className="pt-3 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-caption text-text-muted">
             {(selectedChannelsCount ?? 0) === 0 ? (
-              <span className="text-warning font-semibold flex items-center gap-1">
+              <span className="text-warning-text font-semibold flex items-center gap-1">
                 ⚠️ Vui lòng chọn ít nhất 1 kênh mạng xã hội ở Bước 3 để sinh bài viết.
               </span>
             ) : (

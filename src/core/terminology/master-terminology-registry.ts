@@ -8,7 +8,7 @@
  */
 
 import type {
-  SmeOsTier,
+  AlgTier,
   SaasMotherTerminology,
   SaasIndustryTerminology,
   ChainOsTerminology,
@@ -16,7 +16,7 @@ import type {
 } from "./terminology-contract"
 
 export const SAAS_MOTHER_TERMS: SaasMotherTerminology = {
-  platformName: "smeOS — Hệ Điều Hành Doanh Nghiệp Tinh Gọn",
+  platformName: "ALG — Hệ Điều Hành Doanh Nghiệp Tinh Gọn",
   platformAdminTitle: "Quản trị viên nền tảng",
   tenantEntityTitle: "Tổ chức doanh nghiệp",
   subscriptionPlanTitle: "Gói giải pháp dịch vụ",
@@ -76,6 +76,6 @@ const TIER_TERMS: TierTerminologyMap = {
   TIER_4_STORE: STORE_OS_TERMS,
 }
 
-export function getTierTerminology<T extends SmeOsTier>(tier: T): TierTerminologyMap[T] {
+export function getTierTerminology<T extends AlgTier>(tier: T): TierTerminologyMap[T] {
   return TIER_TERMS[tier]
 }

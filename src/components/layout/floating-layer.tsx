@@ -24,6 +24,11 @@ export function useFloatingLayer() {
   return ctx
 }
 
+/** Như `useFloatingLayer` nhưng trả `null` khi không nằm trong provider (render đơn lẻ, test). */
+export function useOptionalFloatingLayer() {
+  return React.useContext(FloatingLayerContext)
+}
+
 export interface FloatingLayerProviderProps {
   children: React.ReactNode
   className?: string

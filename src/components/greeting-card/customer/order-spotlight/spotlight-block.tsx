@@ -13,7 +13,7 @@ export function spotlightClasses(active: boolean): { block: string; badge: strin
       }
     : {
         block: "bg-transparent border-border/60 hover:bg-surface/60",
-        badge: "bg-surface-muted text-text-muted",
+        badge: "bg-surface-alt text-text-muted",
       }
 }
 

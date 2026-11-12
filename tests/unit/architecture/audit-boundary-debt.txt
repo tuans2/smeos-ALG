@@ -37,7 +37,8 @@ coordinator/orders/[id]/approve-customer-photo
 coordinator/orders/[id]/craft-fee-complaint
 coordinator/orders/[id]/dispatch-to-chat
 coordinator/orders/[id]/set-shipper
-coordinator/partners
+# 12/11/2026: nhánh cấp tài khoản đối tác chuỗi (chưa ghi kiểm toán) tách khỏi coordinator/partners sang đây — cùng một nợ, không phải nợ mới.
+coordinator/chain-partners
 coordinator/partners/[id]/tools
 coordinator/partners/link-existing
 coordinator/reminders/acknowledge
@@ -85,7 +86,6 @@ notification/store-defaults
 notification/store-hard-locks
 occasions
 occasions/[id]
-orders/[id]
 orders/[id]/assign
 orders/[id]/deliver-before-pay
 orders/[id]/info-requests
@@ -120,3 +120,12 @@ video/jobs/[id]/approve-video
 video/jobs/[id]/storyboard
 vision/analyses
 workspaces
+# Lộ ra 12/11/2026 (không phải nợ mới): test trước đó chỉ nhận route tenant qua `requireTenantContext(`, nên route ghi
+# viết bằng `defineRoute` (`auth: { kind: "tenant" }`) lọt khỏi kiểm tra. Sửa test xong thấy 7 route có sẵn chưa ghi kiểm toán.
+brand-kit/identity-options
+brand-kit/identity-options/[id]/select
+internal-chat/conversations/[id]/images
+internal-chat/conversations/[id]/mute
+notification/push-subscriptions
+session/invitations/[id]/accept
+session/invitations/[id]/decline

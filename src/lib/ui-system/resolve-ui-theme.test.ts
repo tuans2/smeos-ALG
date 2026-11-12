@@ -2,33 +2,33 @@ import { describe, it, expect } from "vitest"
 import { resolveUiTheme } from "./resolve-ui-theme"
 
 describe("resolveUiTheme (Server Component Theme Resolution)", () => {
-  it("resolves modern-slate and compact density for platform admin", () => {
+  it("resolves alg (ALG brand, 12/11/2026) and compact density for platform admin", () => {
     const theme = resolveUiTheme({
       organizationType: "PLATFORM",
       roleKey: "platform_admin",
     })
-    expect(theme.preset).toBe("modern-slate")
+    expect(theme.preset).toBe("alg")
     expect(theme.density).toBe("compact")
-    expect(theme.dataTheme).toBe("modern-slate")
+    expect(theme.dataTheme).toBe("alg")
     expect(theme.dataDensity).toBe("compact")
     expect(theme.brandStyle).toBeUndefined()
   })
 
-  it("resolves modern-slate and compact density for ChainOS coordinator", () => {
+  it("resolves alg and compact density for ChainOS coordinator", () => {
     const theme = resolveUiTheme({
       organizationType: "CHAIN",
       roleKey: "coordinator",
     })
-    expect(theme.preset).toBe("modern-slate")
+    expect(theme.preset).toBe("alg")
     expect(theme.density).toBe("compact")
   })
 
-  it("resolves moc-lan and comfortable density for default StoreOS", () => {
+  it("resolves alg and comfortable density for default StoreOS", () => {
     const theme = resolveUiTheme({
       organizationType: "STORE",
       roleKey: "dieu_hanh",
     })
-    expect(theme.preset).toBe("moc-lan")
+    expect(theme.preset).toBe("alg")
     expect(theme.density).toBe("comfortable")
   })
 
@@ -61,7 +61,7 @@ describe("resolveUiTheme (Server Component Theme Resolution)", () => {
         },
       },
     })
-    expect(theme.preset).toBe("moc-lan")
+    expect(theme.preset).toBe("alg")
     expect(theme.brandStyle).toEqual({
       "--color-primary": "#0F766E",
       "--color-primary-dark": "#115E59",
@@ -72,8 +72,15 @@ describe("resolveUiTheme (Server Component Theme Resolution)", () => {
 
   it("falls back safely when session is null or undefined", () => {
     const theme = resolveUiTheme(null)
-    expect(theme.preset).toBe("moc-lan")
+    expect(theme.preset).toBe("alg")
     expect(theme.density).toBe("comfortable")
   })
-})
 
+  it("store can still opt into the previous moc-lan preset via ui_preset", () => {
+    const theme = resolveUiTheme({
+      organizationType: "STORE",
+      organization: { settings: { ui_preset: "moc-lan" } },
+    })
+    expect(theme.preset).toBe("moc-lan")
+  })
+})
