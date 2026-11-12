@@ -88,7 +88,7 @@ export function StepCatalog(props: StepCatalogProps) {
       {loadError && <InlineError message={loadError} onRetry={props.onRetry} />}
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2" aria-busy="true" aria-label="Đang tải bộ sưu tập">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2" role="status" aria-busy="true" aria-label="Đang tải bộ sưu tập">
           <Skeleton className="h-24 rounded-xl" />
           <Skeleton className="h-24 rounded-xl" />
         </div>
