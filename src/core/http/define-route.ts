@@ -2,7 +2,7 @@ import type { z } from "zod"
 
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
 import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency"
 import { requireIntegrationContext, type IntegrationContext } from "@/modules/integration/use-cases/resolve-integration-context"
@@ -23,8 +23,11 @@ import { handle } from "./response"
  * Tên trường thân/query của route mới là snake_case — kiểm ngay lúc khai báo (ném khi nạp module).
  */
 export type RouteAuth =
-  /** Phiên người dùng + mã năng lực. `capability: null` chỉ cho dữ liệu của chính người gọi, kèm lý do. */
-  | { kind: "tenant"; capability: string }
+  /**
+   * Phiên người dùng + mã năng lực; mảng = có một trong các mã là đủ (vd. `["M4", "Q1"]`).
+   * `capability: null` chỉ cho dữ liệu của chính người gọi, kèm lý do.
+   */
+  | { kind: "tenant"; capability: string | readonly [string, ...string[]] }
   | { kind: "tenant"; capability: null; reason: string }
   | { kind: "platform"; capability: string }
   /** Máy gọi máy (`/integration/*`) — trần 600/phút/token đã nằm trong `requireIntegrationContext`. */
@@ -98,7 +101,7 @@ async function authenticate(request: Request, auth: RouteAuth): Promise<Actor> {
   switch (auth.kind) {
     case "tenant": {
       const { ctx } = await requireTenantContext(request)
-      if (auth.capability !== null) requireCapability(ctx, auth.capability)
+      if (auth.capability !== null) requireAnyCapability(ctx, auth.capability)
       return { ctx }
     }
     case "platform": {
@@ -153,4 +156,11 @@ export function assertSnakeCaseKeys(schema: unknown, path: string): void {
   for (const child of [def.element, def.innerType, def.in, ...(def.options ?? [])]) {
     if (child) assertSnakeCaseKeys(child, path)
   }
+}
+
+/** Có một trong các mã là đủ; không có mã nào thì ném đúng lỗi của `requireCapability` cho mã đầu tiên. */
+function requireAnyCapability(ctx: TenantContext, capability: string | readonly [string, ...string[]]): void {
+  const codes = typeof capability === "string" ? [capability] : capability
+  if (codes.some((code) => hasCapability(ctx, code))) return
+  requireCapability(ctx, codes[0]!)
 }

@@ -31,7 +31,7 @@ Từ 12/11/2026 mọi tuyến khoá đều có guard URL (L-03 đã sửa; `test
 | Cửa hàng | /cai-dat/thanh-vien/vai-tro | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /cai-dat/thong-bao | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /catalog | 🔒 Khoá (có guard URL) | ✅ Giao | Dữ liệu thật |  |
-| Cửa hàng | /cham-soc | ✅ Mở | — Không giao (Nghiên cứu thị trường và thu hút khách) | Dữ liệu thật | 🐞 L-04 (còn): nhóm "Tất cả khách" gọi `GET /api/v1/customers` không tồn tại |
+| Cửa hàng | /cham-soc | ✅ Mở | — Không giao (Nghiên cứu thị trường và thu hút khách) | Dữ liệu thật | L-04 đã sửa 12/11: thêm `GET /api/v1/customers` cho nhóm "Tất cả khách" |
 | Cửa hàng | /chat | ✅ Mở | — Không giao (Hội thoại đa kênh và kết nối ứng dụng ngoài) | Chuyển hướng |  |
 | Cửa hàng | /cong-cu | ✅ Mở | ✅ Giao | Dữ liệu thật |  |
 | Cửa hàng | /cong-cu/anh-san-pham | ✅ Mở | — Không giao (Sáng tạo ảnh, video, nội dung) | Dữ liệu thật |  |

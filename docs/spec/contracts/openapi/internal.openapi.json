@@ -66931,6 +66931,321 @@
         "x-capability": "M4 hoặc Q1"
       }
     },
+    "/customers": {
+      "get": {
+        "operationId": "listCareCustomers",
+        "summary": "Tất cả khách (chăm sóc khách)",
+        "description": "Mới nhất cập nhật trước. `limit` 1–100 (mặc định 25), `cursor` lấy từ `next_cursor`; sai → 400. `search`: tên, mã, 4 số cuối hoặc đủ số điện thoại.",
+        "tags": [
+          "Nhóm khách hàng & tương tác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Khách",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "notes": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "metrics": {
+                            "type": "object",
+                            "properties": {
+                              "tier": {
+                                "type": "string",
+                                "enum": [
+                                  "NEW",
+                                  "BRONZE",
+                                  "SILVER",
+                                  "GOLD",
+                                  "VIP"
+                                ]
+                              },
+                              "totalSpentVnd": {
+                                "type": "number"
+                              },
+                              "orderCount": {
+                                "type": "number"
+                              },
+                              "lastOrderAt": {
+                                "type": "string"
+                              },
+                              "aovVnd": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "tier",
+                              "totalSpentVnd",
+                              "orderCount",
+                              "aovVnd"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "preferences": {
+                            "type": "object",
+                            "properties": {
+                              "preferredFlowers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "preferredColors": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "preferredFlowers",
+                              "preferredColors"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "occasions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "date": {
+                                  "type": "string"
+                                },
+                                "isRecurring": {
+                                  "type": "boolean"
+                                },
+                                "reminderDaysBefore": {
+                                  "type": "number"
+                                },
+                                "recipientName": {
+                                  "type": "string"
+                                },
+                                "notes": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "name",
+                                "date",
+                                "isRecurring",
+                                "reminderDaysBefore"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "consents": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "channel": {
+                                  "type": "string",
+                                  "enum": [
+                                    "ZALO_ZNS",
+                                    "SMS",
+                                    "PHONE_CALL",
+                                    "PROMOTION"
+                                  ]
+                                },
+                                "granted": {
+                                  "type": "boolean"
+                                },
+                                "grantedAt": {
+                                  "type": "string"
+                                },
+                                "revokedAt": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "channel",
+                                "granted",
+                                "grantedAt"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "availableVouchers": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "code": {
+                                  "type": "string"
+                                },
+                                "discountType": {
+                                  "type": "string",
+                                  "enum": [
+                                    "PERCENTAGE",
+                                    "FIXED_AMOUNT"
+                                  ]
+                                },
+                                "discountValue": {
+                                  "type": "number"
+                                },
+                                "expiresAt": {
+                                  "type": "string"
+                                },
+                                "minOrderVnd": {
+                                  "type": "number"
+                                },
+                                "maxDiscountVnd": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "code",
+                                "discountType",
+                                "discountValue",
+                                "minOrderVnd"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "code",
+                          "name",
+                          "phone",
+                          "tags",
+                          "metrics",
+                          "preferences",
+                          "occasions",
+                          "consents",
+                          "availableVouchers",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "M4 hoặc Q1"
+      }
+    },
     "/customers/{id}/interactions": {
       "get": {
         "operationId": "listCustomerInteractionsOfCustomer",

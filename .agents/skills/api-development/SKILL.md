@@ -39,7 +39,7 @@ export const POST = defineRoute({
   handler: async ({ ctx, body }) => created(await createItem(ctx, body)),
 })
 ```
-- `auth`: `tenant` (mã năng lực, hoặc `capability: null` + `reason` cho dữ liệu của chính mình), `platform`, `integration`, `public` (bắt buộc `rateLimit` theo IP), `cron`, `custom` (webhook/URL ký, kèm `reason`).
+- `auth`: `tenant` (mã năng lực; mảng `["M4", "Q1"]` = có một mã là đủ; hoặc `capability: null` + `reason` cho dữ liệu của chính mình), `platform`, `integration`, `public` (bắt buộc `rateLimit` theo IP), `cron`, `custom` (webhook/URL ký, kèm `reason`).
 - Tạo job / trừ credit: `idempotency: "required"` → handler nhận `idempotencyKey`; trả `accepted({ job_id, status })` (202).
 - Thành công `{ data }` / `{ data, next_cursor }`; lỗi vẫn ném `AppError`. Cấm `NextResponse.json`, `{ success }`, `{ ok }`, `{ error: "chuỗi" }` — `tests/unit/architecture/route-contract-ratchet.test.ts` chặn.
 - Route cũ (có trước 07/11/2026) nằm trong `tests/unit/architecture/route-contract-legacy.txt`; sửa route cũ thì nên chuyển sang `defineRoute` và xoá dòng — chỉ khi không đổi hợp đồng client đang dùng.

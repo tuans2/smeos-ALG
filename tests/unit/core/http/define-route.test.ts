@@ -53,6 +53,15 @@ describe("defineRoute", () => {
     expect(handler).not.toHaveBeenCalled()
   })
 
+  it("tenant: mảng mã năng lực — có một trong các mã là đủ, không có mã nào → 403", async () => {
+    const handler = vi.fn(async () => ok(null))
+    const GET = defineRoute({ auth: { kind: "tenant", capability: ["Z9", "L1"] }, handler })
+    expect((await GET(req("/x"))).status).toBe(200)
+    const DENY = defineRoute({ auth: { kind: "tenant", capability: ["Z9", "Z8"] }, handler })
+    expect((await DENY(req("/x"))).status).toBe(403)
+    expect(handler).toHaveBeenCalledTimes(1)
+  })
+
   it("query sai → 400 details.issues, câu tiếng Việt", async () => {
     const GET = defineRoute({ auth: { kind: "tenant", capability: "L1" }, query: z.object(pageQuery), handler: async () => ok(null) })
     for (const limit of ["0", "101", "abc"]) {

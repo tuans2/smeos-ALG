@@ -227,6 +227,7 @@
     "/api/v1/customer-interactions",
     "/api/v1/customer-segments",
     "/api/v1/customer-segments/[id]",
+    "/api/v1/customers",
     "/api/v1/delivery/my-runs",
     "/api/v1/delivery/my-runs/[id]",
     "/api/v1/field-config",
