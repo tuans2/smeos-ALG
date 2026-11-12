@@ -125,20 +125,9 @@ Hiện trạng đã đo:
 3. Chạy lại kịch bản nghiệm thu trên bản cắt, ghi người chạy và ngày.
 4. Quét rò rỉ lần cuối, có người đọc lại danh sách file.
 
-**Đã làm 11/11/2026 trên tag `gd1-rc-2026-11-11-2` (`4d1fb65d`):** dựng từ thư mục trắng chỉ theo README của bản giao (`cp .env.example .env` + 3 khoá, Postgres thay cho `docker compose`, `npm ci`, `prisma generate`, `db:deploy`, `db:seed`, `build`, `start`). Phát hiện và đã sửa ở smeOS (cần ứng viên mới):
+**Đã làm 11–12/11/2026, ba lượt, ứng viên cuối `gd1-rc-2026-11-12-3`:** dựng từ môi trường trắng chỉ theo README (qua được, kể cả tạo người vận hành đầu tiên); cổng kiểm trên bản cắt xanh (typecheck, unit 710/710 tệp, platform 19/19, tenant 271/271, pytest, build); quét rò rỉ sạch; 141/141 bước kịch bản đã chạy — 118 Đạt, 4 Đạt một phần, 19 chờ môi trường thật, 0 Không đạt; 25 lỗi phát hiện đã xử lý. Chi tiết: [`docs/audit/gd1-buoc6/`](../audit/gd1-buoc6/README.md).
 
-1. `db:seed` và server không lên: ô để trống trong `.env.example` (`STORAGE_DELETE_PAYLOADS=`, `STORAGE_SIGNING_SECRET=`) bị `src/lib/env.ts` từ chối → ô trống nay coi như chưa đặt; test `src/lib/env-example.test.ts` nạp cả hai `.env.example`.
-2. Tài khoản đầu tiên kẹt "chờ duyệt" (chưa có ai duyệt) → `npm run gan-van-hanh-nen-tang` duyệt luôn tài khoản đang chờ khi gán quyền (`src/modules/platform/use-cases/grant-platform-operator.ts`, test `tests/platform/grant-platform-operator.test.ts`); README thêm bước tạo người vận hành đầu tiên.
-3. README thiếu `npm run db:test:setup` trước `test:tenant` → đã thêm.
-4. `npm test` / `test:tenant` đỏ trên máy dựng theo README vì đọc `.env` của máy (`NEXT_PUBLIC_APP_URL`, `CRON_SECRET`, `OPENAI_API_KEY` trống) → `tests/setup.ts` và `tests/unit/core/public-url.test.ts` ép về giá trị CI dùng.
-
-Kết quả trên bản dựng sạch (sau khi áp 4 sửa): kiểm rò rỉ sạch; typecheck, ESLint ratchet, UX lint, `check:docs`; `npm test` 699 tệp; `test:platform` 18 tệp; `test:tenant` 266 tệp (4 ca đỏ do mục 4, chạy lại đạt); `build`; người vận hành đầu tiên đăng nhập và mở Console; `pytest` worker đạt (Python 3.13); E2E 30/31 — ca đỏ còn lại là ảnh mốc `/khach-hang` 390px lệch 8% điểm ảnh do phông chữ máy dựng hẹp hơn máy CI (hai nút nằm cùng hàng), CI cùng commit xanh. Ghi chú: E2E trên bản build production cần `ALLOW_LOCAL_STORAGE=true` (đã ghi trong `.env.example`).
-
-**Kịch bản nghiệm thu trên bản cắt (6.3):** 84/141 bước đã chạy — 55 Đạt, 17 Không đạt, 12 chờ môi trường thật, 57 chưa chạy. Báo cáo, checklist đã điền và ảnh: [`docs/audit/gd1-buoc6/`](../audit/gd1-buoc6/README.md).
-
-**Thêm từ lần chạy đầu trên tag `gd1-rc-2026-11-11` (`21411f4f`):** README của lớp phủ thiếu `npm run seed:field-registry`, nên bản cài mới theo tài liệu bị `check:field-registry` báo thiếu 39 trường lõi — đã thêm bước đó vào README bản giao.
-
-Còn lại: chủ dự án chạy lại kịch bản nghiệm thu trên ứng viên mới (6.3), đọc lại danh sách tệp (6.4), rồi quyết định tạo repo giao ALG.
+**Ghi chú 13/11/2026:** sau `gd1-rc-2026-11-12-3`, `main` đã nhận thêm PR #62, #65 (tạm dừng/rời hệ thống, xoá dữ liệu khách, danh sách việc chuyển giao) và các sửa của nhánh nghiệm thu này. Bản cắt `Alg_123Cn` (22:08 12/11) dựng từ `main` sau PR #64 nên không trùng mã với ứng viên đã nghiệm thu — cần cắt ứng viên mới từ `main` và chạy lại các bước liên quan trước khi giao.
 
 **Điểm duyệt:** bạn xác nhận mới tạo repo và giao cho ALG (hành động ra bên ngoài, không tự làm).
 
