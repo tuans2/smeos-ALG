@@ -207,7 +207,7 @@ export const contentGuardResponse = z.strictObject({
   hasWarnings: z.boolean(),
   hardBlocks: z.array(match),
   warnings: z.array(match),
-  /** Chỉ khi `autoSanitize: true`. */
+  /** Chỉ khi `auto_sanitize: true`. */
   sanitizedText: z.string().optional(),
   /** Phong cách cấm lấy từ hồ sơ thương hiệu. */
   forbiddenStylesApplied: text,

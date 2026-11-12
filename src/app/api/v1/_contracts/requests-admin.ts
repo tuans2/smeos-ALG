@@ -53,7 +53,7 @@ export const reviewAiRequestBody = z.object({
 // content-guard/validate/route.ts
 export const validateContentBody = z.object({
   text: z.string().min(1, "Văn bản kiểm duyệt không được để trống"),
-  autoSanitize: z.boolean().optional(),
+  auto_sanitize: z.boolean().optional(),
 })
 
 // ── Chỉ mô tả ───────────────────────────────────────────────────────────────

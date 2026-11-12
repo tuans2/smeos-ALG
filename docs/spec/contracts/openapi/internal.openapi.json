@@ -19740,7 +19740,7 @@
       "post": {
         "operationId": "validateFlowerContent",
         "summary": "Kiểm văn bản với từ điển từ cấm ngành hoa và phong cách cấm của thương hiệu",
-        "description": "Chỉ cần phiên của tổ chức. `autoSanitize: true` → kèm `sanitizedText` (thay bằng gợi ý). Văn bản rỗng → 400.",
+        "description": "Chỉ cần phiên của tổ chức. `auto_sanitize: true` → kèm `sanitizedText` (thay bằng gợi ý). Văn bản rỗng → 400.",
         "tags": [
           "Quản trị AI"
         ],
@@ -19760,7 +19760,7 @@
                     "type": "string",
                     "minLength": 1
                   },
-                  "autoSanitize": {
+                  "auto_sanitize": {
                     "type": "boolean"
                   }
                 },

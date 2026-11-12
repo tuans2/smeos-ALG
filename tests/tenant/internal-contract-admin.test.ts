@@ -89,7 +89,7 @@ describe("hợp đồng — vai trò, không gian, nhật ký, thuê bao, chính
     await expectContract(await reviewQueue(get("/ai-requests/review")), 200, R.reviewQueueResponse, "review-queue")
     await expectContract(await reviewAi(send("/ai-requests/review", "POST", { id: row.id, action: "approve", note: "Ổn" })), 200, R.reviewDecisionResponse, "review-decision")
     expect((await reviewAi(send("/ai-requests/review", "POST", { id: row.id, action: "approve" }, other))).status).toBe(404)
-    await expectContract(await validateContent(send("/content-guard/validate", "POST", { text: "Hoa tươi đẹp, cam kết 100% không héo", autoSanitize: true })), 200, R.contentGuardResponse, "content-guard")
+    await expectContract(await validateContent(send("/content-guard/validate", "POST", { text: "Hoa tươi đẹp, cam kết 100% không héo", auto_sanitize: true })), 200, R.contentGuardResponse, "content-guard")
     await expectContract(await validateContent(send("/content-guard/validate", "POST", { text: "Bó hoa vĩnh cửu, giống hệt 100% hình mẫu" })), 200, R.contentGuardResponse, "content-guard-blocked")
     expect((await validateContent(send("/content-guard/validate", "POST", { text: "" }))).status).toBe(400)
     expect((await readJson(await reviewQueue(get("/ai-requests/review", other)))).data).toEqual([])
