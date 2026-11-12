@@ -4166,6 +4166,38 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 56. Mức cô lập của tổ chức — `organizations.isolation_tier` (12/11/2026)
+
+ADR-016 D-S2, bước S-5 (PO duyệt 12/11/2026). Migration `20261112120000_organization_isolation_tier` (expand, một giao
+dịch): thêm kiểu và cột bắt buộc có `DEFAULT 'SHARED'` — mọi tổ chức cũ ở mức dùng chung, đúng hiện trạng.
+
+```prisma
+enum organization_isolation_tier {
+  SHARED
+  SHARED_PLUS
+  DEDICATED
+}
+
+model organizations {
+  // …
+  isolation_tier organization_isolation_tier @default(SHARED)
+}
+```
+
+| Gói đang hiệu lực (`subscriptions.plan`, chưa huỷ) | Mức được phép |
+|---|---|
+| Chưa có thuê bao · `EXPERIENCE` · `STARTER` · `PRO` · gói lạ | `SHARED` |
+| `FLOWER_NETWORK` | `SHARED`, `SHARED_PLUS` |
+| `ENTERPRISE` | `SHARED`, `SHARED_PLUS`, `DEDICATED` |
+
+- Luật: `src/modules/organization/domain/isolation-tier.ts` (PO 12/11/2026 "theo quy mô").
+- Đổi mức: `PATCH /platform/organizations/:id` với `isolation_tier`, mã `N2`; gói không cho phép → 422; ghi
+  `platform_audit_logs` + `audit_logs` (`platform.organization_isolation_changed`).
+- Đổi gói / huỷ thuê bao (`N19`) làm mức hiện tại không còn được phép → 422, không đổi gì — hạ mức trước.
+- Cột chỉ ghi nhận mức; khôi phục riêng một tổ chức (S-4) và dựng triển khai riêng (S-6) là việc vận hành.
+
+Ca thử: `src/modules/organization/domain/isolation-tier.test.ts`, `tests/tenant/organization-isolation-tier.test.ts`.
+
 ## 55. Yêu cầu của khách về dữ liệu cá nhân — `data_subject_requests` (12/11/2026)
 
 ADR-014 D-P5, bước P-7a (PO duyệt 12/11/2026). Migration `20261112100000_data_subject_requests` (expand, một giao dịch):
