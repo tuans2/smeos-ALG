@@ -298,14 +298,13 @@ export const POST = defineRoute({
 
     if (!sweep) {
       log.info("chain_dispatch_sweep.skipped_locked", {})
-      return jsonResponse({ ok: true, skipped: "Lượt quét trước vẫn đang chạy", sweepAt: now.toISOString() })
+      return jsonResponse({ data: { skipped: "Lượt quét trước vẫn đang chạy", sweepAt: now.toISOString() } })
     }
     if (!sweep.complete) log.warn("chain_dispatch_sweep.incomplete", { pages: sweep.pages, processed: totalProcessed })
     const { productProposals, deliveryReminders, stuckJobsFailed, storageLifecycle, idempotencyKeysPurged, piiEncrypted, quotationsExpired, subscriptions } =
       await runSideSweeps(now)
 
-    return jsonResponse({
-      ok: true,
+    return jsonResponse({ data: {
       processed: totalProcessed,
       remindersSent: totalRemindersSent,
       roundsAdvanced,
@@ -324,6 +323,6 @@ export const POST = defineRoute({
       errorCount: errors.length,
       errors: errors.length > 0 ? errors.slice(0, MAX_REPORTED) : undefined,
       sweepAt: now.toISOString(),
-    })
+    } })
   },
 })

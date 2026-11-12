@@ -25,7 +25,7 @@ describe("báo lỗi Viết lại bằng AI bị chặn", () => {
   it("form sản phẩm: hết credit → ném lỗi kèm câu báo; thành công → gợi ý; lỗi mạng → rỗng", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => errorRes(422, "QUOTA_EXCEEDED")))
     await expect(callContentEngineMarketing("Bó hồng")).rejects.toThrow(REWRITE_NO_CREDIT)
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ success: true, suggestions: ["a", "b"] }), { status: 200 })))
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ data: { suggestions: ["a", "b"] } }), { status: 200 })))
     expect(await callContentEngineMarketing("Bó hồng")).toEqual(["a", "b"])
     vi.stubGlobal("fetch", vi.fn(async () => { throw new TypeError("mạng") }))
     expect(await callContentEngineMarketing("Bó hồng")).toEqual([])

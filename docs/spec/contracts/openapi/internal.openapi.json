@@ -91354,138 +91354,164 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "processed": {
-                      "type": "number"
-                    },
-                    "remindersSent": {
-                      "type": "number"
-                    },
-                    "roundsAdvanced": {
-                      "type": "number"
-                    },
-                    "graceCommitted": {
-                      "type": "number"
-                    },
-                    "pages": {
-                      "type": "number"
-                    },
-                    "stuckJobsFailed": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "storageLifecycle": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "idempotencyKeysPurged": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "piiEncrypted": {
+                    "data": {
                       "anyOf": [
                         {
                           "type": "object",
-                          "propertyNames": {
-                            "type": "string"
+                          "properties": {
+                            "processed": {
+                              "type": "number"
+                            },
+                            "remindersSent": {
+                              "type": "number"
+                            },
+                            "roundsAdvanced": {
+                              "type": "number"
+                            },
+                            "graceCommitted": {
+                              "type": "number"
+                            },
+                            "pages": {
+                              "type": "number"
+                            },
+                            "stuckJobsFailed": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "storageLifecycle": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            "idempotencyKeysPurged": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "piiEncrypted": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {
+                                    "type": "number"
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "quotationsExpired": {
+                              "type": "number"
+                            },
+                            "subscriptions": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            "complete": {
+                              "type": "boolean"
+                            },
+                            "productProposals": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            "deliveryReminders": {
+                              "type": "object",
+                              "properties": {
+                                "organizations": {
+                                  "type": "number"
+                                },
+                                "pushed": {
+                                  "type": "number"
+                                },
+                                "failedOrganizations": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "organizations",
+                                "pushed",
+                                "failedOrganizations"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "sentDetails": {
+                              "type": "array",
+                              "items": {}
+                            },
+                            "errorCount": {
+                              "type": "number"
+                            },
+                            "errors": {
+                              "type": "array",
+                              "items": {}
+                            },
+                            "sweepAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
                           },
-                          "additionalProperties": {
-                            "type": "number"
-                          }
+                          "required": [
+                            "processed",
+                            "remindersSent",
+                            "roundsAdvanced",
+                            "graceCommitted",
+                            "pages",
+                            "stuckJobsFailed",
+                            "storageLifecycle",
+                            "idempotencyKeysPurged",
+                            "piiEncrypted",
+                            "quotationsExpired",
+                            "subscriptions",
+                            "complete",
+                            "deliveryReminders",
+                            "errorCount",
+                            "sweepAt"
+                          ],
+                          "additionalProperties": false
                         },
                         {
-                          "type": "null"
+                          "type": "object",
+                          "properties": {
+                            "skipped": {
+                              "type": "string"
+                            },
+                            "sweepAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "skipped",
+                            "sweepAt"
+                          ],
+                          "additionalProperties": false
                         }
                       ]
-                    },
-                    "quotationsExpired": {
-                      "type": "number"
-                    },
-                    "subscriptions": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {
-                        "type": "number"
-                      }
-                    },
-                    "complete": {
-                      "type": "boolean"
-                    },
-                    "productProposals": {
-                      "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {
-                        "type": "number"
-                      }
-                    },
-                    "deliveryReminders": {
-                      "type": "object",
-                      "properties": {
-                        "organizations": {
-                          "type": "number"
-                        },
-                        "pushed": {
-                          "type": "number"
-                        },
-                        "failedOrganizations": {
-                          "type": "number"
-                        }
-                      },
-                      "required": [
-                        "organizations",
-                        "pushed",
-                        "failedOrganizations"
-                      ],
-                      "additionalProperties": false
-                    },
-                    "sentDetails": {
-                      "type": "array",
-                      "items": {}
-                    },
-                    "errorCount": {
-                      "type": "number"
-                    },
-                    "errors": {
-                      "type": "array",
-                      "items": {}
-                    },
-                    "sweepAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                     }
                   },
                   "required": [
-                    "ok",
-                    "processed",
-                    "remindersSent",
-                    "roundsAdvanced",
-                    "graceCommitted",
-                    "pages",
-                    "stuckJobsFailed",
-                    "storageLifecycle",
-                    "idempotencyKeysPurged",
-                    "piiEncrypted",
-                    "quotationsExpired",
-                    "subscriptions",
-                    "complete",
-                    "deliveryReminders",
-                    "errorCount",
-                    "sweepAt"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
