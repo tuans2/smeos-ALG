@@ -4,7 +4,7 @@ import { getRevenueReport } from "@/modules/reporting/use-cases/reports"
 import { defineRoute } from "@/core/http/define-route"
 
 export const GET = defineRoute({
-  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: getRevenueReport" },
+  auth: { kind: "tenant", capability: null, reason: "R20 kiểm ở use-case (getRevenueReport → periodOrThrow)" },
   handler: async ({ request, ctx }) => {
     const q = new URL(request.url).searchParams
     return jsonResponse({ data: await getRevenueReport(ctx, { from: q.get("from"), to: q.get("to"), granularity: q.get("granularity"), detail: q.get("detail") }) })

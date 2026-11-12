@@ -1,3 +1,14 @@
+/**
+ * GET /api/v1/orders/export
+ *
+ * Xuất danh sách đơn hàng ra file Excel (.xlsx).
+ * Query params:
+ *   from_date  — YYYY-MM-DD, ngày bắt đầu (UTC+7), tùy chọn
+ *   to_date    — YYYY-MM-DD, ngày kết thúc (UTC+7), tùy chọn
+ *
+ * Yêu cầu năng lực: R1 (order.read)
+ */
+
 import { requireCapability } from "@/core/rbac/capabilities"
 import { exportOrdersToExcel } from "@/modules/orders/use-cases/export-orders"
 import { recordDataExport } from "@/modules/audit/use-cases/record-data-export"

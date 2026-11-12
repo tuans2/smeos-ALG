@@ -5,6 +5,7 @@ import type { MarketTimeframeKey } from "@/modules/market-intelligence/domain/tr
 import { defineRoute } from "@/core/http/define-route"
 
 export const GET = defineRoute({
+  // Gác quyền V2: market-intel.opportunity.read
   auth: { kind: "tenant", capability: "V2" },
   handler: async ({ request, ctx }) => {
     const url = new URL(request.url);

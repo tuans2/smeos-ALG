@@ -8,6 +8,7 @@ import { defineRoute } from "@/core/http/define-route"
 const productIntelligenceSchema = productIntelligenceBodySchema;
 
 export const POST = defineRoute({
+  // Gác quyền V1: market-intel.research.run
   auth: { kind: "tenant", capability: "V1" },
   handler: async ({ request, ctx }) => {
     const body = await request.json().catch(() => ({}));

@@ -1,3 +1,9 @@
+/**
+ * GET /api/v1/chain/stores-data
+ *
+ * Returns list of store card summaries for the Consolidated Chain Data Hub (/du-lieu).
+ */
+
 import { jsonResponse } from "@/core/http/response"
 import { getChainStoresData } from "@/modules/field-platform/use-cases/get-chain-stores-data"
 import { defineRoute } from "@/core/http/define-route"

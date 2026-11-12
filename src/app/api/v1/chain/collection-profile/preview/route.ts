@@ -1,3 +1,12 @@
+/**
+ * POST /api/v1/chain/collection-profile/preview
+ *
+ * Implements preview impact calculation before publishing a Chain Collection Profile (§9.5.8):
+ * - Validates rules against S3 prohibition, floor <= ceiling, S2 purpose
+ * - Checks against active Store DSAs
+ * - Calculates affected store counts and risk classification (R1 vs R2)
+ */
+
 import { validationFailed } from "@/core/http/errors"
 import { jsonResponse } from "@/core/http/response"
 import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"

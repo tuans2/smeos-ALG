@@ -1,3 +1,9 @@
+/**
+ * POST /api/v1/chain/partner-stores
+ *
+ * Implements registration of a partner / franchise store bound by a Data Sharing Agreement (DSA).
+ */
+
 import { jsonResponse } from "@/core/http/response"
 import { registerPartnerStoreBody } from "@/app/api/v1/_contracts/requests-chain"
 import { registerPartnerStore } from "@/modules/field-platform/use-cases/register-partner-store"

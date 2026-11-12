@@ -9,7 +9,7 @@ import { defineRoute } from "@/core/http/define-route"
  * `GET /storage/library`.
  */
 export const GET = defineRoute({
-  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: parseLibraryScope, getLibrarySummary" },
+  auth: { kind: "tenant", capability: null, reason: "chỉ đếm loại thư viện người gọi được xem (lọc theo ctx.capabilities trong getLibrarySummary)" },
   handler: async ({ request, ctx }) => {
     const scope = parseLibraryScope(new URL(request.url).searchParams.get("scope"))
     return jsonResponse({ data: await getLibrarySummary(ctx, scope) })

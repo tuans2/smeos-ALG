@@ -7,18 +7,13 @@ auth/me
 auth/session-status
 auth/signup
 billing/sepay
-campaigns/[id]
 catalog-links/[slug]
-chain/stores-data/[storeId]
 chat/channels
 chat/public/widget
 chat/webhooks/facebook
 chat/webhooks/zalo
 coordinator/orders/[id]/dispatch-to-chat
 coordinator/templates/[id]/reminders
-customer-segments/[id]
-customer-segments/[id]/customers
-customers/[id]/interactions
 greeting-card/cancellation-requests
 greeting-card/cancellation-requests/[id]/decision
 greeting-card/cancellation-requests/[id]/follow-up
@@ -112,8 +107,6 @@ platform/notification/hard-locks
 platform/notification/visibility
 platform/tier-preview
 platform/ux-rollout-flags
-print/renditions/[id]
-print/renditions/[id]/export
 product-copies
 product-copies/[id]
 product-copies/[id]/approve
@@ -162,9 +155,6 @@ public/subcontract/[orderCode]/submit-delivery
 public/subcontract/[orderCode]/submit-shipper
 public/subcontract/[orderCode]/upload-qc
 public/zalo-oa/webhook
-quotations/[id]
-quotations/[id]/convert
-quotations/[id]/send
 session/organization
 session/password
 sso/refresh

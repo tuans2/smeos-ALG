@@ -18,6 +18,7 @@ const requestSchema = z.object({
 })
 
 export const POST = defineRoute({
+  // J7 — sinh nội dung AI cho landing/catalog (PO 30/10/2026, trả nợ #170)
   auth: { kind: "tenant", capability: "J7" },
   handler: async ({ request, ctx }) => {
     const body = await request.json().catch(() => null)

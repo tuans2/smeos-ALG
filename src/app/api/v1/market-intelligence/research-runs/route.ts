@@ -5,6 +5,7 @@ import { marketIntelligenceRepo } from "@/modules/market-intelligence/infra/mark
 import { defineRoute } from "@/core/http/define-route"
 
 export const POST = defineRoute({
+  // Gác quyền V1: market-intel.research.run
   auth: { kind: "tenant", capability: "V1" },
   handler: async ({ request, ctx }) => {
     const body = await request.json().catch(() => ({}));
@@ -25,6 +26,7 @@ export const POST = defineRoute({
 });
 
 export const GET = defineRoute({
+  // Gác quyền V1: market-intel.research.run
   auth: { kind: "tenant", capability: "V1" },
   handler: async ({ ctx }) => {
     const runs = await marketIntelligenceRepo.listResearchRuns(20);

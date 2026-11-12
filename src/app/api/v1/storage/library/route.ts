@@ -8,7 +8,7 @@ import { defineRoute } from "@/core/http/define-route"
  * Kho dữ liệu v2 — mã quyền theo từng `type` (`domain/library.ts`).
  */
 export const GET = defineRoute({
-  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: parseLibraryScope, listLibrary" },
+  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: listLibrary" },
   handler: async ({ request, ctx }) => {
     const url = new URL(request.url)
     const fromRaw = url.searchParams.get("from")

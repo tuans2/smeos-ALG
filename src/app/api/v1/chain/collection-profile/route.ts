@@ -1,3 +1,11 @@
+/**
+ * GET & PUT /api/v1/chain/collection-profile
+ *
+ * Implements Chain Collection Profile management (§9.5.8):
+ * - GET: Retrieves existing profile and list of collectable fields
+ * - PUT: Validates and publishes a new immutable profile version
+ */
+
 import { validationFailed } from "@/core/http/errors"
 import { jsonResponse } from "@/core/http/response"
 import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"

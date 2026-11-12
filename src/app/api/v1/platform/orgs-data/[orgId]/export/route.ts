@@ -25,6 +25,7 @@ import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-
 import { defineRoute } from "@/core/http/define-route"
 
 export const GET = defineRoute({
+  // Gác ngay đầu: nhánh CSV nuốt lỗi từng miền nên thiếu N1 từng ra ZIP rỗng thay vì 403.
   auth: { kind: "platform", capability: "N1" },
   handler: async ({ request, pctx, params }) => {
     await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc dữ liệu tổ chức

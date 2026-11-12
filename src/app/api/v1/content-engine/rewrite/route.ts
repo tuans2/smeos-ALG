@@ -33,7 +33,7 @@ export interface RewriteResultOutput {
 }
 
 export const POST = defineRoute({
-  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: holdRewriteCredit, requireRewriteCapability" },
+  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: requireRewriteCapability" },
   handler: async ({ request, ctx }) => {
     // PO 07/11/2026 (audit API-02, nợ #170): một trong F2/L2/L3; 1 lượt AI trả gợi ý = giá `content.rewrite`.
     // Trần tần suất vẫn giữ — kiểm trước khi đọc thân/gọi AI.

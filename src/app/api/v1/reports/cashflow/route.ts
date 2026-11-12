@@ -4,7 +4,7 @@ import { getCashflowReport } from "@/modules/reporting/use-cases/reports"
 import { defineRoute } from "@/core/http/define-route"
 
 export const GET = defineRoute({
-  auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: getCashflowReport" },
+  auth: { kind: "tenant", capability: null, reason: "R20 kiểm ở use-case (getCashflowReport → periodOrThrow)" },
   handler: async ({ request, ctx }) => {
     const q = new URL(request.url).searchParams
     return jsonResponse({ data: await getCashflowReport(ctx, { from: q.get("from"), to: q.get("to"), granularity: q.get("granularity"), detail: q.get("detail") }) })

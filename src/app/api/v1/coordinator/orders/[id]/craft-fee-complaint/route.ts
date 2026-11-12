@@ -19,7 +19,7 @@ import { craftFeeComplaintBody } from "@/app/api/v1/_contracts/requests-coordina
 import { defineRoute } from "@/core/http/define-route"
 
 export const POST = defineRoute({
-  auth: { kind: "tenant", capability: null, reason: "quyền kiểm trong handler: GREETING_CARD_CAPABILITY" },
+  auth: { kind: "tenant", capability: null, reason: "quyền kiểm trong handler: GREETING_CARD_CAPABILITY.orderUpdate" },
   handler: async ({ request, ctx, params }) => {
     requireCapability(ctx, GREETING_CARD_CAPABILITY.orderUpdate)
     const { id: orderId } = params as { id: string }
