@@ -41,6 +41,8 @@
     "db:not-valid": "tsx --env-file-if-exists=.env scripts/not-valid-constraints.ts",
     "db:growth": "tsx --env-file-if-exists=.env scripts/db-growth.ts",
     "db:verify": "tsx --env-file-if-exists=.env scripts/db-verify.ts",
+    "load:seed": "tsx --env-file-if-exists=.env scripts/load-test/seed.ts",
+    "load:run": "tsx --env-file-if-exists=.env scripts/load-test/run.ts",
     "tenant:purge": "tsx --env-file-if-exists=.env scripts/tenant-purge.ts",
     "tenant:transfer": "tsx --env-file-if-exists=.env scripts/tenant-transfer.ts",
     "retention:sweep": "tsx --env-file-if-exists=.env scripts/retention-sweep.ts",
