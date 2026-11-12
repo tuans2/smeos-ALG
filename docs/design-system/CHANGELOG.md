@@ -4,6 +4,18 @@ Tất cả các thay đổi đáng chú ý của ALG Design System sẽ được
 
 ---
 
+## [1.4.0] - 2026-11-12
+
+### Thương hiệu ALG và component mới (Đợt 4)
+
+#### Đã thêm
+- `Slider` (`src/components/ui/slider.tsx`, có test): thanh trượt chuẩn bọc `@base-ui/react/slider` (không thêm phụ thuộc). Bắt buộc `aria-label`; `getValueText` cho chữ đọc ("27 km"); vùng điều khiển 24px, 44px khi cảm ứng. Thay 12 `<input type="range">` (lint R18); ô so sánh ảnh phủ toàn khung được miễn có lý do.
+- `TEXT_BUTTON_HIT_AREA` (`button.tsx`): nới vùng bấm nút chỉ có chữ bằng `::before` (25px chuột, 45px cảm ứng) mà không đổi kích thước hiển thị.
+- Preset `alg` (AVI Lotus Group) làm mặc định; phông Google Sans tự lưu.
+
+#### Đã sửa
+- `Button`: icon không còn bị co khi nút có kích thước cố định cộng padding (`[&_svg]:shrink-0`).
+
 ## [1.3.4] - 2026-11-11
 
 ### Lint R24: lớp màu dùng token không tồn tại
