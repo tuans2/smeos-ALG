@@ -25,7 +25,10 @@ describe("GET /api/v1/internal/health", () => {
 
   it("thiếu hoặc sai x-cron-secret → 401, không đo gì", async () => {
     expect((await GET(new Request(URL))).status).toBe(401)
-    expect((await GET(new Request(URL, { headers: { "x-cron-secret": "nope" } }))).status).toBe(401)
+    const res = await GET(new Request(URL, { headers: { "x-cron-secret": "nope" } }))
+    expect(res.status).toBe(401)
+    // Envelope lỗi chung, không còn thân cũ `{ error: "Unauthorized" }` (audit API §32)
+    expect((await res.json()).error.code).toBe("UNAUTHENTICATED")
     expect(latency).not.toHaveBeenCalled()
   })
 

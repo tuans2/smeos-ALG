@@ -1,3 +1,4 @@
+import { parseIntParam } from "@/core/http/pagination";
 import { handle, jsonResponse } from "@/core/http/response";
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
 import { requireCapability } from "@/core/rbac/capabilities";
@@ -10,9 +11,8 @@ export const GET = handle(async (request) => {
   requireCapability(ctx, "V2");
 
   const url = new URL(request.url);
-  const limit = url.searchParams.get("limit")
-    ? parseInt(url.searchParams.get("limit")!, 10)
-    : 20;
+  // Chữ → `NaN` xuống Prisma → 500 trước đây (audit API §22); trần 100 giữ đúng trần của use-case
+  const limit = parseIntParam(url.searchParams.get("limit"), { field: "limit", fallback: 20, min: 1, max: 100 });
   const cursor = url.searchParams.get("cursor") ?? undefined;
   const minScore = url.searchParams.get("min_score")
     ? parseFloat(url.searchParams.get("min_score")!)

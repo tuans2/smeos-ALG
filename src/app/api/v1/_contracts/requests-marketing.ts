@@ -33,11 +33,11 @@ export const createCampaignSchema = z.object({
 // campaigns/[id]/route.ts
 export const updateCampaignSchema = z.object({
   name: z.string().min(1).max(150).optional(),
-  objective: z.enum(["AWARENESS", "LEAD", "SALE", "RETENTION"]).optional(),
+  objective: z.enum(CAMPAIGN_OBJECTIVES).optional(),
   occasion_code: z.string().nullable().optional(),
   starts_at: z.string().nullable().optional(),
   ends_at: z.string().nullable().optional(),
-  status: z.enum(["DRAFT", "ACTIVE", "PAUSED", "COMPLETED", "ARCHIVED"]).optional(),
+  status: z.enum(CAMPAIGN_STATUSES).optional(),
 })
 
 // delivery/my-runs/[id]/route.ts

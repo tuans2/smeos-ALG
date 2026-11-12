@@ -3,7 +3,7 @@ import { z } from "zod"
 
 import { accepted, created, noContent, page } from "@/core/http/contract-responses"
 import { AppError } from "@/core/http/errors"
-import { DEFAULT_PAGE_LIMIT, decodeCursor, encodeCursor, pageQuery, toPage } from "@/core/http/pagination"
+import { DEFAULT_PAGE_LIMIT, decodeCursor, encodeCursor, pageQuery, parseIntParam, toPage } from "@/core/http/pagination"
 
 /** Phân trang chuẩn API Contract v1.1 §6 (PO chốt 07/11/2026: mặc định 25, `{ data, next_cursor }`). */
 describe("pagination", () => {
@@ -57,5 +57,26 @@ describe("contract responses", () => {
     expect(n.status).toBe(204)
     expect(await n.text()).toBe("")
     expect(await page({ data: [1], next_cursor: null }).json()).toEqual({ data: [1], next_cursor: null })
+  })
+})
+
+describe("parseIntParam (route cũ, audit API §15/§29)", () => {
+  const opts = { field: "limit", fallback: 20, min: 1, max: 100 }
+
+  it("bỏ trống → mặc định; số nguyên trong khoảng → giữ nguyên", () => {
+    expect(parseIntParam(null, opts)).toBe(20)
+    expect(parseIntParam("", opts)).toBe(20)
+    expect(parseIntParam("1", opts)).toBe(1)
+    expect(parseIntParam("100", opts)).toBe(100)
+  })
+
+  it.each(["abc", "2.5", "0", "-1", "101", "1e2", "99999999999999999999"])("%s → 400 details.limit", (raw) => {
+    try {
+      parseIntParam(raw, opts)
+      expect.unreachable()
+    } catch (e) {
+      expect(e).toBeInstanceOf(AppError)
+      expect((e as AppError).details).toHaveProperty("limit")
+    }
   })
 })

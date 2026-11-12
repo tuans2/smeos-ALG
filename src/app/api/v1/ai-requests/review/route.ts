@@ -1,4 +1,5 @@
 import { validationFailed } from "@/core/http/errors"
+import { parseIntParam } from "@/core/http/pagination"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -10,7 +11,8 @@ export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "U3")
 
-  const limit = Number(new URL(request.url).searchParams.get("limit") ?? 100)
+  // Trần 5.000 giữ đúng trần sẵn có của `listReviewQueue`; chữ/số âm trước đây → `take: NaN`/đảo chiều → 500
+  const limit = parseIntParam(new URL(request.url).searchParams.get("limit"), { field: "limit", fallback: 100, min: 1, max: 5000 })
   const queue = await new AiRequestRepository().listReviewQueue(ctx, limit)
 
   return jsonResponse({

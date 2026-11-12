@@ -6,9 +6,9 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 
 | Mục | Giữ | Bị chặn hoặc bỏ |
 |---|---:|---:|
-| Trang | 90 | 26 |
+| Trang | 90 | 27 |
 | API | 483 | 61 |
-| Tệp trong `src/` | 3555 | 663 |
+| Tệp trong `src/` | 3558 | 669 |
 
 ## Code trong phạm vi chạm vùng không giao
 
@@ -30,6 +30,7 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 | `src/components/dashboard/customer-service-workspace.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
 | `src/components/dashboard/store-growth-center.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
 | `src/components/dashboard/store-growth-center.tsx` | `/market-intelligence` | Ẩn khi không thuộc giai đoạn |
+| `src/components/integrations/api-tokens-panel.tsx` | `/tich-hop/tai-lieu-api` | Ẩn khi không thuộc giai đoạn |
 | `src/components/organization/ai-channels-settings-tab.tsx` | `/ket-noi` | Ẩn khi không thuộc giai đoạn |
 | `src/components/products/one-image-kit-dialog.tsx` | `/in-an` | Ẩn khi không thuộc giai đoạn |
 
@@ -51,7 +52,7 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `crm` | 39/40 |
 | `field-platform` | 41/47 |
 | `greeting-card` | 281/285 |
-| `integration` | 20/23 |
+| `integration` | 22/26 |
 | `integration-hub` | 34/35 |
 | `jobs` | 19/20 |
 | `journey` | 6/17 |

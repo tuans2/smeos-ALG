@@ -13,6 +13,15 @@ export function isValidTtlDays(days: number): boolean {
   return Number.isInteger(days) && days >= MIN_TOKEN_TTL_DAYS && days <= MAX_TOKEN_TTL_DAYS
 }
 
+/**
+ * Thời hạn (ngày) đã chọn lúc cấp một token = `expires_at − created_at`, để lần xoay giữ đúng thời hạn đó (audit API §19
+ * — trước đây xoay luôn ra 90 ngày, token 30 ngày bị kéo dài ngoài ý người cấp). Lệch khỏi khoảng hợp lệ → mặc định.
+ */
+export function ttlDaysOf(token: { readonly created_at: Date; readonly expires_at: Date }): number {
+  const days = Math.round((token.expires_at.getTime() - token.created_at.getTime()) / (24 * 60 * 60 * 1000))
+  return isValidTtlDays(days) ? days : DEFAULT_TOKEN_TTL_DAYS
+}
+
 /** Hạn dùng mới, tính từ `now` — dùng cả lúc cấp mới lẫn lúc xoay. */
 export function resolveExpiry(now: Date, ttlDays: number | undefined): Date {
   const days = ttlDays ?? DEFAULT_TOKEN_TTL_DAYS

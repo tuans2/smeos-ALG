@@ -10,6 +10,7 @@ export type ErrorCode =
   | "CAPABILITY_DENIED"
   | "ENTITLEMENT_REQUIRED"
   | "PASSWORD_CHANGE_REQUIRED"
+  | "CROSS_ORIGIN_REJECTED"
   | "SUBSCRIPTION_OVERDUE"
   | "ORGANIZATION_INACTIVE"
   | "NOT_FOUND"
@@ -27,6 +28,8 @@ const HTTP_STATUS: Record<ErrorCode, number> = {
   CAPABILITY_DENIED: 403,
   ENTITLEMENT_REQUIRED: 403,
   PASSWORD_CHANGE_REQUIRED: 403,
+  // Lệnh ghi có cookie phiên gửi từ origin khác (ARC-022, PO D-25)
+  CROSS_ORIGIN_REJECTED: 403,
   // Gói thuê bao quá hạn thanh toán → chỉ xem (checklist ALG 10.7, PO Q9)
   SUBSCRIPTION_OVERDUE: 402,
   // Tổ chức tạm ngưng / đang rời nền tảng / đã đóng (ADR-016 D-S5)

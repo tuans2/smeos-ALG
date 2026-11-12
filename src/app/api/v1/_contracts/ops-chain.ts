@@ -8,7 +8,7 @@ import * as res from "./responses-chain"
 const BR = "Chi nhánh"
 const CHAIN = "Chuỗi — dữ liệu cửa hàng"
 const LINK = "Chuỗi — liên kết (phía cửa hàng)"
-const RULES_BUG = "Thiếu `rules` hoặc không phải mảng hiện trả 500 thay vì 400 (lỗi đã ghi nhận, audit API §17)."
+const RULES_BUG = "Thiếu `rules` hoặc không phải mảng → 400 `details.rules`."
 const LINK_NF = "Liên kết của tổ chức khác → 404; liên kết vừa đổi trạng thái → 409."
 
 export const CHAIN_OPERATIONS: OpenApiOperation[] = [
@@ -28,14 +28,14 @@ export const CHAIN_OPERATIONS: OpenApiOperation[] = [
     ok: [200, { description: "Hồ sơ và trường thu thập được", schema: res.collectionProfileResponse }] }),
   op(CHAIN, { method: "put", path: "/chain/collection-profile", operationId: "publishChainCollectionProfile", summary: "Phát hành phiên bản hồ sơ thu thập mới", cap: "F2",
     body: req.collectionProfileBody,
-    description: `Mỗi lần phát hành là một phiên bản mới, không sửa bản cũ. Quy tắc sai luật (trường S3, mức sàn vượt trần, thiếu mục đích cho trường S2, vượt trần thoả thuận chia sẻ dữ liệu) hiện cũng trả 500 (use-case ném \`Error\` trần) — gọi \`/preview\` trước để thấy lỗi trong \`validation.issues\`. ${RULES_BUG}`,
-    ok: [200, { description: "Hồ sơ đã phát hành", schema: res.collectionProfilePublishedResponse }], errors: [...BODY_ERRORS, 500] }),
+    description: `Mỗi lần phát hành là một phiên bản mới, không sửa bản cũ. Quy tắc sai luật (trường S3, mức sàn vượt trần, thiếu mục đích cho trường S2, vượt trần thoả thuận chia sẻ dữ liệu) → 422 kèm \`details.issues\` (cùng dạng \`validation.issues\` của \`/preview\`). ${RULES_BUG}`,
+    ok: [200, { description: "Hồ sơ đã phát hành", schema: res.collectionProfilePublishedResponse }], errors: [...BODY_ERRORS, 422] }),
   op(CHAIN, { method: "post", path: "/chain/collection-profile/preview", operationId: "previewChainCollectionProfile", summary: "Xem trước tác động của hồ sơ thu thập", cap: "F1",
     body: req.collectionProfileBody, description: `Không lưu. Quy tắc sai luật trả trong \`validation.issues\` (vẫn 200). ${RULES_BUG}`,
-    ok: [200, { description: "Kết quả xem trước", schema: res.collectionProfilePreviewResponse }], errors: [...BODY_ERRORS, 500] }),
+    ok: [200, { description: "Kết quả xem trước", schema: res.collectionProfilePreviewResponse }], errors: BODY_ERRORS }),
   op(CHAIN, { method: "post", path: "/chain/partner-stores", operationId: "registerPartnerStore", summary: "Đăng ký cửa hàng đối tác (pháp nhân riêng) kèm thoả thuận chia sẻ dữ liệu", cap: "F2",
-    body: req.registerPartnerStoreBody, description: "Mã cửa hàng đã có trong tổ chức hiện trả 500 thay vì 409 (lỗi đã ghi nhận, audit API §17).",
-    ok: [201, { description: "Cửa hàng và thoả thuận", schema: res.partnerStoreResponse }], errors: [...BODY_ERRORS, 500] }),
+    body: req.registerPartnerStoreBody, description: "Mã cửa hàng đã có trong tổ chức → 409.",
+    ok: [201, { description: "Cửa hàng và thoả thuận", schema: res.partnerStoreResponse }], errors: [...BODY_ERRORS, 409] }),
   op(CHAIN, { method: "get", path: "/chain/stores-data", operationId: "listChainStoresData", summary: "Tóm tắt dữ liệu các cửa hàng của chuỗi", cap: "F1",
     ok: [200, { description: "Thẻ cửa hàng", schema: res.chainStoresResponse }] }),
   op(CHAIN, { method: "get", path: "/chain/stores-data/{storeId}", operationId: "getChainStoreFolder", summary: "Thư mục dữ liệu một cửa hàng theo miền", cap: "F1",

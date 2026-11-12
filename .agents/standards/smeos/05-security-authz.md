@@ -16,6 +16,7 @@
 | Cron | `src/core/http/cron-auth.ts` (`isAuthorizedCronRequest`) |
 | Bí mật trong DB | `src/core/security/secret-box.ts` — AES-256-GCM, HKDF theo `purpose` từ `INTEGRATION_TOKEN_SECRET`, dạng `v1.<iv>.<tag>.<ct>` |
 | CSP | `next.config.ts` — **Report-Only**, báo về `/api/v1/public/csp-report` |
+| CSRF / Origin | `src/core/http/origin-guard.ts`, gọi trong `handle()`: lệnh ghi có cookie phiên + đăng nhập/đăng ký từ origin khác → 403 `CROSS_ORIGIN_REJECTED`; miễn trừ chỉ co lại (`ORIGIN_CHECK_EXEMPT_PREFIXES`); `ORIGIN_CHECK_MODE` `log`/`enforce` |
 | Audit | `src/modules/audit/use-cases/` — `recordAuditLog`, `record-data-export.ts`; ~56 nơi gọi |
 
 ## 2. Trạng thái
@@ -28,6 +29,8 @@
 | SSRF, XSS ảnh, ReDoS | ✅ | CodeQL CI + unit test |
 | Audit xuất dữ liệu | ✅ | `export-audit.test.ts` |
 | CSP chặn thật | 🟡 Report-Only | nợ CSP trong `TECHNICAL_DEBT.md` |
+| Kiểm Origin cho lệnh ghi (ARC-022, PO D-25) | 🟡 mã xong 11/11/2026; production chạy `log` một tuần rồi đặt `ORIGIN_CHECK_MODE=enforce` | `tests/unit/core/http/origin-guard.test.ts`, `tests/tenant/origin-guard.test.ts` |
+| Route GET không đổi trạng thái | ✅ | `tests/unit/architecture/get-no-side-effects.test.ts` |
 | Quét CodeQL + gitleaks | ✅ CI (`.github/workflows/codeql.yml`, `.gitleaksignore`) | — |
 
 ## 3. Quy tắc cho agent
@@ -36,4 +39,5 @@
 3. Webhook mới → kiểm chữ ký raw body trước khi parse; thiếu bí mật thì 401/503, không chấp nhận.
 4. Lưu token nhà cung cấp → `secret-box` với `purpose` riêng.
 5. Thay đổi cấu hình, quyền, xoá vĩnh viễn, xuất dữ liệu → `recordAuditLog` (không ghi giá trị tìm kiếm).
+5b. Route ghi mới đi qua `handle()`/`defineRoute` là có kiểm Origin; route xác thực KHÔNG bằng cookie phiên (webhook, Bearer, URL ký) mà nằm ngoài các tiền tố miễn trừ → thêm vào `ORIGIN_CHECK_EXEMPT_PREFIXES` kèm lý do. Không làm route `GET` đổi trạng thái.
 6. Nới tenancy, trần quyền, auth/SSO, chuyển CSP sang chặn → hỏi PO (CLAUDE.md).

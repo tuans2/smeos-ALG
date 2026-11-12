@@ -20,7 +20,7 @@ const legacyErrors = (o: OpenApiOperation): OpenApiOperation => ({ ...o, extensi
 
 export const CHAT_OPERATIONS: OpenApiOperation[] = [
   op(AI, { method: "get", path: "/chat/conversations", operationId: "listChatConversations", summary: "Hội thoại tư vấn", cap: "T1", query: req.chatConversationsQuery,
-    description: "`status` mặc định `ACTIVE`; `limit` mặc định 50, chưa có trần; `limit` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §15).", ok: [200, { description: "Hội thoại", schema: res.chatConversationsResponse }], errors: [500] }),
+    description: "`status` mặc định `ACTIVE`; `limit` 1–100, mặc định 50; không phải số nguyên hoặc ngoài khoảng → 400.", ok: [200, { description: "Hội thoại", schema: res.chatConversationsResponse }], errors: [400] }),
   op(AI, { method: "post", path: "/chat/conversations", operationId: "createChatConversation", summary: "Mở hội thoại tư vấn mới", cap: "T2", body: req.createChatConversationBody,
     description: "Thân không kiểm bằng lược đồ: trường vắng dùng mặc định.", ok: [201, { description: "Hội thoại", schema: res.chatConversationResponse }], errors: BODY_ERRORS }),
   op(AI, { method: "get", path: "/chat/conversations/{id}/messages", operationId: "listChatMessages", summary: "Tin nhắn của hội thoại", cap: "T1", description: NF,
