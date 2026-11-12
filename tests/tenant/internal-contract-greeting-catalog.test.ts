@@ -57,7 +57,7 @@ describe("hợp đồng — Thẻ chào: bộ sưu tập và link", () => {
     await expectContract(await getCatalog(get(`/catalogs/${id}`), ps({ id })), 200, R.catalogResponse, "catalog")
     await expectContract(await patchCatalog(send(`/catalogs/${id}`, "PATCH", { name: "Hoa Tết 2027", description: "Mẫu mới" }), ps({ id })), 200, R.catalogResponse, "catalog")
     await expectContract(await addProduct(send(`/catalogs/${id}/products`, "POST", { productId: productIds[2] }), ps({ id })), 201, R.catalogItemResponse, "catalog-item")
-    await expectContract(await removeProduct(send(`/catalogs/${id}/products`, "DELETE", { productId: productIds[2] }), ps({ id })), 200, R.successResponse, "catalog-item-removed")
+    await expectContract(await removeProduct(send(`/catalogs/${id}/products`, "DELETE", { productId: productIds[2] }), ps({ id })), 200, R.catalogProductRemovedResponse, "catalog-item-removed")
     await expectContract(await hearts(get(`/catalogs/${id}/hearts`), ps({ id })), 200, R.catalogHeartsResponse, "catalog-hearts")
     const png = await collage(get(`/catalogs/${id}/collage`), ps({ id }))
     expect(png.status).toBe(200)

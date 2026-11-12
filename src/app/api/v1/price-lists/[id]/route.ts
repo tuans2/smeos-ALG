@@ -50,6 +50,6 @@ export const DELETE = defineRoute({
   handler: async ({ ctx, params }) => {
     const { id } = params as { id: string }
     await archivePriceList(ctx, id)
-    return jsonResponse({ ok: true })
+    return jsonResponse({ data: { id, archived: true } })
   },
 })

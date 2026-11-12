@@ -17,7 +17,7 @@ export const PROFILE_OPERATIONS: OpenApiOperation[] = [
   op(PROFILE, { method: "put", path: "/business-profile", operationId: "putBusinessProfile", summary: "Lưu hồ sơ doanh nghiệp", cap: "F2", body: req.putBusinessProfileBody,
     description: "Không gửi `brand_message`/`target_customers` thì giữ giá trị đang lưu. Hai trường này đi vào ngữ cảnh AI viết nội dung.", ok: [200, { description: "Hồ sơ", schema: res.businessProfileResponse }], errors: BODY_ERRORS }),
   op(PROFILE, { method: "post", path: "/business-profile/mock-data", operationId: "applyIndustryMockData", summary: "Nạp dữ liệu mẫu theo ngành (không gian trải nghiệm)", cap: "`F2` (hoặc `H4`/`N1`/`N12`)",
-    body: req.industryMockDataBody, description: "Chỉ tổ chức loại không gian trải nghiệm — tổ chức thường → 403. Mã ngành lạ → 400. Trả envelope cũ `{ success: true, data }`.",
+    body: req.industryMockDataBody, description: "Chỉ tổ chức loại không gian trải nghiệm — tổ chức thường → 403. Mã ngành lạ → 400.",
     ok: [200, { description: "Dữ liệu mẫu đã nạp", schema: res.mockDataResponse }], errors: BODY_ERRORS }),
   op(PROFILE, { method: "get", path: "/brand-profile", operationId: "getBrandProfile", summary: "Hồ sơ thương hiệu", cap: "F1",
     description: "Thân không bọc `{ data }`.", ok: [200, { description: "Hồ sơ thương hiệu", schema: res.brandProfileResponse }] }),

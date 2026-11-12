@@ -153,9 +153,9 @@ export const coordinatorApi = {
   listPayments: async (id: string) =>
     (await request<{ payments: OrderPaymentView[] }>(`${BASE}/orders/${id}/payments`, { method: "GET" })).payments,
   listPartners: async (activeOnly = false) =>
-    (await request<{ partners: CoordinationPartner[] }>(`${BASE}/partners${activeOnly ? "?active=1" : ""}`)).partners,
+    (await request<{ data: CoordinationPartner[] }>(`${BASE}/partners${activeOnly ? "?active=1" : ""}`)).data,
   createPartner: async (body: { code: string; name: string; phone: string; district?: string; province?: string; capacityDaily?: number }) =>
-    (await request<{ partner: CoordinationPartner }>(`${BASE}/partners`, post(body))).partner,
+    (await request<{ data: CoordinationPartner }>(`${BASE}/partners`, post(body))).data,
   /** ĐP-4a.1 (26/09/2026) — danh mục (§2.15) cho ô chọn ở T01. `keys` bỏ trống trả hết. */
   listCatalogs: async (keys?: readonly string[]) => {
     const qs = keys && keys.length > 0 ? `?keys=${encodeURIComponent(keys.join(","))}` : ""

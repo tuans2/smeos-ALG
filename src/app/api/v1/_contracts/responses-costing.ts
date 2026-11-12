@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { actionDone } from "./responses-actions"
 
 /**
  * Phản hồi `/api/v1/costing/*`, `/api/v1/pricing-rules`, `/api/v1/price-lists/*` (OpenAPI nội bộ, PO 07/11/2026). Sinh
@@ -185,4 +186,4 @@ export const priceListDocumentResponse = z.strictObject({
   categories: z.array(categoryOption),
   productCount: z.number(),
 })
-export const okResponse = z.strictObject({ ok: z.literal(true) })
+export const priceListArchivedResponse = actionDone("archived")

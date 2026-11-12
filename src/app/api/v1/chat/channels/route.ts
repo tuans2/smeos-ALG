@@ -12,7 +12,8 @@ import type { SupportedChatChannel } from "@/modules/chat-assistant/domain/chann
 import { defineRoute } from "@/core/http/define-route"
 
 export const GET = defineRoute({
-  auth: { kind: "tenant", capability: null, reason: "CHƯA gác mã năng lực (có từ trước): đọc cấu hình kênh chat của chính tổ chức" },
+  // Xem cấu hình kênh trong màn Tích hợp — cùng mã xem danh mục tích hợp (PO 12/11/2026); khoá đã che
+  auth: { kind: "tenant", capability: "W1" },
   handler: async ({ ctx }) => {
     const [channels, org] = await Promise.all([
       listChatChannels(ctx),

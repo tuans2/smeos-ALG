@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { actionDone } from "./responses-actions"
 
 import { jobStatusSchema, usageSchema } from "@/modules/creative-production/contracts/common"
 import { videoJobRecordSchema } from "@/modules/creative-production/contracts/stage-06d-video"
@@ -145,7 +146,7 @@ const musicTrack = z.strictObject({
 })
 export const musicTracksResponse = z.strictObject({ tracks: z.array(musicTrack) })
 export const musicTrackResponse = z.strictObject({ track: musicTrack })
-export const okResponse = z.strictObject({ ok: z.literal(true) })
+export const musicTrackDeletedResponse = actionDone("deleted")
 const voiceClone = z.strictObject({
   id: z.string(),
   name: z.string(),

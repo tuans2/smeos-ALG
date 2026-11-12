@@ -19,6 +19,6 @@ export const DELETE = defineRoute({
     }
 
     await permanentDelete(ctx, { id, type })
-    return jsonResponse({ success: true })
+    return jsonResponse({ data: { id, deleted: true } })
   },
 })

@@ -102,7 +102,7 @@ describe("hợp đồng — sản phẩm", () => {
       "batch-import"
     )
     await expectContract(await importBatches(get("/products/import-batches")), 200, R.importBatchesResponse, "import-batches")
-    const batchId = batch.batch_id as string
+    const batchId = (batch.data as { batch_id: string }).batch_id
     await expectContract(await undo(send(`/products/import-batches/${batchId}/undo`, "POST", {}), ps({ id: batchId })), 200, R.undoImportBatchResponse, "undo-batch")
   })
 

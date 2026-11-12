@@ -85,7 +85,7 @@ async function newPartner(t: Tenant, code = "XUONG-01", capacityDaily = 10): Pro
     })
   )
   expect(res.status).toBe(201)
-  return (await json(res)).partner
+  return (await readJson(res)).data as PartnerView
 }
 
 async function seedAsset(ctx: TenantContext): Promise<string> {
@@ -273,8 +273,8 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     await call(patchStage, a, order.id, { stage: "PLANNING" }, "PATCH")
     expect((await call(assignPartner, a, order.id, { partnerId: partnerB.id })).status).toBe(404)
 
-    const partnersA = (await json(await listPartners(withSession(`${BASE}/partners`, a.token))))
-    expect(partnersA.partners).toHaveLength(0)
+    const partnersA = (await readJson(await listPartners(withSession(`${BASE}/partners`, a.token)))).data as PartnerView[]
+    expect(partnersA).toHaveLength(0)
     expect((await call(patchPartner, a, partnerB.id, { isActive: false }, "PATCH")).status).toBe(404)
   })
 

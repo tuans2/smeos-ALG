@@ -105,8 +105,7 @@ export const POST = defineRoute({
 
     await finishImportBatch(ctx, batch.id, createdProducts.map((p) => p.id), updatedIds)
 
-    return jsonResponse({
-      success: true,
+    return jsonResponse({ data: {
       batch_id: batch.id,
       total_requested: items.length,
       created_count: createdProducts.length,
@@ -119,6 +118,6 @@ export const POST = defineRoute({
       updated: updatedCodes,
       skipped: skippedCodes,
       failed: failedItems,
-    }, { status: 201 })
+    } }, { status: 201 })
   },
 })

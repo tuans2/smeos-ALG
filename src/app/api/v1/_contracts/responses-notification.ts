@@ -57,8 +57,8 @@ export const inboxResponse = z.strictObject({
   pagination: z.strictObject({ page: z.number(), limit: z.number(), total: z.number(), unreadCount: z.number() }),
 })
 /** `success` = false khi tin không thuộc người/tổ chức của phiên (không đổi gì). */
-export const inboxReadResponse = z.strictObject({ success: z.boolean(), id: z.string() })
-export const inboxReadAllResponse = z.strictObject({ success: z.literal(true), count: z.number() })
+export const inboxReadResponse = data(z.strictObject({ id: z.string(), read: z.boolean() }))
+export const inboxReadAllResponse = data(z.strictObject({ count: z.number() }))
 
 const preferenceRecord = z.strictObject({
   eventKey: z.string(),
@@ -68,11 +68,11 @@ const preferenceRecord = z.strictObject({
 })
 export const preferencesResponse = data(z.array(preferenceRecord))
 
-/** Lệnh ghi trả lại đúng thân đã gửi (sau khi lược đồ kiểm) dưới `updated`. */
-const echo = (key: "updated" | "hardLock" | "removed") => z.strictObject({ success: z.literal(true), [key]: z.record(z.string(), z.unknown()) })
-export const updatedResponse = echo("updated")
-export const hardLockSetResponse = echo("hardLock")
-export const hardLockRemovedResponse = echo("removed")
+/** Lệnh ghi trả lại đúng thân đã gửi (sau khi lược đồ kiểm) dưới `data`. */
+const echo = data(z.record(z.string(), z.unknown()))
+export const updatedResponse = echo
+export const hardLockSetResponse = echo
+export const hardLockRemovedResponse = echo
 
 const hardLock = z.strictObject({
   eventKey: z.string(),

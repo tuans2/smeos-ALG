@@ -4,6 +4,7 @@
  * Quyền: H5 — gác ở use-case `listProductCopies` (RS-8/RS-9 18/09).
  */
 import { defineRoute } from "@/core/http/define-route";
+import { jsonResponse } from "@/core/http/response";
 import type { TenantContext } from "@/core/tenancy";
 import { listProductCopies } from "@/modules/product-copies/use-cases/get-product-copy";
 
@@ -19,10 +20,7 @@ async function listHandler({ request, ctx }: { request: Request; ctx: TenantCont
     ? copies.filter(c => c.approval_state === approvalState)
     : copies;
 
-  return new Response(JSON.stringify({ data: filtered }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return jsonResponse({ data: filtered });
 }
 
 export const GET = defineRoute({

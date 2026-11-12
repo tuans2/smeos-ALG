@@ -23,7 +23,9 @@ const patchSchema = z.object({
 })
 
 export const GET = defineRoute({
-  auth: { kind: "custom", reason: "tra link catalog theo slug, không đòi phiên (có từ trước)" },
+  auth: { kind: "public" },
+  // Trang công khai không phiên — chặn quét slug theo IP như catalog công khai (PO 12/11/2026)
+  rateLimit: { scope: "catalog-link-view", limit: 60, windowMs: 60_000, per: "ip" },
   handler: async ({ params }) => {
       const { slug } = params as { slug: string }
       const link = await getCatalogLinkBySlug(slug)

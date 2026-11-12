@@ -14,7 +14,6 @@ const IN = "Chat nội bộ"
 const NF = "Hội thoại của tổ chức khác → 404."
 const MEMBER = "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404."
 const NOTE_AUDIT = "Nhật ký kiểm toán chỉ ghi loại tin và độ dài, không ghi nội dung."
-const LEGACY = "Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`)."
 /** Route trả `{ error: "chuỗi" }` cho bên gọi ngoài thay cho envelope `Error` chung. */
 const legacyErrors = (o: OpenApiOperation): OpenApiOperation => ({ ...o, extensions: { ...o.extensions, "x-legacy-error-envelope": true } })
 
@@ -33,22 +32,22 @@ export const CHAT_OPERATIONS: OpenApiOperation[] = [
     description: `Thiếu \`productId\` hoặc sản phẩm chưa có giá bán → 400 (không tạo đơn 0đ). Hội thoại/sản phẩm của tổ chức khác → 404.`,
     ok: [201, { description: "Đơn nháp", schema: res.chatCreateOrderResponse }], errors: [...BODY_ERRORS, 404] }),
 
-  op(CH, { method: "get", path: "/chat/channels", operationId: "listChatChannels", summary: "Kênh chat, biểu phí và trạng thái", cap: null,
-    description: "Chưa gác mã năng lực (RS-8 đặc tả 06). Khoá bí mật đã che.", ok: [200, { description: "Kênh", schema: res.chatChannelsResponse }] }),
+  op(CH, { method: "get", path: "/chat/channels", operationId: "listChatChannels", summary: "Kênh chat, biểu phí và trạng thái", cap: "W1",
+    description: "Xem trong màn Tích hợp — cùng mã xem danh mục tích hợp (PO 12/11/2026; trước đó không gác mã). Khoá bí mật đã che.", ok: [200, { description: "Kênh", schema: res.chatChannelsResponse }], errors: [403] }),
   op(CH, { method: "post", path: "/chat/channels", operationId: "configureChatChannel", summary: "Bật/tắt và cấu hình một kênh", cap: "T4", body: req.configureChatChannelBody,
     description: "Mã năng lực kiểm ở use-case. Bật kênh có phí trừ credit gia hạn — không đủ → 422 `QUOTA_EXCEEDED`. Khoá bí mật gửi lại dạng đã che thì giữ giá trị cũ.",
     ok: [200, { description: "Kênh sau khi lưu", schema: res.chatChannelConfiguredResponse }], errors: [...BODY_ERRORS, 404, 422] }),
-  op(CH, { method: "get", path: "/chat/public-limits", operationId: "getPublicChatLimits", summary: "Hạn mức chat công khai đang áp dụng", cap: null,
-    description: "`pending`: yêu cầu nâng đang chờ nền tảng duyệt.", ok: [200, { description: "Hạn mức", schema: res.publicChatLimitsResponse }] }),
+  op(CH, { method: "get", path: "/chat/public-limits", operationId: "getPublicChatLimits", summary: "Hạn mức chat công khai đang áp dụng", cap: "W1",
+    description: "`pending`: yêu cầu nâng đang chờ nền tảng duyệt.", ok: [200, { description: "Hạn mức", schema: res.publicChatLimitsResponse }], errors: [403] }),
   op(CH, { method: "post", path: "/chat/public-limits", operationId: "requestPublicChatLimits", summary: "Xin nâng hạn mức chat công khai", cap: "T4",
     body: req.publicChatLimitRequestBody,
     description: "Mức xin phải là một mức chọn sẵn và cao hơn mức hiện tại → không thì 400; đã có yêu cầu chờ duyệt → 409.",
     ok: [201, { description: "Yêu cầu đã ghi", schema: res.publicChatLimitRequestedResponse }], errors: [...BODY_ERRORS, 409] }),
 
-  legacyErrors(op(CH, { method: "post", path: "/chat/public/widget", operationId: "sendPublicChatWidgetMessage", summary: "Khung chat AI trên trang công khai", cap: null, auth: "public",
+  op(CH, { method: "post", path: "/chat/public/widget", operationId: "sendPublicChatWidgetMessage", summary: "Khung chat AI trên trang công khai", cap: null, auth: "public",
     body: req.publicChatWidgetBody,
-    description: "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Mọi lỗi trả `{ error: \"chuỗi\" }`; route không qua `handle()` nên không có header `RateLimit-*`.",
-    ok: [200, { description: "Trả lời của trợ lý", schema: res.publicChatWidgetResponse }], errors: [400, 404, 429, 500] })),
+    description: "Tổ chức suy từ `slug`. Không thấy tiệm hoặc trang bị tắt → 404; quá hạn mức theo khách/IP → 429; lỗi khác → 500 không kèm chi tiết. Mỗi lượt AI trả lời trừ 1 credit; tiệm hết credit → 200 với câu mời chờ nhân viên. Lỗi theo envelope chuẩn `{ error: { code, message } }`; route không qua `handle()` nên không có header `RateLimit-*`.",
+    ok: [200, { description: "Trả lời của trợ lý", schema: res.publicChatWidgetResponse }], errors: [400, 404, 429, 500] }),
   legacyErrors(op(HOOK, { method: "get", path: "/chat/webhooks/facebook", operationId: "verifyFacebookWebhook", summary: "Xác minh webhook Facebook", cap: null, auth: "public",
     query: req.facebookVerifyQuery,
     description: "`hub.verify_token` khớp `FB_WEBHOOK_VERIFY_TOKEN` → 200 thân là `hub.challenge` (văn bản thường); khác hoặc chưa cấu hình → 403 `Forbidden`.",
@@ -61,19 +60,19 @@ export const CHAT_OPERATIONS: OpenApiOperation[] = [
     ok: [200, { description: "Đã nhận", schema: res.zaloWebhookResponse }], errors: [400, 401] })),
 
   op(IN, { method: "get", path: "/internal-chat/conversations", operationId: "listInternalConversations", summary: "Hội thoại nội bộ tôi tham gia", cap: null,
-    query: req.internalConversationsQuery, description: `Không cần mã năng lực. ${LEGACY}`,
+    query: req.internalConversationsQuery, description: "Không cần mã năng lực.",
     ok: [200, { description: "Hội thoại", schema: res.internalConversationsResponse }] }),
   op(IN, { method: "post", path: "/internal-chat/conversations", operationId: "createInternalConversation", summary: "Tạo hoặc lấy lại hội thoại nội bộ", cap: null,
     body: z.union([req.openInternalRoomBody, req.createInternalConversationBody]),
-    description: `Thân \`{ partnerOrgId }\` / \`{ chainOrgId }\` / \`{ branchId }\` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — \`PLATFORM_TENANT\` client không tự tạo được (→ 400). \`targetUserId\` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc \`orderId\` của tổ chức khác → 404. Sai lược đồ → 400 \`details.reason\` (một chuỗi). ${LEGACY}`,
+    description: `Thân \`{ partnerOrgId }\` / \`{ chainOrgId }\` / \`{ branchId }\` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — \`PLATFORM_TENANT\` client không tự tạo được (→ 400). \`targetUserId\` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc \`orderId\` của tổ chức khác → 404. Sai lược đồ → 400 \`details.reason\` (một chuỗi).`,
     ok: [200, { description: "Hội thoại", schema: res.internalConversationResponse }], errors: [...BODY_ERRORS, 404] }),
   op(IN, { method: "get", path: "/internal-chat/conversations/{id}/messages", operationId: "listInternalMessages", summary: "Tin nhắn của hội thoại nội bộ", cap: null,
-    description: `${MEMBER} ${LEGACY}`, ok: [200, { description: "Tin nhắn", schema: res.internalMessagesResponse }], errors: [404] }),
+    description: MEMBER, ok: [200, { description: "Tin nhắn", schema: res.internalMessagesResponse }], errors: [404] }),
   op(IN, { method: "post", path: "/internal-chat/conversations/{id}/messages", operationId: "sendInternalMessage", summary: "Gửi tin nhắn nội bộ", cap: null,
-    body: req.sendInternalMessageBody, description: `${MEMBER} Chỉ tin chữ: thân có \`actionPayload\` / \`attachments\` / loại khác \`TEXT\` hoặc tin rỗng → 400 (thẻ đơn và tin hệ thống chỉ do máy chủ sinh; ảnh gửi qua \`/images\`). ${LEGACY}`,
+    body: req.sendInternalMessageBody, description: `${MEMBER} Chỉ tin chữ: thân có \`actionPayload\` / \`attachments\` / loại khác \`TEXT\` hoặc tin rỗng → 400 (thẻ đơn và tin hệ thống chỉ do máy chủ sinh; ảnh gửi qua \`/images\`).`,
     ok: [200, { description: "Tin đã gửi", schema: res.internalMessageResponse }], errors: [...BODY_ERRORS, 404] }),
   op(IN, { method: "post", path: "/internal-chat/messages/{id}/action", operationId: "handleInternalCardAction", summary: "Bấm nút trên thẻ hành động (nhận/từ chối đơn)", cap: null,
-    body: req.internalCardActionBody, description: `${MEMBER} Chỉ tổ chức được giao, không phải người gửi thẻ (khác → 404). Tin không phải thẻ đơn (\`ACTION_CARD_ORDER\`) → 409; thẻ đã xử lý hoặc vừa bị người khác xử lý → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. ${LEGACY}`,
+    body: req.internalCardActionBody, description: `${MEMBER} Chỉ tổ chức được giao, không phải người gửi thẻ (khác → 404). Tin không phải thẻ đơn (\`ACTION_CARD_ORDER\`) → 409; thẻ đã xử lý hoặc vừa bị người khác xử lý → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định.`,
     ok: [200, { description: "Tin sau khi cập nhật", schema: res.internalMessageResponse }], errors: [...BODY_ERRORS, 404, 409] }),
   op(IN, { method: "patch", path: "/internal-chat/messages/{id}", operationId: "editInternalMessage", summary: "Sửa tin của mình (trong 24 giờ)", cap: "S1",
     body: req.editInternalMessageBody,

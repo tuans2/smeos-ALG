@@ -37,7 +37,8 @@ coordinator/orders/[id]/approve-customer-photo
 coordinator/orders/[id]/craft-fee-complaint
 coordinator/orders/[id]/dispatch-to-chat
 coordinator/orders/[id]/set-shipper
-coordinator/partners
+# 12/11/2026: nhánh cấp tài khoản đối tác chuỗi (chưa ghi kiểm toán) tách khỏi coordinator/partners sang đây — cùng một nợ, không phải nợ mới.
+coordinator/chain-partners
 coordinator/partners/[id]/tools
 coordinator/partners/link-existing
 coordinator/reminders/acknowledge

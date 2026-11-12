@@ -85,7 +85,7 @@ describe("hợp đồng — đơn hàng và báo giá", () => {
     await expectContract(
       await closeInfoRequest(send_(`/orders/${id}/info-requests/${requestId}`, "POST", { outcome: "RECEIVED" }), ps({ id, requestId })),
       200,
-      R.okResponse,
+      R.infoRequestClosedResponse,
       "info-request-closed"
     )
     await expectContract(await openInfoRequests(get("/orders/info-requests")), 200, R.infoRequestsResponse, "open-info-requests")
