@@ -15,8 +15,8 @@ import { createTenant, type Tenant } from "../helpers/fixtures"
  * đặt `app.org_id` theo ngữ cảnh của luồng. Chế độ chặn: thiếu ngữ cảnh → 0 dòng; tổ chức A không đọc/ghi được
  * dòng của B kể cả khi truy vấn quên lọc; quyền hệ thống thấy tất cả; kết nối dùng lại không rò ngữ cảnh.
  */
-/** Tài khoản thường (như `smeos_app`, ADR-013 D-I1): superuser của CSDL test bỏ qua RLS nên không dùng được để kiểm. */
-const APP_ROLE = "smeos_app_rls_test"
+/** Tài khoản thường (như `alg_app`, ADR-013 D-I1): superuser của CSDL test bỏ qua RLS nên không dùng được để kiểm. */
+const APP_ROLE = "alg_app_rls_test"
 const APP_PASSWORD = "chi-dung-cho-test-rls"
 
 function appUrl(): string {

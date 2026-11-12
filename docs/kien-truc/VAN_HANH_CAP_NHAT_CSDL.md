@@ -127,7 +127,7 @@ Với từng khoá: tìm dòng sai bằng câu `IF EXISTS (…)` cùng tên tron
 cao điểm; có `lock_timeout = 30s` nên bảng đang bận làm migration dừng, không treo.
 
 Worker Python cũ (chưa deploy) ghi `job_events` không kèm `organization_id`: trigger
-`smeos_fill_org_from_parent` điền từ bảng cha, nên thứ tự deploy web/worker không quan trọng.
+`alg_fill_org_from_parent` điền từ bảng cha, nên thứ tự deploy web/worker không quan trọng.
 
 ## 8. Kiểm migration tự động (05/11/2026, O-5)
 

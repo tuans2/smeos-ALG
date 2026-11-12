@@ -55,7 +55,7 @@ describe("hợp đồng — phiên, báo cáo, bản in, mã giảm giá, credit
     await expectContract(await listInvitations(get("/session/invitations", staff)), 200, R.invitationsResponse, "session-invitations")
     await expectContract(await accept(send(`/session/invitations/${id}/accept`, "POST", undefined, staff), ps(id)), 200, R.invitationAcceptedResponse, "session-accept")
     const sw = await switchOrg(send("/session/organization", "POST", { organization_id: shop.organizationId }, staff))
-    expect(sw.headers.get("set-cookie")).toContain("smeos_sso=")
+    expect(sw.headers.get("set-cookie")).toContain("alg_sso=")
     await expectContract(sw, 200, R.switchOrganizationResponse, "session-switch")
     expect((await switchOrg(send("/session/organization", "POST", { organization_id: (await createTenant("hop-dong-la")).organizationId }, staff))).status).toBe(404)
 

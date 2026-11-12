@@ -4072,7 +4072,7 @@ số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE
 - Ca thử: `tests/tenant/industries.test.ts` (ghi tách ngành ra cột; đọc lồng theo cột khi JSON không còn `industry`).
 
 **T-6c-2** (contract, PO duyệt 06/11/2026, sau khi T-6c-1 #161 đã chạy trên production; không đổi schema): migration
-`20261106110000_industry_contract` (một giao dịch) bỏ trigger + hàm `smeos_organizations_sync_industry_key` TRƯỚC, chép
+`20261106110000_industry_contract` (một giao dịch) bỏ trigger + hàm `alg_organizations_sync_industry_key` TRƯỚC, chép
 bù `industry_key` cho dòng còn trống mà JSON có mã hợp lệ, báo (NOTICE) số dòng mã lạ sẽ mất, rồi xoá khoá
 `settings.industry`; chốt cuối: không còn dòng nào có khoá đó. Mã: `industryKeyOf` và `resolveTierChain` chỉ đọc cột;
 `withIndustryKey` phủ `settings.industry` = cột, cột trống thì BỎ khoá (JSON sót lại không có tác dụng); worker phân tích
@@ -4395,7 +4395,7 @@ model platform_access_logs {
 ```
 
 - Thuộc tổ chức: RLS `tenant_isolation` như mọi bảng tenant (`scripts/gen-rls-policies.mjs`); đọc qua `scopedWhere`.
-- Chỉ thêm dòng: trigger `platform_access_logs_append_only` (hàm `smeos_append_only_guard`, §46).
+- Chỉ thêm dòng: trigger `platform_access_logs_append_only` (hàm `alg_append_only_guard`, §46).
 - Ghi: `recordPlatformAccess` (`src/modules/audit/use-cases/record-platform-access.ts`) ở mọi handler
   `platform/organizations/[id]/*` và `platform/orgs-data/[orgId]/*`, ngay sau khi giải phiên Console (xuất dữ liệu: sau
   khi kiểm `N1`), TRƯỚC khi đọc/ghi; ghi lỗi → yêu cầu lỗi (biện pháp bù R-2). `INSERT … SELECT … WHERE` tổ chức tồn
@@ -4408,7 +4408,7 @@ Ca thử: `tests/tenant/platform-access-isolation.test.ts`, `src/modules/audit/d
 ## 46. Nhật ký bất biến — `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage` (06/11/2026)
 
 ADR-013 D-I4, bước **I-2a** (PO duyệt ADR-013 06/11/2026; không đổi schema Prisma). Migration
-`20261106130000_append_only_logs`: hàm `smeos_append_only_guard()` + trigger `<bảng>_append_only` (`BEFORE UPDATE OR
+`20261106130000_append_only_logs`: hàm `alg_append_only_guard()` + trigger `<bảng>_append_only` (`BEFORE UPDATE OR
 DELETE … FOR EACH ROW`) trên năm bảng:
 
 - `UPDATE` → luôn từ chối (mọi tài khoản, kể cả chủ sở hữu).
@@ -4418,7 +4418,7 @@ DELETE … FOR EACH ROW`) trên năm bảng:
 - `TRUNCATE` không qua trigger theo dòng (chỉ dùng ở CSDL test, `resetDatabase`).
 - Rà mã 06/11/2026: ứng dụng, worker, test không sửa/xoá năm bảng này; chỉ `scripts/handover-clean-tenant.ts` và
   `prisma/seed/clean-siin-store-orders.ts` xoá — cả hai đặt lý do purge đầu giao dịch.
-- Quyền: `scripts/db/create-roles.sql` thu `UPDATE, DELETE` của `smeos_app`/`smeos_worker` trên năm bảng.
+- Quyền: `scripts/db/create-roles.sql` thu `UPDATE, DELETE` của `alg_app`/`alg_worker` trên năm bảng.
 
 Ca thử: `tests/tenant/append-only-logs.test.ts` (tự cài hàm + trigger từ tệp migration và gỡ khi xong, vì CSDL test
 dựng bằng `db push`).

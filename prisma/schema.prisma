@@ -2646,7 +2646,7 @@ model platform_secrets {
 /// Tách riêng vì `audit_logs.organization_id` là `NOT NULL` (D-N3).
 /// Nhân viên nền tảng truy cập dữ liệu của một tổ chức (ADR-013 D-I5, D-60): mỗi yêu cầu Console vào
 /// `platform/organizations/:id/*` hoặc `platform/orgs-data/:orgId/*` ghi một dòng, TRƯỚC khi trả dữ liệu. Thuộc tổ chức:
-/// chủ tổ chức xem ở `/audit` (tab "Truy cập của nền tảng", quyền G9). Chỉ thêm dòng (trigger `smeos_append_only_guard`).
+/// chủ tổ chức xem ở `/audit` (tab "Truy cập của nền tảng", quyền G9). Chỉ thêm dòng (trigger `alg_append_only_guard`).
 model platform_access_logs {
   id              String   @id @default(uuid())
   organization_id String

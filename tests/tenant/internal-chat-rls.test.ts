@@ -16,7 +16,7 @@ import { createTenant, linkPartner, makeChainOrganization, type Tenant } from ".
  * ghi được phòng + tin chung với chuỗi; tổ chức thứ ba không thấy dòng nào và không ghi được tin vào phòng đó.
  * Cùng kỹ thuật với `rls.test.ts`: tài khoản CSDL thường (superuser bỏ qua RLS), pool đặt `app.org_id` theo ngữ cảnh.
  */
-const APP_ROLE = "smeos_app_rls_test"
+const APP_ROLE = "alg_app_rls_test"
 const APP_PASSWORD = "chi-dung-cho-test-rls"
 const MIGRATIONS = path.join(__dirname, "../../prisma/migrations")
 
