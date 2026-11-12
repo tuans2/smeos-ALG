@@ -312,3 +312,17 @@ kênh nào, mở thông số SMS, đã kết nối SMS (khoá giả). Sau sửa:
 | KLL-04 | — | Cảnh báo nội dung "cam kết / đánh giá" | Báo nhầm: tên nhóm/sự kiện của ma trận có từ trước (ví dụ "Ma trận cam kết"), không phải nội dung bịa |
 
 Chưa kiểm thủ công: bàn phím, zoom 200%, trình đọc màn hình; gửi thử thật (chưa có khoá nhà cung cấp).
+
+## `/khach-hang` — hồ sơ khách, tab Quyền riêng tư: "Yêu cầu về dữ liệu" (12/11/2026, ADR-014 D-P5, P-7b)
+
+Kịch bản `scripts/ux-audit/scenarios/khach-hang-du-lieu.mjs` (chủ tiệm, CSDL `*_test`): danh sách trống, form ghi nhận
+yêu cầu sửa, có yêu cầu đang chờ, sau khi xuất (tải JSON / CSV), hộp xác nhận xoá. 10/10 ảnh (390px, 1280px) axe sạch,
+không tràn ngang; soát ảnh bằng mắt.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| DSR-01 | P3 | 390px: ba nút hành động xuống dòng với độ rộng lệch nhau | Lưới một cột trên điện thoại, hàng ngang từ `sm` |
+| DSR-02 | — (ngoài phạm vi) | Tab có sẵn hiện mã kỹ thuật "Kênh: ZALO_ZNS / SMS / PROMOTION / PHONE_CALL" và chữ tiếng Anh "(Consent)" | Chỉ ghi lại — khối đồng ý nhận tin có từ trước, không sửa trong bước này |
+
+Xoá dữ liệu là R3 không hoàn tác: `ConfirmDialog` tông nguy hiểm, nói rõ phần bị xoá và phần được giữ (đơn, phiếu thu,
+hoá đơn VAT), bắt gõ "XOÁ". Chưa kiểm thủ công: bàn phím, zoom 200%, trình đọc màn hình.

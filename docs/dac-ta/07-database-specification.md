@@ -4213,7 +4213,8 @@ model data_subject_requests {
   đã xoá.
 - **Sửa** (`Q3`): ghi nhận `RECEIVED`; sửa hồ sơ bằng `PATCH /crm/customers/:id` rồi `PATCH /crm/data-requests/:id`.
 - Hạn 72 giờ theo thực hành phổ biến với Nghị định 13/2023/NĐ-CP — **chưa phải ý kiến pháp lý**.
-- Chưa làm: màn hình cho nhân viên; bản CSV của gói xuất.
+- P-7b (12/11/2026): màn hình trong hồ sơ khách, tab Quyền riêng tư (`src/components/crm/customer-data-requests-panel.tsx`);
+  bản CSV dựng ở trình duyệt từ gói JSON (`src/modules/crm/domain/data-package-csv.ts`, chặn công thức Excel).
 
 Ca thử: `src/modules/crm/domain/data-subject-request.test.ts`, `tests/tenant/data-subject-requests-isolation.test.ts`
 (cách ly ở tầng use-case — bản giao GD1 chưa có route này), `tests/tenant/data-subject-requests.test.ts` (xuất đủ
