@@ -21,9 +21,9 @@
 | 6. Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 | 0 | 0 | 0 |
 | 7. AI phân tích, nội dung & marketing | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
 | 8. Landing page bán hàng | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
-| 9. Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 2 | 2 | 0 | 0 | 0 |
+| 9. Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 11 | 3 | 0 | 0 | 0 | 0 |
 | 10. Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 7 | 1 | 0 | 0 | 0 | 0 |
-| **Tổng** | **123** | **107** | **14** | **2** | **0** | **0** | **0** |
+| **Tổng** | **123** | **108** | **15** | **0** | **0** | **0** | **0** |
 
 ## 1. Nền tảng chung & phân quyền
 
@@ -170,7 +170,7 @@
 
 | Mã | Chức năng | UI | API | Backend | DB | Test | smeOS production | Bản giao GD1 | Bằng chứng | Ghi chú / AC |
 |---|---|:-:|:-:|:-:|:-:|:-:|---|---|---|---|
-| 9.1 | Trao đổi / chat nội bộ trên từng đơn | ● | ● | ● | ● | ● | 🟡 Một phần | 🟡 AC lệch | Khung trao đổi trên đơn (`greeting-card/messages`, đánh dấu đã đọc `messages/read`); `/tin-nhan` + `internal-chat/*`; 9 tệp `tests/tenant/internal-chat-*` | AC I-01 "không có cách xoá tin" **lệch quyết định PO 09/11**: người gửi thu hồi được tin của mình trong 24 giờ (`internal-chat/domain/message-change-policy.ts`, `DELETE /api/v1/internal-chat/messages/:id`). Khung trao đổi trên đơn không có xoá. `/tin-nhan` nay khoá production có guard URL |
+| 9.1 | Trao đổi / chat nội bộ trên từng đơn | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | Khung trao đổi trên đơn (`greeting-card/messages`, đánh dấu đã đọc `messages/read`); `/tin-nhan` + `internal-chat/*`; 9 tệp `tests/tenant/internal-chat-*` | AC I-01 đã sửa 12/11 cho khớp quyết định PO 09/11: khung trao đổi của đơn không có xoá; ở Trao đổi nội bộ người gửi thu hồi được tin của mình trong 24 giờ (`internal-chat/domain/message-change-policy.ts`, `DELETE /api/v1/internal-chat/messages/:id`). Bước "Vận hành → Trao đổi nội bộ" (`/tin-nhan`) khoá production có guard URL |
 | 9.2 | Hồ sơ thương hiệu | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/brand-profile` |  |
 | 9.3 | Hồ sơ kinh doanh | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/business-profile` |  |
 | 9.4 | Thư viện tài nguyên & thùng rác 30 ngày | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `storage/trash/*`; `/kho-du-lieu` |  |
@@ -183,7 +183,7 @@
 | 9.11 | Duyệt 2 bước cho thao tác nhạy cảm | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `orders/approval-requests/*` |  |
 | 9.12 | Cơ chế chặn tự nâng quyền chính mình | — | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `organization/use-cases/assert-not-self-approval.ts` |  |
 | 9.13 | Cách ly phân quyền dữ liệu theo chi nhánh | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | phạm vi `branch_id` trong `TenantContext` |  |
-| 9.14 | Đăng nhập 1 lần (SSO 15 phút) | ● | ● | ● | — | ● | 🟡 Một phần | 🟡 AC cần sửa | `sso/domain/sso-claims.ts` (JWT 15 phút); đăng bài trong smeOS: `social-publishing/*`, Công cụ → Tạo nội dung → Đăng tự động | Theo D-46 đăng bài chạy ngay trong smeOS — không còn "ứng dụng liên kết" để chạy I-09 như đang viết. Cần ALG đổi câu chữ I-09 (manifest GD1 `acceptanceNote`); phiên 15 phút chỉ kiểm bằng test |
+| 9.14 | Đăng nhập 1 lần (SSO 15 phút) | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `sso/domain/sso-claims.ts` (JWT 15 phút); đăng bài trong smeOS: `social-publishing/*`, Công cụ → Tạo nội dung → Đăng tự động | AC I-09 đã sửa 12/11 theo D-46: vai Điều hành (có `J5`) mở Công cụ → Tạo nội dung → Đăng tự động, không phải đăng nhập lại; `/cong-cu` mở trên cả hai đích. Thời hạn 15 phút của phiên liên kết chỉ kiểm bằng test (`sso-claims.test.ts`, `sso-jwt.test.ts`) |
 
 ## 10. Quản lý credit AI, hạn mức & thuê bao SaaS
 

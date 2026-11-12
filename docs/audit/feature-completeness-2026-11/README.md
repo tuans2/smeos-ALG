@@ -24,18 +24,18 @@ Có hai đích chạy, nên ma trận có hai cột trạng thái:
 
 | Trạng thái | Nghĩa | smeOS production (lần 1 → lần 2) | Bản giao GD1 |
 |---|---|---:|---:|
-| ✅ Hoàn thiện | Đủ UI + API + backend + DB (khi cần) + test; màn hình của AC mở | 105 → **107** | **121** |
-| 🔒 Có mã, khoá production | Mã đủ tầng, nhưng màn hình của AC bị khoá "Sắp ra mắt" | 13 → **14** | 0 |
-| 🟡 Một phần | Thiếu một mắt xích, hoặc AC chỉ đạt một phần / lệch quyết định đã chốt | 5 → **2** | **2** |
+| ✅ Hoàn thiện | Đủ UI + API + backend + DB (khi cần) + test; màn hình của AC mở | 105 → **108** | **123** |
+| 🔒 Có mã, khoá production | Mã đủ tầng, nhưng màn hình của AC bị khoá "Sắp ra mắt" | 13 → **15** | 0 |
+| 🟡 Một phần | Thiếu một mắt xích, hoặc AC chỉ đạt một phần / lệch quyết định đã chốt | 5 → **0** | **0** |
 | 🎨 Chỉ có UI | Có giao diện, không có logic | 0 → 0 | 0 |
 | ❌ Chưa triển khai | Không có route, bảng hay màn hình | 0 → 0 | 0 |
 | 🐞 Lỗi | Chức năng trong danh mục chạy sai | 0 → 0 | 0 |
 
 Cả 123 chức năng đều có mã thật. Phần còn chưa xong:
-- **Trên smeOS production:** chủ yếu là khoá "Sắp ra mắt" (14 chức năng).
-- **Trên bản giao GD1:** còn **2 chức năng có Acceptance Criteria lệch quyết định đã chốt** (9.1, 9.14). Không còn chức năng nào thiếu mã.
+- **Trên smeOS production:** chỉ còn khoá "Sắp ra mắt" (15 chức năng).
+- **Trên bản giao GD1:** cả 123 chức năng đạt về mã. Hai câu AC từng lệch quyết định đã chốt (I-01 của 9.1, I-09 của 9.14) đã được sửa trong checklist ngày 12/11/2026 (mục 2.2).
 
-**🔒 Khoá trên smeOS production (14), mở trên bản giao GD1:**
+**🔒 Khoá trên smeOS production (15), mở trên bản giao GD1:**
 - 1.17 Nhật ký thao tác
 - 3.1 Quy tắc giá (`/gia`)
 - 4.11 Lịch sử đơn cùng khách (`/khach-hang`)
@@ -43,15 +43,9 @@ Cả 123 chức năng đều có mã thật. Phần còn chưa xong:
 - 6.1, 6.2, 6.3, 6.5, 6.6 Báo cáo theo kỳ (`/bao-cao`)
 - 6.9 và 10.1 Sổ quỹ & credit (`/muc-dung`)
 - 8.1 Landing page (lối vào `/catalog`)
+- 9.1 Trao đổi nội bộ (`/tin-nhan`)
 - 9.6 Tác vụ nền (`/job`)
 - 9.7 Chính sách AI (`/cai-dat-ai`)
-
-**🟡 Một phần (2), giống nhau trên cả hai đích:**
-
-| Mã | Còn thiếu |
-|---|---|
-| 9.1 | AC I-01 ghi "không có cách xoá tin", nhưng PO quyết định ngày 09/11/2026 cho người gửi **thu hồi tin của mình trong 24 giờ** ở Trao đổi nội bộ (`internal-chat/domain/message-change-policy.ts`, `DELETE /api/v1/internal-chat/messages/:id`). Khung trao đổi trên đơn không có xoá. Cần sửa câu AC hoặc đổi lại quyết định |
-| 9.14 | Đăng bài đã chạy ngay trong smeOS (D-46), nên không còn "ứng dụng liên kết" để chạy I-09 như đang viết. JWT liên-app 15 phút có ở core và chỉ được kiểm bằng test. Cần ALG đổi câu chữ I-09 (manifest GD1 đã ghi `acceptanceNote`) |
 
 ### 2.1 Thay đổi so với lần 1 (06/11/2026)
 
@@ -60,10 +54,27 @@ Cả 123 chức năng đều có mã thật. Phần còn chưa xong:
 | 4.30 | 🟡 | ✅ | Tầng Mẹ đăng ký nhà cung cấp SMS (eSMS) / Zalo (ZNS) một lần (`PUT /api/v1/platform/notification/providers`, khối "Kênh liên lạc" ở `/van-hanh/thong-bao`); adapter gửi thật, thiếu cấu hình thì `NOT_CONFIGURED`. Web Push tự viết theo RFC 8291/VAPID (`push_subscriptions`). PR #30, #32 |
 | 4.32 | 🟡 | ✅ | Mốc M1/M2 được đẩy thành tin (sự kiện `DELIVERY_REMINDER_DUE`) trong cron 5 phút `chain-dispatch-sweep`, mỗi mốc một lần. Đổi mốc ở Cài đặt tiệm (mở). PR #30 |
 | 8.1 | 🟡 | 🔒 | Đổi cách xếp loại, mã không đổi: mã đủ tầng, chỉ lối vào AC (`/catalog`, nay là "Bộ sưu tập chung") bị khoá — cùng loại với 13 chức năng khoá khác. Bản giao GD1 mở |
-| 9.1 | 🟡 (do `/tin-nhan` khoá) | 🟡 (do AC lệch) | `/tin-nhan` nay có guard URL. Trao đổi nội bộ hoàn thiện, có test (PR #18). Lý do "một phần" chuyển sang AC I-01 lệch quyết định thu hồi tin |
-| 9.14 | 🟡 | 🟡 | Hướng xử lý đã chốt (D-46: đăng bài trong smeOS, module `social-publishing`), nhưng câu chữ AC I-09 chưa đổi |
+| 9.1 | 🟡 | 🔒 | Trao đổi nội bộ hoàn thiện, có test (PR #18); `/tin-nhan` nay có guard URL. AC I-01 đã sửa cho khớp quyết định thu hồi tin (mục 2.2). Còn lại chỉ là khoá "Sắp ra mắt"; bản giao GD1 mở |
+| 9.14 | 🟡 | ✅ | D-46: đăng bài chạy trong smeOS (module `social-publishing`). AC I-09 đã sửa sang Công cụ → Tạo nội dung → Đăng tự động (mục 2.2) |
 
 Không có chức năng ✅ nào ở lần 1 bị hạ bậc. Toàn bộ đường dẫn bằng chứng của lần 1 vẫn tồn tại. Từ lần 1 đến nay không có tệp nào dưới `src/app` bị xoá.
+
+### 2.2 Câu AC đã sửa trong checklist (12/11/2026)
+
+`docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`, sheet "Kịch bản". Chỉ sửa chữ trong ô; mã bước, mã chức năng, cột "Khoá mã", công thức và định dạng giữ nguyên.
+
+| Bước | Cột | Trước | Sau |
+|---|---|---|---|
+| I-01 (9.1) | Thao tác | Nhắn qua lại trên 1 đơn; thử xoá tin | Nhắn qua lại trên 1 đơn, thử xoá tin; ở Trao đổi nội bộ, người gửi thu hồi 1 tin của mình, người kia thử thu hồi tin đó |
+| I-01 (9.1) | Kết quả mong đợi | Tin hiện cho người kia, đánh dấu đã đọc; không có cách xoá tin | Tin hiện cho người kia, đánh dấu đã đọc; khung trao đổi của đơn không có cách xoá tin. Ở Trao đổi nội bộ chỉ người gửi thu hồi được tin của chính mình, trong 24 giờ kể từ lúc gửi; tin hiện “Tin nhắn đã được thu hồi” với mọi người; người kia không có nút thu hồi |
+| I-09 (9.14) | Vai | Nhân viên | Điều hành (vai có quyền đăng bài `J5` và có sẵn tài khoản ở trang Chuẩn bị) |
+| I-09 (9.14) | Mở ở | Ứng dụng liên kết (SSO) | Công cụ → Tạo nội dung → Đăng tự động |
+| I-09 (9.14) | Thao tác | Từ smeOS mở ứng dụng liên kết | Đang đăng nhập smeOS, mở bước Đăng tự động (kết nối kênh, chọn bài, lên lịch) |
+| I-09 (9.14) | Kết quả mong đợi | Vào thẳng không đăng nhập lại; phiên liên kết hết hạn sau 15 phút | Vào thẳng, không phải đăng nhập lại; đăng bài chạy ngay trong smeOS, không mở ứng dụng ngoài. Thời hạn 15 phút của phiên liên kết cho ứng dụng ngoài được kiểm bằng test tự động, không chạy tay |
+
+Căn cứ:
+- I-01: quyết định PO 09/11/2026 (`docs/plan/hoan-thien-chat-noi-bo.md` §10). Hành vi trong mã: `internal-chat/domain/message-change-policy.ts`, `components/internal-chat/message-actions.tsx`, `message-item.tsx`.
+- I-09: quyết định D-46 và `acceptanceNote` của mục 9.14 trong `gd1.manifest.json`. Ô "Tạo nội dung" nằm ở `components/dashboard/toolkit-module-detail.tsx`; quyền `J5` ở `core/rbac/capability-catalog.ts:202`.
 
 ## 3. Cổng kiểm tra đã chạy (máy kiểm toán, không phải CI)
 
@@ -71,8 +82,9 @@ Không có chức năng ✅ nào ở lần 1 bị hạ bậc. Toàn bộ đườ
 |---|---|
 | `npm run typecheck` | ✅ 0 lỗi (`NODE_OPTIONS=--max-old-space-size=6144`) |
 | `npm test` (unit) | ✅ 4.954/4.954 ca, 816 tệp. CSDL `floraos` dựng như CI: `db:deploy` + `db:seed` |
-| `npm run test:tenant` | ⏳ Đang chạy lúc commit này — kết quả ghi ở commit sau |
-| `npm run test:platform` | ⏳ Chạy sau `test:tenant` — kết quả ghi ở commit sau |
+| `npm run test:tenant` | ✅ 1.244/1.244 ca, 289 tệp (CSDL cục bộ `floraos_test`, `prisma db push` như CI) |
+| `npm run test:platform` | ✅ 64/64 ca, 19 tệp |
+| `tests/unit/release/gd1-manifest.test.ts` (đọc checklist xlsx sau khi sửa I-01, I-09) | ✅ 7/7 ca (cũng nằm trong `npm test`) |
 | `npm run check:docs` | ✅ "Tài liệu khớp mã" |
 | Lint, `lint:ux`, build, E2E | Không chạy — lần kiểm toán này không đổi mã |
 
@@ -99,8 +111,8 @@ Môi trường: CSDL cục bộ Postgres 16. `floraos` dựng bằng `db:deploy`
 
 | # | Mức | Phát hiện | Vị trí | Hệ quả |
 |---|---|---|---|---|
-| N-01 | ⚠️ AC | AC I-01 (9.1) "không có cách xoá tin" ngược quyết định PO 09/11/2026 cho thu hồi tin trong 24 giờ | `internal-chat/domain/message-change-policy.ts`, `api/v1/internal-chat/messages/[id]/route.ts:32` | Người nghiệm thu sẽ chấm I-01 trượt dù mã đúng quyết định. Cần sửa câu AC (hoặc PO đổi lại quyết định) |
-| N-02 | ⚠️ AC | AC I-09 (9.14) vẫn ghi "Từ smeOS mở ứng dụng liên kết", trong khi D-46 đã bỏ ứng dụng liên kết | `gd1.manifest.json` mục 9.14 `acceptanceNote`; `docs/plan/BANGIAO_GD1_123_CHUC_NANG.md` Bước 4 | Không chạy được I-09 như đang viết. Cần ALG đổi câu chữ |
+| N-01 | ⚠️ AC | AC I-01 (9.1) "không có cách xoá tin" ngược quyết định PO 09/11/2026 cho thu hồi tin trong 24 giờ | `internal-chat/domain/message-change-policy.ts`, `api/v1/internal-chat/messages/[id]/route.ts:32` | ✅ Đã sửa câu AC 12/11 (mục 2.2) |
+| N-02 | ⚠️ AC | AC I-09 (9.14) vẫn ghi "Từ smeOS mở ứng dụng liên kết", trong khi D-46 đã bỏ ứng dụng liên kết | `gd1.manifest.json` mục 9.14 `acceptanceNote`; `docs/plan/BANGIAO_GD1_123_CHUC_NANG.md` Bước 4 | ✅ Đã sửa câu AC 12/11 (mục 2.2). Cần báo ALG bản checklist mới |
 | N-03 | ℹ️ AC | Giao diện đổi tên "Thẻ chào" → **"Bộ sưu tập riêng"** và "Catalog" → **"Bộ sưu tập chung"** (PO 09/11/2026, D-66). 19 bước kịch bản vẫn ghi "Thẻ chào" ở cột "Mở ở"/"Thao tác"; I-10 ghi "Tạo catalog" | `src/modules/toolkit/domain/collection-names.ts` | Người nghiệm thu không tìm thấy mục theo tên trong kịch bản. Cần bảng đối chiếu tên hoặc sửa kịch bản |
 | N-04 | ℹ️ | Ba phát hiện nghiệp vụ chạm tới AC của danh mục vẫn chờ PO: BL-28 (trần chiết khấu mọi kênh, chạm 3.4/3.7), BL-29 (nhắc thu quá hạn chỉ một lần, chạm 4.26), BL-30 ("Giá trị đơn" gồm đơn Nháp, chạm 6.2). BL-35 (bộ máy duyệt thay đổi cấu hình trường không được dùng) cũng chờ PO | `docs/audit/business-logic-audit/BUSINESS_LOGIC_AUDIT_2026-11-11.md` | Các bước C-03, C-11, F-09, H-02 vẫn đạt với dữ liệu chuẩn bị trong kịch bản; rủi ro nằm ở trường hợp biên |
 
