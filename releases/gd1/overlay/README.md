@@ -32,6 +32,14 @@ npm run db:seed
 npm run dev               # http://localhost:3200
 ```
 
+Người vận hành đầu tiên (hệ thống mới chưa có ai để duyệt đăng ký): đăng ký một tài khoản ở `/dang-nhap` → "Đăng ký mới", rồi chạy
+
+```bash
+npm run gan-van-hanh-nen-tang -- --email=<địa chỉ vừa đăng ký>
+```
+
+Lệnh gán đủ quyền Console Vận hành (`/van-hanh`) và duyệt luôn tài khoản đó. Từ đây người vận hành duyệt các đăng ký khác ở `/van-hanh/dang-ky`.
+
 Worker: `npm run worker:vision`, `npm run worker:media` (cần Python 3.11+, `pip install -r workers/requirements.txt`).
 
 ## Kiểm tra trước khi đưa mã lên
@@ -43,7 +51,7 @@ npm run build
 cd workers && python -m pytest tests -q
 ```
 
-`npm run test:tenant` và `npm run test:platform` xoá sạch dữ liệu và chỉ chạy trên cơ sở dữ liệu có tên kết thúc bằng `_test`.
+`npm run test:tenant` và `npm run test:platform` xoá sạch dữ liệu và chỉ chạy trên cơ sở dữ liệu có tên kết thúc bằng `_test` (`DATABASE_URL_TEST`). Dựng cơ sở dữ liệu này một lần sau `docker compose up -d`: `npm run db:test:setup`.
 
 ## CI và triển khai
 

@@ -8,7 +8,7 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 |---|---:|---:|
 | Trang | 90 | 27 |
 | API | 483 | 61 |
-| Tệp trong `src/` | 3558 | 668 |
+| Tệp trong `src/` | 3558 | 669 |
 
 ## Code trong phạm vi chạm vùng không giao
 
@@ -61,7 +61,7 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `media` | 11/21 |
 | `notification` | 46/47 |
 | `organization` | 101/106 |
-| `platform` | 55/62 |
+| `platform` | 55/63 |
 | `print` | 6/8 |
 | `product-photo-studio` | 6/7 |
 | `products` | 69/73 |
