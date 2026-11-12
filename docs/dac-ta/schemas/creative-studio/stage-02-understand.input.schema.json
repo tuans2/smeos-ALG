@@ -3,7 +3,7 @@
   "$id": "stage-02-understand.input.schema.json",
   "title": "Chặng 02 — UNDERSTAND: Nhận diện cấu trúc & định tính thương mại — Đầu vào",
   "description": "Mô hình thị giác (gpt-4o-mini) đọc ảnh TỪ KHO theo asset_id, trả thành phần hoa, thuộc tính thị giác, bao bì, bối cảnh; người dùng sửa được từng trường. Thu product.vision_extract (1 credit) khi mô hình chạy; cùng ảnh bấm lại không thu lần hai; hỏng thì hoàn.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "02",
     "stage": 2,
     "code": "UNDERSTAND",

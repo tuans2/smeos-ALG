@@ -256,7 +256,7 @@ export function TimeframeDistributionBar({
                   onClick={() => onSelectBucket(bucket)}
                   className={`h-auto flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-caption transition cursor-pointer border ${
                     isSelected
-                      ? "bg-warning-text text-white border-warning-text font-bold shadow-xs ring-2 ring-warning-border/60 hover:bg-warning"
+                      ? "bg-warning-text text-white border-warning-text font-bold shadow-xs ring-2 ring-warning-border/60 hover:bg-warning-text/90"
                       : hasItems
                       ? "bg-white text-text border-border hover:border-warning hover:bg-warning-bg/40 font-semibold"
                       : "bg-bg text-text-muted border-border/60 hover:bg-surface-alt"

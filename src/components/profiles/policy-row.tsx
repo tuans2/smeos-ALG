@@ -31,7 +31,7 @@ export function PolicyRow({
   disabled = false,
 }: PolicyRowProps) {
   return (
-    <tr className={`transition-colors ${highlight ? "bg-primary/5" : "hover:bg-surface-muted/30"}`}>
+    <tr className={`transition-colors ${highlight ? "bg-primary/5" : "hover:bg-surface-alt/30"}`}>
       <td className="py-3.5 px-4">
         <div className="flex items-start gap-2.5">
           <span className="mt-0.5 shrink-0">{icon}</span>
@@ -58,7 +58,7 @@ export function PolicyRow({
           className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-caption font-bold border transition-colors ${
             isOn
               ? "bg-success-bg border-success text-success shadow-xs"
-              : "bg-surface border-border text-text-muted hover:bg-surface-muted"
+              : "bg-surface border-border text-text-muted hover:bg-surface-alt"
           }`}
         >
           <CheckCircle2 size={13} />
@@ -74,8 +74,8 @@ export function PolicyRow({
           onClick={() => onToggle(false)}
           className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-caption font-bold border transition-colors ${
             !isOn
-              ? "bg-surface-muted border-border text-text shadow-xs"
-              : "bg-surface border-border text-text-muted hover:bg-surface-muted"
+              ? "bg-surface-alt border-border text-text shadow-xs"
+              : "bg-surface border-border text-text-muted hover:bg-surface-alt"
           }`}
         >
           <XCircle size={13} />

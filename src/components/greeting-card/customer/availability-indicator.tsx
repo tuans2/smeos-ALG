@@ -86,7 +86,7 @@ export function AvailabilityIndicator({
   // Cảnh báo sắp hết hàng
   if (remainingQuantity !== null && remainingQuantity !== undefined && remainingQuantity > 0 && remainingQuantity <= 3) {
     return (
-      <div className="flex items-center gap-1.5 p-2 rounded-lg border border-warning/30 bg-warning/10 text-warning text-caption font-medium">
+      <div className="flex items-center gap-1.5 p-2 rounded-lg border border-warning/30 bg-warning/10 text-warning-text text-caption font-medium">
         <AlertCircle size={14} className="shrink-0" />
         <span>{isEn ? `Only ${remainingQuantity} items left in stock` : `Chỉ còn ${remainingQuantity} sản phẩm trong kho`}</span>
       </div>

@@ -1,5 +1,5 @@
 /**
- * smeOS Template Library — Phân tích ảnh sản phẩm (Product Analysis M01)
+ * ALG Template Library — Phân tích ảnh sản phẩm (Product Analysis M01)
  *
  * Gom toàn bộ các templates của chức năng Phân tích ảnh sản phẩm vào một module duy nhất:
  * - M01a Guidance: Template hướng dẫn tải ảnh & nhận diện cấu phần hoa

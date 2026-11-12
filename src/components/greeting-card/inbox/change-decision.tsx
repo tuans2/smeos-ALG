@@ -46,7 +46,7 @@ export function ChangeDecision({ requestId, changes, note, expectedFeeDeltaVnd, 
       </ul>
       {note && <p className="text-body-sm text-text-muted">Khách nhắn: &ldquo;{note}&rdquo;</p>}
       {expectedFeeDeltaVnd > 0 && (
-        <p className="text-body-sm text-warning">Duyệt sẽ cộng thêm {expectedFeeDeltaVnd.toLocaleString("vi-VN")}đ phí giao vào đơn.</p>
+        <p className="text-body-sm text-warning-text">Duyệt sẽ cộng thêm {expectedFeeDeltaVnd.toLocaleString("vi-VN")}đ phí giao vào đơn.</p>
       )}
       <label className="sr-only" htmlFor={`change-note-${requestId}`}>Lời nhắn cho khách</label>
       <Textarea id={`change-note-${requestId}`} rows={2} value={reply} maxLength={500} onChange={(e) => setReply(e.target.value)}

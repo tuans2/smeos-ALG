@@ -83,7 +83,7 @@ export function MarketplaceProfileModal({ store, onClose, readOnly = false, onDe
 
           {scoreAndTier.totalScore && (
             <div className="flex items-center gap-2 rounded-xl bg-surface px-3 py-2 border border-border">
-              <Award className="h-5 w-5 text-warning" />
+              <Award className="h-5 w-5 text-warning-text" />
               <div>
                 <div className="text-caption uppercase font-bold text-text-muted">Tổng điểm</div>
                 <div className="text-title-sm font-black text-text leading-none">{scoreAndTier.totalScore}</div>

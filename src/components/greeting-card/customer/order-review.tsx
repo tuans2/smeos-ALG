@@ -68,7 +68,7 @@ export function OrderReview(props: {
       </h2>
 
       {/* Ảnh mẫu đã chọn — khách nhìn lại đúng sản phẩm trước khi xác nhận */}
-      <figure className="flex items-center gap-4 rounded-xl border border-border bg-surface-muted p-3">
+      <figure className="flex items-center gap-4 rounded-xl border border-border bg-surface-alt p-3">
         <FlowerImage
           src={product.imageUrl}
           driveLink={product.driveLink}
@@ -88,7 +88,7 @@ export function OrderReview(props: {
         </figcaption>
       </figure>
 
-      <dl className="rounded-xl border border-border bg-surface-muted px-4 py-2 divide-y divide-border">
+      <dl className="rounded-xl border border-border bg-surface-alt px-4 py-2 divide-y divide-border">
         <Row label={isHomestay ? (isEn ? "Room Type" : "Hạng phòng") : (isEn ? "Product" : terms.sampleProduct)} value={props.variantName ? `${product.name} · ${props.variantName}` : product.name} />
         {quote && quote.quantity > 1 && <Row label={isHomestay ? (isEn ? "Nights / Rooms" : "Số đêm / Số phòng") : (isEn ? "Quantity" : "Số lượng")} value={String(quote.quantity)} />}
         {quote && !awaitingQuote && <Row label={isEn ? "Subtotal" : "Tạm tính"} value={vnd(quote.subtotalVnd)} />}
@@ -144,7 +144,7 @@ export function OrderReview(props: {
         </Button>
 
         {appliedPolicies?.agreements && appliedPolicies.agreements.length > 0 && (
-          <div className="p-3.5 rounded-xl border border-border bg-surface-muted space-y-2">
+          <div className="p-3.5 rounded-xl border border-border bg-surface-alt space-y-2">
             <h4 className="text-caption font-extrabold uppercase tracking-wider text-text flex items-center gap-1.5">
               <FileText size={14} />
               <span>{isEn ? "Terms & Agreements" : orderTerms.agreementHeading} ({appliedPolicies.agreements.length})</span>

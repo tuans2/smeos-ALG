@@ -204,7 +204,7 @@ export function AutoGeneratePanel({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-caption font-bold text-text flex items-center gap-1">
-                  <Zap className="h-3.5 w-3.5 text-warning" /> Bố cục Template
+                  <Zap className="h-3.5 w-3.5 text-warning-text" /> Bố cục Template
                 </span>
                 <span className="text-caption px-1.5 py-0.2 rounded bg-success-bg text-success-text font-bold">
                   Khuyên dùng

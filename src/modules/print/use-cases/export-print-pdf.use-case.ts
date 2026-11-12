@@ -136,7 +136,7 @@ export async function exportPrintPdfUseCase(
   })
 
   return {
-    fileName: `smeos_print_${rendition.presetCode.toLowerCase()}_${Date.now()}.pdf`,
+    fileName: `alg_print_${rendition.presetCode.toLowerCase()}_${Date.now()}.pdf`,
     mimeType: "application/pdf",
     base64: base64Data,
     widthMm: totalWidth,

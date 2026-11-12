@@ -31,7 +31,7 @@ export default async function PublicQuotationPage({ params }: PageProps) {
   const displayStatus = expired && quotation.status !== "CONVERTED" ? "EXPIRED" : quotation.status
 
   return (
-    <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto mb-3 flex justify-end">
         <QuoteExportButtons targetId="quote-card" fileName={`bao-gia-${quotation.code}`} />
       </div>
@@ -57,9 +57,9 @@ export default async function PublicQuotationPage({ params }: PageProps) {
                   {QUOTATION_STATUS_LABELS[displayStatus] ?? displayStatus}
                 </Badge>
               </div>
-              <h2 className="text-title font-extrabold text-primary mt-1">
+              <h1 className="text-title font-extrabold text-primary mt-1">
                 {quotation.code}
-              </h2>
+              </h1>
             </div>
 
             <div className="text-left sm:text-right space-y-1 text-caption text-text-muted">
@@ -181,6 +181,6 @@ export default async function PublicQuotationPage({ params }: PageProps) {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   )
 }

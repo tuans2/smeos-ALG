@@ -45,7 +45,7 @@ export function CampaignSectionToggles({
               }
               className={`h-auto gap-0 px-3 py-1.5 rounded-xl border text-caption font-bold transition-all ${
                 isEnabled
-                  ? "border-primary bg-primary-bg/20 text-primary hover:bg-primary-bg/20"
+                  ? "border-primary bg-primary-muted/20 text-primary hover:bg-primary-muted/20"
                   : "border-border bg-surface text-text-muted opacity-60 hover:bg-surface"
               }`}
             >

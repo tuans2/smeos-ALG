@@ -107,6 +107,7 @@ export function DesktopNavHeader({
               variant="ghost"
               size="icon"
               onClick={onClose}
+              data-drawer-close=""
               aria-label={t("common.actions.close")}
               className={cn(ICON_BUTTON, "h-10 w-10")}
             >

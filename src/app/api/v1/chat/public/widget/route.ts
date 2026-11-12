@@ -12,7 +12,7 @@ import {
 } from "@/modules/chat-assistant/use-cases/handle-public-widget-message"
 
 /**
- * Khung chat AI trên trang công khai do công cụ SMEOS tạo (tổ chức suy từ slug).
+ * Khung chat AI trên trang công khai do công cụ ALG tạo (tổ chức suy từ slug).
  * Chỉ phục vụ cùng nguồn gốc — chưa mở CORS cho website ngoài (giai đoạn sau).
  */
 

@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — AI Proposal Governance Engine (§10.1)
+ * ALG Inputs Architecture v2.1 — AI Proposal Governance Engine (§10.1)
  *
  * Enforces:
  * 1. AI NEVER writes directly to production state.

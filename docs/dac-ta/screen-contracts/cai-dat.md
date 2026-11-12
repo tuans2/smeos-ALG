@@ -100,7 +100,7 @@ acceptance:
 | Vai · Việc · IA · Mật độ · Thứ bậc · CTA · Luồng · Trạng thái · Responsive · Trợ năng · Dữ liệu · Quyền · AI · Nhất quán | PASS | Đạt chuẩn 100% |
 
 ## 14. Đội ngũ & Phân quyền `/cai-dat/thanh-vien` — tài khoản nhân viên (PO 08/10/2026)
-- **Thêm nhân viên** (`A3`, chỉ Điều hành) thay "Mời thành viên": họ tên, email đăng nhập (không cần email thật, mỗi người một email), vai (mặc định Sale) → tài khoản **dùng được ngay**; hộp kết quả hiện email + **mật khẩu tạm một lần** kèm nút "Chép thông tin đăng nhập". Email đã có tài khoản FloraOS → báo lỗi, không chiếm tài khoản người khác.
+- **Thêm nhân viên** (`A3`, chỉ Điều hành) thay "Mời thành viên": họ tên, email đăng nhập (không cần email thật, mỗi người một email), vai (mặc định Sale) → tài khoản **dùng được ngay**; hộp kết quả hiện email + **mật khẩu tạm một lần** kèm nút "Chép thông tin đăng nhập". Email đã có tài khoản ALG → báo lỗi, không chiếm tài khoản người khác.
 - Mỗi dòng nhân viên (trừ chính mình): **Đặt lại mật khẩu** (`A7`, hỏi lại; hiện mật khẩu tạm mới, người đó bị đăng xuất mọi máy) · **Tạm khoá / Mở khoá** (`A5`, hỏi lại; khoá là đăng xuất ngay, giữ dữ liệu) · **Phân vai** (`F5`). Trạng thái: Đang hoạt động · Đang tạm khoá · Chờ kích hoạt (lời mời cũ).
 - Menu tài khoản (mọi người có `A2`): **Đổi mật khẩu** (mật khẩu hiện tại + mới ≥ 10 ký tự, nhập lại); giữ phiên đang dùng, đăng xuất máy khác.
 - Đăng nhập: sai quá 10 lần/15 phút mỗi email → tạm chặn (429).

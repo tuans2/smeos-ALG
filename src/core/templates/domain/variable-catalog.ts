@@ -1,5 +1,5 @@
 /**
- * smeOS Template Engine — Variable Catalog
+ * ALG Template Engine — Variable Catalog
  * Danh mục token chuẩn hóa & Resolver trích xuất dữ liệu.
  *
  * DỰ TRỮ, KHÔNG PHẢI NỢ (nợ #99, chốt 17/09) — xem chú thích đầy đủ ở

@@ -41,7 +41,7 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
         className="mb-3 sm:mb-4 transition-transform group-hover:scale-105"
       />
       <span className="text-caption font-semibold text-text-muted">Mục tiêu {module.order}</span>
-      <h3 className="text-body-sm sm:text-title-sm font-bold leading-snug text-text mt-0.5">
+      <h2 className="text-body-sm sm:text-title-sm font-bold leading-snug text-text mt-0.5">
         <Button variant="ghost"
           type="button"
           onClick={() => onOpen(module.key)}
@@ -49,7 +49,7 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
         >
           {module.name}
         </Button>
-      </h3>
+      </h2>
       <span className="mt-1 sm:mt-2 text-caption text-text-muted">
         {module.journey === "BRAND_KIT" ? "3 bước: Hồ sơ · Nhận diện · Landing" : module.journey === "CONTENT_STUDIO" ? "4 bước: Thẻ sản phẩm · Thẻ chào · Bài đăng · Đăng tự động" : module.journey === "PROMOTION_HUB" ? PROMOTION_GRID_SUMMARY : (
           <>{readyAssets > 0 ? `${readyAssets} ấn phẩm · ` : ""}{toolsCount} công cụ</>
@@ -80,7 +80,7 @@ function StoreOperationsCard({
         className="mb-3 sm:mb-4 transition-transform group-hover:scale-105"
       />
       <span className="text-caption font-semibold text-text-muted">Khu vận hành</span>
-      <h3 className="text-body-sm sm:text-title-sm font-bold leading-snug text-text mt-0.5">
+      <h2 className="text-body-sm sm:text-title-sm font-bold leading-snug text-text mt-0.5">
         <Button variant="ghost"
           type="button"
           onClick={() => onOpen(section.key)}
@@ -88,7 +88,7 @@ function StoreOperationsCard({
         >
           {section.name}
         </Button>
-      </h3>
+      </h2>
       <span className="mt-1 sm:mt-2 text-caption text-text-muted">
         {section.groups.length} nhóm · {totalTools} công cụ
       </span>

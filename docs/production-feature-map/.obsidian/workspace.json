@@ -83,12 +83,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Huong_Dan_Su_Dung_FloraOS_DungchoDIEUHANH.md",
+                "file": "Huong_Dan_Su_Dung_ALG_DungchoDIEUHANH.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Huong_Dan_Su_Dung_FloraOS_DungchoDIEUHANH"
+              "title": "Huong_Dan_Su_Dung_ALG_DungchoDIEUHANH"
             }
           }
         ],
@@ -170,7 +170,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Huong_Dan_Su_Dung_FloraOS_DungchoDIEUHANH.md",
+                "file": "Huong_Dan_Su_Dung_ALG_DungchoDIEUHANH.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -189,7 +189,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Huong_Dan_Su_Dung_FloraOS_DungchoDIEUHANH.md",
+                "file": "Huong_Dan_Su_Dung_ALG_DungchoDIEUHANH.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -232,7 +232,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Huong_Dan_Su_Dung_FloraOS_DungchoDIEUHANH.md",
+                "file": "Huong_Dan_Su_Dung_ALG_DungchoDIEUHANH.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -263,7 +263,7 @@
   "lastOpenFiles": [
     "03_04.md",
     "09_10.md",
-    "Huong_Dan_Su_Dung_FloraOS_DungchoDIEUHANH.md",
+    "Huong_Dan_Su_Dung_ALG_DungchoDIEUHANH.md",
     "07_08.md",
     "05_06.md",
     "01_02.md",

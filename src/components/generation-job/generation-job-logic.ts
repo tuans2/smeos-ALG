@@ -1,3 +1,4 @@
+import "@/lib/brand-storage-migration"
 import { type TaskUiState, taskStateFromBackend } from "@/lib/ui-system/task-state"
 
 /** Hỏi lại mỗi 2 giây, tối đa 5 phút — vòng lặp luôn có giới hạn (CLAUDE.md #5). */
@@ -51,7 +52,7 @@ export function parsePolledJob<R>(body: unknown): PolledGenerationJob<R> {
 
 /** Khoá nhớ tác vụ đang chạy để mở lại trang vẫn thấy kết quả — gắn tổ chức (03c UX-022). */
 export function jobStorageKey(tool: string, organizationId: string | null | undefined): string | null {
-  return organizationId ? `smeos.${tool}.lastJobId__${organizationId}` : null
+  return organizationId ? `alg.${tool}.lastJobId__${organizationId}` : null
 }
 
 export function newIdempotencyKey(prefix: string): string {

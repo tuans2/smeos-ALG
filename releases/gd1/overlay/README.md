@@ -1,4 +1,4 @@
-# smeOS — bản giao Giai đoạn 1
+# ALG — bản giao Giai đoạn 1
 
 Nền tảng quản trị và vận hành cho doanh nghiệp vừa và nhỏ, gồm ba tầng: Nền tảng (SaaS Mother), Chuỗi (ChainOS) và Cửa hàng (StoreOS), với 123 chức năng trong `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`.
 

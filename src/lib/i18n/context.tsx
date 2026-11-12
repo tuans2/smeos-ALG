@@ -1,5 +1,7 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 /**
  * context.tsx — React Context & Hook đa ngôn ngữ cho Client Components
  */
@@ -19,7 +21,7 @@ import {
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 import { getTierTerminology } from "@/core/terminology"
 
-const STORAGE_KEY = "smeos_locale"
+const STORAGE_KEY = "alg_locale"
 const LEGACY_STORAGE_KEY = "floraos_locale"
 
 const I18nContext = createContext<I18nContextValue | null>(null)

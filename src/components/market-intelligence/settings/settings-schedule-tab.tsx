@@ -1,5 +1,6 @@
 "use client";
 
+import { Slider } from "@/components/ui/slider"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
@@ -171,18 +172,17 @@ export function SettingsScheduleTab({
           <span className="font-bold text-text block text-body-sm">Tự động ghép sản phẩm với xu hướng</span>
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between">
-              <label htmlFor="mi-fit-threshold" className="font-semibold text-text">Ngưỡng điểm phù hợp xu hướng:</label>
+              <label className="font-semibold text-text">Ngưỡng điểm phù hợp xu hướng:</label>
               <span className="font-black text-primary text-body-sm">{productMatching.fitThreshold}/100</span>
             </div>
-            <input
-              id="mi-fit-threshold"
-              type="range"
+            <Slider
+              aria-label="Ngưỡng điểm phù hợp xu hướng"
               min={50}
               max={95}
               step={5}
               value={productMatching.fitThreshold}
-              onChange={(e) => setProductMatching({ ...productMatching, fitThreshold: Number(e.target.value) })}
-              className="w-full accent-primary"
+              onValueChange={(v) => setProductMatching({ ...productMatching, fitThreshold: v })}
+              getValueText={(v) => `${v} trên 100`}
             />
           </div>
         </div>

@@ -76,7 +76,7 @@ const TYPE_LABEL: Record<string, string> = {
 
 const AUTH_LABEL: Record<string, string> = {
   integrationToken: "Khoá ứng dụng (Bearer)",
-  smeosSso: "Phiên SSO (x-smeos-sso)",
+  algSso: "Phiên SSO (x-alg-sso)",
 }
 
 /** Gộp `anyOf: [X, null]` và `type: [X, "null"]` thành một kiểu + cờ nullable. */

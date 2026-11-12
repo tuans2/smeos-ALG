@@ -2,7 +2,7 @@
  * Dev Role Override — CHỈ DÙNG TRONG MÔI TRƯỜNG DEVELOPMENT.
  *
  * Cho phép developer switch nhanh giữa các vai / tầng kiến trúc
- * (StoreOS, ChainOS, SaaS Mother) qua cookie `smeos_dev_role`
+ * (StoreOS, ChainOS, SaaS Mother) qua cookie `alg_dev_role`
  * mà KHÔNG cần đăng nhập lại hay thay đổi DB.
  *
  * Cookie format: JSON string của `DevRoleOverride`.
@@ -20,7 +20,7 @@
 import type { MockSession } from "@/lib/mock-data"
 
 /** Tên cookie dev override — dùng chung ở mọi nơi, không hardcode. */
-export const DEV_ROLE_COOKIE = "smeos_dev_role"
+export const DEV_ROLE_COOKIE = "alg_dev_role"
 
 export interface DevRoleOverride {
   roleKey: string

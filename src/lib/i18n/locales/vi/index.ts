@@ -1,5 +1,5 @@
 /**
- * index.ts — Bộ từ điển Tiếng Việt gốc (SSOT 100% của smeOS)
+ * index.ts — Bộ từ điển Tiếng Việt gốc (SSOT 100% của ALG)
  */
 
 import { commonVi } from "./common"

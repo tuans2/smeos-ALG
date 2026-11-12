@@ -1,5 +1,5 @@
 /**
- * smeOS Template Library — Khách Hàng & Chăm Sóc (CRM & Retention M08)
+ * ALG Template Library — Khách Hàng & Chăm Sóc (CRM & Retention M08)
  */
 
 export * from "./crm-guidance-card"

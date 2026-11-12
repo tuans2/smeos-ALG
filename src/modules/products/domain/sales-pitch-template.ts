@@ -302,7 +302,7 @@ export function buildSalesPitchData(
 
   // 10. Thông tin cửa hàng & Trạng thái xuất bản (Ưu tiên: Overrides -> Tenant Profile -> Fallback)
   // Fallback KHÔNG được là một tên thương hiệu/hotline trông như thật (trước đây
-  // là "FloraOS Flower Boutique" / "1900 xxxx") — nếu tenant chưa nhập hồ sơ, phải
+  // là "ALG Flower Boutique" / "1900 xxxx") — nếu tenant chưa nhập hồ sơ, phải
   // hiện rõ đây là chỗ trống cần cập nhật, tránh gửi nhầm thông tin giả cho khách.
   const shopName = overrides?.shopName ?? tenantDefaults?.shopName ?? "Chưa cập nhật tên tiệm"
   const shopHotline = overrides?.shopHotline ?? tenantDefaults?.shopHotline ?? "Chưa cập nhật hotline"

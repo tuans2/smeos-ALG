@@ -99,7 +99,7 @@ export function CatalogCard({
           onClick={onPreview}
           title="Xem trước giao diện khách sẽ thấy"
           aria-label={`Xem trước link công khai của ${catalog.name}`}
-          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text inline-flex items-center"
+          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-alt transition-colors text-text-muted hover:text-text inline-flex items-center"
         >
           <Eye size={14} />
         </Button>
@@ -108,7 +108,7 @@ export function CatalogCard({
           onClick={onCopy}
           title="Sao chép link mang tên bạn — khách mở link này được tính cho bạn"
           aria-label={`Sao chép link bộ sưu tập ${catalog.name} mang tên bạn`}
-          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
+          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-alt transition-colors text-text-muted hover:text-text"
         >
           {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
         </Button>
@@ -117,7 +117,7 @@ export function CatalogCard({
           download
           title="Tải ảnh catalog để đăng lên Zalo/Facebook"
           aria-label={`Tải ảnh catalog ${catalog.name}`}
-          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text inline-flex items-center"
+          className="p-1.5 rounded-lg border border-border hover:bg-surface-alt transition-colors text-text-muted hover:text-text inline-flex items-center"
         >
           <Download size={14} />
         </a>
@@ -160,7 +160,7 @@ export function CatalogCard({
           type="button"
           onClick={onSelect}
           aria-label={`Mở chi tiết catalog ${catalog.name}`}
-          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted"
+          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-alt transition-colors text-text-muted"
         >
           <ChevronRight size={14} />
         </Button>

@@ -66,7 +66,7 @@ export async function adminConfirmBrochureOrder(
     throw conflict("Đơn hàng đã giao xong")
   }
   if (order.status === "DRAFT") {
-    throw conflict("Điều hành chưa xác nhận tiền — hãy xác nhận tiền (Gate 1) trước khi xác nhận đơn")
+    throw conflict("Điều hành chưa xác nhận tiền — hãy xác nhận tiền trước khi xác nhận đơn")
   }
   if (
     order.production_status === "ASSIGNED" ||

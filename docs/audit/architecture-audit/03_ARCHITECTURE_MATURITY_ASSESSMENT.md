@@ -126,7 +126,7 @@ Phân loại bằng chứng: **V** Verified · **PV** Partially Verified · **NV
 
 | Tài liệu yêu cầu | Có? | Vị trí | Đánh giá |
 |---|---|---|---|
-| Kiến trúc hệ thống | Có | `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`, `SMEOS_4_TIER_…` | Mô tả đích, lẫn hiện trạng |
+| Kiến trúc hệ thống | Có | `ALG_SAAS_TARGET_ARCHITECTURE_V2.md`, `SMEOS_4_TIER_…` | Mô tả đích, lẫn hiện trạng |
 | CSDL | Có | đặc tả 07 (khớp mã theo `check:docs`) | Tốt |
 | ERD | Không | — | Thiếu |
 | API | Có (nội bộ) | đặc tả 06 | Không có bản cho khách / OpenAPI |

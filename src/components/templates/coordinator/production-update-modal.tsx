@@ -1,5 +1,6 @@
 "use client"
 
+import { Slider } from "@/components/ui/slider"
 import React, { useState } from "react"
 import { Sliders } from "@/components/ui/icon-set/sliders"
 import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
@@ -116,7 +117,7 @@ export function ProductionUpdateModal({
                 BƯỚC 4 • GIA CÔNG
               </span>
               <h3 className="text-body font-extrabold text-text">
-                Tiến Độ & Ảnh Thành Phẩm (T08/T10)
+                Tiến Độ & Ảnh Thành Phẩm
               </h3>
             </div>
           </div>
@@ -161,14 +162,14 @@ export function ProductionUpdateModal({
             <label className="font-bold text-text">Tiến độ hoàn thiện sản phẩm:</label>
             <span className="font-extrabold text-danger-text text-body">{progress}%</span>
           </div>
-          <Input
-            type="range"
-            min="0"
-            max="100"
-            step="10"
+          <Slider
+            aria-label="Tiến độ hoàn thiện sản phẩm"
+            min={0}
+            max={100}
+            step={10}
             value={progress}
-            onChange={(e) => setProgress(Number(e.target.value))}
-            className="w-full accent-red-600 cursor-pointer h-2 bg-surface rounded-lg p-0 border-0"
+            onValueChange={(v) => setProgress(v)}
+            getValueText={(v) => `${v}%`}
           />
           <div className="flex justify-between text-caption font-semibold text-text-muted mt-1">
             <Button variant="ghost"

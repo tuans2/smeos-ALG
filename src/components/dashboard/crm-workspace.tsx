@@ -59,7 +59,7 @@ function nhanVongDoi(stage: CustomerLifecycleStage): { label: string; cls: strin
     case "GROW":
       return { label: "Tiềm năng", cls: "bg-primary/10 text-primary" }
     case "AT_RISK":
-      return { label: "Nguy cơ rời bỏ", cls: "bg-warning-bg text-warning" }
+      return { label: "Nguy cơ rời bỏ", cls: "bg-warning-bg text-warning-text" }
     case "DORMANT":
       return { label: "Ngủ đông", cls: "bg-danger-bg text-danger" }
     case "ACQUIRE":
@@ -192,7 +192,7 @@ export function CrmWorkspace() {
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
             <span className="text-caption text-text-muted">Nguy cơ rời bỏ</span>
-            <span className="text-title font-extrabold text-warning">
+            <span className="text-title font-extrabold text-warning-text">
               {!daTai ? "—" : atRiskCustomers.length}
             </span>
           </Card>
@@ -274,7 +274,7 @@ export function CrmWorkspace() {
           <Card className="flex flex-col gap-3 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <AlertCircle size={18} className="text-warning" aria-hidden="true" />
+                <AlertCircle size={18} className="text-warning-text" aria-hidden="true" />
                 <h2 className="text-title-sm font-bold">
                   Khách cần giữ chân & kích hoạt ({retentionList.length})
                 </h2>

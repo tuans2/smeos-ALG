@@ -72,7 +72,7 @@ export function ExcludeCatalogsFilter({ currentCatalogId, selected, onChange, lo
             <ul className="flex max-h-40 flex-col gap-1 overflow-y-auto">
               {catalogs.map((c) => (
                 <li key={c.id}>
-                  <label className="flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-1.5 text-body-sm text-text hover:bg-surface-muted">
+                  <label className="flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-1.5 text-body-sm text-text hover:bg-surface-alt">
                     <Checkbox checked={selected.includes(c.id)} onCheckedChange={() => toggle(c.id)} className="h-4 w-4 accent-primary" />
                     <span className="flex-1 truncate">{c.name}</span>
                     {c._count && <span className="text-caption text-text-muted">{c._count.items} mẫu</span>}

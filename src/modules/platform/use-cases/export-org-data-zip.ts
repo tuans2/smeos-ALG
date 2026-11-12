@@ -1,5 +1,5 @@
 /**
- * SMEOS Platform Admin — Export Org Data as ZIP
+ * ALG Platform Admin — Export Org Data as ZIP
  *
  * Đóng gói toàn bộ dữ liệu của một tổ chức vào file .zip:
  *   catalog.csv          — danh sách sản phẩm (với cột image_url)

@@ -21,8 +21,8 @@ acceptance:
 ## 1. Vai và mục đích
 - **Vai chính (03b):** Tất cả các vai (Màn tham chiếu danh mục vai trò hệ thống).
 - **Phạm vi:** Toàn hệ thống (15 vai: 2 Platform, 10 One-Store, 3 Chain).
-- **Việc chính:** Xem danh mục các vai trò theo lộ trình FloraOS, biết vai nào đang khả dụng, vai hiện tại của mình là gì, và vai nào đang phát triển.
-- **Câu hỏi chính:** "FloraOS có những vai trò nào và vai của tôi có thể làm gì?"
+- **Việc chính:** Xem danh mục các vai trò theo lộ trình ALG, biết vai nào đang khả dụng, vai hiện tại của mình là gì, và vai nào đang phát triển.
+- **Câu hỏi chính:** "ALG có những vai trò nào và vai của tôi có thể làm gì?"
 - **Mật độ:** MEDIUM (Phân 3 nhóm theo phân khúc: Nền tảng, Một cửa hàng, Chuỗi cửa hàng).
 
 ## 2. Hiện trạng (audit)

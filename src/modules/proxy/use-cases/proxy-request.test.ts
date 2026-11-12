@@ -72,6 +72,9 @@ describe("buildForwardHeaders", () => {
       extra: { accept: "application/json" },
     })
     expect(headers["x-floraos-sso"]).toBe("jwt")
+    // Tên mới ALG + tên smeOS vẫn gửi kèm cho ứng dụng liên kết chưa cập nhật
+    expect(headers["x-alg-sso"]).toBe("jwt")
+    expect(headers["x-smeos-sso"]).toBe("jwt")
     expect(headers["content-type"]).toBe("application/json")
     expect(headers["authorization"]).toBeUndefined()
   })

@@ -119,8 +119,8 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 - **Không phá vỡ** trong `/v1`: thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở *phản hồi* (client phải bỏ qua giá trị lạ), nới validation.
 - **Phá vỡ** (đổi/xoá trường, đổi kiểu, siết validation, đổi mã trạng thái/lỗi, đổi ngữ nghĩa) → endpoint mới song song hoặc `/v2` theo họ tài nguyên.
-- Endpoint sắp gỡ: header `Deprecation: @<unix-time>` + `Sunset: <HTTP-date>` + `Link: <…>; rel="successor-version"`; tối thiểu **90 ngày** cho `/integration/*` và webhook ra ngoài, 30 ngày cho API nội bộ chỉ giao diện SMEOS gọi. Ghi lịch gỡ trong đặc tả 06 và changelog OpenAPI.
-- Giao diện SMEOS và API phát hành cùng nhau nên route nội bộ được đổi nhanh hơn, nhưng vẫn qua ratchet để không vỡ tab đang mở (phiên dài, `session-status` 15 giây).
+- Endpoint sắp gỡ: header `Deprecation: @<unix-time>` + `Sunset: <HTTP-date>` + `Link: <…>; rel="successor-version"`; tối thiểu **90 ngày** cho `/integration/*` và webhook ra ngoài, 30 ngày cho API nội bộ chỉ giao diện ALG gọi. Ghi lịch gỡ trong đặc tả 06 và changelog OpenAPI.
+- Giao diện ALG và API phát hành cùng nhau nên route nội bộ được đổi nhanh hơn, nhưng vẫn qua ratchet để không vỡ tab đang mở (phiên dài, `session-status` 15 giây).
 
 ## 9. OpenAPI Specification
 
@@ -145,7 +145,7 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 ```yaml
 openapi: 3.1.0
-info: { title: SMEOS Integration API, version: 1.1.0 }
+info: { title: ALG Integration API, version: 1.1.0 }
 servers: [{ url: /api/v1 }]
 components:
   securitySchemes:

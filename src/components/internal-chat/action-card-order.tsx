@@ -61,16 +61,16 @@ export function ActionCardOrder({
   return (
     <Card className="p-4 max-w-sm text-text" variant="default">
       <div className="flex items-center justify-between border-b border-border pb-2 mb-3">
-        <span className="text-caption font-semibold text-primary bg-primary-subtle px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-primary/20">
+        <span className="text-caption font-semibold text-primary bg-primary-muted px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-primary/20">
           <Package className="w-3.5 h-3.5" /> {t("chat.card.legacyTitle", { code: payload.orderCode })}
         </span>
         <span
           className={`text-caption font-medium px-2 py-0.5 rounded-full ${
             isPending
-              ? "bg-warning-subtle text-warning-text border border-warning/20"
+              ? "bg-warning-bg text-warning-text border border-warning/20"
               : isAccepted
-              ? "bg-success-subtle text-success border border-success/20"
-              : "bg-surface-muted text-text-muted"
+              ? "bg-success-bg text-success border border-success/20"
+              : "bg-surface-alt text-text-muted"
           }`}
         >
           {t(isPending ? "chat.card.legacyPending" : isAccepted ? "chat.card.legacyAccepted" : "chat.card.legacyRejected")}
@@ -85,7 +85,7 @@ export function ActionCardOrder({
             className="w-16 h-16 object-cover rounded-lg border border-border shrink-0"
           />
         ) : (
-          <div className="w-16 h-16 bg-surface-muted rounded-lg flex items-center justify-center text-text-muted text-caption shrink-0">
+          <div className="w-16 h-16 bg-surface-alt rounded-lg flex items-center justify-center text-text-muted text-caption shrink-0">
             {t("chat.card.legacyNoImage")}
           </div>
         )}

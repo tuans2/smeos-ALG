@@ -53,7 +53,7 @@ test("hành trình Creative Studio: ảnh gốc → Master → biến thể → 
   page.on("pageerror", (e) => loiTrang.push(e.message))
 
   // 1. Đăng ký — cookie phiên nằm trong ngữ cảnh trình duyệt, `page.request` dùng chung.
-  const email = `e2e-${randomUUID().slice(0, 8)}@floraos.test`
+  const email = `e2e-${randomUUID().slice(0, 8)}@alg.test`
   const dangKy = await page.request.post("/api/v1/auth/signup", {
     data: { email, password: "MatKhau-E2E-2026!", name: "E2E", organization_name: "Tiệm hoa E2E" },
   })

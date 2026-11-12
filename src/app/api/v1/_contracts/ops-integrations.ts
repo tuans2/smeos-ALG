@@ -63,6 +63,6 @@ export const INTEGRATION_HUB_OPERATIONS: OpenApiOperation[] = [
   op(TOKEN, { method: "delete", path: "/integration-tokens/{id}", operationId: "revokeIntegrationToken", summary: "Thu hồi token ngay", cap: "F9",
     description: "Không xoá bản ghi. Token của tổ chức khác → 404.", ok: [200, { description: "Đã thu hồi", schema: res.revokedResponse }], errors: [404] }),
   op(TOKEN, { method: "post", path: "/sso/refresh", operationId: "refreshSsoToken", summary: "Làm mới JWT liên-app cho Unified Shell", cap: null, auth: "session",
-    description: "Gọi máy-chủ-tới-máy-chủ từ LocalBudd/SocialFlow, chuyển tiếp cookie phiên. JWT 15 phút: trả trong thân (để app gọi tự đặt cookie cho trình duyệt) và header `Set-Cookie` `smeos_sso`.",
+    description: "Gọi máy-chủ-tới-máy-chủ từ LocalBudd/SocialFlow, chuyển tiếp cookie phiên. JWT 15 phút: trả trong thân (để app gọi tự đặt cookie cho trình duyệt) và header `Set-Cookie` `alg_sso`.",
     ok: [200, { description: "JWT mới", schema: res.ssoRefreshResponse }] }),
 ]

@@ -96,7 +96,7 @@ export function CustomerProfileCard({
       </div>
 
       {notes && (
-        <div className="rounded-lg bg-warning-bg border border-warning/25 p-2.5 text-caption text-warning italic">
+        <div className="rounded-lg bg-warning-bg border border-warning/25 p-2.5 text-caption text-warning-text italic">
           Ghi chú: {notes}
         </div>
       )}

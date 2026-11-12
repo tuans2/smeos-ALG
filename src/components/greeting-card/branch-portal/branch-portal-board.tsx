@@ -27,7 +27,7 @@ interface PortalResponse {
 const REFRESH_MS = 30_000
 
 const STAGE_COPY: Record<Stage, { title: string; badge: string; badgeClass: string; action: string }> = {
-  INVITED: { title: "Lời mời nhận đơn", badge: "Đang mời", badgeClass: "bg-warning/15 text-warning", action: "Xem và nhận đơn" },
+  INVITED: { title: "Lời mời nhận đơn", badge: "Đang mời", badgeClass: "bg-warning/15 text-warning-text", action: "Xem và nhận đơn" },
   GRACE: { title: "Đã nhận, đang kiểm kho", badge: "Kiểm kho", badgeClass: "bg-primary/10 text-primary", action: "Chốt làm hoặc huỷ" },
   IN_PROGRESS: { title: "Đang làm", badge: "Đang làm", badgeClass: "bg-success-bg text-success", action: "Mở thẻ chế tác" },
 }
@@ -55,7 +55,7 @@ function OrderCard({ order }: { order: PortalOrder }) {
           <Clock size={12} /> Giao: {order.deliveryTime}
         </span>
         {order.subcontractPriceVnd !== null && <span>Thù lao: {order.subcontractPriceVnd.toLocaleString("vi-VN")} đ</span>}
-        {left !== null && <span className="font-bold text-warning">Còn {left} phút</span>}
+        {left !== null && <span className="font-bold text-warning-text">Còn {left} phút</span>}
       </div>
       <a
         href={order.cardUrl}

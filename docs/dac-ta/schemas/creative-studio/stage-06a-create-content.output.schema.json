@@ -3,7 +3,7 @@
   "$id": "stage-06a-create-content.output.schema.json",
   "title": "Chặng 06a — CREATE · Khu vực B: Nội dung bài đăng — Đầu ra",
   "description": "Bài viết theo kênh (tối đa một bài/kênh) sinh từ kịch bản; tự lưu, ghi đè bản cũ cùng khoá ảnh + chủ đề + mode.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "06a",
     "stage": 6,
     "code": "CREATE_CONTENT",

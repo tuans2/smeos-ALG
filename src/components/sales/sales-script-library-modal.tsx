@@ -208,8 +208,8 @@ export function SalesScriptLibraryModal({
                 </div>
 
                 {/* Khối Mẹo tâm lý thực chiến */}
-                <div className="rounded-xl border border-warning/30 bg-warning-bg/60 p-3 flex items-start gap-2.5 text-caption text-warning">
-                  <Lightbulb className="h-4 w-4 text-warning shrink-0 mt-0.5" />
+                <div className="rounded-xl border border-warning/30 bg-warning-bg/60 p-3 flex items-start gap-2.5 text-caption text-warning-text">
+                  <Lightbulb className="h-4 w-4 text-warning-text shrink-0 mt-0.5" />
                   <div>
                     <span className="font-bold">Mẹo tâm lý thực chiến: </span>
                     <span className="text-text font-normal">{activeScript.psychologicalTip}</span>

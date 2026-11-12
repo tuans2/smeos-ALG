@@ -125,7 +125,7 @@ export const URGENCY_CONFIG: Record<ReminderUrgency, { label: string; colorClass
   URGENT: {
     label: "Khẩn cấp",
     colorClass: "border-warning/40 bg-warning-bg",
-    badgeClass: "bg-warning text-white",
+    badgeClass: "bg-warning text-text",
   },
   SOON: {
     label: "Sắp đến",

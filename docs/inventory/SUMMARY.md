@@ -1,12 +1,12 @@
 # T1.7 — Báo cáo Tổng hợp Kiểm kê Hiện trạng (SUMMARY.md)
 
-> **Dự án**: smeOS / FloraOS | **Phiên bản kiểm kê**: v1.0 | **Ngày**: 2026-10-25
+> **Dự án**: ALG / ALG | **Phiên bản kiểm kê**: v1.0 | **Ngày**: 2026-10-25
 
 ## 1. Kết luận Khảo sát Hiện trạng
-Codebase `smeOS` hiện tại là một **Modular Monolith trưởng thành** với 38 modules, 97 bảng CSDL và 5 workers xử lý nền. Hệ thống đã sở hữu hạt nhân phân định rõ ràng giữa **Store OS** (quản lý tiệm), **Chain OS** (điều phối mạng lưới chuỗi), **Industry Pack** (chuẩn SSOT đa ngành) và **Mother Platform** (console vận hành).
+Codebase `ALG` hiện tại là một **Modular Monolith trưởng thành** với 38 modules, 97 bảng CSDL và 5 workers xử lý nền. Hệ thống đã sở hữu hạt nhân phân định rõ ràng giữa **Store OS** (quản lý tiệm), **Chain OS** (điều phối mạng lưới chuỗi), **Industry Pack** (chuẩn SSOT đa ngành) và **Mother Platform** (console vận hành).
 
 ## 2. Những điểm Cấu trúc Đề xuất KHÔNG KHỚP với Thực tế
-1. **Cấu trúc Monorepo**: Spec pack đề xuất chia cứng thành `apps/` và `packages/`. Hiện tại smeOS đang tổ chức phẳng dạng Next.js monolith (`src/modules/*` và `src/app/*`). **Khuyến nghị**: Giữ nguyên Monolith trong giai đoạn này (ADR-004), chưa tách `apps/` vật lý để tránh gãy tooling và build pipeline.
+1. **Cấu trúc Monorepo**: Spec pack đề xuất chia cứng thành `apps/` và `packages/`. Hiện tại ALG đang tổ chức phẳng dạng Next.js monolith (`src/modules/*` và `src/app/*`). **Khuyến nghị**: Giữ nguyên Monolith trong giai đoạn này (ADR-004), chưa tách `apps/` vật lý để tránh gãy tooling và build pipeline.
 2. **Cơ chế Truy cập CSDL**: Hiện tại các module đang query Prisma trực tiếp xuyên biên giới. Cần triển khai **Repository Pattern** có interface nghiêm ngặt để chuẩn hóa ranh giới dữ liệu trước khi có thể tách bất kỳ module nào.
 3. **Chưa có Transactional Outbox**: Việc gửi tin nhắn đối tác (Telegram) và đồng bộ ngoài đang gọi API trực tiếp, chưa qua bảng Outbox chuẩn hóa `event-envelope.schema.json`.
 

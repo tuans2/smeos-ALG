@@ -69,7 +69,7 @@ export const BEAT_COLORS: Record<string, string> = {
   RISING: "bg-primary/15 text-primary border-primary/30",
   CLIMAX: "bg-danger/10 text-danger border-danger/20",
   RESOLUTION: "bg-success/10 text-success border-success/20",
-  CTA: "bg-warning/10 text-warning border-warning/20",
+  CTA: "bg-warning/10 text-warning-text border-warning/20",
 }
 
 export function metaOf(c: SceneCandidate): SceneMeta {

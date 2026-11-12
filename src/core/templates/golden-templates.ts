@@ -1,5 +1,5 @@
 /**
- * smeOS Template Engine — System Golden Templates
+ * ALG Template Engine — System Golden Templates
  * Bộ mẫu chuẩn hệ sinh thái cho các kịch bản tư vấn, thẻ chào và vận hành.
  *
  * ═══ DỰ TRỮ, KHÔNG PHẢI NỢ (nợ #99, chốt qua AskUserQuestion 17/09) ═══

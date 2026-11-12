@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Data Propagation Hub (§9.5)
+ * ALG Inputs Architecture v2.1 — Data Propagation Hub (§9.5)
  *
  * Implements:
  * 1. Effective sharing target calculation:

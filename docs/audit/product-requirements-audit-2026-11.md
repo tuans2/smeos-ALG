@@ -176,7 +176,7 @@ Thứ tự ưu tiên. Cột "Cần PO" = phải có quyết định của Produc
 | 3 | Quyết định `Q5` hay `R13` cho xuất khách hàng; sửa mã hoặc `YC-K6` | PRA-03 | Quyết định | Có (trần cứng) | Test: vai ngoài Điều hành bị 403 (nếu chọn `Q5`) |
 | 4 | Chốt D13 rồi làm luồng chủ thể dữ liệu tự xoá + `customer_consents` chèn-chỉ | PRA-06, -07 | Mã + schema | Có (schema, pháp lý) | Test tenant: xoá theo yêu cầu khách không mở bằng mã năng lực nào |
 | 5 | Consent dữ liệu huấn luyện cấp tổ chức trước go-live | PRA-04 | Mã + schema | Có | Cờ mặc định tắt; cổng AI từ chối dùng dữ liệu cho huấn luyện khi tắt |
-| 6 | Viết lại PRD §1–5, §21 của 01 theo smeOS đa ngành, 4 tầng, phạm vi thật (landing, content, thanh toán, Redis) | PRA-15, -16 | Tài liệu | Có (PRD là SSOT) | PRD mới được PO ký, registry cập nhật |
+| 6 | Viết lại PRD §1–5, §21 của 01 theo ALG đa ngành, 4 tầng, phạm vi thật (landing, content, thanh toán, Redis) | PRA-15, -16 | Tài liệu | Có (PRD là SSOT) | PRD mới được PO ký, registry cập nhật |
 | 7 | Bổ sung FR có mã (`YC-*` mới) + AC cho ~15 khối chưa có yêu cầu | PRA-17 | Tài liệu | Có | Mỗi khối ≥ 1 nhóm mã + tiêu chí đo được |
 | 8 | Đặt mã cho FR ở PRD §7 và lập **một** ma trận truy vết `YC-* → test/route → ô checklist → bước Excel` | PRA-22, nhận định 1 | Tài liệu | Không | Ma trận sinh được bằng script, chạy trong `check:docs` |
 | 9 | Chạy vòng nghiệm thu 123 chức năng trên staging, ghi kết quả + bằng chứng | PRA-22 | Kiểm thử | Không | 141/141 bước có kết quả |

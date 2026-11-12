@@ -16,7 +16,7 @@ import { CancellationFollowUp } from "./cancellation-follow-up"
 type Group = "actions" | "messages" | "updates"
 export interface InboxTarget { tab: InboxTab; orderId: string | null; sessionId: string | null }
 
-const ROW = "flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-surface-muted min-h-16"
+const ROW = "flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-surface-alt min-h-16"
 
 /** Hộp việc: một chỗ cho việc cần làm, tin nhắn và cập nhật — xử lý hoặc mở đúng đơn ngay. */
 export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onOpenTarget: (t: InboxTarget) => void }) {
@@ -79,7 +79,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
       <div role="tablist" aria-label="Nhóm trong Hộp việc" className="sticky top-0 z-10 grid grid-cols-3 gap-1 border-b border-border bg-surface p-2">
         {tabs.map((t) => (
           <Button variant="ghost" key={t.id} type="button" role="tab" aria-selected={group === t.id} onClick={() => setGroup(t.id)}
-            className={`px-0 py-0 flex h-11 items-center justify-center gap-1.5 rounded-xl text-body-sm font-bold ${group === t.id ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:bg-surface-muted"}`}>
+            className={`px-0 py-0 flex h-11 items-center justify-center gap-1.5 rounded-xl text-body-sm font-bold ${group === t.id ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:bg-surface-alt"}`}>
             {t.label}
             {t.count > 0 && <span className={`min-w-5 rounded-full px-1.5 text-caption ${group === t.id ? "bg-white/25" : "bg-danger text-white"}`}>{t.count}</span>}
           </Button>
@@ -92,7 +92,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
           <Button variant="ghost" type="button" onClick={() => void inbox.mutate()} className="text-[length:inherit] h-auto p-0 gap-0 ml-2 font-bold underline">Thử lại</Button>
         </div>
       ) : !data ? (
-        <div className="flex flex-col gap-2 p-4" aria-busy="true">{[0, 1, 2, 3].map((i) => <div key={i} className="h-16 animate-pulse motion-reduce:animate-none rounded-xl bg-surface-muted" />)}</div>
+        <div className="flex flex-col gap-2 p-4" aria-busy="true">{[0, 1, 2, 3].map((i) => <div key={i} className="h-16 animate-pulse motion-reduce:animate-none rounded-xl bg-surface-alt" />)}</div>
       ) : group === "actions" ? (
         data.actions.length === 0 ? <Empty text="Không có việc nào đang chờ bạn. Mọi đơn đều đúng tiến độ." /> : (
           <ul className="divide-y divide-border bg-surface">
@@ -203,7 +203,7 @@ function ActionRow({ action, onOpen, onMessage, onDecided }: { action: InboxActi
           </Button>
         )}
         {onMessage && (
-          <Button variant="outline" type="button" onClick={onMessage} className="py-0 gap-0 h-11 flex-1 rounded-xl border border-border px-3 text-body-sm font-bold text-text hover:bg-surface-muted sm:flex-none">
+          <Button variant="outline" type="button" onClick={onMessage} className="py-0 gap-0 h-11 flex-1 rounded-xl border border-border px-3 text-body-sm font-bold text-text hover:bg-surface-alt sm:flex-none">
             Nhắn tin
           </Button>
         )}

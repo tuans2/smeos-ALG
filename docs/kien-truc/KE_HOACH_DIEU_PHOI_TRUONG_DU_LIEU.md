@@ -4,8 +4,8 @@
 **Mã định danh:** `DOC-05-KE-HOACH-DIEU-PHOI-TRUONG`
 **Đặc tả gốc (không thay thế, tệp này là lớp thực thi):**
 
-- [`docs/dac-ta/FLORAOS_COORDINATOR_FIELD_SPEC.md`](../dac-ta/FLORAOS_COORDINATOR_FIELD_SPEC.md) v2.3 (gọi tắt **Đặc tả trường**)
-- [`docs/dac-ta/FLORAOS_COORDINATOR_MASTER_INDEX_CONTRACT.md`](../dac-ta/FLORAOS_COORDINATOR_MASTER_INDEX_CONTRACT.md) v2.2 (gọi tắt **Hợp đồng MI**)
+- [`docs/dac-ta/ALG_COORDINATOR_FIELD_SPEC.md`](../dac-ta/ALG_COORDINATOR_FIELD_SPEC.md) v2.3 (gọi tắt **Đặc tả trường**)
+- [`docs/dac-ta/ALG_COORDINATOR_MASTER_INDEX_CONTRACT.md`](../dac-ta/ALG_COORDINATOR_MASTER_INDEX_CONTRACT.md) v2.2 (gọi tắt **Hợp đồng MI**)
 
 ---
 
@@ -15,7 +15,7 @@
 
 1. Đưa Điều phối (Chức năng 12) từ khoảng 15% trường chạy thật lên đủ bộ trường của Đặc tả trường cho T01–T27 và các form vận hành.
 2. Nối Điều phối với Product/Customer Master Index.
-3. Dựng **nền quản trị trường**, trong đó quản trị nền tảng FloraOS sửa được mọi trường, mọi danh mục và **tạo được trường mới hoàn toàn** trên Console Vận hành.
+3. Dựng **nền quản trị trường**, trong đó quản trị nền tảng ALG sửa được mọi trường, mọi danh mục và **tạo được trường mới hoàn toàn** trên Console Vận hành.
 
 Các quyết định PO ngày 26/09/2026 làm căn cứ cho kế hoạch:
 
@@ -83,7 +83,7 @@ Các quyết định PO ngày 26/09/2026 làm căn cứ cho kế hoạch:
 2. **Tenant:** mọi bảng mới thuộc tenant có `organization_id`, nằm trong `TENANT_TABLES` (`tests/helpers/database.ts`), có ca thử trong `tests/tenant/`. Bảng cấp nền tảng là **ngoại lệ có chủ đích của Luật 1**, ghi lý do trong đặc tả 07 ngay lượt khai, giống `platform_operators`.
 3. **Đổi route hoặc lược đồ thì sửa đặc tả 06/07 trong cùng lượt.** `node scripts/check-docs.mjs` phải xanh.
 4. **Đổi hợp đồng zod của Điều phối thì chạy `npm run gen:schemas:coordinator`**, rồi `check:schemas:coordinator` phải xanh.
-5. **Đổi `src/components/templates/*` thì cập nhật `FLORAOS_TEMPLATE_SYSTEM_SSOT.md`**, rồi `npm run check:template-ssot` phải xanh.
+5. **Đổi `src/components/templates/*` thì cập nhật `ALG_TEMPLATE_SYSTEM_SSOT.md`**, rồi `npm run check:template-ssot` phải xanh.
 6. **Không bịa dữ liệu.** Thiếu nguồn thì hiện trạng thái "chưa có", không điền giá trị mặc định trông hợp lý.
 7. **Mỗi trường mới** được khai trong Sổ đăng ký trường (ĐP-3) cùng lượt với lượt tạo ra nó, và bảng trạng thái của Đặc tả trường được cập nhật (CHƯA XÂY → CÓ).
 8. **Cổng chung của mọi giai đoạn:**

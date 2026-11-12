@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "step-03-assign-partner.input.schema.json",
-  "title": "Phân công đối tác xưởng (T06) — Đầu vào",
+  "title": "Phân công đối tác xưởng — Đầu vào",
   "description": "Gán đối tác cùng tổ chức, kiểm tạm ngưng và công suất ngày; đơn vào IN_PRODUCTION",
-  "x-floraos": {
+  "x-alg": {
     "stepId": "03",
     "step": 3,
     "code": "ASSIGN_PARTNER",

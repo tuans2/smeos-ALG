@@ -104,7 +104,7 @@ export function PaymentProofUploader({
       {/* Khung upload / preview */}
       {previewUrl ? (
         <div className="flex items-center gap-3 p-3 rounded-xl border border-border bg-surface">
-          <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-border shrink-0 bg-surface-muted flex items-center justify-center">
+          <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-border shrink-0 bg-surface-alt flex items-center justify-center">
             <Image
               src={previewUrl}
               alt="Ảnh chuyển khoản"

@@ -42,7 +42,7 @@ export function OnboardingProgressBar() {
               </span>
             </div>
             <div className="text-caption text-text-muted">
-              Đã hoàn thành {completedCount}/{steps.length} tiêu chuẩn nhập liệu cốt lõi của smeOS
+              Đã hoàn thành {completedCount}/{steps.length} tiêu chuẩn nhập liệu cốt lõi của ALG
             </div>
           </div>
         </div>

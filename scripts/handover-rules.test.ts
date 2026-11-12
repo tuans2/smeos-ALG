@@ -33,8 +33,8 @@ describe("handover-rules — luật kiểm bản giao khách", () => {
         "docs/Nhập liệu/BST_Basic_NhuCauDN_Chuan_ALG.xlsx",
         "docs/Nhập liệu/Kho_San_Pham_ALG_Template.xlsx",
         "docs/khach/Bao_gia_Avi_Florist.docx",
-        "docs/Nhập liệu/FloraOS_Template_Master_Kho_San_Pham.xlsx",
-        "public/templates/smeOS_Template_Master_Kho_San_Pham.xlsx",
+        "docs/Nhập liệu/ALG_Template_Master_Kho_San_Pham.xlsx",
+        "public/templates/ALG_Template_Master_Kho_San_Pham.xlsx",
         "src/modules/catalog/algorithm.ts",
       ]),
     ).toEqual([

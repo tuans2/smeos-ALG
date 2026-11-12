@@ -57,9 +57,9 @@ export function SubcontractBypassControl({
     <div className="flex flex-col gap-2 pt-1 border-t border-border/60">
       {isPending ? (
         <div className="p-3 rounded-xl bg-warning-bg border border-warning/30 flex items-start gap-2.5 text-caption">
-          <Clock size={16} className="text-warning shrink-0 mt-0.5 animate-pulse motion-reduce:animate-none" />
+          <Clock size={16} className="text-warning-text shrink-0 mt-0.5 animate-pulse motion-reduce:animate-none" />
           <div className="flex flex-col gap-0.5">
-            <span className="font-extrabold text-warning">
+            <span className="font-extrabold text-warning-text">
               Đang chờ Điều phối viên chuỗi duyệt bỏ qua ({stepKey})
             </span>
             <span className="text-text-muted">
@@ -80,7 +80,7 @@ export function SubcontractBypassControl({
             variant="outline"
             size="sm"
             onClick={() => setModalOpen(true)}
-            className="h-8 text-caption font-bold border-dashed border-warning/50 text-warning hover:bg-warning-bg gap-1.5 cursor-pointer"
+            className="h-8 text-caption font-bold border-dashed border-warning/50 text-warning-text hover:bg-warning-bg gap-1.5 cursor-pointer"
           >
             <ShieldAlert size={13} />
             Xin bỏ qua {stepKey}

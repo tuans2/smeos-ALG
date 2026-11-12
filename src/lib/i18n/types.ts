@@ -29,7 +29,7 @@ type NestedKeyOf<ObjectType extends object> = {
 }[keyof ObjectType & (string | number)]
 
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
-import type { SmeOsTier, getTierTerminology } from "@/core/terminology"
+import type { AlgTier, getTierTerminology } from "@/core/terminology"
 
 export type TranslationKey = NestedKeyOf<I18nDictionary>
 

@@ -96,7 +96,7 @@ export function generateHeadline(input: FlowerContentInput): string {
  * Sinh nội dung bài bán hoa hoàn chỉnh
  */
 export function generateFlowerContent(input: FlowerContentInput): GeneratedContentResult {
-  const brand = input.shopBrandName || "FloraOS Flower Boutique"
+  const brand = input.shopBrandName || "ALG Flower Boutique"
   const flowers = input.flowerTypes?.length ? input.flowerTypes.join(", ") : "những đóa hoa tuyển chọn loại 1"
   const color = input.colorTheme ? `tông màu ${input.colorTheme}` : "sắc màu hài hòa, thanh nhã"
   const occasion = input.occasion || "khoảnh khắc trọn vẹn"

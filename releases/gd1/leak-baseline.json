@@ -295,6 +295,7 @@
   "tên bên khác|src/app/layout.tsx": 1,
   "tên bên khác|src/components/brand-kit/svg-file.ts": 2,
   "tên bên khác|src/components/brand-kit/tiles/profile-fields.ts": 1,
+  "tên bên khác|src/components/greeting-card/customer/__tests__/shop-logo.test.tsx": 1,
   "tên bên khác|src/components/layout/__tests__/app-shell.test.tsx": 4,
   "tên bên khác|src/components/products/bulk-import/import-preview.tsx": 1,
   "tên bên khác|src/components/products/bulk-import/parse-product-sheet.ts": 8,

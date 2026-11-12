@@ -106,7 +106,7 @@ export function StaffNotifySettings() {
             aria-label="Bật thông báo tức thì cho nhân viên"
             className="peer sr-only"
           />
-          <div className="h-6 w-11 rounded-full bg-surface-muted peer-checked:bg-primary peer-focus:outline-none after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full" />
+          <div className="h-6 w-11 rounded-full bg-surface-alt peer-checked:bg-primary peer-focus:outline-none after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full" />
         </label>
       </div>
 

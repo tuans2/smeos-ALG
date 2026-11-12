@@ -27,7 +27,7 @@ export async function loginStorageState(
   const kind: MeasureAccount["kind"] = email && password ? "env" : "signup"
 
   if (!email || !password) {
-    email = `perf-${randomUUID().slice(0, 8)}@smeos.test`
+    email = `perf-${randomUUID().slice(0, 8)}@alg.test`
     password = `Perf-${randomUUID()}`
     const res = await request.post(`${base}/api/v1/auth/signup`, {
       data: { email, password, name: "Đo hiệu năng", organization_name: `Cửa hàng đo ${randomUUID().slice(0, 4)}` },

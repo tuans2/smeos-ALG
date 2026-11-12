@@ -81,10 +81,10 @@ export function SourcePicker({
   if (masters.length === 0 && assets.length === 0 && !loadingMasters && !loadingAssets) {
     return (
       <Card className="w-full p-4.5 border-2 border-dashed border-warning bg-warning-bg flex flex-col gap-2 shadow-xs">
-        <div className="text-body font-extrabold text-warning">
+        <div className="text-body font-extrabold text-warning-text">
           Chưa có ảnh nào trong kho
         </div>
-        <div className="text-meta text-warning">
+        <div className="text-meta text-warning-text">
           Hãy tải ảnh lên ở Tab Tối ưu trước để có ảnh nguồn.
         </div>
         <div>
@@ -128,7 +128,7 @@ export function SourcePicker({
                 Ảnh đã qua cổng Identity Guard — đảm bảo chất lượng chuẩn Studio
               </div>
               {masters.length === 0 && (
-                <div className="text-caption text-warning font-bold mt-1">
+                <div className="text-caption text-warning-text font-bold mt-1">
                   Chưa có Master nào. Chạy Tab 1 trước hoặc chọn Skip bên dưới.
                 </div>
               )}
@@ -287,7 +287,7 @@ export function SourcePicker({
           </Button>
 
           {!canApprove && (
-            <div className="text-caption text-warning font-medium text-center">
+            <div className="text-caption text-warning-text font-medium text-center">
               Tài khoản chưa có năng lực I2 (duyệt ảnh). Liên hệ quản trị viên.
             </div>
           )}

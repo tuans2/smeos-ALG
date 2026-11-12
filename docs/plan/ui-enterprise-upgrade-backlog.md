@@ -70,7 +70,7 @@ Mỗi việc C2-xx gồm: component trên `@base-ui/react` (trừ ghi chú) · c
 | S3-01 | `AppShell` dùng chung (skip-link, live region, main landmark, đệm BottomNav, `SessionTakeoverWatcher`) | `src/components/layout/app-shell.tsx`, 2 layout | `(platform)` có đủ; E2E skip-link cho `/van-hanh` | UI-A-02, UI-F-03 | 2 |
 | S3-02 | `PageLayout` A–F + `PageHeader` v2 (h1 20px, breadcrumb, actions K2) | `src/components/layout/page-layout/*` | Contract component + catalog | UI-J-01/02 | 2 |
 | S3-03 | `FloatingLayer` + đăng ký Copilot, UI Studio, StageGateApprovalBar | `src/components/layout/floating-layer.tsx` | Không chồng ở 360/390 (ảnh mốc) | UI-F-02 | 1,5 |
-| S3-04 | Copilot: BottomSheet < sm, `role="dialog"`, panel desktop co theo viewport | `floraos-global-copilot.tsx` | Ảnh 360/390/1280 không tràn | UI-F-01 | 1,5 |
+| S3-04 | Copilot: BottomSheet < sm, `role="dialog"`, panel desktop co theo viewport | `alg-global-copilot.tsx` | Ảnh 360/390/1280 không tràn | UI-F-01 | 1,5 |
 | S3-05 | Nav: test mọi `href` theo tầng mở được; ẩn mục không vào được của `nav-industry.ts`; tách `nav-store.ts` | `src/components/layout/nav/*` | Test vai × tầng xanh; tệp < 350 dòng | UI-A-05 | 2 |
 | S3-06 | Bỏ hard-code `roleKey` trong UI → capability | `(app)/san-pham/page.tsx:56-60`, `(app)/page.tsx:51` | `grep "roleKey ==="` trong `src/app` = 0 (trừ chọn khuôn trang chủ có ghi lý do) | UI-J-05 | 1 |
 

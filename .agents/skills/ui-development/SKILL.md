@@ -1,21 +1,21 @@
 ---
 name: ui-development
 description: >-
-  Quy tắc phát triển giao diện UI/UX cho FloraOS. Kích hoạt khi agent tạo/sửa
+  Quy tắc phát triển giao diện UI/UX cho ALG. Kích hoạt khi agent tạo/sửa
   React component, page layout, form, modal, hoặc bất kỳ file nào trong
   src/components/, src/app/(app)/, hoặc liên quan đến giao diện người dùng.
 ---
 
 > **Cập nhật 30/10/2026 — đọc trước phần còn lại của skill này.**
 > 1. `docs/dac-ta/ux-patterns/OPERATING_PRINCIPLES.md` (bắt buộc, PD8) → `docs/dac-ta/03c-ux-progressive-disclosure.md` → `03a-ux-constitution.md`.
-> 2. Code chuẩn + trạng thái: `.agents/standards/smeos/03-ux.md`; nguyên tắc chung: `.agents/standards/universal/03-ux.md`.
+> 2. Code chuẩn + trạng thái: `.agents/standards/alg/03-ux.md`; nguyên tắc chung: `.agents/standards/universal/03-ux.md`.
 > 3. Dùng `task-state.ts`/`TaskStatus`, `ConfirmDialog`, `Disclosure`, `ResultPanel`, `CostPreview`, `EntitlementGate`; không `window.confirm`, không `<details>` tự viết, không tiến trình giả (lint R13–R16).
 > 4. Bề mặt khách thấy: không dữ liệu giả, ưu đãi chỉ từ `listActiveShopPromotions`, không tự xuất bản.
 > 5. Chữ: token `*-text`, không `opacity`. Kiểm bằng `npm run ux:audit`; gate `npm run lint:ux -- --check`.
 > Khi phần dưới mâu thuẫn với các tài liệu trên → tài liệu trên thắng.
 
 
-# UI Development — FloraOS
+# UI Development — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 

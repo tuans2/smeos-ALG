@@ -136,7 +136,7 @@ export function OccasionCareCard({
         </div>
 
         {showScript && (
-          <pre className="rounded-lg bg-surface-raised border border-border p-3 text-caption text-text font-sans whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
+          <pre className="rounded-lg bg-surface border border-border p-3 text-caption text-text font-sans whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto">
             {script}
           </pre>
         )}
@@ -191,7 +191,7 @@ export function OccasionCarePanel({
               </span>
             )}
             {urgentCount > 0 && (
-              <span className="ml-2 font-bold text-warning">
+              <span className="ml-2 font-bold text-warning-text">
                 · {urgentCount} dịp trong 3 ngày tới
               </span>
             )}

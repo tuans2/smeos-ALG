@@ -1,7 +1,7 @@
 /**
  * Trang đã có trong app nhưng chưa nằm trong danh mục 51 công cụ gốc (PO 30/10/2026).
  *
- * Rà soát đồng bộ ở `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/02_DANH_MUC_ASSET.md`.
+ * Rà soát đồng bộ ở `docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/02_DANH_MUC_ASSET.md`.
  * Mức hoàn thiện của từng trang CHƯA được đánh giá, nên tạm để IN_PROGRESS (production chưa hiện);
  * đổi sang DONE sau khi rà soát từng trang.
  */

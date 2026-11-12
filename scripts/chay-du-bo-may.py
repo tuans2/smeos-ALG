@@ -51,7 +51,7 @@ GOI_CAN = {
     "day-du": ("openai", "PIL", "numpy"),
     "gon": ("openai", "PIL", "numpy"),
 }
-CO_DOI_INTERPRETER = "FLORAOS_DA_DOI_PYTHON"
+CO_DOI_INTERPRETER = "ALG_DA_DOI_PYTHON"
 
 
 def _co_du_goi(python: Path, goi: tuple[str, ...]) -> bool:

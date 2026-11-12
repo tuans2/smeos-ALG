@@ -1,5 +1,5 @@
 /**
- * THƯ VIỆN TAXONOMY & KEYWORDS THỊ TRƯỜNG HOA TƯƠI — FLORAOS INTELLIGENCE ENGINE
+ * THƯ VIỆN TAXONOMY & KEYWORDS THỊ TRƯỜNG HOA TƯƠI — ALG INTELLIGENCE ENGINE
  * 
  * Chuẩn hóa 10 phân nhóm nghiệp vụ:
  * - 01. OCCASION (30 keywords) — Dịp lễ & Nhu cầu

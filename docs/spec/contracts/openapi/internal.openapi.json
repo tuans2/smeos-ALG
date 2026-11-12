@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SMEOS Internal API",
+    "title": "ALG Internal API",
     "version": "1.0.0",
-    "description": "API nội bộ của ứng dụng tiệm — chỉ giao diện SMEOS gọi, không phải API công khai (xem Integration API). Mọi route cần phiên đăng nhập của thành viên tổ chức; `organization_id` lấy từ phiên, không nhận từ thân/query. Quyền theo mã năng lực (`x-capability`), không theo tên vai. Bản ghi của tổ chức khác trả 404, không bao giờ 403. Lỗi chung: thiếu phiên 401; thiếu quyền, công cụ bị khoá, đang dùng mật khẩu tạm 403; phiên chưa chọn tổ chức 409; lệnh ghi khi gói quá hạn 402."
+    "description": "API nội bộ của ứng dụng tiệm — chỉ giao diện ALG gọi, không phải API công khai (xem Integration API). Mọi route cần phiên đăng nhập của thành viên tổ chức; `organization_id` lấy từ phiên, không nhận từ thân/query. Quyền theo mã năng lực (`x-capability`), không theo tên vai. Bản ghi của tổ chức khác trả 404, không bao giờ 403. Lỗi chung: thiếu phiên 401; thiếu quyền, công cụ bị khoá, đang dùng mật khẩu tạm 403; phiên chưa chọn tổ chức 409; lệnh ghi khi gói quá hạn 402."
   },
   "servers": [
     {
@@ -97626,7 +97626,7 @@
                     "maximum": 4294967294
                   },
                   "style": {
-                    "description": "Phong cách hậu cảnh (ý định FloraOS) — Stability dịch sang style_preset; phông cục bộ ghi provider_ignored",
+                    "description": "Phong cách hậu cảnh (ý định ALG) — Stability dịch sang style_preset; phông cục bộ ghi provider_ignored",
                     "type": "string",
                     "enum": [
                       "natural",
@@ -127428,7 +127428,7 @@
       "post": {
         "operationId": "switchOrganization",
         "summary": "Đổi tổ chức đang hoạt động của phiên",
-        "description": "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Tổ chức đang tạm ngưng / đã đóng → 403 `ORGANIZATION_INACTIVE` (audit User Journey UJ-27). Phát lại cookie `smeos_sso`.",
+        "description": "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Tổ chức đang tạm ngưng / đã đóng → 403 `ORGANIZATION_INACTIVE` (audit User Journey UJ-27). Phát lại cookie `alg_sso`.",
         "tags": [
           "Phiên — tổ chức & mật khẩu"
         ],
@@ -130378,7 +130378,7 @@
       "post": {
         "operationId": "refreshSsoToken",
         "summary": "Làm mới JWT liên-app cho Unified Shell",
-        "description": "Gọi máy-chủ-tới-máy-chủ từ LocalBudd/SocialFlow, chuyển tiếp cookie phiên. JWT 15 phút: trả trong thân (để app gọi tự đặt cookie cho trình duyệt) và header `Set-Cookie` `smeos_sso`.",
+        "description": "Gọi máy-chủ-tới-máy-chủ từ LocalBudd/SocialFlow, chuyển tiếp cookie phiên. JWT 15 phút: trả trong thân (để app gọi tự đặt cookie cho trình duyệt) và header `Set-Cookie` `alg_sso`.",
         "tags": [
           "Token tích hợp & SSO"
         ],
@@ -138252,13 +138252,13 @@
       "tenantSession": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "smeos_session",
+        "name": "alg_session",
         "description": "Phiên đăng nhập của thành viên tổ chức"
       },
       "platformSession": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "smeos_session",
+        "name": "alg_session",
         "description": "Phiên của người vận hành nền tảng (vài route cấu hình hộ tổ chức)"
       }
     },

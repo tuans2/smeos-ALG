@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-[var(--radius-button)] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-40 select-none",
+  "inline-flex items-center justify-center gap-2 rounded-[var(--radius-button)] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-40 select-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -11,7 +11,7 @@ export const buttonVariants = cva(
         secondary: "bg-surface text-primary border border-border hover:border-primary active:bg-surface-alt",
         outline: "border border-border bg-transparent text-text hover:bg-surface-alt active:bg-border/30",
         ghost: "text-text hover:bg-surface-alt active:bg-border/30",
-        warning: "bg-warning text-white hover:opacity-90 active:opacity-80",
+        warning: "bg-warning text-text hover:opacity-90 active:opacity-80",
         danger: "bg-danger text-white hover:opacity-90 active:opacity-80",
         subtle: "bg-surface-alt text-text hover:bg-border/70 border border-transparent active:bg-border",
       },
@@ -30,6 +30,13 @@ export const buttonVariants = cva(
     },
   }
 )
+
+/**
+ * Vùng bấm cho nút chỉ có chữ (`h-auto p-0`) đứng riêng: lớp giả `::before` nới 5px trên/dưới (≥ 24px với chữ 13–15px),
+ * 15px khi màn cảm ứng (≥ 44px) — không đổi kích thước hiển thị. Không dùng cho liên kết trong dòng chữ (WCAG miễn).
+ */
+export const TEXT_BUTTON_HIT_AREA =
+  "relative before:absolute before:inset-x-0 before:-inset-y-[5px] before:content-[''] [@media(pointer:coarse)]:before:-inset-y-[15px]"
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,

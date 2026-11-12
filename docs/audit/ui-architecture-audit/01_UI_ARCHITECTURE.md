@@ -27,7 +27,7 @@
 | `LiveRegionProvider`, `GlobalImageZoom`, `SessionTakeoverWatcher` | Có | **Thiếu** | Thông báo cho trình đọc màn hình không hoạt động ở Console Mẹ. |
 | Giới hạn rộng | `w-full` | `max-w-md … md:max-w-none` | Khác nhau không có lý do ghi lại. |
 | Footer | Không áp dụng (SaaS nội bộ) | Không áp dụng | — |
-| Phần tử nổi | `FloraOSGlobalCopilot` (nút `fixed top-1/2 right-3 z-50`, panel `fixed bottom-5 right-5 z-50 w-[380px] h-[580px]`) + `UiStudioDrawer` (`fixed bottom-24 right-6 z-40`) | `UiStudioDrawer` | Không có registry z-index/vị trí cho phần tử nổi; 3 lớp nổi cùng góc phải dưới trên di động. |
+| Phần tử nổi | `AlgGlobalCopilot` (nút `fixed top-1/2 right-3 z-50`, panel `fixed bottom-5 right-5 z-50 w-[380px] h-[580px]`) + `UiStudioDrawer` (`fixed bottom-24 right-6 z-40`) | `UiStudioDrawer` | Không có registry z-index/vị trí cho phần tử nổi; 3 lớp nổi cùng góc phải dưới trên di động. |
 | Overlay toàn cục | `UiStudioDrawer` render ở **root** `src/app/layout.tsx:37` — kể cả `/dang-nhap` và trang khách `/c/…`, `/g/…` | — | **UI-A-03 (P1)**: công cụ đổi giao diện nội bộ lộ cho khách cuối và mọi nhân viên ở production, không kiểm capability. |
 
 **Kết luận A2:** shell có nền dùng chung (nav) nhưng **lắp ráp trùng lặp** và **bất nhất về a11y** giữa SaaS Mother và các tầng còn lại. Tầng 2 (SaaS Ngành) không có shell/trang riêng: `nav-industry.ts` trỏ tới `/van-hanh/du-lieu`, `/van-hanh/nganh`, `/van-hanh/truong-du-lieu` — các tuyến nằm trong `(platform)` vốn chỉ cho `platform_operators` (`resolve-platform-session.ts:40-59`). Nếu `industry_admin` không đồng thời là platform operator, 3 mục menu sẽ chuyển về `/` (**PLAUSIBLE — cần xác minh runtime**, UI-A-05).

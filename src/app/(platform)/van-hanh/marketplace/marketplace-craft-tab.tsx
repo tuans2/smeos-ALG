@@ -104,7 +104,7 @@ export function MarketplaceCraftTab({ production }: MarketplaceCraftTabProps) {
             </div>
             <div className="flex justify-between py-1 border-b border-border/50">
               <span className="text-text-muted">Tỷ lệ hao hụt ước tính:</span>
-              <span className="font-semibold text-warning">
+              <span className="font-semibold text-warning-text">
                 {production.lossRateEstimate || "---"}
               </span>
             </div>

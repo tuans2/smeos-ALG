@@ -64,7 +64,7 @@ function CopyButton({ value, label }: { value: string; label?: string }) {
       size="xs"
       onClick={handleCopy}
       title={`Sao chép ${label ?? value}`}
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-surface-muted hover:bg-surface-elevated text-text-muted text-caption font-medium h-auto"
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-surface-alt hover:bg-surface text-text-muted text-caption font-medium h-auto"
     >
       {copied ? (
         <>
@@ -85,12 +85,12 @@ function CopyButton({ value, label }: { value: string; label?: string }) {
 
 function OrgTypeBadge({ type }: { type: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    CHAIN: { label: "Chuỗi", cls: "bg-primary-subtle text-primary border-primary/20" },
-    STORE: { label: "Cửa hàng", cls: "bg-primary-subtle text-primary border-primary/20" },
-    PLATFORM: { label: "SaaS Platform", cls: "bg-surface-muted text-text border-border" },
-    SINGLE: { label: "Tiệm độc lập", cls: "bg-warning-subtle text-warning-text border-warning/20" },
+    CHAIN: { label: "Chuỗi", cls: "bg-primary-muted text-primary border-primary-border" },
+    STORE: { label: "Cửa hàng", cls: "bg-primary-muted text-primary border-primary-border" },
+    PLATFORM: { label: "SaaS Platform", cls: "bg-surface-alt text-text border-border" },
+    SINGLE: { label: "Tiệm độc lập", cls: "bg-warning-bg text-warning-text border-warning-border" },
   }
-  const { label, cls } = map[type] ?? { label: type, cls: "bg-surface-muted text-text-muted border-border" }
+  const { label, cls } = map[type] ?? { label: type, cls: "bg-surface-alt text-text-muted border-border" }
   return (
     <span className={`text-caption font-semibold px-2.5 py-0.5 rounded-full border ${cls}`}>
       {label}
@@ -166,11 +166,11 @@ export default function KetNoiPage() {
             Profile Kết Nối Nội Bộ
           </span>
         }
-        description="Mã định danh được dùng để kết nối và xác nhận danh tính trong hệ thống smeOS"
+        description="Mã định danh được dùng để kết nối và xác nhận danh tính trong hệ thống ALG"
         actions={
           <Link
             href="/tin-nhan"
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary hover:bg-primary-hover text-primary-fg text-caption font-semibold rounded-xl transition-colors shadow-xs"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-primary hover:bg-primary-dark text-primary-fg text-caption font-semibold rounded-xl transition-colors shadow-xs"
           >
             <MessageSquare className="w-3.5 h-3.5" />
             Mở Chat nội bộ
@@ -231,7 +231,7 @@ export default function KetNoiPage() {
 
             <div className="p-5 space-y-4">
               {/* Mã kết nối chính */}
-              <div className="p-4 bg-primary-subtle rounded-xl border border-primary/20">
+              <div className="p-4 bg-primary-muted rounded-xl border border-primary/20">
                 <div className="text-caption font-semibold text-primary uppercase tracking-wider mb-2 flex items-center gap-1.5">
                   <Link2 className="w-3.5 h-3.5" />
                   Mã Kết Nối Nội Bộ
@@ -251,7 +251,7 @@ export default function KetNoiPage() {
 
               {/* ID kỹ thuật (rút gọn) */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-surface-muted rounded-xl border border-border">
+                <div className="p-3 bg-surface-alt rounded-xl border border-border">
                   <div className="text-caption font-semibold text-text-muted uppercase tracking-wider mb-1">
                     ID Tổ Chức (Rút Gọn)
                   </div>
@@ -261,7 +261,7 @@ export default function KetNoiPage() {
                   </div>
                 </div>
 
-                <div className="p-3 bg-surface-muted rounded-xl border border-border">
+                <div className="p-3 bg-surface-alt rounded-xl border border-border">
                   <div className="text-caption font-semibold text-text-muted uppercase tracking-wider mb-1">
                     UUID Đầy Đủ
                   </div>
@@ -282,7 +282,7 @@ export default function KetNoiPage() {
               )}
 
               {/* Ghi chú bảo mật */}
-              <div className="flex items-start gap-2 p-3 bg-success-subtle rounded-xl border border-success/20 text-caption text-success">
+              <div className="flex items-start gap-2 p-3 bg-success-bg rounded-xl border border-success/20 text-caption text-success">
                 <ShieldCheck className="w-4 h-4 text-success shrink-0 mt-0.5" />
                 <span>
                   Mã kết nối là <strong>slug định danh công khai</strong> — an toàn để chia sẻ với đối tác. UUID nội bộ
@@ -300,15 +300,15 @@ export default function KetNoiPage() {
             </h3>
             <ol className="space-y-2 text-meta text-text-muted">
               <li className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-bold text-caption shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-primary-muted text-primary flex items-center justify-center font-bold text-caption shrink-0 mt-0.5">
                   1
                 </span>
                 <span>
-                  Chia sẻ <strong>Mã Kết Nối</strong> (<code className="bg-surface-muted px-1 rounded text-text">{org.connectCode}</code>) với Admin của chuỗi muốn tham gia.
+                  Chia sẻ <strong>Mã Kết Nối</strong> (<code className="bg-surface-alt px-1 rounded text-text">{org.connectCode}</code>) với Admin của chuỗi muốn tham gia.
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-bold text-caption shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-primary-muted text-primary flex items-center justify-center font-bold text-caption shrink-0 mt-0.5">
                   2
                 </span>
                 <span>
@@ -316,7 +316,7 @@ export default function KetNoiPage() {
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="w-5 h-5 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-bold text-caption shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-primary-muted text-primary flex items-center justify-center font-bold text-caption shrink-0 mt-0.5">
                   3
                 </span>
                 <span>
@@ -351,7 +351,7 @@ export default function KetNoiPage() {
                 variant="interactive"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-bold text-body-sm">
+                  <div className="w-9 h-9 rounded-full bg-primary-muted text-primary flex items-center justify-center font-bold text-body-sm">
                     {(m.name || m.email).charAt(0).toUpperCase()}
                   </div>
                   <div>

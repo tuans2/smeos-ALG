@@ -62,7 +62,7 @@ export function ProductionScopePicker({
       on
         ? "border-primary bg-primary/10 text-primary"
         : derived
-          ? "border-dashed border-warning/30 bg-warning/10 text-warning"
+          ? "border-dashed border-warning/30 bg-warning/10 text-warning-text"
           : "border-border bg-surface text-text-muted hover:bg-surface-alt"
     }`
 

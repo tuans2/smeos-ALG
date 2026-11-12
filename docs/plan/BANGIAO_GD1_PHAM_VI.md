@@ -15,7 +15,7 @@ Bản xem của `src/lib/delivery/gd1.manifest.json`. Chủ dự án chốt ph�
 
 ## 2. Chức năng 9.14 và SocialFlow
 
-Đăng bài đã chạy ngay trong smeOS (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động.
+Đăng bài đã chạy ngay trong ALG (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động.
 
 Mô-đun `src/modules/social-publishing` gọi thẳng API của Meta, TikTok, Zalo. Việc còn lại trong bản giao:
 

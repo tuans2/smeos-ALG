@@ -1,13 +1,13 @@
-# CONTEXT.md — Bối cảnh sản phẩm smeOS
+# CONTEXT.md — Bối cảnh sản phẩm ALG
 
-Bản đồ nghiệp vụ một trang: smeOS là gì, phục vụ ai, gồm những khối nào, và đọc ở đâu khi cần chi tiết.
+Bản đồ nghiệp vụ một trang: ALG là gì, phục vụ ai, gồm những khối nào, và đọc ở đâu khi cần chi tiết.
 Quy tắc làm việc nằm ở `CLAUDE.md` và `.agents/AGENT_RULES.md`; quy ước, lệnh, bẫy nằm ở `AGENTS.md`. Tệp này không lặp lại các quy tắc đó.
 
 ## 1. Sản phẩm
 
-smeOS là nền tảng SaaS đa tenant, đa ngành, dùng để quản trị và vận hành doanh nghiệp vừa và nhỏ: sản phẩm, ảnh và video marketing, catalog bán hàng, khách hàng, đơn hàng, điều phối sản xuất và giao hàng, nội dung và hội thoại đa kênh.
+ALG là nền tảng SaaS đa tenant, đa ngành, dùng để quản trị và vận hành doanh nghiệp vừa và nhỏ: sản phẩm, ảnh và video marketing, catalog bán hàng, khách hàng, đơn hàng, điều phối sản xuất và giao hàng, nội dung và hội thoại đa kênh.
 
-- **Gốc:** FloraOS, hệ điều hành cho tiệm hoa. Ngành hoa vẫn là ngành có nghiệp vụ đầy đủ nhất (tính giá, quy ước đếm cành, từ điển từ cấm nội dung).
+- **Gốc:** ALG, hệ điều hành cho tiệm hoa. Ngành hoa vẫn là ngành có nghiệp vụ đầy đủ nhất (tính giá, quy ước đếm cành, từ điển từ cấm nội dung).
 - **Đa ngành:** mỗi ngành là một Industry Plugin trong `src/modules/organization/domain/industries/`: `floral`, `fashion`, `fnb`, `homestay`, `craft-gift`, `retail-general`, `services`. Logic và nhãn khác nhau theo ngành đi qua contract plugin, không rẽ nhánh theo `industryKey`.
 - **Khách hàng tham chiếu:** AVI GIFT, nạp dữ liệu từ FloraOS v1 qua `src/modules/avi-gift-import/`.
 - **Người dùng cuối:** người Việt; mọi chữ trên giao diện là tiếng Việt tự nhiên.
@@ -27,7 +27,7 @@ Quyết định của tầng trên khoá tầng dưới theo thứ tự: khoá d
 - **Entitlement:** gói dịch vụ, khoá công cụ, `src/core/entitlements/`
 - **Governance:** ma trận quản trị, `src/modules/organization/domain/governance-decisions.ts`
 
-Chi tiết: skill `tier-governance`, `.agents/standards/smeos/01-tier-governance.md`.
+Chi tiết: skill `tier-governance`, `.agents/standards/alg/01-tier-governance.md`.
 
 ## 3. Kiến trúc tổng thể
 
@@ -82,7 +82,7 @@ Bảng này là bản đồ định hướng. Trạng thái thật của từng 
 
 | Repo | Vai trò |
 |---|---|
-| `smeOS` (repo này) | Lõi: tổ chức, RBAC, sản phẩm, tệp, job, khách hàng, đơn hàng, sáng tạo, catalog, hội thoại |
+| `ALG` (repo này) | Lõi: tổ chức, RBAC, sản phẩm, tệp, job, khách hàng, đơn hàng, sáng tạo, catalog, hội thoại |
 | `FloraOS` | Bản v1, đóng băng tính năng; nguồn thu hoạch |
 | `LocalBudd` | Landing page, catalog (bản song song) |
 | `SocialFlow` | Đăng bài mạng xã hội, số liệu nền tảng |
@@ -93,9 +93,9 @@ Bảng này là bản đồ định hướng. Trạng thái thật của từng 
 |---|---|---|
 | Tài liệu gốc (SSOT) của một mảng | `docs/00-DOCUMENTATION-REGISTRY.yaml` | `grep` |
 | Đang ở đâu, quyết định đã chốt, việc kế tiếp | `docs/kien-truc/TRANG_THAI.md` | chỉ §4–6, phần còn lại `grep` |
-| Kiến trúc đích | `docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` | `grep -n "^## "` rồi đọc mục cần |
+| Kiến trúc đích | `docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md` | `grep -n "^## "` rồi đọc mục cần |
 | Đặc tả sản phẩm, API, CSDL, UX | `docs/dac-ta/` | theo tệp |
-| Chuẩn kiến trúc đối chiếu mã (10 mảng) | `.agents/standards/README.md`, `.agents/standards/smeos/` | theo mảng |
+| Chuẩn kiến trúc đối chiếu mã (10 mảng) | `.agents/standards/README.md`, `.agents/standards/alg/` | theo mảng |
 | Quy ước mã, bản đồ mã, bẫy | `AGENTS.md` | `grep` theo mục |
 | Luật cấm và lỗi lặp lại | `.agents/AGENT_RULES.md` | theo mục |
 | Nguyên tắc UX | `docs/dac-ta/ux-patterns/OPERATING_PRINCIPLES.md` | trước mọi việc giao diện |

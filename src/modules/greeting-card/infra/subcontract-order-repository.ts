@@ -211,7 +211,7 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
     return null
   }
 
-  /** Ứng viên bắn đơn (id hoặc mã) có phải cửa hàng đối tác có tài khoản smeOS không — gợi ý Trao đổi nội bộ (IC-6.2). */
+  /** Ứng viên bắn đơn (id hoặc mã) có phải cửa hàng đối tác có tài khoản ALG không — gợi ý Trao đổi nội bộ (IC-6.2). */
   async isPartnerStoreCandidate(branchKey: string, orgId: string): Promise<boolean> {
     const n = await this.db.branches.count({
       where: { organization_id: orgId, partner_org_id: { not: null }, OR: [{ id: branchKey }, { code: branchKey, accepts_dispatch: true }] },

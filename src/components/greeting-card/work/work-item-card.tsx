@@ -58,10 +58,10 @@ export function WorkItemCard({ item, me, onOpenNotes, actions, now }: Props) {
         <div className="flex w-full flex-wrap gap-1.5 sm:w-auto">
           {item.customerPhone && (
             <>
-              <a href={`tel:${item.customerPhone}`} className="inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted">
+              <a href={`tel:${item.customerPhone}`} className="inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-alt">
                 <Phone size={13} aria-hidden="true" /> Gọi
               </a>
-              <a href={zaloHref(item.customerPhone)} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted">
+              <a href={zaloHref(item.customerPhone)} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-alt">
                 Zalo
               </a>
             </>
@@ -69,7 +69,7 @@ export function WorkItemCard({ item, me, onOpenNotes, actions, now }: Props) {
           <Button variant="outline"
             type="button"
             onClick={() => onOpenNotes(item, item.currentStepId)}
-            className="py-0 inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted"
+            className="py-0 inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-alt"
           >
             <MessageSquare size={13} className="text-primary" aria-hidden="true" />
             Nhắn tin

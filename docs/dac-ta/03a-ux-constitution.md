@@ -1,6 +1,6 @@
 > [!NOTE]
 > **VAI TRÒ TÀI LIỆU — CHUẨN CHẤT LƯỢNG UX TOÀN CỤC (Level 3, CANONICAL)**
-> Tệp này quy định chuẩn chất lượng UX, thứ bậc thông tin L0–L4, mật độ, ngân sách nội dung (content budget), trạng thái, chuẩn trợ năng WCAG 2.2, quy cách Screen Contract, UX Lint và định nghĩa Production/Commercial-ready cho toàn bộ hệ sinh thái FloraOS.
+> Tệp này quy định chuẩn chất lượng UX, thứ bậc thông tin L0–L4, mật độ, ngân sách nội dung (content budget), trạng thái, chuẩn trợ năng WCAG 2.2, quy cách Screen Contract, UX Lint và định nghĩa Production/Commercial-ready cho toàn bộ hệ sinh thái ALG.
 > Áp dụng bình đẳng cho mọi vai trải nghiệm trong `docs/dac-ta/03b-role-ux.md` và bổ sung chuẩn thực thi cho `docs/dac-ta/03-ux-architecture.md`.
 > **Quyết định phê duyệt của Product Owner:** 26/09/2026 (K1–K6, D-RU4, Q-TC, Q-MO, Q-E2E).
 
@@ -8,7 +8,7 @@
 
 ## §0. Áp dụng trong floraos-core
 
-Tài liệu này xác lập chuẩn chất lượng UX toàn cục cho FloraOS, áp dụng bình đẳng cho mọi vai trải nghiệm (03b). Mọi quy chuẩn được thi hành kết hợp với các quyết định của Product Owner ngày 26/09/2026.
+Tài liệu này xác lập chuẩn chất lượng UX toàn cục cho ALG, áp dụng bình đẳng cho mọi vai trải nghiệm (03b). Mọi quy chuẩn được thi hành kết hợp với các quyết định của Product Owner ngày 26/09/2026.
 
 ### 1. Bảng phán quyết K1–K3 của Product Owner
 
@@ -18,7 +18,7 @@ Tài liệu này xác lập chuẩn chất lượng UX toàn cục cho FloraOS, 
 | **K2** | **Thanh nút tác vụ góc phải (Top-Right Action Header)**: Giữ vị trí góc trên cùng bên phải. Hiển thị trực tiếp **tối đa 1 nút chính (`variant: "primary"`)** cho hành động quan trọng nhất + **tối đa 2 nút phụ (`outline`/`secondary`)**; toàn bộ các tác vụ còn lại đưa vào menu mở rộng `…`. `TabActionHeader` tự động cảnh báo ở môi trường dev nếu có > 1 nút primary. | Điều chỉnh UX-010 & UX-011 (One Primary Action per Viewport, Action Architecture) |
 | **K3** | **Dẫn chứng video kép Market Intelligence**: Giữ nguyên bắt buộc dẫn chứng video từ TikTok và YouTube. Tuy nhiên, trên thẻ **danh sách** chỉ hiển thị chỉ báo gọn ("2 video dẫn chứng" + 2 biểu tượng nền tảng); cặp thumbnail đầy đủ kèm trình phát chỉ render ở **lớp chi tiết** (drawer/modal). | Điều chỉnh §41 & UX-005 (giảm tải DOM và triệt tiêu 1.476 lớp màu thô trên mobile) |
 
-### 2. Vị trí tài liệu theo cấu trúc SSOT của FloraOS (thay thế §52)
+### 2. Vị trí tài liệu theo cấu trúc SSOT của ALG (thay thế §52)
 
 - **Chuẩn chất lượng UX toàn cục**: `docs/dac-ta/03a-ux-constitution.md` (tệp này, Level 3, CANONICAL).
 - **Trải nghiệm theo 14 vai**: `docs/dac-ta/03b-role-ux.md` (Level 3, CANONICAL).
@@ -49,7 +49,7 @@ Mọi màn hình và component trong `src/app` và `src/components` được ki�
 
 ### 5. Thang Token Cỡ Chữ và Màu Ngữ Nghĩa (T4.2 & T4.3 SSOT)
 
-Toàn bộ cỡ chữ và màu sắc trong FloraOS bắt buộc tuân theo bảng token chuẩn hóa khai báo tại `src/app/globals.css`. Tuyệt đối không dùng các lớp tùy tiện `text-[Npx]` (vi phạm R2) hoặc màu Tailwind thô `red-*`, `stone-*` (vi phạm R1).
+Toàn bộ cỡ chữ và màu sắc trong ALG bắt buộc tuân theo bảng token chuẩn hóa khai báo tại `src/app/globals.css`. Tuyệt đối không dùng các lớp tùy tiện `text-[Npx]` (vi phạm R2) hoặc màu Tailwind thô `red-*`, `stone-*` (vi phạm R1).
 
 #### Bảng Thang Cỡ Chữ Chuẩn Hóa
 | Lớp Token | Kích thước | Chiều cao dòng (line-height) | Quy tắc sử dụng |
@@ -74,10 +74,10 @@ Toàn bộ cỡ chữ và màu sắc trong FloraOS bắt buộc tuân theo bản
 
 ---
 
-# FLORAOS UX CONSTITUTION
+# ALG UX CONSTITUTION
 ## Global UX Quality & Production Readiness Standard
 
-**Document ID:** `FLORAOS-UX-CONSTITUTION-001`  
+**Document ID:** `ALG-UX-CONSTITUTION-001`  
 **Version:** `1.0.0`  
 **Status:** GOVERNANCE BASELINE  
 **Audience:** Claude Code, Antigravity, Cursor, Codex, product designers, UX designers, frontend engineers, AI design agents  
@@ -87,13 +87,13 @@ Toàn bộ cỡ chữ và màu sắc trong FloraOS bắt buộc tuân theo bản
 
 # 00. PURPOSE
 
-This document defines the **global UX governance rules** for FloraOS.
+This document defines the **global UX governance rules** for ALG.
 
 It exists to solve a recurring problem:
 
 > A UI can be technically correct, visually attractive, and component-consistent while still being cluttered, text-heavy, difficult to scan, difficult to operate, and not production/commercial-ready.
 
-Therefore FloraOS UX quality MUST be governed at multiple levels:
+Therefore ALG UX quality MUST be governed at multiple levels:
 
 ```text
 ROLE UX
@@ -116,7 +116,7 @@ This document defines those global rules.
 The existing:
 
 ```text
-FLORAOS-ROLE-UX-AI-AGENT-EXECUTION-CONTRACT.md
+ALG-ROLE-UX-AI-AGENT-EXECUTION-CONTRACT.md
 ```
 
 defines role-specific UX behavior.
@@ -130,7 +130,7 @@ This document defines the **global UX quality system** that applies across all r
 The target architecture is:
 
 ```text
-                    FLORAOS UX SYSTEM
+                    ALG UX SYSTEM
                            │
               ┌────────────┴────────────┐
               │                         │
@@ -300,7 +300,7 @@ The Agent MUST NOT expose every available field simply because the field exists.
 
 # 05. UX-004 — Progressive Disclosure by Default
 
-FloraOS MUST progressively reveal complexity.
+ALG MUST progressively reveal complexity.
 
 Preferred information flow:
 
@@ -495,7 +495,7 @@ Do not use color alone to create hierarchy.
 
 # 09. UX-008 — Reduce Text, Preserve Meaning
 
-FloraOS MUST NOT solve unclear UX by adding explanatory paragraphs everywhere.
+ALG MUST NOT solve unclear UX by adding explanatory paragraphs everywhere.
 
 When text is excessive, first investigate:
 
@@ -741,7 +741,7 @@ Products
 Performance
 ```
 
-The actual IA must be reconciled with current FloraOS-Core before implementation.
+The actual IA must be reconciled with current ALG-Core before implementation.
 
 ---
 
@@ -827,7 +827,7 @@ Scope becomes especially important for:
 
 # 21. INTERACTION DESIGN STANDARD
 
-FloraOS SHOULD align interaction behavior with recognized human-centered interaction principles.
+ALG SHOULD align interaction behavior with recognized human-centered interaction principles.
 
 The design should support:
 
@@ -1107,7 +1107,7 @@ scope:
 
 # 32. ACCESSIBILITY BASELINE
 
-FloraOS SHOULD use **WCAG 2.2** as its accessibility baseline.
+ALG SHOULD use **WCAG 2.2** as its accessibility baseline.
 
 Accessibility considerations MUST include:
 
@@ -1189,7 +1189,7 @@ Every significant screen SHOULD pass:
 
 # 35. UX LINT
 
-FloraOS SHOULD eventually implement an automated or AI-assisted **UX Lint** layer.
+ALG SHOULD eventually implement an automated or AI-assisted **UX Lint** layer.
 
 UX Lint should detect:
 
@@ -1511,7 +1511,7 @@ AI MUST NOT be instructed simply:
 Preferred:
 
 ```text
-Apply the FloraOS UX Constitution.
+Apply the ALG UX Constitution.
 Identify the role.
 Identify the primary job.
 Create the Screen Contract.
@@ -1706,7 +1706,7 @@ Recommended:
 ```text
 docs/
 └── ux/
-    ├── FLORAOS-UX-CONSTITUTION.md
+    ├── ALG-UX-CONSTITUTION.md
     │
     ├── role-ux/
     │   ├── role-ux-constitution.md
@@ -1727,13 +1727,13 @@ docs/
     └── audits/
 ```
 
-The actual location MUST be reconciled with the existing FloraOS-Core documentation architecture.
+The actual location MUST be reconciled with the existing ALG-Core documentation architecture.
 
 ---
 
 # 53. EXTERNAL STANDARDS BASELINE
 
-FloraOS UX governance SHOULD use recognized external standards as references.
+ALG UX governance SHOULD use recognized external standards as references.
 
 ## ISO 9241-210
 
@@ -1807,7 +1807,7 @@ ISO = UI component library
 
 ISO provides principles and process guidance.
 
-FloraOS still requires:
+ALG still requires:
 
 ```text
 Design System
@@ -1890,7 +1890,7 @@ More information
 
 # 57. FINAL UX QUALITY MODEL
 
-FloraOS UX quality should be evaluated as:
+ALG UX quality should be evaluated as:
 
 ```text
              UX QUALITY
@@ -1914,7 +1914,7 @@ FloraOS UX quality should be evaluated as:
 
 # 58. FINAL AGENT DIRECTIVE
 
-When creating or modifying any FloraOS UI, the Agent MUST NOT start by asking:
+When creating or modifying any ALG UI, the Agent MUST NOT start by asking:
 
 ```text
 "What would look good?"
@@ -1951,9 +1951,9 @@ DESIGN
 
 # 59. MASTER UX RULE
 
-> **FloraOS should not show users everything the system knows. It should show users what they need to know, when they need to know it, in the order required to make the next correct decision or action.**
+> **ALG should not show users everything the system knows. It should show users what they need to know, when they need to know it, in the order required to make the next correct decision or action.**
 
-This is the central rule of the FloraOS UX Constitution.
+This is the central rule of the ALG UX Constitution.
 
 ---
 
@@ -1962,15 +1962,15 @@ This is the central rule of the FloraOS UX Constitution.
 The AI Agent MUST use both documents together.
 
 ```text
-FLORAOS-UX-CONSTITUTION.md
+ALG-UX-CONSTITUTION.md
         │
         │ Global UX quality rules
         ↓
-FLORAOS-ROLE-UX-AI-AGENT-EXECUTION-CONTRACT.md
+ALG-ROLE-UX-AI-AGENT-EXECUTION-CONTRACT.md
         │
         │ Role-specific rules
         ↓
-CURRENT FLORAOS-CORE
+CURRENT ALG-CORE
         │
         ↓
 AUDIT
@@ -2059,10 +2059,10 @@ Clarification, typo correction, example improvement or non-semantic refinement.
 
 # 63. END STATE
 
-The final FloraOS UX system should operate as:
+The final ALG UX system should operate as:
 
 ```text
-                 FLORAOS UX GOVERNANCE
+                 ALG UX GOVERNANCE
                           │
           ┌───────────────┴────────────────┐
           │                                │
@@ -2090,12 +2090,12 @@ The final FloraOS UX system should operate as:
                   COMMERCIAL READY
 ```
 
-The objective is not to make every FloraOS screen visually impressive.
+The objective is not to make every ALG screen visually impressive.
 
-The objective is to make every FloraOS screen:
+The objective is to make every ALG screen:
 
 **clear, purposeful, role-appropriate, efficient, predictable, consistent, accessible, recoverable, and commercially trustworthy.**
 
 ---
 
-**END OF FLORAOS UX CONSTITUTION**
+**END OF ALG UX CONSTITUTION**

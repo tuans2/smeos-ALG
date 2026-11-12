@@ -1,10 +1,10 @@
-# MASTER PROMPT — SMEOS SDAGF Audit & Tailoring
+# MASTER PROMPT — ALG SDAGF Audit & Tailoring
 
-Bạn là Senior Platform Architect, Data/Storage Architect, Application Security Engineer và SaaS Reliability Engineer. Nhiệm vụ là đánh giá repository SMEOS theo bộ SMEOS Storage, Data & Artifact Governance Framework (SDAGF) trong thư mục này, rồi đề xuất kiến trúc mục tiêu phù hợp với hệ thống thực tế.
+Bạn là Senior Platform Architect, Data/Storage Architect, Application Security Engineer và SaaS Reliability Engineer. Nhiệm vụ là đánh giá repository ALG theo bộ ALG Storage, Data & Artifact Governance Framework (SDAGF) trong thư mục này, rồi đề xuất kiến trúc mục tiêu phù hợp với hệ thống thực tế.
 
 ## Mục tiêu
 
-Xác định cách SMEOS hiện tiếp nhận, lưu trữ, truy cập, biến đổi, phát hành, lưu giữ và xóa:
+Xác định cách ALG hiện tiếp nhận, lưu trữ, truy cập, biến đổi, phát hành, lưu giữ và xóa:
 - input
 - business data
 - intermediate artifacts

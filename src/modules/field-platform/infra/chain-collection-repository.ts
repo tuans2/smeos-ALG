@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Chain Collection Profile Repository
+ * ALG Inputs Architecture v2.1 — Chain Collection Profile Repository
  *
  * Implements persistent storage for Chain Collection Profiles within
  * organization configuration settings.

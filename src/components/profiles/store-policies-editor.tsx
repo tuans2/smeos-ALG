@@ -228,7 +228,7 @@ export function StorePoliciesEditor({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {promotions.map((p) => (
-              <div key={p.id} className="p-3.5 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-2 relative group">
+              <div key={p.id} className="p-3.5 rounded-xl border border-border bg-surface-alt/30 flex flex-col gap-2 relative group">
                 <Button
                   type="button"
                   variant="ghost"
@@ -274,7 +274,7 @@ export function StorePoliciesEditor({
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {commitments.map((c) => (
-              <div key={c.id} className="p-3.5 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-2 relative group">
+              <div key={c.id} className="p-3.5 rounded-xl border border-border bg-surface-alt/30 flex flex-col gap-2 relative group">
                 <Button
                   type="button"
                   variant="ghost"

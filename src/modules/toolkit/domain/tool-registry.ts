@@ -1,7 +1,7 @@
 /**
  * tool-registry.ts — Toolkit SSOT Registry & Tier Projection Engine
  *
- * Single Source of Truth (SSOT) cho toàn bộ 48+ công cụ trên nền tảng smeOS.
+ * Single Source of Truth (SSOT) cho toàn bộ 48+ công cụ trên nền tảng ALG.
  * - Quản lý tập trung mọi metadata của công cụ (ID, Tên, Đường dẫn, Icon, Năng lực, Trạng thái).
  * - Cung cấp ma trận phân bổ công cụ theo 3 Tầng sử dụng:
  *     + INDUSTRY: SaaS Ngành (Tầng 2)

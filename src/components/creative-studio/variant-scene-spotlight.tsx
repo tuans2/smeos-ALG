@@ -105,7 +105,7 @@ export function ActiveSceneSpotlight({
           </div>
 
           {activeScene.fallbackReason && (
-            <div className="rounded-xl border border-warning bg-warning-bg px-3.5 py-2.5 text-caption text-warning">
+            <div className="rounded-xl border border-warning bg-warning-bg px-3.5 py-2.5 text-caption text-warning-text">
               <strong>Chưa có bối cảnh của kịch bản:</strong> worker lùi về phông Studio cục bộ. Lý do: {activeScene.fallbackReason}
             </div>
           )}

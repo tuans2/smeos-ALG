@@ -1,7 +1,7 @@
 """Google Gemini Image — enhancer nhà cung cấp cho M04a (25/09/2026, PO chọn thêm).
 
 Một lượt sửa ảnh làm các bước Gemini làm được: phông studio + chỉnh sáng +
-làm nét theo mô tả, giữ nguyên bó hoa (Guard của FloraOS đo lại). Xoá
+làm nét theo mô tả, giữ nguyên bó hoa (Guard của ALG đo lại). Xoá
 watermark / chèn chữ không đưa vào mô tả → `bo_qua`. Lỗi → theo cờ
 `lui_cuc_bo`: lùi `StudioEnhancer` (mặc định) hoặc ném `NhaCungCapLoi` để
 chuỗi nhà cung cấp thử bên kế tiếp.

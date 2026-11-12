@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Get Store Folder Data (§9.5.8)
+ * ALG Inputs Architecture v2.1 — Get Store Folder Data (§9.5.8)
  *
  * Implements "Folder in Folder" data retrieval for a specific store:
  * 1. Groups data by Input Domains (org_legal, brand, catalog, finance_tax_payment, sales_policy, etc.)

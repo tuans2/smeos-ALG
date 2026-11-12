@@ -1,6 +1,6 @@
 /**
  * Landing Page Journey Manifest MVP (PATCH P4)
- * FloraOS Core — Final Hardening Patch v2.3 / Mục 11.4 & Mục 12
+ * ALG Core — Final Hardening Patch v2.3 / Mục 11.4 & Mục 12
  */
 
 import { JourneyManifestV2 } from '../journey-manifest-v2'

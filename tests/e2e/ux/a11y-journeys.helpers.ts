@@ -11,7 +11,7 @@ export const PRESETS = ["moc-lan", "modern-slate", "pure-swiss"] as const
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]
 const MAX_TABS = 40
 
-const dbUrl = process.env.DATABASE_URL || "postgresql://floraos:floraos@localhost:5432/floraos"
+const dbUrl = process.env.DATABASE_URL || "postgresql://alg:alg@localhost:5432/alg"
 
 export async function withDb<T>(fn: (db: Client) => Promise<T>): Promise<T> {
   const db = new Client({ connectionString: dbUrl })

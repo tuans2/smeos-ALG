@@ -46,7 +46,7 @@ export function MemberPhoneAction({
 
   return (
     <>
-      <Button type="button" variant="outline" size="sm" onClick={() => setOpen(true)} aria-label={`Số điện thoại của ${who}`}>
+      <Button type="button" variant="outline" size="sm" onClick={() => setOpen(true)} aria-label={`${member.phone || "Thêm số"} — số điện thoại của ${who}`}>
         <Phone size={15} />
         <span>{member.phone || "Thêm số"}</span>
       </Button>

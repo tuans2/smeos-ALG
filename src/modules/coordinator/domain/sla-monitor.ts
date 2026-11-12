@@ -105,7 +105,7 @@ export function evaluateOrderSla(params: {
       return {
         status,
         label: "Cảnh báo sắp trễ (<30p)",
-        colorToken: "text-warning border-warning/40 bg-warning-bg",
+        colorToken: "text-warning-text border-warning/40 bg-warning-bg",
         badgeVariant: "warning",
         suggestedAction,
       }

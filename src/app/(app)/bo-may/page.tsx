@@ -9,11 +9,11 @@
 // là chất lượng, chi phí, và ảnh có rời khỏi hạ tầng của tổ chức hay không —
 // nên màn này nói thẳng cả ba, thay vì bày ba lựa chọn trông ngang nhau.
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
-import { Check } from "@/components/ui/icon-set/check"
 import { Cloud } from "@/components/ui/icon-set/cloud"
 import { Server } from "@/components/ui/icon-set/server"
 import { Button } from "@/components/ui/button"
@@ -36,7 +36,7 @@ type MoTaBoMay = {
 
 const NHAN_TRANG_THAI: Record<TrangThai, { chu: string; lop: string }> = {
   san_xuat: { chu: "Đã chạy thật", lop: "bg-success-bg text-primary" },
-  thu_nghiem: { chu: "Chưa đo độ chính xác", lop: "bg-warning-bg text-warning" },
+  thu_nghiem: { chu: "Chưa đo độ chính xác", lop: "bg-warning-bg text-warning-text" },
   chua_san_sang: { chu: "Chưa sẵn sàng", lop: "bg-surface-alt text-text-muted" },
 }
 
@@ -119,7 +119,7 @@ export default function BoMayPage() {
         </div>
 
         {loi && (
-          <div className="rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-caption font-medium text-warning">
+          <div className="rounded-xl border border-warning/30 bg-warning-bg px-3.5 py-2.5 text-caption font-medium text-warning-text">
             {loi}
           </div>
         )}
@@ -129,41 +129,30 @@ export default function BoMayPage() {
         )}
 
         {danhSach && (
-          <div role="radiogroup" aria-label="Danh sách bộ máy phân tích ảnh" className="flex flex-col gap-3">
+          // Nhóm lựa chọn chuẩn (Đợt 4, D4-09): bàn phím và ARIA do RadioGroup lo; cả thẻ là <label> nên bấm đâu cũng chọn
+          <RadioGroup
+            aria-label="Danh sách bộ máy phân tích ảnh"
+            value={chon}
+            onValueChange={(v) => setChon(String(v))}
+            disabled={!doiDuoc}
+            className="flex flex-col gap-3"
+          >
             {danhSach.map((bo) => {
               const dangChon = chon === bo.key
               const nhan = NHAN_TRANG_THAI[bo.trang_thai]
               return (
-                <div
+                <label
                   key={bo.key}
-                  role="radio"
-                  aria-checked={dangChon}
-                  aria-disabled={!doiDuoc}
-                  tabIndex={doiDuoc ? 0 : -1}
-                  onClick={() => doiDuoc && setChon(bo.key)}
-                  onKeyDown={(e) => {
-                    if (doiDuoc && (e.key === " " || e.key === "Enter")) {
-                      e.preventDefault()
-                      setChon(bo.key)
-                    }
-                  }}
                   className={cn(
-                    "flex flex-col gap-2.5 p-4 rounded-2xl border text-left transition-all duration-150 bg-surface",
+                    "flex flex-col gap-2.5 p-4 rounded-2xl border text-left transition-all duration-150 bg-surface has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
                     dangChon
                       ? "border-primary ring-1 ring-primary/20 bg-primary/[0.02]"
                       : "border-border hover:border-border-subtle",
-                    doiDuoc ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" : "cursor-default opacity-85"
+                    doiDuoc ? "cursor-pointer" : "cursor-default opacity-85"
                   )}
                 >
                   <div className="flex items-center gap-2">
-                    <div
-                      className={cn(
-                        "flex h-[22px] w-[22px] flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                        dangChon ? "border-primary bg-primary text-white" : "border-border"
-                      )}
-                    >
-                      {dangChon && <Check size={13} strokeWidth={3} />}
-                    </div>
+                    <RadioGroupItem value={bo.key} className="h-[22px] w-[22px] border-2" />
                     <div className="flex-1 text-body-sm font-bold text-text">{bo.ten}</div>
                     {bo.key === dangDung && (
                       <span className="rounded-full bg-success-bg px-2.5 py-1 text-caption font-bold text-primary">
@@ -190,16 +179,16 @@ export default function BoMayPage() {
                       )}
                     </span>
                   </div>
-                </div>
+                </label>
               )
             })}
-          </div>
+          </RadioGroup>
         )}
 
         {danhSach && (
           <div className="flex items-start gap-2 rounded-xl bg-warning-bg p-3.5">
-            <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning" />
-            <div className="text-caption leading-relaxed text-warning">
+            <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning-text" />
+            <div className="text-caption leading-relaxed text-warning-text">
               Chỉ bộ &quot;Đầy đủ&quot; đã chạy trên ảnh thật. Hai bộ còn lại chưa được chấm điểm trên
               bộ ảnh chuẩn, nên chưa có căn cứ nói bộ nào đếm đúng hơn. Đổi bộ máy được ghi vào nhật ký
               kiểm toán để về sau đối chiếu được kết quả của từng giai đoạn.
@@ -274,7 +263,7 @@ export default function BoMayPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 flex flex-col gap-1.5 text-warning">
+          <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 flex flex-col gap-1.5 text-warning-text">
             <div className="font-bold flex items-center gap-1.5">
               <AlertTriangle size={14} /> Lưu ý trước khi đổi:
             </div>

@@ -165,7 +165,7 @@ export function StoryboardEditor({
       {/* Cảnh báo nếu kịch bản chưa hợp lệ */}
       {!validation.isValid && (
         <div className="flex items-start gap-2 bg-warning/10 border border-warning/30 text-text rounded-lg p-3 text-caption">
-          <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning" />
+          <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning-text" />
           <div className="flex flex-col gap-0.5">
             <span className="font-semibold">Cần điều chỉnh kịch bản:</span>
             {validation.errors.map((err, i) => (

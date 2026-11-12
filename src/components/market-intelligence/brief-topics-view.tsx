@@ -93,7 +93,7 @@ export function BriefTopicsView({
       {/* Banner Thư Viện Kịch Bản Bán Hàng */}
       <div className="rounded-2xl border border-warning-border/90 bg-gradient-to-br from-warning-bg/70 via-white to-bg p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning text-white shadow-sm flex-shrink-0">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning text-text shadow-sm flex-shrink-0">
             <Lightbulb size={20} />
           </div>
           <div>

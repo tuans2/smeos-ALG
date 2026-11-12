@@ -104,7 +104,7 @@ export function CatalogSections() {
           <FormField id="demo-select">
             <FormLabel>Preset giao diện</FormLabel>
             <Select value={selectVal} onValueChange={setSelectVal}>
-              <SelectTrigger>
+              <SelectTrigger aria-label="Preset giao diện">
                 <SelectValue placeholder="Chọn preset…" />
               </SelectTrigger>
               <SelectContent>

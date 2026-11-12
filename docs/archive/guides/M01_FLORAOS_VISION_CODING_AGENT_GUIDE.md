@@ -3,9 +3,9 @@
 **Version:** 1.2
 **Ngày:** 2026-09-09 (cập nhật: đồng bộ với Kiến trúc V2 — repo core mới, quyết định D5-c và D6-1)
 **Module:** **M01 — Product Image Analysis** (một trong 8 module của FloraOS, xem Mục 2 Kiến trúc hệ thống)
-**Repo:** `floraos-core` (repo mới — xem `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` mục 2). Repo `FloraOS` cũ đã nghỉ hưu và là **nguồn thu hoạch**, không phải nơi triển khai.
+**Repo:** `floraos-core` (repo mới — xem `ALG_SAAS_TARGET_ARCHITECTURE_V2.md` mục 2). Repo `FloraOS` cũ đã nghỉ hưu và là **nguồn thu hoạch**, không phải nơi triển khai.
 
-**Tài liệu cấp trên (bắt buộc tuân thủ):** `FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md` · **Bản đồ thu hoạch:** `HARVEST_MANIFEST.md`
+**Tài liệu cấp trên (bắt buộc tuân thủ):** `ALG_SAAS_TARGET_ARCHITECTURE_V2.md` · **Bản đồ thu hoạch:** `HARVEST_MANIFEST.md`
 **Tài liệu kiến trúc module:** `ALG_AI_Vision_Architecture_V2_Canonical.md`
 **Đối tượng sử dụng:** AI Coding Agent (Claude Code, Cursor, Copilot Agent, hoặc tương đương) khi thực thi task trên codebase `floraos-core`.
 
@@ -18,7 +18,7 @@ Tài liệu này **không thay thế** kiến trúc chuẩn — nó là **quy tr
 ### 0.1. Thang bậc tài liệu — tài liệu nào thắng khi mâu thuẫn
 
 ```text
-CẤP 1 — HỆ THỐNG:  FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md
+CẤP 1 — HỆ THỐNG:  ALG_SAAS_TARGET_ARCHITECTURE_V2.md
    Thắng tuyệt đối về: phân bổ repo, multi-tenant (organization_id), RBAC,
    mô hình GenerationJob, Usage, Asset, Review & Approve, Experience/trial,
    ranh giới TS/Python, thứ tự Phase tổng (P0–P12).

@@ -32,7 +32,7 @@ describe("tên miền riêng của cửa hàng", () => {
 
   async function verifiedDomain(t: Tenant, hostname: string) {
     const d = await addCustomDomain(can(t, ["D19"]), { hostname }, deps)
-    txt[`_smeos-verify.${hostname}`] = [[d.records[0]!.value]]
+    txt[`_alg-verify.${hostname}`] = [[d.records[0]!.value]]
     await verifyCustomDomain(can(t, ["D19"]), d.id, deps)
     return d
   }
@@ -65,17 +65,25 @@ describe("tên miền riêng của cửa hàng", () => {
     expect(d.status).toBe("PENDING")
     expect(await resolveCustomDomainRequest("hoa.tiem-a.vn", "/ch/tiem-a-gioi-thieu")).toEqual({ action: "not_found" })
 
-    txt["_smeos-verify.hoa.tiem-a.vn"] = [["smeos-verify=sai-ma"]]
+    txt["_alg-verify.hoa.tiem-a.vn"] = [["alg-verify=sai-ma"]]
     const wrong = await verifyCustomDomain(can(a, ["D19"]), d.id, deps)
     expect(wrong.verified).toBe(false)
     expect(wrong.domain.status).toBe("PENDING")
 
-    txt["_smeos-verify.hoa.tiem-a.vn"] = [[d.records[0]!.value]]
+    txt["_alg-verify.hoa.tiem-a.vn"] = [[d.records[0]!.value]]
     const ok = await verifyCustomDomain(can(a, ["D19"]), d.id, deps)
     expect(ok.verified).toBe(true)
     expect(ok.domain).toMatchObject({ status: "VERIFIED", certificateStatus: "REQUESTED" })
     expect(attached).toEqual(["hoa.tiem-a.vn"])
     expect(await resolveCustomDomainRequest("hoa.tiem-a.vn:443", "/ch/tiem-a-gioi-thieu")).toEqual({ action: "next" })
+  })
+
+  it("bản ghi cũ _smeos-verify (thêm trước khi đổi tên ALG) vẫn xác minh được", async () => {
+    const d = await addCustomDomain(can(a, ["D19"]), { hostname: "cu.tiem-a.vn" }, deps)
+    const token = d.records[0]!.value.replace(/^alg-verify=/, "")
+    txt["_smeos-verify.cu.tiem-a.vn"] = [[`smeos-verify=${token}`]]
+    const ok = await verifyCustomDomain(can(a, ["D19"]), d.id, deps)
+    expect(ok.verified).toBe(true)
   })
 
   it("tên miền của A không mở dữ liệu của B; trang ngoài danh sách (đăng nhập) → 404; trang chủ → trang cửa hàng A", async () => {

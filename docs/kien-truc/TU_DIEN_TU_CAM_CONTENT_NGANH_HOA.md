@@ -1,5 +1,5 @@
 # 🌸 TỪ ĐIỂN TỪ NGỮ CẤM & KHUYẾN CÁO AN TOÀN NỘI DUNG NGÀNH HOA
-> **FloraOS Content Guard Lexicon — M07 AI Content Engine**  
+> **ALG Content Guard Lexicon — M07 AI Content Engine**  
 > **Phiên bản:** 1.0.0  
 > **Cập nhật lần cuối:** 15/09/2026  
 > **Mục đích:** Bảng tham chiếu chính thức (Single Source of Truth) dành cho Chuyên gia ngành hoa, Marketer và Reviewer Agent để rà soát, kiểm soát chất lượng và cập nhật các từ ngữ/cụm từ bị hạn chế trong nội dung tiếp thị tự động.
