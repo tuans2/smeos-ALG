@@ -13,6 +13,7 @@ import type { OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { returnStock } from "../infra/order-stock"
+import { releaseOrderBookings } from "@/modules/availability/infra/order-booking-hold"
 import { releaseLeadOfCancelledOrder } from "../infra/order-lead-link"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 import { orderCoordinationPort, type OrderCoordinationPort } from "@/modules/coordinator/use-cases/order-coordination-port"
@@ -25,7 +26,8 @@ export async function cancelOrder(
   notify: typeof notifyOrganization = notifyOrganization,
   coordination: OrderCoordinationPort = orderCoordinationPort,
   releaseStock: typeof returnStock = returnStock,
-  releaseLead: typeof releaseLeadOfCancelledOrder = releaseLeadOfCancelledOrder
+  releaseLead: typeof releaseLeadOfCancelledOrder = releaseLeadOfCancelledOrder,
+  releaseBookings: typeof releaseOrderBookings = releaseOrderBookings
 ): Promise<OrderRecord> {
   // Gác quyền R6 (Trần cứng)
   requireCapability(ctx, "R6")
@@ -70,6 +72,8 @@ export async function cancelOrder(
     ])
     // Hoàn tồn đã trừ lúc tạo đơn (Q9); đơn ở Điều phối được hoàn trong `cancelCoordinatorOrder`
     await releaseStock(ctx.organizationId, orderId)
+    // Trả lịch đặt chỗ của đơn (audit User Journey UJ-23); đơn ở Điều phối được trả trong `cancelCoordinatorOrder`
+    await releaseBookings(ctx.organizationId, orderId)
     // Lead gắn với đơn về "Theo dõi"; đơn ở Điều phối được xử lý trong `cancelCoordinatorOrder` (UJ-13)
     await releaseLead(ctx.organizationId, orderId)
   }

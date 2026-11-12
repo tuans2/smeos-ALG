@@ -41,6 +41,7 @@ import {
   runCoordinatorTx,
 } from "./shared"
 import { returnStock } from "@/modules/orders/infra/order-stock"
+import { releaseOrderBookings } from "@/modules/availability/infra/order-booking-hold"
 import { releaseLeadOfCancelledOrder } from "@/modules/orders/infra/order-lead-link"
 
 function currentAxes(row: CoordinatorOrderRow) {
@@ -306,6 +307,7 @@ export async function cancelCoordinatorOrder(
     const rejectedPending = await new PendingPaymentRepository(tx).rejectAllForOrder(ctx, row.id)
     // Hoàn tồn đã trừ lúc tạo đơn (PO 07/11/2026, Q9) trong cùng giao dịch huỷ — huỷ lỗi thì không hoàn (audit BL-26)
     await returnStock(ctx.organizationId, row.id, tx)
+    await releaseOrderBookings(ctx.organizationId, row.id, tx) // trả lịch đặt chỗ (UJ-23)
     await audit(ctx, tx, "coordinator.order.cancel", row.id, { stage: from }, { stage: "CANCELLED", reason: input.reason.trim(), rejectedPending })
     return row.id
   })
