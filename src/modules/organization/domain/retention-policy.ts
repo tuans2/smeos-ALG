@@ -15,6 +15,8 @@ export type RetentionAction = (typeof RETENTION_ACTIONS)[number]
  *   ẩn danh sau lần tương tác cuối.
  * - `customer_profiles`: hồ sơ khách không có hoạt động nào — ẩn danh (giữ đơn, phiếu thu, hoá đơn VAT).
  * - `non_ledger_documents`: báo giá, đơn huỷ chưa thu đồng nào — xoá.
+ * - `finished_jobs`: job sinh ảnh / nội dung đã xong, lỗi hoặc huỷ (ADR-015 D-O6, bước O-10) — xoá cùng nhật ký job;
+ *   `usage` giữ nguyên, job còn được phân tích sản phẩm / phong cách thương hiệu trỏ tới thì giữ.
  * Chứng từ ghi sổ 10 năm chưa làm (PO 12/11/2026: chờ pháp lý xác nhận mốc).
  */
 export const RETENTION_CATEGORIES = {
@@ -24,6 +26,7 @@ export const RETENTION_CATEGORIES = {
   customer_conversations: "ANONYMIZE",
   customer_profiles: "ANONYMIZE",
   non_ledger_documents: "DELETE",
+  finished_jobs: "DELETE",
 } as const satisfies Record<string, RetentionAction>
 export type RetentionCategory = keyof typeof RETENTION_CATEGORIES
 
