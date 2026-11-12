@@ -19,7 +19,7 @@ export const step05QCInspectionContract = defineStep({
   step: 5,
   code: "QUALITY_CHECK",
   slug: "quality-check",
-  title: "Kiểm định chất lượng (T14–T15)",
+  title: "Kiểm định chất lượng",
   summary: "Người kiểm kết luận PASSED / REWORK_REQUESTED / REJECTED; không đạt bắt buộc lý do. Điểm AI chỉ ghi khi có lượt Vision thật (nợ #140)",
   endpoint: {
     method: "POST",

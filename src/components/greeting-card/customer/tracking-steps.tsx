@@ -47,7 +47,7 @@ export function TrackingSteps({
         const isCompleted = stepIndex > step || stepIndex === TRACKING_STEP_COUNT
         const isCurrent = stepIndex === step && stepIndex !== TRACKING_STEP_COUNT
         return (
-          <li key={s.label} className="flex flex-col items-center gap-1 text-center" aria-current={isCurrent ? "step" : undefined}>
+          <li key={s.label} className="flex min-w-0 flex-col items-center gap-1 text-center" aria-current={isCurrent ? "step" : undefined}>
             <div
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
                 isCompleted
@@ -59,10 +59,11 @@ export function TrackingSteps({
             >
               <Icon size={16} aria-hidden="true" />
             </div>
-            <span className={`text-caption font-bold leading-tight whitespace-nowrap ${isCurrent ? "text-primary" : isCompleted ? "text-success" : "text-text-muted"}`}>
+            <span className={`text-caption font-bold leading-tight break-words ${isCurrent ? "text-primary" : isCompleted ? "text-success" : "text-text-muted"}`}>
               {s.label}
             </span>
-            {timeLabels[idx] && <span className="text-caption font-medium text-text-muted leading-tight tracking-tight whitespace-nowrap">{timeLabels[idx]}</span>}
+            {/* Ô ~60px ở 390px: cho xuống dòng sau "–" để khung giờ không đè sang cột bên */}
+            {timeLabels[idx] && <span className="text-caption font-medium text-text-muted leading-tight tracking-tight break-words">{timeLabels[idx].replace("–", "–\u200b")}</span>}
           </li>
         )
       })}

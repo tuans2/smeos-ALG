@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "step-02-validate-plan.output.schema.json",
-  "title": "Thẩm định & Lập kế hoạch (T02) — Đầu ra",
+  "title": "Thẩm định & Lập kế hoạch — Đầu ra",
   "description": "Chuyển INTAKE → VALIDATING/PLANNING → ASSIGNING; máy chủ kiểm luồng và bằng chứng (409 nếu sai)",
   "x-alg": {
     "stepId": "02",
@@ -503,6 +503,12 @@
                     "widthCm"
                   ],
                   "additionalProperties": false
+                },
+                "assemblySteps": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "warningTags": {
                   "type": "array",

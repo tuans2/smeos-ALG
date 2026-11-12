@@ -331,7 +331,7 @@ export function VideoWorkspace() {
           metrics={[
             { label: "Khuôn video", value: spec.label },
             { label: "Tỷ lệ", value: spec.aspectRatio },
-            { label: "Thời lượng", value: `~${spec.targetDurationSeconds}s` },
+            { label: "Thời lượng", value: `khoảng ${spec.targetDurationSeconds} giây` },
             { label: "Phụ đề", value: hasSubtitle ? "Có" : "Không" },
           ]}
         />

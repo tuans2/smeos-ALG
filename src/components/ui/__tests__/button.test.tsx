@@ -89,3 +89,14 @@ describe("Button component", () => {
     expect(html).not.toContain("text-white")
   })
 })
+
+describe("Button — icon không bị co (Đợt 4, D4-13)", () => {
+  it("lớp gốc giữ kích thước icon khi nút có kích thước cố định và padding", () => {
+    const html = renderToStaticMarkup(
+      <Button variant="outline" className="h-11 w-11" aria-label="Hộp việc">
+        <svg width="18" height="18" />
+      </Button>,
+    )
+    expect(html).toContain("[&amp;_svg]:shrink-0")
+  })
+})

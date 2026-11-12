@@ -179,7 +179,7 @@ function OrgCard({
       <div className="flex items-center gap-1.5 text-caption text-text-muted bg-surface-alt rounded-lg px-2.5 py-1.5">
         <Database size={11} />
         <span>
-          ~{totalRecords.toLocaleString("vi-VN")} bản ghi có thể xem &amp; tải về
+          Khoảng {totalRecords.toLocaleString("vi-VN")} bản ghi có thể xem &amp; tải về
         </span>
         <FileDown size={11} className="ml-auto opacity-50 group-hover:opacity-100 transition-opacity" />
       </div>
@@ -300,7 +300,7 @@ function DomainPicker({
                       {d.label}
                     </p>
                     <p className="text-caption text-text-muted font-bold">
-                      {typeof count === "number" ? `~${count.toLocaleString("vi-VN")} bản ghi` : "—"}
+                      {typeof count === "number" ? `Khoảng ${count.toLocaleString("vi-VN")} bản ghi` : "—"}
                     </p>
                   </div>
                 </div>

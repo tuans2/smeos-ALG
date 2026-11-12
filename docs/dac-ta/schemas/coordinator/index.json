@@ -13,7 +13,7 @@
       "id": "01",
       "code": "INTAKE",
       "slug": "intake",
-      "title": "Tiếp nhận đơn (T01)",
+      "title": "Tiếp nhận đơn",
       "endpoint": {
         "method": "POST",
         "path": "/api/v1/coordinator/orders",
@@ -28,7 +28,7 @@
       "id": "02",
       "code": "VALIDATE_PLAN",
       "slug": "validate-plan",
-      "title": "Thẩm định & Lập kế hoạch (T02)",
+      "title": "Thẩm định & Lập kế hoạch",
       "endpoint": {
         "method": "PATCH",
         "path": "/api/v1/coordinator/orders/{id}/stage",
@@ -43,7 +43,7 @@
       "id": "03",
       "code": "ASSIGN_PARTNER",
       "slug": "assign-partner",
-      "title": "Phân công đối tác xưởng (T06)",
+      "title": "Phân công đối tác xưởng",
       "endpoint": {
         "method": "POST",
         "path": "/api/v1/coordinator/orders/{id}/assign-partner",
@@ -58,7 +58,7 @@
       "id": "04",
       "code": "PRODUCTION",
       "slug": "production",
-      "title": "Theo dõi sản xuất (T07–T11)",
+      "title": "Theo dõi sản xuất",
       "endpoint": {
         "method": "POST",
         "path": "/api/v1/coordinator/orders/{id}/production",
@@ -73,7 +73,7 @@
       "id": "05",
       "code": "QUALITY_CHECK",
       "slug": "quality-check",
-      "title": "Kiểm định chất lượng (T14–T15)",
+      "title": "Kiểm định chất lượng",
       "endpoint": {
         "method": "POST",
         "path": "/api/v1/coordinator/orders/{id}/qc",
@@ -103,7 +103,7 @@
       "id": "07",
       "code": "CLOSE_LEARN",
       "slug": "close-learn",
-      "title": "Nghiệm thu & Đóng đơn (T25–T27)",
+      "title": "Nghiệm thu & Đóng đơn",
       "endpoint": {
         "method": "POST",
         "path": "/api/v1/coordinator/orders/{id}/close",

@@ -84,10 +84,11 @@ function ProofVerificationCard({
 
           {/* Ba nhánh hiển thị rõ ràng — không lấp lửng */}
           {!analysis && (
-            // Chưa có kết quả AI (đang xử lý ngầm — thường chỉ vài giây sau khi khách tải lên)
-            <p className="text-caption text-text-muted flex items-center gap-1">
-              <Clock size={11} className="animate-spin motion-reduce:animate-none shrink-0" />
-              <span>Đang đọc dữ liệu biên lai...</span>
+            // Chưa có kết quả: tiệm chưa bật "AI đọc bill" (mặc định — PO 14/10/2026) hoặc AI đang xử lý.
+            // Không hiện "đang đọc" vì khi công tắc tắt sẽ không bao giờ có kết quả (Đợt 4, D4-14).
+            <p className="text-caption text-text-muted flex items-start gap-1">
+              <Clock size={11} className="shrink-0 mt-0.5" />
+              <span>Chưa có kết quả đọc tự động. Xem ảnh và đối chiếu với sao kê ngân hàng trước khi xác nhận.</span>
             </p>
           )}
 

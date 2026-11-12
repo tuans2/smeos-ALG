@@ -116,7 +116,7 @@ export function ProductionUpdateModal({
                 BƯỚC 4 • GIA CÔNG
               </span>
               <h3 className="text-body font-extrabold text-text">
-                Tiến Độ & Ảnh Thành Phẩm (T08/T10)
+                Tiến Độ & Ảnh Thành Phẩm
               </h3>
             </div>
           </div>

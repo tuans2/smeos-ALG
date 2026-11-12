@@ -92,7 +92,7 @@ export function VideoConfigCard({
                 </div>
                 <div className="flex items-center justify-between text-caption text-text-muted mt-1">
                   <span className="flex items-center gap-1">
-                    <Clock size={11} /> ~{s.targetDurationSeconds}s
+                    <Clock size={11} /> khoảng {s.targetDurationSeconds} giây
                   </span>
                   <span
                     className="font-semibold text-warning-text flex items-center gap-0.5"

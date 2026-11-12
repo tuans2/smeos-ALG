@@ -35,7 +35,7 @@ export function MissingInfoRequestCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <HelpCircle size={17} className="text-warning-text" />
-          <span className="text-caption font-bold text-warning-text">YÊU CẦU BỔ SUNG THÔNG TIN (T03)</span>
+          <span className="text-caption font-bold text-warning-text">YÊU CẦU BỔ SUNG THÔNG TIN</span>
           <Badge tone="warning" className="text-caption font-bold">
             Đơn #{orderCode}
           </Badge>

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "step-07-close-learn.input.schema.json",
-  "title": "Nghiệm thu & Đóng đơn (T25–T27) — Đầu vào",
+  "title": "Nghiệm thu & Đóng đơn — Đầu vào",
   "description": "Chỉ khi DELIVERED và không còn sự cố mở; chốt điểm + tiền công đối tác, ghi audit",
   "x-alg": {
     "stepId": "07",

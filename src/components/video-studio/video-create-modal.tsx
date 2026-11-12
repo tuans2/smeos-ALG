@@ -137,7 +137,7 @@ export function VideoCreateModal({
                   </div>
                   <div className="flex items-center justify-between text-caption text-text-muted mt-1 w-full">
                     <span className="flex items-center gap-1">
-                      <Clock size={11} /> ~{spec.targetDurationSeconds}s
+                      <Clock size={11} /> khoảng {spec.targetDurationSeconds} giây
                     </span>
                     <span className="font-semibold text-warning-text flex items-center gap-0.5">
                       <Coins size={11} /> {spec.defaultCreditCost} credits

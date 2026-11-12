@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "step-04-production.output.schema.json",
-  "title": "Theo dõi sản xuất (T07–T11) — Đầu ra",
+  "title": "Theo dõi sản xuất — Đầu ra",
   "description": "Cập nhật tiến độ; báo cắm xong bắt buộc kèm ảnh thành phẩm (assets cùng tổ chức) → QUALITY_CHECK; báo thiếu vật liệu mở sự cố",
   "x-alg": {
     "stepId": "04",
@@ -503,6 +503,12 @@
                     "widthCm"
                   ],
                   "additionalProperties": false
+                },
+                "assemblySteps": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "warningTags": {
                   "type": "array",

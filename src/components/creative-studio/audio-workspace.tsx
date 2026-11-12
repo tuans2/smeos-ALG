@@ -295,7 +295,7 @@ export function AudioWorkspace() {
           onApprove={() => navigateToArea("d")}
           metrics={[
             { label: "Tác vụ", value: spec.label },
-            { label: "Thời lượng", value: `~${Math.round(totalDuration)}s` },
+            { label: "Thời lượng", value: `khoảng ${Math.round(totalDuration)} giây` },
             { label: "Nhạc nền", value: audioJob?.music_track_name ?? (effectiveMusic ? "Đã chọn" : "Không") },
             { label: "Giọng đọc", value: taskType === "VOICE_CLONE" ? "Giọng nhân bản" : spec.needsVoice ? selectedVoice?.displayName ?? "—" : "Không" },
           ]}

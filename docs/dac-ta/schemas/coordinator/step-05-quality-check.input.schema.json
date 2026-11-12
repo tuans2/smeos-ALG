@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "step-05-quality-check.input.schema.json",
-  "title": "Kiểm định chất lượng (T14–T15) — Đầu vào",
+  "title": "Kiểm định chất lượng — Đầu vào",
   "description": "Người kiểm kết luận PASSED / REWORK_REQUESTED / REJECTED; không đạt bắt buộc lý do. Điểm AI chỉ ghi khi có lượt Vision thật (nợ #140)",
   "x-alg": {
     "stepId": "05",
