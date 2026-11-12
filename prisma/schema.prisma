@@ -254,6 +254,7 @@ model organizations {
   partners                                         partners[]
   partner_settlements                              partner_settlements[]
   order_coordinations                              order_coordinations[]
+  order_code_sequences                             order_code_sequences[]
   order_qc_records                                 order_qc_records[]
   order_payments                                   order_payments[]
   order_exceptions                                 order_exceptions[]
@@ -2106,6 +2107,22 @@ model orders {
   @@index([lead_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([source_session_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([voucher_id]) // khoá ngoại cần index (ADR-015 O-1)
+}
+
+/// Bộ đếm số thứ tự mã đơn `DH<yymmdd>-<số>` theo tổ chức và tiền tố ngày (12/11/2026, đặc tả 07 §57). Mỗi lần tạo
+/// đơn cấp số bằng một lệnh upsert nguyên tử (`OrderRepository.allocateOrderCodeNumber`) — đơn tạo cùng lúc không còn
+/// trùng mã như khi đếm đơn trong ngày. Một dòng mỗi tổ chức mỗi ngày có đơn; không chứa dữ liệu cá nhân.
+model order_code_sequences {
+  organization_id String
+  /// Phần mã trước số thứ tự, vd `DH261112-`
+  prefix          String
+  /// Số đã cấp gần nhất
+  last_value      Int
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@id([organization_id, prefix])
 }
 
 /// ADR-014 D-P2, bước P-3a (PO duyệt 07/11/2026): người nhận và bên mua hoá đơn VAT của một đơn — nơi lưu dữ liệu cá

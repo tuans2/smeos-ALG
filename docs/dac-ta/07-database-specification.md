@@ -4166,6 +4166,39 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 57. Bộ đếm mã đơn — `order_code_sequences` (12/11/2026)
+
+PO duyệt 12/11/2026 sau thử tải O-9 (`docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md` §5): mã đơn `DH<yymmdd>-<số>`
+lấy số bằng cách đếm đơn trong ngày rồi cộng 1, nên 10 đơn tạo cùng lúc trong một chuỗi trùng mã 70/100 lần
+(`Đang có nhiều đơn tạo cùng lúc`). Migration `20261112160000_order_code_sequences` (expand, một giao dịch): bảng mới
+`order_code_sequences (organization_id, prefix, last_value, updated_at)`, khoá chính `(organization_id, prefix)`,
+khoá ngoại tới `organizations`, chính sách RLS `tenant_isolation`. Không backfill.
+
+```prisma
+model order_code_sequences {
+  organization_id String
+  prefix          String   // phần mã trước số thứ tự, vd `DH261112-`
+  last_value      Int      // số đã cấp gần nhất
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+
+  @@id([organization_id, prefix])
+}
+```
+
+- **Ghi.** `createOrder` (`src/modules/orders/use-cases/create-order.ts`) gọi
+  `allocateOrderCodeNumber` (`src/modules/orders/infra/order-code-sequence.ts`) với tiền tố ngày Việt Nam
+  (`orderCodePrefix`). Mỗi lần cấp là một câu SQL tự giao dịch (`UPDATE … RETURNING`, lần đầu trong ngày
+  `INSERT … ON CONFLICT DO UPDATE`), khoá dòng nhả ngay. Lần đầu trong ngày bắt đầu sau số lớn nhất đã có với tiền tố
+  đó (đơn tạo trước khi deploy, mã không phải số thì bỏ qua). Tạo đơn lỗi sau khi đã cấp số → số đó bị bỏ: mã có thể
+  nhảy số, không trùng. Vẫn thử lại tối đa `ORDER_CODE_ATTEMPTS` lần khi trùng khoá (bản cũ còn chạy lúc deploy).
+- **Đọc.** Không màn hình nào đọc bảng. Một dòng mỗi tổ chức mỗi ngày có đơn; không có dữ liệu cá nhân. Xuất/nhập/xoá
+  tổ chức đi theo sổ bảng-thuộc-tenant như mọi bảng khác.
+- **Ngoài phạm vi:** mã đơn Điều phối `FLR-…` (`create-coordinator-order.ts`) và mã báo giá (`quotation-repository.ts`)
+  vẫn đếm dòng + thử lại 5 lần — chưa đo dưới tải.
+
+Ca thử: `tests/tenant/order-code-sequences.test.ts` (30 đơn đồng thời ra mã liền nhau, tách tổ chức, bắt đầu sau số lớn
+nhất có sẵn, mã lạ cùng tiền tố, ngày mới đếm lại), `tests/unit/orders/order-code.test.ts`.
+
 ## 56. Mức cô lập của tổ chức — `organizations.isolation_tier` (12/11/2026)
 
 ADR-016 D-S2, bước S-5 (PO duyệt 12/11/2026). Migration `20261112120000_organization_isolation_tier` (expand, một giao
