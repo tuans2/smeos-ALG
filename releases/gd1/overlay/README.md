@@ -29,7 +29,7 @@ npm ci
 npx prisma generate
 npm run db:deploy
 npm run db:seed
-npm run seed:field-registry   # danh mục trường dữ liệu nền tảng (đơn hàng, đối tác)
+npm run seed:field-registry   # danh mục trường dữ liệu nền tảng (đơn hàng, đối tác); `npm run check:field-registry` để đối chiếu
 npm run dev               # http://localhost:3200
 ```
 
