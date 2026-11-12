@@ -123,3 +123,23 @@ export const upcomingRemindersResponse = z.strictObject({
   count: z.number(),
   scannedAt: z.string(),
 })
+
+/** Yêu cầu của khách về dữ liệu cá nhân (ADR-014 D-P5) — `result` chỉ là số dòng theo bảng. */
+export const dataRequest = z.strictObject({
+  id: z.string(),
+  customerId: z.string().nullable(),
+  type: z.enum(["EXPORT", "ERASE", "RECTIFY"]),
+  status: z.enum(["RECEIVED", "COMPLETED", "REJECTED"]),
+  receivedBy: z.string(),
+  receivedAt: timestamp,
+  dueAt: timestamp,
+  overdue: z.boolean(),
+  note: z.string().nullable(),
+  completedBy: z.string().nullable(),
+  completedAt: timestamp.nullable(),
+  result: z.record(z.string(), z.number()).nullable(),
+})
+export const dataRequestResponse = data(dataRequest)
+export const dataRequestsResponse = data(z.array(dataRequest))
+/** Gói xuất: mỗi mục là mảng bản ghi của khách (khách, dịp, đồng ý, tương tác, lead, phiên Thẻ chào, đơn, hội thoại, báo giá). */
+export const dataExportResponse = data(z.strictObject({ request: dataRequest, package: z.record(z.string(), z.unknown()) }))

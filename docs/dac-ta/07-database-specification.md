@@ -4166,6 +4166,58 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 55. Yêu cầu của khách về dữ liệu cá nhân — `data_subject_requests` (12/11/2026)
+
+ADR-014 D-P5, bước P-7a (PO duyệt 12/11/2026). Migration `20261112100000_data_subject_requests` (expand, một giao dịch):
+hai kiểu, bảng thuộc tổ chức có RLS `tenant_isolation`.
+
+```prisma
+enum data_subject_request_type {
+  EXPORT
+  ERASE
+  RECTIFY
+}
+
+enum data_subject_request_status {
+  RECEIVED
+  COMPLETED
+  REJECTED
+}
+
+model data_subject_requests {
+  id              String                      @id @default(uuid())
+  organization_id String
+  customer_id     String?                     // khách bị xoá hẳn (Q4) → null, yêu cầu giữ làm bằng chứng
+  type            data_subject_request_type
+  status          data_subject_request_status @default(RECEIVED)
+  received_by     String                      // users.id
+  received_at     DateTime                    @default(now()) @db.Timestamptz(3)
+  due_at          DateTime                    @db.Timestamptz(3) // 72 giờ (DSR_DUE_HOURS)
+  note            String?
+  completed_by    String?
+  completed_at    DateTime?                   @db.Timestamptz(3)
+  result          Json?                       // số dòng theo bảng — không có dữ liệu cá nhân
+  created_at      DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime                    @default(now()) @updatedAt @db.Timestamptz(3)
+}
+```
+
+- **Xuất** (`R13`): gói JSON dữ liệu của khách — hồ sơ, dịp, đồng ý, tương tác, lead, phiên Thẻ chào, đơn kèm người nhận
+  và hoá đơn VAT, hội thoại, báo giá (`src/modules/crm/infra/customer-data-export.ts`). Yêu cầu ghi hoàn tất ngay; nhật ký
+  `data.export` + `crm.data_subject_export`. Chưa có bản CSV.
+- **Xoá** (`Q4`): một giao dịch (`src/modules/crm/infra/customer-erasure.ts`) — khách → `Khách đã xoá` / `ERASED`, bỏ
+  băm, 4 số cuối, email, địa chỉ, ghi chú, nhãn, sở thích (SQL thô — xem `AGENT_RULES.md` §14 #25); xoá dịp và tương tác;
+  thu hồi đồng ý (giữ dòng); lead và phiên Thẻ chào của khách bỏ tên/SĐT; hội thoại xoá tin nhắn, bỏ liên kết; đơn bỏ lời
+  chúc, ghi chú nội bộ, `delivery_address`; người nhận bỏ tên/SĐT/địa chỉ — **giữ** hoá đơn VAT; điều phối bỏ SĐT khách,
+  tên người nhận ảnh giao. Giữ đơn, dòng đơn, phiếu thu. Chi nhánh được chia sẻ đơn đọc theo tham chiếu (§50) nên thấy bản
+  đã xoá.
+- **Sửa** (`Q3`): ghi nhận `RECEIVED`; sửa hồ sơ bằng `PATCH /crm/customers/:id` rồi `PATCH /crm/data-requests/:id`.
+- Hạn 72 giờ theo thực hành phổ biến với Nghị định 13/2023/NĐ-CP — **chưa phải ý kiến pháp lý**.
+- Chưa làm: màn hình cho nhân viên; bản CSV của gói xuất.
+
+Ca thử: `src/modules/crm/domain/data-subject-request.test.ts`, `tests/tenant/data-subject-requests.test.ts` (xuất đủ
+bản ghi; xoá xuyên bảng, giữ đơn + VAT, chi nhánh được chia sẻ thấy bản đã xoá; hai khách cùng tổ chức; tổ chức khác → 404).
+
 ## 54. Hạn lưu theo loại dữ liệu — `retention_policies` (11/11/2026)
 
 ADR-014 D-P4, bước P-6a (PO duyệt 11/11/2026). Migration `20261111150000_retention_policies` (expand, một giao dịch): thêm
