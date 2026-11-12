@@ -95,6 +95,16 @@ export const RETENTION_TARGETS: Record<RetentionCategory, readonly RetentionTarg
         notes = NULL, tags = '{}', preferred_flowers = '{}', preferred_colors = '{}'`,
     },
   ],
+  finished_jobs: [
+    {
+      // Nhật ký job (`job_events`) xoá dây chuyền dưới `purge_reason`; `usage` không có khoá ngoại tới job nên giữ.
+      table: "generation_jobs",
+      key: "id",
+      where: `status IN ('COMPLETED', 'FAILED', 'CANCELLED') AND COALESCE(completed_at, cancelled_at, updated_at) < $1 AND ${NOT_ON_HOLD}
+        AND NOT EXISTS (SELECT 1 FROM "product_analyses" pa WHERE pa.job_id = generation_jobs.id)
+        AND NOT EXISTS (SELECT 1 FROM "brand_style_options" bs WHERE bs.job_id = generation_jobs.id)`,
+    },
+  ],
   non_ledger_documents: [
     { table: "quotations", key: "id", where: `updated_at < $1 AND ${NOT_ON_HOLD}` },
     {

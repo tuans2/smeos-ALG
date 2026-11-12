@@ -32,3 +32,15 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO smeos_readon
 ALTER ROLE smeos_system BYPASSRLS;
 -- Báo cáo/BI/điều tra: luôn chặn theo tổ chức — phải đặt app.org_id mới đọc được dữ liệu một tổ chức.
 ALTER ROLE smeos_readonly SET app.rls_mode = 'enforce';
+
+-- Giới hạn truy vấn theo tài khoản (ADR-015 D-O5, bước O-8): request người dùng không giữ kết nối quá lâu; giao dịch bỏ
+-- ngỏ bị cắt. Thao tác dài có chủ đích (xoá / nhập / khôi phục một tổ chức) tự đặt `SET LOCAL statement_timeout` riêng
+-- trong giao dịch của nó. Có hiệu lực từ phiên kết nối mới (khởi động lại dịch vụ sau khi chạy).
+ALTER ROLE smeos_app SET statement_timeout = '15s';
+ALTER ROLE smeos_worker SET statement_timeout = '120s';
+ALTER ROLE smeos_system SET statement_timeout = '120s';
+ALTER ROLE smeos_readonly SET statement_timeout = '120s';
+ALTER ROLE smeos_app SET idle_in_transaction_session_timeout = '60s';
+ALTER ROLE smeos_worker SET idle_in_transaction_session_timeout = '60s';
+ALTER ROLE smeos_system SET idle_in_transaction_session_timeout = '60s';
+ALTER ROLE smeos_readonly SET idle_in_transaction_session_timeout = '60s';

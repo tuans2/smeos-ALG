@@ -4285,6 +4285,7 @@ model retention_policies {
 | `customer_conversations` | 3 tháng | Ẩn danh | `chat_messages` (xoá), `chat_conversations` (bỏ `customer_id`, giữ dòng), `leads` (tên → `Khách đã xoá`, SĐT → `ERASED`, bỏ băm/4 số cuối/lời nhắn), `greeting_sessions` (bỏ tên, SĐT) | hội thoại không có tin nhắn từ mốc; lead chưa `WON`, không có đơn, `updated_at` trước mốc; phiên Thẻ chào chưa đặt (không `order_id`, chưa `ORDER_SUBMITTED`/`PAYMENT_REPORTED`/`COMPLETED`), `last_active_at` trước mốc |
 | `customer_profiles` | 24 tháng | Ẩn danh | `customer_occasions` (xoá), `customers` (như S-3b: tên, SĐT, băm, email, địa chỉ, ghi chú, nhãn, sở thích) | khách không có đơn, lead, phiên Thẻ chào, báo giá, hội thoại, tương tác nào từ mốc — **kể cả** khách có đơn đã thu (PO 12/11/2026): đơn, phiếu thu, hoá đơn VAT giữ nguyên |
 | `non_ledger_documents` | 60 tháng | Xoá | `quotations`, `orders` `CANCELLED` có `paid_vnd = 0` và không có phiếu thu (dòng con xoá dây chuyền) | `updated_at` trước mốc |
+| `finished_jobs` | 1 tháng (≈ 30 ngày) | Xoá | `generation_jobs` `COMPLETED`/`FAILED`/`CANCELLED` (nhật ký `job_events` xoá dây chuyền); giữ job còn được `product_analyses` / `brand_style_options` trỏ tới; `usage` giữ nguyên — ADR-015 D-O6, O-10, migration `20261112130000_retention_policies_finished_jobs` | `COALESCE(completed_at, cancelled_at, updated_at)` trước mốc |
 
 - Luật (loại mã biết xử lý, hành động duy nhất của từng loại, mốc cắt theo tháng lịch, giờ chạy):
   `src/modules/organization/domain/retention-policy.ts`. Dòng có loại lạ hoặc hành động khác bảng trên → bỏ qua, log
