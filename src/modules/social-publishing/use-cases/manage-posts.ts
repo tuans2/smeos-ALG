@@ -21,13 +21,22 @@ export async function listPosts(
   return { data: page.map(toPostView), next_cursor: more ? (page[page.length - 1]?.id ?? null) : null }
 }
 
-/** Huỷ bài đang chờ (J5). Bài tổ chức khác → 404; đã bắt đầu đăng → 409. */
+/**
+ * Huỷ bài đang chờ (J5). Bài tổ chức khác → 404; đã bắt đầu đăng → 409. Huỷ bài cuối cùng của lượt → lượt bài nguồn mở
+ * lại để sửa (audit User Journey UJ-30 — trước đây kẹt "Đã gửi lịch", muốn sửa chữ phải sinh nội dung mới).
+ */
 export async function cancelPost(ctx: TenantContext, id: string, repo: SocialPostRepository = getSocialPostRepository()): Promise<SocialPostView> {
   requireCapability(ctx, "J5")
   const post = await repo.findById(ctx, id)
   if (!post) throw notFound()
   if (!canCancel(post.status) || !(await repo.cancel(ctx, id))) throw conflict("Bài đã bắt đầu đăng hoặc đã xong — không huỷ được")
   await recordAuditLog(ctx, { action: "social_post.cancel", entityType: "social_posts", entityId: id, before: { status: post.status }, after: { status: "CANCELED" } })
+  if (post.content_generation_id && (await repo.reopenGenerationIfAllCanceled(ctx, post.content_generation_id))) {
+    await recordAuditLog(ctx, {
+      action: "content_generation.reopen", entityType: "content_generations", entityId: post.content_generation_id,
+      before: { status: "SCHEDULED" }, after: { status: "APPROVED", reason: "Đã huỷ mọi bài đăng của lượt" },
+    })
+  }
   return toPostView({ ...post, status: "CANCELED", next_attempt_at: null })
 }
 

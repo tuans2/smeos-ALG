@@ -129279,7 +129279,7 @@
       "post": {
         "operationId": "cancelSocialPost",
         "summary": "Huỷ bài đang chờ",
-        "description": "Chỉ bài `QUEUED`; đã bắt đầu đăng → 409. Của tổ chức khác hoặc mã lạ → 404.",
+        "description": "Chỉ bài `QUEUED`; đã bắt đầu đăng → 409. Huỷ bài cuối cùng còn lại của lượt bài nguồn (mọi bài đều `CANCELED`) → lượt về `APPROVED` để sửa / duyệt lại. Của tổ chức khác hoặc mã lạ → 404.",
         "tags": [
           "Đăng bài tự động"
         ],
