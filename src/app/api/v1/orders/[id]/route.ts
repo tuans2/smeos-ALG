@@ -2,7 +2,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getOrder } from "@/modules/orders/use-cases/get-order"
-import { updateOrderProgress } from "@/modules/orders/use-cases/update-order-progress"
+import { editOrder } from "@/modules/orders/use-cases/update-order-progress"
 import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { patchOrderBody } from "@/app/api/v1/_contracts/requests-orders"
 
@@ -25,7 +25,7 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
   const body = await request.json()
   const parsed = patchOrderBody.parse(body)
 
-  const updated = await updateOrderProgress(ctx, id, parsed)
+  const updated = await editOrder(ctx, id, parsed)
   // Bổ sung đủ thông tin → yêu cầu bổ sung tự đóng (checklist ALG 4.14)
   await syncOrderInfoRequests(ctx, id)
   return jsonResponse({ order: updated })
