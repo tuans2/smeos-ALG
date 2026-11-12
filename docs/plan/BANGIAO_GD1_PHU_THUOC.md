@@ -7,8 +7,8 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 | Mục | Giữ | Bị chặn hoặc bỏ |
 |---|---:|---:|
 | Trang | 90 | 26 |
-| API | 478 | 61 |
-| Tệp trong `src/` | 3540 | 663 |
+| API | 479 | 65 |
+| Tệp trong `src/` | 3547 | 667 |
 
 ## Code trong phạm vi chạm vùng không giao
 
@@ -48,7 +48,7 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `content-engine` | 42/44 |
 | `coordinator` | 53/73 |
 | `creative-production` | 17/68 |
-| `crm` | 33/34 |
+| `crm` | 38/39 |
 | `field-platform` | 41/47 |
 | `greeting-card` | 281/285 |
 | `integration` | 20/23 |
@@ -98,7 +98,11 @@ Có route nhưng không trang, API hay tác vụ nào trong phạm vi gọi tớ
 - `/api/v1/creative-production/scene-plans/[id]`
 - `/api/v1/creative-production/scene-revisions`
 - `/api/v1/creative-production/video-assembly`
+- `/api/v1/crm/customers/[id]/data-requests/erase`
+- `/api/v1/crm/customers/[id]/data-requests/export`
+- `/api/v1/crm/customers/[id]/data-requests/rectify`
 - `/api/v1/crm/customers/[id]/master-index`
+- `/api/v1/crm/data-requests/[id]`
 - `/api/v1/customer-segments/[id]/customers`
 - `/api/v1/customers/[id]/interactions`
 - `/api/v1/greeting-card/integrations/staff-notifications/saas-policy`
