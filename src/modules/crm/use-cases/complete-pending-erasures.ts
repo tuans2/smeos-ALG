@@ -1,10 +1,8 @@
 import { log } from "@/core/observability/log"
 import type { TenantContext } from "@/core/tenancy"
-import { prisma } from "@/core/tenancy/infra/prisma"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 
-import { eraseCustomerDataIn } from "../infra/customer-erasure"
-import { completeDsrIn, listCompletableErasures } from "../infra/data-subject-request-repository"
+import { finishPendingErasure, listCompletableErasures } from "../infra/data-subject-request-repository"
 
 /** Trần mỗi lượt quét 5 phút — dư thì lượt sau làm tiếp. */
 export const PENDING_ERASURE_BATCH = 50
@@ -26,10 +24,7 @@ export async function completePendingErasures(now: Date = new Date()): Promise<{
     let failed = 0
     for (const r of due) {
       try {
-        const done = await prisma.$transaction(async (tx) => {
-          const result = await eraseCustomerDataIn(tx, r.organizationId, r.customerId, now)
-          return (await completeDsrIn(tx, r.organizationId, r.id, { by: SYSTEM_ACTOR, at: now, result })) ? result : null
-        })
+        const done = await finishPendingErasure(r.organizationId, r.id, r.customerId, { by: SYSTEM_ACTOR, at: now })
         if (!done) continue
         completed++
         await recordAuditLog(systemContext(r.organizationId), {

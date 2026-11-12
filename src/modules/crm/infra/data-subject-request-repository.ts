@@ -2,6 +2,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 
 import type { DataSubjectRequestView, DsrStatus, DsrType } from "../domain/data-subject-request"
+import { eraseCustomerDataIn, type ErasureCounts } from "./customer-erasure"
 
 /** Bảng `data_subject_requests` (ADR-014 D-P5) — mọi truy vấn kèm `organization_id` của phiên. */
 type Row = Prisma.data_subject_requestsGetPayload<object>
@@ -101,4 +102,17 @@ export async function completeDsrIn(
     data: { status: "COMPLETED", completed_by: input.by, completed_at: input.at, result: input.result },
   })
   return count === 1
+}
+
+/**
+ * Xoá nốt dữ liệu của một yêu cầu đang chờ rồi đóng nó — một giao dịch (audit User Journey UJ-28). `null` = yêu cầu
+ * đã được xử lý giữa chừng (không đóng hai lần).
+ */
+export async function finishPendingErasure(
+  organizationId: string, id: string, customerId: string, input: { by: string; at: Date },
+): Promise<ErasureCounts | null> {
+  return prisma.$transaction(async (tx) => {
+    const result = await eraseCustomerDataIn(tx, organizationId, customerId, input.at)
+    return (await completeDsrIn(tx, organizationId, id, { ...input, result })) ? result : null
+  })
 }
