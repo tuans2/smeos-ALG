@@ -48,6 +48,8 @@ export async function checkTarget(tx: Tx, pkg: TenantPackage): Promise<boolean> 
   const bad = verifyPackage(pkg)
   if (bad) throw new Error(bad)
   await tx.$executeRawUnsafe(`SET LOCAL lock_timeout = '30s'`)
+  // Thao tác dài có chủ đích: vượt giới hạn 120 s của smeos_system (ADR-015 D-O5)
+  await tx.$executeRawUnsafe(`SET LOCAL statement_timeout = '30min'`)
   const target = await schemaVersion(tx)
   if (target !== pkg.schemaVersion) throw new Error(`Khác phiên bản schema: gói ${pkg.schemaVersion}, CSDL đích ${target}`)
   const [exists] = await tx.$queryRawUnsafe<Array<{ n: number }>>(`SELECT count(*)::int AS n FROM "organizations" WHERE id = $1`, pkg.organizationId)

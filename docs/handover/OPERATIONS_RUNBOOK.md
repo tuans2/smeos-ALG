@@ -172,7 +172,9 @@ không mở ngữ cảnh. Log `kind=unclassified` của `smeos-web` là chỗ c�
 từng vai (`ALTER ROLE … PASSWORD`), rồi thay `DATABASE_URL` của từng dịch vụ trên Render (khoá `sync: false`):
 `smeos-web` → `smeos_app`, 3 worker → `smeos_worker`, script vận hành và bộ quét ngoài app → `smeos_system` (bỏ qua RLS),
 báo cáo/điều tra → `smeos_readonly` (luôn chặn theo tổ chức). Bước migration (pre-deploy) giữ tài khoản chủ sở hữu. Trước khi thay
-cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `smeos_app`.
+cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `smeos_app`. Script cũng đặt giới hạn truy vấn
+(ADR-015 D-O5): 15 s cho `smeos_app`, 120 s cho vai khác, giao dịch bỏ ngỏ 60 s — có hiệu lực ở kết nối mới (khởi động lại
+dịch vụ); chạy lại script an toàn.
 
 **Nhật ký bất biến (ADR-013 D-I4, migration `20261106130000_append_only_logs`):** `audit_logs`, `platform_audit_logs`,
 `order_events`, `job_events`, `usage` không sửa được; xoá (kể cả xoá đơn hàng kéo theo `order_events`) chỉ được trong giao
