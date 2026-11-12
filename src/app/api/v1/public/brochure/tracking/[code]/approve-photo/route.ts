@@ -14,7 +14,7 @@ export const POST = defineRoute({
     const { code } = params as { code: string }
     const link = new URL(request.url).searchParams.get("link")
     await approveBrochurePhoto(request, code, link)
-    return jsonResponse({ success: true, message: "Đã xác nhận hình ảnh sản phẩm thành công" })
+    return jsonResponse({ data: { code, approved: true } })
   },
 })
 

@@ -71219,12 +71219,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "product_id": {
+                          "type": "string"
+                        },
+                        "removed": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "product_id",
+                        "removed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success"
+                    "data"
                   ],
                   "additionalProperties": false
                 }

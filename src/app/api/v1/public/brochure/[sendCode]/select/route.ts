@@ -18,7 +18,7 @@ export const POST = defineRoute({
     const parsed = brochureSelectBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ productId: "Thiếu thông tin sản phẩm" })
     const snapshot = await selectBrochureProduct(sendCode, parsed.data.productId)
-    return jsonResponse({ success: true, snapshot })
+    return jsonResponse({ data: { snapshot } })
   },
 })
 

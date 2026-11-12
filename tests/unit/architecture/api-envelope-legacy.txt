@@ -17,8 +17,3 @@ next-response-json	src/app/api/health/route.ts
 string-error	src/app/api/dev/role-override/route.ts
 # Còn nợ: một route phục vụ hai nghiệp vụ theo query/thân (đối tác gia công vs đối tác chuỗi) — cần tách route trước.
 success-envelope	src/app/api/v1/coordinator/partners/route.ts
-# Còn nợ: phía gọi nằm trong src/components/greeting-card/** — luật B5 (test khoá hành vi trước khi sửa).
-ok-envelope	src/app/api/v1/public/greeting-catalog/[id]/event/route.ts
-success-envelope	src/app/api/v1/greeting-card/catalogs/[id]/products/route.ts
-success-envelope	src/app/api/v1/public/brochure/[sendCode]/select/route.ts
-success-envelope	src/app/api/v1/public/brochure/tracking/[code]/approve-photo/route.ts

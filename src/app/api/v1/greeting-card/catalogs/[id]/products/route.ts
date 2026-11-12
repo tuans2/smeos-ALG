@@ -32,6 +32,6 @@ export const DELETE = defineRoute({
     await assertCanEditCatalog(ctx, id)
     const repo = new GreetingCardRepository()
     await repo.removeProductFromCatalog(ctx, id, parsed.data.productId)
-    return jsonResponse({ success: true })
+    return jsonResponse({ data: { product_id: parsed.data.productId, removed: true } })
   },
 })

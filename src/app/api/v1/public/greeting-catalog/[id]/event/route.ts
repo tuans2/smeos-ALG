@@ -17,7 +17,7 @@ export const POST = defineRoute({
     if (!parsed.success) throw validationFailed({ body: "Sự kiện không hợp lệ" })
     const ok = await recordCatalogEvent({ catalogId: id, channel: parsed.data.channel, eventType: parsed.data.type, visitorId: parsed.data.visitorId, productId: parsed.data.productId })
     if (!ok) throw notFound()
-    return jsonResponse({ ok: true }, { status: 202 })
+    return jsonResponse({ data: { accepted: true } }, { status: 202 })
   },
 })
 
