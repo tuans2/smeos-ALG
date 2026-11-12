@@ -15,6 +15,14 @@ import { NativeSelect } from "@/components/ui/select"
 import type { PartnerView } from "@/modules/coordinator/use-cases/manage-partners"
 import { PartnerCard } from "./partner-card"
 import { PartnerCreateForm } from "./partner-create-form"
+import { PartnerStatementModal } from "./partner-statement-modal"
+import { useSession } from "@/lib/session"
+
+/**
+ * Danh bạ xưởng gia công (bảng `partners`, mã `R1`) — cả xưởng đang hoạt động lẫn tạm ngưng. Thiếu `?active` thì route trả
+ * danh sách đối tác CHUỖI (`F1`) nên thẻ, nút tạm ngưng (`R4`) và form tạo xưởng của màn này chạy trên dữ liệu khác loại.
+ */
+export const PARTNER_DIRECTORY_URL = "/api/v1/coordinator/partners?active=0"
 
 export interface PartnerManagementModalProps {
   isOpen: boolean
@@ -34,12 +42,14 @@ export function PartnerManagementModal({
   const [isAddingNew, setIsAddingNew] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
+  const [statementOf, setStatementOf] = useState<PartnerView | null>(null)
+  const canSettle = useSession().can("R19") // bảng kê cần R19 (Điều hành, Kế toán)
 
   const fetchPartners = useCallback(async () => {
     setLoading(true)
     setErrorMsg(null)
     try {
-      const res = await fetch("/api/v1/coordinator/partners")
+      const res = await fetch(PARTNER_DIRECTORY_URL)
       if (!res.ok) throw new Error("Không thể tải danh bạ đối tác")
       const data = await res.json()
       if (Array.isArray(data.data)) {
@@ -228,11 +238,13 @@ export function PartnerManagementModal({
                 key={p.id}
                 partner={p}
                 onToggleStatus={handleToggleStatus}
+                onOpenSettlement={canSettle ? setStatementOf : undefined}
               />
             ))
           )}
         </div>
       </div>
+      <PartnerStatementModal partner={statementOf} onClose={() => setStatementOf(null)} />
     </Dialog>
   )
 }

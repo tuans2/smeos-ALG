@@ -8,6 +8,7 @@ vi.mock("@/lib/env", async (orig) => {
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
 import { ensureInvoice, upsertSubscription } from "@/modules/subscription/infra/subscription-repository"
+import { checkSubscription } from "@/modules/subscription/use-cases/subscription-guard"
 import { handlePlatformSepay } from "@/modules/subscription/use-cases/sepay-platform-webhook"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
@@ -32,8 +33,8 @@ describe("thuê bao — đổi gói, tiền dư, ngày neo", () => {
     await disconnectDatabase()
   })
 
-  const assign = (priceVnd: number, now: Date, cycle: "MONTHLY" | "YEARLY" = "MONTHLY") =>
-    runInTransaction((tx) => upsertSubscription(tx, a.organizationId, { plan: "PRO", cycle, priceVnd, includedCreditsMonthly: 0, actorId: a.userId, now }))
+  const assign = (priceVnd: number, now: Date, cycle: "MONTHLY" | "YEARLY" = "MONTHLY", plan = "PRO", credits = 0) =>
+    runInTransaction((tx) => upsertSubscription(tx, a.organizationId, { plan, cycle, priceVnd, includedCreditsMonthly: credits, actorId: a.userId, now }))
   const sub = () => prisma.subscriptions.findUniqueOrThrow({ where: { organization_id: a.organizationId } })
   const invoices = () => prisma.subscription_invoices.findMany({ where: { organization_id: a.organizationId }, orderBy: { created_at: "asc" } })
 
@@ -53,6 +54,35 @@ describe("thuê bao — đổi gói, tiền dư, ngày neo", () => {
     // Hạ gói: không lập hoá đơn bù, hoá đơn kỳ sau theo giá mới
     expect((await assign(200_000, new Date())).prorationInvoice).toBeNull()
     expect((await prisma.subscription_invoices.findUniqueOrThrow({ where: { id: next.id } })).amount_vnd).toBe(200_000)
+  })
+
+  it("hạ gói: giữ gói, giá, credit tặng tới hết kỳ; sang kỳ mới mới áp; hoá đơn kỳ sau theo gói mới", async () => {
+    const start = new Date(Date.now() - 20 * DAY)
+    const { firstInvoice } = await assign(600_000, start, "MONTHLY", "PRO", 200)
+    await handlePlatformSepay(KEY, { id: 11, transferType: "in", transferAmount: 600_000, content: firstInvoice!.code })
+    await assign(300_000, new Date(), "MONTHLY", "STARTER", 50)
+    const held = await sub()
+    expect({ plan: held.plan, price: held.price_vnd, credits: held.included_credits_monthly }).toEqual({ plan: "PRO", price: 600_000, credits: 200 })
+    expect(held.pending_change).toMatchObject({ plan: "STARTER", priceVnd: 300_000, includedCreditsMonthly: 50, effectiveAt: held.current_period_end.toISOString() })
+    // Hoá đơn kỳ sau sinh theo gói chờ áp; thu tiền kỳ sau → kỳ dời sang kỳ mới → gói mới có hiệu lực
+    const next = await runInTransaction((tx) => ensureInvoice(tx, { ...held, cycle: "MONTHLY" }, held.current_period_end))
+    expect(next.amount_vnd).toBe(300_000)
+    await handlePlatformSepay(KEY, { id: 12, transferType: "in", transferAmount: 300_000, content: next.code })
+    const after = await sub()
+    expect({ plan: after.plan, price: after.price_vnd, credits: after.included_credits_monthly, pending: after.pending_change }).toEqual({ plan: "STARTER", price: 300_000, credits: 50, pending: null })
+  })
+
+  it("hạ gói chưa thu kỳ sau: hết kỳ thì bộ xét thuê bao vẫn áp gói mới; đổi ý về giá cũ → huỷ thay đổi chờ áp", async () => {
+    const start = new Date(Date.now() - 20 * DAY)
+    const { firstInvoice } = await assign(600_000, start)
+    await handlePlatformSepay(KEY, { id: 21, transferType: "in", transferAmount: 600_000, content: firstInvoice!.code })
+    await assign(300_000, new Date(), "MONTHLY", "STARTER")
+    await assign(600_000, new Date(), "MONTHLY", "PRO")
+    expect((await sub()).pending_change).toBeNull()
+    await assign(300_000, new Date(), "MONTHLY", "STARTER")
+    const s = await sub()
+    await checkSubscription(a.organizationId, new Date(s.current_period_end.getTime() + DAY))
+    expect(await sub()).toMatchObject({ plan: "STARTER", price_vnd: 300_000, pending_change: null })
   })
 
   it("chuyển dư → phần dư trừ vào hoá đơn kỳ kế tiếp; dư đủ cả hoá đơn → hoá đơn đó coi như đã thu", async () => {

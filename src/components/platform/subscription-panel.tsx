@@ -9,8 +9,12 @@ import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { formatCurrency, formatDate } from "@/lib/i18n/formatters"
+import { isPlanCode, PLAN_LABEL } from "@/modules/subscription/domain/subscription-rules"
 
-interface Sub { plan: string; cycle: "MONTHLY" | "YEARLY"; price_vnd: number; included_credits_monthly: number; status: string; current_period_end: string }
+interface Sub {
+  plan: string; cycle: "MONTHLY" | "YEARLY"; price_vnd: number; included_credits_monthly: number; status: string; current_period_end: string
+  pending_change?: { plan: string; cycle: string; priceVnd: number; effectiveAt: string } | null
+}
 interface Invoice { id: string; code: string; periodStart: string; periodEnd: string; amountVnd: number; status: string; dueAt: string }
 
 export const PLAN_OPTIONS = [
@@ -77,6 +81,11 @@ export function SubscriptionPanel({ organizationId }: { organizationId: string }
         {sub && <Badge tone={STATUS[sub.status]?.tone ?? "neutral"}>{STATUS[sub.status]?.label ?? sub.status}</Badge>}
       </div>
       {sub && <p className="text-caption text-text">Kỳ hiện tại tới {formatDate(sub.current_period_end)}</p>}
+      {sub?.pending_change && (
+        <p className="text-caption text-text-muted">
+          Chờ đổi từ {formatDate(sub.pending_change.effectiveAt)}: gói {isPlanCode(sub.pending_change.plan) ? PLAN_LABEL[sub.pending_change.plan] : sub.pending_change.plan} · {formatCurrency(sub.pending_change.priceVnd)}/{sub.pending_change.cycle === "YEARLY" ? "năm" : "tháng"}
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-4">
         <NativeSelect value={form.plan} onChange={(e) => setForm({ ...form, plan: e.target.value })} aria-label="Gói">
           {PLAN_OPTIONS.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
