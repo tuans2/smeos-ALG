@@ -146,7 +146,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | [ ] | S-2 Xuất/nhập tenant theo sổ; thay `scripts/handover-backup-engine.ts` | Vòng tròn xuất → nhập khớp từng dòng |
 | [x] | S-3 [SCHEMA nhỏ] `lifecycle_status`; tạm ngưng/rời/xoá — **11/11/2026:** S-3a cột + kiểm truy cập + Console đổi trạng thái; S-3b `npm run tenant:purge` xoá theo sổ, giữ chứng từ + nhật ký, ẩn danh (đặc tả 07 §53). Hai script dọn dữ liệu thử giữ nguyên (PO 11/11/2026, mục đích khác) | `organization-lifecycle.test.ts`, `tenant-purge.test.ts` (xoá không chạm tổ chức khác) |
 | [ ] | S-4 [VẬN HÀNH] Runbook + diễn tập khôi phục riêng một tenant | Biên bản ≤ 4 giờ |
-| [ ] | S-5 [SCHEMA nhỏ] `isolation_tier` gắn gói | Gói không cho phép → 422 |
+| [x] | S-5 [SCHEMA nhỏ] `isolation_tier` gắn gói — PO 12/11/2026 "theo quy mô": gói nhỏ / chưa thuê bao → `SHARED`, Mạng lưới thêm `SHARED_PLUS`, Doanh nghiệp cả ba; đổi / huỷ gói làm mức không còn hợp lệ → 422 (đặc tả 07 §56) | `organization-isolation-tier.test.ts`: gói không cho phép → 422 |
 | [ ] | S-6 [VẬN HÀNH] Mẫu triển khai `DEDICATED` + dựng thử một lần + sổ triển khai | Biên bản dựng từ đầu |
 
 ### GĐ6 — Bật enterprise và chứng minh

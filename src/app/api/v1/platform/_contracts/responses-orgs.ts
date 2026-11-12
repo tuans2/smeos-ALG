@@ -27,19 +27,21 @@ export const organizationResponse = data(
     workspaceKinds: z.array(z.string()),
     lifecycleStatus: z.enum(["ACTIVE", "SUSPENDED", "OFFBOARDING", "DELETED"]), // ADR-016 D-S5
     offboardingUntil: timestamp.nullable(),
+    isolationTier: z.enum(["SHARED", "SHARED_PLUS", "DEDICATED"]), // ADR-016 D-S2
     unlockedLocales: z.array(z.string()).optional(),
     pendingLanguageUnlock: z.strictObject({ requested_locales: z.array(z.string()), ...requestMeta }).nullable().optional(),
     pendingModelChange: z.strictObject({ requested_type: z.string(), ...requestMeta }).nullable().optional(),
   })
 )
 
-/** PATCH trả kết quả của thao tác cuối cùng trong thân (đổi mô hình, mở ngôn ngữ, gỡ yêu cầu, hạn mức chat, phạm vi chi nhánh, vòng đời). */
+/** PATCH trả kết quả của thao tác cuối cùng trong thân (đổi mô hình, mở ngôn ngữ, gỡ yêu cầu, hạn mức chat, phạm vi chi nhánh, vòng đời, mức cô lập). */
 export const organizationPatchResponse = data(
   z.union([
     z.strictObject({ success: z.literal(true), targetType: z.enum(["CHAIN", "STORE", "EXPERIENCE", "SINGLE"]), organizationId: z.string() }),
     z.strictObject({ success: z.literal(true), action: z.enum(["approved", "rejected", "clear_pending_language_unlock", "clear_pending_model_change"]) }),
     z.strictObject({ success: z.literal(true), branchScopeWave1: z.boolean() }),
     z.strictObject({ success: z.literal(true), lifecycleStatus: z.enum(["ACTIVE", "SUSPENDED", "OFFBOARDING"]), offboardingUntil: timestamp.nullable() }),
+    z.strictObject({ success: z.literal(true), isolationTier: z.enum(["SHARED", "SHARED_PLUS", "DEDICATED"]) }),
     z.strictObject({ success: z.literal(true), organizationId: z.string(), unlockedLocales: z.array(z.string()) }),
     z.strictObject({ success: z.literal(true) }),
   ])
