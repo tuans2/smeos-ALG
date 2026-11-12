@@ -124,7 +124,7 @@ describe("huỷ đơn trả lại lịch đặt chỗ", () => {
       const link = await createSendLink(a.ctx, { catalogId: catalog.id })
       await selectBrochureProduct(link.sendCode, product.id)
       const order = await submitBrochureOrder(link.sendCode, {
-        customerName: "Khách Quen", customerPhone: "0987654321", recipientName: "Người Nhận", recipientPhone: "0912345678",
+        customerName: "Khách Quen", customerPhone: "0987 654 321", recipientName: "Người Nhận", recipientPhone: "0912 345 678",
         confirmedTerms: true, selectedPromotionId: "promo-discount-10", deliveryDate: new Date(Date.now() + 10 * 86_400_000).toISOString().slice(0, 10), deliveryAddress: "1 Lê Lợi, Q1",
       })
       return order.orderId

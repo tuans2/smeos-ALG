@@ -84,7 +84,7 @@ describe("PATCH /orders/:id — tiến độ đơn đang ở Điều phối, đ�
     for (const status of ["CANCELLED", "COMPLETED"] as const) {
       await prisma.orders.update({ where: { id: orderId }, data: { status } })
       const blocked = [
-        { deliveryAddress: { recipientName: "Trần Thị Bình", phone: "0901234567", street: "12 Lê Lợi" } },
+        { deliveryAddress: { recipientName: "Trần Thị Bình", phone: "0901 234 567", street: "12 Lê Lợi" } },
         { cardMessage: "Lời chúc mới" },
         { deliveryStatus: "DISPATCHED" },
       ]
