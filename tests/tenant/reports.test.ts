@@ -57,6 +57,7 @@ describe("báo cáo theo kỳ", () => {
     await order(a, { status: "DELIVERED", total: 300_000, deliveredAt: at(11) })
     await order(a, { status: "CANCELLED", total: 200_000 })
     await order(b, { status: "COMPLETED", total: 9_000_000, deliveredAt: at(9) })
+    await order(b, { status: "DRAFT", total: 700_000 }) // audit BL-30: Nháp không vào dự kiến
     await prisma.order_payments.create({ data: { organization_id: a.organizationId, order_id: o1.id, kind: "DEPOSIT", amount_vnd: 400_000, payment_method: "BANK_TRANSFER", collected_by: a.userId, collected_at: at(8) } })
     await prisma.order_payments.create({ data: { organization_id: a.organizationId, order_id: o1.id, kind: "REFUND", amount_vnd: 50_000, payment_method: "BANK_TRANSFER", collected_by: a.userId, collected_at: at(12) } })
     await prisma.order_payments.create({ data: { organization_id: a.organizationId, order_id: o1.id, kind: "BALANCE", amount_vnd: 100_000, payment_method: "CASH", collected_by: a.userId, collected_at: at(12), status: "PENDING_CONFIRMATION" } })
@@ -66,7 +67,7 @@ describe("báo cáo theo kỳ", () => {
     const revenue = await getRevenueReport(can(a), { ...Q, detail: "orders" })
     expect(revenue.totals).toMatchObject({ expectedVnd: 800_000, collectedVnd: 400_000, refundedVnd: 50_000, netCollectedVnd: 350_000 })
     expect("orders" in revenue && revenue.orders.map((o) => o.totalVnd).sort()).toEqual([300_000, 500_000])
-    expect((await getRevenueReport(can(b), Q)).totals.expectedVnd).toBe(9_000_000)
+    expect((await getRevenueReport(can(b), Q)).totals).toMatchObject({ expectedVnd: 9_000_000, draftCount: 1, draftVnd: 700_000 })
   })
 
   it("6.3 + 6.5: xếp hạng mẫu, tỷ trọng màu; doanh số Sale, thợ, shipper đúng giờ", async () => {

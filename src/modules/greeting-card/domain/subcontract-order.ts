@@ -6,6 +6,7 @@
  */
 
 import type { CraftFeeDeduction, CraftFeeLine, CraftFeeMethod } from "./craft-fee-policy"
+import type { CraftFeeDeductionTerms } from "./craft-fee-deduction-terms"
 
 export type SubcontractDispatchStatus =
   | "OPEN" // Đang mở để các chi nhánh trong vòng nhận đơn
@@ -73,6 +74,8 @@ export interface CraftFeeRecord {
   /** Phí nhập tay vượt biên độ cho phép — do Điều hành duyệt. */
   overrideApprovedBy?: string | undefined
   deductions: CraftFeeDeduction[]
+  /** Điều kiện khấu trừ chụp lúc gửi lời mời — điều kiện chi nhánh đã nhận (PO 12/11/2026, audit BL-24). */
+  deductionTerms?: CraftFeeDeductionTerms | undefined
 }
 
 /** Thẻ Telegram của một chi nhánh (thẻ mời / thẻ tiến độ), hoặc `null` nếu chưa gửi. */

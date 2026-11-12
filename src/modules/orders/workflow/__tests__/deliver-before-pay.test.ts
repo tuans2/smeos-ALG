@@ -11,7 +11,7 @@ import {
 
 const strict = { brochure_policy: { require_full_before_dispatch: true } }
 const ctx = (over: Partial<DeliverBeforePayContext> = {}): DeliverBeforePayContext => ({
-  totalVnd: 800_000, paidVnd: 0, isUrgent: false, customerCompletedOrders: 3, customerHasOverdueDebt: false, customerOpenDebtVnd: 0, ...over,
+  hasCustomer: true, totalVnd: 800_000, paidVnd: 0, isUrgent: false, customerCompletedOrders: 3, customerHasOverdueDebt: false, customerOpenDebtVnd: 0, ...over,
 })
 
 describe("giao trước, thu sau — tầng 1: dùng lại chính sách thu tiền sẵn có", () => {
@@ -30,8 +30,19 @@ describe("giao trước, thu sau — tầng 1: dùng lại chính sách thu ti�
 })
 
 describe("tầng 2–3: ngoài chính sách", () => {
-  it("đơn hoả tốc → Sale tự quyết", () => {
-    expect(decideDeliverBeforePay(strict, ctx({ isUrgent: true, totalVnd: 9_000_000 }))).toMatchObject({ outcome: "AUTO_APPROVE", basis: "URGENT" })
+  it("đơn hoả tốc trong hạn mức Sale tự quyết → Sale tự quyết, kể cả khách mới", () => {
+    expect(decideDeliverBeforePay(strict, ctx({ isUrgent: true, totalVnd: 900_000, customerCompletedOrders: 0 }))).toMatchObject({ outcome: "AUTO_APPROVE", basis: "URGENT" })
+  })
+
+  // PO 12/11/2026 (BL-29): hoả tốc vẫn có trần tiền; đơn chưa gắn khách không tự duyệt bằng lối nào
+  it("đơn hoả tốc vượt hạn mức Sale tự quyết → Điều hành duyệt", () => {
+    expect(decideDeliverBeforePay(strict, ctx({ isUrgent: true, totalVnd: 9_000_000 }))).toMatchObject({ outcome: "NEEDS_ADMIN", why: "Đơn hoả tốc vượt hạn mức Sale tự quyết" })
+  })
+
+  it("đơn chưa gắn khách → Điều hành duyệt, kể cả trong chính sách tiệm và hoả tốc", () => {
+    const why = "Đơn chưa gắn khách hàng — gắn khách để xét công nợ"
+    expect(decideDeliverBeforePay({}, ctx({ hasCustomer: false }))).toMatchObject({ outcome: "NEEDS_ADMIN", why })
+    expect(decideDeliverBeforePay(strict, ctx({ hasCustomer: false, isUrgent: true, totalVnd: 100_000 }))).toMatchObject({ outcome: "NEEDS_ADMIN", why })
   })
 
   it("trong hạn mức mặc định (≤ 1.000.000đ, ≥ 2 đơn hoàn tất, không nợ quá hạn) → Sale tự quyết", () => {

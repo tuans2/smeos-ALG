@@ -28,6 +28,7 @@ acceptance:
   - `GET /api/v1/coordinator/orders`
   - `POST /api/v1/coordinator/dispatch`
   - `GET /api/v1/greeting-card/coordinator-board`
+  - `POST /api/v1/coordinator/orders/:id/close` — form Nghiệm thu & đóng đơn tự điền tiền công chuẩn (phí gia công sau khấu trừ, không có thì giá thoả thuận); sửa khác số chuẩn hiện ô "Lý do điều chỉnh tiền công", bắt buộc (PO 12/11/2026, audit BL-22)
 - **Quyền:** Điều phối `R3`, `R4`, `R5`.
 
 ## 3. Thứ bậc thông tin

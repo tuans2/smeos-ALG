@@ -27,11 +27,14 @@ function makeSalesDeps(products: ReturnType<typeof product>[], stock: Record<str
   const base = makeFakeDeps()
   const listings = new Map<string, ListingView>()
   const claimed = new Map<string, string>()
-  const createOrder = vi.fn(async (_ctx: unknown, _input: unknown) => ({ id: `order-${createOrder.mock.calls.length}` }) as never)
+  const createOrder = vi.fn(async (_ctx: unknown, input: { items: Array<{ quantity: number; unitPriceVnd: number }> }) =>
+    ({ id: `order-${createOrder.mock.calls.length}`, totalVnd: input.items.reduce((n, i) => n + i.quantity * i.unitPriceVnd, 0) }) as never)
+  const recordPrepayment = vi.fn(async () => null)
   const deps: SalesDeps = {
     ...base.deps,
     listProducts: async (_ctx, filters) => products.filter((p) => !filters.ids || filters.ids.includes(p.id)) as never,
     createOrder,
+    recordPrepayment,
     sales: {
       listListings: async (_ctx, _c, ids) => [...listings.values()].filter((l) => !ids || ids.includes(l.productId)),
       saveListing: async (_ctx, _c, input) => {
@@ -52,7 +55,7 @@ function makeSalesDeps(products: ReturnType<typeof product>[], stock: Record<str
       activeSalesConnectionsSystem: async () => [],
     },
   }
-  return { ...base, deps, listings, claimed, createOrder }
+  return { ...base, deps, listings, claimed, createOrder, recordPrepayment }
 }
 
 const orgA = ctxOf("org-a")
@@ -87,6 +90,18 @@ describe("Nhận đơn từ kênh bán", () => {
     expect(s.createOrder.mock.calls[0]![1]).toMatchObject({ source: "CHANNEL", items: [{ productId: "p1", quantity: 2 }] })
     await expect(importChannelOrder(connection, "khong-hop-le", s.deps)).rejects.toThrow("ORDER_NOT_FOUND")
     expect(s.claimed.get("khong-hop-le")).toBe("FAILED")
+  })
+
+  // PO 12/11/2026 (audit BL-34): đơn sàn đã thu → ghi sổ thu (hình thức sàn, mã tham chiếu = mã đơn sàn); COD → không
+  it("đơn sàn đã trả trước → ghi khoản sàn đã thu; đơn thu hộ → không ghi", async () => {
+    const s = makeSalesDeps([product("p1", "HOA-01")])
+    await connectWithSecret(orgA, { connectorKey: "test_shop", secret: SECRET }, s.deps)
+    const connection = s.connections[0]!
+    await importChannelOrder(connection, "HOA-01x2", s.deps)
+    expect(s.recordPrepayment).not.toHaveBeenCalled()
+    const id = await importChannelOrder(connection, "HOA-01x3p", s.deps)
+    expect(s.recordPrepayment).toHaveBeenCalledTimes(1)
+    expect(s.recordPrepayment.mock.calls[0]).toMatchObject([{ organizationId: "org-a" }, { orderId: id, amountVnd: 300_000, externalOrderId: "HOA-01x3p" }])
   })
 
   it("sự kiện order.created trong hàng chờ gọi nhập đơn theo mã đơn", async () => {
