@@ -37,7 +37,7 @@ function routeDir(route: string, dir = APP_DIR, rest = route.split("/").filter(B
 describe("tuyến khoá production có guard chặn cả URL gõ thẳng", () => {
   it("bộ dò thư mục tuyến hoạt động", () => {
     expect(routeDir("/gia")).not.toBeNull()
-    expect(routeDir("/noi-bo/ket-noi")).not.toBeNull()
+    expect(routeDir("/dieu-phoi/doi-tac")).not.toBeNull()
     expect(routeDir("/khong-co-tuyen-nay")).toBeNull()
   })
 
