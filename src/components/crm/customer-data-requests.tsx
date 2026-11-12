@@ -75,10 +75,17 @@ export function CustomerDataRequestList({ customerId, reloadKey, canResolve }: {
               {r.status === "RECEIVED" ? ` · hạn ${when(r.dueAt)}` : r.completedAt ? ` · xong ${when(r.completedAt)}` : ""}
             </div>
             {r.note && <div className="text-text-muted">Ghi chú: {r.note}</div>}
+            {r.type === "ERASE" && r.status === "RECEIVED" && (r.result?.["orders_waiting"] ?? 0) > 0 && (
+              <div className="text-warning-text">
+                Đã xoá hồ sơ và tin nhắn. Chờ {r.result?.["orders_waiting"]} đơn đang giao kết thúc — hệ thống tự xoá nốt địa chỉ, người nhận rồi hoàn tất.
+              </div>
+            )}
           </div>
           {r.status === "RECEIVED" && canResolve && (
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled={busyId === r.id} onClick={() => void resolve(r.id, "COMPLETED")}>Đã sửa xong</Button>
+              {r.type === "RECTIFY" && (
+                <Button variant="outline" size="sm" disabled={busyId === r.id} onClick={() => void resolve(r.id, "COMPLETED")}>Đã sửa xong</Button>
+              )}
               <Button variant="ghost" size="sm" disabled={busyId === r.id} onClick={() => void resolve(r.id, "REJECTED")}>Từ chối</Button>
             </div>
           )}

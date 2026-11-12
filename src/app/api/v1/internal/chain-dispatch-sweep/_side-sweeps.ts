@@ -7,6 +7,7 @@ import { expireOverdueQuotations } from "@/modules/sales/use-cases/expire-quotat
 import { sweepSubscriptions } from "@/modules/subscription/use-cases/sweep-subscriptions"
 import { sweepStorageLifecycle } from "@/modules/storage/use-cases/sweep-storage-lifecycle"
 import { runPiiBackfill } from "@/core/security/infra/pii-backfill"
+import { completePendingErasures } from "@/modules/crm/use-cases/complete-pending-erasures"
 
 /**
  * Các tác vụ quét phụ đi chung cron điều phối chuỗi (để không thêm dịch vụ Render). Tách khỏi `route.ts` để route
@@ -32,5 +33,7 @@ export async function runSideSweeps(now: Date) {
   // Audit hành trình UJ-11: báo giá hết hạn và vòng đời gói chạy đúng hạn, không chờ người mở màn hình
   const quotationsExpired = await expireOverdueQuotations(now)
   const subscriptions = await sweepSubscriptions(now)
-  return { productProposals, deliveryReminders, stuckJobsFailed, storageLifecycle, idempotencyKeysPurged, piiEncrypted, quotationsExpired, subscriptions }
+  // Audit hành trình UJ-28: yêu cầu xoá dữ liệu khách chờ đơn đang giao → xoá nốt khi đơn đã đóng
+  const pendingErasures = await completePendingErasures(now)
+  return { productProposals, deliveryReminders, stuckJobsFailed, storageLifecycle, idempotencyKeysPurged, piiEncrypted, quotationsExpired, subscriptions, pendingErasures }
 }

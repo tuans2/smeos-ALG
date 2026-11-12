@@ -63695,7 +63695,7 @@
       "post": {
         "operationId": "eraseCustomerData",
         "summary": "Khách yêu cầu xoá dữ liệu cá nhân",
-        "description": "Ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT; thu hồi đồng ý nhận tin. `result` = số dòng theo bảng. Khách của tổ chức khác → 404.",
+        "description": "Ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT; thu hồi đồng ý nhận tin. `result` = số dòng theo bảng. Đơn chưa kết thúc giữ địa chỉ / người nhận / lời thiệp tới khi đóng: yêu cầu ở `RECEIVED` với `result.orders_waiting`, lượt quét nội bộ xoá nốt và hoàn tất khi mọi đơn đã đóng. Khách của tổ chức khác → 404.",
         "tags": [
           "Khách hàng — yêu cầu về dữ liệu cá nhân"
         ],
@@ -65133,7 +65133,7 @@
       "patch": {
         "operationId": "resolveDataRequest",
         "summary": "Đóng yêu cầu: hoàn tất hoặc từ chối",
-        "description": "Yêu cầu của tổ chức khác → 404; đã đóng → 409.",
+        "description": "Yêu cầu của tổ chức khác → 404; đã đóng → 409; yêu cầu xoá không đóng tay bằng `COMPLETED` (hệ thống tự hoàn tất khi đơn của khách đã đóng) → 409.",
         "tags": [
           "Khách hàng — yêu cầu về dữ liệu cá nhân"
         ],

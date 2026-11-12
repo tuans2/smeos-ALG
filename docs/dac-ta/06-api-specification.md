@@ -593,10 +593,10 @@ Liên kết thu hồi được nhưng không xoá được: một mã QR đã d�
 | POST | `/crm/customers/:id/consent` | `Q9` | Cơ sở đồng ý, có mốc thời gian |
 | GET | `/crm/reminders/upcoming` | `Q7` | Quét dịp trước 14 ngày |
 | POST | `/crm/customers/:id/data-requests/export` | `R13` | Khách yêu cầu xuất dữ liệu cá nhân (ADR-014 D-P5): gói JSON mọi bản ghi của khách, yêu cầu hoàn tất ngay · khách tổ chức khác → 404 · đặc tả 07 §55 |
-| POST | `/crm/customers/:id/data-requests/erase` | `Q4` | Khách yêu cầu xoá: ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT, thu hồi đồng ý nhận tin; `result` = số dòng theo bảng · khách tổ chức khác → 404 |
+| POST | `/crm/customers/:id/data-requests/erase` | `Q4` | Khách yêu cầu xoá: ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT, thu hồi đồng ý nhận tin; `result` = số dòng theo bảng · đơn chưa kết thúc giữ địa chỉ / người nhận / lời thiệp tới khi đóng: yêu cầu ở `RECEIVED` với `result.orders_waiting`, lượt quét `internal/chain-dispatch-sweep` xoá nốt và hoàn tất (audit User Journey UJ-28, PO UQ15) · khách tổ chức khác → 404 |
 | POST | `/crm/customers/:id/data-requests/rectify` | `Q3` | Khách yêu cầu sửa: ghi nhận, hạn 72 giờ; sửa bằng `PATCH /crm/customers/:id` rồi đóng yêu cầu |
 | GET | `/crm/data-requests` | `Q1` | `?status` `?customer_id` — mới nhất trước, tối đa 200; `overdue` = đang chờ và quá hạn |
-| PATCH | `/crm/data-requests/:id` | `Q3` | Đóng yêu cầu đang chờ: `COMPLETED` hoặc `REJECTED` · tổ chức khác → 404 · đã đóng → 409 |
+| PATCH | `/crm/data-requests/:id` | `Q3` | Đóng yêu cầu đang chờ: `COMPLETED` hoặc `REJECTED` · tổ chức khác → 404 · đã đóng → 409 · yêu cầu xoá không đóng tay bằng `COMPLETED` → 409 (UJ-28) |
 
 **Lệch nghĩa mã cần soát:** bản cũ gán `Q5` cho xuất danh sách và `Q6` cho dịp; mã thật gán `Q5` cho dịp và `Q6` cho đồng ý. Một trong hai sai — xem **RS-10**.
 

@@ -25,6 +25,8 @@ export interface NewDsr {
   note: string | null
   /** Có khi xử lý ngay (xuất, xoá). */
   completed?: { by: string; at: Date; result: Record<string, number> }
+  /** Xoá còn chờ đơn đang mở (audit User Journey UJ-28): yêu cầu giữ RECEIVED nhưng ghi phần đã xoá. */
+  partialResult?: Record<string, number>
 }
 
 export async function insertDsr(organizationId: string, input: NewDsr): Promise<DataSubjectRequestView> {
@@ -34,7 +36,7 @@ export async function insertDsr(organizationId: string, input: NewDsr): Promise<
       received_at: input.receivedAt, due_at: input.dueAt, note: input.note,
       ...(input.completed
         ? { status: "COMPLETED", completed_by: input.completed.by, completed_at: input.completed.at, result: input.completed.result }
-        : {}),
+        : input.partialResult ? { result: input.partialResult } : {}),
     },
   })
   return toView(row, input.receivedAt)
@@ -69,4 +71,34 @@ export async function resolveDsr(
 /** Khách có thuộc tổ chức không — khách tổ chức khác coi như không có. */
 export async function customerExists(organizationId: string, customerId: string): Promise<boolean> {
   return (await prisma.customers.count({ where: { organization_id: organizationId, id: customerId } })) > 0
+}
+
+/**
+ * Yêu cầu xoá đang chờ mà khách không còn đơn nào chưa kết thúc (XUYÊN tổ chức — chỉ gọi từ lượt quét nội bộ, audit
+ * User Journey UJ-28). Cũ trước, có trần.
+ */
+export async function listCompletableErasures(limit: number): Promise<{ id: string; organizationId: string; customerId: string }[]> {
+  const rows = await prisma.data_subject_requests.findMany({
+    where: {
+      type: "ERASE",
+      status: "RECEIVED",
+      customer_id: { not: null },
+      customer: { is: { orders: { none: { status: { notIn: ["COMPLETED", "CANCELLED"] } } } } },
+    },
+    orderBy: { received_at: "asc" },
+    take: limit,
+    select: { id: true, organization_id: true, customer_id: true },
+  })
+  return rows.map((r) => ({ id: r.id, organizationId: r.organization_id, customerId: r.customer_id as string }))
+}
+
+/** Hoàn tất yêu cầu đang chờ (có điều kiện RECEIVED) trong giao dịch của người gọi; `false` = đã đổi giữa chừng. */
+export async function completeDsrIn(
+  tx: Prisma.TransactionClient, organizationId: string, id: string, input: { by: string; at: Date; result: Record<string, number> },
+): Promise<boolean> {
+  const { count } = await tx.data_subject_requests.updateMany({
+    where: { organization_id: organizationId, id, status: "RECEIVED" },
+    data: { status: "COMPLETED", completed_by: input.by, completed_at: input.at, result: input.result },
+  })
+  return count === 1
 }
