@@ -36,7 +36,7 @@ export const CRM_OPERATIONS: OpenApiOperation[] = [
     body: req.dataRequestBody, description: `Gói JSON mọi bản ghi cá nhân của khách trong tổ chức; yêu cầu ghi là hoàn tất ngay, có nhật ký. ${ID}`,
     ok: [201, { description: "Yêu cầu và gói dữ liệu", schema: res.dataExportResponse }], errors: [...BODY_ERRORS, 404] }),
   op(DSR, { method: "post", path: "/crm/customers/{id}/data-requests/erase", operationId: "eraseCustomerData", summary: "Khách yêu cầu xoá dữ liệu cá nhân", cap: "Q4",
-    body: req.dataRequestBody, description: `Ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT; thu hồi đồng ý nhận tin. \`result\` = số dòng theo bảng. ${ID}`,
+    body: req.dataRequestBody, description: `Ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT; thu hồi đồng ý nhận tin. \`result\` = số dòng theo bảng. Đơn chưa kết thúc giữ địa chỉ / người nhận / lời thiệp tới khi đóng: yêu cầu ở \`RECEIVED\` với \`result.orders_waiting\`, lượt quét nội bộ xoá nốt và hoàn tất khi mọi đơn đã đóng. ${ID}`,
     ok: [201, { description: "Yêu cầu đã xử lý", schema: res.dataRequestResponse }], errors: [...BODY_ERRORS, 404] }),
   op(DSR, { method: "post", path: "/crm/customers/{id}/data-requests/rectify", operationId: "receiveCustomerRectification", summary: "Khách yêu cầu sửa dữ liệu cá nhân", cap: "Q3",
     body: req.dataRequestBody, description: `Ghi nhận, hạn xử lý 72 giờ; sửa hồ sơ bằng \`PATCH /crm/customers/{id}\` rồi đóng yêu cầu. ${ID}`,
@@ -44,7 +44,7 @@ export const CRM_OPERATIONS: OpenApiOperation[] = [
   op(DSR, { method: "get", path: "/crm/data-requests", operationId: "listDataRequests", summary: "Yêu cầu của khách về dữ liệu cá nhân", cap: "Q1", query: req.dataRequestsQuery,
     description: "Mới nhất trước, tối đa 200; `overdue` = đang chờ và quá hạn.", ok: [200, { description: "Yêu cầu", schema: res.dataRequestsResponse }] }),
   op(DSR, { method: "patch", path: "/crm/data-requests/{id}", operationId: "resolveDataRequest", summary: "Đóng yêu cầu: hoàn tất hoặc từ chối", cap: "Q3", body: req.resolveDataRequestBody,
-    description: "Yêu cầu của tổ chức khác → 404; đã đóng → 409.", ok: [200, { description: "Yêu cầu sau khi đóng", schema: res.dataRequestResponse }], errors: [...BODY_ERRORS, 404, 409] }),
+    description: "Yêu cầu của tổ chức khác → 404; đã đóng → 409; yêu cầu xoá không đóng tay bằng `COMPLETED` (hệ thống tự hoàn tất khi đơn của khách đã đóng) → 409.", ok: [200, { description: "Yêu cầu sau khi đóng", schema: res.dataRequestResponse }], errors: [...BODY_ERRORS, 404, 409] }),
   op(CRM, { method: "get", path: "/crm/reminders/upcoming", operationId: "listUpcomingReminders", summary: "Dịp kỷ niệm sắp tới của khách", cap: "Q7", query: req.remindersQuery,
     ok: [200, { description: "Dịp sắp tới, gợi ý hoa và giọng điệu", schema: res.upcomingRemindersResponse }] }),
 ]

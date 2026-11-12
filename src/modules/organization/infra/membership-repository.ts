@@ -3,6 +3,7 @@ import type { membership_status, memberships } from "./entities"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 
+import type { OrganizationLifecycleStatus } from "../domain/organization-lifecycle"
 import type { DbClient } from "./db-client"
 
 export class MembershipRepository {
@@ -40,12 +41,17 @@ export class MembershipRepository {
     })
   }
 
-  /** Tổ chức đầu tiên người dùng còn hoạt động, dùng để chọn tổ chức lúc đăng nhập. */
-  findFirstActiveForUser(userId: string): Promise<memberships | null> {
-    return this.db.memberships.findFirst({
+  /**
+   * Thành viên còn hiệu lực, kèm trạng thái vòng đời của tổ chức, cũ trước — đăng nhập chọn tổ chức đầu tiên còn
+   * vào được (audit User Journey UJ-27: trước đây tổ chức cũ nhất bị tạm ngưng thì khoá cả tài khoản).
+   */
+  async listActiveWithLifecycleForUser(userId: string): Promise<{ organizationId: string; lifecycleStatus: OrganizationLifecycleStatus }[]> {
+    const rows = await this.db.memberships.findMany({
       where: { user_id: userId, status: "ACTIVE" },
-      orderBy: { invited_at: "asc" },
+      orderBy: [{ invited_at: "asc" }, { id: "asc" }],
+      select: { organization_id: true, organization: { select: { lifecycle_status: true } } },
     })
+    return rows.map((r) => ({ organizationId: r.organization_id, lifecycleStatus: r.organization.lifecycle_status }))
   }
 
   /** Chỉ dùng lúc đăng ký, khi tổ chức vừa ra đời và chưa có ngữ cảnh để gác. */

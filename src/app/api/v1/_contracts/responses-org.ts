@@ -51,7 +51,7 @@ const organization = z.strictObject({
 })
 export const currentOrganizationResponse = organization
 export const organizationsResponse = z.strictObject({
-  data: z.array(z.strictObject({ id: z.string(), name: z.string(), slug: z.string(), type: z.string() })),
+  data: z.array(z.strictObject({ id: z.string(), name: z.string(), slug: z.string(), type: z.string(), lifecycle_status: z.string() })),
   next_cursor: z.null(),
 })
 const TIER = z.enum(["MOTHER", "INDUSTRY", "CHAIN", "STORE"])

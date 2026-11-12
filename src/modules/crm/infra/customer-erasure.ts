@@ -10,16 +10,33 @@ import { ERASED_CUSTOMER_NAME, ERASED_MARKER } from "@/modules/organization/doma
  */
 export type ErasureCounts = Record<string, number>
 
-export async function eraseCustomerData(organizationId: string, customerId: string, now: Date): Promise<ErasureCounts> {
-  return prisma.$transaction((tx) => eraseCustomerDataIn(tx, organizationId, customerId, now))
+export interface ErasureOptions {
+  /**
+   * Giữ địa chỉ, người nhận, lời thiệp, SĐT điều phối của đơn CHƯA KẾT THÚC (audit User Journey UJ-28, PO 12/11/2026
+   * UQ15): xoá giữa lúc đang giao làm thợ / người giao mất địa chỉ. Số đơn còn chờ trả ở `orders_waiting`; bộ quét
+   * `completePendingErasures` xoá nốt khi đơn đã đóng.
+   */
+  keepOpenOrders?: boolean
+}
+
+/** Đơn đã kết thúc — xoá dữ liệu giao nhận được. */
+const CLOSED_ORDER_STATUSES = ["COMPLETED", "CANCELLED"] as const
+
+export async function eraseCustomerData(organizationId: string, customerId: string, now: Date, options: ErasureOptions = {}): Promise<ErasureCounts> {
+  return prisma.$transaction((tx) => eraseCustomerDataIn(tx, organizationId, customerId, now, options))
 }
 
 /** Như `eraseCustomerData` nhưng trong giao dịch của người gọi (khôi phục riêng một tổ chức chạy lại yêu cầu xoá). */
-export async function eraseCustomerDataIn(tx: Prisma.TransactionClient, organizationId: string, customerId: string, now: Date): Promise<ErasureCounts> {
+export async function eraseCustomerDataIn(
+  tx: Prisma.TransactionClient, organizationId: string, customerId: string, now: Date, options: ErasureOptions = {},
+): Promise<ErasureCounts> {
   {
     const org = { organization_id: organizationId }
     const mine = { ...org, customer_id: customerId }
-    const orderIds = (await tx.orders.findMany({ where: mine, select: { id: true } })).map((o) => o.id)
+    const orders = await tx.orders.findMany({ where: mine, select: { id: true, status: true } })
+    const isClosed = (status: string) => (CLOSED_ORDER_STATUSES as readonly string[]).includes(status)
+    const openOrderIds = options.keepOpenOrders ? orders.filter((o) => !isClosed(o.status)).map((o) => o.id) : []
+    const orderIds = orders.map((o) => o.id).filter((id) => !openOrderIds.includes(id))
     const ofOrders = { ...org, order_id: { in: orderIds } }
     const conversationIds = (await tx.chat_conversations.findMany({ where: mine, select: { id: true } })).map((c) => c.id)
 
@@ -41,14 +58,15 @@ export async function eraseCustomerDataIn(tx: Prisma.TransactionClient, organiza
       data: { name: ERASED_CUSTOMER_NAME, phone: ERASED_MARKER, phone_hash: null, phone_last4: null, message: null },
     })).count)
     add("greeting_sessions", (await tx.greeting_sessions.updateMany({
-      where: mine,
+      // Phiên Thẻ chào của đơn còn mở giữ SĐT khách tới khi đơn đóng (UJ-28)
+      where: openOrderIds.length > 0 ? { ...mine, OR: [{ order_id: null }, { order_id: { notIn: openOrderIds } }] } : mine,
       data: { customer_name: null, customer_phone: null, customer_phone_hash: null, customer_phone_last4: null },
     })).count)
     add("chat_messages", (await tx.chat_messages.deleteMany({ where: { ...org, conversation_id: { in: conversationIds } } })).count)
     add("chat_conversations", (await tx.chat_conversations.updateMany({ where: mine, data: { customer_id: null } })).count)
     add("quotations", (await tx.quotations.updateMany({ where: mine, data: { notes: null } })).count)
     add("orders", (await tx.orders.updateMany({
-      where: mine,
+      where: { ...mine, id: { in: orderIds } },
       data: { card_message: null, internal_note: null, delivery_address: Prisma.DbNull },
     })).count)
     add("order_recipients", (await tx.order_recipients.updateMany({
@@ -59,6 +77,7 @@ export async function eraseCustomerDataIn(tx: Prisma.TransactionClient, organiza
       where: ofOrders,
       data: { customer_phone: null, customer_phone_hash: null, pod_recipient_name: null },
     })).count)
+    add("orders_waiting", openOrderIds.length)
     return counts
   }
 }

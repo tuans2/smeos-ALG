@@ -7,6 +7,7 @@ import { canOverrideIndustryLock } from "@/modules/organization/domain/organizat
 import { asSystemDb, withTenantDb } from "@/core/tenancy/db-context"
 import { describeSession } from "./describe-session"
 import { resolveSession } from "./resolve-session"
+import { lifecycleStatusOf } from "../infra/organization-lifecycle-repository"
 import { parseDevRoleOverride, applyDevRoleOverride, DEV_ROLE_COOKIE } from "@/lib/dev-role-override"
 import { LEGACY_TIER_PREVIEW_COOKIE, TIER_PREVIEW_COOKIE, canUseTierPreview, parseTierPreview } from "@/modules/platform/domain/tier-preview"
 
@@ -59,6 +60,9 @@ export const resolveAppSession = cache(async function resolveAppSession(
   const industryLocked = canOverrideIndustryLock(platformCapabilities) ? false : (described.organization?.industry_locked ?? false)
   // Ma trận điều hướng Admin SaaS ghi đè cho ngành này — đọc ở máy chủ, không đóng gói lúc build (M13)
   const navHiddenKeys = await asSystemDb("session:nav-matrix", () => getNavHiddenOverride(industry))
+  // Tổ chức tạm ngưng / rời nền tảng → banner trên mọi trang (audit User Journey UJ-26)
+  const sessionOrgId = resolved.ctx.organizationId
+  const lifecycleStatus = await asSystemDb("session:lifecycle", () => lifecycleStatusOf(sessionOrgId))
 
   const session: MockSession = {
     userName: described.user.name ?? described.user.email,
@@ -77,6 +81,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
           industryLocked,
           navHiddenKeys,
           unlockedTools: described.organization.unlocked_tools ?? null,
+          lifecycleStatus: lifecycleStatus ?? "ACTIVE",
         }
       : undefined,
     // Đặc tả 03b (Role UX): khoá vai + loại tổ chức để chọn trang chủ/thứ tự

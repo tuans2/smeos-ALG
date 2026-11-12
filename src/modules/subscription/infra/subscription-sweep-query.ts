@@ -1,4 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { ACTIVE_ORGANIZATION_ONLY } from "@/modules/organization/infra/active-organization-filter"
 import type { DbClient } from "@/modules/organization/infra/db-client"
 import { RENEWAL_NOTICE_DAYS } from "../domain/subscription-rules"
 
@@ -30,6 +31,7 @@ export async function listSubscriptionsToCheck(
   const rows = await db.subscriptions.findMany({
     where: {
       status: { not: "CANCELLED" },
+      ...ACTIVE_ORGANIZATION_ONLY, // UJ-26: không mở hoá đơn / nhắc gia hạn cho tổ chức tạm ngưng / rời nền tảng
       OR: [
         { status: "OVERDUE" },
         { current_period_end: { lte: renewalHorizon } },

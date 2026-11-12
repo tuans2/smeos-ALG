@@ -130,7 +130,8 @@ export function CustomerDataRequestsPanel({ customerId, code, onErased }: { cust
         consequence={
           <span>
             Tên, số điện thoại, email, địa chỉ, ghi chú, dịp kỷ niệm và tin nhắn của khách bị xoá vĩnh viễn; khách không còn
-            nhận tin. Đơn hàng, phiếu thu và thông tin hoá đơn VAT vẫn được giữ để đối chiếu sổ sách. Không hoàn tác được.
+            nhận tin. Đơn hàng, phiếu thu và thông tin hoá đơn VAT vẫn được giữ để đối chiếu sổ sách. Đơn còn đang làm / đang giao
+            giữ địa chỉ, người nhận và lời thiệp tới khi đơn kết thúc, rồi hệ thống tự xoá nốt. Không hoàn tác được.
           </span>
         }
         confirmLabel="Xoá dữ liệu"
