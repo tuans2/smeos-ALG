@@ -177,7 +177,7 @@ export function buildContentEngineSchemaFiles(): GeneratedSchemaFile[] {
     json: {
       $schema: "https://json-schema.org/draft/2020-12/schema",
       $id: "index.json",
-      title: "FloraOS Content Engine — hợp đồng dữ liệu",
+      title: "ALG Content Engine — hợp đồng dữ liệu",
       description: "Danh sách tệp JSON Schema của Content Engine (P27).",
       "x-floraos": {
         module: "content-engine",

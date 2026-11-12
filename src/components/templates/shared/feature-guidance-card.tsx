@@ -67,7 +67,7 @@ function markAsSeen(id: string): void {
 /**
  * Base Feature Guidance Card Component (Họ Guidance Templates)
  *
- * Khung chuẩn hiển thị hướng dẫn thao tác cho các Tab tính năng trong smeOS:
+ * Khung chuẩn hiển thị hướng dẫn thao tác cho các Tab tính năng trong ALG:
  * - Khung viền đứt nét màu đỏ: `border-2 border-dashed border-red-300`
  * - Nền đỏ pastel dịu mắt: `bg-red-50/70`
  * - Badge định danh chức năng: `bg-guidance-tag-bg text-red-700`

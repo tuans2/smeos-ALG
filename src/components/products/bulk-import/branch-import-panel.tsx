@@ -34,7 +34,7 @@ export function BranchImportPanel() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = "smeOS_Template_DanhSach_CuaHang_Chuoi.xlsx"
+    a.download = "ALG_Template_DanhSach_CuaHang_Chuoi.xlsx"
     a.click()
     URL.revokeObjectURL(url)
   }

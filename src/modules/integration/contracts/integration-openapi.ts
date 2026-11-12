@@ -122,7 +122,7 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
 
 export function buildIntegrationOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({
-    title: "SMEOS Integration API",
+    title: "ALG Integration API",
     version: "1.0.0",
     description: [
       "Bề mặt máy gọi máy cho LocalBudd và SocialFlow (đặc tả 06 mục 11, đặc tả 08). Tổ chức luôn suy từ",

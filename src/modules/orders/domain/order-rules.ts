@@ -190,7 +190,7 @@ export function calculateOrderSla(
 }
 
 /**
- * Sinh mã đơn hàng chuẩn FloraOS dạng `DHYYMMDD-XXXX`, ngày theo giờ Việt Nam (audit BL-10).
+ * Sinh mã đơn hàng chuẩn ALG dạng `DHYYMMDD-XXXX`, ngày theo giờ Việt Nam (audit BL-10).
  */
 export function generateOrderCode(seqNumber: number, date = new Date()): string {
   const vn = vnCalendarDate(date)

@@ -1,5 +1,5 @@
 /**
- * Toàn bộ danh mục 92 Asset của smeOS (77 asset + 15 nhận diện thương hiệu).
+ * Toàn bộ danh mục 92 Asset của ALG (77 asset + 15 nhận diện thương hiệu).
  *
  * SSOT: `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/02_DANH_MUC_ASSET.md`.
  */

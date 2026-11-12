@@ -435,7 +435,7 @@ SERVER-SIDE.*
 - [x] Trả lời tự động bật tắt bằng `T4` trần cứng; cấu hình đa kênh theo từng shop (`YC-H4`) — `configure-chat-channel.ts`
 - [x] Hội thoại lọc theo tổ chức; bộ test cách ly phủ cả 3 bảng — `chat-isolation.test.ts` (3/3), `chat-channel-isolation.test.ts` (2/2)
 - [x] Tích hợp Đa Kênh Omnichannel (E-Catalog, Landing Page, Messenger, Zalo OA, Website ngoài) kèm cơ chế định giá & thu phí credit FloraOS-core
-- [x] Trợ lý nổi In-App Copilot `<FloraOSGlobalCopilot />` (`Cmd+K`) hướng dẫn vận hành M01–M10 kèm Deep Link chuyển trang
+- [x] Trợ lý nổi In-App Copilot `<AlgGlobalCopilot />` (`Cmd+K`) hướng dẫn vận hành M01–M10 kèm Deep Link chuyển trang
 - [x] **Kiến trúc AI Engine Đa Tầng (Multi-tier Pluggable Fallback)**: Dify -> OpenAI Direct (`gpt-4o-mini`, giải quyết triệt để vấn đề rập khuôn, lặp từ) -> Local Qwen 2.5:7b (Ollama 0 VNĐ / 0 Token) -> Local Rule Engine (offline 100%)
 - [x] **Cẩm nang Tri thức & Nhập liệu SSOT (`/tri-thuc`)**: Chuẩn hóa Atomic Disaggregated Fields cho 7 phân hệ, so sánh trực quan Good vs Bad, checklist Onboarding Progress Bar đo lường mức độ sẵn sàng dữ liệu
 - [x] **Tái cấu trúc Sidebar Navigation (`desktop-nav.tsx`)**: Đưa Tri thức & Nhập liệu (`/tri-thuc`) và AI Chat Assistant (`/hoi-thoai`) lên vị trí trung tâm nổi bật, kèm nút Copilot (Cmd+K) chân sidebar

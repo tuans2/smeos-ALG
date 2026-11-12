@@ -6,7 +6,7 @@ import {
 } from "../interpolation-engine"
 import { buildInterpolationContext } from "../variable-catalog"
 
-describe("smeOS Template Interpolation Engine", () => {
+describe("ALG Template Interpolation Engine", () => {
   it("resolves nested variables correctly with dot notation", () => {
     const ctx = buildInterpolationContext({
       productName: "Bó Hoa Tươi Thắm",

@@ -15,7 +15,7 @@
  * cho trình duyệt.
  *
  * Hai đường danh tính forwarded:
- *   - `X-FloraOS-SSO: <jwt>` — thay mặt NGƯỜI DÙNG đang đăng nhập. Sibling đã
+ *   - `X-ALG-SSO: <jwt>` — thay mặt NGƯỜI DÙNG đang đăng nhập. Sibling đã
  *     có `sso_auth.py`/`sso-jwt.ts` để verify, `claims.org` là tổ chức. Dùng cho
  *     mọi tính năng theo người dùng.
  *   - `Authorization: Bearer <token>` — token MÁY GỌI MÁY (`integration_tokens`,

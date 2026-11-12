@@ -168,11 +168,11 @@ export function variantRequiresWarning(result: GuardResult): boolean {
 
 /**
  * Cách đo của cổng (PO 25/09/2026):
- *  - `pixel_exact`: luồng cục bộ / đám mây chỉ-hậu-cảnh — FloraOS tự dán nguyên
+ *  - `pixel_exact`: luồng cục bộ / đám mây chỉ-hậu-cảnh — ALG tự dán nguyên
  *    khối sản phẩm, lõi phải trùng khít từng điểm ảnh (ngưỡng 0,999 / 0,99);
  *  - `perceptual`: luồng NHÀ CUNG CẤP TRỌN GÓI — nhà cung cấp chỉnh sáng cả bó
  *    hoa, nên đo HÌNH DÁNG (IoU mặt nạ) + CẤU TRÚC (SSIM) + MÀU (ΔE). Không nhà
- *    cung cấp nào trả phép đo này (soát 25/09) — cổng vẫn là của FloraOS.
+ *    cung cấp nào trả phép đo này (soát 25/09) — cổng vẫn là của ALG.
  */
 export type IntegrityMethod = "pixel_exact" | "perceptual"
 

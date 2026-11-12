@@ -29,7 +29,7 @@ Hệ thống smeOS chia làm 4 phân vùng ứng dụng chính:
 
 1. **Phân vùng Nghiệp vụ Chính (`src/app/(app)/`)**:
    - Chứa 37 module route phục vụ quản trị và vận hành cửa hàng / doanh nghiệp.
-   - Bao bọc bởi `src/app/(app)/layout.tsx` với cơ chế xác thực phiên máy chủ (`resolveAppSession`), phân quyền RBAC theo năng lực (`can()`), kiểm soát vai trò (`roleUx`), nhúng Copilot toàn cục (`FloraOSGlobalCopilot`), thông báo động (`LiveRegionProvider`) và ngôn ngữ đa ngành (`I18nProvider`).
+   - Bao bọc bởi `src/app/(app)/layout.tsx` với cơ chế xác thực phiên máy chủ (`resolveAppSession`), phân quyền RBAC theo năng lực (`can()`), kiểm soát vai trò (`roleUx`), nhúng Copilot toàn cục (`AlgGlobalCopilot`), thông báo động (`LiveRegionProvider`) và ngôn ngữ đa ngành (`I18nProvider`).
    - Điều hướng kép: **DesktopNav** (Sidebar 240px / 56px thu gọn) và **BottomNav** (Thanh điều hướng dưới đáy màn hình 5 nút chuẩn cho mobile) + **MobileNavDrawer**.
 
 2. **Phân vùng Quản trị Nền tảng (`src/app/(platform)/`)**:

@@ -1,5 +1,5 @@
 /**
- * Trang công cụ smeOS — 6 Business Modules & Khu Vận hành cửa hàng (business-modules.ts).
+ * Trang công cụ ALG — 6 Business Modules & Khu Vận hành cửa hàng (business-modules.ts).
  *
  * Route: /cong-cu
  *

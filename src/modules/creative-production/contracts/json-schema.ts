@@ -99,7 +99,7 @@ export function buildCreativeStudioSchemaFiles(): GeneratedSchemaFile[] {
   const index: GeneratedSchemaFile = {
     file: "index.json",
     json: {
-      title: "FloraOS Creative Studio — hợp đồng input/output 14 chặng",
+      title: "ALG Creative Studio — hợp đồng input/output 14 chặng",
       "x-floraos": {
         generated: "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`.",
         source: CONTRACTS_SOURCE_DIR,

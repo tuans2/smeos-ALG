@@ -1,5 +1,5 @@
 /**
- * Chính sách khung chat AI trên các trang công khai do công cụ SMEOS tạo ra
+ * Chính sách khung chat AI trên các trang công khai do công cụ ALG tạo ra
  * (catalog, landing page, hồ sơ cửa hàng, link bán hàng, danh thiếp...).
  * Thuần — không Prisma, không mạng.
  */

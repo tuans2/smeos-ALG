@@ -46,7 +46,7 @@
 | `/vai-tro` | Danh mục vai trải nghiệm | Bảng 16 khuôn, đánh dấu vai của tôi (chỉ đọc) | không gác | `role-ux-catalog.ts` (tĩnh) | Implemented (tĩnh) |
 | `/them` | Lối "Thêm" trên mobile | Lưới mục điều hướng (mục khoá hiện "Sắp ra mắt") + lối tắt tạo | `H3`/`I2`/`L2` cho lối tắt | `/products` | Implemented |
 
-Thành phần toàn cục của `(app)/layout.tsx`: `DesktopNav`, `BottomNav`, `GlobalImageZoom`, `SessionTakeoverWatcher`, `FloraOSGlobalCopilot` (chat nổi, gọi `/chat/conversations*`), `LiveRegionProvider`.
+Thành phần toàn cục của `(app)/layout.tsx`: `DesktopNav`, `BottomNav`, `GlobalImageZoom`, `SessionTakeoverWatcher`, `AlgGlobalCopilot` (chat nổi, gọi `/chat/conversations*`), `LiveRegionProvider`.
 
 ## 8.2 Đăng nhập & console nền tảng
 

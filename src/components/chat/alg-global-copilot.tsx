@@ -32,7 +32,7 @@ const QUICK_PROMPTS = [
   "Cách cấp tài khoản nhân viên mới trong 10 giây?",
 ]
 
-export function FloraOSGlobalCopilot() {
+export function AlgGlobalCopilot() {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [conversationId, setConversationId] = useState<string | null>(null)

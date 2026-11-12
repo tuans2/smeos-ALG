@@ -14,7 +14,7 @@ const LOCALE_MAP: Record<SupportedLocale, string> = {
 
 /**
  * Định dạng tiền tệ an toàn theo locale và đơn vị tiền
- * Mặc định cho SMEOS là VND
+ * Mặc định cho ALG là VND
  */
 export function formatCurrency(
   amount: number | null | undefined,

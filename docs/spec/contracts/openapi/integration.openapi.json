@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SMEOS Integration API",
+    "title": "ALG Integration API",
     "version": "1.0.0",
     "description": "Bề mặt máy gọi máy cho LocalBudd và SocialFlow (đặc tả 06 mục 11, đặc tả 08). Tổ chức luôn suy từ chứng thư — không endpoint nào nhận `organization_id` từ client. Giới hạn tần suất: 600 lần/60 giây cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức). Lỗi theo envelope `Error`."
   },

@@ -43,7 +43,7 @@ Log OOM: `Mark-Compact (reduce) 2042.0 (2083.6) -> 2040.7 MB … FATAL ERROR: In
   `src/components` 47 % check time, `src/modules` 25 %, `src/app` 14 %, `tests` 8,5 %.
 - **Typed routes là bước nhảy lớn nhất**: khi có `.next/types/link.d.ts` (358 route tĩnh + 264 mẫu route động; `RouteImpl<T>` gồm
   `${StaticRoutes}${SearchOrHash}` và suy luận `T extends ${DynamicRoutes<infer _>}${Suffix}`), check time ×4,5 và heap +0,85 GB.
-  **31 tệp chiếm 196 s / 273 s (72 %)**; 7 tệp đầu: `dashboard/marketing-workspace.tsx` 25,1 s, `chat/floraos-global-copilot.tsx` 22,2 s,
+  **31 tệp chiếm 196 s / 273 s (72 %)**; 7 tệp đầu: `dashboard/marketing-workspace.tsx` 25,1 s, `chat/alg-global-copilot.tsx` 22,2 s,
   `dashboard/accounting-workspace.tsx` 18,6 s, `dashboard/crm-workspace.tsx` 16,3 s, `dashboard/product-manager-workspace.tsx` 13,3 s,
   `dashboard/customer-service-workspace.tsx` 12,0 s, `organization/settings-subsystem-grid.tsx` 11,2 s (cùng tệp ở kịch bản A chỉ ~0,1 s).
   Các tệp này dùng nhiều `router.push("…" as Route)` (repo có 76 phép ép `as Route` trong 31 tệp; `marketing-workspace.tsx` có 12).

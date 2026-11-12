@@ -1,5 +1,5 @@
 /**
- * Cẩm Nang Nhập Liệu Chuẩn SSOT Cho Toàn Bộ Hệ Thống smeOS.
+ * Cẩm Nang Nhập Liệu Chuẩn SSOT Cho Toàn Bộ Hệ Thống ALG.
  * Định nghĩa chi tiết các trường dữ liệu nguyên tử (Atomic Disaggregated Fields)
  * giúp người dùng biết chính xác cần nhập những gì tại từng phân hệ.
  */

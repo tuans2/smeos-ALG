@@ -2,7 +2,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { QA_ORGANIZATION_NAME, createQaAccounts, qaAccountsProblems } from "@/modules/platform/infra/qa-accounts"
 
 /**
- * Tạo hai tài khoản chuyên test chức năng trong tổ chức riêng "smeOS QA" (PO 22/10/2026):
+ * Tạo hai tài khoản chuyên test chức năng trong tổ chức riêng "ALG QA" (PO 22/10/2026):
  * test01 = Điều hành (toàn quyền tiệm), test02 = vai hạn chế (mặc định Sale). Không cấp mã N.
  * Chạy SAU `npm run don-tai-khoan` — lệnh đó xoá mọi tài khoản trừ superadmin.
  *

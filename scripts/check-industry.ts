@@ -275,7 +275,7 @@ function checkBackendContracts(): CheckResult {
 function main() {
   const { isCheckOnly, industryFilter } = parseArgs()
 
-  console.log("\n🔍  smeOS — KIỂM TRA ĐỒNG BỘ ĐA NGÀNH THEO SSOT (FRONTEND + BACKEND)\n")
+  console.log("\n🔍  ALG — KIỂM TRA ĐỒNG BỘ ĐA NGÀNH THEO SSOT (FRONTEND + BACKEND)\n")
   console.log("═".repeat(65))
   if (industryFilter) {
     console.log(`  🎯 Lọc theo ngành: ${industryFilter}`)

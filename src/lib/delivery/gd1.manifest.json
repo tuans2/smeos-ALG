@@ -1785,7 +1785,7 @@
       "scenarios": [
         "I-09"
       ],
-      "acceptanceNote": "Đăng bài đã chạy ngay trong smeOS (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động."
+      "acceptanceNote": "Đăng bài đã chạy ngay trong ALG (quyết định D-46), không còn ứng dụng liên kết để mở. Nghiệm thu: mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên liên kết 15 phút kiểm bằng test tự động."
     },
     {
       "id": "10.1",
@@ -2261,7 +2261,7 @@
         ]
       },
       {
-        "reason": "Công cụ phát hành và bàn giao nội bộ của smeOS",
+        "reason": "Công cụ phát hành và bàn giao nội bộ của ALG",
         "paths": [
           "scripts/release/",
           "scripts/handover-",

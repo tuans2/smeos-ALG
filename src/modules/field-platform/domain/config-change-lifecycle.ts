@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Configuration Change Lifecycle Engine (§6.4)
+ * ALG Inputs Architecture v2.1 — Configuration Change Lifecycle Engine (§6.4)
  *
  * Implements the safe configuration transition workflow:
  * Draft -> Validate -> Preview Impact -> Approve -> Publish -> Rollback

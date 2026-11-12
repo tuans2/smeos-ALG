@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Register Partner Store with DSA (§4.3 & §9.5.3)
+ * ALG Inputs Architecture v2.1 — Register Partner Store with DSA (§4.3 & §9.5.3)
  *
  * Implements onboarding of a franchise/partner store under a separate legal entity,
  * bound by a Data Sharing Agreement (DSA).

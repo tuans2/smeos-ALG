@@ -1,5 +1,5 @@
 /**
- * smeOS SaaS System Knowledge Base (Bộ Cẩm Nang Tri Thức Vận Hành SSOT).
+ * ALG SaaS System Knowledge Base (Bộ Cẩm Nang Tri Thức Vận Hành SSOT).
  * Đóng gói toàn bộ tài liệu hướng dẫn và đặc tả các module vào từ điển tri thức.
  */
 
@@ -293,7 +293,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
 
 /**
  * Nhận diện ý định câu hỏi:
- * - "SAAS_HELP": Câu hỏi về thao tác, cách dùng, in ấn, tính năng, quy trình smeOS.
+ * - "SAAS_HELP": Câu hỏi về thao tác, cách dùng, in ấn, tính năng, quy trình ALG.
  * - "FLOWER_SALES": Câu hỏi về mua sản phẩm/hoa, giá sản phẩm, tìm theo dịp, ngân sách.
  */
 export function detectUserIntent(query: string): "SAAS_HELP" | "FLOWER_SALES" {
@@ -320,7 +320,7 @@ export function detectUserIntent(query: string): "SAAS_HELP" | "FLOWER_SALES" {
 }
 
 /**
- * Tra cứu tri thức vận hành hệ thống smeOS dựa trên câu hỏi của người dùng
+ * Tra cứu tri thức vận hành hệ thống ALG dựa trên câu hỏi của người dùng
  */
 export function querySaasKnowledge(query: string): SaasKnowledgeItem | null {
   const lower = query.toLowerCase()

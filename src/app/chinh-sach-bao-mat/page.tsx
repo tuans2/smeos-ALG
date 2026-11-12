@@ -42,7 +42,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
   },
 ]
 
-/** Chính sách bảo mật mẫu chung FloraOS cho trang đặt hoa — chỉ mở khi bật cờ D13. */
+/** Chính sách bảo mật mẫu chung ALG cho trang đặt hoa — chỉ mở khi bật cờ D13. */
 export default function PrivacyPolicyPage() {
   const dict = getDictionary("vi")
   if (!isPrivacyNoticeEnabled()) notFound()

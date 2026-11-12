@@ -134,7 +134,7 @@ Số liệu đo ngày 03/11/2026; lệnh đo ở `13_RE_AUDIT_ENTERPRISE_REPORT.
   - Tệp: `src/components/layout/floating-layer.tsx`.
   - Bộ điều phối các nút và widget nổi (Copilot, UI Studio Drawer, StageGateApprovalBar) theo độ ưu tiên (`priority`), tự động đệm cách đáy trên di động, triệt tiêu xung đột che khuất trên màn 360px - 430px (đóng phát hiện UI-F-02).
 - **Copilot Responsiveness & BottomSheet (S3-04)**:
-  - Tệp: `src/components/chat/floraos-global-copilot.tsx`.
+  - Tệp: `src/components/chat/alg-global-copilot.tsx`.
   - Trên màn hình nhỏ (`< sm`): hiển thị dạng `BottomSheet` toàn chiều rộng (`inset-x-0 bottom-0 rounded-t-2xl max-h-[85dvh]`) có tay cầm kéo và lớp nền mờ (backdrop), triệt tiêu hoàn toàn lỗi tràn 40px mép trái trên màn 360px (đóng phát hiện P1 UI-F-01).
   - Trên desktop (`>= sm`): hiển thị dạng cửa sổ nổi co giãn linh hoạt theo viewport (`max-h-[calc(100vh-5rem)]`).
   - Bổ sung `role="dialog"`, `aria-modal="true"`, phím tắt Escape để đóng, dọn sạch `console.error` và chuyển đổi 100% sang token ngữ nghĩa.

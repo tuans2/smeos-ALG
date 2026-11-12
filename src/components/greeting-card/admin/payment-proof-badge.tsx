@@ -12,7 +12,7 @@ export interface PaymentProofBadgeProps {
 
 /**
  * Smart Badge hiển thị trạng thái thẩm định bill ngân hàng qua AI Vision.
- * Tuân thủ quy chuẩn UX FloraOS (Token màu ngữ nghĩa, cỡ chữ text-caption, không jargon).
+ * Tuân thủ quy chuẩn UX ALG (Token màu ngữ nghĩa, cỡ chữ text-caption, không jargon).
  */
 export function PaymentProofBadge({
   analysis,

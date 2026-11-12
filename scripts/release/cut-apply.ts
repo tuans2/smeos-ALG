@@ -78,7 +78,7 @@ export function applyCut(root: string, phase: string, manifest: CutManifest, pla
   execFileSync("git", ["add", "-A"], { cwd: root })
   execFileSync(
     "git",
-    ["-c", "user.name=smeOS release", "-c", "user.email=release@invalid", "commit", "-q", "-m", `chore: bản giao ${phase.toUpperCase()}`],
+    ["-c", "user.name=ALG release", "-c", "user.email=release@invalid", "commit", "-q", "-m", `chore: bản giao ${phase.toUpperCase()}`],
     { cwd: root },
   )
 

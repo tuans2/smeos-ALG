@@ -1,6 +1,6 @@
 /**
- * smeOS Ops Copilot Engine (Domain Service).
- * Trợ lý Vận hành SaaS smeOS chuẩn Commercial & Production.
+ * ALG Ops Copilot Engine (Domain Service).
+ * Trợ lý Vận hành SaaS ALG chuẩn Commercial & Production.
  * Tích hợp Kiến trúc Multi-Agent Pipeline Đa Tầng (4 Chuyên Trách):
  * 1. Intent & Context Analyzer Agent
  * 2. Knowledge Researcher Agent (SSOT)

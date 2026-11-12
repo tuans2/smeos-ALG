@@ -19,6 +19,12 @@ export function customerFilesPattern(recipient) {
 /** Tệp văn phòng mang tên khách hàng khác — bản giao không có bên nhận cụ thể. */
 export const CUSTOMER_FILES = customerFilesPattern(undefined)
 
+/**
+ * Mẫu nhập liệu chung của nền tảng — từ 12/11/2026 nền tảng mang thương hiệu ALG nên tên mẫu có "ALG",
+ * nhưng đây không phải dữ liệu của khách hàng ALG.
+ */
+export const PLATFORM_TEMPLATES = /^public\/templates\/ALG_Template_[^/]*\.xlsx$/
+
 /** Đường dẫn máy cá nhân trong nội dung tệp. */
 export const LOCAL_PATH = ["file://", "/Users/"].join("")
 
@@ -35,7 +41,7 @@ export function findHandoverViolations(entries, filesWithLocalPath = [], options
   for (const p of entries) {
     if (AGENT_CONFIG.some((re) => re.test(p))) out.push({ rule: "cấu hình agent", path: p })
     else if (AGENT_DOCS.test(p)) out.push({ rule: "tài liệu agent", path: p })
-    else if (customerFiles.test(p)) out.push({ rule: "tệp của khách hàng khác", path: p })
+    else if (customerFiles.test(p) && !PLATFORM_TEMPLATES.test(p)) out.push({ rule: "tệp của khách hàng khác", path: p })
   }
   for (const p of filesWithLocalPath) {
     if (inArchive.has(p)) out.push({ rule: "đường dẫn máy cá nhân", path: p })

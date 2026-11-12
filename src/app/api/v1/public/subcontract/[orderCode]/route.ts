@@ -36,7 +36,7 @@ export const GET = handle<[{ params: Promise<{ orderCode: string }> }]>(async (r
 
   // Kiểm tra chi nhánh có thuộc cùng tổ chức với đơn hàng hay không
   let branchName = ""
-  // Cửa hàng đối tác có tài khoản smeOS → gợi ý làm đơn trong Trao đổi nội bộ (kế hoạch chat nội bộ IC-6.2, D11)
+  // Cửa hàng đối tác có tài khoản ALG → gợi ý làm đơn trong Trao đổi nội bộ (kế hoạch chat nội bộ IC-6.2, D11)
   let inAppChatUrl: string | null = null
   if (branchId) {
     const branch = await repo.findBranchInOrganization(branchId, order.organization_id)

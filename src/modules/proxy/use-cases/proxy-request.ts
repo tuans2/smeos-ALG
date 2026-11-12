@@ -44,7 +44,7 @@ export class ProxyRouteError extends AppError {
  *
  * SSO JWT `floraos_sso` core tự đặt cookie host-only "localhost" — trình duyệt
  * tự gửi kèm khi dashboard gọi proxy same-origin, core đọc ở đây rồi forward
- * làm header `X-FloraOS-SSO` sang sibling (sibling verify bằng chính bí mật
+ * làm header `X-ALG-SSO` sang sibling (sibling verify bằng chính bí mật
  * `SSO_SESSION_SECRET` dùng chung). Không forward cookie session
  * (`floraos_session`) — sibling không cần, và JWT/token là chứng thư đã ký,
  * tự xác minh được.

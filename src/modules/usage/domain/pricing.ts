@@ -94,7 +94,7 @@ const FEATURE_COST_CREDIT: Readonly<Record<string, number>> = {
  * Video nhà cung cấp (PO 25/09/2026): mỗi cảnh một clip ảnh → video, giá theo
  * TỶ LỆ chi phí công bố của từng bên (Veo 3 đắt ~3–4 lần Kling/Runway/Luma cho
  * cùng số giây). Tổng một lượt = `video.render` (ghép + âm thanh + phụ đề của
- * FloraOS) + giá/cảnh × số cảnh. Lùi Ken Burns cục bộ → hoàn phần clip; bên
+ * ALG) + giá/cảnh × số cảnh. Lùi Ken Burns cục bộ → hoàn phần clip; bên
  * thật rẻ hơn bên đã tính → hoàn chênh (`get-video-job.ts`). Bảng giá v1.
  */
 export const VIDEO_CLIP_CREDIT_PER_SCENE: Readonly<Record<string, number>> = {

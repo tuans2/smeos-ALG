@@ -1,5 +1,5 @@
 /**
- * SMEOS File Security — Excel / Spreadsheet Validator
+ * ALG File Security — Excel / Spreadsheet Validator
  *
  * Tiêu chuẩn an toàn và bảo mật khi tiếp nhận tệp tải lên từ người dùng:
  * 1. Giới hạn dung lượng tối đa (Max 25MB) chống DoS/OOM

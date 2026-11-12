@@ -1,7 +1,7 @@
 "use client"
 
 // Console "Trường dữ liệu" (`N12`, ĐP-3 3.15) — nơi quản trị nền tảng
-// FloraOS sửa trường/danh mục đã xây và tạo trường tự tạo, theo nguyên lý
+// ALG sửa trường/danh mục đã xây và tạo trường tự tạo, theo nguyên lý
 // PO 26/09/2026 (Đặc tả trường §16.2/§16.3). 4 tab, mỗi thao tác ghi đều
 // xác nhận-có-diff trước khi gọi API (`_components/diff-confirm.tsx`).
 //

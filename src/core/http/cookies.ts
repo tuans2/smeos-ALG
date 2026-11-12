@@ -37,7 +37,7 @@ export function serializeClearedSessionCookie(): string {
 }
 
 /**
- * Cookie JWT phiên liên-app (Unified Shell, B1) cho smeOS
+ * Cookie JWT phiên liên-app (Unified Shell, B1) cho ALG
  */
 export const SSO_COOKIE = "smeos_sso"
 /** Tên trước khi đổi thương hiệu (e9833b1) — LocalBudd/SocialFlow còn đọc/gửi tên này. */

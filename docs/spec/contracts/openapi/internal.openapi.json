@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SMEOS Internal API",
+    "title": "ALG Internal API",
     "version": "1.0.0",
-    "description": "API nội bộ của ứng dụng tiệm — chỉ giao diện SMEOS gọi, không phải API công khai (xem Integration API). Mọi route cần phiên đăng nhập của thành viên tổ chức; `organization_id` lấy từ phiên, không nhận từ thân/query. Quyền theo mã năng lực (`x-capability`), không theo tên vai. Bản ghi của tổ chức khác trả 404, không bao giờ 403. Lỗi chung: thiếu phiên 401; thiếu quyền, công cụ bị khoá, đang dùng mật khẩu tạm 403; phiên chưa chọn tổ chức 409; lệnh ghi khi gói quá hạn 402."
+    "description": "API nội bộ của ứng dụng tiệm — chỉ giao diện ALG gọi, không phải API công khai (xem Integration API). Mọi route cần phiên đăng nhập của thành viên tổ chức; `organization_id` lấy từ phiên, không nhận từ thân/query. Quyền theo mã năng lực (`x-capability`), không theo tên vai. Bản ghi của tổ chức khác trả 404, không bao giờ 403. Lỗi chung: thiếu phiên 401; thiếu quyền, công cụ bị khoá, đang dùng mật khẩu tạm 403; phiên chưa chọn tổ chức 409; lệnh ghi khi gói quá hạn 402."
   },
   "servers": [
     {
@@ -95291,7 +95291,7 @@
                     "maximum": 4294967294
                   },
                   "style": {
-                    "description": "Phong cách hậu cảnh (ý định FloraOS) — Stability dịch sang style_preset; phông cục bộ ghi provider_ignored",
+                    "description": "Phong cách hậu cảnh (ý định ALG) — Stability dịch sang style_preset; phông cục bộ ghi provider_ignored",
                     "type": "string",
                     "enum": [
                       "natural",

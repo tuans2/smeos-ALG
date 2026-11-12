@@ -1,5 +1,5 @@
 /**
- * Hệ thống Điều hướng 4 Tầng smeOS (Navigation Dispatcher)
+ * Hệ thống Điều hướng 4 Tầng ALG (Navigation Dispatcher)
  * Chuẩn hóa theo SSOT SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md
  */
 

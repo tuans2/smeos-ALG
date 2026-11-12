@@ -7,7 +7,7 @@
  * - `Authorization: Bearer <token>` — token MÁY GỌI MÁY (`integration_tokens`,
  *   `YC-T8`). Gắn cứng vào một tổ chức, không gắn người dùng. Dùng cho lời gọi
  *   nền: cron, worker, đối soát.
- * - `X-FloraOS-SSO: <jwt>` — JWT phiên liên-app (`floraos_sso`, Unified Shell
+ * - `X-ALG-SSO: <jwt>` — JWT phiên liên-app (`floraos_sso`, Unified Shell
  *   B1). Gắn NGƯỜI DÙNG + tổ chức đang hoạt động của chính người đó. Dùng cho
  *   lời gọi mà `LocalBudd`/`SocialFlow` thực hiện thay mặt một người đang
  *   đăng nhập.

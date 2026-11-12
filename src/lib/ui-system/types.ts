@@ -1,5 +1,5 @@
 /**
- * UI System Types — smeOS Architecture (Phase 1 — Enterprise Design System)
+ * UI System Types — ALG Architecture (Phase 1 — Enterprise Design System)
  *
  * Định nghĩa hợp đồng kiểu dữ liệu cho toàn bộ hệ thống Runtime UI System:
  * - Presets: Mộc Lan (chuẩn StoreOS), Modern Slate (Platform/ChainOS), Pure Swiss (Minimalist)

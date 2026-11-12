@@ -84,7 +84,7 @@ export default function DonHangPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-bg">
-      {/* 1. Header chuẩn FloraOS */}
+      {/* 1. Header chuẩn ALG */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4">
         <PageHeader
           title={t("orders.header.title")}

@@ -1,5 +1,5 @@
 /**
- * Lời gọi API của Bước 4 "Đăng tự động" — module `social-publishing` của SMEOS (không còn qua proxy SocialFlow).
+ * Lời gọi API của Bước 4 "Đăng tự động" — module `social-publishing` của ALG (không còn qua proxy SocialFlow).
  * Mọi lỗi ném `Error` với câu tiếng Việt cho user.
  */
 import type { PendingPage } from "@/modules/social-publishing/use-cases/connect-channel"

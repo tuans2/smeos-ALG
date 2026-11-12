@@ -33,7 +33,7 @@ Phân hệ **AI Chat Assistant (M08)** hoạt động theo cơ chế **Dual-Inte
 ```
 
 1. **Nhánh A — Trợ Lý Vận Hành SaaS Nội Bộ (`INTERNAL_DASHBOARD`)**:
-   - Xuất hiện trên mọi màn hình của webapp FloraOS thông qua `<FloraOSGlobalCopilot />` nhúng tại `src/app/(app)/layout.tsx`.
+   - Xuất hiện trên mọi màn hình của webapp FloraOS thông qua `<AlgGlobalCopilot />` nhúng tại `src/app/(app)/layout.tsx`.
    - Trả lời 24/7 mọi thắc mắc của chủ tiệm và thợ hoa về quy trình: in phiếu cắm hoa giấu giá M10, phiếu giao hàng A6, công thức giá sàn/trần M02, quét ngày kỷ niệm CRM M09, dựng video marketing 9:16 M04c.
    - Cung cấp nút Deep Link điều hướng trực tiếp đến đúng màn hình cần thao tác.
 
@@ -270,8 +270,8 @@ Hệ thống phân định rành mạch 2 tầng chi phí độc lập:
 
 ## 7. Giao Diện Người Dùng & Trải Nghiệm Khách Hàng (Frontend Components)
 
-1. **Trợ Lý Nổi Toàn Hệ Thống (`<FloraOSGlobalCopilot />`)**:
-   - File: `src/components/chat/floraos-global-copilot.tsx` & `copilot-message-item.tsx`.
+1. **Trợ Lý Nổi Toàn Hệ Thống (`<AlgGlobalCopilot />`)**:
+   - File: `src/components/chat/alg-global-copilot.tsx` & `copilot-message-item.tsx`.
    - Vị trí: Góc dưới bên phải trên toàn bộ webapp, hỗ trợ phím tắt `Cmd + K`.
    - Tự động bắt intent người dùng: Hướng dẫn nghiệp vụ SaaS (`SAAS_HELP`) kèm nút Deep Link điều hướng, hoặc Tư vấn bán hoa tươi (`FLOWER_SALES`) trích xuất từ Product Master Index.
 

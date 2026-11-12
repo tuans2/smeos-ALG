@@ -1,6 +1,6 @@
 /**
  * Domain Logic: Vòng đời xu hướng (Trend Lifecycle) & Cấu trúc Dẫn chứng (Evidence).
- * Tuân thủ Đặc tả FloraOS Intelligence Engine v2.0 (Mục 6.2 & 20-22).
+ * Tuân thủ Đặc tả ALG Intelligence Engine v2.0 (Mục 6.2 & 20-22).
  * Thuần TypeScript — Zero external dependencies.
  */
 

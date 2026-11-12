@@ -8,7 +8,7 @@ Căn cứ: `KE_HOACH_NANG_CAP_UI.md` Đợt 3, `BANG_LECH_CHUAN_DESIGN_SYSTEM.md
 Đọc mã cho thấy hai phát hiện cũ có phạm vi **nhỏ hơn** tôi báo:
 
 - **UI Studio** chỉ gắn vào cửa hàng ngoài production (`src/app/(app)/layout.tsx:49`, `withUiStudio={process.env.NODE_ENV !== "production"}`); Console nền tảng luôn có (`(platform)/layout.tsx:50`). Vì vậy lỗi nhãn truy cập DS-09 (138 lượt đo) và việc nút nổi che nội dung (DS-12) **không xảy ra với khách cửa hàng trên production**, chỉ ở dev và Console.
-- Nút nổi của **Copilot** (`floraos-global-copilot.tsx:184`, `fixed top-1/2 right-3`) mới là phần tử nổi khách thấy trên production.
+- Nút nổi của **Copilot** (`alg-global-copilot.tsx:184`, `fixed top-1/2 right-3`) mới là phần tử nổi khách thấy trên production.
 
 ## Danh sách hạng mục
 

@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SMEOS Public API",
+    "title": "ALG Public API",
     "version": "1.0.0",
     "description": "Endpoint không cần đăng nhập. Tổ chức luôn suy từ mã gửi / slug / token / khoá webhook phía máy chủ, không nhận từ thân yêu cầu. Mọi route có giới hạn tần suất (header `RateLimit-*`, 429 kèm `Retry-After`). Lỗi theo envelope `Error`, trừ vài webhook ghi rõ ở từng operation."
   },

@@ -22,7 +22,7 @@ import { verifySsoToken } from "@/modules/sso/infra/sso-jwt"
  * - `token` — máy gọi máy (`integration_tokens`, `YC-T8`). Không có người
  *   dùng đứng sau, nên `capabilities` rỗng và phạm vi là chính tập route này.
  * - `sso` — thay mặt một người đang đăng nhập (JWT `floraos_sso`, header
- *   `X-FloraOS-SSO`). Có người dùng thật, nên `capabilities` là năng lực THẬT
+ *   `X-ALG-SSO`). Có người dùng thật, nên `capabilities` là năng lực THẬT
  *   của người đó trong tổ chức đó, và mọi use-case tái dùng tự cắt đúng phần
  *   người ấy không được xem.
  *

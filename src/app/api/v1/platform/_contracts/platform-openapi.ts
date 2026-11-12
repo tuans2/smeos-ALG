@@ -12,7 +12,7 @@ import { ORG_OPERATIONS } from "./ops-orgs"
  */
 export const PLATFORM_OPENAPI_PATH = "docs/spec/contracts/openapi/platform.openapi.json"
 
-/** Mọi operation đã khai — test giữ ở smeOS không có operation nào trỏ route không tồn tại. */
+/** Mọi operation đã khai — test giữ ở ALG không có operation nào trỏ route không tồn tại. */
 export const PLATFORM_OPERATIONS_DECLARED: OpenApiOperation[] = [...ORG_OPERATIONS, ...CONFIG_OPERATIONS, ...DATA_OPERATIONS]
 
 /** Bản cắt bàn giao chỉ còn route được giao: bỏ operation của route đã cắt (kế hoạch GD1, Bước 2.3). */
@@ -20,10 +20,10 @@ export const PLATFORM_OPERATIONS: OpenApiOperation[] = PLATFORM_OPERATIONS_DECLA
 
 export function buildPlatformOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({
-    title: "SMEOS Platform Console API",
+    title: "ALG Platform Console API",
     version: "1.0.0",
     description: [
-      "API nội bộ của Console Vận hành Nền tảng — chỉ giao diện SMEOS gọi. Mọi route cần phiên của người vận hành",
+      "API nội bộ của Console Vận hành Nền tảng — chỉ giao diện ALG gọi. Mọi route cần phiên của người vận hành",
       "nền tảng (`platform_operators`); quyền theo mã `N*` (`x-capability`), không theo vai của tổ chức. Đọc xuyên tổ",
       "chức là ngoại lệ có chủ đích (đặc tả 06 mục 21); route đọc/ghi dữ liệu một tổ chức ghi nhật ký truy cập (D-60).",
     ].join(" "),

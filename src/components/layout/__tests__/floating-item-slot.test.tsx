@@ -31,7 +31,7 @@ describe("FloatingItemSlot (T3-2, layouts.md §3)", () => {
   })
 
   it("Copilot và UI Studio đăng ký qua lớp nổi, không tự định vị fixed", () => {
-    const copilot = src("src/components/chat/floraos-global-copilot.tsx")
+    const copilot = src("src/components/chat/alg-global-copilot.tsx")
     const studio = src("src/components/layout/ui-studio-drawer.tsx")
     expect(copilot).toContain('<FloatingItemSlot id="copilot"')
     expect(studio).toContain('<FloatingItemSlot id="ui-studio"')
@@ -50,7 +50,7 @@ describe("Nút UI Studio — nhãn truy cập chứa chữ nhìn thấy (T3-1, W
 
 describe("Nút Copilot — icon không bị co (T3-2)", () => {
   it("nút tròn 44px không có padding, icon shrink-0", () => {
-    const copilot = src("src/components/chat/floraos-global-copilot.tsx")
+    const copilot = src("src/components/chat/alg-global-copilot.tsx")
     expect(copilot).toContain("h-11 w-11 p-0")
     expect(copilot).toMatch(/<Bot className="h-5 w-5 shrink-0/)
   })

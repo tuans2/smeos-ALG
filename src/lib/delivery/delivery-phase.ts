@@ -66,7 +66,7 @@ export function isHrefInPhase(href: string | null | undefined, phase: DeliveryPh
 }
 
 /**
- * Route API có trong mã nguồn hiện tại (trong hay ngoài phạm vi). Ở smeOS là mọi route; ở bản cắt chỉ còn
+ * Route API có trong mã nguồn hiện tại (trong hay ngoài phạm vi). Ở ALG là mọi route; ở bản cắt chỉ còn
  * route được giao — dùng để danh sách operation OpenAPI tự khớp bản cắt. `path` dạng OpenAPI (`/orders/{id}`).
  */
 export function isKnownApiRoute(openApiPath: string, phase: DeliveryPhase = "gd1"): boolean {

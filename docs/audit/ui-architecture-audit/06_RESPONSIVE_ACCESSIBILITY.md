@@ -23,7 +23,7 @@
 
 | ID | Phát hiện | Bằng chứng | Khổ bị ảnh hưởng | Mức |
 |---|---|---|---|---|
-| UI-F-01 | Panel Copilot rộng cố định 380px, neo `right-5` (20px) | `src/components/chat/floraos-global-copilot.tsx` (khối `fixed bottom-5 right-5 z-50 … h-[580px] w-[380px] sm:w-[420px]`) | 360 (tràn trái ~40px), 390 (~10px); cao 580px vượt khung nhìn ngang/thấp; `z-50` phủ lên BottomNav `z-40` | P1 (cần ảnh xác nhận) |
+| UI-F-01 | Panel Copilot rộng cố định 380px, neo `right-5` (20px) | `src/components/chat/alg-global-copilot.tsx` (khối `fixed bottom-5 right-5 z-50 … h-[580px] w-[380px] sm:w-[420px]`) | 360 (tràn trái ~40px), 390 (~10px); cao 580px vượt khung nhìn ngang/thấp; `z-50` phủ lên BottomNav `z-40` | P1 (cần ảnh xác nhận) |
 | UI-F-02 | Ba phần tử nổi cùng mép phải không có registry vị trí | Copilot nút `fixed top-1/2 right-3 z-50`; UI Studio `fixed bottom-24 right-6 z-40`; BottomNav `fixed bottom-0 z-40 h-16` + nút giữa nhô `-mt-5` | 360–430 | P2 |
 | UI-F-03 | Shell `(platform)` không đệm đáy cho BottomNav | `src/app/(platform)/layout.tsx:50-52` | 360–767 | P2 (cần ảnh xác nhận) |
 | UI-F-04 | Bề rộng tối thiểu cố định trong nội dung | `tracking-stepper-view.tsx:61` `min-w-[720px]`; `platform-integrations-matrix.tsx:28` `min-w-[720px]`; 17 chỗ `w-[4xx–9xxpx]` không kèm breakpoint | < 768 (phụ thuộc vùng cuộn bao ngoài) | P3 |

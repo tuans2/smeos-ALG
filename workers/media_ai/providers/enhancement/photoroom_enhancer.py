@@ -5,7 +5,7 @@ Một lượt `POST https://image-api.photoroom.com/v2/edit` (multipart, header
 (`removeBackground`, `background.color`), bóng đổ AI (`shadow.mode=ai.soft`),
 chỉnh sáng AI (`lighting.mode=ai.auto`), tăng nét AI (`upscale.mode=ai.fast`).
 `referenceBox=originalImage` + `outputSize=originalImage` giữ nguyên khung và vị
-trí bó hoa — bố cục là của FloraOS, không để nhà cung cấp tự cắt lại.
+trí bó hoa — bố cục là của ALG, không để nhà cung cấp tự cắt lại.
 
 Năng lực Photoroom KHÔNG có (xoá watermark, chèn chữ) ghi vào `bo_qua`, không
 âm thầm bỏ và không trộn xử lý cục bộ thay thế (luật PO 25/09/2026).

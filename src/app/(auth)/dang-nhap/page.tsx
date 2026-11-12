@@ -1,6 +1,6 @@
 "use client"
 
-// Trang xác thực smeOS — Hỗ trợ 3 luồng:
+// Trang xác thực ALG — Hỗ trợ 3 luồng:
 // 1. Đăng nhập tài khoản có sẵn (POST /api/v1/auth/login)
 // 2. Đăng ký tài khoản chính thức (POST /api/v1/auth/signup)
 // 3. Đăng ký dùng thử, chờ quản trị viên duyệt (POST /api/v1/auth/instant-trial)

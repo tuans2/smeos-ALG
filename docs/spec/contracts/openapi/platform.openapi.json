@@ -1,9 +1,9 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "SMEOS Platform Console API",
+    "title": "ALG Platform Console API",
     "version": "1.0.0",
-    "description": "API nội bộ của Console Vận hành Nền tảng — chỉ giao diện SMEOS gọi. Mọi route cần phiên của người vận hành nền tảng (`platform_operators`); quyền theo mã `N*` (`x-capability`), không theo vai của tổ chức. Đọc xuyên tổ chức là ngoại lệ có chủ đích (đặc tả 06 mục 21); route đọc/ghi dữ liệu một tổ chức ghi nhật ký truy cập (D-60)."
+    "description": "API nội bộ của Console Vận hành Nền tảng — chỉ giao diện ALG gọi. Mọi route cần phiên của người vận hành nền tảng (`platform_operators`); quyền theo mã `N*` (`x-capability`), không theo vai của tổ chức. Đọc xuyên tổ chức là ngoại lệ có chủ đích (đặc tả 06 mục 21); route đọc/ghi dữ liệu một tổ chức ghi nhật ký truy cập (D-60)."
   },
   "servers": [
     {

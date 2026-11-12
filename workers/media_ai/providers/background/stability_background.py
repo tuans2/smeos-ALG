@@ -78,7 +78,7 @@ STYLE_PRESETS: frozenset[str] = frozenset({
     "tile-texture",
 })
 
-# Ý định phong cách của FloraOS (`base.PHONG_CACH`) → `style_preset` Stability.
+# Ý định phong cách của ALG (`base.PHONG_CACH`) → `style_preset` Stability.
 # Chỉ các preset ảnh chụp — ảnh sản phẩm hoa thật không đi với anime/pixel-art.
 STYLE_SANG_PRESET: dict[str, str] = {
     "natural": "photographic",
@@ -145,7 +145,7 @@ class StabilityBackgroundProvider:
 
     @staticmethod
     def _style_preset(style: str | None) -> tuple[str | None, list[str]]:
-        """Ý định FloraOS → `style_preset`. Giá trị lạ bị bỏ và ghi `bo_qua` —
+        """Ý định ALG → `style_preset`. Giá trị lạ bị bỏ và ghi `bo_qua` —
         không gửi thẳng cho Stability (enum lạ là HTTP 400)."""
         if not style:
             return None, []
@@ -155,7 +155,7 @@ class StabilityBackgroundProvider:
         return None, [f"style:{style}"]
 
     def generate(self, req: BackgroundRequest) -> BackgroundResult:
-        """Adapter theo khung chung: ý định FloraOS → tham số Stability Core.
+        """Adapter theo khung chung: ý định ALG → tham số Stability Core.
 
         - khung: `aspect_ratio` = ĐÚNG tỉ lệ đích (không còn theo ảnh Master);
         - ánh sáng / cỡ cảnh / bảng màu: ghép vào `prompt` (`dung_prompt_hau_canh`);

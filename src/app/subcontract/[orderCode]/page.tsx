@@ -19,7 +19,7 @@ import type { StepBypassRequestInfo } from "@/components/greeting-card/subcontra
 import { subcontractAccessHeaders } from "@/components/greeting-card/subcontract/subcontract-access"
 
 interface SubcontractPageData extends SubcontractClaimCardProps {
-  /** Cửa hàng đối tác có tài khoản smeOS — mở phòng Trao đổi nội bộ với chuỗi */
+  /** Cửa hàng đối tác có tài khoản ALG — mở phòng Trao đổi nội bộ với chuỗi */
   inAppChatUrl?: string | null | undefined
   craftFeeDeductions?: Array<{ amountVnd: number; reason: string }>
   craftFeePayableVnd?: number

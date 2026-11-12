@@ -70,7 +70,7 @@ export function isFeatureLockEnabled(
  * `NEXT_PUBLIC_APP_ENV` (P0-06):
  * - `/market-intelligence`: worker nghiên cứu thị trường chưa được triển khai (D-20b).
  * - `/lich-dang`, `/ket-noi`: còn gọi SocialFlow qua proxy, production không cấu hình SocialFlow; mở lại
- *   khi đăng bài chạy ngay trong SMEOS (Workstream S, `docs/audit/architecture-audit/17_…`).
+ *   khi đăng bài chạy ngay trong ALG (Workstream S, `docs/audit/architecture-audit/17_…`).
  */
 export const UNAVAILABLE_ROUTE_PREFIXES: readonly string[] = ["/market-intelligence", "/lich-dang", "/ket-noi"]
 

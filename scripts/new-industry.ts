@@ -77,7 +77,7 @@ async function collectIndustryInput(prefill: Partial<IndustryInput> & { defaults
   const isAuto = Boolean(prefill.defaults)
   const rl = isAuto ? null : readline.createInterface({ input, output })
 
-  console.log("\n🏭  WIZARD TẠO NGÀNH MỚI — smeOS SSOT\n")
+  console.log("\n🏭  WIZARD TẠO NGÀNH MỚI — ALG SSOT\n")
   console.log("─".repeat(60))
   if (!isAuto) {
     console.log("  Trả lời các câu hỏi dưới đây. Nhấn Enter để dùng giá trị mặc định.\n")

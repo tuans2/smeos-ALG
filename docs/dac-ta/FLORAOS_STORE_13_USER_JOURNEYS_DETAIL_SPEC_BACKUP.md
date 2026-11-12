@@ -8,7 +8,7 @@
 > - Máy trạng thái hành trình: `src/modules/journey/domain/journey-state.ts`  
 > - Điều hướng & Giao diện: `src/components/dashboard/store-journey-home.tsx` & `src/components/journey/choice-grid.tsx`  
 > - Khung giao diện hành trình: `src/components/journey/journey-shell.tsx`, `workflow-preview.tsx`  
-> - Trợ lý hội thoại toàn cục: `src/components/chat/floraos-global-copilot.tsx`  
+> - Trợ lý hội thoại toàn cục: `src/components/chat/alg-global-copilot.tsx`  
 > **Vai trò người dùng mục tiêu:** `store_admin` (Chủ tiệm hoa), `store_manager` (Quản lý cửa hàng), `dieu_hanh` (Điều hành)  
 > **Phiên bản:** 2.1 (Bổ sung phân tích chuyên sâu Ý nghĩa, Giá trị nghiệp vụ & Vai trò cốt lõi của 13 chức năng) — Ngày ban hành: 02/10/2026 (20:25)
 
@@ -324,7 +324,7 @@ Hệ thống FloraOS áp dụng triệt để kiến trúc **Hành trình trư�
 - **Mã hành trình (`id`):** `floraos-copilot-chat`
 - **Mô tả ngắn:** Trợ lý thông minh FloraOS Copilot hỗ trợ 24/7 giải đáp nghiệp vụ và thao tác.
 - **Phân loại & Huy hiệu:** `category: "AI_SUGGEST"` | Huy hiệu: `"Trợ lý 24/7"` | Biểu tượng: `Bot`
-- **Phương thức kích hoạt:** Kích hoạt trực tiếp khung hội thoại trợ lý ảo toàn cục (`FloraOSGlobalCopilot`) thông qua sự kiện `floraos:open-copilot` hoặc phím tắt `⌘K`.
+- **Phương thức kích hoạt:** Kích hoạt trực tiếp khung hội thoại trợ lý ảo toàn cục (`AlgGlobalCopilot`) thông qua sự kiện `floraos:open-copilot` hoặc phím tắt `⌘K`.
 
 #### 🎯 Ý nghĩa & Giá trị nghiệp vụ:
 - **Ý nghĩa:** Tích hợp Trợ lý Trí tuệ nhân tạo toàn cục (FloraOS In-App Copilot) với nền tảng Cơ sở tri thức ngành hoa (SaaS Knowledge Base), nắm vững mọi kỹ thuật cắm hoa, cách dưỡng hoa tươi lâu, bảng màu phối hoa và hướng dẫn sử dụng phần mềm.
@@ -359,7 +359,7 @@ Hệ thống FloraOS áp dụng triệt để kiến trúc **Hành trình trư�
 | **10** | **Tiếp nhận & Xử lý đơn hàng ( Giành cho Điện Hoa)** | `create-order` | Xương sống tiếp nhận đơn & điều phối điện hoa | `SINGLE` | — | `ShoppingCart` | `/don-hang` | `don-hang/page.tsx` |
 | **11** | **CRM _ Hệ thống Chăm Sóc khách hàng** | `manage-customers` | Cỗ máy duy trì quan hệ & nhắc hẹn kỷ niệm | `SINGLE` | — | `Users` | `/khach-hang` | `khach-hang/page.tsx` |
 | **12** | **Combo 14 bước Tự động tạo và đăng bài.** | `launch-product-combo` | Dây chuyền tự động hóa đưa sản phẩm ra thị trường | `COMBO` | Gói quy trình | `Rocket` | *Quy trình nội bộ* | `workflow-preview.tsx` + `journey-shell.tsx` |
-| **13** | **Chatbot** | `floraos-copilot-chat` | Cố vấn chuyên môn & Trợ lý ảo toàn cục 24/7 | `AI_SUGGEST` | Trợ lý 24/7 | `Bot` | *Khung Copilot 24/7 (⌘K)* | `floraos-global-copilot.tsx` |
+| **13** | **Chatbot** | `floraos-copilot-chat` | Cố vấn chuyên môn & Trợ lý ảo toàn cục 24/7 | `AI_SUGGEST` | Trợ lý 24/7 | `Bot` | *Khung Copilot 24/7 (⌘K)* | `alg-global-copilot.tsx` |
 
 ---
 
