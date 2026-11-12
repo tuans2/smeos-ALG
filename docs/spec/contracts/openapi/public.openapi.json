@@ -11253,6 +11253,7 @@
                   "ENTITLEMENT_REQUIRED",
                   "PASSWORD_CHANGE_REQUIRED",
                   "SUBSCRIPTION_OVERDUE",
+                  "ORGANIZATION_INACTIVE",
                   "NOT_FOUND",
                   "CONFLICT",
                   "PAYLOAD_TOO_LARGE",

@@ -6,6 +6,7 @@ import { getOrganization } from "@/modules/platform/use-cases/get-organization"
 import { approveOrganizationModelChange } from "@/modules/platform/use-cases/approve-organization-model-change"
 import { decidePublicChatLimits } from "@/modules/platform/use-cases/decide-public-chat-limits"
 import { setBranchScopeWave1 } from "@/modules/platform/use-cases/set-branch-scope-wave"
+import { setOrganizationLifecycle } from "@/modules/platform/use-cases/set-organization-lifecycle"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { organizationPatchBody } from "@/app/api/v1/platform/_contracts/requests"
 
@@ -75,6 +76,15 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
 
   if (parsed.data.branch_scope_wave1 !== undefined) {
     result = await setBranchScopeWave1(pctx, { organizationId: id, enabled: parsed.data.branch_scope_wave1 })
+  }
+
+  if (parsed.data.lifecycle_status) {
+    result = await setOrganizationLifecycle(pctx, {
+      organizationId: id,
+      status: parsed.data.lifecycle_status,
+      offboardingUntil: parsed.data.offboarding_until ? new Date(parsed.data.offboarding_until) : null,
+      note: parsed.data.note ?? null,
+    })
   }
 
   return jsonResponse({ data: result })

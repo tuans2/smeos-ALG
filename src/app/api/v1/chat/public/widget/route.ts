@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { NextRequest, NextResponse } from "next/server"
 import { publicChatWidgetBody } from "@/app/api/v1/_contracts/requests-chat"
 import { AppError } from "@/core/http/errors"
@@ -19,7 +20,12 @@ const PUBLIC_MESSAGES: Partial<Record<string, string>> = {
   RATE_LIMITED: "Bạn gửi tin nhắn hơi nhanh, vui lòng thử lại sau ít phút",
 }
 
+/** Webhook / widget công khai ngoài `handle()`: chạy quyền hệ thống (tổ chức suy từ kênh), như nhóm đường dẫn của `handle()`. */
 export async function POST(req: NextRequest) {
+  return asSystemDb("route:/api/v1/chat/public/widget", () => postUnscoped(req))
+}
+
+async function postUnscoped(req: NextRequest) {
   const parsed = publicChatWidgetBody.safeParse(await req.json().catch(() => null))
   if (!parsed.success) {
     return NextResponse.json({ error: "Tham số không hợp lệ" }, { status: 400 })

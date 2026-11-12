@@ -15,6 +15,7 @@ import { UserRepository } from "@/modules/organization/infra/user-repository"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { checkSubscription } from "@/modules/subscription/use-cases/subscription-guard"
+import { assertOrganizationLifecycle } from "./assert-organization-lifecycle"
 import { lockedToolForPath, toolForPath, unlockedToolsFrom } from "@/modules/organization/domain/tool-route-entitlement"
 
 export type ResolvedSession = {
@@ -147,6 +148,7 @@ export async function requireTenantContext(
   if (resolved.user.must_change_password && new URL(request.url).pathname !== PASSWORD_CHANGE_PATH) {
     throw new AppError("PASSWORD_CHANGE_REQUIRED", "Tài khoản đang dùng mật khẩu tạm — đổi mật khẩu trước khi tiếp tục")
   }
+  await assertOrganizationLifecycle(resolved.ctx.organizationId, request.method) // ADR-016 D-S5
   await assertToolUnlocked(request, resolved.ctx)
   await assertSubscriptionWritable(request, resolved.ctx)
   return { resolved, ctx: resolved.ctx }

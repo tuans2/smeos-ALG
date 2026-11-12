@@ -7,6 +7,7 @@ import { headers } from "next/headers"
 import { requestCookieHeader } from "@/lib/request-cookie-header"
 
 import { log } from "@/core/observability/log"
+import { withRequestDb } from "@/core/tenancy/db-context"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { ProductItem } from "@/components/products/product-card"
 import { INITIAL_PRODUCT_LIST_URL, type ProductListPage } from "@/components/products/product-list-page"
@@ -27,9 +28,13 @@ async function loadInitialPage(): Promise<ProductListPage<ProductItem> | null> {
   const host = (await headers()).get("host") ?? "localhost"
   try {
     const request = new Request(`http://${host}${INITIAL_PRODUCT_LIST_URL}`, { headers: { cookie: cookieHeader } })
-    const { ctx } = await requireTenantContext(request)
-    if (!hasCapability(ctx, "L1")) return null
-    const result = await listProducts(ctx, {}, { limit: INITIAL_LIMIT, cursor: null })
+    // Ngoài `handle()`: mở ngữ cảnh CSDL, `requireTenantContext` gắn tổ chức của phiên (RLS)
+    const result = await withRequestDb("/san-pham", async () => {
+      const { ctx } = await requireTenantContext(request)
+      if (!hasCapability(ctx, "L1")) return null
+      return listProducts(ctx, {}, { limit: INITIAL_LIMIT, cursor: null })
+    })
+    if (!result) return null
     // Cùng dạng JSON với API (ngày → chuỗi ISO) để client không phân biệt nguồn.
     return JSON.parse(JSON.stringify(result)) as ProductListPage<ProductItem>
   } catch (error) {

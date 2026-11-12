@@ -126,6 +126,7 @@ export async function listPendingApprovals(
 export type PlatformOrganizationDetail = PlatformOrganizationSummary & {
   branchCount: number
   workspaceKinds: string[]
+  lifecycleStatus: string; offboardingUntil: Date | null // ADR-016 D-S5
   unlockedLocales?: string[] | undefined
   pendingLanguageUnlock?: {
     requested_locales: string[]
@@ -164,9 +165,8 @@ export async function getAnyOrganization(
     memberCount: org._count.memberships,
     branchCount: org._count.branches,
     workspaceKinds: org.workspaces.map((w) => w.kind),
-    unlockedLocales: Array.isArray(settings.unlocked_locales)
-      ? (settings.unlocked_locales as string[])
-      : ["vi"],
+    lifecycleStatus: org.lifecycle_status, offboardingUntil: org.offboarding_until,
+    unlockedLocales: Array.isArray(settings.unlocked_locales) ? (settings.unlocked_locales as string[]) : ["vi"],
     pendingLanguageUnlock:
       (settings.pending_language_unlock as
         | PlatformOrganizationDetail["pendingLanguageUnlock"]
