@@ -5,7 +5,7 @@
 import { AppError, validationFailed } from "@/core/http/errors"
 import { branchScopeOf } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import { calculateOrderTotal, calculateOrderTotalWithAdjustments, generateOrderCode } from "../domain/order-rules"
+import { calculateOrderTotal, calculateOrderTotalWithAdjustments, generateOrderCode, orderCodePrefix } from "../domain/order-rules"
 import { newOrderDeliveryErrors } from "../domain/order-input-rules"
 import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
@@ -64,8 +64,7 @@ export async function createOrder(
     // Sàn (C10) và trần (C9, PO 07/11/2026 Q3) so với tiền của chính các dòng có sản phẩm
     if (productTotal > 0) await floorGuard(ctx, productLines.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.quantity)) })), productTotal, productTotal)
   }
-  const countToday = await repo.countTodayOrders(ctx.organizationId)
-  const order = await createWithFreshCode(ctx, repo, countToday, scopedInput, totalVnd)
+  const order = await createWithFreshCode(ctx, repo, scopedInput, totalVnd)
   await audit(ctx, {
     action: "order.create",
     entityType: "orders",
@@ -87,19 +86,23 @@ export async function createOrder(
 export const ORDER_CODE_ATTEMPTS = 3
 
 /**
- * Hai đơn tạo cùng lúc đọc cùng `countToday` → cùng mã → trùng khoá `(organization_id, code)`. Trước đây trả 500;
- * nay thử số kế tiếp, tối đa `ORDER_CODE_ATTEMPTS` lần (audit BL-10, cùng cách với tạo đơn Điều phối).
+ * Số thứ tự lấy từ bộ đếm theo tổ chức và ngày (`allocateOrderCodeNumber`, đặc tả 07 §57) — đơn tạo cùng lúc nhận số
+ * khác nhau. Trước đây đếm đơn trong ngày rồi cộng 1: 10 đơn cùng lúc trong một chuỗi trùng mã 70/100 lần (thử tải
+ * O-9, 12/11/2026). Vẫn giữ vài lần thử khi trùng khoá `(organization_id, code)`: mã do bản cũ còn chạy lúc deploy cấp,
+ * hoặc vi phạm khoá duy nhất khác — mỗi lần thử xin số mới, tối đa `ORDER_CODE_ATTEMPTS` lần (audit BL-10).
  */
 async function createWithFreshCode(
   ctx: TenantContext,
   repo: IOrderRepository,
-  countToday: number,
   input: CreateOrderInput,
   totalVnd: number
 ): Promise<OrderRecord> {
+  const now = new Date()
+  const prefix = orderCodePrefix(now)
   for (let attempt = 0; ; attempt += 1) {
+    const seq = await repo.allocateOrderCodeNumber(ctx.organizationId, prefix)
     try {
-      return await repo.create(ctx.organizationId, generateOrderCode(countToday + 1 + attempt), input, totalVnd, ctx.userId)
+      return await repo.create(ctx.organizationId, generateOrderCode(seq, now), input, totalVnd, ctx.userId)
     } catch (error: unknown) {
       if (!isUniqueViolation(error) || attempt + 1 >= ORDER_CODE_ATTEMPTS) {
         if (isUniqueViolation(error)) throw new AppError("CONFLICT", "Đang có nhiều đơn tạo cùng lúc — vui lòng thử lại.")
