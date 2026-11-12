@@ -8,7 +8,7 @@ vi.mock("@/modules/jobs/use-cases/enqueue-job", () => ({ enqueueJob: (...args: u
 import { POST } from "@/app/api/v1/jobs/batch/route"
 import { getJobFeatureForModule } from "@/lib/feature-catalog"
 
-const valid = { productId: "p-1", feature: getJobFeatureForModule("M01"), capabilities: ["AIC-01"], module: "M01" }
+const valid = { product_id: "p-1", feature: getJobFeatureForModule("M01"), capabilities: ["AIC-01"], module: "M01" }
 
 function post(body: unknown, key: string | null = "khoa-1"): Request {
   const headers: Record<string, string> = { "content-type": "application/json" }
@@ -35,7 +35,7 @@ describe("POST /api/v1/jobs/batch", () => {
   })
 
   it.each([
-    ["thiếu productId", { ...valid, productId: undefined }],
+    ["thiếu product_id", { ...valid, product_id: undefined }],
     ["capabilities rỗng", { ...valid, capabilities: [] }],
     ["capabilities quá 50 mục", { ...valid, capabilities: Array.from({ length: 51 }, (_, i) => `AIC-${i}`) }],
     ["capabilities không phải mảng chuỗi", { ...valid, capabilities: [1, 2] }],

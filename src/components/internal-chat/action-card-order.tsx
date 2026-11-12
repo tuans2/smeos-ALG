@@ -40,7 +40,7 @@ export function ActionCardOrder({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action,
-          rejectedReason: action === "REJECT_ORDER" ? rejectReason : undefined,
+          rejected_reason: action === "REJECT_ORDER" ? rejectReason : undefined,
         }),
       })
       if (res.ok) {

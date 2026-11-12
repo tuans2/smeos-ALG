@@ -19,7 +19,7 @@ async function seedProduct(t: Tenant, code: string): Promise<string> {
 function postBlock(token: string, productId: string): Request {
   return withSession(BASE, token, {
     method: "POST",
-    body: JSON.stringify({ productId, checkInDate: "2026-11-01", checkOutDate: "2026-11-03", note: "Bảo trì" }),
+    body: JSON.stringify({ product_id: productId, check_in_date: "2026-11-01", check_out_date: "2026-11-03", note: "Bảo trì" }),
   })
 }
 

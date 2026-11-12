@@ -35,7 +35,7 @@ export const POST = defineRoute({
     })
 
     let sanitized: string | undefined
-    if (parsed.data.autoSanitize) {
+    if (parsed.data.auto_sanitize) {
       const sanitizeRes = sanitizeFlowerContent(parsed.data.text, {
         brandForbiddenStyles: forbiddenStyles,
       })

@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { errorText } from "@/lib/error-text"
 
+import { snakeKeys } from "@/lib/case-keys"
 const TEMPLATE_FAMILY = "ST"
 const TEMPLATE_KEY = "sales_pitch_zalo"
 const FIELD_KEY = "greeting_line"
@@ -48,7 +49,7 @@ export function GreetingLineOverrideForm() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`/api/v1/template-overrides?templateKey=${TEMPLATE_KEY}`)
+      const res = await fetch(`/api/v1/template-overrides?template_key=${TEMPLATE_KEY}`)
       if (!res.ok) throw new Error(`Không tải được câu chào tuỳ chỉnh (${res.status})`)
       const json = await res.json()
       const rows = (json.data ?? []) as Array<{ field_key: string; value: string }>
@@ -79,12 +80,12 @@ export function GreetingLineOverrideForm() {
       const res = await fetch("/api/v1/template-overrides", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(snakeKeys({
           templateFamily: TEMPLATE_FAMILY,
           templateKey: TEMPLATE_KEY,
           fieldKey: FIELD_KEY,
           value: trimmed,
-        }),
+        })),
       })
       if (!res.ok) {
         const errJson = await res.json().catch(() => null)

@@ -7,6 +7,7 @@ import { jsonResponse } from "@/core/http/response"
 import { aiMonthlyLimitBody } from "@/app/api/v1/_contracts/requests-misc"
 import { getMonthlyLimits, setAiMonthlyLimit } from "@/modules/usage/use-cases/monthly-limits"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const GET = defineRoute({
   auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: getMonthlyLimits" },
@@ -20,7 +21,8 @@ export const PUT = defineRoute({
   handler: async ({ request, ctx }) => {
     const parsed = aiMonthlyLimitBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    return jsonResponse({ data: await setAiMonthlyLimit(ctx, parsed.data.aiMonthlyLimit) })
+    const input = camelKeys(parsed.data)
+    return jsonResponse({ data: await setAiMonthlyLimit(ctx, input.aiMonthlyLimit) })
   },
 })
 

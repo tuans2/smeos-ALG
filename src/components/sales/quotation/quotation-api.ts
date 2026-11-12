@@ -1,4 +1,5 @@
 import type { QuotationDraftItem, QuotationRecord } from "./quotation-types"
+import { snakeKeys } from "@/lib/case-keys"
 
 export interface CreateQuotationPayload {
   leadId?: string | null
@@ -23,7 +24,7 @@ export const quotationApi = {
     const res = await fetch("/api/v1/quotations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(snakeKeys(payload)),
     })
     if (!res.ok) {
       const err = await res.json().catch(() => ({}))

@@ -17,11 +17,10 @@ export const GET = defineRoute({
 
 export const PATCH = defineRoute({
   auth: { kind: "platform", capability: "N2" },
-  handler: async ({ request, pctx: platform }) => {
-    const body = eventVisibilityBody.parse(await request.json())
-
+  body: eventVisibilityBody,
+  handler: async ({ pctx: platform, body }) => {
     await updateEventVisibility({
-      eventKey: body.eventKey,
+      eventKey: body.event_key,
       tier: body.tier as NotificationSubTier,
       visible: body.visible,
       updatedBy: platform.userId,

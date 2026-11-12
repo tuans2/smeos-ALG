@@ -46,7 +46,7 @@ describe("product_bookings có kiểu dữ liệu chặt", () => {
     const res = await createBlock(
       withSession("http://localhost/api/v1/availability/blocks", a.token, {
         method: "POST",
-        body: JSON.stringify({ productId, checkInDate: "2026-02-30", checkOutDate: "2026-03-02" }),
+        body: JSON.stringify({ product_id: productId, check_in_date: "2026-02-30", check_out_date: "2026-03-02" }),
       })
     )
     expect(res.status).toBe(422)

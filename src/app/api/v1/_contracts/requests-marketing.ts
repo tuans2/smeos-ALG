@@ -44,15 +44,15 @@ export const updateCampaignSchema = z.object({
 // delivery/my-runs/[id]/route.ts
 export const shipperRunEventBody = z.object({
   event: z.enum(["PICKED_UP", "ON_THE_WAY", "DELIVERED_SUCCESS", "DELIVERY_FAILED"]),
-  podAssetId: z.string().uuid().optional(),
-  recipientSignedName: z.string().max(200).optional(),
-  failureReason: z.string().max(500).optional(),
+  pod_asset_id: z.string().uuid().optional(),
+  recipient_signed_name: z.string().max(200).optional(),
+  failure_reason: z.string().max(500).optional(),
 })
 
 // leads/[id]/route.ts
 export const updateLeadBody = z.object({
   status: z.string().max(20).optional(),
-  assigneeUserId: z.string().max(64).nullable().optional(),
+  assignee_user_id: z.string().max(64).nullable().optional(),
 })
 
 // occasions/route.ts
@@ -60,15 +60,15 @@ export const createOccasionBody = z.object({
   code: z.string().min(1),
   name: z.string().min(1),
   register: z.enum(OCCASION_REGISTERS).optional(),
-  sortOrder: z.number().int().optional(),
+  sort_order: z.number().int().optional(),
 })
 
 // occasions/[id]/route.ts
 export const updateOccasionBody = z.object({
   name: z.string().min(1).optional(),
   register: z.enum(OCCASION_REGISTERS).optional(),
-  sortOrder: z.number().int().optional(),
-  isActive: z.boolean().optional(),
+  sort_order: z.number().int().optional(),
+  is_active: z.boolean().optional(),
 })
 
 // ── Chỉ mô tả — route tự đọc ────────────────────────────────────────────────

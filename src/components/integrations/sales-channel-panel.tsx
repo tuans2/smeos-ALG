@@ -85,7 +85,7 @@ export function SalesChannelPanel({ connectionId, channelLabel, askConfirm }: { 
       confirmLabel: remove ? "Gỡ khỏi kênh" : "Đăng lên kênh",
       ...(remove ? { tone: "danger" as const } : {}),
     })
-    if (ok) await run(() => call(`${base}/${remove ? "unpublish" : "publish"}`, { method: "POST", body: JSON.stringify({ productIds: ids }) }))
+    if (ok) await run(() => call(`${base}/${remove ? "unpublish" : "publish"}`, { method: "POST", body: JSON.stringify({ product_ids: ids }) }))
   }
 
   function toggle(id: string) {

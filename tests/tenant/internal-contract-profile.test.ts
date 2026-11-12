@@ -74,11 +74,11 @@ describe("hợp đồng — hồ sơ & kênh cửa hàng", () => {
     await expectContract(await getShare(get("/store-share-link")), 200, R.shareLinkResponse, "share-get")
     await expectContract(await revokeShare(send("/store-share-link/revoke", "POST")), 200, R.shareLinkRevokedResponse, "share-revoke")
 
-    const created = await expectContract(await createReview(send("/shop-reviews", "POST", { authorName: "Chị Lan", occasion: "Sinh nhật", rating: 5, comment: "Hoa tươi, giao đúng giờ" })), 201, R.reviewResponse, "review-create")
+    const created = await expectContract(await createReview(send("/shop-reviews", "POST", { author_name: "Chị Lan", occasion: "Sinh nhật", rating: 5, comment: "Hoa tươi, giao đúng giờ" })), 201, R.reviewResponse, "review-create")
     const id = String((created.data as { id: string }).id)
     await expectContract(await listReviews(get("/shop-reviews")), 200, R.reviewsResponse, "reviews")
-    await expectContract(await patchReview(send(`/shop-reviews/${id}`, "PATCH", { isVisible: false }), ps(id)), 200, R.reviewResponse, "review-patch")
-    expect((await patchReview(send(`/shop-reviews/${id}`, "PATCH", { isVisible: true }, other), ps(id))).status).toBe(404)
+    await expectContract(await patchReview(send(`/shop-reviews/${id}`, "PATCH", { is_visible: false }), ps(id)), 200, R.reviewResponse, "review-patch")
+    expect((await patchReview(send(`/shop-reviews/${id}`, "PATCH", { is_visible: true }, other), ps(id))).status).toBe(404)
     await expectContract(await removeReview(send(`/shop-reviews/${id}`, "DELETE"), ps(id)), 200, R.reviewRemovedResponse, "review-remove")
   })
 

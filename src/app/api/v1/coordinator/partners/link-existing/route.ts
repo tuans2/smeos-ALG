@@ -4,6 +4,7 @@ import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra
 import { LinkExistingStoreUseCase } from "@/modules/chain-partnership/use-cases/link-existing-store"
 import { linkExistingBody } from "@/app/api/v1/_contracts/requests-coordinator"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const POST = defineRoute({
   auth: { kind: "tenant", capability: "F2" },
@@ -15,16 +16,17 @@ export const POST = defineRoute({
       const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
       throw validationFailed({ reason: errorDetails })
     }
+    const input = camelKeys(parsed.data)
 
     // Lỗi nghiệp vụ (không phải Chuỗi → 409, không tìm thấy → 404, đã liên kết → 409) đi thẳng qua `handle`;
     // trước đây mọi lỗi bị gói thành 400 kèm câu chữ nội bộ.
     const partnership = await new LinkExistingStoreUseCase(getChainPartnershipRepository()).execute({
       chainOrgId: ctx.organizationId,
-      identifier: parsed.data.identifier,
-      partnerCode: parsed.data.partnerCode,
-      partnershipType: parsed.data.partnershipType,
-      commissionRate: parsed.data.commissionRate,
-      capacityDaily: parsed.data.capacityDaily,
+      identifier: input.identifier,
+      partnerCode: input.partnerCode,
+      partnershipType: input.partnershipType,
+      commissionRate: input.commissionRate,
+      capacityDaily: input.capacityDaily,
     })
 
     return jsonResponse({ data: partnership }, { status: 201 })

@@ -27,9 +27,9 @@ export const registerPartnerStoreBody = z.object({
   name: z.string().min(2, "Tên cửa hàng phải có ít nhất 2 ký tự"),
   code: z.string().min(2, "Mã cửa hàng phải có ít nhất 2 ký tự"),
   address: z.string().nullish(),
-  legalEntityId: z.string().min(2, "Mã pháp nhân / MST đối tác là bắt buộc"),
-  fieldCeilings: z.record(z.string(), z.enum(["NONE", "AGGREGATED", "MASKED", "RAW"] as const)),
-  validUntil: z.string().optional(),
+  legal_entity_id: z.string().min(2, "Mã pháp nhân / MST đối tác là bắt buộc"),
+  field_ceilings: z.record(z.string(), z.enum(["NONE", "AGGREGATED", "MASKED", "RAW"] as const)),
+  valid_until: z.string().optional(),
 })
 
 // chain/links/[id]/leave/route.ts

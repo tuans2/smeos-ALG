@@ -8,6 +8,7 @@ import { governanceBody } from "@/app/api/v1/_contracts/requests-integrations"
 import { validationFailed } from "@/core/http/errors"
 import { getChainGovernance, setChainGovernance } from "@/modules/integration-hub/use-cases/integration-governance"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const GET = defineRoute({
   auth: { kind: "tenant", capability: null, reason: "mã năng lực kiểm ở use-case: getChainGovernance" },
@@ -21,7 +22,8 @@ export const PUT = defineRoute({
   handler: async ({ request: req, ctx }) => {
     const parsed = governanceBody.safeParse(await req.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues.map((i) => i.path.join(".")) })
-    await setChainGovernance(ctx, parsed.data)
+    const input = camelKeys(parsed.data)
+    await setChainGovernance(ctx, input)
     return jsonResponse({ items: await getChainGovernance(ctx) })
   },
 })

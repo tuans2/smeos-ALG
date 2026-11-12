@@ -31,7 +31,7 @@ describe("hàng đợi chế tác của thợ", () => {
     })).id
   }
   const assignTo = (token: string, orderId: string, assigneeId: string) =>
-    assign(withSession(`${BASE}/${orderId}/assign`, token, { method: "POST", body: JSON.stringify({ assigneeId }) }), { params: Promise.resolve({ id: orderId }) })
+    assign(withSession(`${BASE}/${orderId}/assign`, token, { method: "POST", body: JSON.stringify({ assignee_id: assigneeId }) }), { params: Promise.resolve({ id: orderId }) })
   const list = async (token: string, scope = "") =>
     ((await readJson(await myWork(withSession(`${BASE}/my-work${scope}`, token)))).data as Work[])
   const act = (token: string, orderId: string, action: string) =>

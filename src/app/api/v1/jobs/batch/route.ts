@@ -6,8 +6,8 @@
  * 
  * Body:
  * {
- *   productId: string,
- *   masterImageId?: string,
+ *   product_id: string,
+ *   master_image_id?: string,
  *   feature: string,           // job feature string (vision.analyze, creative.compose, etc.)
  *   capabilities: string[],    // AIC codes: ["AIC-11", "AIC-12", ...]
  *   module: string             // M01, M01b, M04a, M04b, M04c, M07, M09, M06, M05
@@ -25,6 +25,7 @@ import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency";
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job";
 import { getJobFeatureForModule, type ModuleKey } from "@/lib/feature-catalog";
 import { jobBatchBody } from "@/app/api/v1/_contracts/requests-ai-studio";
+import { camelKeys } from "@/lib/case-keys"
 
 const MODULE_RUN_CAPABILITY: Record<string, string> = {
   M01: "H1",
@@ -44,7 +45,8 @@ async function batchJobHandler({ request, ctx }: { request: Request; ctx: Tenant
 
   const parsed = jobBatchBody.safeParse(await request.json().catch(() => null));
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues });
-  const { productId, masterImageId, feature, capabilities, module } = parsed.data;
+  const input = camelKeys(parsed.data)
+  const { productId, masterImageId, feature, capabilities, module } = input;
 
   // YC-U7: khoá do client gửi — tự sinh UUID khi thiếu (bản trước) làm mỗi lần bấm lại là một job
   // mới, trừ credit hai lần. Kiểm trước khi tạo job, cùng cách `media/optimizations`.

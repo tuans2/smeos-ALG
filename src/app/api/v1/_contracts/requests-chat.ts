@@ -19,7 +19,8 @@ export const configureChatChannelBody = z.object({
     "ZALO_OA",
     "EMBEDDED_WIDGET",
   ]),
-  isEnabled: z.boolean(),
+  is_enabled: z.boolean(),
+  /** Cấu hình kênh — giữ tên trường như `GET /chat/channels` trả về (đọc/ghi cùng một đối tượng, D-69). */
   config: z
     .object({
       welcomeMessage: z.string().optional(),
@@ -41,8 +42,8 @@ export const configureChatChannelBody = z.object({
 
 // chat/public-limits/route.ts
 export const publicChatLimitRequestBody = z.object({
-  perVisitor: z.number().int().positive(),
-  perIp: z.number().int().positive(),
+  per_visitor: z.number().int().positive(),
+  per_ip: z.number().int().positive(),
   note: z.string().trim().max(500).nullish(),
 })
 
@@ -57,18 +58,18 @@ export const publicChatWidgetBody = z.object({
 // internal-chat/conversations/route.ts — nút "Nhắn tin": mở phòng của đúng một cặp (chuỗi ↔ cửa hàng đối tác,
 // hoặc chi nhánh nội bộ) — IC-2.6. Thân không khớp thì route thử lược đồ tạo hội thoại bên dưới.
 export const openInternalRoomBody = z.union([
-  z.object({ partnerOrgId: z.string().uuid() }).strict(),
-  z.object({ chainOrgId: z.string().uuid() }).strict(),
-  z.object({ branchId: z.string().uuid() }).strict(),
+  z.object({ partner_org_id: z.string().uuid() }).strict(),
+  z.object({ chain_org_id: z.string().uuid() }).strict(),
+  z.object({ branch_id: z.string().uuid() }).strict(),
 ])
 
 export const createInternalConversationBody = z.object({
   // `PLATFORM_TENANT` (Nền tảng ↔ khách) không cho client tự tạo
-  conversationType: z.enum(CLIENT_CREATABLE_CONVERSATION_TYPES),
+  conversation_type: z.enum(CLIENT_CREATABLE_CONVERSATION_TYPES),
   title: z.string().trim().max(200).optional(),
-  targetOrganizationId: z.string().uuid().optional(),
-  targetUserId: z.string().uuid().optional(),
-  orderId: z.string().uuid().optional(),
+  target_organization_id: z.string().uuid().optional(),
+  target_user_id: z.string().uuid().optional(),
+  order_id: z.string().uuid().optional(),
 })
 
 // internal-chat/conversations/[id]/messages/route.ts
@@ -86,7 +87,7 @@ export const sendInternalMessageBody = z
 // internal-chat/messages/[id]/action/route.ts
 export const internalCardActionBody = z.object({
   action: z.enum(["ACCEPT_ORDER", "REJECT_ORDER"]),
-  rejectedReason: z.string().max(CARD_REJECT_REASON_MAX_LENGTH, `Lý do tối đa ${CARD_REJECT_REASON_MAX_LENGTH} ký tự`).optional(),
+  rejected_reason: z.string().max(CARD_REJECT_REASON_MAX_LENGTH, `Lý do tối đa ${CARD_REJECT_REASON_MAX_LENGTH} ký tự`).optional(),
 })
 
 // internal-chat/messages/[id]/route.ts (PATCH) — sửa tin chữ / chú thích ảnh của chính mình

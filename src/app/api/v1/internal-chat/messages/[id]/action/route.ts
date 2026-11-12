@@ -30,7 +30,7 @@ export const POST = defineRoute({
       userBranchId: ctx.branchId,
       userRole: resolved.membership?.role_id ?? "member",
       action: parsed.data.action,
-      rejectedReason: parsed.data.rejectedReason ?? undefined,
+      rejectedReason: parsed.data.rejected_reason ?? undefined,
     })
 
     return jsonResponse({

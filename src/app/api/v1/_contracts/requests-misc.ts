@@ -17,7 +17,7 @@ export const switchOrganizationBody = z.object({ organization_id: z.string() })
 export const changePasswordBody = z.object({ current_password: z.string().max(200), new_password: z.string().max(200) })
 
 // usage/limits/route.ts
-export const aiMonthlyLimitBody = z.object({ aiMonthlyLimit: z.number().int().nullable() })
+export const aiMonthlyLimitBody = z.object({ ai_monthly_limit: z.number().int().nullable() })
 
 // vouchers/batches/route.ts
 const optionalDate = z.string().datetime({ offset: true }).nullable().optional()
@@ -45,23 +45,23 @@ export const voucherBatchActiveBody = z.object({ is_active: z.boolean() })
 
 // print/preflight/route.ts
 export const preflightBody = z.object({
-  presetCode: z.enum(printPresetCodes),
-  imageWidthPx: z.number().int().positive().optional(),
-  imageHeightPx: z.number().int().positive().optional(),
-  colorMode: z.enum(["RGB", "CMYK"]).optional(),
-  hasQrCode: z.boolean().optional(),
-  qrSizeMm: z.number().positive().optional(),
-  hasContentOutsideSafeZone: z.boolean().optional(),
+  preset_code: z.enum(printPresetCodes),
+  image_width_px: z.number().int().positive().optional(),
+  image_height_px: z.number().int().positive().optional(),
+  color_mode: z.enum(["RGB", "CMYK"]).optional(),
+  has_qr_code: z.boolean().optional(),
+  qr_size_mm: z.number().positive().optional(),
+  has_content_outside_safe_zone: z.boolean().optional(),
 })
 
 // print/renditions/[id]/export/route.ts
 export const printExportBody = z.object({
   title: z.string().trim().optional(),
   subtitle: z.string().trim().optional(),
-  storeName: z.string().trim().optional(),
-  includeBleedMarks: z.boolean().default(true),
+  store_name: z.string().trim().optional(),
+  include_bleed_marks: z.boolean().default(true),
   // ≤ 20 MB ảnh sau giải mã base64 (4/3) cộng tiền tố data URL; kiểm nội dung ở use-case.
-  imageDataUrl: z.string().max(28_000_000).optional(),
+  image_data_url: z.string().max(28_000_000).optional(),
 })
 
 // ── Query — chỉ mô tả ────────────────────────────────────────────────────────

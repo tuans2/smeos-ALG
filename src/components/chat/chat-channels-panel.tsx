@@ -58,7 +58,7 @@ export function ChatChannelsPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           channel: channelItem.channel,
-          isEnabled: nextState,
+          is_enabled: nextState,
           config: channelItem.config,
         }),
       })
@@ -88,7 +88,7 @@ export function ChatChannelsPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           channel: configModalChannel.channel,
-          isEnabled: true,
+          is_enabled: true,
           config: modalConfigForm,
         }),
       })

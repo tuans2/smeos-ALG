@@ -61,7 +61,7 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
     const resAssignB = await assignFloristRoute(
       withSession(`${BASE}/orders/${orderId}/assign`, b.token, {
         method: "POST",
-        body: JSON.stringify({ assigneeId: b.userId }),
+        body: JSON.stringify({ assignee_id: b.userId }),
       }),
       { params: Promise.resolve({ id: orderId }) }
     )
@@ -73,7 +73,7 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
     const resAssignA = await assignFloristRoute(
       withSession(`${BASE}/orders/${orderId}/assign`, a.token, {
         method: "POST",
-        body: JSON.stringify({ assigneeId: a.userId }),
+        body: JSON.stringify({ assignee_id: a.userId }),
       }),
       { params: Promise.resolve({ id: orderId }) }
     )
@@ -128,9 +128,9 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
       withSession(`${BASE}/template-overrides`, a.token, {
         method: "PUT",
         body: JSON.stringify({
-          templateFamily: "GT",
-          templateKey: "loi-chuc-sinh-nhat",
-          fieldKey: "tieu_de",
+          template_family: "GT",
+          template_key: "loi-chuc-sinh-nhat",
+          field_key: "tieu_de",
           value: "Chúc mừng sinh nhật từ Tiệm hoa alpha",
         }),
       })
@@ -139,7 +139,7 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
 
     // B liệt kê cùng templateKey — không thấy ghi đè của A.
     const resListB = await getTemplateOverrides(
-      withSession(`${BASE}/template-overrides?templateKey=loi-chuc-sinh-nhat`, b.token)
+      withSession(`${BASE}/template-overrides?template_key=loi-chuc-sinh-nhat`, b.token)
     )
     const listB = (await readJson(resListB)) as { data: unknown[] }
     expect(listB.data).toEqual([])
@@ -149,9 +149,9 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
       withSession(`${BASE}/template-overrides`, b.token, {
         method: "PUT",
         body: JSON.stringify({
-          templateFamily: "GT",
-          templateKey: "loi-chuc-sinh-nhat",
-          fieldKey: "tieu_de",
+          template_family: "GT",
+          template_key: "loi-chuc-sinh-nhat",
+          field_key: "tieu_de",
           value: "Chúc mừng sinh nhật từ Tiệm hoa beta",
         }),
       })

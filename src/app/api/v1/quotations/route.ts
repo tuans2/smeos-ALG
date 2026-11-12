@@ -17,9 +17,8 @@ export const GET = defineRoute({
 
     const url = new URL(request.url)
     const status = enumParam(url, "status", QUOTATION_STATUSES)
-    const leadId = url.searchParams.get("leadId") ?? url.searchParams.get("lead_id") ?? undefined
-    const customerId =
-      url.searchParams.get("customerId") ?? url.searchParams.get("customer_id") ?? undefined
+    const leadId = url.searchParams.get("lead_id") ?? undefined
+    const customerId = url.searchParams.get("customer_id") ?? undefined
     const search = url.searchParams.get("search") ?? undefined
     const cursor = url.searchParams.get("cursor") ?? undefined
 
@@ -66,12 +65,12 @@ export const POST = defineRoute({
 
     const data = parsed.data
     const quotation = await createQuotationUseCase(ctx, {
-      leadId: data.leadId ?? data.lead_id ?? null,
-      customerId: data.customerId ?? data.customer_id ?? null,
-      assetUsageId: data.assetUsageId ?? data.asset_usage_id ?? null,
-      validUntil: data.validUntil ?? data.valid_until ?? null,
-      discountAmount: data.discountAmount ?? data.discount_amount ?? 0,
-      shippingFee: data.shippingFee ?? data.shipping_fee ?? 0,
+      leadId: data.lead_id ?? null,
+      customerId: data.customer_id ?? null,
+      assetUsageId: data.asset_usage_id ?? null,
+      validUntil: data.valid_until ?? null,
+      discountAmount: data.discount_amount ?? 0,
+      shippingFee: data.shipping_fee ?? 0,
       terms: data.terms ?? null,
       notes: data.notes ?? null,
       items: data.items.map((it) => ({

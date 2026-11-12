@@ -12,6 +12,7 @@ import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Handshake } from "@/components/ui/icon-set/handshake"
 import type { PropagationTarget } from "@/modules/field-platform/domain/field-registry-v2"
 
+import { snakeKeys } from "@/lib/case-keys"
 interface AddPartnerStoreModalProps {
   readonly isOpen: boolean
   readonly onClose: () => void
@@ -57,14 +58,14 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
       const res = await fetch("/api/v1/chain/partner-stores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(snakeKeys({
           name: name.trim(),
           code: code.trim().toUpperCase(),
           address: address.trim() || null,
           legalEntityId: legalEntityId.trim(),
           fieldCeilings,
           validUntil,
-        }),
+        })),
       })
 
       const json = await res.json()

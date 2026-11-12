@@ -25,7 +25,7 @@ describe("cách ly tenant — tắt tiếng phòng trao đổi", () => {
     stranger = await createTenant("nguoila")
     await makeChainOrganization(chain)
     await linkPartner(chain, partner, { code: "P-01" })
-    const res = await openRoom(withSession(`${BASE}/internal-chat/conversations`, chain.token, { method: "POST", body: JSON.stringify({ partnerOrgId: partner.organizationId }) }))
+    const res = await openRoom(withSession(`${BASE}/internal-chat/conversations`, chain.token, { method: "POST", body: JSON.stringify({ partner_org_id: partner.organizationId }) }))
     roomId = ((await readJson(res)) as { data: { id: string } }).data.id
   })
 

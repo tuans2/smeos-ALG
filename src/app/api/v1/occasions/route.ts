@@ -4,6 +4,7 @@ import { createOccasion } from "@/modules/organization/use-cases/create-occasion
 import { listOccasions } from "@/modules/organization/use-cases/list-occasions"
 import { createOccasionBody } from "@/app/api/v1/_contracts/requests-marketing"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 // nợ #104: danh mục dịp là một phần hồ sơ tổ chức (giống brand-profile) — dùng
 // chung F1 (org.read)/F2 (org.update), không xin mã năng lực F-mới riêng vì
@@ -21,12 +22,13 @@ export const POST = defineRoute({
   handler: async ({ request, ctx }) => {
     const parsed = createOccasionBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
 
     const occasion = await createOccasion(ctx, {
-      code: parsed.data.code,
-      name: parsed.data.name,
-      ...(parsed.data.register !== undefined ? { register: parsed.data.register } : {}),
-      ...(parsed.data.sortOrder !== undefined ? { sortOrder: parsed.data.sortOrder } : {}),
+      code: input.code,
+      name: input.name,
+      ...(input.register !== undefined ? { register: input.register } : {}),
+      ...(input.sortOrder !== undefined ? { sortOrder: input.sortOrder } : {}),
     })
     return jsonResponse({ occasion }, { status: 201 })
   },

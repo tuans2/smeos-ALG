@@ -14,7 +14,7 @@ export const issueIntegrationTokenBody = z.object({
 
 // integrations/connections/route.ts
 export const connectBody = z.object({
-  connectorKey: z.string().min(1).max(64),
+  connector_key: z.string().min(1).max(64),
   secret: z.string().min(1).max(4096),
   options: z.record(z.string(), z.unknown()).optional(),
 })
@@ -29,10 +29,10 @@ export const connectionEventsQuery = z.object({
 })
 
 // integrations/connections/[id]/sales/publish/route.ts, …/unpublish/route.ts
-export const salesProductsBody = z.object({ productIds: z.array(z.string().min(1).max(64)).min(1).max(100) })
+export const salesProductsBody = z.object({ product_ids: z.array(z.string().min(1).max(64)).min(1).max(100) })
 
 // integrations/governance/route.ts
 export const governanceBody = z.object({
-  connectorKey: z.string().min(1).max(64),
+  connector_key: z.string().min(1).max(64),
   mode: z.enum(["FORBID", "INHERIT_ONLY", "ALLOW_OWN"]),
 })
