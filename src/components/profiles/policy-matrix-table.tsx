@@ -73,7 +73,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-border bg-surface-muted/60 text-caption font-extrabold text-text uppercase tracking-wider">
+              <tr className="border-b border-border bg-surface-alt/60 text-caption font-extrabold text-text uppercase tracking-wider">
                 <th scope="col" className="py-3 px-4">Hạng mục chính sách & Quy tắc vận hành</th>
                 <th scope="col" className="py-3 px-3 text-center w-28">Bật</th>
                 <th scope="col" className="py-3 px-3 text-center w-28">Tắt</th>

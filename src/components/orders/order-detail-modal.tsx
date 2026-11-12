@@ -115,7 +115,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
   const productNameText = items.map((it) => it?.description).filter(Boolean).join(", ") || sampleProductTitle
 
   const tabNav = (
-    <div className="flex gap-2 px-5 pt-2 sm:px-6 text-caption font-semibold bg-surface-raised/30">
+    <div className="flex gap-2 px-5 pt-2 sm:px-6 text-caption font-semibold bg-surface/30">
       {([
         { key: "overview", label: "Tổng quan & Điều hành", icon: <Layers className="h-3.5 w-3.5" /> },
         { key: "florist", label: `${makerTitle} (Ẩn giá)`, icon: <Flower2 className="h-3.5 w-3.5" /> },
@@ -173,7 +173,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
           <div className="space-y-6">
             {activeTab === "overview" && (
               <>
-                <div className="flex items-center justify-between rounded-lg border border-border bg-surface-raised p-4">
+                <div className="flex items-center justify-between rounded-lg border border-border bg-surface p-4">
                   <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5 text-text-muted" />
                     <div>
@@ -213,7 +213,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                         <div className="font-bold text-text">{(it.quantity * it.unitPriceVnd).toLocaleString("vi-VN")} đ</div>
                       </div>
                     ))}
-                    <div className="flex items-center justify-between bg-surface-raised p-3 font-bold text-body-sm">
+                    <div className="flex items-center justify-between bg-surface p-3 font-bold text-body-sm">
                       <span>Tổng tiền:</span>
                       <span className="text-primary">{order.totalVnd.toLocaleString("vi-VN")} đ</span>
                     </div>

@@ -166,7 +166,7 @@ export function ProductPhotoStudioClient() {
       )}
 
       {isProcessing && (
-        <div className="p-12 rounded-2xl border border-primary/20 bg-primary-subtle/30 text-center space-y-4 max-w-md mx-auto my-6 shadow-xs">
+        <div className="p-12 rounded-2xl border border-primary/20 bg-primary-muted/30 text-center space-y-4 max-w-md mx-auto my-6 shadow-xs">
           <Loader2 className="w-10 h-10 mx-auto text-primary animate-spin motion-reduce:animate-none" />
           <div>
             <div className="font-bold text-text text-body">

@@ -268,7 +268,7 @@ function DomainPicker({
         <a
           href={`/api/v1/platform/orgs-data/${org.id}/export?type=full`}
           download={`${org.name.replace(/\s+/g, "_")}_full.zip`}
-          className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-xl text-caption font-bold bg-primary hover:bg-primary-hover text-white transition-colors shrink-0 shadow-sm"
+          className="inline-flex items-center justify-center gap-1.5 h-9 px-4 rounded-xl text-caption font-bold bg-primary hover:bg-primary-dark text-white transition-colors shrink-0 shadow-sm"
         >
           <FileDown size={14} />
           <span>Tải Trọn Bộ + Ảnh (.ZIP)</span>

@@ -114,7 +114,7 @@ export function SlaMonitorPanel({ orders, onSelectOrder }: SlaMonitorPanelProps)
             {summary.partnerStats.map((p) => (
               <div
                 key={p.partnerName}
-                className="flex items-center justify-between p-2.5 rounded-lg border border-border/70 bg-surface-raised"
+                className="flex items-center justify-between p-2.5 rounded-lg border border-border/70 bg-surface"
               >
                 <div>
                   <div className="font-semibold text-body-sm text-text">{p.partnerName}</div>

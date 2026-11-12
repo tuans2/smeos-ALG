@@ -252,7 +252,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
                     data.occasions.map((o) => (
                       <div key={o.id} className="flex items-center justify-between rounded-lg border border-border p-3 text-caption">
                         <div className="flex items-center gap-2.5">
-                          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-subtle text-primary">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary-muted text-primary">
                             <Gift className="h-3.5 w-3.5" />
                           </span>
                           <div>

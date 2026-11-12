@@ -90,7 +90,7 @@ export function CampaignList({ onSelectCampaign, onCreateCampaign }: CampaignLis
               className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex h-9 cursor-pointer items-center gap-1.5 rounded-xl px-3.5 text-body-sm font-medium transition-colors ${
                 isSelected
                   ? "bg-primary text-white"
-                  : "border border-border bg-surface text-text hover:bg-surface-elevated"
+                  : "border border-border bg-surface text-text hover:bg-surface"
               }`}
             >
               <span>{tab.label}</span>
@@ -139,7 +139,7 @@ export function CampaignList({ onSelectCampaign, onCreateCampaign }: CampaignLis
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <Badge tone={statusTone}>{CAMPAIGN_STATUS_LABELS[camp.status]}</Badge>
-                    <span className="rounded-lg bg-surface-elevated px-2 py-0.5 text-caption font-medium text-text-muted border border-border">
+                    <span className="rounded-lg bg-surface px-2 py-0.5 text-caption font-medium text-text-muted border border-border">
                       {CAMPAIGN_OBJECTIVE_LABELS[camp.objective]}
                     </span>
                   </div>

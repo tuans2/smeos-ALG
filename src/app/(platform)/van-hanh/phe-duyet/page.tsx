@@ -200,7 +200,7 @@ export default function PheQuyetPage() {
           {/* Danh sách */}
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
-              <div className="w-14 h-14 rounded-2xl bg-surface-muted flex items-center justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-surface-alt flex items-center justify-center">
                 <InboxIcon size={24} className="text-text-muted" aria-hidden />
               </div>
               <div>

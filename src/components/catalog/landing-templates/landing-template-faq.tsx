@@ -42,7 +42,7 @@ export function LandingTemplateFaq({
     <section className={`p-6 sm:p-8 rounded-3xl border space-y-5 ${containerStyle}`}>
       <div className="flex items-center gap-2">
         <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-          isLuxury ? "bg-primary/10 text-primary" : isFestive ? "bg-primary/10 text-primary" : "bg-primary-bg/30 text-primary"
+          isLuxury ? "bg-primary/10 text-primary" : isFestive ? "bg-primary/10 text-primary" : "bg-primary-muted/30 text-primary"
         }`}>
           <HelpCircle size={16} />
         </div>

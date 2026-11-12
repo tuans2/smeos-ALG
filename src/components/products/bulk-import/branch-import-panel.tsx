@@ -192,7 +192,7 @@ export function BranchImportPanel() {
       </div>
 
       {/* Khu vực Upload */}
-      <div className="border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-surface-muted/50 transition-colors hover:border-primary/40">
+      <div className="border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-surface-alt/50 transition-colors hover:border-primary/40">
         <label
           htmlFor="branch-excel-upload"
           className="flex flex-col items-center gap-2 cursor-pointer"

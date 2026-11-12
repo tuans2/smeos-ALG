@@ -2,88 +2,33 @@
   "summary": {
     "app/(app)": {
       "R18": 3,
-      "R24": 32,
       "R20": 1
     },
-    "app/(auth)": {
-      "R24": 1
-    },
-    "app/(platform)": {
-      "R24": 4
-    },
     "app/subcontract": {
-      "R20": 1,
-      "R24": 1
+      "R20": 1
     },
     "components/catalog": {
-      "R24": 13,
       "R14": 3
     },
-    "components/chat": {
-      "R24": 4
-    },
-    "components/coordinator": {
-      "R24": 3
-    },
-    "components/creative-studio": {
-      "R24": 2
-    },
-    "components/crm": {
-      "R24": 5
-    },
     "components/dashboard": {
-      "R24": 1,
       "R18": 1
     },
     "components/greeting-card": {
-      "R24": 209,
       "R18": 7
     },
-    "components/internal-chat": {
-      "R24": 16
-    },
-    "components/knowledge-base": {
-      "R24": 1
-    },
     "components/layout": {
-      "R18": 3,
-      "R24": 7
+      "R18": 3
     },
     "components/market-intelligence": {
       "R18": 4
     },
-    "components/marketing-center": {
-      "R24": 6
-    },
-    "components/media": {
-      "R24": 1
-    },
-    "components/orders": {
-      "R24": 5
-    },
-    "components/platform": {
-      "R24": 1
-    },
-    "components/product-image-set": {
-      "R24": 4
-    },
-    "components/product-photo-studio": {
-      "R24": 3
-    },
-    "components/products": {
-      "R24": 7
-    },
-    "components/profiles": {
-      "R24": 11
-    },
     "components/templates": {
-      "R24": 1,
       "R18": 4
     },
     "components/upload": {
       "R14": 1
     }
   },
-  "total": 366,
-  "updatedAt": "2026-11-11T10:06:33.282Z"
+  "total": 28,
+  "updatedAt": "2026-11-12T00:10:00.785Z"
 }

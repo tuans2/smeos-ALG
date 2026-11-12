@@ -85,7 +85,7 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
                       {field.required && <span className="text-warning-text ml-1 font-bold">*</span>}
                     </td>
                     <td className="px-3 py-2.5">
-                      <Badge className="bg-secondary/20 text-secondary-foreground text-caption font-mono px-1.5 py-0.5">
+                      <Badge className="bg-secondary/20 text-secondary-text text-caption font-mono px-1.5 py-0.5">
                         {field.dataType}
                       </Badge>
                     </td>

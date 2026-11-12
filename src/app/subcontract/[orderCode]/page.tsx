@@ -78,7 +78,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-lg h-96 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none border border-border" />
+        <div className="w-full max-w-lg h-96 rounded-2xl bg-surface-alt animate-pulse motion-reduce:animate-none border border-border" />
       </div>
     )
   }

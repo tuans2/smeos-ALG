@@ -254,7 +254,7 @@ export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCa
                 onClick={() => setStyleVariant(st.id)}
                 className={`h-auto text-[length:inherit] gap-0 p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
                   styleVariant === st.id
-                    ? "border-primary bg-primary-bg/25 text-primary font-bold shadow-xs hover:bg-primary-bg/25"
+                    ? "border-primary bg-primary-muted/25 text-primary font-bold shadow-xs hover:bg-primary-muted/25"
                     : "border-border bg-surface text-text hover:border-border-hover hover:bg-surface"
                 }`}
               >

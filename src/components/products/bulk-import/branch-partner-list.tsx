@@ -73,14 +73,14 @@ export function BranchPartnerList() {
             <div
               key={b.branchCode}
               className={`p-3 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                b.isActive ? "border-border bg-surface" : "border-border bg-surface-muted opacity-70"
+                b.isActive ? "border-border bg-surface" : "border-border bg-surface-alt opacity-70"
               }`}
             >
               <div className="min-w-0">
                 <div className="text-body-sm font-bold text-text">
                   {b.name} <span className="font-mono text-caption text-text-muted">[{b.branchCode}]</span>
                   {b.partnerStore && (
-                    <span className="ml-2 text-caption font-semibold px-2 py-0.5 rounded-full bg-primary-subtle text-primary">Cửa hàng đối tác</span>
+                    <span className="ml-2 text-caption font-semibold px-2 py-0.5 rounded-full bg-primary-muted text-primary">Cửa hàng đối tác</span>
                   )}
                 </div>
                 {b.address && <div className="text-caption text-text-muted truncate">{b.address}</div>}

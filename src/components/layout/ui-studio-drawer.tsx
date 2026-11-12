@@ -48,7 +48,7 @@ export function UiStudioDrawer() {
           <span className="text-caption font-semibold pr-1 hidden sm:inline-block">
             UI Studio
           </span>
-          <span className="text-caption uppercase font-mono px-1.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-primary/20">
+          <span className="text-caption uppercase font-mono px-1.5 py-0.5 rounded-full bg-primary-muted text-primary border border-primary/20">
             {currentPreset.name.split(" ")[0]}
           </span>
         </Button>
@@ -112,7 +112,7 @@ export function UiStudioDrawer() {
                           onClick={() => setDensity(item.id)}
                           className={`text-[length:inherit] h-auto p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                             isSelected
-                              ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs hover:bg-primary-subtle"
+                              ? "border-primary bg-primary-muted text-primary font-bold shadow-xs hover:bg-primary-muted"
                               : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text hover:bg-surface"
                           }`}
                         >
@@ -126,7 +126,7 @@ export function UiStudioDrawer() {
                 </div>
 
                 {/* Live Preview Specs */}
-                <Card className="p-3.5 space-y-2 bg-surface-muted/50" variant="default">
+                <Card className="p-3.5 space-y-2 bg-surface-alt/50" variant="default">
                   <div className="text-caption font-bold text-text uppercase tracking-wider">
                     Thông số hiển thị thực tế
                   </div>

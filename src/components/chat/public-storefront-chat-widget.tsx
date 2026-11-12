@@ -215,7 +215,7 @@ export function PublicStorefrontChatWidget({
                         className={`rounded-2xl px-3.5 py-2 text-caption leading-relaxed whitespace-pre-line ${
                           isUser
                             ? "bg-primary text-white font-medium rounded-br-none"
-                            : "bg-surface-raised border border-border text-text rounded-bl-none shadow-2xs"
+                            : "bg-surface border border-border text-text rounded-bl-none shadow-2xs"
                         }`}
                       >
                         {m.content}

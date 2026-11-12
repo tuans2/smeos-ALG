@@ -195,7 +195,7 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
                 onClick={() => setIsExpanded(!isExpanded)}
                 className={`h-8 px-3 text-caption font-bold gap-1.5 ${
                   totalCritical > 0
-                    ? "bg-danger hover:bg-danger-dark text-white"
+                    ? "bg-danger hover:bg-danger-text text-white"
                     : "bg-primary hover:bg-primary-dark text-white"
                 }`}
               >

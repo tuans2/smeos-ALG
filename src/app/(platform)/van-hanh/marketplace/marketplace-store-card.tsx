@@ -131,7 +131,7 @@ export function MarketplaceStoreCard({ store, onQuickView, selection }: Marketpl
         {/* Highlight Tags */}
         <div className="mb-3 flex flex-wrap gap-1.5">
           {production.mainProductLine && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-primary-subtle px-2 py-0.5 text-caption font-medium text-primary">
+            <span className="inline-flex items-center gap-1 rounded-md bg-primary-muted px-2 py-0.5 text-caption font-medium text-primary">
               <Package className="h-3 w-3" />
               {production.mainProductLine}
             </span>

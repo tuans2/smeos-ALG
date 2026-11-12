@@ -317,7 +317,7 @@ export default function ChatAssistantPage() {
 
                   if (isSystem) {
                     return (
-                      <div key={m.id} className="rounded-lg bg-surface-raised border border-border p-3 text-center text-text-muted italic">
+                      <div key={m.id} className="rounded-lg bg-surface border border-border p-3 text-center text-text-muted italic">
                         {m.content}
                       </div>
                     )
@@ -326,7 +326,7 @@ export default function ChatAssistantPage() {
                   return (
                     <div key={m.id} className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"}`}>
                       {!isUser && (
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-primary">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-muted text-primary">
                           <Bot className="h-4 w-4" />
                         </span>
                       )}
@@ -336,7 +336,7 @@ export default function ChatAssistantPage() {
                           className={`rounded-2xl px-4 py-2.5 text-caption leading-relaxed ${
                             isUser
                               ? "bg-primary text-white font-medium rounded-br-none"
-                              : "bg-surface-raised border border-border text-text rounded-bl-none"
+                              : "bg-surface border border-border text-text rounded-bl-none"
                           }`}
                         >
                           {m.content}
@@ -362,7 +362,7 @@ export default function ChatAssistantPage() {
                                       className="h-16 w-16 rounded-lg object-cover border border-border"
                                     />
                                   ) : (
-                                    <div className="h-16 w-16 rounded-lg bg-primary-subtle flex items-center justify-center text-primary">
+                                    <div className="h-16 w-16 rounded-lg bg-primary-muted flex items-center justify-center text-primary">
                                       <Flower2 className="h-6 w-6" />
                                     </div>
                                   )}
@@ -401,7 +401,7 @@ export default function ChatAssistantPage() {
                       </div>
 
                       {isUser && (
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-raised border border-border text-text">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface border border-border text-text">
                           <User className="h-4 w-4" />
                         </span>
                       )}

@@ -88,7 +88,7 @@ export default function DangNhapPage() {
             className={`px-0 h-auto cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               cheDo === "dung-thu"
                 ? "bg-primary text-text-inverse shadow-xs font-extrabold hover:bg-primary"
-                : "text-primary hover:text-primary-hover font-semibold"
+                : "text-primary hover:text-primary-dark font-semibold"
             }`}
           >
             <Zap size={14} className={cheDo === "dung-thu" ? "text-text-inverse" : "text-primary"} />

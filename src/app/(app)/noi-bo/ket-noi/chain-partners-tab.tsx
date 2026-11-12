@@ -51,7 +51,7 @@ export function ChainPartnersTab({
                 variant="interactive"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-primary-muted text-primary flex items-center justify-center">
                     <Building2 className="w-5 h-5" />
                   </div>
                   <div>
@@ -64,12 +64,12 @@ export function ChainPartnersTab({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-caption font-semibold px-2 py-0.5 rounded-full bg-success-subtle text-success border border-success/20">
+                  <span className="text-caption font-semibold px-2 py-0.5 rounded-full bg-success-bg text-success border border-success/20">
                     {r.partnershipType}
                   </span>
                   <Link
                     href={(r.chainOrgId ? `/tin-nhan?chuoi=${r.chainOrgId}` : "/tin-nhan") as never}
-                    className="p-2 rounded-lg bg-primary-subtle hover:bg-primary-subtle/80 text-primary transition-colors"
+                    className="p-2 rounded-lg bg-primary-muted hover:bg-primary-muted/80 text-primary transition-colors"
                     title="Nhắn tin với chuỗi"
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -94,7 +94,7 @@ export function ChainPartnersTab({
                 variant="interactive"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-primary-muted text-primary flex items-center justify-center">
                     <Store className="w-5 h-5" />
                   </div>
                   <div>
@@ -107,12 +107,12 @@ export function ChainPartnersTab({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-caption font-semibold px-2 py-0.5 rounded-full bg-primary-subtle text-primary border border-primary/20">
+                  <span className="text-caption font-semibold px-2 py-0.5 rounded-full bg-primary-muted text-primary border border-primary/20">
                     {r.partnershipType}
                   </span>
                   <Link
                     href={(r.partnerOrgId ? `/tin-nhan?doi-tac=${r.partnerOrgId}` : "/tin-nhan") as never}
-                    className="p-2 rounded-lg bg-primary-subtle hover:bg-primary-subtle/80 text-primary transition-colors"
+                    className="p-2 rounded-lg bg-primary-muted hover:bg-primary-muted/80 text-primary transition-colors"
                     title="Nhắn tin với đối tác"
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -125,7 +125,7 @@ export function ChainPartnersTab({
           <div className="mt-3 flex justify-end">
             <Link
               href="/dieu-phoi/doi-tac"
-              className="inline-flex items-center gap-1.5 text-caption text-primary hover:text-primary-hover font-semibold"
+              className="inline-flex items-center gap-1.5 text-caption text-primary hover:text-primary-dark font-semibold"
             >
               Quản lý toàn bộ đối tác chuỗi <ChevronRight className="w-3.5 h-3.5" />
             </Link>

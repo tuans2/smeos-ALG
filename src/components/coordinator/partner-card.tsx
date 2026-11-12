@@ -34,7 +34,7 @@ export function PartnerCard({ partner, onToggleStatus, onOpenSettlement }: Partn
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-caption font-bold px-2 py-0.5 rounded bg-surface-raised border border-border text-text">
+            <span className="font-mono text-caption font-bold px-2 py-0.5 rounded bg-surface border border-border text-text">
               {partner.code}
             </span>
             <h4 className="font-bold text-text text-body-sm">{partner.name}</h4>

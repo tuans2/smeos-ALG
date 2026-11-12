@@ -55,7 +55,7 @@ export function LandingTemplatePerks({
                 0{idx + 1}.
               </span>
             ) : (
-              <div className="p-2 rounded-xl bg-surface-alt border border-border group-hover:bg-primary-bg/20 transition-colors shrink-0">
+              <div className="p-2 rounded-xl bg-surface-alt border border-border group-hover:bg-primary-muted/20 transition-colors shrink-0">
                 {getIcon(perk.icon)}
               </div>
             )}

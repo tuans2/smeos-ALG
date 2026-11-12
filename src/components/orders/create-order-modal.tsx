@@ -201,7 +201,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
 
   const dialogTitle = (
     <span className="flex items-center gap-2">
-      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary-subtle text-primary">
+      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary-muted text-primary">
         <Sparkles className="h-3.5 w-3.5" />
       </span>
       Tạo đơn hàng mới
@@ -314,7 +314,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
                 <Input type="number" min="1" className="w-16 rounded-md border border-border bg-surface px-2 py-1.5 text-center text-body-sm" value={it.quantity} onChange={(e) => updateItem(idx, "quantity", Math.max(1, parseInt(e.target.value) || 1))} />
                 <Input type="number" step="10000" min="0" className="w-32 rounded-md border border-border bg-surface px-2 py-1.5 text-right text-body-sm" placeholder="Đơn giá (₫)" value={it.unitPriceVnd} onChange={(e) => updateItem(idx, "unitPriceVnd", parseInt(e.target.value) || 0)} />
                 {items.length > 1 && (
-                  <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(idx)} aria-label="Xóa dòng" className="flex h-9 w-9 p-0 items-center justify-center rounded-md text-text-muted hover:bg-surface-raised hover:text-danger">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(idx)} aria-label="Xóa dòng" className="flex h-9 w-9 p-0 items-center justify-center rounded-md text-text-muted hover:bg-surface hover:text-danger">
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 )}

@@ -33,7 +33,7 @@ const TEMPLATE_BADGE_COLOR: Record<string, string> = {
   T02_MINIMAL_PRODUCT_LIST: "bg-surface-alt text-text border-border",
   T03_PREMIUM_LOOKBOOK: "bg-surface-alt text-text-muted border-border",
   T04_BENTO_SHOWCASE: "bg-primary-muted text-primary border-primary/20",
-  T05_DARK_CINEMATIC: "bg-surface-dark text-warning border-border",
+  T05_DARK_CINEMATIC: "bg-text text-warning border-border",
 }
 
 const STYLE_PREVIEW_BG: Record<string, string> = {

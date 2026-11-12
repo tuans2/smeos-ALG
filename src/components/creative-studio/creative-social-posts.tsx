@@ -200,7 +200,7 @@ export function CreativeSocialPosts({
                         type="button"
                         size="sm"
                         onClick={() => setEditingPlatform(null)}
-                        className="bg-success hover:bg-success-dark text-white text-caption font-bold h-7 px-3"
+                        className="bg-success hover:bg-success-text text-white text-caption font-bold h-7 px-3"
                       >
                         <Check size={12} className="mr-1" /> Lưu chỉnh sửa
                       </Button>

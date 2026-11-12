@@ -186,7 +186,7 @@ export function PricingRulesConfigCard({
             </div>
           )}
           {luuThanhCong && (
-            <div className="rounded-xl border border-secondary/30 bg-secondary-bg p-2.5 text-caption font-medium text-secondary">
+            <div className="rounded-xl border border-secondary/30 bg-secondary/10 p-2.5 text-caption font-medium text-secondary-text">
               Đã lưu quy tắc giá thành công.
             </div>
           )}
