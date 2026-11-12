@@ -279,3 +279,22 @@ Job hằng đêm (1–5 giờ sáng giờ Việt Nam) trong `smeos-web`, đặc 
 4. Tắt job khẩn cấp: biến môi trường `RETENTION_SWEEP=off` rồi khởi động lại dịch vụ; hoặc đặt `enforce = false`.
 5. Dữ liệu đã xoá vẫn còn trong bản sao lưu tới hết hạn giữ bản sao lưu (ADR-015); khôi phục từ bản cũ thì chạy lại
    job.
+
+## 17. Xuất / nhập toàn bộ dữ liệu một tổ chức (ADR-016 D-S3, 12/11/2026)
+
+Dùng khi: chuyển khách sang triển khai riêng (`DEDICATED`), bàn giao dữ liệu khi khách rời nền tảng, khôi phục riêng một
+tổ chức (D-S4). Chạy trên Render shell của `smeos-web`; người vận hành cần mã `N2`; mỗi lần ghi `platform_audit_logs`.
+
+1. Xuất: `npm run tenant:transfer -- export --org <id> --out /tmp/<id>.json --operator <email>` — in số dòng từng bảng và
+   số tệp trong kho cần chép riêng (danh sách ở `files` của gói).
+2. Kiểm gói ở CSDL đích: `npm run tenant:transfer -- import --file <tệp> --operator <email>` — kiểm định dạng, checksum
+   từng bảng, phiên bản schema (migration cuối) phải trùng.
+3. Sao lưu CSDL đích, rồi thêm `--confirm` để nhập (một giao dịch; lỗi giữa chừng thì không ghi gì).
+4. Chép tệp trong `files` sang kho của đích (cùng khoá).
+
+Lưu ý:
+- Gói chứa dữ liệu cá nhân dạng bản mã và băm mật khẩu thành viên — lưu như bản sao lưu, xoá sau khi dùng.
+- CSDL đích phải dùng **cùng** `PII_ENCRYPTION_KEY` (khoá dữ liệu của tổ chức đi theo gói, được bọc bằng khoá chủ).
+- Tổ chức đã có ở đích → từ chối (khôi phục riêng: xoá dữ liệu hiện tại theo D-S4 trước). Thành viên đã có (cùng id)
+  giữ nguyên; liên kết tới tổ chức không có ở đích bị bỏ qua.
+- `scripts/handover-backup-engine.ts` vẫn giữ cho hai script dọn dữ liệu thử trước bàn giao (PO 11/11/2026).

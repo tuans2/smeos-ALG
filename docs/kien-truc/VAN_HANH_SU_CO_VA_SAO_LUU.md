@@ -11,6 +11,7 @@
 | PITR của Render (`smeos-postgres`, gói `basic-256mb`) | Khôi phục về một thời điểm bất kỳ, cách hiện tại ≥ 10 phút | 3 ngày (workspace Hobby) · 7 ngày (Pro trở lên) |
 | Export logic (*Recovery → Create export*) | Tệp `.dir.tar.gz` tải về được | 7 ngày trên Render; tự tải về để giữ lâu hơn |
 | `scripts/handover-backup-engine.ts` | Snapshot JSON dữ liệu giao dịch **một tenant** trước khi dọn | Theo nơi lưu tệp |
+| `npm run tenant:transfer` (ADR-016 D-S3) | Xuất / nhập **toàn bộ** dữ liệu một tenant theo sổ bảng, có phiên bản schema + checksum — runbook §17 | Theo nơi lưu tệp |
 
 **Mục tiêu đề xuất** (cần PO chốt với khách):
 
