@@ -32,7 +32,7 @@ Quyết định của người giao việc ngày 12/11/2026: mức 3 (đổi to�
 
 ## 3. Cần ALG/PO cung cấp hoặc quyết
 
-1. **Tên miền**: mã còn `app.smeos.vn`, `docs.smeos.vn`, `smeos.vn/shop` (liên kết thật). Cần tên miền ALG.
+1. **Tên miền**: đã đổi `smeos.vn` → `avilotusgroup.com` (giữ tiền tố `app.`, `docs.`, `storage.`…) trong mã, test, `AGENTS.md`, tài liệu và một dòng chú thích ví dụ trong `render.yaml` (quyết định 12/11/2026). **Chưa làm (ngoài repo):** trỏ DNS, đặt `PUBLIC_APP_URL`/`NEXT_PUBLIC_APP_URL` trên Render, dựng trang `docs.avilotusgroup.com` (Copilot đang dẫn tới hướng dẫn tích hợp Facebook/Zalo ở đó). Giữ nguyên tiền tố bản ghi TXT `_smeos-verify` để tên miền riêng đã xác minh của cửa hàng không bị mất xác minh.
 2. **Tài khoản ngân hàng** nạp credit nền tảng (đang là "CONG TY CONG NGHE SMEOS").
 3. Prompt AI có đổi tên trợ lý/nền tảng sang ALG không.
 4. Logo bản trắng cho nền tối (repo đã có `*-white.png`; chưa dùng ở màn nào).

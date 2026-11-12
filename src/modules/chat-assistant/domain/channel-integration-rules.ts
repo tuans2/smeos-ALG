@@ -45,7 +45,7 @@ export const CHANNEL_PRICING_CATALOG: Record<SupportedChatChannel, ChannelPricin
     monthlyCreditCost: 50, // 50 credit/tháng (~150.000 đ)
     messageCreditCost: 1,
     requiresSetup: true,
-    guideUrl: "https://docs.smeos.vn/integrations/facebook-messenger",
+    guideUrl: "https://docs.avilotusgroup.com/integrations/facebook-messenger",
   },
   ZALO_OA: {
     channel: "ZALO_OA",
@@ -55,7 +55,7 @@ export const CHANNEL_PRICING_CATALOG: Record<SupportedChatChannel, ChannelPricin
     monthlyCreditCost: 70, // 70 credit/tháng (~200.000 đ)
     messageCreditCost: 1,
     requiresSetup: true,
-    guideUrl: "https://docs.smeos.vn/integrations/zalo-oa",
+    guideUrl: "https://docs.avilotusgroup.com/integrations/zalo-oa",
   },
   EMBEDDED_WIDGET: {
     channel: "EMBEDDED_WIDGET",

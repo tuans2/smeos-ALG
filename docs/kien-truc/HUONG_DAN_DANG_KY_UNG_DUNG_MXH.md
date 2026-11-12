@@ -10,7 +10,7 @@ biến môi trường của dịch vụ web trên Render (Environment → Secret
 
 ## 0. Địa chỉ cần khai báo ở cả 3 nền tảng
 
-`<PUBLIC_APP_URL>` là địa chỉ công khai của SMEOS (vd. `https://app.smeos.vn`; biến `PUBLIC_APP_URL`, trống thì lấy
+`<PUBLIC_APP_URL>` là địa chỉ công khai của SMEOS (vd. `https://app.avilotusgroup.com`; biến `PUBLIC_APP_URL`, trống thì lấy
 `RENDER_EXTERNAL_URL`). Địa chỉ gọi về (redirect URI / callback URL) phải khai **đúng từng ký tự**:
 
 | Nền tảng | Địa chỉ gọi về |

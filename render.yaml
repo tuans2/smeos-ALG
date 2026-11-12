@@ -99,7 +99,7 @@ services:
       # dựng được "https://" + host của dịch vụ, mà khai `sync: false` thì lại thành một ô phải
       # điền tay. Link công khai rơi về `RENDER_EXTERNAL_URL` do Render tự cấp
       # (`src/lib/public-url.ts`), đúng cho tên miền *.onrender.com. Khi gắn tên miền riêng
-      # (vd. app.smeos.vn): thêm `NEXT_PUBLIC_APP_URL` trên Render → smeos-web → Environment.
+      # (vd. app.avilotusgroup.com): thêm `NEXT_PUBLIC_APP_URL` trên Render → smeos-web → Environment.
       - key: OPENAI_API_KEY
         sync: false
       - key: ANTHROPIC_API_KEY

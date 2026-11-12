@@ -16,7 +16,7 @@ describe("tên miền riêng — luật thuần (ALG 10.8)", () => {
       expect(normalizeHostname(bad).ok, bad).toBe(false)
     }
     expect(normalizeHostname("shop.onrender.com", ["onrender.com"]).ok).toBe(false)
-    expect(normalizeHostname("app.smeos.vn", ["app.smeos.vn"]).ok).toBe(false)
+    expect(normalizeHostname("app.avilotusgroup.com", ["app.avilotusgroup.com"]).ok).toBe(false)
   })
 
   it("bản ghi TXT khớp khi các đoạn ghép lại đúng mã; sai mã hoặc thiếu → không khớp", () => {

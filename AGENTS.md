@@ -285,7 +285,7 @@ Nền tảng SaaS đa tenant, đa ngành phục vụ doanh nghiệp vừa & nh�
   5. **Typography Biên tập & Làm sạch dữ liệu**:
      - Tiêu đề thương hiệu và tên bộ sưu tập phải dùng font có bản sắc riêng (serif biên tập *Playfair Display / Cormorant Garamond* hoặc geometric sans giãn dòng `tracking-widest`).
      - Thẻ giá dán trên ảnh phải có lớp đệm gradient bảo vệ tương phản, dùng định dạng viên thuốc (pill badge) thanh lịch thay vì khối vuông thô.
-     - Toàn bộ ấn phẩm xuất file ảnh PNG/PDF phải tự động làm sạch URL nội bộ (lược bỏ `localhost:3200`, `http://` ➔ hiển thị tên miền sạch `smeos.vn/...`).
+     - Toàn bộ ấn phẩm xuất file ảnh PNG/PDF phải tự động làm sạch URL nội bộ (lược bỏ `localhost:3200`, `http://` ➔ hiển thị tên miền sạch `avilotusgroup.com/...`).
 - **Quy chuẩn Tiêu Điểm Khối Tương Tác (Active Block Spotlight Standard / Focus-First Block UX, PO 18/10/2026)**:
   - **Mục tiêu UX**: Tránh quá tải nhận thức thị giác (Cognitive Overload) khi hiển thị nhiều khối tính năng hoặc các bước tác vụ trên cùng một màn hình (như Wizard cấu hình, Tạo bộ sưu tập, Thiết lập chiến dịch).
   - **Cơ chế hoạt động**:

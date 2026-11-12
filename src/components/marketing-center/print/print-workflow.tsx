@@ -45,7 +45,7 @@ export function PrintWorkflow({
   const [subtitle, setSubtitle] = useState<string>(
     "Kính chúc quý khách có trải nghiệm mua sắm tuyệt vời!"
   )
-  const [qrLink, setQrLink] = useState<string>("https://smeos.vn")
+  const [qrLink, setQrLink] = useState<string>("https://avilotusgroup.com")
 
   // Kết quả Preflight
   const [preflightReport, setPreflightReport] = useState<PreflightReport | null>(null)
@@ -237,7 +237,7 @@ export function PrintWorkflow({
                 type="url"
                 value={qrLink}
                 onChange={(e) => setQrLink(e.target.value)}
-                placeholder="https://smeos.vn/shop-cua-ban"
+                placeholder="https://avilotusgroup.com/shop-cua-ban"
               />
               <p className="text-caption text-text-muted">
                 Khách hàng quét mã này để đặt lại món, xem bảng giá hoặc đánh giá cửa hàng.

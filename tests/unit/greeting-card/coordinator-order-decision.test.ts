@@ -235,7 +235,7 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
     expect(
       coordinatorAcceptanceBlocker(
         { status: "DRAFT", productionStatus: "WAITING", deliveryStatus: "PENDING" },
-        { paidVnd: 0, paymentProofUrl: "https://r2.smeos.vn/proof.jpg" }
+        { paidVnd: 0, paymentProofUrl: "https://r2.avilotusgroup.com/proof.jpg" }
       )
     ).toBeNull()
 
@@ -251,7 +251,7 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
     expect(
       coordinatorAcceptanceBlocker(
         { status: "CONFIRMED", productionStatus: "WAITING", deliveryStatus: "PENDING" },
-        { paidVnd: 500_000, paymentProofUrl: "https://r2.smeos.vn/proof.jpg" }
+        { paidVnd: 500_000, paymentProofUrl: "https://r2.avilotusgroup.com/proof.jpg" }
       )
     ).toBe("Đơn đã được xác nhận nhận đơn")
 
@@ -259,7 +259,7 @@ describe("Điều phối tiếp nhận và từ chối đơn hàng", () => {
     expect(
       coordinatorAcceptanceBlocker(
         { status: "DRAFT", productionStatus: "ARRANGING", deliveryStatus: "PENDING" },
-        { paidVnd: 500_000, paymentProofUrl: "https://r2.smeos.vn/proof.jpg" }
+        { paidVnd: 500_000, paymentProofUrl: "https://r2.avilotusgroup.com/proof.jpg" }
       )
     ).toBe("Đơn đã vào sản xuất")
   })
