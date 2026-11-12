@@ -40,14 +40,13 @@ Nhánh `claude/fervent-pascal-ilhcgb`, 12/11/2026. Người giao việc duyệt 
 - `lint:ux`: 23 → 8 → **0** vi phạm (baseline 0).
 - axe toàn kho đo lại (109 màn × 390/1280): critical 0, serious 130 → **0**, tương phản 6 → 0, tràn ngang 390px 1 → 0 (`SO_SANH_TRUOC_SAU_DOT4.md`).
 
-## 4. Cổng kiểm (chạy lại sau toàn bộ Đợt 4)
-- `npm test` 4961/4963 — 2 ca `public-url` đỏ do `.env` local, có từ trước, không liên quan.
-- `test:tenant` **276/276 tệp, 1204/1204 ca** · `test:platform` 17/17 tệp, 55 ca — DB `smeos_test`.
+## 4. Cổng kiểm (chạy lại sau khi nhánh được gộp thêm `main`, nền 5703212b + 4 commit Đợt 4)
+- `npm test` **5233/5233** · typecheck · `lint:ratchet` (không lỗi mới, 57 lỗi cũ nợ #172) · `lint:ux` 0 · `check:docs` · `check:screen-contracts` 107/107 · `check:template-ssot` · `check:schemas:*` xanh.
+- `test:tenant` **304/304 tệp, 1299/1299 ca** · `test:platform` **19/19 tệp, 64 ca** — DB `smeos_test` (lược đồ đồng bộ bằng `db push`, có đồng ý của người giao việc).
 - Test worker Python: 494 ca đạt (venv riêng cài `workers/requirements.txt`).
-- typecheck · `lint:ratchet` (không lỗi mới) · `lint:ux` 0 · `check:docs` · `check:screen-contracts` 107/107 · `check:template-ssot` · `check:schemas:*` xanh.
-- `test:e2e:ux` trên dev server local: **trợ năng và hành trình xanh** (sau khi sửa `role="status"` cho khung tải ở Thẻ chào gửi nhanh — lỗi có sẵn trên `main`). **Hai ca so ảnh mẫu đỏ đúng dự kiến** (`dang-nhap`, `vai-tro`: khác 9–10% điểm ảnh vì màu và phông ALG); chạy với ảnh mẫu tạm thì 14/14 ca ảnh mốc chạy hết luồng, 13 ảnh khác mẫu cũ. Theo quy định repo, ảnh mẫu `*-linux.png` phải lấy từ ảnh `-actual.png` do runner CI chụp — **cần mở PR để CI chạy rồi cập nhật ảnh mẫu**; chưa làm vì chưa có yêu cầu mở PR.
+- `test:e2e:ux` (dev server local): trợ năng và hành trình xanh sau khi sửa `role="status"` cho khung tải ở Thẻ chào gửi nhanh (lỗi có sẵn trên `main`). Ảnh mẫu so ảnh khác do màu/phông ALG: phiên phát hành đã cập nhật từ ảnh CI chụp (84260d71, cf14599c, cf539190).
+- **Chưa xác minh trong phiên này:** CI GitHub chạy trọn trên commit cuối của nhánh (chỉ chạy khi có PR vào `main`).
 
 ## 5. Còn lại / ngoài phạm vi
-- Ảnh mẫu e2e (`visual*.spec.ts-snapshots`) sinh lại từ CI khi mở PR.
-- CI trên GitHub (chỉ chạy với PR vào `main`).
+- Xác nhận CI xanh trên PR trước khi gộp.
 - Kiểm bằng trình đọc màn hình thật (NVDA/VoiceOver) và trên thiết bị thật.
