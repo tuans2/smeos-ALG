@@ -21,7 +21,7 @@ export function ProductStatusBadge({ status }: { status: "ACTIVE" | "PAUSED" | "
   }
   if (status === "PAUSED") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-alt px-2.5 py-0.5 text-caption font-bold text-warning">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-alt px-2.5 py-0.5 text-caption font-bold text-warning-text">
         <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
         Tạm ngưng
       </span>
@@ -29,7 +29,7 @@ export function ProductStatusBadge({ status }: { status: "ACTIVE" | "PAUSED" | "
   }
   if (status === "ARCHIVED") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-warning-bg px-2.5 py-0.5 text-caption font-bold text-warning">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-warning-bg px-2.5 py-0.5 text-caption font-bold text-warning-text">
         <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
         Lưu trữ
       </span>

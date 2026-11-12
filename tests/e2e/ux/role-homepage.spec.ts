@@ -13,7 +13,7 @@ test.describe("UX Role-based Homepage (03b Role UX §4)", () => {
     // Screen Contract docs/dac-ta/screen-contracts/cong-cu.md, PO 01/11/2026): 6 thẻ mục tiêu kinh doanh.
     // Mục tiêu "Hồ sơ & Thương hiệu" có công cụ hoàn thiện nên luôn hiện ở production.
     await expect(page.getByRole("heading", { level: 1, name: "Trung tâm Tiếp thị & Bán hàng" })).toBeVisible({ timeout: 15_000 })
-    await expect(page.getByRole("heading", { level: 3, name: "Hồ sơ & Thương hiệu" })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 2, name: "Hồ sơ & Thương hiệu" })).toBeVisible()
   })
 
   test("vai Bán hàng (sale, PRODUCTION) vào trang chủ Pipeline Workspace", async ({ page }) => {

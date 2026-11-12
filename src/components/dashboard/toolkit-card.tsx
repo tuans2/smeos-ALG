@@ -13,7 +13,7 @@ import { STATUS_DISPLAY } from "@/modules/toolkit/domain/toolkit-catalog"
 
 const STATUS_STYLE: Record<ToolStatus, string> = {
   DONE: "bg-success-bg text-success border-success-border",
-  IN_PROGRESS: "bg-warning-bg text-warning border-warning-border",
+  IN_PROGRESS: "bg-warning-bg text-warning-text border-warning-border",
   FOUNDATION: "bg-info-bg text-info border-info-border",
   PLANNED: "bg-surface-alt text-text-muted border-border",
 }

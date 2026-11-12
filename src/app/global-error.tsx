@@ -16,10 +16,14 @@ export default function GlobalError({
 }) {
   return (
     <html lang="vi">
+      {/* Layout gốc bị thay hoàn toàn nên metadata không áp dụng: tự khai tiêu đề (WCAG 2.4.2) */}
+      <head>
+        <title>ALG tạm thời không tải được</title>
+      </head>
       <body className="min-h-dvh bg-bg text-text antialiased">
         <main role="alert" className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-3 p-6 text-center">
-          <p className="text-caption font-semibold uppercase tracking-wider text-danger">Lỗi hệ thống</p>
-          <h1 className="text-title font-bold">smeOS tạm thời không tải được</h1>
+          <p className="text-caption font-semibold uppercase tracking-wider text-danger-text">Lỗi hệ thống</p>
+          <h1 className="text-title font-bold">ALG tạm thời không tải được</h1>
           <p className="text-body-sm text-text-muted">Vui lòng thử lại sau ít phút. Dữ liệu của tiệm không bị ảnh hưởng.</p>
           <Button
             type="button"

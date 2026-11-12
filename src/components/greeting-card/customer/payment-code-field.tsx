@@ -31,7 +31,7 @@ export function PaymentCodeField({
   const applied = !error && plan?.source === "PAYMENT_CODE" && plan.paymentCode ? plan : null
 
   return (
-    <section aria-label={t("greetingCard.customer.options.paymentCodeTitle")} className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30">
+    <section aria-label={t("greetingCard.customer.options.paymentCodeTitle")} className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-alt/30">
       <div className="flex items-center justify-between">
         <span className="text-caption font-bold text-text flex items-center gap-1.5">
           <Wallet size={14} className="text-primary" />

@@ -47,7 +47,7 @@ export function IndustryEcosystemBoard() {
           label="Bối cảnh Studio"
           value={industries.reduce((acc, ind) => acc + ind.aiConfig.studioBackgroundStyles.length, 0)}
           tip="Phong cách bối cảnh hình ảnh thương phẩm phục vụ chế tác tự động bằng AI"
-          icon={<Sparkles className="w-4 h-4 text-warning" aria-hidden="true" />}
+          icon={<Sparkles className="w-4 h-4 text-warning-text" aria-hidden="true" />}
         />
       </div>
 

@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — 16 Input Domains SSOT
+ * ALG Inputs Architecture v2.1 — 16 Input Domains SSOT
  *
  * Domain keys are stable string literals used across Registry, APIs,
  * permissions, and audit logs.

@@ -1,4 +1,4 @@
-# Hồ sơ bàn giao smeOS
+# Hồ sơ bàn giao ALG
 
 > Trạng thái `CANONICAL` · chủ sở hữu: Product Owner · cập nhật 22/10/2026.
 > Điểm vào duy nhất cho đội nhận bàn giao. Tệp này chỉ trỏ đến SSOT, không chép lại nội dung.
@@ -14,7 +14,7 @@
 | Redis (giới hạn tần suất dùng chung) | `src/core/cache/redis-client.ts` | `smeos-redis` |
 
 Tài liệu gốc:
-- Kiến trúc: `docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md`
+- Kiến trúc: `docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md`
 - Trạng thái và nợ kỹ thuật: `docs/kien-truc/TRANG_THAI.md`, `docs/dac-ta/TECHNICAL_DEBT.md`
 - API: `docs/dac-ta/06-api-specification.md`
 - CSDL: `docs/dac-ta/07-database-specification.md`
@@ -89,8 +89,8 @@ Việc làm tay còn lại trước khi đưa khách vào:
 - [x] Đặt `CRON_SECRET` (giống nhau ở web và cron) và `NEXT_PUBLIC_APP_URL`.
 - [x] Cấp quyền superadmin nền tảng cho `tuans2@dev.com`.
 - [ ] **Đổi mật khẩu** của `siinstore@dev.vn`, `owner@siinstore.local`, `tuans2@dev.com`: mật khẩu hiện là mật khẩu seed nằm trong lịch sử repo công khai. Làm trước mọi việc khác.
-- [ ] Xoay mật khẩu CSDL smeOS và FloraOS (đã lộ qua ảnh chụp màn hình 22/10) — `VAN_HANH_SU_CO_VA_SAO_LUU.md`, mục xoay khoá.
-- [ ] Tài khoản test chức năng: tổ chức riêng "smeOS QA", `test01@smeos.com` vai Điều hành, `test02@smeos.com` vai Sale, không có mã N.
+- [ ] Xoay mật khẩu CSDL ALG và ALG (đã lộ qua ảnh chụp màn hình 22/10) — `VAN_HANH_SU_CO_VA_SAO_LUU.md`, mục xoay khoá.
+- [ ] Tài khoản test chức năng: tổ chức riêng "ALG QA", `test01@avilotusgroup.com` vai Điều hành, `test02@avilotusgroup.com` vai Sale, không có mã N.
   - Lệnh: `MAT_KHAU_TEST01='…' MAT_KHAU_TEST02='…' npm run tao-tai-khoan-test -- --xac-nhan` (mỗi mật khẩu ≥ 12 ký tự, hai mật khẩu khác nhau). Bỏ `--xac-nhan` thì chỉ kiểm tra. Đổi vai `test02`: thêm `--vai=dieu_phoi`. Chạy xong: `history -c`.
   - Cách khác: thêm ở *Cài đặt → Thành viên* của Siin Store — nhanh hơn nhưng dữ liệu test lẫn vào cửa hàng thật.
 - [ ] Bật thông báo lỗi của Render, mức *Only failure notifications* (`VAN_HANH_SU_CO_VA_SAO_LUU.md` mục 2).

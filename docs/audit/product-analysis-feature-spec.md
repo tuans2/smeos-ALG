@@ -14,7 +14,7 @@
 ## 1. Tổng quan kiến trúc & Ranh giới Hệ thống
 
 ### 1.1 Mô tả nghiệp vụ cốt lõi
-Phân tích ảnh sản phẩm (**Module M01 / Feature `vision.analyze`**) là cánh cổng nhập liệu thông minh (Smart Ingestion) của FloraOS:
+Phân tích ảnh sản phẩm (**Module M01 / Feature `vision.analyze`**) là cánh cổng nhập liệu thông minh (Smart Ingestion) của ALG:
 1. **M01a — Nhận diện cấu phần hoa (Vision AI)**: Biến một bức ảnh chụp hoa thật (chụp tại shop hoặc tải lên) thành cấu trúc dữ liệu nguyên tử (Atomic Disaggregated Fields) gồm: Định lượng cành hoa (**BOM - Bill of Materials**), phân loại dáng/mặt hoa/vật chứa, phân tích bảng màu quang học (**Palette Accounting**), phát hiện chữ trên thiệp (**Card OCR**), kiểm định chất lượng/nụ hoa/cành hỏng, và tính điểm tin cậy (**Confidence score**).
 2. **M01b — Sinh dữ liệu thương mại & Nội dung bán hàng (Product Copy / Marketing AI)**: Từ kết quả phân tích cấu phần hoa đã duyệt ở M01a, kết hợp với Hồ sơ thương hiệu (**Learning Profile**) của tiệm để tự động sinh: Tên thương mại gợi ý, Slogan/Tagline, Mô tả cảm xúc/ý nghĩa loài hoa, USP (Điểm bán hàng nổi bật), Thẻ phân loại/SEO, Dịp tặng, Chân dung khách hàng mục tiêu, Phân khúc giá và Dải giá đề xuất.
 3. **M01c — Thẻ chào hàng & Kịch bản tư vấn Zalo (Sales Pitch & Instant Outreach)**: Chuyển đổi dữ liệu M01a + M01b thành: Thẻ chào hàng trực quan chuẩn A6 (sẵn sàng tải ảnh hoặc gửi nhanh), Bộ kịch bản tư vấn Zalo 1-chạm (3 biến thể: Tự nhiên, Tinh tế, Chốt nhanh), Bộ phối hoa thay thế theo ngân sách khách hàng (Budget Matching Engine), và bàn giao trực tiếp sang Creative Studio (14 chặng sáng tạo nội dung).
@@ -123,7 +123,7 @@ Hợp đồng JSON Schema nghiêm ngặt (`strict: true`) mà worker bắt buộ
 
 ## 3. Bản đồ Năng lực Phân quyền (RBAC & Capabilities)
 
-FloraOS áp dụng mô hình 3 lớp cắt (Mặc định → Cấu hình tổ chức → **Trần cứng cắt sau cùng**). Phân hệ Phân tích ảnh sản phẩm được bảo vệ nghiêm ngặt bởi nhóm mã năng lực `H`:
+ALG áp dụng mô hình 3 lớp cắt (Mặc định → Cấu hình tổ chức → **Trần cứng cắt sau cùng**). Phân hệ Phân tích ảnh sản phẩm được bảo vệ nghiêm ngặt bởi nhóm mã năng lực `H`:
 
 | Mã năng lực | Tên kỹ thuật | Nhãn hiển thị | Vai trò mặc định | Trần cứng (Hard Cap) | Hành động API gác cổng |
 |---|---|---|---|---|---|

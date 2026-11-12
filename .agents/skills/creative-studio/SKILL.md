@@ -7,7 +7,7 @@ description: >-
   liên quan đến user upload ảnh sản phẩm.
 ---
 
-# Creative Studio & Product Journey — FloraOS
+# Creative Studio & Product Journey — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 
@@ -53,7 +53,7 @@ Mỗi khi đụng chức năng **user upload ảnh**, Agent **PHẢI DỪNG LẠ
 
 ### 3. Khu vực Creative Studio
 
-Nguồn: `docs/kien-truc/FLORAOS_CREATIVE_STUDIO_ARCHITECTURE.md` (6 khu vực A–F; rà 05/10/2026).
+Nguồn: `docs/kien-truc/ALG_CREATIVE_STUDIO_ARCHITECTURE.md` (6 khu vực A–F; rà 05/10/2026).
 
 | Khu vực | Chức năng | Key |
 |---|---|---|
@@ -65,7 +65,7 @@ Nguồn: `docs/kien-truc/FLORAOS_CREATIVE_STUDIO_ARCHITECTURE.md` (6 khu vực A
 | **F** | Gói chiến dịch | Chặng 07–14, `campaign_packages` (đặc tả 07 §23) |
 
 ### 4. Template System
-- SSOT: `docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md`
+- SSOT: `docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md`
 - Thêm/xoá/đổi tên file `src/components/templates/*` → cập nhật SSOT → `npm run check:template-ssot` xanh.
 
 ---
@@ -93,9 +93,9 @@ await runJourney(image, { steps: [BRING, UNDERSTAND, CREATE] })
 | Pattern | File |
 |---|---|
 | Creative contracts (Zod) | `src/modules/creative-production/contracts/` |
-| Template SSOT | `docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md` |
-| Template engine arch | `docs/kien-truc/FLORAOS_TEMPLATE_ENGINE_ARCHITECTURE.md` |
-| Product journey SSOT | `docs/dac-ta/FLORAOS_PRODUCT_TO_MARKET_USER_JOURNEY.md` |
+| Template SSOT | `docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md` |
+| Template engine arch | `docs/kien-truc/ALG_TEMPLATE_ENGINE_ARCHITECTURE.md` |
+| Product journey SSOT | `docs/dac-ta/ALG_PRODUCT_TO_MARKET_USER_JOURNEY.md` |
 | Scene providers | `workers/media_ai/providers/scene/` |
 | Variant workspace UI | `src/components/creative-studio/` |
 | Template components | `src/components/templates/` |

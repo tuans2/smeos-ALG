@@ -12,7 +12,7 @@ export interface PaymentProofBadgeProps {
 
 /**
  * Smart Badge hiển thị trạng thái thẩm định bill ngân hàng qua AI Vision.
- * Tuân thủ quy chuẩn UX FloraOS (Token màu ngữ nghĩa, cỡ chữ text-caption, không jargon).
+ * Tuân thủ quy chuẩn UX ALG (Token màu ngữ nghĩa, cỡ chữ text-caption, không jargon).
  */
 export function PaymentProofBadge({
   analysis,
@@ -21,15 +21,16 @@ export function PaymentProofBadge({
 }: PaymentProofBadgeProps) {
   if (!hasProofUrl) return null
 
-  // Đang phân tích hoặc chưa có kết quả AI
+  // Chưa có kết quả AI: tiệm tắt "AI đọc bill" (mặc định) hoặc đang xử lý — không ghi "đang đọc" vì có thể
+  // không bao giờ có kết quả (Đợt 4, D4-14)
   if (!analysis) {
     return (
       <span
-        title="Đang đọc dữ liệu từ ảnh bill..."
-        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-muted text-text-muted border border-border ${className}`}
+        title="Có ảnh bill — chưa có kết quả đọc tự động, xem ảnh để đối chiếu"
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border ${className}`}
       >
-        <Clock size={12} className="animate-spin motion-reduce:animate-none text-text-muted" aria-hidden="true" />
-        <span>Đang đọc bill</span>
+        <Clock size={12} className="text-text-muted" aria-hidden="true" />
+        <span>Có ảnh bill</span>
       </span>
     )
   }
@@ -53,9 +54,9 @@ export function PaymentProofBadge({
     return (
       <span
         title={`Lệch tiền: Khách chuyển ${extracted.amountVnd.toLocaleString("vi-VN")} đ (${isUnder ? "Thiếu" : "Thừa"} ${Math.abs(amountDifferenceVnd).toLocaleString("vi-VN")} đ)`}
-        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-warning-bg text-warning border border-warning/40 ${className}`}
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-warning-bg text-warning-text border border-warning/40 ${className}`}
       >
-        <AlertTriangle size={12} className="text-warning" aria-hidden="true" />
+        <AlertTriangle size={12} className="text-warning-text" aria-hidden="true" />
         <span>
           {isUnder ? `Thiếu ${Math.abs(amountDifferenceVnd).toLocaleString("vi-VN")} đ` : `Thừa ${amountDifferenceVnd.toLocaleString("vi-VN")} đ`}
         </span>
@@ -90,7 +91,7 @@ export function PaymentProofBadge({
   return (
     <span
       title="Không nhận diện được nội dung chữ/số trên ảnh"
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-muted text-text-muted border border-border ${className}`}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border ${className}`}
     >
       <span>Ảnh mờ / Không rõ</span>
     </span>

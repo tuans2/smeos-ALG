@@ -1,6 +1,6 @@
-# 16 — Implementation plan: đưa SMEOS lên Production & Commercial Ready
+# 16 — Implementation plan: đưa ALG lên Production & Commercial Ready
 
-> Đầu vào: audit `01`–`14`, quyết định PO `15` (01/11/2026). Phạm vi: repo `smeOS` (D-36).
+> Đầu vào: audit `01`–`14`, quyết định PO `15` (01/11/2026). Phạm vi: repo `ALG` (D-36).
 > Trạng thái: **bản kế hoạch chờ PO duyệt**. Chưa thực hiện hạng mục nào.
 > Hạng mục phụ thuộc đầu vào còn thiếu (`15` §4: D-46, I-1…I-7, A-1) được đánh dấu **[CHỜ]** — không chặn các hạng mục khác.
 
@@ -129,9 +129,9 @@ Tổng công ước lượng: khoảng 100–145 ngày công agent (gồm Workst
 | Mã | Việc | Công | Thiết kế | Nghiệm thu |
 |---|---|---|---|---|
 | P2-G1 | **[TAY]** Kiểm LocalBudd có đang chạy/có dữ liệu thật; xuất dữ liệu; archive repo | S | Theo `15` §3.1 | Biên bản |
-| P2-G2 | Gỡ phần chờ LocalBudd trong `smeOS` | S–M | Bỏ tiền tố proxy `LOCALBUDD`, client token `LOCALBUDD`, `integration/business-profile` (nếu không client nào khác), script `dev:all`, mục danh mục `api_tokens`; cập nhật đặc tả 06/08 | `check:docs`, route guard test |
-| P2-G3 | Thay SocialFlow (D-46 = a) — **Workstream S**, 16 hạng mục S-00…S-16 ở `17_SOCIALFLOW_REPLACEMENT_PLAN.md` §4 | XL (25–35 ngày) | Bài đăng trong `smeOS`, kết nối OAuth qua Integration Hub (không lưu mật khẩu MXH), đầu nối Facebook Page/Instagram/Zalo OA, lịch đăng qua cron, tự duyệt D11 (`O7`), số liệu Chặng 12; gỡ SocialFlow (S-14) | `17` §4 |
-| P2-G4 | Gỡ proxy, SSO liên-app, token tích hợp khi cả hai app ngừng | M | Sau P2-G2 + S-14; giữ Integration API nếu có khách bên thứ ba cần (hỏi PO trong PR) | Route guard test; `smeOS` không còn mã gọi LocalBudd/SocialFlow |
+| P2-G2 | Gỡ phần chờ LocalBudd trong `ALG` | S–M | Bỏ tiền tố proxy `LOCALBUDD`, client token `LOCALBUDD`, `integration/business-profile` (nếu không client nào khác), script `dev:all`, mục danh mục `api_tokens`; cập nhật đặc tả 06/08 | `check:docs`, route guard test |
+| P2-G3 | Thay SocialFlow (D-46 = a) — **Workstream S**, 16 hạng mục S-00…S-16 ở `17_SOCIALFLOW_REPLACEMENT_PLAN.md` §4 | XL (25–35 ngày) | Bài đăng trong `ALG`, kết nối OAuth qua Integration Hub (không lưu mật khẩu MXH), đầu nối Facebook Page/Instagram/Zalo OA, lịch đăng qua cron, tự duyệt D11 (`O7`), số liệu Chặng 12; gỡ SocialFlow (S-14) | `17` §4 |
+| P2-G4 | Gỡ proxy, SSO liên-app, token tích hợp khi cả hai app ngừng | M | Sau P2-G2 + S-14; giữ Integration API nếu có khách bên thứ ba cần (hỏi PO trong PR) | Route guard test; `ALG` không còn mã gọi LocalBudd/SocialFlow |
 
 ## 5. GĐ3 — Bàn giao, tài liệu, chất lượng (tuần 8–12)
 

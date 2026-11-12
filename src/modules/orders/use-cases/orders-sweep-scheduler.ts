@@ -4,7 +4,7 @@ import { matchStandardBankTransfers } from "./match-standard-bank-transfers"
 import { remindCollectDue } from "./remind-collect-due"
 import { expireUnpaidOrders } from "./expire-unpaid-orders"
 
-const STARTED = Symbol.for("smeos.orders.bank-match")
+const STARTED = Symbol.for("alg.orders.bank-match")
 const INTERVAL_MS = 60 * 1000
 
 /**

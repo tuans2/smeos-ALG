@@ -2,7 +2,7 @@
 
 ## 1. Mục đích
 
-Thiết lập một cách quản trị nhất quán, có thể kiểm tra và tự động hóa đối với mọi dữ liệu và tài sản số được SMEOS tiếp nhận, tạo ra, xử lý, lưu trữ hoặc phát hành.
+Thiết lập một cách quản trị nhất quán, có thể kiểm tra và tự động hóa đối với mọi dữ liệu và tài sản số được ALG tiếp nhận, tạo ra, xử lý, lưu trữ hoặc phát hành.
 
 ## 2. Kết quả mong muốn
 
@@ -29,7 +29,7 @@ Không mặc định rằng mọi đối tượng đều phải nằm trong cùn
 
 ## 4. Ngoài phạm vi mặc định
 
-Các nội dung sau cần liên kết với chính sách chuyên biệt nếu SMEOS có yêu cầu:
+Các nội dung sau cần liên kết với chính sách chuyên biệt nếu ALG có yêu cầu:
 - Hồ sơ pháp lý hoặc dữ liệu chịu quy định ngành đặc thù.
 - Hồ sơ kế toán/thuế có thời hạn lưu theo luật.
 - Hệ thống quản lý khóa, secrets hoặc danh tính doanh nghiệp.

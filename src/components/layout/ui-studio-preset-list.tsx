@@ -28,8 +28,8 @@ export function UiStudioPresetList({
             onClick={() => onSelectPreset(preset.id as UiPresetId)}
             className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 w-full text-left p-3.5 rounded-2xl cursor-pointer transition-all border ${
               isSelected
-                ? "border-primary ring-1 ring-primary bg-primary-subtle/30 hover:bg-primary-subtle/30"
-                : "border-border bg-surface hover:border-border-strong hover:bg-surface-muted/40"
+                ? "border-primary ring-1 ring-primary bg-primary-muted/30 hover:bg-primary-muted/30"
+                : "border-border bg-surface hover:border-border-strong hover:bg-surface-alt/40"
             }`}
           >
             <div className="flex items-start justify-between gap-2">

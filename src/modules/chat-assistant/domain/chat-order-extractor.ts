@@ -262,7 +262,7 @@ export function generateChatOrderCheckout(
 
   const bankCode = "ICB" // VietinBank Napas 247
   const accountNumber = "102874629102"
-  const accountName = "SMEOS STORE PAY"
+  const accountName = "ALG STORE PAY"
 
   const qrQuickLink = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-compact2.png?amount=${totalVnd}&addInfo=${encodeURIComponent(
     paymentTransferCode

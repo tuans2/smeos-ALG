@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Field Registry v2 Linter
+ * ALG Inputs Architecture v2.1 — Field Registry v2 Linter
  *
  * Enforces the 11 CI linting rules specified in §7.2 of the Architecture doc.
  * Fails fast before build or merge.

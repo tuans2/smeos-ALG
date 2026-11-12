@@ -1,8 +1,9 @@
+import "@/lib/brand-storage-migration"
 /**
  * Thông tin người đặt lưu trên chính máy khách cho lần đặt sau (ALG 5.15) — chỉ khi khách
  * tích đồng ý; bỏ tích là xoá. Không gửi lên máy chủ. Giữ tối đa 180 ngày.
  */
-const KEY = "smeos:buyer"
+const KEY = "alg:buyer"
 const TTL_MS = 180 * 86_400_000
 
 export interface SavedBuyer {

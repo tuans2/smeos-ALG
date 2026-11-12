@@ -37,7 +37,7 @@ export function ConfidenceBadge({ value }: { value: number | null | undefined })
       className={cn(
         "inline-flex items-center rounded-full px-2 py-0.5 text-caption font-bold",
         value >= 80 ? "bg-success-bg text-secondary"
-          : value >= 60 ? "bg-warning-bg text-warning"
+          : value >= 60 ? "bg-warning-bg text-warning-text"
           : "bg-danger-bg text-danger"
       )}
     >

@@ -39,7 +39,7 @@ export function HoldCountdown({ until, onExpire, deadline = false }: {
   if (ms <= 0) {
     if (deadline) return null
     return (
-      <p role="status" className="mb-4 w-full rounded-xl bg-warning-bg px-3 py-2 text-body-sm text-warning">
+      <p role="status" className="mb-4 w-full rounded-xl bg-warning-bg px-3 py-2 text-body-sm text-warning-text">
         Đã quá thời gian giữ đơn. Nếu bạn vẫn muốn đặt, hãy chuyển khoản rồi liên hệ cửa hàng để xác nhận.
       </p>
     )

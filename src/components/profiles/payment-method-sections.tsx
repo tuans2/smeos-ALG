@@ -104,7 +104,7 @@ export function CodPaymentSection({ config, updateConfig }: SectionProps) {
     <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-border">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent-text">
             <Truck size={18} />
           </div>
           <div>
@@ -237,7 +237,7 @@ export function InStoreAndEWalletSection({ config, updateConfig }: SectionProps)
       <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/15 text-accent">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/15 text-accent-text">
               <Smartphone size={18} />
             </div>
             <div>

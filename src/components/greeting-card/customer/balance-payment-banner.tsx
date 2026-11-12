@@ -46,14 +46,14 @@ export function BalancePaymentBanner({
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-warning/20 text-warning">
+          <div className="p-1.5 rounded-lg bg-warning/20 text-warning-text">
             <Banknote size={20} aria-hidden="true" />
           </div>
           <span className="text-body font-extrabold text-text">
             {paidVnd > 0 ? "Yêu cầu thanh toán số tiền còn lại" : "Yêu cầu thanh toán đơn hàng"}
           </span>
         </div>
-        <span className="text-caption font-bold px-2.5 py-0.5 rounded-full bg-warning/20 text-warning shrink-0">
+        <span className="text-caption font-bold px-2.5 py-0.5 rounded-full bg-warning/20 text-warning-text shrink-0">
           {paidVnd > 0 ? "Đơn đặt cọc" : "Chờ thanh toán"}
         </span>
       </div>
@@ -111,7 +111,7 @@ export function BalancePaymentBanner({
             variant="outline"
             size="sm"
             onClick={onScrollToPayment}
-            className="h-9 gap-1.5 font-bold border-warning/50 text-warning hover:bg-warning/10"
+            className="h-9 gap-1.5 font-bold border-warning/50 text-warning-text hover:bg-warning/10"
           >
             <ArrowDownCircle size={15} aria-hidden="true" />
             <span>Xem mã QR & Thanh toán ngay</span>

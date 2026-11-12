@@ -1,5 +1,5 @@
 /**
- * smeOS Template Library — Studio Video (Video Studio M05)
+ * ALG Template Library — Studio Video (Video Studio M05)
  */
 
 export * from "./video-guidance-card"

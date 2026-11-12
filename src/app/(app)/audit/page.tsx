@@ -129,7 +129,7 @@ export default function AuditLogsPage() {
 
       {/* Thông báo lỗi */}
       {tab === "org" && error && (
-        <div className="flex items-center gap-2 p-3 text-caption bg-warning-bg text-warning border border-warning/30 rounded-xl">
+        <div className="flex items-center gap-2 p-3 text-caption bg-warning-bg text-warning-text border border-warning/30 rounded-xl">
           <AlertCircle size={15} />
           <span>{error}</span>
         </div>
@@ -262,8 +262,8 @@ export default function AuditLogsPage() {
             <div className="md:hidden flex flex-col gap-2.5">
               {filteredLogs.map((item) => (
                 <div key={item.id} className="p-3 rounded-xl border border-border bg-surface-alt/40 flex flex-col gap-2 text-caption">
-                  <div className="flex items-center justify-between">
-                    <Badge tone="accent" className="font-mono text-caption">
+                  <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                    <Badge tone="accent" className="font-mono text-caption max-w-full break-all whitespace-normal">
                       {item.action}
                     </Badge>
                     <span className="text-caption text-text-muted">

@@ -1,5 +1,5 @@
 /**
- * industry-roadmap.ts — Lộ trình triển khai 95 ngành nghề của smeOS
+ * industry-roadmap.ts — Lộ trình triển khai 95 ngành nghề của ALG
  *
  * Mỗi ngành có trạng thái:
  *   - ACTIVE:       Đã triển khai đầy đủ IndustryPluginContract (6 khối thành phần)
@@ -37,7 +37,7 @@ export interface IndustryRoadmapItem {
 }
 
 /**
- * Danh sách đầy đủ 95 ngành nghề — Lộ trình triển khai smeOS đa ngành.
+ * Danh sách đầy đủ 95 ngành nghề — Lộ trình triển khai ALG đa ngành.
  *
  * ACTIVE:       6 ngành đã triển khai IndustryPluginContract đầy đủ.
  * COMING_SOON:  89 ngành đã lên kế hoạch, chờ triển khai theo nhu cầu.

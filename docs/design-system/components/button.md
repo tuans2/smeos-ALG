@@ -7,7 +7,7 @@
 ---
 
 ## 1. Purpose (Mục đích)
-Nút bấm hành động (`Button`) là thành phần điều khiển cốt lõi của giao diện smeOS, đại diện cho các hành vi tương tác do người dùng chủ động kích hoạt: gửi dữ liệu, xác nhận hành động, đóng/mở luồng, chuyển bước, hoặc điều hướng (`asChild`).
+Nút bấm hành động (`Button`) là thành phần điều khiển cốt lõi của giao diện ALG, đại diện cho các hành vi tương tác do người dùng chủ động kích hoạt: gửi dữ liệu, xác nhận hành động, đóng/mở luồng, chuyển bước, hoặc điều hướng (`asChild`).
 
 ## 2. Props Interface (Giao diện props)
 ```typescript

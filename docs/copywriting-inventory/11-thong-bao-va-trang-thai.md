@@ -1,6 +1,6 @@
 # BẢN ĐỒ NỘI DUNG UI — 11. THÔNG BÁO, TRẠNG THÁI & HỘP THOẠI TOÀN HỆ THỐNG
 
-> **Phân hệ**: Toàn bộ hệ thống FloraOS  
+> **Phân hệ**: Toàn bộ hệ thống ALG  
 > **Mã phân hệ**: `COMMON`  
 > **Mục đích**: Chuẩn hóa 100% microcopy cho Toast thông báo, Kiểm tra lỗi ô nhập liệu, Hộp thoại xác nhận nguy hiểm và Trạng thái AI.  
 > **Trạng thái**: Đã chuẩn hóa theo Tiêu chuẩn SaaS Enterprise & Từ điển SSOT.

@@ -130,7 +130,7 @@ export default function ChiTietToChucPage() {
       {/* Khối cảnh báo yêu cầu chuyển đổi mô hình đang chờ duyệt */}
       {org.pendingModelChange && (
         <Card className="p-4 border-2 border-warning/40 bg-warning-bg rounded-2xl space-y-3">
-          <div className="flex items-center gap-2 text-warning font-bold text-body-sm">
+          <div className="flex items-center gap-2 text-warning-text font-bold text-body-sm">
             <Clock size={16} />
             <span>Yêu cầu chuyển đổi mô hình cần duyệt</span>
           </div>
@@ -277,7 +277,7 @@ export default function ChiTietToChucPage() {
         </div>
 
         <div className="flex flex-col gap-2 pt-1">
-          <label className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-surface-muted/40 cursor-not-allowed">
+          <label className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-surface-alt/40 cursor-not-allowed">
             <div className="flex items-center gap-2.5">
               <span className="text-body">🇻🇳</span>
               <div>
@@ -290,7 +290,7 @@ export default function ChiTietToChucPage() {
             </span>
           </label>
 
-          <label className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-surface hover:bg-surface-muted/50 transition-colors cursor-pointer">
+          <label className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-surface hover:bg-surface-alt/50 transition-colors cursor-pointer">
             <div className="flex items-center gap-2.5">
               <span className="text-body">🇬🇧</span>
               <div>

@@ -28,7 +28,7 @@
 | Error | UX-P06, `InlineError` có `role="alert"` + nút thử lại | 58 tệp | Đã triển khai |
 | Confirmation | UX-P07, `useConfirmDialog`, `useConfirmPublish` | 22 tệp; R13 ratchet | Đã triển khai (còn nợ) |
 | Undo | 03c: “R2 có hoàn tác **hoặc** xem trước chi phí” | 7 tệp nhắc “hoàn tác/undo”; **không có cơ chế undo dùng chung** | Không triển khai (cơ chế) |
-| Keyboard | 03a §32, R5 | Có phím tắt `/`, `⌘B`, `⌘K` trong nav/copilot; chưa kiểm thủ công (`.agents/standards/smeos/03-ux.md` §2: 🟡) | Chưa kiểm chứng |
+| Keyboard | 03a §32, R5 | Có phím tắt `/`, `⌘B`, `⌘K` trong nav/copilot; chưa kiểm thủ công (`.agents/standards/alg/03-ux.md` §2: 🟡) | Chưa kiểm chứng |
 | Touch | `OPERATING_PRINCIPLES` §3 “vùng bấm ≥ 24px (di động ưu tiên 32–44px)” vs `COMPONENT_CONTRACTS` “`default` h-12 Touch Target chuẩn” vs `Button size="xs"` 32px | Ba con số khác nhau | Có nhưng bất nhất |
 
 ## D3. Form Standards

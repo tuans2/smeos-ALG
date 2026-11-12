@@ -1,7 +1,7 @@
 /**
  * Creative Studio Schemas — Chuẩn hóa dữ liệu Input và Output đạt chuẩn Commercial Ready.
  *
- * Mọi giao tiếp giữa FloraOS Core và các AI Provider ngoài (Photoroom, Google Imagen 3,
+ * Mọi giao tiếp giữa ALG Core và các AI Provider ngoài (Photoroom, Google Imagen 3,
  * Fal.ai FLUX Fill, Studio Pipeline) bắt buộc phải qua hình dạng này.
  *
  * Tệp thuần Domain: không import Prisma, không gọi I/O, không phụ thuộc hạ tầng mạng.

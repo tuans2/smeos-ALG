@@ -378,7 +378,7 @@ export function PostStatusReportCard({
             <span className="text-text font-medium flex items-center gap-1.5">
               <span>{post.media_url ? "Đã sẵn sàng" : "Chưa có"}</span>
               {post.is_mock_media && (
-                <span className="text-caption font-bold px-1.5 py-0.2 rounded bg-warning-bg text-warning border border-warning/30">
+                <span className="text-caption font-bold px-1.5 py-0.2 rounded bg-warning-bg text-warning-text border border-warning/30">
                   Ảnh mẫu (Mock)
                 </span>
               )}
@@ -394,7 +394,7 @@ export function PostStatusReportCard({
             <div className="text-meta font-bold text-text flex items-center gap-2">
               <TrendingUp size={14} className="text-success" />
               <span>Báo cáo tương tác mạng xã hội</span>
-              <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-warning-bg text-warning border border-warning/30">
+              <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-warning-bg text-warning-text border border-warning/30">
                 ⚠️ DỮ LIỆU MÔ PHỎNG (MOCK DATA)
               </span>
             </div>

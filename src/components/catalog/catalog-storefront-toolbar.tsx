@@ -36,6 +36,7 @@ export function CatalogStorefrontToolbar({
 
   return (
     <div
+      role="search" aria-label="Tìm và lọc sản phẩm"
       className="sticky top-[57px] z-30 py-2.5 backdrop-blur-md transition-colors"
       style={{ backgroundColor: `${style.tokens.background}F2` }}
     >

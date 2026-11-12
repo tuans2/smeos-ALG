@@ -1,7 +1,7 @@
 import type { OpenApiOperation, OpenApiResponse } from "@/core/http/openapi"
 
 /**
- * Khuôn operation của OpenAPI nội bộ (API tiệm gọi từ giao diện SMEOS, PO 07/11/2026). Mặc định route cần phiên
+ * Khuôn operation của OpenAPI nội bộ (API tiệm gọi từ giao diện ALG, PO 07/11/2026). Mặc định route cần phiên
  * đăng nhập của thành viên tổ chức; `organization_id` lấy từ phiên, không nhận từ thân/query. Chung cho mọi route
  * `requireTenantContext`: thiếu phiên → 401; thiếu mã năng lực, công cụ bị khoá hoặc đang dùng mật khẩu tạm → 403;
  * phiên chưa chọn tổ chức → 409; lệnh ghi khi gói quá hạn → 402. Bản ghi của tổ chức khác → 404 (không bao giờ 403).

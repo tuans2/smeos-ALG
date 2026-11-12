@@ -1,6 +1,6 @@
 /**
  * Use Case: Evaluate Readiness Gate (PATCH P1 & P3)
- * FloraOS Core — Final Hardening Patch v2.3 / Mục 11.4 & Mục 5.6
+ * ALG Core — Final Hardening Patch v2.3 / Mục 11.4 & Mục 5.6
  *
  * Kiểm tra các điều kiện tiên quyết (requirements) trước khi chạy Journey
  * bằng cách truy vấn các Facts qua IFactReader.

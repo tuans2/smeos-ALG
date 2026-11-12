@@ -7,9 +7,9 @@ import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant } from "../helpers/fixtures"
 
 const INPUT = {
-  ownerEmail: "test01@smeos.com",
+  ownerEmail: "test01@avilotusgroup.com",
   ownerPassword: "mat-khau-test-01-dai",
-  staffEmail: "test02@smeos.com",
+  staffEmail: "test02@avilotusgroup.com",
   staffPassword: "mat-khau-test-02-dai",
   staffRoleKey: "sale",
 }
@@ -35,8 +35,8 @@ describe("tạo tài khoản test", () => {
   it("test01 Điều hành và test02 Sale cùng tổ chức riêng smeOS QA; không ai có mã nền tảng", async () => {
     const result = await createQaAccounts(INPUT)
 
-    expect(await roleOf("test01@smeos.com")).toEqual({ org: QA_ORGANIZATION_NAME, role: "dieu_hanh" })
-    expect(await roleOf("test02@smeos.com")).toEqual({ org: QA_ORGANIZATION_NAME, role: "sale" })
+    expect(await roleOf("test01@avilotusgroup.com")).toEqual({ org: QA_ORGANIZATION_NAME, role: "dieu_hanh" })
+    expect(await roleOf("test02@avilotusgroup.com")).toEqual({ org: QA_ORGANIZATION_NAME, role: "sale" })
     const staff = await prisma.memberships.findFirstOrThrow({ where: { user_id: result.staffUserId } })
     expect(staff.organization_id).toBe(result.organizationId)
     expect(staff.status).toBe("ACTIVE")

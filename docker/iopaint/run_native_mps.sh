@@ -9,7 +9,7 @@
 # `pip` lên chính máy, không qua Docker — đúng như script này làm.
 #
 # Cài vào một venv RIÊNG (`.venv-iopaint/`, cạnh script này) — không đụng
-# tới môi trường Python của `workers/` (floraos-core dùng Poetry/venv
+# tới môi trường Python của `workers/` (alg-core dùng Poetry/venv
 # riêng cho worker, IOPaint có bảng phụ thuộc rất khác — torch, diffusers,
 # gradio — không nên trộn vào cùng một venv).
 #

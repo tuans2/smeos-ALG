@@ -24,7 +24,7 @@ function ProofVerificationCard({
   const ext = analysis?.extracted
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 p-3 rounded-xl border border-border bg-surface-muted/60">
+    <div className="flex flex-col sm:flex-row gap-3 p-3 rounded-xl border border-border bg-surface-alt/60">
       {/* Thumbnail ảnh bill */}
       <div className="flex flex-col gap-1 items-start shrink-0">
         <span className="text-caption font-bold text-text-muted">{title}</span>
@@ -63,7 +63,7 @@ function ProofVerificationCard({
               </span>
             )}
             {analysis?.status === "AMOUNT_MISMATCH" && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-warning-bg text-warning border border-warning/40">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-warning-bg text-warning-text border border-warning/40">
                 <AlertTriangle size={11} />
                 <span>Lệch số tiền</span>
               </span>
@@ -84,19 +84,20 @@ function ProofVerificationCard({
 
           {/* Ba nhánh hiển thị rõ ràng — không lấp lửng */}
           {!analysis && (
-            // Chưa có kết quả AI (đang xử lý ngầm — thường chỉ vài giây sau khi khách tải lên)
-            <p className="text-caption text-text-muted flex items-center gap-1">
-              <Clock size={11} className="animate-spin motion-reduce:animate-none shrink-0" />
-              <span>Đang đọc dữ liệu biên lai...</span>
+            // Chưa có kết quả: tiệm chưa bật "AI đọc bill" (mặc định — PO 14/10/2026) hoặc AI đang xử lý.
+            // Không hiện "đang đọc" vì khi công tắc tắt sẽ không bao giờ có kết quả (Đợt 4, D4-14).
+            <p className="text-caption text-text-muted flex items-start gap-1">
+              <Clock size={11} className="shrink-0 mt-0.5" />
+              <span>Chưa có kết quả đọc tự động. Xem ảnh và đối chiếu với sao kê ngân hàng trước khi xác nhận.</span>
             </p>
           )}
 
           {analysis?.status === "UNREADABLE" && (
             // Không đối chiếu tự động được (AI không đọc được ảnh, hoặc không chạy vì ảnh chứa dữ liệu cá nhân)
             <div className="flex items-start gap-1.5 p-2 rounded-lg bg-warning-bg border border-warning/30">
-              <AlertTriangle size={12} className="text-warning shrink-0 mt-0.5" />
+              <AlertTriangle size={12} className="text-warning-text shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
-                <span className="text-caption font-bold text-warning">Chưa đối chiếu tự động</span>
+                <span className="text-caption font-bold text-warning-text">Chưa đối chiếu tự động</span>
                 <span className="text-caption text-text-muted leading-relaxed">
                   Hệ thống chưa đọc được số liệu trên ảnh này. Vui lòng xem ảnh và đối chiếu với sao kê ngân hàng trước khi xác nhận.
                 </span>

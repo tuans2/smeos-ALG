@@ -148,7 +148,7 @@ export function ProductManagerWorkspace() {
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
             <span className="text-caption text-text-muted">Cần hoàn thiện</span>
-            <span className="text-title font-extrabold text-warning">
+            <span className="text-title font-extrabold text-warning-text">
               {!daTai ? "—" : unready.length}
             </span>
           </Card>
@@ -170,7 +170,7 @@ export function ProductManagerWorkspace() {
         <Card className="flex flex-col gap-3 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertCircle size={18} className="text-warning" aria-hidden="true" />
+              <AlertCircle size={18} className="text-warning-text" aria-hidden="true" />
               <h2 className="text-title-sm font-bold">
                 Sản phẩm chưa sẵn sàng bán {daTai && `(${unready.length})`}
               </h2>
@@ -227,7 +227,7 @@ export function ProductManagerWorkspace() {
                         {readiness.missingReasons.map((reason, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center rounded-full bg-warning-bg px-2 py-0.5 text-caption font-medium text-warning"
+                            className="inline-flex items-center rounded-full bg-warning-bg px-2 py-0.5 text-caption font-medium text-warning-text"
                           >
                             {reason}
                           </span>

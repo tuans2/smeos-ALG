@@ -2,7 +2,7 @@
 
 > **Mã kế hoạch:** `PLAN-2026-JOURNEY-UX-01`  
 > **Ngày phê duyệt PO:** 30/09/2026  
-> **Tài liệu nguồn:** [`FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md`](../FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md)  
+> **Tài liệu nguồn:** [`ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md`](../ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md)  
 > **Hệ thống đích:** `floraos-core` — Next.js 15 + Prisma/PostgreSQL + Clean Architecture  
 > **Trạng thái hệ thống tại thời điểm phân tích:** 1.348/1.348 test xanh · 283/283 tenant test xanh · tsc sạch 100%
 
@@ -12,7 +12,7 @@
 
 ### 1. TÓM TẮT TÀI LIỆU ĐẦU VÀO
 
-Tài liệu `FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md` đề xuất một **triết lý UX Journey-First** thống nhất cho cả 3 role cấp cao (`Platform Admin`, `Store Admin`, `Điện hoa Admin`) với các nguyên tắc cốt lõi:
+Tài liệu `ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md` đề xuất một **triết lý UX Journey-First** thống nhất cho cả 3 role cấp cao (`Platform Admin`, `Store Admin`, `Điện hoa Admin`) với các nguyên tắc cốt lõi:
 
 | # | Nguyên tắc | Mô tả |
 |---|---|---|

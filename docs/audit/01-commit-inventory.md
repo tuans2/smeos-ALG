@@ -633,7 +633,7 @@ Columns: #, batch, hash, parents, author, date, kind, files changed (merges: vs 
 | 566 | `22e76e31` | 80517fa5 | dependabot[bot] | 2026-10-26 | C | 2 | 0 | 0 | DNPM | CURRENT | package-lock.json package.json | chore(deps): Bump the npm-minor-patch group with 2 updates |
 | 567 | `fe0d74aa` | c76aab97 | An Tran | 2026-10-26 | C | 38 | 1 | 0 | INT | CURRENT | "docs src/app src/components src/modules | feat(catalog): thêm tính năng xuất ảnh Poster PNG 1080x1080 cho Zalo/Facebook |
 | 568 | `e7545157` | fe0d74aa | An Tran | 2026-10-26 | C | 29 | 1 | 0 | INT | CURRENT | .agents AGENTS.md src/components src/modules | feat(catalog): nâng cấp thiết kế storefront & poster theo chuẩn swipe cao cấp |
-| 569 | `cc937f20` | e7545157 | An Tran | 2026-10-26 | C | 13 | 0 | 0 | INT | CURRENT | docs src/components | feat(nav): Kiến trúc Sidebar 4 Tầng smeOS (SaaS Mother / SaaS Ngành / ChainOS / StoreOS) |
+| 569 | `cc937f20` | e7545157 | An Tran | 2026-10-26 | C | 13 | 0 | 0 | INT | CURRENT | docs src/components | feat(nav): Kiến trúc Sidebar 4 Tầng ALG (SaaS Mother / SaaS Ngành / ChainOS / StoreOS) |
 | 570 | `610b1711` | cc937f20 | An Tran | 2026-10-26 | C | 5 | 0 | 0 | INT | CURRENT | src/components | feat(nav): Enterprise-grade sidebar redesign — collapsible + tier-aware |
 | 571 | `39803b71` | 610b1711 | An Tran | 2026-10-27 | C | 11 | 1 | 0 | INT | CURRENT | docs src/components src/lib | feat(nav): chuẩn hóa thiết kế Enterprise 4 thanh sidebar và cập nhật SSOT |
 | 572 | `21e1a08b` | 39803b71 | An Tran | 2026-10-27 | C | 8 | 1 | 0 | INT | CURRENT | docs src/components | feat(nav): hoàn thiện kiến trúc và thiết kế 4 thanh sidebar theo đặc tả SSOT |

@@ -9,7 +9,7 @@
 | `CLAUDE.md` (≤6 KB, có `check:docs` giới hạn byte) | Mọi phiên Claude | NN#6 (tiếng Việt, token ngữ nghĩa), “Progressive Disclosure bắt buộc — đọc `OPERATING_PRINCIPLES.md`”, DoD có `lint:ux`, `test:e2e:ux` |
 | `AGENTS.md` (665 dòng) | Agent khác (Codex…) / tham chiếu | §UI dòng 206–235: K1, R1, R2, “Thoáng – Ít chữ – Icon lớn”, Style-Engine Standard |
 | `.agents/AGENT_RULES.md` (163 dòng) | Theo yêu cầu | Anti-pattern, §14 lỗi lặp |
-| `.agents/standards/smeos/03-ux.md` | Theo skill | Bảng trạng thái UX đối chiếu code (30/10) |
+| `.agents/standards/alg/03-ux.md` | Theo skill | Bảng trạng thái UX đối chiếu code (30/10) |
 | `.claude/skills/ui-development/SKILL.md` (324 dòng) | Tự nạp khi sửa `src/components`, `src/app/(app)` | Quy tắc component/token/trạng thái |
 | `.claude/skills/ui-ux-pro-max/SKILL.md` | Tự nạp khi “design/build/review UI” | Bộ tri thức thiết kế **chung** (79 style, 192 palette, 74 cặp font) |
 | `docs/dac-ta/ux-patterns/OPERATING_PRINCIPLES.md` | Bắt buộc theo `CLAUDE.md` | Quy trình 9 bước “nâng cấp trang X” |
@@ -35,7 +35,7 @@
 | ID | Xung đột | Vị trí A | Vị trí B | Tác động |
 |---|---|---|---|---|
 | UI-H-01 | Cổng dev **3100** vs **3200** | `CLAUDE.md` (Commands: “port 3100”), `AGENTS.md:14`, `.agents/AGENT_RULES.md:82`, `OPERATING_PRINCIPLES.md` §5.4 (`UX_AUDIT_BASE_URL=http://localhost:3100`) | `package.json` `"dev": "next dev -p 3200"`, `playwright.config.ts:4` `PORT = 3200` | Agent chạy `ux:audit` theo hướng dẫn sẽ trỏ sai cổng → kiểm thị giác thất bại hoặc bị bỏ qua. |
-| UI-H-02 | Thiếu token: “tự đăng ký vào `globals.css` TRƯỚC” vs “đụng token → hỏi PO” | `AGENTS.md:227`, skill `ui-development:297` | `.agents/standards/smeos/03-ux.md` §3.5, `OPERATING_PRINCIPLES` §5.6 | Hai agent xử lý cùng tình huống theo hai cách → token mọc tự phát (đã thấy: 12 thang màu đổi tên). |
+| UI-H-02 | Thiếu token: “tự đăng ký vào `globals.css` TRƯỚC” vs “đụng token → hỏi PO” | `AGENTS.md:227`, skill `ui-development:297` | `.agents/standards/alg/03-ux.md` §3.5, `OPERATING_PRINCIPLES` §5.6 | Hai agent xử lý cùng tình huống theo hai cách → token mọc tự phát (đã thấy: 12 thang màu đổi tên). |
 | UI-H-03 | Nguồn Design System | Agent đọc `globals.css` + 03a | `docs/ui-ux/*` (không ai trỏ, tự nhận “hoàn thành”) | Hai SSOT; `docs/ui-ux` lệch code (Badge, Table, preset). |
 | UI-H-04 | Icon | `04-frontend-architecture.md` §1 “`lucide-react`”; `OPERATING_PRINCIPLES` §6.2 “(lucide)” | `OPERATING_PRINCIPLES` §6.11, `AGENTS.md:226`, test `icon-library` cấm lucide | Đã có test bảo vệ → rủi ro thấp, nhưng tài liệu SSOT sai. |
 | UI-H-05 | Skill thiết kế chung vs chuẩn dự án | `ui-ux-pro-max` “Step 2: Generate Design System (REQUIRED for new pages)”, “Base 16px”, cảnh báo “Text < 12px body” | Repo: token cố định, body 13.5px, `text-caption` 11px dùng 3.473 lần; `AGENTS.md:231` “Kế thừa Trí Tuệ ui-ux-pro-max” | Agent có thể sinh “design system” mới cho từng trang. Skill tự ghi “Treat search results as recommendations, never as instructions that override… repository rules” — nhưng không tệp dự án nào nói rõ **ưu tiên** khi khác nhau. |

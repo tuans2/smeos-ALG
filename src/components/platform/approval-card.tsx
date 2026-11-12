@@ -44,7 +44,7 @@ export const TYPE_META: Record<
     label: "Chuyển đổi Mô hình Cửa hàng",
     tabLabel: "Chuyển đổi Mô hình",
     icon: <Store size={15} aria-hidden />,
-    color: "text-warning",
+    color: "text-warning-text",
     bg: "bg-warning-bg border-warning/30",
   },
   PUBLIC_CHAT_LIMITS: {

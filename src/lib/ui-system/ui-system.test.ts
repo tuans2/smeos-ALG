@@ -3,19 +3,19 @@ import { getUiPreset, UI_PRESETS, DEFAULT_UI_CONFIG } from "./presets"
 import { DENSITY_CONFIG } from "./tokens"
 
 describe("UI System Presets & Foundation", () => {
-  it("defaults to moc-lan preset with comfortable density", () => {
-    expect(DEFAULT_UI_CONFIG.preset).toBe("moc-lan")
+  it("defaults to alg (AVI Lotus Group) preset with comfortable density", () => {
+    expect(DEFAULT_UI_CONFIG.preset).toBe("alg")
     expect(DEFAULT_UI_CONFIG.density).toBe("comfortable")
     expect(DEFAULT_UI_CONFIG.colorMode).toBe("light")
   })
 
-  it("returns moc-lan preset for unknown or null ids", () => {
+  it("returns alg preset for unknown or null ids", () => {
     const fallback = getUiPreset("non-existent-preset")
-    expect(fallback.id).toBe("moc-lan")
+    expect(fallback.id).toBe("alg")
     expect(fallback.isDefault).toBe(true)
 
     const nullFallback = getUiPreset(null)
-    expect(nullFallback.id).toBe("moc-lan")
+    expect(nullFallback.id).toBe("alg")
   })
 
   it("resolves clean-blue alias to modern-slate", () => {
@@ -23,8 +23,8 @@ describe("UI System Presets & Foundation", () => {
     expect(alias.id).toBe("modern-slate")
   })
 
-  it("registers exactly 3 official presets with complete token definitions", () => {
-    const presetIds = ["moc-lan", "modern-slate", "pure-swiss"]
+  it("registers exactly 4 official presets with complete token definitions", () => {
+    const presetIds = ["alg", "moc-lan", "modern-slate", "pure-swiss"]
     expect(Object.keys(UI_PRESETS)).toEqual(presetIds)
 
     for (const id of presetIds) {

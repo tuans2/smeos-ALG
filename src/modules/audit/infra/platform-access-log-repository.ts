@@ -1,6 +1,6 @@
 /**
  * `platform_access_logs` (ADR-013 D-I5, D-60): ghi khi nhân viên nền tảng truy cập dữ liệu một tổ chức; chủ tổ chức
- * đọc danh sách của chính tổ chức mình (`scopedWhere`). Bảng chỉ thêm dòng (trigger `smeos_append_only_guard`).
+ * đọc danh sách của chính tổ chức mình (`scopedWhere`). Bảng chỉ thêm dòng (trigger `alg_append_only_guard`).
  */
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"

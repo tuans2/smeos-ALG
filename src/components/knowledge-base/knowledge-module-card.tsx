@@ -10,7 +10,7 @@ import { HelpCircle } from "@/components/ui/icon-set/help-circle"
 import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { ChevronUp } from "@/components/ui/icon-set/chevron-up"
 import { Table } from "@/components/ui/icon-set/table"
-import { Button } from "@/components/ui/button"
+import { Button, TEXT_BUTTON_HIT_AREA } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ModuleKnowledgeSpec } from "./knowledge-data"
 import type { Route } from "next"
@@ -67,7 +67,7 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
         </div>
 
         {showFields && (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <div role="region" tabIndex={0} aria-label={`Bảng tra cứu: ${module.title}`} className="overflow-x-auto rounded-xl border border-border bg-surface">
             <table className="w-full text-left text-caption">
               <thead className="bg-surface-alt border-b border-border text-caption font-bold text-text-muted uppercase">
                 <tr>
@@ -82,10 +82,10 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
                   <tr key={idx} className="hover:bg-surface-alt/60 transition-colors">
                     <td className="px-3 py-2.5 font-bold text-text whitespace-nowrap">
                       {field.name}
-                      {field.required && <span className="text-warning ml-1 font-bold">*</span>}
+                      {field.required && <span className="text-warning-text ml-1 font-bold">*</span>}
                     </td>
                     <td className="px-3 py-2.5">
-                      <Badge className="bg-secondary/20 text-secondary-foreground text-caption font-mono px-1.5 py-0.5">
+                      <Badge className="bg-secondary/20 text-secondary-text text-caption font-mono px-1.5 py-0.5">
                         {field.dataType}
                       </Badge>
                     </td>
@@ -114,11 +114,11 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
         </div>
 
         <div className="rounded-xl border border-warning/30 bg-warning-bg p-3.5 space-y-1.5">
-          <div className="flex items-center gap-1.5 text-caption font-bold text-warning">
-            <XCircle className="h-4 w-4 text-warning" />
+          <div className="flex items-center gap-1.5 text-caption font-bold text-warning-text">
+            <XCircle className="h-4 w-4 text-warning-text" />
             <span>Sai lầm cần tránh (Anti-pattern)</span>
           </div>
-          <p className="text-caption leading-relaxed text-warning line-through decoration-warning/60">
+          <p className="text-caption leading-relaxed text-warning-text line-through decoration-warning/60">
             {module.badPractice}
           </p>
         </div>
@@ -131,10 +131,10 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
           variant="ghost"
           size="sm"
           onClick={() => onAskCopilot?.(module.copilotPrompt)}
-          className="h-auto p-0 inline-flex items-center gap-1.5 text-caption font-bold text-primary hover:underline"
+          className={`h-auto p-0 inline-flex items-center gap-1.5 text-caption font-bold text-primary hover:underline ${TEXT_BUTTON_HIT_AREA}`}
         >
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Hỏi smeOS Copilot về phân hệ này</span>
+          <span>Hỏi ALG Copilot về phân hệ này</span>
         </Button>
 
         <Link href={module.routePath as Route}>

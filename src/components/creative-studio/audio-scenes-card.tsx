@@ -119,7 +119,7 @@ export function AudioScenesCard({
                     placeholder="Nhập lời thoại…"
                     className="w-full text-caption"
                   />
-                  <p className={`mt-0.5 text-caption ${longer ? "text-warning" : "text-text-muted"}`}>
+                  <p className={`mt-0.5 text-caption ${longer ? "text-warning-text" : "text-text-muted"}`}>
                     {scene.voiceScript.length}/{maxVoiceScriptLength} ký tự · đọc ~{est}s
                     {longer ? ` — dài hơn ${scene.targetDurationSeconds}s, cảnh sẽ tự kéo dài để đọc trọn câu` : ""}
                   </p>

@@ -62,7 +62,7 @@ export async function login({ seedData = true, flags = [] } = {}) {
     document.addEventListener("DOMContentLoaded", () => document.head.append(Object.assign(document.createElement("style"), { textContent: css })))
   })
   const stamp = Date.now()
-  const email = `ux-audit-${stamp}@floraos.test`, password = "MatKhau-Audit-2026!"
+  const email = `ux-audit-${stamp}@alg.test`, password = "MatKhau-Audit-2026!"
   const r = await page.request.post(BASE + "/api/v1/auth/signup", { data: { email, password, name: "Chủ tiệm", organization_name: `Tiệm Hoa Mẫu ${stamp}` } })
   if (!r.ok()) throw new Error(`đăng ký ${r.status()}`)
   await q("UPDATE users SET approval_status='APPROVED', approval_decided_at=now() WHERE email=$1", [email])

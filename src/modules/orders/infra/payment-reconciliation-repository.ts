@@ -4,7 +4,7 @@ import type { OpenFinding, PaidMismatch, ReconciliationPlan } from "../domain/pa
 
 /**
  * Đọc/ghi đối soát số đã thu — chạy liên tenant như các bộ quét nền khác (không có `TenantContext`);
- * mỗi dòng ghi vẫn mang `organization_id` của đơn. Sau ADR-013 I-1 chạy bằng tài khoản `smeos_system`.
+ * mỗi dòng ghi vẫn mang `organization_id` của đơn. Sau ADR-013 I-1 chạy bằng tài khoản `alg_system`.
  */
 export class PaymentReconciliationRepository {
   /** Đơn có `paid_vnd` khác sổ thu, tối đa `limit` dòng mỗi lượt. */

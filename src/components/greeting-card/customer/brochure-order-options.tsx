@@ -41,7 +41,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
 
   return (
     <>
-    <div className="flex flex-col gap-3 p-3 rounded-xl border border-border bg-surface-muted/50">
+    <div className="flex flex-col gap-3 p-3 rounded-xl border border-border bg-surface-alt/50">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {priceDimensions && priceDimensions.length > 0 && variants.some((v) => v.values) ? (
           <VariantStepPicker
@@ -116,7 +116,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
 
       {/* Khối Mã ưu đãi — chỉ khi tiệm bật nhận mã giảm giá (tắt thì máy chủ bỏ qua mã, không để khách nhập vô ích) */}
       {shipping.vouchersEnabled === true && (
-      <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30">
+      <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-alt/30">
         <div className="flex items-center justify-between">
           <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <Ticket size={14} className="text-primary" />

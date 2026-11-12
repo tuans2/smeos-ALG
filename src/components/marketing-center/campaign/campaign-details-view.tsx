@@ -123,7 +123,7 @@ export function CampaignDetailsView({ campaignId, onBack }: CampaignDetailsViewP
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-h2 font-bold text-text">{campaign.name}</h2>
             <Badge tone={statusTone}>{CAMPAIGN_STATUS_LABELS[campaign.status]}</Badge>
-            <span className="rounded-lg bg-surface-elevated px-2 py-0.5 text-caption text-text-muted border border-border">
+            <span className="rounded-lg bg-surface px-2 py-0.5 text-caption text-text-muted border border-border">
               {CAMPAIGN_OBJECTIVE_LABELS[campaign.objective]}
             </span>
           </div>
@@ -213,13 +213,13 @@ export function CampaignDetailsView({ campaignId, onBack }: CampaignDetailsViewP
           <div className="flex gap-2">
             <Link
               href={"/kho-du-lieu" as Route}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 text-caption font-medium text-text hover:bg-surface-elevated"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-surface px-3 text-caption font-medium text-text hover:bg-surface"
             >
               <Plus className="h-4 w-4" /> Chọn từ kho dữ liệu
             </Link>
             <Link
               href={"/cong-cu" as Route}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-caption font-medium text-white hover:bg-primary-hover"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-primary px-3 text-caption font-medium text-white hover:bg-primary-dark"
             >
               <Sparkles className="h-4 w-4" /> Tạo mới từ công cụ
             </Link>

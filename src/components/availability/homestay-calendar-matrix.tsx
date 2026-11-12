@@ -233,7 +233,7 @@ export function HomestayCalendarMatrix({
                                   : `Đơn: ${booking.orderCode || "Online"} - Khách: ${booking.customerName || "Khách lẻ"} (Bấm để xem chi tiết)`
                               }
                               className={`h-auto gap-0 group relative flex w-full flex-col items-center justify-center rounded-lg p-1 text-caption font-bold hover:opacity-85 transition-opacity cursor-pointer ${
-                                isBlocked ? "text-warning hover:bg-warning/20" : "text-primary hover:bg-primary/20"
+                                isBlocked ? "text-warning-text hover:bg-warning/20" : "text-primary hover:bg-primary/20"
                               }`}
                             >
                               {isBlocked ? (

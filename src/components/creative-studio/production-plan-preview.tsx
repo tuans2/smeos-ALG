@@ -198,7 +198,7 @@ export function ProductionPlanPreview({
                       className="mt-1 text-caption"
                     />
                     {need > d.duration && (
-                      <p className="text-caption text-warning">Lời thoại cần ~{need}s — dài hơn cảnh, âm thanh sẽ kéo dài cảnh này.</p>
+                      <p className="text-caption text-warning-text">Lời thoại cần ~{need}s — dài hơn cảnh, âm thanh sẽ kéo dài cảnh này.</p>
                     )}
                   </>
                 ) : (

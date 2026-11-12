@@ -13,7 +13,7 @@ export function ImportResultPanel({ result, onBack, onReset }: Props) {
     <div
       className={`rounded-2xl border p-5 ${
         result.success
-          ? "border-success/30 bg-success-bg/40 text-success-dark"
+          ? "border-success/30 bg-success-bg/40 text-success-text"
           : "border-danger/30 bg-danger-bg/40 text-danger"
       }`}
     >

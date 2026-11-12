@@ -53,7 +53,7 @@ export function BrochureLinkLifetimeSettings() {
         nhận link mới. Chỉ áp dụng cho link tạo sau khi lưu; link đã có đơn luôn mở được.
       </p>
       {saved === null ? (
-        <div className="h-10 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-10 rounded-lg bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <label className="flex items-center gap-2 text-body-sm text-text">
           <span>Link dùng được trong</span>

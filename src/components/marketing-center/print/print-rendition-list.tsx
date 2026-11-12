@@ -66,7 +66,7 @@ export function PrintRenditionList() {
       // Tải file PDF về máy người dùng
       const link = document.createElement("a")
       link.href = `data:application/pdf;base64,${pdfBase64}`
-      link.download = `smeos-ban-in-${rendition.presetCode.toLowerCase()}-${rendition.id.slice(0, 8)}.pdf`
+      link.download = `alg-ban-in-${rendition.presetCode.toLowerCase()}-${rendition.id.slice(0, 8)}.pdf`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)

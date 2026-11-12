@@ -1,5 +1,7 @@
 "use client"
 
+import "@/lib/brand-storage-migration"
+
 import React, { useState, useEffect, useRef } from "react"
 import { MessageCircle } from "@/components/ui/icon-set/message-circle"
 import { X } from "@/components/ui/icon-set/x"
@@ -37,10 +39,10 @@ interface PublicStorefrontChatWidgetProps {
 // Visitor ID duy nhất theo phiên trình duyệt (sessionStorage). Đọc lúc gửi tin
 // thay vì giữ trong state — không cần effect đồng bộ state khi mount.
 function getVisitorId(): string {
-  let vid = sessionStorage.getItem("smeos_visitor_id") ?? sessionStorage.getItem("floraos_visitor_id")
+  let vid = sessionStorage.getItem("alg_visitor_id") ?? sessionStorage.getItem("floraos_visitor_id")
   if (!vid) {
     vid = `guest_${Math.random().toString(36).substring(2, 9)}`
-    sessionStorage.setItem("smeos_visitor_id", vid)
+    sessionStorage.setItem("alg_visitor_id", vid)
   }
   return vid
 }
@@ -216,7 +218,7 @@ export function PublicStorefrontChatWidget({
                         className={`rounded-2xl px-3.5 py-2 text-caption leading-relaxed whitespace-pre-line ${
                           isUser
                             ? "bg-primary text-white font-medium rounded-br-none"
-                            : "bg-surface-raised border border-border text-text rounded-bl-none shadow-2xs"
+                            : "bg-surface border border-border text-text rounded-bl-none shadow-2xs"
                         }`}
                       >
                         {m.content}

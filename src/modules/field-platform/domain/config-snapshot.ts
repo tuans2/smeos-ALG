@@ -1,5 +1,5 @@
 /**
- * SMEOS Inputs Architecture v2.1 — Configuration Snapshot Engine
+ * ALG Inputs Architecture v2.1 — Configuration Snapshot Engine
  *
  * Implements immutable frozen snapshot (§6.5) attached to orders / bookings.
  * Generates SHA-256 hash to verify immutability and detect tampering.

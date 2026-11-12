@@ -19,7 +19,7 @@ export const step03AssignPartnerContract = defineStep({
   step: 3,
   code: "ASSIGN_PARTNER",
   slug: "assign-partner",
-  title: "Phân công đối tác xưởng (T06)",
+  title: "Phân công đối tác xưởng",
   summary: "Gán đối tác cùng tổ chức, kiểm tạm ngưng và công suất ngày; đơn vào IN_PRODUCTION",
   endpoint: {
     method: "POST",

@@ -37,7 +37,7 @@ export interface VisionExtractionResult {
   context: ProductInferredContext;
 }
 
-export const PRODUCT_VISION_SYSTEM_PROMPT = `Bạn là chuyên gia thẩm định thị giác sản phẩm nghệ thuật cao cấp của smeOS.
+export const PRODUCT_VISION_SYSTEM_PROMPT = `Bạn là chuyên gia thẩm định thị giác sản phẩm nghệ thuật cao cấp của ALG.
 Nhiệm vụ của bạn là quan sát thật kỹ bức ảnh sản phẩm sản phẩm được cung cấp, nhận diện chính xác từng chi tiết và xuất ra định dạng JSON thuần túy (không markdown, không giải thích ngoài JSON) theo đúng cấu trúc sau:
 {
   "product_name": "Tên thương mại cuốn hút cho sản phẩm (ví dụ: Sản phẩm hồng đỏ Passionate Love, Sản phẩm tulip cam cháy vintage...)",
@@ -102,7 +102,7 @@ export function getProductVisionSystemPrompt(industryPlugin?: IndustryPluginCont
   const sampleProducts = plugin.aiConfig?.sampleProductNames?.slice(0, 3).join(", ") || "";
   const units = terms.defaultMeasurementUnits?.slice(0, 5).join(", ") || "cái, món";
 
-  return `Bạn là chuyên gia thẩm định thị giác sản phẩm và dịch vụ ngành "${plugin.identity.name}" của hệ thống smeOS.
+  return `Bạn là chuyên gia thẩm định thị giác sản phẩm và dịch vụ ngành "${plugin.identity.name}" của hệ thống ALG.
 Nhiệm vụ của bạn là quan sát kỹ bức ảnh được cung cấp, nhận diện chính xác các thành phần, cấu trúc, vật tư, tiện nghi, đặc tính và định tính thương mại theo đặc thù ngành.
 Trọng tâm quan sát: ${visionFocus}
 

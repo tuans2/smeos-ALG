@@ -51,12 +51,12 @@
 
 ## 4. Lưới thẻ chức năng (Action Cards — 13 Thẻ còn lại)
 
-> **Cập nhật 30/10/2026 (PO duyệt phong cách "Thoáng – Ít chữ – Icon lớn"):** tên thẻ rút gọn ≤ 5 từ, mô tả nằm trong dấu "?". Tên hiện hành: Xem báo cáo · Xu hướng thị trường · Sản phẩm từ ảnh · Tạo báo giá · Viết bài đăng · Giọng đọc · Ảnh quảng cáo · Video sản phẩm · Trang bán hàng · Xử lý đơn hàng · Quản lý khách hàng · Ra mắt sản phẩm mới · Hỏi trợ lý smeOS. Nguồn: `src/modules/journey/domain/journey-catalog.ts` (test `journey-short-goals.test.ts`); thuật ngữ theo ngành chỉ đổi ở mô tả. Cột "HIỆN TẠI" bên dưới là lịch sử.
+> **Cập nhật 30/10/2026 (PO duyệt phong cách "Thoáng – Ít chữ – Icon lớn"):** tên thẻ rút gọn ≤ 5 từ, mô tả nằm trong dấu "?". Tên hiện hành: Xem báo cáo · Xu hướng thị trường · Sản phẩm từ ảnh · Tạo báo giá · Viết bài đăng · Giọng đọc · Ảnh quảng cáo · Video sản phẩm · Trang bán hàng · Xử lý đơn hàng · Quản lý khách hàng · Ra mắt sản phẩm mới · Hỏi trợ lý ALG. Nguồn: `src/modules/journey/domain/journey-catalog.ts` (test `journey-short-goals.test.ts`); thuật ngữ theo ngành chỉ đổi ở mô tả. Cột "HIỆN TẠI" bên dưới là lịch sử.
 
 | Mã Copy | Loại | Tên thẻ (Goal) | Nội dung HIỆN TẠI trên UI | Nội dung BẠN CHUẨN HÓA (Mới) | Trạng thái Production |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `HOME-CRD-01T`| `HDR` | Báo cáo | `Xem báo cáo` | `Xem báo cáo` | Đang mở |
-| `HOME-CRD-01D`| `HDR` | Mô tả | `Nắm bắt doanh thu, đơn hàng, mức độ sử dụng FloraOS và kho tư liệu đã tạo` | `Xem doanh thu, số đơn hàng và hoạt động trên FloraOS của cửa hàng.` | Đang mở |
+| `HOME-CRD-01D`| `HDR` | Mô tả | `Nắm bắt doanh thu, đơn hàng, mức độ sử dụng ALG và kho tư liệu đã tạo` | `Xem doanh thu, số đơn hàng và hoạt động trên ALG của cửa hàng.` | Đang mở |
 | `HOME-CRD-02T`| `HDR` | Xu hướng | `Xem mẫu hoa đang được yêu thích` | `Xem mẫu hoa được ưa chuộng` | Sắp ra mắt |
 | `HOME-CRD-02D`| `HDR` | Mô tả | `Biết khách đang chuộng kiểu hoa, màu sắc và mức giá nào để tiệm cắm bán theo` | `Biết khách thích kiểu hoa, màu sắc và mức giá nào để chuẩn bị hàng.` | Sắp ra mắt |
 | `HOME-CRD-03T`| `HDR` | Quét ảnh | `Tạo Thẻ sản phẩm từ ảnh` | `Tạo mẫu hoa từ ảnh chụp` | **Đang mở** (Mở khóa P0) |
@@ -79,8 +79,8 @@
 | `HOME-CRD-11D`| `HDR` | Mô tả | `Lưu sở thích hoa, ngày sinh nhật, dịp kỷ niệm và lịch sử đặt hoa của từng khách quen` | `Lưu sở thích, ngày sinh nhật, ngày kỷ niệm và lịch sử đặt hoa của khách quen.` | Sắp ra mắt |
 | `HOME-CRD-12T`| `HDR` | Combo | `Ra mắt mẫu hoa mới` | `Ra mắt mẫu hoa mới` | Sắp ra mắt |
 | `HOME-CRD-12D`| `HDR` | Mô tả | `Từ 1 ảnh chụp hoa: Phân tích thành phần → Tạo thẻ sản phẩm → Viết bài → Ghép ảnh quảng cáo` | `Từ một ảnh chụp: nhận diện hoa, tạo mẫu hoa, viết bài và làm ảnh quảng cáo.` | Sắp ra mắt |
-| `HOME-CRD-13T`| `HDR` | Chatbot | `Trợ lý FloraOS Chat` | `Hỏi trợ lý FloraOS` | Sắp ra mắt |
-| `HOME-CRD-13D`| `HDR` | Mô tả | `Trợ lý ảo thông minh trả lời câu hỏi và hướng dẫn bạn vận hành tiệm hoa hiệu quả` | `Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng FloraOS.` | Sắp ra mắt |
+| `HOME-CRD-13T`| `HDR` | Chatbot | `Trợ lý ALG Chat` | `Hỏi trợ lý ALG` | Sắp ra mắt |
+| `HOME-CRD-13D`| `HDR` | Mô tả | `Trợ lý ảo thông minh trả lời câu hỏi và hướng dẫn bạn vận hành tiệm hoa hiệu quả` | `Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng ALG.` | Sắp ra mắt |
 
 ---
 

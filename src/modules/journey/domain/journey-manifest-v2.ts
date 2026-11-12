@@ -1,6 +1,6 @@
 /**
  * Journey Manifest & UX Contract v2 SSOT
- * FloraOS Core — Final Hardening Patch v2.3 / PATCH P1 (Mục 11.4)
+ * ALG Core — Final Hardening Patch v2.3 / PATCH P1 (Mục 11.4)
  *
  * Chuẩn hóa tập đóng 7 màn hình, 6 loại đầu vào, chế độ thực thi Manual/Automatic
  * và ràng buộc quyết định sở hữu (Decision Ownership).

@@ -198,7 +198,7 @@ export function MediaExportModal({
         </div>
 
         {/* Thông tin chi tiết preset được chọn */}
-        <div className="p-3.5 rounded-xl border border-border/80 bg-surface-raised space-y-2">
+        <div className="p-3.5 rounded-xl border border-border/80 bg-surface space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-body-sm font-bold text-text">
               {activePreset.label}
@@ -212,7 +212,7 @@ export function MediaExportModal({
           </p>
 
           {validation.warning && (
-            <div className="text-caption font-semibold text-warning bg-warning-bg p-2 rounded-lg border border-warning/30">
+            <div className="text-caption font-semibold text-warning-text bg-warning-bg p-2 rounded-lg border border-warning/30">
               ⚠️ {validation.warning}
             </div>
           )}

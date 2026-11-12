@@ -10,7 +10,7 @@ Các nhà cung cấp có VAI TRÒ TƯƠNG ĐƯƠNG (PO 25/09): mỗi bên là m�
 cùng cổng này, khai `NangLucCanh`; thêm bên mới = thêm một adapter + một dòng ở
 `registry.py`, không sửa worker.
 
-Hợp đồng nói bằng Ý ĐỊNH FloraOS (cảnh, ánh sáng, bảng màu, phong cách, seed,
+Hợp đồng nói bằng Ý ĐỊNH ALG (cảnh, ánh sáng, bảng màu, phong cách, seed,
 chất lượng) — adapter dịch sang tham số riêng. Ý định nào không làm được (kể cả
 qua prompt) ghi vào `bo_qua`, không âm thầm bỏ.
 """
@@ -54,7 +54,7 @@ class NangLucCanh:
 @dataclass(frozen=True)
 class SceneRequest:
     """Ý định cho MỘT khung. `chu_the_png`: khung đúng tỉ lệ đích, bó hoa đã đặt
-    đúng chỗ (bố cục của FloraOS), nền trong suốt."""
+    đúng chỗ (bố cục của ALG), nền trong suốt."""
 
     chu_the_png: bytes
     ratio: str

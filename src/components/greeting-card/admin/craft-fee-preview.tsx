@@ -18,7 +18,7 @@ export function CraftFeePreview({ policy, feeLabel }: { policy: CraftFeePolicy; 
   })
 
   return (
-    <div className="p-4 rounded-xl bg-surface-muted border border-border flex flex-col gap-2">
+    <div className="p-4 rounded-xl bg-surface-alt border border-border flex flex-col gap-2">
       <label className="flex items-center justify-between gap-3 text-body-sm font-bold text-text">
         Xem thử với đơn giá hàng (trước VAT)
         <Input

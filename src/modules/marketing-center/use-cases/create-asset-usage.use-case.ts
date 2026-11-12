@@ -100,7 +100,7 @@ export async function createAssetUsageUseCase(
       name: input.title.trim(),
       targetPath: input.targetPath,
       placementLabel: input.destination,
-      utmSource: "smeos_asset_usage",
+      utmSource: "alg_asset_usage",
       utmMedium: kind.toLowerCase(),
       utmCampaign: `usage_${input.assetTypeCode}`,
     })

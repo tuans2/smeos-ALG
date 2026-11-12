@@ -135,7 +135,7 @@ function QuanLyThanhVienContent() {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"
             variant="outline"
@@ -224,7 +224,7 @@ function QuanLyThanhVienContent() {
         </div>
 
         <div className="p-4 rounded-2xl border border-border bg-surface flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center flex-shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-accent/10 text-accent-text flex items-center justify-center flex-shrink-0">
             <Building size={20} />
           </div>
           <div>

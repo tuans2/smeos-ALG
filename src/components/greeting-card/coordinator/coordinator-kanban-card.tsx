@@ -88,7 +88,7 @@ export function CoordinatorKanbanCard({
   } else if (tier === "URGENT") {
     tierBorder = "border-warning/70 bg-warning-bg/15 shadow-sm"
     tierBadge = (
-      <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse motion-reduce:animate-none">
+      <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning-text shrink-0 animate-pulse motion-reduce:animate-none">
         Sắp đến hạn
       </span>
     )
@@ -137,7 +137,7 @@ export function CoordinatorKanbanCard({
             tier === "OVERDUE"
               ? "bg-danger-bg text-danger border border-danger/30"
               : tier === "URGENT"
-              ? "bg-warning-bg text-warning border border-warning/40"
+              ? "bg-warning-bg text-warning-text border border-warning/40"
               : "bg-primary/10 text-primary border border-primary/20"
           }`}
         >
@@ -286,7 +286,7 @@ export function CoordinatorKanbanCard({
                 disabled={!!blockerOf("dispatch-shipping")}
                 title={blockerOf("dispatch-shipping") ?? undefined}
                 onClick={() => onOpen({ type: "dispatch", orderId: o.id, orderCode: o.code })}
-                className={`h-7 text-caption gap-1 px-2 flex-1 ${isWaitingSecondPayment ? "border-warning/50 text-warning bg-warning-bg/30" : ""}`}
+                className={`h-7 text-caption gap-1 px-2 flex-1 ${isWaitingSecondPayment ? "border-warning/50 text-warning-text bg-warning-bg/30" : ""}`}
               >
                 <Truck size={12} />
                 {isWaitingSecondPayment ? "Chờ TT lần 2" : isStay ? "Đón tiếp" : "Giao Ship"}

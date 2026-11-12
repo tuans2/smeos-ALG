@@ -99,7 +99,7 @@ export function PackageReviewImages({
                   Cảnh {sc.index}{sc.beat ? ` · ${sc.beat}` : ""}
                 </span>
                 {shown && !chosen && (
-                  <span className="absolute right-2 top-2 rounded bg-warning-bg px-1.5 py-0.5 text-caption text-warning">chưa trong gói</span>
+                  <span className="absolute right-2 top-2 rounded bg-warning-bg px-1.5 py-0.5 text-caption text-warning-text">chưa trong gói</span>
                 )}
               </div>
               <div className="p-3 space-y-1.5 text-caption">

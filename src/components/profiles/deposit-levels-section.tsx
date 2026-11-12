@@ -81,7 +81,7 @@ export function DepositLevelsSection() {
         phần còn lại trả sau khi hoa hoàn thành và cửa hàng gửi ảnh. Mã thanh toán không giảm giá — tổng đơn không đổi.
       </p>
       {!config ? (
-        <div className="h-20 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-20 rounded-lg bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <div className="flex flex-col gap-5 text-body-sm">
           <section className="flex flex-col gap-2">

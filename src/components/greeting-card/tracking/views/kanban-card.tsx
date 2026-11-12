@@ -84,7 +84,7 @@ export function KanbanCard({
 
   // Màu nhân viên phụ trách (Sale ID → palette R1)
   const saleColorRaw = getStaffColor(item.saleId ?? undefined)
-  const saleColor = { bg: saleColorRaw?.bg ?? "bg-surface-muted", border: saleColorRaw?.border ?? "border-border", text: saleColorRaw?.text ?? "text-text-muted" }
+  const saleColor = { bg: saleColorRaw?.bg ?? "bg-surface-alt", border: saleColorRaw?.border ?? "border-border", text: saleColorRaw?.text ?? "text-text-muted" }
 
   // Viền và nền thẻ theo tầng thời gian / trạng thái
   let tierStyle = "border-border bg-surface hover:border-primary/60"
@@ -113,7 +113,7 @@ export function KanbanCard({
             title={collapsed ? "Mở rộng chi tiết đơn" : "Thu gọn đơn"}
             aria-expanded={!collapsed}
             aria-label={collapsed ? "Mở rộng đơn" : "Thu gọn đơn"}
-            className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-text-muted hover:bg-surface-muted hover:text-text transition-colors cursor-pointer"
+            className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-text-muted hover:bg-surface-alt hover:text-text transition-colors cursor-pointer"
           >
             {collapsed ? <ChevronRight size={13} aria-hidden="true" /> : <ChevronDown size={13} aria-hidden="true" />}
           </Button>
@@ -157,7 +157,7 @@ export function KanbanCard({
               <Button variant="outline"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onDecide(item, false) }}
-                className="h-auto gap-0 rounded border border-border bg-surface px-1.5 py-0.5 text-caption font-medium text-text-muted hover:bg-surface-muted transition-colors cursor-pointer"
+                className="h-auto gap-0 rounded border border-border bg-surface px-1.5 py-0.5 text-caption font-medium text-text-muted hover:bg-surface-alt transition-colors cursor-pointer"
               >
                 Từ chối
               </Button>
@@ -210,7 +210,7 @@ export function KanbanCard({
             className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] flex w-full flex-col gap-1.5 text-left cursor-pointer"
           >
             {/* Ảnh sản phẩm / hạng phòng & Giá tiền */}
-            <div className="flex items-center gap-2 rounded-lg bg-surface-muted/40 p-1.5 w-full">
+            <div className="flex items-center gap-2 rounded-lg bg-surface-alt/40 p-1.5 w-full">
               <FlowerImage
                 src={item.productImageUrl}
                 alt={item.productName || terms.sampleProduct}

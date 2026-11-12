@@ -42,7 +42,7 @@ describe("khách quay lại sau khi báo chuyển khoản", () => {
       const store = new Map<string, string>()
       vi.stubGlobal("window", { localStorage: { setItem: (k: string, v: string) => store.set(k, v) } })
       rememberCatalogOrder("cat-1", "SL-ABC123")
-      expect(JSON.parse(store.get("smeos:catalog-order:cat-1")!)).toMatchObject({ sendCode: "SL-ABC123" })
+      expect(JSON.parse(store.get("alg:catalog-order:cat-1")!)).toMatchObject({ sendCode: "SL-ABC123" })
 
       vi.stubGlobal("window", { localStorage: { setItem: () => { throw new Error("blocked") } } })
       expect(() => rememberCatalogOrder("cat-1", "SL-ABC123")).not.toThrow()

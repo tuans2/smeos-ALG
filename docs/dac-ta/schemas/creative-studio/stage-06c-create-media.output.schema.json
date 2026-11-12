@@ -3,7 +3,7 @@
   "$id": "stage-06c-create-media.output.schema.json",
   "title": "Chặng 06c — CREATE · Khu vực D: Ảnh biến thể theo cảnh — Đầu ra",
   "description": "Mỗi cảnh một job; qua cổng Subject Integrity. Kết quả là assets MARKETING (PENDING) có cha là Master — đọc qua GET /media/variants/:id.",
-  "x-floraos": {
+  "x-alg": {
     "stageId": "06c",
     "stage": 6,
     "code": "CREATE_MEDIA",

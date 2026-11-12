@@ -19,7 +19,7 @@ export const step04ProductionContract = defineStep({
   step: 4,
   code: "PRODUCTION",
   slug: "production",
-  title: "Theo dõi sản xuất (T07–T11)",
+  title: "Theo dõi sản xuất",
   summary: "Cập nhật tiến độ; báo cắm xong bắt buộc kèm ảnh thành phẩm (assets cùng tổ chức) → QUALITY_CHECK; báo thiếu vật liệu mở sự cố",
   endpoint: {
     method: "POST",

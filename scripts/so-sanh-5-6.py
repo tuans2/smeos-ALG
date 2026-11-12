@@ -78,7 +78,7 @@ def _doi_python_neu_thieu_goi() -> None:
     cách chắc chắn để lệnh hỏng — `chay-du-bo-may.py` đã giải đúng bài này,
     đây là bản gọn của cùng cách làm.
     """
-    if os.environ.get("FLORAOS_DA_DOI_PYTHON"):
+    if os.environ.get("ALG_DA_DOI_PYTHON"):
         return
     try:
         import openai  # noqa: F401
@@ -97,7 +97,7 @@ def _doi_python_neu_thieu_goi() -> None:
         thu = subprocess.run([str(py), "-c", "import openai, numpy, PIL"], capture_output=True, timeout=180)
         if thu.returncode == 0:
             print(f"python3 hiện tại thiếu gói — chuyển sang {py}")
-            os.environ["FLORAOS_DA_DOI_PYTHON"] = "1"
+            os.environ["ALG_DA_DOI_PYTHON"] = "1"
             os.execv(str(py), [str(py), str(Path(__file__).resolve()), *sys.argv[1:]])
     print(
         "Không tìm thấy trình thông dịch nào có đủ `openai`, `numpy`, `PIL`.\n"

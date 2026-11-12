@@ -4,7 +4,7 @@ import type { Icon as PhosphorIcon, IconWeight } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
 /**
- * Bộ icon chuẩn SMEOS (Phosphor, PO 30/10/2026). Danh mục vẫn lưu tên icon kiểu lucide
+ * Bộ icon chuẩn ALG (Phosphor, PO 30/10/2026). Danh mục vẫn lưu tên icon kiểu lucide
  * (`"Camera"`, `"BadgeCheck"`…) — bảng dưới ánh xạ sang Phosphor, thiếu thì dùng `Folder`.
  * Bảng tường minh, không tra động qua `./icons`: tra động buộc bundler giữ MỌI icon trong chunk chung
  * của shell (trước đây ~236 icon × 6 nét vẽ, 174 KB gzip ở mọi trang).

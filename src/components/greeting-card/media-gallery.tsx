@@ -39,7 +39,7 @@ export function MediaGallery({ urls, label }: { urls: readonly string[]; label: 
               type="button"
               onClick={() => setOpen(i)}
               aria-label={`${label} — xem ${isVideoUrl(url) ? "video" : "ảnh"} ${i + 1}/${urls.length}`}
-              className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 relative block aspect-square w-full overflow-hidden rounded-lg border border-border bg-surface-muted hover:bg-surface-muted"
+              className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 relative block aspect-square w-full overflow-hidden rounded-lg border border-border bg-surface-alt hover:bg-surface-alt"
             >
               {isVideoUrl(url) ? (
                 <>

@@ -39,7 +39,7 @@ acceptance:
   - FeatureGuidanceCard chuẩn hóa (tối đa 1 khối, 3 tips, không spam).
   - Cột trái: Danh sách hội thoại kèm kênh (Web / Zalo) và thời gian.
   - Cột phải: Khung tin nhắn đàm thoại, gợi ý mẫu hoa và nút "Chốt đơn mẫu này".
-  - Modal: `ChannelConfigModal` (dùng `Dialog` chuẩn FloraOS).
+  - Modal: `ChannelConfigModal` (dùng `Dialog` chuẩn ALG).
 - **Trạng thái:** Tải (`loading`), Rỗng (`EmptyState`), Lỗi.
 
 ## 3. Thứ bậc thông tin

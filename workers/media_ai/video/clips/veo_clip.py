@@ -3,7 +3,7 @@
 `POST …/models/{model}:predictLongRunning` với `instances[0].{prompt, image}` và
 `parameters.{aspectRatio}`; poll `GET …/{operation}` tới `done`, tải
 `response.generateVideoResponse.generatedSamples[0].video.uri` (header khoá).
-Veo chỉ hỗ trợ 16:9 và 9:16 — khung khác xin 9:16 rồi FloraOS cắt khung khi
+Veo chỉ hỗ trợ 16:9 và 9:16 — khung khác xin 9:16 rồi ALG cắt khung khi
 ghép. Khoá `GOOGLE_VEO_API_KEY` hoặc `GEMINI_API_KEY`. CHƯA gọi thật (nợ #153).
 Thay nhánh Veo cũ (`providers/veo_provider.py`) chỉ sinh MỘT clip cho cả video
 và bỏ mất lời thoại / nhạc / phụ đề.

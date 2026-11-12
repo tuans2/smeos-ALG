@@ -36,7 +36,7 @@ export const sepayWebhookBody = z.object({
   referenceCode: z.string().max(100).nullish(),
 })
 
-/** Sự kiện OA Zalo (chỉ các trường SMEOS đọc) — thân thô ≤ 64 KB, ký bằng `X-ZEvent-Signature`. */
+/** Sự kiện OA Zalo (chỉ các trường ALG đọc) — thân thô ≤ 64 KB, ký bằng `X-ZEvent-Signature`. */
 export const zaloOaEventBody = z.looseObject({
   app_id: z.string(),
   event_name: z.string(),

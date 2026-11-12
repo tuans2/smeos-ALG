@@ -79,7 +79,7 @@ export function CoordinatorOrderBriefCard({
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="px-2 py-0.5 rounded-md bg-surface-alt text-text text-caption font-black uppercase border border-border tracking-wider">
-            BƯỚC 2 • BRIEF (T02)
+            BƯỚC 2 • TÓM TẮT ĐƠN
           </span>
           <span className="text-caption font-bold text-text-muted">ĐIỀU PHỐI ĐƠN</span>
           <span className="text-body font-extrabold text-text">#{orderCode}</span>
@@ -111,7 +111,7 @@ export function CoordinatorOrderBriefCard({
               onClick={onOpenMissingInfo}
               className="h-6 text-caption px-2 font-bold text-warning-text border-warning-border bg-warning-bg hover:bg-warning-border shrink-0"
             >
-              Xem Phiếu Thiếu Tin (T03)
+              Xem Phiếu Thiếu Tin
             </Button>
           )}
         </div>
@@ -223,7 +223,7 @@ export function CoordinatorOrderBriefCard({
               onClick={onOpenAssignModal}
               className="text-caption h-7 px-2.5 font-bold border-info-border text-info-text bg-info-bg/70 hover:bg-info-bg"
             >
-              ⚡ Phân công xưởng (T06)
+              ⚡ Phân công xưởng
             </Button>
           )}
 
@@ -234,7 +234,7 @@ export function CoordinatorOrderBriefCard({
               onClick={onOpenProduction}
               className="text-caption h-7 px-2.5 font-bold border-warning-border text-warning-text bg-warning-bg/70 hover:bg-warning-bg"
             >
-              🌸 Phiếu cắm hoa (T07)
+              🌸 Phiếu cắm hoa
             </Button>
           )}
 
@@ -245,7 +245,7 @@ export function CoordinatorOrderBriefCard({
               onClick={onOpenQC}
               className="text-caption h-7 px-2.5 font-bold border-accent-border text-accent-text bg-accent-bg/70 hover:bg-accent-bg"
             >
-              🤖 Duyệt AI QC (T14)
+              🤖 Duyệt AI QC
             </Button>
           )}
 
@@ -256,7 +256,7 @@ export function CoordinatorOrderBriefCard({
               onClick={onOpenPOD}
               className="text-caption h-7 px-2.5 font-bold border-info-border text-info-text bg-info-bg/70 hover:bg-info-bg"
             >
-              📦 Biên nhận POD (T21)
+              📦 Biên nhận POD
             </Button>
           )}
 
@@ -267,7 +267,7 @@ export function CoordinatorOrderBriefCard({
               onClick={onOpenClosure}
               className="text-caption h-7 px-2.5 font-bold border-success-border text-success-text bg-success-bg/70 hover:bg-success-bg"
             >
-              ✅ Nghiệm thu (T25)
+              ✅ Nghiệm thu
             </Button>
           )}
 

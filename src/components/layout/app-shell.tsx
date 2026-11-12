@@ -9,11 +9,13 @@ import { SessionTakeoverWatcher } from "@/components/layout/session-takeover-wat
 import { LiveRegionProvider } from "@/components/ui/live-region"
 import { ToastProvider } from "@/components/ui/toast"
 import { FloatingLayerProvider } from "@/components/layout/floating-layer"
+// Chuyển khoá lưu trên trình duyệt smeos*/floraos* → alg* trước khi trang đọc (đổi tên ALG, 12/11/2026)
+import "@/lib/brand-storage-migration"
 import { ToolLockGuard } from "@/components/layout/tool-lock-guard"
 import { OrganizationLifecycleBanner } from "@/components/layout/organization-lifecycle-banner"
 import { UiStudioAvailabilityProvider } from "@/components/layout/ui-studio-availability"
 import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
-import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
+import { AlgGlobalCopilot } from "@/components/chat/alg-global-copilot"
 import { UiSystemProvider, useUiSystem } from "@/lib/ui-system/ui-provider"
 import type { ResolvedUiTheme } from "@/lib/ui-system/resolve-ui-theme"
 
@@ -88,7 +90,7 @@ function AppShellFrame({
             </div>
             {withImageZoom && <GlobalImageZoom />}
             <SessionTakeoverWatcher />
-            {withCopilot && <FloraOSGlobalCopilot />}
+            {withCopilot && <AlgGlobalCopilot />}
             {/* Layout quyết định theo ADR-011 D-UI-01: (app) chỉ ngoài production, (platform) luôn có */}
             {withUiStudio && <UiStudioDrawer />}
           </FloatingLayerProvider>

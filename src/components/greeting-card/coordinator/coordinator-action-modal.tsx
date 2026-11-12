@@ -213,7 +213,7 @@ function CoordinatorTaskModal({
               placeholder={cfg.note.placeholder}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full rounded-xl border border-border bg-surface-alt p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
             {error && <p role="alert" className="text-danger text-caption">{error}</p>}
             <div className="flex gap-2 justify-end">

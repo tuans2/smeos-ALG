@@ -84,13 +84,13 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
               Khách đang đặt <strong className="text-text">{info.current.name}</strong>. Chọn tối đa {SUBSTITUTE_MAX_OPTIONS} mẫu thay thế; khách chọn trên trang theo dõi đơn, <strong>tổng tiền giữ nguyên</strong>.
             </p>
             {info.latest && (
-              <p className="rounded-xl bg-surface-muted p-3 text-caption text-text">
+              <p className="rounded-xl bg-surface-alt p-3 text-caption text-text">
                 {info.latest.status === "PENDING"
                   ? "Đang chờ khách trả lời đề xuất trước."
                   : `Lần trước: ${info.latest.choice ? SUBSTITUTE_CHOICE_LABEL[info.latest.choice] : "đã trả lời"}${info.latest.customerNote ? ` — "${info.latest.customerNote}"` : ""}.`}
               </p>
             )}
-            {info.lockedReason && <p role="alert" className="text-warning text-caption">{info.lockedReason}</p>}
+            {info.lockedReason && <p role="alert" className="text-warning-text text-caption">{info.lockedReason}</p>}
 
             {info.options.length === 0 ? (
               <p className="text-body-sm text-text-muted">Bộ sưu tập không còn mẫu nào khác đang bán. Hãy liên hệ khách hoặc đề xuất huỷ đơn.</p>
@@ -116,7 +116,7 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
             <label className="text-body-sm font-bold text-text" htmlFor="substitute-reason">Lý do (khách sẽ đọc)</label>
             <Textarea id="substitute-reason" rows={2} maxLength={SUBSTITUTE_REASON_MAX} value={reason} onChange={(e) => setReason(e.target.value)} disabled={busy || pending}
               placeholder="Vd: Hoa hồng Ecuador hôm nay về bị dập, tiệm xin đề xuất mẫu tương đương"
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
+              className="w-full rounded-xl border border-border bg-surface-alt p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
           </>
         )}
 

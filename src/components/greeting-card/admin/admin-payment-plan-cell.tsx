@@ -24,7 +24,7 @@ export function AdminPaymentPlanCell({ order, shopDepositPercent }: { order: Adm
   )
   return (
     <div className="text-right">
-      <div className={balance > 0 ? "font-bold text-warning" : "font-bold text-success"}>{vnd(order.paid_vnd)}</div>
+      <div className={balance > 0 ? "font-bold text-warning-text" : "font-bold text-success"}>{vnd(order.paid_vnd)}</div>
       {balance > 0 && order.status !== "CANCELLED" && <div className="text-caption text-text-muted">còn {vnd(balance)}</div>}
       <Disclosure
         label={`${s.policyLabel}${s.paymentCode ? ` · ${s.paymentCode}` : ""}`}

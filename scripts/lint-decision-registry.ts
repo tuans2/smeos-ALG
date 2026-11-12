@@ -1,6 +1,6 @@
 /**
  * Decision Registry Lint Script (FR-D04)
- * FloraOS Core — Final Hardening Patch v2.3 / Mục 11.5
+ * ALG Core — Final Hardening Patch v2.3 / Mục 11.5
  *
  * Kiểm tra các bất biến bảo mật của Decision Registry:
  * - 6 quyết định tối thượng (Cấp quyền, Xác minh Fact, Duyệt công khai, Thu hồi thủ công, Xử lý xung đột, Phát hành)

@@ -61,7 +61,7 @@ Ghi nhận dấu hiệu trong mã. **Không phải requirement gap**, không kè
 | C-08 | `tests/unit/architecture/route-capability-guard.test.ts`: webhook chat "xác thực bằng chữ ký" | Route `POST` Facebook/Zalo không kiểm chữ ký | Cơ chế xác thực webhook |
 | C-09 | Chú thích đầu `src/app/(app)/page.tsx`: workspace trải nghiệm → lưới thẻ chức năng | `DashboardPage` không đọc `workspace.kind`; `ExperienceGrid` không được render | Trang chủ tài khoản trải nghiệm |
 | C-10 | `TRANG_THAI.md` §6 mục 0: còn phải `git rm` `src/lib/variant-compositor.ts`, `scripts/media/process_m04b_variants.py`, xoá `media/variants/_probe/depth-probe.txt` | Các đường dẫn này không còn trong repo; chỉ còn route `media/background-removal` | Việc dọn dẹp đã/ chưa làm |
-| C-11 | `docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md` (theo chú thích trong `kho-templates/page.tsx`): màn Analytics là `/bao-cao` | Route thật: `/so-lieu` | Tên tuyến |
+| C-11 | `docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md` (theo chú thích trong `kho-templates/page.tsx`): màn Analytics là `/bao-cao` | Route thật: `/so-lieu` | Tên tuyến |
 | C-12 | `docs/00-DOCUMENTATION-REGISTRY.yaml`: `total_documents: 67` | Tệp có 69 mục `- id:` tại commit `9b4a54b` (70 sau khi thêm mục của tài liệu này; trường đếm không sửa) | Đếm registry |
 | C-13 | `scripts/check-docs.mjs` (`SCHEMA_ONLY_CHUA_NOI`): `vouchers` "chỉ có đọc lồng qua customers" | Thẻ chào đọc và cập nhật `vouchers.is_used` khi đặt/huỷ đơn | Đường dùng bảng voucher |
 | C-14 | `CLAUDE.md`: "Known leftover: 78 old ESLint errors" | Không chạy ESLint trong lượt này | NOT VERIFIED |

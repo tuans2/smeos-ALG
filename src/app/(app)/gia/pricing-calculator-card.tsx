@@ -318,7 +318,7 @@ export function PricingCalculatorCard({
           </div>
 
           {canhBaoSanTran && (
-            <div className="mt-1 flex items-start gap-2 rounded-xl border border-warning/30 bg-warning-bg p-2.5 text-caption text-warning">
+            <div className="mt-1 flex items-start gap-2 rounded-xl border border-warning/30 bg-warning-bg p-2.5 text-caption text-warning-text">
               <Info size={15} strokeWidth={1.8} className="mt-0.5 flex-shrink-0" />
               <div className="flex-1 leading-snug">{canhBaoSanTran}</div>
             </div>

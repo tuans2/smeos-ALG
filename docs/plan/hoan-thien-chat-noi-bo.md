@@ -9,13 +9,13 @@
 
 ## 1. Mục đích (PO chốt 09/11/2026)
 
-Chuỗi giao đơn cho các cửa hàng đối tác **ngay trong smeOS**, theo đúng quy trình gia công đang chạy ở Thẻ Chào:
+Chuỗi giao đơn cho các cửa hàng đối tác **ngay trong ALG**, theo đúng quy trình gia công đang chạy ở Thẻ Chào:
 
 1. **Phân bổ tự động theo khu vực**: bộ máy `chain-dispatch-engine.ts` chấm điểm theo phường/tỉnh, toạ độ, sức chứa, điểm chất lượng, rồi mời theo vòng. Cửa hàng đối tác **xếp chung** với chi nhánh (PO trả lời câu 1).
 2. Cửa hàng nhận **thẻ mời** trong phòng trao đổi với chuỗi → *Nhận* (ai trước được trước, có thời gian huỷ nhận) → *Chốt làm ngay* hoặc tự chốt khi hết hạn. Không ai nhận thì chuyển Điều phối.
 3. Cửa hàng cập nhật tiến độ ngay trên thẻ: **ảnh thành phẩm** → **thông tin shipper** → **ảnh bàn giao**. Cách kiểm và duyệt ảnh giữ **y như Thẻ Chào** (PO trả lời câu 3).
 4. Chuỗi thấy mọi đơn đang ở bước nào. Thẻ trong chat là **cùng một đơn, cùng trạng thái** với luồng Thẻ Chào, không phải bản sao.
-5. **Telegram/Zalo vẫn chạy song song**, nhưng smeOS **khuyến khích dùng Trao đổi nội bộ** (PO trả lời câu 2) — xem D11.
+5. **Telegram/Zalo vẫn chạy song song**, nhưng ALG **khuyến khích dùng Trao đổi nội bộ** (PO trả lời câu 2) — xem D11.
 6. Trong cùng phòng, hai bên **vẫn nhắn tin tự do** (hỏi mẫu, báo sự cố) và gửi ảnh (PO trả lời câu 4).
 
 **Ngoài phạm vi:** phòng Nền tảng ↔ Khách hàng (`PLATFORM_TENANT`), gọi thoại/video, "đã xem" theo từng người, thay đổi thuật toán chấm điểm phân bổ. *(Sửa / thu hồi tin: PO đưa vào phạm vi 09/11/2026 — xem §10, dòng "Sửa / thu hồi".)*
@@ -62,7 +62,7 @@ Chuỗi giao đơn cho các cửa hàng đối tác **ngay trong smeOS**, theo �
 
 | # | Nội dung |
 |---|---|
-| P1 | Cửa hàng đối tác có tài khoản smeOS **vào chung vòng phân bổ theo khu vực** với chi nhánh |
+| P1 | Cửa hàng đối tác có tài khoản ALG **vào chung vòng phân bổ theo khu vực** với chi nhánh |
 | P2 | Telegram/Zalo **giữ song song**; Trao đổi nội bộ là kênh được khuyến khích |
 | P3 | Ảnh thành phẩm / ảnh bàn giao gửi từ chat **kiểm và duyệt y như Thẻ Chào** (không thêm chặng nào trong 14 chặng hành trình sản phẩm) |
 | P4 | Phòng vẫn cho **nhắn tin tự do** kèm ảnh |
@@ -77,7 +77,7 @@ Chuỗi giao đơn cho các cửa hàng đối tác **ngay trong smeOS**, theo �
 | D4 | RLS phòng liên tổ chức | `USING` và `WITH CHECK` của phòng + tin: `organization_id = app.org_id` **hoặc** `counterpart_org_id = app.org_id`; không dùng `rls_system` | GĐ2 |
 | D9 | Cách đưa đối tác vào vòng mời | Mỗi liên kết ACTIVE có **một dòng `branches`** trong chuỗi với `partner_org_id`, `accepts_dispatch = true`, khu vực và sức chứa chép từ `organization_links` (chuỗi sửa thêm toạ độ, phường lân cận ở màn chi nhánh sẵn có). Nhờ vậy dùng nguyên điểm chất lượng, số lần huỷ, phạt, `shared_order_access` | GĐ3 |
 | D7 | Liên kết tạm dừng / chấm dứt | `SUSPENDED`: chỉ đọc, không nhận đơn mới (`accepts_dispatch = false`), **đơn đang làm vẫn hoàn tất được**. `TERMINATED`: 404; đơn đang giữ → chuyển Điều phối (`ESCALATED`) | GĐ3 |
-| D11 | Cách "khuyến khích" dùng chat | (a) Đối tác có tài khoản **luôn** nhận thẻ trong chat; (b) tin Telegram/Zalo cho đối tác này có thêm nút **"Mở trong smeOS"** dẫn về đúng phòng; link công khai giữ làm dự phòng; (c) trang link công khai hiện gợi ý "Làm trong smeOS để theo dõi mọi đơn một chỗ"; (d) chuỗi xem tỉ lệ đơn xử lý qua chat. **Không** đổi điểm phân bổ theo kênh | GĐ6 |
+| D11 | Cách "khuyến khích" dùng chat | (a) Đối tác có tài khoản **luôn** nhận thẻ trong chat; (b) tin Telegram/Zalo cho đối tác này có thêm nút **"Mở trong ALG"** dẫn về đúng phòng; link công khai giữ làm dự phòng; (c) trang link công khai hiện gợi ý "Làm trong ALG để theo dõi mọi đơn một chỗ"; (d) chuỗi xem tỉ lệ đơn xử lý qua chat. **Không** đổi điểm phân bổ theo kênh | GĐ6 |
 | D10 | Phòng chi nhánh nội bộ (cùng tổ chức) | Có, loại `CHAIN_BRANCH` theo `branch_id` (D3); chi nhánh nội bộ cũng nhận thẻ mời như đối tác | GĐ2 |
 | D8 | Widget nổi & mở khoá production | Bỏ widget; giữ màn `/tin-nhan` + số chưa đọc trên menu; mở khoá sau nghiệm thu GĐ10 | GĐ9 |
 
@@ -153,8 +153,8 @@ Mỗi giai đoạn = một hoặc vài commit Conventional Commits, đủ gate (
 
 | Mã | Việc |
 |---|---|
-| IC-6.1 | Tin Telegram/Zalo cho đối tác có tài khoản: thêm nút "Mở trong smeOS" → `/tin-nhan?phong=<id>&don=<mã>` (đăng nhập xong về đúng thẻ) |
-| IC-6.2 | Trang `/subcontract/[orderCode]` hiện gợi ý chuyển sang smeOS khi nơi nhận có `partner_org_id` |
+| IC-6.1 | Tin Telegram/Zalo cho đối tác có tài khoản: thêm nút "Mở trong ALG" → `/tin-nhan?phong=<id>&don=<mã>` (đăng nhập xong về đúng thẻ) |
+| IC-6.2 | Trang `/subcontract/[orderCode]` hiện gợi ý chuyển sang ALG khi nơi nhận có `partner_org_id` |
 | IC-6.3 | Số liệu cho chuỗi: tỉ lệ đơn nhận/hoàn tất qua chat so với link ngoài (đọc từ người thao tác đã ghi ở IC-4.3) |
 
 ### GĐ7 — Tin tức thì & thông báo (P2 · M · không thêm dependency)
@@ -236,7 +236,7 @@ PR chỉ mở khi PO yêu cầu; nên tách: GĐ1 · GĐ2+3 · GĐ4 · GĐ5 · p
 ## 8. Kịch bản nghiệm thu cho PO
 
 1. Chuỗi cấp tài khoản (hoặc liên kết) cửa hàng đối tác ở phường X → cả hai bên có phòng ở `/tin-nhan`; màn chi nhánh của chuỗi có thêm "Cửa hàng đối tác" ở phường X.
-2. Khách đặt đơn giao phường X, thanh toán xong → bộ máy tự mời; đối tác thấy **thẻ mời** trong chat (kèm thông báo) **và** tin Telegram có nút "Mở trong smeOS".
+2. Khách đặt đơn giao phường X, thanh toán xong → bộ máy tự mời; đối tác thấy **thẻ mời** trong chat (kèm thông báo) **và** tin Telegram có nút "Mở trong ALG".
 3. Đối tác bấm *Nhận* trong chat → thẻ đếm ngược huỷ nhận; chi nhánh khác bấm link Telegram → "Đã có nơi nhận".
 4. Đối tác *Chốt làm ngay* → đơn sang sản xuất; chuỗi thấy cùng trạng thái ở màn điều phối.
 5. Đối tác chụp **ảnh thành phẩm** trên thẻ → kết quả kiểm ảnh như Thẻ Chào → (nếu tiệm bật) chờ khách duyệt → được duyệt.
@@ -268,7 +268,7 @@ PR chỉ mở khi PO yêu cầu; nên tách: GĐ1 · GĐ2+3 · GĐ4 · GĐ5 · p
 | 3 | Xong | RLS (IC-3.1–3.3) gộp vào migration GĐ2; ca `enforce`: `tests/tenant/internal-chat-rls.test.ts`; ghi ADR-013 I-5b. Ứng viên bắn đơn của cửa hàng đối tác (mã `DT-<mã đối tác>`) đồng bộ theo trạng thái liên kết, nhãn "Cửa hàng đối tác" ở danh sách chi nhánh nhận đơn. Chấm dứt khi còn giữ đơn: **báo Điều phối** (sự kiện "đơn kẹt") thay vì tự chuyển `ESCALATED` — tự chuyển dễ mất việc cửa hàng đang làm dở; Điều phối quyết giao lại. Liên kết có sẵn: `npm run chat:backfill-rooms` (chạy thử) rồi `npm run chat:backfill-rooms -- --apply` (lệnh npm có `--conditions=react-server`; gọi `npx tsx` trần lỗi `server-only`) |
 | 4 | Xong | Bộ gửi lời mời (`dispatch-notification-adapter.ts`) đăng vào phòng chung khi ứng viên là cửa hàng đối tác: lời mời → thẻ `ACTION_CARD_SUBCONTRACT`, tin khác (nhắc hạn, chốt làm…) → tin hệ thống; chỉ có Trao đổi nội bộ vẫn tính là đã gửi. Thẻ chỉ lưu `orderCode` + `branchCode`, trạng thái tính lúc đọc bằng cùng luật với `/cua-hang` (`classifyForBranch`) → "đang mời / đã nhận – còn hạn huỷ / đang làm / đã có nơi nhận / hết hạn / đã giao / đã huỷ". Không làm IC-4.1 dạng port gọi `claimSubcontractUseCase` và **giữ** route `dispatch-to-chat` cũ (không còn nút nào gọi) — xem GĐ5 |
 | 5 | Xong (đổi cách làm) | Thay vì tách logic route công khai thành use-case mới (IC-5.1), nút trên thẻ mở **chính Thẻ Gia Công** bằng link ký cấp lúc đọc — đúng mẫu `/cua-hang` đang chạy. Nhận / chốt / huỷ nhận / ảnh thành phẩm (kiểm ảnh AI, chờ khách duyệt) / shipper / ảnh bàn giao / xin bỏ qua chạy **nguyên code hiện tại** (P3), không có bản sao để lệch. Link chỉ cấp cho người của đúng cửa hàng được mời, có `S2`, `shared_order_access` còn hiệu lực. Thẻ hiện 3 bước tiến độ. IC-5.5 làm ở GĐ6: phòng cửa hàng phía chuỗi hiện số đơn đang làm |
-| 6 | Xong | IC-6.1 nút "Mở trong smeOS" trong tin Telegram/Zalo gửi cửa hàng đối tác; IC-6.2 trang Thẻ Gia Công nhận `inAppChatUrl` và gợi ý làm đơn trong Trao đổi nội bộ khi ứng viên là cửa hàng có tài khoản; IC-6.3 `GET /internal-chat/stats` (30 ngày: lời mời qua chat, đơn cửa hàng đối tác nhận, số cửa hàng trong vòng) hiện thành dòng số liệu cho chuỗi. Số liệu đếm đơn cửa hàng đối tác nhận, không tách nhận qua chat hay qua link (cả hai mở cùng Thẻ Gia Công) |
+| 6 | Xong | IC-6.1 nút "Mở trong ALG" trong tin Telegram/Zalo gửi cửa hàng đối tác; IC-6.2 trang Thẻ Gia Công nhận `inAppChatUrl` và gợi ý làm đơn trong Trao đổi nội bộ khi ứng viên là cửa hàng có tài khoản; IC-6.3 `GET /internal-chat/stats` (30 ngày: lời mời qua chat, đơn cửa hàng đối tác nhận, số cửa hàng trong vòng) hiện thành dòng số liệu cho chuỗi. Số liệu đếm đơn cửa hàng đối tác nhận, không tách nhận qua chat hay qua link (cả hai mở cùng Thẻ Gia Công) |
 | 7 | Xong | SSE `GET /internal-chat/stream` (chỉ mã phòng, lọc theo tổ chức + chi nhánh; Redis pub/sub khi có `REDIS_URL`, không thì trong tiến trình); trang nghe `EventSource`, có luồng thì hỏi lại thưa 30 s / 60 s, mất luồng về 5 s / 15 s. Thông báo `INTERNAL_CHAT_ORDER_INVITE` / `INTERNAL_CHAT_MESSAGE` (gộp 5 phút); tắt tiếng phòng theo người (`PATCH …/mute`, `notifyOrganization.excludeUserIds`; thẻ mời vẫn báo); số chưa đọc trên menu máy tính và trang "Thêm" trên điện thoại |
 | 8 | Xong | `POST /internal-chat/conversations/:id/images`: tải ảnh và tạo tin **trong cùng một yêu cầu** (không có tệp tải trước chờ gắn → không sinh tệp mồ côi khi người dùng bỏ dở); kiểm byte thật JPG/PNG/WebP, ≤ 10 MB, ≤ 5 ảnh/tin, kiểm hết rồi mới ghi; khoá `org/<tổ chức chủ phòng>/chat-<phòng>/<id>.<đuôi>` (khác D6 viết `chat/<phòng>/…` vì `buildStorageKey` chỉ có một cấp thư mục); nguồn registry mới `internal_chat_messages.attachments` (đối soát + đếm tham chiếu + `storage-write-contract.test.ts`); đọc phòng → URL ký GET 1 giờ, chỉ cho khoá đúng thư mục phòng. Ô soạn có nút đính kèm, xem trước, bỏ từng ảnh; ảnh hiện dạng lưới, bấm mở cỡ lớn; trang giữ ảnh đã tải khi hỏi lại. Xoá ảnh chat: qua "Thu hồi" (dòng Sửa / thu hồi) |
 | 9 | Xong | Trang tách thành phần (< 200 dòng/tệp), 6 trạng thái, di động một cột, Enter gửi, bỏ "Đa ngành SaaS", xoá widget nổi (D8), sửa nhãn công cụ 56, menu gắn `S1`, Screen Contract cập nhật; từ điển `chat.*` vi/en cho mọi thành phần (TD #189 phần `/tin-nhan`); `tests/e2e/ux/internal-chat.spec.ts` (tiêu đề, trạng thái rỗng, quét axe WCAG 2.2 AA, 390 px một cột) — chạy đạt trên `npm run dev` cục bộ. Mở khoá production: chờ PO (D8) |

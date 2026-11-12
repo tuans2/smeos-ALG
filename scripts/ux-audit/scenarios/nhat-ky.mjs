@@ -16,7 +16,7 @@ export async function run({ open, shot, org }) {
 
   const [{ id: op }] = await q(
     "INSERT INTO users(id,email,name,updated_at) VALUES(gen_random_uuid(),$1,'Nguyễn Vận Hành',now()) RETURNING id",
-    [`van-hanh-${Date.now()}@floraos.test`],
+    [`van-hanh-${Date.now()}@alg.test`],
   )
   for (const [purpose, method, route] of [
     ["org.profile.read", "GET", `/api/v1/platform/organizations/${org}`],

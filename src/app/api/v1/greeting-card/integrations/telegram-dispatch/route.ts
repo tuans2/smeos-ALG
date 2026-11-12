@@ -73,7 +73,7 @@ export const POST = defineRoute({
     }
 
     const text = parsed.data.message ||
-      "🌸 <b>[TEST ĐIỀU PHỐI CHUỖI smeOS]</b>\n\nKết nối thành công giữa hệ thống smeOS và Nhóm chat Chi nhánh!\n\n<i>Mọi đơn hàng gia công mới sẽ tự động được gửi tới nhóm này.</i>"
+      "🌸 <b>[TEST ĐIỀU PHỐI CHUỖI ALG]</b>\n\nKết nối thành công giữa hệ thống ALG và Nhóm chat Chi nhánh!\n\n<i>Mọi đơn hàng gia công mới sẽ tự động được gửi tới nhóm này.</i>"
 
     const sent = await sendTelegramText(botToken, parsed.data.chatId, text)
     // Lỗi phải nằm trong `error.message` để màn hình hiện đúng lý do (trước 23/10/2026 chỉ hiện câu chung)

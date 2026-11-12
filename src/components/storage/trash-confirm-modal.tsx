@@ -98,7 +98,7 @@ export function TrashConfirmModal({ target, onClose, onConfirm }: TrashConfirmMo
 
         {/* Policy Notice Box */}
         <div className="p-3.5 rounded-2xl bg-warning-bg border border-warning/30 text-caption text-text space-y-1.5">
-          <div className="flex items-center gap-1.5 font-bold text-warning">
+          <div className="flex items-center gap-1.5 font-bold text-warning-text">
             <Clock size={14} />
             <span>Chính sách lưu trữ an toàn 30 ngày</span>
           </div>

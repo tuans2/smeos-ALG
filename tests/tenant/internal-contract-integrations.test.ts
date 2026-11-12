@@ -96,7 +96,7 @@ describe("hợp đồng — Trung tâm Tích hợp, token tích hợp, SSO", () 
     expect((await revokeToken(send(`/integration-tokens/${id}`, "DELETE", undefined, chain), ps(id))).status).toBe(404)
 
     const sso = await ssoRefresh(send("/sso/refresh", "POST"))
-    expect(sso.headers.get("set-cookie")).toContain("smeos_sso=")
+    expect(sso.headers.get("set-cookie")).toContain("alg_sso=")
     await expectContract(sso, 200, R.ssoRefreshResponse, "sso-refresh")
   })
 })

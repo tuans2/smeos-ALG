@@ -1,15 +1,15 @@
 ---
 name: ai-integration
 description: >-
-  Quy tắc tích hợp AI cho FloraOS. Kích hoạt khi agent làm việc với AI gateway,
+  Quy tắc tích hợp AI cho ALG. Kích hoạt khi agent làm việc với AI gateway,
   provider adapters, port interfaces, hoặc bất kỳ file nào trong src/core/ai/,
   src/core/ports/, hoặc module adapters gọi AI services (OpenAI, Anthropic, ElevenLabs).
 ---
 
-> **Cập nhật 30/10/2026 — đọc trước.** `.agents/standards/smeos/07-ai-content.md` (prompt registry `content-engine/domain/prompts/active.ts`, copy guard, mẫu dự phòng qua guard, log promptId/version/source, J7) · nguyên tắc chung `universal/07-ai-content.md`. Test `no-direct-ai-provider.test.ts` chặn SDK/endpoint/khoá nhà cung cấp ngoài `adapters/` và `core/ai/` trên toàn `src/` — vẫn bắt buộc `callCapability` ở mọi nơi.
+> **Cập nhật 30/10/2026 — đọc trước.** `.agents/standards/alg/07-ai-content.md` (prompt registry `content-engine/domain/prompts/active.ts`, copy guard, mẫu dự phòng qua guard, log promptId/version/source, J7) · nguyên tắc chung `universal/07-ai-content.md`. Test `no-direct-ai-provider.test.ts` chặn SDK/endpoint/khoá nhà cung cấp ngoài `adapters/` và `core/ai/` trên toàn `src/` — vẫn bắt buộc `callCapability` ở mọi nơi.
 
 
-# AI Integration — FloraOS
+# AI Integration — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 

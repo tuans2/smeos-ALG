@@ -87,7 +87,7 @@ export function InviteMemberDialog({
       open={open}
       onOpenChange={onOpenChange}
       title="Mời người đã có tài khoản"
-      description="Dành cho người đã dùng smeOS ở cửa hàng khác. Họ nhận lời mời ở mục “Tổ chức của tôi” trong menu tài khoản, trong 14 ngày."
+      description="Dành cho người đã dùng ALG ở cửa hàng khác. Họ nhận lời mời ở mục “Tổ chức của tôi” trong menu tài khoản, trong 14 ngày."
       size="md"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">

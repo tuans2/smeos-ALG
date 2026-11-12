@@ -137,7 +137,7 @@ export function BrochureShippingSettings() {
       {org.error ? (
         <p role="alert" className="text-body-sm text-danger">{org.error.message}</p>
       ) : !current ? (
-        <div className="h-20 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-20 rounded-lg bg-surface-alt animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <>
           <ul className="flex flex-col gap-2">

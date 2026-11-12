@@ -45,7 +45,7 @@ export function SubcontractQcGallery({ photos, onDeletePhoto }: SubcontractQcGal
           return (
             <div
               key={idx}
-              className="relative h-24 rounded-lg overflow-hidden border border-border bg-surface-muted shadow-xs group"
+              className="relative h-24 rounded-lg overflow-hidden border border-border bg-surface-alt shadow-xs group"
             >
               {!isBroken ? (
                 <img
@@ -56,7 +56,7 @@ export function SubcontractQcGallery({ photos, onDeletePhoto }: SubcontractQcGal
                   onError={() => setBrokenPhotos((prev) => ({ ...prev, [url]: true }))}
                 />
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-surface-subtle text-text-muted p-1 text-center">
+                <div className="w-full h-full flex flex-col items-center justify-center bg-surface-alt text-text-muted p-1 text-center">
                   <ImageIcon size={18} className="opacity-40 mb-1" />
                   <span className="text-caption leading-tight font-medium">Ảnh QC #{idx + 1}</span>
                   <span className="text-caption text-danger/80">Không tải được</span>

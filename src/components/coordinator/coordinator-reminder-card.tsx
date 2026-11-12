@@ -29,9 +29,9 @@ interface CoordinatorReminderCardProps {
 
 const MILESTONE_BADGE_STYLE: Record<CoordinatorMilestoneCode, string> = {
   M0: "bg-primary/10 text-primary border-primary/20",
-  M1: "bg-warning-bg text-warning border-warning/30",
+  M1: "bg-warning-bg text-warning-text border-warning/30",
   M2: "bg-info/10 text-info border-info/30",
-  M3: "bg-warning-bg text-warning border-warning/30",
+  M3: "bg-warning-bg text-warning-text border-warning/30",
   M4: "bg-primary/10 text-primary border-primary/30",
   M5: "bg-success-bg text-success border-success/30",
 }

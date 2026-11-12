@@ -52,7 +52,7 @@ export function ManualEditPanel({
             {isAiLoading ? (
               <Loader2 className="h-3 w-3 animate-spin motion-reduce:animate-none" />
             ) : (
-              <Sparkles className="h-3 w-3 text-warning" />
+              <Sparkles className="h-3 w-3 text-warning-text" />
             )}
             <span>AI viết lại</span>
           </Button>

@@ -38,13 +38,13 @@ export function LandingTemplateReviews({
     <section className="space-y-4">
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
-          <MessageSquareQuote size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-primary" : "text-warning"} />
+          <MessageSquareQuote size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-primary" : "text-warning-text"} />
           <span className={isLuxury ? "font-display" : ""}>
             {"Khách hàng nói gì"}
           </span>
         </div>
         <div className="flex items-center gap-1 text-caption text-text-muted">
-          <div className="flex text-warning">
+          <div className="flex text-warning-text">
             {[...Array(5)].map((_, i) => (
               <Star key={i} size={11} fill={i < Math.round(avgRating) ? "currentColor" : "none"} aria-hidden="true" />
             ))}
@@ -68,7 +68,7 @@ export function LandingTemplateReviews({
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <div className="flex text-warning">
+                <div className="flex text-warning-text">
                   {[...Array(rev.rating)].map((_, i) => (
                     <Star key={i} size={11} fill="currentColor" />
                   ))}

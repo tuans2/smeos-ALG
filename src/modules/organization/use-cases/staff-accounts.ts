@@ -24,7 +24,7 @@ export interface CreatedStaffAccount {
 
 /**
  * `POST /members` (`A3`, trần cứng Điều hành — PO 08/10/2026): tạo tài khoản nhân viên dùng được ngay
- * (ĐANG HOẠT ĐỘNG) kèm mật khẩu tạm. Email đã có tài khoản FloraOS → 409: không chiếm quyền điều khiển
+ * (ĐANG HOẠT ĐỘNG) kèm mật khẩu tạm. Email đã có tài khoản ALG → 409: không chiếm quyền điều khiển
  * tài khoản người khác (dùng luồng "Mời" cho họ).
  */
 export async function createStaffAccount(

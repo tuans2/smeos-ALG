@@ -6,7 +6,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import {
   MAX_DOMAINS_PER_ORGANIZATION, dnsInstructions, domainStatusText, normalizeHostname, txtRecordsMatch,
-  verificationRecordName, type CertificateStatus, type DnsInstruction,
+  legacyVerificationRecordName, verificationRecordName, type CertificateStatus, type DnsInstruction,
 } from "../domain/custom-domain"
 import { createRenderDomainsClient, type RenderDomainResult, type RenderDomainsClient } from "../adapters/render-custom-domains"
 import { getCustomDomainRepository, type CustomDomainRepository, type CustomDomainRow } from "../infra/custom-domain-repository"
@@ -101,8 +101,12 @@ export async function verifyCustomDomain(ctx: TenantContext, id: string, deps: C
   if (row.status === "LOCKED") throw conflict("Tên miền đang bị khoá. Vui lòng liên hệ hỗ trợ của hệ thống.")
   if (row.status === "VERIFIED") return { verified: true, message: "Tên miền đã được xác minh.", domain: toView(row, env) }
 
-  const records = await (deps.resolveTxt ?? resolveTxtRecords)(verificationRecordName(row.hostname))
-  if (!txtRecordsMatch(records, row.verification_token)) {
+  const resolveTxt = deps.resolveTxt ?? resolveTxtRecords
+  // Thử tên bản ghi mới trước; chưa có thì thử tên cũ (_smeos-verify) cho bản ghi thêm trước khi đổi tên ALG
+  const matched =
+    txtRecordsMatch(await resolveTxt(verificationRecordName(row.hostname)), row.verification_token) ||
+    txtRecordsMatch(await resolveTxt(legacyVerificationRecordName(row.hostname)), row.verification_token)
+  if (!matched) {
     const updated = await repo.update(ctx.organizationId, id, { last_checked_at: now })
     return {
       verified: false,

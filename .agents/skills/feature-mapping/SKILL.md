@@ -2,13 +2,13 @@
 name: feature-mapping
 description: >-
   Quy chuẩn và quy trình khảo sát, đối chiếu mã nguồn thực tế và lập bản đồ tính năng
-  (Feature Map) hoặc tài liệu đặc tả tính năng 100% chuẩn xác cho FloraOS. Kích hoạt
+  (Feature Map) hoặc tài liệu đặc tả tính năng 100% chuẩn xác cho ALG. Kích hoạt
   khi agent khảo sát, tạo mới, kiểm tra, hoặc rà soát tính chính xác của tài liệu mô tả
   tính năng (cấu trúc 7 phần chuẩn hóa) đối chiếu với code trong src/app/, src/components/,
   src/modules/, src/lib/feature-lock.ts.
 ---
 
-# Feature Mapping & Documentation — FloraOS
+# Feature Mapping & Documentation — ALG
 
 > Rà theo mã thật: 10/10/2026. Tuân thủ Hiến pháp tài liệu `docs/00-DOCUMENTATION-CONSTITUTION.md` (Level 4: Codebase as Implementation SSOT).
 

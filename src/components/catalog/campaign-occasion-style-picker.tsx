@@ -34,7 +34,7 @@ export function CampaignOccasionStylePicker({
               onClick={() => onOccasionChange(occ.id)}
               className={`h-auto justify-start gap-0 p-3 rounded-xl border text-left transition-all ${
                 selectedOccasion === occ.id
-                  ? "border-primary bg-primary-bg/30 text-primary font-bold shadow-xs hover:bg-primary-bg/30"
+                  ? "border-primary bg-primary-muted/30 text-primary font-bold shadow-xs hover:bg-primary-muted/30"
                   : "border-border bg-surface text-text hover:border-border-hover text-caption font-medium hover:bg-surface"
               }`}
             >
@@ -58,7 +58,7 @@ export function CampaignOccasionStylePicker({
               onClick={() => onArchetypeChange(arch.id)}
               className={`h-auto text-[length:inherit] justify-start font-[inherit] gap-0 p-3 rounded-xl border text-left transition-all ${
                 selectedArchetype === arch.id
-                  ? "border-primary bg-primary-bg/30 shadow-xs hover:bg-primary-bg/30"
+                  ? "border-primary bg-primary-muted/30 shadow-xs hover:bg-primary-muted/30"
                   : "border-border bg-surface hover:border-border-hover hover:bg-surface"
               }`}
             >

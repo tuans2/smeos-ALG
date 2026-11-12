@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from typing import Any, Mapping
 
 _KHOA_CAM = re.compile(r"phone|so_dien_thoai|address|dia_chi|password|secret|cookie|authorization|token|api_?key", re.I)
-_ngu_canh: ContextVar[dict[str, Any]] = ContextVar("smeos_job_log_context", default={})
+_ngu_canh: ContextVar[dict[str, Any]] = ContextVar("alg_job_log_context", default={})
 
 # Thuộc tính có sẵn của LogRecord — không chép vào dòng JSON.
 _THUOC_TINH_GOC = set(vars(logging.makeLogRecord({}))) | {"message", "asctime"}

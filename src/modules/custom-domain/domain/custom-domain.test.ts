@@ -16,19 +16,21 @@ describe("tên miền riêng — luật thuần (ALG 10.8)", () => {
       expect(normalizeHostname(bad).ok, bad).toBe(false)
     }
     expect(normalizeHostname("shop.onrender.com", ["onrender.com"]).ok).toBe(false)
-    expect(normalizeHostname("app.smeos.vn", ["app.smeos.vn"]).ok).toBe(false)
+    expect(normalizeHostname("app.avilotusgroup.com", ["app.avilotusgroup.com"]).ok).toBe(false)
   })
 
   it("bản ghi TXT khớp khi các đoạn ghép lại đúng mã; sai mã hoặc thiếu → không khớp", () => {
-    expect(txtRecordsMatch([["smeos-verify=abc", "123"]], "abc123")).toBe(true)
-    expect(txtRecordsMatch([["v=spf1 -all"], ["smeos-verify=abc123"]], "abc123")).toBe(true)
-    expect(txtRecordsMatch([["smeos-verify=khac"]], "abc123")).toBe(false)
+    expect(txtRecordsMatch([["alg-verify=abc", "123"]], "abc123")).toBe(true)
+    expect(txtRecordsMatch([["v=spf1 -all"], ["alg-verify=abc123"]], "abc123")).toBe(true)
+    expect(txtRecordsMatch([["alg-verify=khac"]], "abc123")).toBe(false)
+    // Bản ghi thêm trước khi đổi tên ALG (12/11/2026) vẫn được nhận
+    expect(txtRecordsMatch([["smeos-verify=abc123"]], "abc123")).toBe(true)
     expect(txtRecordsMatch([], "abc123")).toBe(false)
   })
 
   it("hướng dẫn DNS: TXT luôn có; CNAME chỉ khi biết máy chủ đích", () => {
     expect(dnsInstructions("hoa.tiem.vn", "t1", "smeos-web.onrender.com").map((r) => [r.type, r.name, r.value])).toEqual([
-      ["TXT", "_smeos-verify.hoa.tiem.vn", "smeos-verify=t1"],
+      ["TXT", "_alg-verify.hoa.tiem.vn", "alg-verify=t1"],
       ["CNAME", "hoa.tiem.vn", "smeos-web.onrender.com"],
     ])
     expect(dnsInstructions("hoa.tiem.vn", "t1", null)).toHaveLength(1)

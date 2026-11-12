@@ -22,12 +22,12 @@ export function LandingTemplatePerks({
       case "camera":
         return <Camera size={18} className="text-primary" />
       case "clock":
-        return <Clock size={18} className="text-warning" />
+        return <Clock size={18} className="text-warning-text" />
       case "shield":
         return <ShieldCheck size={18} className="text-success" />
       case "gift":
       default:
-        return <Gift size={18} className="text-accent" />
+        return <Gift size={18} className="text-accent-text" />
     }
   }
 
@@ -55,7 +55,7 @@ export function LandingTemplatePerks({
                 0{idx + 1}.
               </span>
             ) : (
-              <div className="p-2 rounded-xl bg-surface-alt border border-border group-hover:bg-primary-bg/20 transition-colors shrink-0">
+              <div className="p-2 rounded-xl bg-surface-alt border border-border group-hover:bg-primary-muted/20 transition-colors shrink-0">
                 {getIcon(perk.icon)}
               </div>
             )}

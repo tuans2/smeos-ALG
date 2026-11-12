@@ -9,7 +9,8 @@ import { mergeVariantRows, readPriceCells } from "./parse-price-columns"
 
 /** Tên cột chấp nhận cho từng trường, theo thứ tự ưu tiên. */
 const COLUMNS = {
-  code: ["Mã SKU Chuẩn (smeOS) *", "Mã SKU Chuẩn (smeOS)", "Mã SKU Chuẩn (FloraOS) *", "Mã SKU Chuẩn (FloraOS)", "Mã SKU *", "Mã sản phẩm (SKU) *", "Mã Lovi (Loviinet)", "Mã Siin (Siin Store)", "Mã Lovi", "Mã Siin", "Mã sản phẩm", "SKU", "code"],
+  // Tên cột cũ (smeOS/FloraOS) giữ làm bí danh để tệp mẫu tải trước khi đổi tên ALG vẫn nhập được
+  code: ["Mã SKU Chuẩn (ALG) *", "Mã SKU Chuẩn (ALG)", "Mã SKU Chuẩn (smeOS) *", "Mã SKU Chuẩn (smeOS)", "Mã SKU Chuẩn (FloraOS) *", "Mã SKU Chuẩn (FloraOS)", "Mã SKU *", "Mã sản phẩm (SKU) *", "Mã Lovi (Loviinet)", "Mã Siin (Siin Store)", "Mã Lovi", "Mã Siin", "Mã sản phẩm", "SKU", "code"],
   // Giữ tiêu đề cột của mẫu cũ ("Tên mẫu hoa") — file Excel tiệm đang dùng vẫn nhập được (audit AUD-037)
   name: ["Tên sản phẩm *", "Tên sản phẩm", "Tên mẫu hoa *", "Tên mẫu hoa", "name"],
   price: ["Giá niêm yết B2C (VNĐ) *", "Giá niêm yết B2C (VNĐ)", "Giá niêm yết B2C", "Giá bán (VNĐ)", "Giá bán", "price"],
@@ -20,7 +21,7 @@ const COLUMNS = {
   color: ["Tone màu chủ đạo", "Màu sắc / Tone màu", "Màu sắc", "color"],
   description: ["Câu chuyện hoa (Copywriting bán hàng)", "Câu chuyện hoa (copy bán hàng)", "Mô tả / Ý nghĩa hoa", "Mô tả / Ghi chú", "Mô tả", "description"],
   flowersText: ["Hoa chính (BOM)", "Hoa chính (nguyên liệu quyết định)", "Công thức chế tác (BOM)", "Công thức cắm hoa (BOM)", "Công thức hoa (BOM)", "BOM"],
-  imageFileName: ["Tên file ảnh (hoặc URL ảnh) *", "Tên file ảnh chuẩn hóa ( smeOS Media )", "Tên file ảnh chuẩn hóa ( FloraOS Media )", "Tên file ảnh chuẩn hóa", "Ảnh thành phẩm chuẩn", "Tên file ảnh (tuỳ chọn)", "Tên file ảnh", "Tên ảnh", "image"],
+  imageFileName: ["Tên file ảnh (hoặc URL ảnh) *", "Tên file ảnh chuẩn hóa ( ALG Media )", "Tên file ảnh chuẩn hóa ( smeOS Media )", "Tên file ảnh chuẩn hóa ( FloraOS Media )", "Tên file ảnh chuẩn hóa", "Ảnh thành phẩm chuẩn", "Tên file ảnh (tuỳ chọn)", "Tên file ảnh", "Tên ảnh", "image"],
   loviCode: ["Mã Lovi (Loviinet)", "Mã Lovi"],
   siinCode: ["Mã Siin (Siin Store)", "Mã Siin"],
   driveLink: ["Link ảnh thành phẩm chuẩn (Drive)", "Link ảnh Drive", "Google Drive"],

@@ -1203,7 +1203,7 @@ model products {
 }
 
 /// Đề xuất sửa một mẫu CHÍNH THỨC của người không có `H3` (quản trị danh mục, giai đoạn 3 —
-/// `docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md` mục 6). Bản gốc không đổi tới khi
+/// `docs/dac-ta/ALG_PRODUCT_CATALOG_GOVERNANCE_SPEC.md` mục 6). Bản gốc không đổi tới khi
 /// Điều hành duyệt; `base_updated_at` phát hiện bản gốc đã đổi sau lúc gửi (xung đột, không tự gộp).
 model product_change_requests {
   id              String    @id @default(uuid())
@@ -1694,7 +1694,7 @@ enum template_family {
 }
 
 /// Ghi đè template theo tenant (nợ #99, Giai đoạn 3 kiến trúc gốc —
-/// FLORAOS_TEMPLATE_ENGINE_ARCHITECTURE.md §3, cơ chế kế thừa 2 lớp: System
+/// ALG_TEMPLATE_ENGINE_ARCHITECTURE.md §3, cơ chế kế thừa 2 lớp: System
 /// Golden Template -> Tenant Override). BẢNG RIÊNG, không mở rộng
 /// `brand_profiles` — quyết định anh Tony 17/09, giữ nguyên sau khi cân nhắc
 /// lại 18/09 theo đề xuất kiến trúc: đúng nguyên tắc Atomic Disaggregated
@@ -2691,7 +2691,7 @@ model platform_secrets {
 /// Tách riêng vì `audit_logs.organization_id` là `NOT NULL` (D-N3).
 /// Nhân viên nền tảng truy cập dữ liệu của một tổ chức (ADR-013 D-I5, D-60): mỗi yêu cầu Console vào
 /// `platform/organizations/:id/*` hoặc `platform/orgs-data/:orgId/*` ghi một dòng, TRƯỚC khi trả dữ liệu. Thuộc tổ chức:
-/// chủ tổ chức xem ở `/audit` (tab "Truy cập của nền tảng", quyền G9). Chỉ thêm dòng (trigger `smeos_append_only_guard`).
+/// chủ tổ chức xem ở `/audit` (tab "Truy cập của nền tảng", quyền G9). Chỉ thêm dòng (trigger `alg_append_only_guard`).
 model platform_access_logs {
   id              String   @id @default(uuid())
   organization_id String

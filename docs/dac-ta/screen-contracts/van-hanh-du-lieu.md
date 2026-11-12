@@ -33,3 +33,7 @@ acceptance:
 
 ## Chưa kiểm
 - Ảnh mốc 390×844 và 1280×800, quét axe, bàn phím, đọc màn hình: chưa có ca trong `tests/e2e/ux` cho tuyến này.
+
+## Thay đổi Đợt 4 (12/11/2026)
+
+- "Khoảng N bản ghi" thay "~N" (dấu ~ đọc như số âm, D4-15); `<nav aria-label="Đường dẫn">`; nút đường dẫn có vùng bấm ≥ 24px (`TEXT_BUTTON_HIT_AREA`, D4-07).

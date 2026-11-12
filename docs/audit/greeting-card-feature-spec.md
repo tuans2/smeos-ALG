@@ -41,7 +41,7 @@
 
 ## 2. User Flows & Capabilities
 
-### 2.1 Luồng Nhân viên Sale (Nội bộ FloraOS)
+### 2.1 Luồng Nhân viên Sale (Nội bộ ALG)
 
 #### Flow A: Gửi nhanh 3 bước (Journey Wizard) ✅
 [`journey-wizard.tsx`](../../src/components/greeting-card/journey/journey-wizard.tsx)

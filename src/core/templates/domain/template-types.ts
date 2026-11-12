@@ -1,5 +1,5 @@
 /**
- * smeOS Template Engine — Domain Types
+ * ALG Template Engine — Domain Types
  * Định nghĩa cấu trúc cho hệ thống template đa tenant.
  *
  * DỰ TRỮ, KHÔNG PHẢI NỢ (nợ #99, chốt 17/09) — xem chú thích đầy đủ ở

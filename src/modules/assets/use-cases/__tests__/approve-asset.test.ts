@@ -65,7 +65,7 @@ vi.mock("@/modules/assets/infra/asset-repository", () => {
 vi.mock("@/modules/assets/adapters/storage-provider-factory", () => ({
   getStorageProvider: vi.fn().mockImplementation(function () { return {
     name: "gia-lap",
-    signedUrl: vi.fn().mockResolvedValue("https://storage.smeos.vn/asset-1.png"),
+    signedUrl: vi.fn().mockResolvedValue("https://storage.avilotusgroup.com/asset-1.png"),
   } }),
 }))
 
@@ -103,7 +103,7 @@ describe("approveAsset use-case", () => {
     const result = await approveAsset(mockTenantContext, "asset-1")
 
     expect(result.approval_state).toBe("APPROVED")
-    expect(result.url).toBe("https://storage.smeos.vn/asset-1.png")
+    expect(result.url).toBe("https://storage.avilotusgroup.com/asset-1.png")
     expect(mockApprove).not.toHaveBeenCalled()
   })
 
@@ -122,6 +122,6 @@ describe("approveAsset use-case", () => {
       approvedBy: "user-1",
     }))
     expect(result.approval_state).toBe("APPROVED")
-    expect(result.url).toBe("https://storage.smeos.vn/asset-1.png")
+    expect(result.url).toBe("https://storage.avilotusgroup.com/asset-1.png")
   })
 })

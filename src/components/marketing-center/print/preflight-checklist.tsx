@@ -82,11 +82,11 @@ export function PreflightChecklist({
       {/* Danh sách cảnh báo */}
       {warnings.length > 0 && (
         <div className="p-3.5 rounded-xl border border-warning/20 bg-warning/5 space-y-2">
-          <div className="flex items-center gap-2 text-warning text-caption font-bold">
+          <div className="flex items-center gap-2 text-warning-text text-caption font-bold">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>Lưu ý kỹ thuật ({warnings.length}):</span>
           </div>
-          <ul className="space-y-1 pl-6 list-disc text-caption text-warning">
+          <ul className="space-y-1 pl-6 list-disc text-caption text-warning-text">
             {warnings.map((warn, idx) => (
               <li key={idx} className="leading-relaxed">
                 {warn}

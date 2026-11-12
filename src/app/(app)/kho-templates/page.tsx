@@ -3,7 +3,7 @@
 // trực quan, chỉ đọc (không chỉnh sửa/quản lý override ở đây — phần đó đã có
 // riêng ở /ho-so), hiển thị cho MỌI người dùng có tài khoản (không gate theo
 // capability). Nội dung 11 chức năng × 50 template lấy đúng theo
-// docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md mục 3 — không tự bịa mô tả.
+// docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md mục 3 — không tự bịa mô tả.
 //
 // Lưu ý đã đối chiếu thật với hệ thống file trước khi dùng: SSOT ghi màn
 // hình của Chức năng 10 (Analytics & Governance) là `/bao-cao`, nhưng thư
@@ -338,11 +338,8 @@ export default function KhoTemplatesPage() {
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-body font-bold text-text">{cat.title}</h2>
-                        <span className="rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold tracking-wide text-text-muted uppercase">
-                          {cat.code}
-                        </span>
                         <span className="rounded-full bg-surface-alt px-2 py-0.5 text-caption font-semibold text-text-muted">
-                          {cat.files.length} template
+                          {cat.files.length} mẫu
                         </span>
                       </div>
                       <p className="mt-1 max-w-2xl text-meta leading-relaxed text-text-muted">

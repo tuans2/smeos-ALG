@@ -255,7 +255,7 @@ export function PackageWorkspace() {
             </Button>
           )}
         </div>
-        {dirty && <p className="text-meta text-warning">Có thay đổi chưa lưu — lưu gói trước khi chạy QA.</p>}
+        {dirty && <p className="text-meta text-warning-text">Có thay đổi chưa lưu — lưu gói trước khi chạy QA.</p>}
         {pkg.qa_report ? (
           <PackageQACard report={pkg.qa_report} />
         ) : (

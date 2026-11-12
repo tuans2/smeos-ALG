@@ -17,6 +17,7 @@ import ts from "typescript"
 import { ALL_RULES, type Violation } from "./ux-lint/rules"
 import { PD_RULES } from "./ux-lint/rules-pd"
 import { ENTERPRISE_RULES } from "./ux-lint/rules-enterprise"
+import { TOKEN_RULES } from "./ux-lint/rules-tokens"
 import {
   type AllowlistConfig,
   type BaselineData,
@@ -90,7 +91,7 @@ function runLint(): Violation[] {
       sourceCode: code,
     }
 
-    for (const [ruleId, ruleFn] of Object.entries({ ...ALL_RULES, ...PD_RULES, ...ENTERPRISE_RULES })) {
+    for (const [ruleId, ruleFn] of Object.entries({ ...ALL_RULES, ...PD_RULES, ...ENTERPRISE_RULES, ...TOKEN_RULES })) {
       try {
         const violations = ruleFn(sourceFile, context)
         for (const v of violations) {

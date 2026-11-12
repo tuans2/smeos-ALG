@@ -5,7 +5,7 @@
  * - Endpoint đã khai: `handle()` gắn `Deprecation: @<unix>` (ngày báo), `Sunset: <HTTP-date>` (ngày gỡ),
  *   `Link: <successor>; rel="successor-version"` cho MỌI phản hồi, kể cả lỗi.
  * - Báo trước tối thiểu: 90 ngày cho bề mặt bên ngoài (`/integration/*` — LocalBudd/SocialFlow/đối tác,
- *   `/public/*` — trang khách, webhook nhà cung cấp), 30 ngày cho API chỉ giao diện SMEOS gọi.
+ *   `/public/*` — trang khách, webhook nhà cung cấp), 30 ngày cho API chỉ giao diện ALG gọi.
  * - Quá ngày gỡ mà route còn → `tests/unit/core/http/deprecation.test.ts` đỏ: gỡ route hoặc dời ngày
  *   (dời cũng phải đủ mức báo trước tính từ ngày báo mới).
  */

@@ -1,5 +1,5 @@
 /**
- * Tin nhắn từ khung chat AI trên trang công khai do công cụ SMEOS tạo ra.
+ * Tin nhắn từ khung chat AI trên trang công khai do công cụ ALG tạo ra.
  * Tổ chức suy từ slug; kiểm trang có được bật khung chat, áp hạn mức chống spam
  * (theo khách và theo IP, tách riêng từng tiệm) rồi chuyển cho luồng xử lý kênh.
  */

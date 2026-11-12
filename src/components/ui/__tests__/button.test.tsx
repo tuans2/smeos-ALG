@@ -81,4 +81,31 @@ describe("Button component", () => {
     expect(html).toContain("bg-transparent")
     expect(html).toContain("Liên kết điều hướng")
   })
+
+  it("biến thể warning dùng chữ tối trên nền hổ phách (trắng chỉ đạt 3,33:1, dưới AA)", () => {
+    const html = renderToStaticMarkup(<Button variant="warning">Cảnh báo</Button>)
+    expect(html).toContain("bg-warning")
+    expect(html).toContain("text-text")
+    expect(html).not.toContain("text-white")
+  })
+})
+
+describe("Button — icon không bị co (Đợt 4, D4-13)", () => {
+  it("lớp gốc giữ kích thước icon khi nút có kích thước cố định và padding", () => {
+    const html = renderToStaticMarkup(
+      <Button variant="outline" className="h-11 w-11" aria-label="Hộp việc">
+        <svg width="18" height="18" />
+      </Button>,
+    )
+    expect(html).toContain("[&amp;_svg]:shrink-0")
+  })
+})
+
+describe("TEXT_BUTTON_HIT_AREA — vùng bấm nút chữ (Đợt 4, D4-07)", () => {
+  it("nới vùng bấm bằng ::before: 5px mỗi phía, 15px khi cảm ứng; nút giữ vị trí tương đối", async () => {
+    const { TEXT_BUTTON_HIT_AREA } = await import("../button")
+    expect(TEXT_BUTTON_HIT_AREA).toContain("relative")
+    expect(TEXT_BUTTON_HIT_AREA).toContain("before:-inset-y-[5px]")
+    expect(TEXT_BUTTON_HIT_AREA).toContain("[@media(pointer:coarse)]:before:-inset-y-[15px]")
+  })
 })
