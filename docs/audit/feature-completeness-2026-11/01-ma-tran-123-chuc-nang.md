@@ -37,7 +37,7 @@
 | 1.6 | Khai báo chi nhánh & tọa độ quận/huyện | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/greeting-card/chain-branches/bulk-import` (phường phục vụ, toạ độ); `bulk-import/branch-import-panel.tsx` |  |
 | 1.7 | Khai báo dịp tặng hoa ngành chuẩn | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/occasions`; bảng `occasions` |  |
 | 1.8 | Chính sách cửa hàng (ngân hàng, phụ thu lễ) | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | Cài đặt tiệm tab 3/4/8; `organization-settings-policy.ts` |  |
-| 1.9 | Cấu hình trường dữ liệu linh hoạt theo shop | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/field-config/*`; bảng `field_config_overrides` | Trường do Console tạo chưa nối vào 17 mẫu/form (`van-hanh/truong-du-lieu/_components/truong-tu-tao-tab.tsx:5`) |
+| 1.9 | Cấu hình trường dữ liệu linh hoạt theo shop | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/field-config/*`; bảng `field_config_overrides` | Trường do Console tự tạo: nhập/lưu được trên đơn điều phối và (từ 12/11, L-09) trên đối tác gia công |
 | 1.10 | Quản lý & mời thành viên | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/members/invite`; `staff-accounts.ts` (mật khẩu tạm hiện 1 lần) | Chưa có luồng mời qua email (nợ #13) — AC dùng mật khẩu tạm nên vẫn đạt |
 | 1.11 | Điều chỉnh/gỡ thành viên & thu hồi phiên ngay | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `members/[id]/role`, `DELETE members/[id]`; quyền đọc lại mỗi request (`resolve-session.ts:89`) |  |
 | 1.12 | 6 vai trò mặc định | ● | — | ● | ● | ● | ✅ Hoàn thiện | ✅ | `organization/domain/system-roles.ts` (12 vai hệ thống) |  |

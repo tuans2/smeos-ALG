@@ -44403,6 +44403,13 @@
                               },
                               "isActive": {
                                 "type": "boolean"
+                              },
+                              "customFields": {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {}
                               }
                             },
                             "required": [
@@ -44416,7 +44423,8 @@
                               "tier",
                               "rating",
                               "capacityDaily",
-                              "isActive"
+                              "isActive",
+                              "customFields"
                             ],
                             "additionalProperties": false
                           }
@@ -44784,6 +44792,13 @@
                         "type": "integer",
                         "minimum": 1,
                         "maximum": 1000
+                      },
+                      "customFields": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
                       }
                     },
                     "required": [
@@ -44862,6 +44877,13 @@
                             },
                             "isActive": {
                               "type": "boolean"
+                            },
+                            "customFields": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
                             }
                           },
                           "required": [
@@ -44875,7 +44897,8 @@
                             "tier",
                             "rating",
                             "capacityDaily",
-                            "isActive"
+                            "isActive",
+                            "customFields"
                           ],
                           "additionalProperties": false
                         }
@@ -45096,6 +45119,13 @@
                     "minimum": 1,
                     "maximum": 1000
                   },
+                  "customFields": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {}
+                  },
                   "isActive": {
                     "type": "boolean"
                   }
@@ -45167,6 +45197,13 @@
                         },
                         "isActive": {
                           "type": "boolean"
+                        },
+                        "customFields": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
                         }
                       },
                       "required": [
@@ -45180,7 +45217,8 @@
                         "tier",
                         "rating",
                         "capacityDaily",
-                        "isActive"
+                        "isActive",
+                        "customFields"
                       ],
                       "additionalProperties": false
                     }
