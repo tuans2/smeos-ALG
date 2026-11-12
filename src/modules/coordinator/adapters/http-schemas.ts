@@ -217,6 +217,8 @@ export const createPartnerSchema = z.object({
   province: text(100).optional(),
   tier: z.enum(["STANDARD", "PREFERRED", "VIP"]).default("STANDARD"),
   capacityDaily: z.number().int().min(1).max(1000).default(10),
+  /** Giá trị trường tự tạo (entity PARTNER) — kiểm theo định nghĩa ở `applyCustomFields` (audit L-09). */
+  customFields: z.record(z.string(), z.unknown()).optional(),
 })
 
 export const updatePartnerSchema = createPartnerSchema

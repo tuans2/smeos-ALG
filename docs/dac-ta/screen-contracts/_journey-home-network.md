@@ -1,5 +1,7 @@
 # Screen Contract — Trang chủ Hành trình Quản trị Mạng lưới Điện hoa (Network Journey Home)
 
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Thẻ hành trình có `primaryHref` trỏ tới tuyến khoá (Điều phối, Khách hàng) bị ẩn; nút "Tháp điều phối" và "Mở bảng điều phối" của `FlowerNetworkCommandCenter` ẩn khi `/dieu-phoi` khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
 **Tuyến:** `/` · **Tệp chính:** `src/components/dashboard/network-journey-home.tsx` · **Cập nhật:** 30/09/2026 · **Thẻ:** J1–J7
 
 ## 1. Vai và mục đích

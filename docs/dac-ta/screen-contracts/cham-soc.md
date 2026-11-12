@@ -58,5 +58,6 @@ acceptance:
 
 ## 4. Dữ liệu và quyền
 - Bảng CSDL: `customer_segments`, `customer_interactions`, `customers`, `customer_consents`.
+- API danh sách khách: nhóm "Tất cả khách" đọc `GET /api/v1/customers` (con trỏ, `M4` hoặc `Q1` — audit L-04, 12/11/2026); nhóm cụ thể đọc `GET /api/v1/customer-segments/:id/customers`.
 - Quyền: `M4` (quản lý phân nhóm và ghi nhận chăm sóc), `Q1` (đọc thông tin khách hàng và nhật ký).
 - Chốt chặn: Khách không đồng ý nhận tin qua kênh điện tử sẽ không xuất hiện trong danh sách gửi của kênh đó.

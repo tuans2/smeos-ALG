@@ -35,6 +35,7 @@ const partner = z.strictObject({
   rating: z.number(),
   capacityDaily: z.number(),
   isActive: z.boolean(),
+  customFields: z.record(z.string(), z.unknown()),
 })
 export const partnerResponse = z.strictObject({ partner })
 export const partnersResponse = z.strictObject({ partners: z.array(partner) })

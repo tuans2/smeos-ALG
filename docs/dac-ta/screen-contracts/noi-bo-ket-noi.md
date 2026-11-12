@@ -16,6 +16,8 @@ acceptance:
 
 # Screen Contract — Kết Nối Mạng Lưới Nội Bộ & Đối Tác
 
+> **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/noi-bo/ket-noi` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/noi-bo/ket-noi/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
+
 **Mã màn:** `SCR-STORE-noi-bo-ket-noi` · **Tuyến:** `/noi-bo/ket-noi` · **Tầng:** `STORE` · **Bố cục (Archetype):** `B` (Danh mục kết nối)
 
 ## 1. Vai & Mục đích

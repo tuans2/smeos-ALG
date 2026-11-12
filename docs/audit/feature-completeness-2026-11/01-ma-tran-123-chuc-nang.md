@@ -20,10 +20,10 @@
 | 5. Thẻ Chào mẫu hoa & trang khách hàng | 15 | 15 | 0 | 0 | 0 | 0 | 0 |
 | 6. Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 | 0 | 0 | 0 |
 | 7. AI phân tích, nội dung & marketing | 3 | 3 | 0 | 0 | 0 | 0 | 0 |
-| 8. Landing page bán hàng | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
+| 8. Landing page bán hàng | 1 | 1 | 0 | 0 | 0 | 0 | 0 |
 | 9. Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 11 | 3 | 0 | 0 | 0 | 0 |
 | 10. Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 7 | 1 | 0 | 0 | 0 | 0 |
-| **Tổng** | **123** | **108** | **15** | **0** | **0** | **0** | **0** |
+| **Tổng** | **123** | **109** | **14** | **0** | **0** | **0** | **0** |
 
 ## 1. Nền tảng chung & phân quyền
 
@@ -37,7 +37,7 @@
 | 1.6 | Khai báo chi nhánh & tọa độ quận/huyện | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/greeting-card/chain-branches/bulk-import` (phường phục vụ, toạ độ); `bulk-import/branch-import-panel.tsx` |  |
 | 1.7 | Khai báo dịp tặng hoa ngành chuẩn | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/occasions`; bảng `occasions` |  |
 | 1.8 | Chính sách cửa hàng (ngân hàng, phụ thu lễ) | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | Cài đặt tiệm tab 3/4/8; `organization-settings-policy.ts` |  |
-| 1.9 | Cấu hình trường dữ liệu linh hoạt theo shop | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/field-config/*`; bảng `field_config_overrides` | Trường do Console tạo chưa nối vào 17 mẫu/form (`van-hanh/truong-du-lieu/_components/truong-tu-tao-tab.tsx:5`) |
+| 1.9 | Cấu hình trường dữ liệu linh hoạt theo shop | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/field-config/*`; bảng `field_config_overrides` | Trường do Console tự tạo: nhập/lưu được trên đơn điều phối và (từ 12/11, L-09) trên đối tác gia công |
 | 1.10 | Quản lý & mời thành viên | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/members/invite`; `staff-accounts.ts` (mật khẩu tạm hiện 1 lần) | Chưa có luồng mời qua email (nợ #13) — AC dùng mật khẩu tạm nên vẫn đạt |
 | 1.11 | Điều chỉnh/gỡ thành viên & thu hồi phiên ngay | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `members/[id]/role`, `DELETE members/[id]`; quyền đọc lại mỗi request (`resolve-session.ts:89`) |  |
 | 1.12 | 6 vai trò mặc định | ● | — | ● | ● | ● | ✅ Hoàn thiện | ✅ | `organization/domain/system-roles.ts` (12 vai hệ thống) |  |
@@ -45,7 +45,7 @@
 | 1.14 | Hiển thị giao diện & menu theo quyền | ● | — | ● | — | ● | ✅ Hoàn thiện | ✅ | `layout/nav/nav-store-entries.ts` lọc theo `capability` | L-01 đã sửa 07/11 (`ebd7a6ea`): mục "Trợ lý tối ưu" bị gỡ khỏi menu; `tests/unit/architecture/nav-href-exists.test.ts` giữ mọi link menu trỏ tới trang có thật |
 | 1.15 | Chặn thao tác vượt quyền & ghi log vi phạm | — | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `core/http/request-audit.ts:51` ghi `security.access_denied` |  |
 | 1.16 | Khóa cứng quyền nhạy cảm ở tầng server | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `core/rbac/capability-catalog.ts` (trần cứng R11, C10…) |  |
-| 1.17 | Nhật ký thao tác chi tiết IP/thiết bị | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/audit-logs`; `auditMutation` ghi IP/UA | `/audit` khoá sidebar production, không có guard URL (L-03) |
+| 1.17 | Nhật ký thao tác chi tiết IP/thiết bị | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/audit-logs`; `auditMutation` ghi IP/UA | `/audit` khoá production (có guard URL từ 12/11, L-03) |
 | 1.18 | Gắn dữ liệu với tổ chức ở tầng database (RLS) | — | — | ● | ● | ● | ✅ Hoàn thiện | ✅ | `migrations/20261106020000_row_level_security`; `core/tenancy/infra/rls-pool.ts` |  |
 | 1.19 | Chặn truy cập chéo (404 Not Found) | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `notFound()` ở repository/use-case; ca S-01/S-02 trong `tests/tenant` |  |
 
@@ -91,12 +91,12 @@
 | 4.4 | 3 hệ thống trạng thái độc lập | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | cột trạng thái xử lý/sản xuất/giao trên `orders` |  |
 | 4.5 | Quản lý khung giờ giao & sức chứa chi nhánh | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `slot-availability.ts`; `delivery/my-runs` (không trả giá) |  |
 | 4.6 | Đổi thông tin đơn giữ vết | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `order-change.ts`; bảng `order_change_requests` |  |
-| 4.7 | Luồng hủy đơn & hoàn tiền duyệt 2 bước | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `orders/[id]/cancel` + duyệt huỷ | Bước duyệt G-05 mở ở Phê duyệt (`/duyet`, khoá sidebar production, không guard URL); lối Thẻ chào → Điều hành vẫn mở |
+| 4.7 | Luồng hủy đơn & hoàn tiền duyệt 2 bước | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `orders/[id]/cancel` + duyệt huỷ | Bước duyệt G-05 mở ở Phê duyệt (`/duyet`, khoá production (có guard URL)); lối Thẻ chào → Điều hành vẫn mở |
 | 4.8 | Lịch sử thao tác đơn tóm tắt | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `orders/[id]/events`; bảng `order_events` |  |
 | 4.9 | In phiếu xưởng (khổ A6) & thiệp/băng rôn | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `/in-phieu/[id]`; `orders/[id]/print` |  |
 | 4.10 | Xuất danh sách đơn Excel | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `orders/export` — 4 trang tính |  |
 | 4.11 | Lịch sử đơn liên quan cùng khách hàng | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `crm/customers/[id]/orders` | `/khach-hang` khoá production (có guard) — AC G-07 |
-| 4.12 | Bảng điều phối phân cấp mức rủi ro trễ giờ | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `coordinator/domain/state-mapper.ts:115` (4 mức rủi ro) | `/dieu-phoi` khoá sidebar production, không guard URL (L-03) |
+| 4.12 | Bảng điều phối phân cấp mức rủi ro trễ giờ | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `coordinator/domain/state-mapper.ts:115` (4 mức rủi ro) | `/dieu-phoi` khoá production (có guard URL từ 12/11, L-03) |
 | 4.13 | Phân công thợ cắm & hàng đợi chế tác | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `orders/[id]/assign`, `orders/my-work` |  |
 | 4.14 | Theo dõi đơn thiếu thông tin | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `orders/[id]/info-requests` |  |
 | 4.15 | Kiểm tra chất lượng QC | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | bảng `order_qc_records` |  |
@@ -116,7 +116,7 @@
 | 4.29 | Tự động cập nhật trang theo dõi của khách | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `brochure-tracking-view.tsx:101` làm mới 15 giây |  |
 | 4.30 | Cấu hình kênh báo tin nhân viên | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `notification/infra/channel-adapters/` (`sms-adapter.ts`, `zalo-adapter.ts`, `web-push-adapter.ts`, `telegram-adapter.ts`); `api/v1/platform/notification/providers`; `api/v1/notification/push-subscriptions`; khối "Kênh liên lạc" ở `/van-hanh/thong-bao` | AC F-07 (trong ứng dụng + Telegram) đạt về mã. SMS/Zalo gửi thật khi tầng Mẹ đã nhập khoá nhà cung cấp (thiếu thì `NOT_CONFIGURED`); chưa thử gửi thật |
 | 4.31 | Tự động gửi Zalo ZNS / SMS cho khách | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `greeting-card/adapters/zalo-zns-adapter.ts`, `esms-adapter.ts`; trừ credit mỗi tin | Cần thông tin OA/eSMS thật |
-| 4.32 | Tự động nhắc lịch giao trước 60 & 30 phút | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `coordinator/use-cases/push-delivery-reminders.ts` (sự kiện `DELIVERY_REMINDER_DUE`, cron `internal/chain-dispatch-sweep`, mỗi mốc một lần); `manage-reminder-policy.ts`; test `tests/tenant/delivery-reminder-push.test.ts` | Đổi mốc ở Cài đặt tiệm (mở). Tin đẩy dẫn về `/dieu-phoi` — khoá sidebar production nhưng gõ URL vẫn vào (L-03) |
+| 4.32 | Tự động nhắc lịch giao trước 60 & 30 phút | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `coordinator/use-cases/push-delivery-reminders.ts` (sự kiện `DELIVERY_REMINDER_DUE`, cron `internal/chain-dispatch-sweep`, mỗi mốc một lần); `manage-reminder-policy.ts`; test `tests/tenant/delivery-reminder-push.test.ts` | Đổi mốc ở Cài đặt tiệm (mở). Tin đẩy dẫn về `/dieu-phoi`; trên smeOS production tuyến này khoá nên tin vẫn gửi nhưng không kèm link (N-05) |
 
 ## 5. Thẻ Chào mẫu hoa & trang khách hàng
 
@@ -142,7 +142,7 @@
 
 | Mã | Chức năng | UI | API | Backend | DB | Test | smeOS production | Bản giao GD1 | Bằng chứng | Ghi chú / AC |
 |---|---|:-:|:-:|:-:|:-:|:-:|---|---|---|---|
-| 6.1 | Báo cáo tổng hợp đơn hàng & tỷ lệ hủy/trễ | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/reports/orders`; `/bao-cao` | `/bao-cao` khoá sidebar production, không guard URL (L-03) |
+| 6.1 | Báo cáo tổng hợp đơn hàng & tỷ lệ hủy/trễ | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/reports/orders`; `/bao-cao` | `/bao-cao` khoá production (có guard URL từ 12/11, L-03) |
 | 6.2 | Báo cáo doanh thu thực thu vs dự kiến | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/reports/revenue` | như 6.1. "Giá trị đơn" còn cộng đơn Nháp chưa thu — chờ PO (BL-30) |
 | 6.3 | Báo cáo sản phẩm bán chạy & tông màu ưa thích | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/reports/products` | như 6.1 |
 | 6.4 | Báo cáo phễu chuyển đổi Thẻ Chào & Sale | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `get-sales-funnel.ts`; Dashboard Thẻ chào |  |
@@ -150,7 +150,7 @@
 | 6.6 | Báo cáo đối chiếu thu tiền: sổ thu vs ngân hàng | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/reports/cashflow` | như 6.1 |
 | 6.7 | Báo cáo truy vết lịch sử đơn giải quyết khiếu nại | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `get-tracking-timeline.ts`, `order_events` |  |
 | 6.8 | Xuất báo cáo tài chính ra Excel (.xlsx) | ● | ● | ● | — | ● | ✅ Hoàn thiện | ✅ | `export-orders.ts` (xlsx) |  |
-| 6.9 | Báo cáo tiêu thụ hạn mức AI theo kỳ | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `usage/summary?period=`; `/muc-dung` | `/muc-dung` khoá sidebar production, không guard URL (L-03) |
+| 6.9 | Báo cáo tiêu thụ hạn mức AI theo kỳ | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `usage/summary?period=`; `/muc-dung` | `/muc-dung` khoá production (có guard URL từ 12/11, L-03) |
 
 ## 7. AI phân tích, nội dung & marketing
 
@@ -164,7 +164,7 @@
 
 | Mã | Chức năng | UI | API | Backend | DB | Test | smeOS production | Bản giao GD1 | Bằng chứng | Ghi chú / AC |
 |---|---|:-:|:-:|:-:|:-:|:-:|---|---|---|---|
-| 8.1 | Trình dựng Landing Page bộ sưu tập / sự kiện | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `/landing-page` (`LandingPageStudioClient`), `/c/[slug]`, `public/catalog/[slug]/order` | Mã đủ tầng. Lối vào AC I-10 ("Công cụ → Tạo catalog", nay là ô "Bộ sưu tập chung" → `/catalog`) khoá production (có guard); `/landing-page` vẫn mở |
+| 8.1 | Trình dựng Landing Page bộ sưu tập / sự kiện | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `promotion-hub/landing-panel.tsx` → `catalog/landing-campaign-tab.tsx`; `api/v1/content-engine/landing-generate` (AI), `api/v1/catalog-links`; `/c/[slug]` (+ `opengraph-image.tsx`), `public/catalog/[slug]/order` | AC I-10 đã sửa 12/11: Công cụ → Quảng bá sản phẩm → Landing page → Tạo landing mới, vai Điều hành (`J1`, `J7`). `/cong-cu` mở trên cả hai đích; không còn đi qua `/catalog` (khoá production) |
 
 ## 9. Chat nội bộ, đa chuỗi & phân quyền nâng cao
 
@@ -175,8 +175,8 @@
 | 9.3 | Hồ sơ kinh doanh | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `api/v1/business-profile` |  |
 | 9.4 | Thư viện tài nguyên & thùng rác 30 ngày | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `storage/trash/*`; `/kho-du-lieu` |  |
 | 9.5 | Quản lý kết nối Webhook/API key | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `integration-tokens/*` (cấp, xoay, thu hồi) |  |
-| 9.6 | Quản lý tác vụ nền & chạy lại tác vụ lỗi | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `jobs/[id]/retry`; `/job` | `/job` khoá sidebar production, không guard URL (L-03) |
-| 9.7 | Cấu hình chính sách & trần chi phí AI tháng | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/ai-policy`; `/cai-dat-ai` | `/cai-dat-ai` khoá production (có guard); trần credit tháng ở `/muc-dung` khoá sidebar |
+| 9.6 | Quản lý tác vụ nền & chạy lại tác vụ lỗi | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `jobs/[id]/retry`; `/job` | `/job` khoá production (có guard URL từ 12/11, L-03) |
+| 9.7 | Cấu hình chính sách & trần chi phí AI tháng | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `api/v1/ai-policy`; `/cai-dat-ai` | `/cai-dat-ai` khoá production (có guard); trần credit tháng ở `/muc-dung` cũng khoá (có guard URL) |
 | 9.8 | Console quản trị nền tảng đa cửa hàng | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `/van-hanh` (Console) | L-02 đã sửa 07/11 (`ebd7a6ea`): mục "Catalog toàn hệ thống" bị gỡ khỏi menu Console |
 | 9.9 | Luồng thẩm định & duyệt đăng ký tổ chức mới | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `auth/signup`; `/van-hanh/dang-ky` |  |
 | 9.10 | Khởi tạo tổ chức & khởi tạo gói dịch vụ | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `platform/use-cases/create-organization.ts` |  |
@@ -189,7 +189,7 @@
 
 | Mã | Chức năng | UI | API | Backend | DB | Test | smeOS production | Bản giao GD1 | Bằng chứng | Ghi chú / AC |
 |---|---|:-:|:-:|:-:|:-:|:-:|---|---|---|---|
-| 10.1 | Xem số dư credit AI & lịch sử tiêu thụ | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `usage/summary`; `/muc-dung` | `/muc-dung` khoá sidebar production, không guard URL (L-03) |
+| 10.1 | Xem số dư credit AI & lịch sử tiêu thụ | ● | ● | ● | ● | ● | 🔒 Có mã, khoá production | ✅ Mở | `usage/summary`; `/muc-dung` | `/muc-dung` khoá production (có guard URL từ 12/11, L-03) |
 | 10.2 | Hoàn 100% credit AI khi tác vụ bị lỗi | — | — | ● | ● | ● | ✅ Hoàn thiện | ✅ | `usage/domain/refund-policy.ts` (FAILED, CANCELLED, Guard từ chối) |  |
 | 10.3 | Thiết lập hạn mức dịch vụ (trần AI, SMS, Zalo) | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | `usage/limits`; Console quy đổi credit; `message-overdraft.ts` | Phần cửa hàng tự đặt trần (AC I-05) nằm ở `/muc-dung` đang khoá |
 | 10.4 | Ghi nhận chi phí thật (USD/VND) đo lợi nhuận | ● | ● | ● | ● | ● | ✅ Hoàn thiện | ✅ | bảng `provider_cost_entries`; Console biên lợi nhuận |  |

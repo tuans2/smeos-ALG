@@ -16,6 +16,8 @@ acceptance:
 
 # Screen Contract — Nhật Ký Kiểm Toán Tổ Chức
 
+> **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/audit` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/audit/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
+
 **Tuyến:** `/audit` · **Tệp chính:** `src/app/(app)/audit/page.tsx`, `src/components/audit/platform-access-tab.tsx` · **Cập nhật:** 07/11/2026 (tab truy cập của nền tảng, D-60) · **Thẻ:** T5.D8
 
 ## 1. Vai và mục đích

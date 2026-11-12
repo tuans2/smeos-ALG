@@ -142,6 +142,7 @@ const customer = z.strictObject({
   ),
   updatedAt: z.string(),
 })
+export const customersPageResponse = z.strictObject({ data: z.array(customer), next_cursor: z.string().nullable() })
 export const segmentCustomersResponse = z.strictObject({
   data: z.array(customer),
   segment_name: z.string(),
