@@ -201,6 +201,8 @@ export type MockSession = {
     navHiddenKeys?: string[] | null
     /** Danh sách công cụ được cấp trên (Chuỗi/Ngành) phê duyệt mở khóa; `null` = dùng mặc định. */
     unlockedTools?: string[] | null
+    /** Vòng đời tổ chức (ADR-016 D-S5) — banner "tạm ngưng" / "chỉ xem" (audit User Journey UJ-26). */
+    lifecycleStatus?: string
   } | undefined
   /**
    * Khoá vai phân quyền (`roles.key`) của membership hiện tại — CHỈ dùng để

@@ -87,6 +87,16 @@ describe("vòng đời tổ chức", () => {
     await expect(setOrganizationLifecycle(pctx, { organizationId: a.organizationId, status: "ACTIVE" })).rejects.toMatchObject({ code: "CONFLICT" })
   })
 
+  it("audit User Journey UJ-26: chủ tiệm nhận thông báo khi Admin tạm ngưng / mở lại / chuyển rời nền tảng", async () => {
+    const inbox = () => prisma.notification_inbox.findMany({ where: { organization_id: a.organizationId, event_key: "ORGANIZATION_LIFECYCLE_CHANGED" }, orderBy: { created_at: "asc" } })
+    await setOrganizationLifecycle(pctx, { organizationId: a.organizationId, status: "SUSPENDED" })
+    await setOrganizationLifecycle(pctx, { organizationId: a.organizationId, status: "ACTIVE" })
+    const rows = await inbox()
+    expect(rows).toHaveLength(2)
+    expect(rows.map((r) => r.message)).toEqual([expect.stringMatching(/tạm ngưng/), expect.stringMatching(/hoạt động trở lại/)])
+    expect(await prisma.notification_inbox.count({ where: { organization_id: b.organizationId, event_key: "ORGANIZATION_LIFECYCLE_CHANGED" } })).toBe(0)
+  })
+
   describe("audit User Journey UJ-27 (R2-02): người thuộc nhiều tổ chức", () => {
     /** Chủ tiệm A (tham gia A trước) được mời làm nhân viên ở B. */
     async function joinB() {

@@ -38,3 +38,13 @@ export function lifecycleBlockedMessage(status: OrganizationLifecycleStatus): st
   if (status === "DELETED") return "Tài khoản cửa hàng này đã đóng."
   return "Tài khoản cửa hàng đang tạm ngưng. Vui lòng liên hệ bộ phận hỗ trợ."
 }
+
+/**
+ * Banner trên ứng dụng của tổ chức không hoạt động (audit User Journey UJ-26, PO 12/11/2026 UQ13) — cùng câu với lỗi
+ * máy chủ trả, để người dùng biết vì sao thao tác bị chặn thay vì gặp lỗi rời rạc ở từng nút. `null` = không hiện.
+ */
+export function lifecycleBanner(status: string | null | undefined): { tone: "danger" | "warning"; message: string } | null {
+  if (status === "SUSPENDED" || status === "DELETED") return { tone: "danger", message: lifecycleBlockedMessage(status) }
+  if (status === "OFFBOARDING") return { tone: "warning", message: lifecycleBlockedMessage(status) }
+  return null
+}

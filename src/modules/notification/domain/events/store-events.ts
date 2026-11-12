@@ -14,6 +14,7 @@ import { STORE_OPERATION_EVENTS } from "./store-operation-events"
 import { STORE_DELIVERY_EVENTS } from "./store-delivery-events"
 import { INTERNAL_CHAT_EVENTS } from "./internal-chat-events"
 import { INTEGRATION_EVENTS } from "./integration-events"
+import { TENANT_LIFECYCLE_EVENTS } from "./tenant-lifecycle-events"
 
 export const STORE_EVENT_CONTRACT: TierEventContract = {
   tier: "STORE",
@@ -24,5 +25,6 @@ export const STORE_EVENT_CONTRACT: TierEventContract = {
     ...STORE_DELIVERY_EVENTS,
     ...INTERNAL_CHAT_EVENTS,
     ...INTEGRATION_EVENTS,
+    ...TENANT_LIFECYCLE_EVENTS,
   ],
 }

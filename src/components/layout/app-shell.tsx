@@ -10,6 +10,7 @@ import { LiveRegionProvider } from "@/components/ui/live-region"
 import { ToastProvider } from "@/components/ui/toast"
 import { FloatingLayerProvider } from "@/components/layout/floating-layer"
 import { ToolLockGuard } from "@/components/layout/tool-lock-guard"
+import { OrganizationLifecycleBanner } from "@/components/layout/organization-lifecycle-banner"
 import { UiStudioAvailabilityProvider } from "@/components/layout/ui-studio-availability"
 import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
 import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
@@ -79,6 +80,7 @@ function AppShellFrame({
                   tabIndex={-1}
                   className="min-h-0 min-w-0 flex-1 focus:outline-none pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0"
                 >
+                  <OrganizationLifecycleBanner />
                   {content}
                 </main>
               </MobileNavDrawer>
