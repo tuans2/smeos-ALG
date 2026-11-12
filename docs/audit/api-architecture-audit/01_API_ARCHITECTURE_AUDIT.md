@@ -764,3 +764,11 @@ Phát hiện ngoài phạm vi (có từ trước, chưa sửa — ghi rõ trong 
 - `GET /chat/public-limits` và `GET /chat/channels` không kiểm mã năng lực (test gác quyền xét theo tệp nên lệnh ghi cùng tệp che mất).
 - `GET /catalog-links/[slug]` tra link catalog không cần phiên, không giới hạn tần suất.
 - `GET /product-photo`, `GET /product-image-set` trả danh mục tĩnh không cần phiên.
+
+**Đợt 3 — đã làm (12/11/2026):** bọc **96 route** Thẻ chào (99 → **3** còn trong danh sách — chỉ còn 3 webhook/widget chat ngoại lệ; **538/541** route khai bằng `defineRoute`). Không đổi hợp đồng, không sửa tệp nào trong `src/modules/greeting-card/**` hay `src/components/greeting-card/**` (phạm vi luật B5) — bộ test Thẻ chào sẵn có chạy không sửa làm test khoá hành vi.
+- 59 route `greeting-card/*` bọc bằng công cụ; 7 route `greeting-card/orders/[id]/*` dùng chung hàm dựng `coordinatorHandler` (`_coordinator-handlers.ts`) — hàm dựng chuyển sang `defineRoute`.
+- 24 route công khai (`brochure`, `greeting-catalog`, `subcontract`) mở đầu bằng giới hạn tần suất theo IP → `kind: "public"` + `rateLimit`; 5 route giới hạn theo mã đơn sau khi đọc mã → `kind: "custom"` để giữ thứ tự.
+- `internal/chain-dispatch-sweep` (349 dòng): tách 8 tác vụ quét phụ sang `_side-sweeps.ts` (chạy tuần tự đúng thứ tự cũ, phản hồi giữ nguyên thứ tự trường) rồi bọc `custom` — route còn 329 dòng.
+- Lý do `capability: null` của 2 route đề xuất huỷ sửa tay: quyền kiểm trong handler (`ctx.capabilities.has`, `canDecideCancellation`), không phải ở use-case như công cụ đoán.
+
+Đợt 4 (envelope, 65 mục) và đợt 5 (lược đồ thân/query, snake_case) đổi hợp đồng — làm theo module, phía gọi sửa cùng commit; `/public`, `/integration` cần PO duyệt.
