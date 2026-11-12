@@ -86,7 +86,6 @@ notification/store-defaults
 notification/store-hard-locks
 occasions
 occasions/[id]
-orders/[id]
 orders/[id]/assign
 orders/[id]/deliver-before-pay
 orders/[id]/info-requests

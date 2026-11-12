@@ -104842,7 +104842,7 @@
       "patch": {
         "operationId": "updateOrder",
         "summary": "Sửa đơn / chuyển trạng thái sản xuất, giao hàng",
-        "description": "Không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` (422) — đi qua thu tiền, hoàn tất, huỷ.",
+        "description": "Không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` (422) — đi qua thu tiền, hoàn tất, huỷ. Đơn đã sang Điều phối không đổi được `status`/`productionStatus`/`deliveryStatus` (409) — đi qua `/coordinator/orders/{id}/stage`. Đơn hoàn tất / đã huỷ chỉ sửa `internalNote` (409).",
         "tags": [
           "Đơn hàng"
         ],
