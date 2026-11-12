@@ -3,7 +3,7 @@
 // trực quan, chỉ đọc (không chỉnh sửa/quản lý override ở đây — phần đó đã có
 // riêng ở /ho-so), hiển thị cho MỌI người dùng có tài khoản (không gate theo
 // capability). Nội dung 11 chức năng × 50 template lấy đúng theo
-// docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md mục 3 — không tự bịa mô tả.
+// docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md mục 3 — không tự bịa mô tả.
 //
 // Lưu ý đã đối chiếu thật với hệ thống file trước khi dùng: SSOT ghi màn
 // hình của Chức năng 10 (Analytics & Governance) là `/bao-cao`, nhưng thư

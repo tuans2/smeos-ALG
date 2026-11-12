@@ -54,7 +54,7 @@ export default function KnowledgeBasePage() {
 
   function handleAskCopilot(prompt: string) {
     // Kích hoạt Copilot toàn cục và tự động gửi câu hỏi mẫu
-    window.dispatchEvent(new CustomEvent("smeos:open-copilot", { detail: { prompt } }))
+    window.dispatchEvent(new CustomEvent("alg:open-copilot", { detail: { prompt } }))
   }
 
   return (

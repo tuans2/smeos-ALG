@@ -1,6 +1,6 @@
 # 02 — Cách ly dữ liệu và phân quyền
 
-smeOS là SaaS nhiều tổ chức trên một CSDL. Mọi bảng thuộc tổ chức có cột `organization_id` và chỉ mục
+ALG là SaaS nhiều tổ chức trên một CSDL. Mọi bảng thuộc tổ chức có cột `organization_id` và chỉ mục
 `@@index([organization_id])`. Cách ly được giữ ở bốn lớp: phiên, repository, Row Level Security, test.
 
 ## 1. Ngữ cảnh tổ chức

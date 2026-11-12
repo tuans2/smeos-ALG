@@ -1,6 +1,6 @@
 # 13 — Audit nhất quán xuyên 4 tầng (Giai đoạn 4)
 
-> Câu hỏi: bốn tầng **SaaS Mẹ → SaaS Ngành → ChainOS → StoreOS** có được biểu diễn **cùng một cách** ở mọi trục của hệ thống không, và tầng trên có thực sự quản được tầng dưới như thiết kế (`SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md`, `.agents/standards/smeos/01-tier-governance.md`) hay không.
+> Câu hỏi: bốn tầng **SaaS Mẹ → SaaS Ngành → ChainOS → StoreOS** có được biểu diễn **cùng một cách** ở mọi trục của hệ thống không, và tầng trên có thực sự quản được tầng dưới như thiết kế (`ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md`, `.agents/standards/smeos/01-tier-governance.md`) hay không.
 > Phương pháp: với mỗi trục, đọc mã nơi tầng được xác định và nơi quyết định được áp; so sánh giữa các trục. Phát hiện mới đánh số `ARC-033…ARC-040` (bổ sung vào `08`).
 
 ## 1. Ma trận đối chiếu: tầng × trục

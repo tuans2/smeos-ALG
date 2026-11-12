@@ -44,3 +44,29 @@ Quyết định của người giao việc ngày 12/11/2026: mức 3 (đổi to�
 - Phát hiện khi kiểm: trước khi sửa, phông chữ **không được nạp** (body nhận chuỗi gốc từ `@theme`, biến của `next/font` chỉ đặt trên body). Đã sửa bằng `className` của phông. Cách nạp Be Vietnam Pro cũ giống hệt nên nhiều khả năng lỗi có từ trước (chưa đối chiếu với `main`).
 - **Chưa chạy**: `test:tenant`, `test:platform`, `test:e2e:ux` — ảnh chụp chuẩn của e2e sẽ khác toàn bộ vì đổi màu, cần sinh lại trên CI sau khi PO duyệt.
 - Phông thương hiệu chỉ đến độ đậm 700: 623 chỗ dùng `font-extrabold`/`font-black` hiển thị ở 700 (khớp hướng dẫn "hạn chế Bold" của brand kit).
+
+## 5. Đổi tên toàn bộ sang ALG (quyết định 12/11/2026, lần 2)
+
+Đã đổi thêm:
+- Prompt AI và vai trợ lý; tiêu đề OpenAPI (sinh lại 4 tệp đặc tả), tiêu đề hợp đồng zod (sinh lại schema creative/content-engine); tên tổ chức QA, email QA mặc định `@avilotusgroup.com`; User-Agent; chuỗi trong worker; log script; chú thích mã; ghi chú trong manifest giai đoạn 1.
+- Component `AlgGlobalCopilot` (`alg-global-copilot.tsx`), kiểu `AlgTier`, sự kiện `alg:open-copilot`.
+- Tệp mẫu nhập hàng `ALG_Template_Master_Kho_San_Pham.xlsx` (sửa 4 ô tiêu đề, giữ 14 quy tắc kiểm dữ liệu); tên cột cũ vẫn được nhận.
+- Mã liên kết Telegram `ALG-…` (vẫn nhận `SMEOS-…`); bản ghi TXT tên miền riêng `_alg-verify` / `alg-verify=` (vẫn nhận bản ghi cũ cho tên miền đang chờ xác minh).
+- Tài liệu: 542 dòng trong 182 tệp; 65 tệp tài liệu đổi tên (`SMEOS_…`, `FloraOS…`, `FLORAOS_…` → `ALG_…`), cập nhật mọi liên kết. Không sửa `docs/archive/` (hồ sơ lịch sử), `docs/ui-baseline/` (báo cáo về chính việc đổi tên) và `CLAUDE.md` (PO sở hữu).
+- Luật kiểm bàn giao: mẫu chung `ALG_Template_*.xlsx` không tính là tệp của khách.
+
+Còn giữ — **cần quyết định riêng vì đổi sẽ gây gián đoạn**:
+
+| Định danh | Ví dụ | Đổi thì |
+|---|---|---|
+| Cookie phiên, cookie và header SSO | `smeos_session`, `floraos_session`, `floraos_sso`, `x-floraos-sso` | Mọi người dùng bị đăng xuất; SSO giữa các dịch vụ phải đổi đồng thời |
+| Vai trò, trigger, hàm trong DB | `smeos_app`, `smeos_worker`, `smeos_readonly`, `smeos_append_only_guard` | Cần migration mới (migration cũ không được sửa) và cấp lại quyền trên production |
+| Tên DB, dịch vụ Docker/Render | `smeos`, `smeos_test`, `smeos-web`, `smeos-worker` | Đổi cấu hình triển khai, `render.yaml` (PO duyệt) |
+| Biến môi trường | `FLORAOS_CORE_INTEGRATION_TOKEN`, `FLORAOS_DA_DOI_PYTHON` | Phải đặt lại trên mọi môi trường cùng lúc |
+| Khoá lưu trên trình duyệt, tiền tố job | `smeos_finalized_pitches_…`, `floraos_job_…` | Người dùng mất dữ liệu nháp đã lưu; job đang chạy mất liên kết |
+| Tên gói npm, thư mục `.agents/standards/smeos/` | `"name": "smeos"` | Không hiển thị cho người dùng |
+| Ghi chú nguồn gốc mã | "thu hoạch từ FloraOS v1", đường dẫn `FloraOS/floraos-web/…` | Là tên kho mã gốc — đổi sẽ sai lịch sử |
+| Tên chủ tài khoản billing mặc định | `CONG TY CONG NGHE SMEOS` (số tài khoản giả) | Cần tài khoản thật của ALG |
+| Tài khoản QA đã tạo | `test01@smeos.com` trên máy chủ | Mặc định mới chỉ áp cho lần tạo sau |
+
+Lệch có sẵn (không do đổi tên, chưa sửa): schema `coordinator` (`assemblySteps`) lệch mã ngay trên HEAD — `npm run check:schemas:coordinator` đỏ trước thay đổi này.

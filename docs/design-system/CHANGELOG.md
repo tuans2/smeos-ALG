@@ -1,6 +1,6 @@
-# smeOS Design System CHANGELOG
+# ALG Design System CHANGELOG
 
-Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ được ghi nhận tại đây theo chuẩn [Keep a Changelog](https://keepachangelog.com/vi/1.0.0/) và tuân thủ [Semantic Versioning](https://semver.org/lang/vi/).
+Tất cả các thay đổi đáng chú ý của ALG Design System sẽ được ghi nhận tại đây theo chuẩn [Keep a Changelog](https://keepachangelog.com/vi/1.0.0/) và tuân thủ [Semantic Versioning](https://semver.org/lang/vi/).
 
 ---
 
@@ -38,7 +38,7 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 - `npm run check:screen-contracts -- --check` trong job `web` của `ci.yml`; đỏ khi có trang thiếu contract hoặc chỉ có contract v1.
 
 #### Đã đổi
-- Bảng thuật ngữ duy nhất là `docs/dac-ta/ux-patterns/glossary.md`: gộp bảng khử thuật ngữ và động từ thao tác từ `SMEOS_UX_WRITING_GLOSSARY.md` (tài liệu đó chỉ còn giọng điệu và mẫu câu). Mâu thuẫn `Job` → "tác vụ" theo mã.
+- Bảng thuật ngữ duy nhất là `docs/dac-ta/ux-patterns/glossary.md`: gộp bảng khử thuật ngữ và động từ thao tác từ `ALG_UX_WRITING_GLOSSARY.md` (tài liệu đó chỉ còn giọng điệu và mẫu câu). Mâu thuẫn `Job` → "tác vụ" theo mã.
 - Lint R16 bắt thêm BOM, Master Index, PII, Control Tower, payload, tenant, M0–M5. 17 điểm có sẵn vào baseline ratchet (28 → 45).
 
 ## [1.3.1] - 2026-11-06
@@ -112,7 +112,7 @@ Số liệu đo ngày 03/11/2026; lệnh đo ở `13_RE_AUDIT_ENTERPRISE_REPORT.
 
 ### Milestone: Giai đoạn 3 — Enterprise Shell & Layout Architecture (S3-01 → S3-06)
 
-Đạt tiêu chuẩn **Commercial & Production Ready** toàn diện cho tầng Shell, Bố cục trang và Điều hướng của hệ thống smeOS theo quyết định kiến trúc `ADR-011` (D-UI-09, D-UI-10) và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
+Đạt tiêu chuẩn **Commercial & Production Ready** toàn diện cho tầng Shell, Bố cục trang và Điều hướng của hệ thống ALG theo quyết định kiến trúc `ADR-011` (D-UI-09, D-UI-10) và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
 
 ### Đã thêm & Nâng cấp (Added & Upgraded)
 - **Unified `AppShell` (S3-01)**:
@@ -153,7 +153,7 @@ Số liệu đo ngày 03/11/2026; lệnh đo ở `13_RE_AUDIT_ENTERPRISE_REPORT.
 
 ### Milestone: Giai đoạn 2 — Enterprise Component Architecture (C2-00 → C2-17)
 
-Đạt tiêu chuẩn **Commercial & Production Ready** cho tầng thư viện Component của smeOS Design System theo quyết định kiến trúc `ADR-011` và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
+Đạt tiêu chuẩn **Commercial & Production Ready** cho tầng thư viện Component của ALG Design System theo quyết định kiến trúc `ADR-011` và kế hoạch `docs/plan/ui-enterprise-upgrade.md`.
 
 ### Đã thêm (Added)
 - **`Button` (C2-01)**:

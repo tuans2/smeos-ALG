@@ -23,7 +23,7 @@ export const CUSTOMER_FILES = customerFilesPattern(undefined)
  * Mẫu nhập liệu chung của nền tảng — từ 12/11/2026 nền tảng mang thương hiệu ALG nên tên mẫu có "ALG",
  * nhưng đây không phải dữ liệu của khách hàng ALG.
  */
-export const PLATFORM_TEMPLATES = /^public\/templates\/ALG_Template_[^/]*\.xlsx$/
+export const PLATFORM_TEMPLATES = /(^|\/)ALG_Template_[^/]*\.xlsx$/
 
 /** Đường dẫn máy cá nhân trong nội dung tệp. */
 export const LOCAL_PATH = ["file://", "/Users/"].join("")

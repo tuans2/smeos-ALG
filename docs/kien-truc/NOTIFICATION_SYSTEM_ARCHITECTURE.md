@@ -1,5 +1,5 @@
 # KIẾN TRÚC HỆ THỐNG THÔNG BÁO (Notification System)
-## smeOS — Enterprise Grade, Multi-Tier, Multi-Role
+## ALG — Enterprise Grade, Multi-Tier, Multi-Role
 
 > **Mã văn bản:** `ARCH-NOTIFY-001`
 > **Ngày ban hành:** 27/10/2026 (PO xác nhận)
@@ -10,7 +10,7 @@
 
 ## 1. TỔNG QUAN
 
-Hệ thống Notification của smeOS vận hành theo ba nguyên tắc cốt lõi bất biến:
+Hệ thống Notification của ALG vận hành theo ba nguyên tắc cốt lõi bất biến:
 
 | Nguyên tắc | Hướng | Mô tả |
 |:---|:---:|:---|

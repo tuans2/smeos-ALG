@@ -1,7 +1,7 @@
 ---
 name: storage
 description: >-
-  Kiến trúc lưu trữ tệp SMEOS: StorageProvider port, khoá org/<org>/…, URL ký theo phương thức,
+  Kiến trúc lưu trữ tệp ALG: StorageProvider port, khoá org/<org>/…, URL ký theo phương thức,
   kiểm nội dung tải lên, registry nguồn tham chiếu, thùng rác 30 ngày, xoá vĩnh viễn + outbox,
   legal hold, đối soát, Kho dữ liệu v2. Kích hoạt khi ghi/đọc/xoá tệp, sửa src/modules/assets,
   src/modules/storage, api/v1/storage, worker ghi kho, hoặc route xuất dữ liệu.

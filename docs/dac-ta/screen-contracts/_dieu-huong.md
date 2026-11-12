@@ -3,7 +3,7 @@
 **Tuyến:** Toàn hệ thống `(app)` · **Tệp chính:** `src/components/layout/nav-model.ts`, `desktop-nav.tsx`, `bottom-nav.tsx`, `src/app/(app)/them/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T3.1–T3.9
 
 ## 1. Vai và mục đích
-- **Vai chính (03b):** Toàn bộ 14 vai trải nghiệm (Role UX) của FloraOS.
+- **Vai chính (03b):** Toàn bộ 14 vai trải nghiệm (Role UX) của ALG.
 - **Phạm vi:** organization / multi-tenant SaaS.
 - **Việc chính:** Cung cấp mô hình điều hướng một nguồn (SSOT), gom nhóm theo việc cần làm của người bán hoa (K5), ưu tiên việc chính theo vai (03b §5), gác hiển thị theo năng lực (RBAC), hỗ trợ tìm kiếm nhanh và thích ứng di động hoàn hảo.
 - **Câu hỏi chính:** "Tôi muốn vào chức năng nào nhanh nhất?"

@@ -1,6 +1,6 @@
 # CẨM NANG TRI THỨC VẬN HÀNH THẺ CHÀO MẪU HOA (SSOT KNOWLEDGE BASE)
 
-> **Tài liệu chuẩn mực (Single Source of Truth - SSOT)** về toàn bộ các tình huống nghiệp vụ thực tế, quy trình thao tác và hướng dẫn xử lý cho mọi vai trò (Điều hành, Sale, Điều phối, Khách hàng) trong chức năng **Thẻ Chào Mẫu Hoa (Greeting Card / Brochure Order & Tracking)** của nền tảng FloraOS.
+> **Tài liệu chuẩn mực (Single Source of Truth - SSOT)** về toàn bộ các tình huống nghiệp vụ thực tế, quy trình thao tác và hướng dẫn xử lý cho mọi vai trò (Điều hành, Sale, Điều phối, Khách hàng) trong chức năng **Thẻ Chào Mẫu Hoa (Greeting Card / Brochure Order & Tracking)** của nền tảng ALG.
 
 ---
 

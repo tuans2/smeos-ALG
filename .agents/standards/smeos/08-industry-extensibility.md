@@ -1,4 +1,4 @@
-# SMEOS · 08 · Plugin ngành & tính giá (đối chiếu code 30/10/2026)
+# ALG · 08 · Plugin ngành & tính giá (đối chiếu code 30/10/2026)
 
 Áp dụng của [universal/08](../universal/08-industry-extensibility.md). Nguồn: Industry Plugin SSOT (PO 17/10, `AGENTS.md` §Thêm ngành mới), Multi-Industry First (PO 24/10), chuẩn hoá đa ngành `7189612`, khung tính giá `1d4bfad`, API `59c0837`, màn `/tinh-gia` công cụ #31–#35 `1beccb4`.
 

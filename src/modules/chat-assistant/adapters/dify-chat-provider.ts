@@ -56,7 +56,7 @@ export class DifyChatProvider {
     const intent = detectUserIntent(input.query)
 
     // ─────────────────────────────────────────────────────────────────────────
-    // NHÁNH 1: HƯỚNG DẪN VẬN HÀNH SAAS FLORAOS (SaaS Help Copilot)
+    // NHÁNH 1: HƯỚNG DẪN VẬN HÀNH SAAS ALG (SaaS Help Copilot)
     // ─────────────────────────────────────────────────────────────────────────
     if (intent === "SAAS_HELP") {
       const kbMatch = querySaasKnowledge(input.query)

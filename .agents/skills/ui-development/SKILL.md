@@ -1,7 +1,7 @@
 ---
 name: ui-development
 description: >-
-  Quy tắc phát triển giao diện UI/UX cho FloraOS. Kích hoạt khi agent tạo/sửa
+  Quy tắc phát triển giao diện UI/UX cho ALG. Kích hoạt khi agent tạo/sửa
   React component, page layout, form, modal, hoặc bất kỳ file nào trong
   src/components/, src/app/(app)/, hoặc liên quan đến giao diện người dùng.
 ---
@@ -15,7 +15,7 @@ description: >-
 > Khi phần dưới mâu thuẫn với các tài liệu trên → tài liệu trên thắng.
 
 
-# UI Development — FloraOS
+# UI Development — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 

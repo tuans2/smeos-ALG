@@ -1,4 +1,4 @@
-# SMEOS · 10 · Mở rộng ngang & độ tin cậy (đối chiếu code 30/10/2026)
+# ALG · 10 · Mở rộng ngang & độ tin cậy (đối chiếu code 30/10/2026)
 
 Áp dụng của [universal/10](../universal/10-scalability.md). Hạ tầng (`render.yaml`): 1 web `smeos-web` + 3 worker (`media`, `video`, `vision`) gói `starter`, Postgres `basic-256mb`, Redis, cron `smeos-cron-dispatch-sweep`.
 

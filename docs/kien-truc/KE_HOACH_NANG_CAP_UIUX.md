@@ -1,4 +1,4 @@
-# KẾ HOẠCH THỰC THI CHI TIẾT — NÂNG CẤP UI/UX FLORAOS-CORE (bản giao việc cho AI Agent)
+# KẾ HOẠCH THỰC THI CHI TIẾT — NÂNG CẤP UI/UX ALG-CORE (bản giao việc cho AI Agent)
 
 **Mã định danh:** `DOC-05-KE-HOACH-NANG-CAP-UIUX` · **Phiên bản:** 2.0 (26/09/2026, thay bản 1.0 cùng ngày)
 **Trạng thái:** SUPPORTING (Level 5). PO duyệt từng giai đoạn trước khi agent viết mã.
@@ -10,8 +10,8 @@
 | **03-UX** | `docs/dac-ta/03-ux-architecture.md` | Khung UX, bản đồ màn, trạng thái (§15), mobile-first (§17), Macro→Micro (§18) |
 | **03b** | `docs/dac-ta/03b-role-ux.md` | 14 vai trải nghiệm (CANONICAL) |
 | **03a** | `docs/archive/drafts/FLORAOS_UX_CONSTITUTION_DRAFT.md`, sẽ thành `docs/dac-ta/03a-ux-constitution.md` ở T0.2 | Chuẩn chất lượng UX toàn cục |
-| **Contract** | `docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md` v1.1 | Khung audit theo vai |
-| **SSOT-TPL** | `docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md` | 5 họ template, component dùng chung |
+| **Contract** | `docs/kien-truc/ALG_ROLE_UX_EXECUTION_CONTRACT.md` v1.1 | Khung audit theo vai |
+| **SSOT-TPL** | `docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md` | 5 họ template, component dùng chung |
 | **AGENTS** | `AGENTS.md` | Quy ước repo, Bẫy |
 
 ---
@@ -238,7 +238,7 @@ UX-7  T7.1–T7.3 sau UX-1; T7.4 sau T7.1–T7.3; T7.5 cuối cùng
      ```yaml
      - id: "DOC-03-UX-CONSTITUTION"
        path: "docs/dac-ta/03a-ux-constitution.md"
-       title: "FloraOS UX Constitution — Chuẩn chất lượng UX toàn cục"
+       title: "ALG UX Constitution — Chuẩn chất lượng UX toàn cục"
        domain: "UX/UI"
        layer: "Level 3"
        purpose: "Chuẩn chất lượng UX toàn cục: thứ bậc thông tin L0–L4, mật độ, content budget, trạng thái, WCAG 2.2, Screen Contract, UX Lint, định nghĩa Production/Commercial-ready"
@@ -836,7 +836,7 @@ UX-7  T7.1–T7.3 sau UX-1; T7.4 sau T7.1–T7.3; T7.5 cuối cùng
 - **Không làm:** tự động hành động thay người dùng.
 
 #### T6.11 — Ngoại lệ và thông báo P0–P3 (#166, #163a) · L · **Phụ thuộc:** ĐP-4c
-- **Làm theo thứ tự:** đặc tả trường (`FLORAOS_COORDINATOR_FIELD_SPEC.md`) → đặc tả 07 → lược đồ → API `GET /coordinator/exceptions` (danh sách, lọc theo trạng thái) → khối "Ngoại lệ đang mở" ở P0 của `store_manager` + Control Tower. Bảng thông báo: đặc tả riêng, PO duyệt.
+- **Làm theo thứ tự:** đặc tả trường (`ALG_COORDINATOR_FIELD_SPEC.md`) → đặc tả 07 → lược đồ → API `GET /coordinator/exceptions` (danh sách, lọc theo trạng thái) → khối "Ngoại lệ đang mở" ở P0 của `store_manager` + Control Tower. Bảng thông báo: đặc tả riêng, PO duyệt.
 - **Chỉ trường có trong Master Index** (Contract §13).
 
 #### T6.12 — Pipeline Sales (#164) · L · **Cổng:** PO duyệt thiết kế dữ liệu

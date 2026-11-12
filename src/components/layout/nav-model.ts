@@ -1,6 +1,6 @@
 /**
  * Mô hình điều hướng một nguồn (Single Source of Truth) — đặc tả 03-UX §3, 03b §5.
- * Tái cấu trúc theo SRP và chuẩn hóa 4 tầng kiến trúc (SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md).
+ * Tái cấu trúc theo SRP và chuẩn hóa 4 tầng kiến trúc (ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md).
  *
  * Luật thuần — không import React, không import icon. Icon gắn ở tầng hiển thị qua `iconKey`.
  */

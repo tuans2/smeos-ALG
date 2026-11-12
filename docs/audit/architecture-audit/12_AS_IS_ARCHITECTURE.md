@@ -1,7 +1,7 @@
-# 12 — Kiến trúc hiện trạng (As-Is) của SMEOS
+# 12 — Kiến trúc hiện trạng (As-Is) của ALG
 
-> Mục đích: trả lời "SMEOS **đang có** gì", không đánh giá đúng/sai (đánh giá ở `03`, `04`, `13`). Mô tả theo mã thật ở commit `c27f39e1`; khi tài liệu nói khác mã, tài liệu này theo mã.
-> Phạm vi: repo `antranhub22/smeOS`. Các repo khác chỉ được mô tả ở điểm tiếp giáp với `smeOS` (xem `14`).
+> Mục đích: trả lời "ALG **đang có** gì", không đánh giá đúng/sai (đánh giá ở `03`, `04`, `13`). Mô tả theo mã thật ở commit `c27f39e1`; khi tài liệu nói khác mã, tài liệu này theo mã.
+> Phạm vi: repo `antranhub22/smeOS`. Các repo khác chỉ được mô tả ở điểm tiếp giáp với `ALG` (xem `14`).
 
 ## 1. Bối cảnh hệ thống
 
@@ -10,7 +10,7 @@
    Người vận hành SaaS  ──► Console /van-hanh        │
    Khách cuối           ──► Trang công khai /c /g /b /s /bst /ch, đặt hàng, chat AI
    Đối tác gia công     ──► /subcontract/[orderCode] (link ký HMAC), /cua-hang
-   Facebook / Zalo      ──► Webhook chat (ký HMAC)   │──►  smeOS (Next.js 16, 1 tiến trình web)
+   Facebook / Zalo      ──► Webhook chat (ký HMAC)   │──►  ALG (Next.js 16, 1 tiến trình web)
    SePay                ──► Webhook/khớp chuyển khoản│        │
    LocalBudd, SocialFlow──► /api/v1/integration/*    │        ├─► PostgreSQL 16 (dữ liệu + hàng đợi job)
                             (token máy-máy, JWT SSO) ┘        ├─► Redis (đếm rate-limit)

@@ -1,6 +1,6 @@
 # Kế hoạch sẵn sàng bàn giao — nhóm việc làm ngay
 
-> Phạm vi: các việc thực hiện trước hoặc cùng lúc bàn giao repo smeOS cho khách hàng, sau khi PR #107 (khắc phục nhánh Enterprise UI/UX) đã hợp nhất vào `main`.
+> Phạm vi: các việc thực hiện trước hoặc cùng lúc bàn giao repo ALG cho khách hàng, sau khi PR #107 (khắc phục nhánh Enterprise UI/UX) đã hợp nhất vào `main`.
 > Chủ sở hữu: Product Owner. Nhánh thực thi: `claude/zen-carson-os8a8r`, kết thúc bằng một PR vào `main`.
 > Hạn bàn giao: 10/11/2026. Thời lượng: 5 ngày làm việc (mục 8). Cách dùng: mỗi commit tick đúng dòng của nó trong cùng commit và điền mã commit vào bảng mục 9.
 

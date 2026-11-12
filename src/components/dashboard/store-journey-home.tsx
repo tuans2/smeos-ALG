@@ -62,7 +62,7 @@ export function StoreJourneyHome() {
 
     if (journey.id === "floraos-copilot-chat" || journey.id === "smeos-copilot-chat") {
       if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("smeos:open-copilot"))
+        window.dispatchEvent(new CustomEvent("alg:open-copilot"))
       }
       return
     }

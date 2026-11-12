@@ -2,13 +2,13 @@
 name: copywriting-governance
 description: >-
   Quy chuẩn và quy trình toàn diện về quản trị nội dung UI, kiểm soát ngôn từ thương mại
-  và xây dựng kiến trúc Đa ngôn ngữ (i18n) đạt chuẩn SSOT cấp độ 2 cho FloraOS và các
+  và xây dựng kiến trúc Đa ngôn ngữ (i18n) đạt chuẩn SSOT cấp độ 2 cho ALG và các
   dự án SaaS. Kích hoạt khi agent rà soát, viết mới hoặc chuẩn hóa câu chữ giao diện,
   loại bỏ jargon kỹ thuật (BOM, Master Index, PII, mã R8), thiết lập từ điển tập trung
   (src/lib/i18n/locales/), hoặc tích hợp i18n hook useI18n() vào components.
 ---
 
-> **Cập nhật 30/10/2026 — đọc trước.** Đối chiếu code + trạng thái: `.agents/standards/smeos/04-i18n.md`; nguyên tắc chung: `.agents/standards/universal/04-i18n.md`; SSOT: `docs/dac-ta/SMEOS_I18N_STANDARD.md` §0.
+> **Cập nhật 30/10/2026 — đọc trước.** Đối chiếu code + trạng thái: `.agents/standards/smeos/04-i18n.md`; nguyên tắc chung: `.agents/standards/universal/04-i18n.md`; SSOT: `docs/dac-ta/ALG_I18N_STANDARD.md` §0.
 > - Định dạng chỉ qua `src/lib/i18n/formatters.ts` (`formatCurrency` vi → `"350.000 ₫"`); ratchet `tests/unit/architecture/i18n-direct-intl-ratchet.test.ts`.
 > - Thêm khóa vào **cả** `vi` và `en` — `i18n-integrity.test.ts` so mọi cấp khóa.
 > - **Chưa có, không dùng:** `tp()` số nhiều; mã lỗi API `{ code, message }`.
@@ -17,7 +17,7 @@ description: >-
 
 # UI Copywriting Governance & Full i18n SSOT Architecture (Cấp độ 2)
 
-> **Mục đích**: Hướng dẫn chuẩn hóa ngôn từ thương mại, xóa bỏ biệt ngữ kỹ thuật và thiết lập Kiến trúc Đa ngôn ngữ (Full i18n Architecture) theo nguyên tắc **Single Source of Truth (SSOT) — "Sửa một chỗ, cập nhật toàn bộ hệ thống"**. Áp dụng cho FloraOS và có thể tái sử dụng cho bất kỳ dự án SaaS nào trên Antigravity IDE.
+> **Mục đích**: Hướng dẫn chuẩn hóa ngôn từ thương mại, xóa bỏ biệt ngữ kỹ thuật và thiết lập Kiến trúc Đa ngôn ngữ (Full i18n Architecture) theo nguyên tắc **Single Source of Truth (SSOT) — "Sửa một chỗ, cập nhật toàn bộ hệ thống"**. Áp dụng cho ALG và có thể tái sử dụng cho bất kỳ dự án SaaS nào trên Antigravity IDE.
 
 ---
 

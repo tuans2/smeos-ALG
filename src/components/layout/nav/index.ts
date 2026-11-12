@@ -1,6 +1,6 @@
 /**
  * Hệ thống Điều hướng 4 Tầng ALG (Navigation Dispatcher)
- * Chuẩn hóa theo SSOT SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md
+ * Chuẩn hóa theo SSOT ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md
  */
 
 import { isChainTier, tierOf } from "@/core/governance/tier-of"

@@ -1,4 +1,4 @@
-# SMEOS · 01 · Quản trị 4 tầng (đối chiếu code 30/10/2026)
+# ALG · 01 · Quản trị 4 tầng (đối chiếu code 30/10/2026)
 
 Áp dụng của [universal/01](../universal/01-tiered-saas-governance.md). Nguồn quyết định: PO 27/10/2026 (`f56024c`, `99db1df`), lưu ma trận `a96d224`, áp vào bán hàng `f2905fe`, khoá công cụ `3b11d05`, xem trước tầng `01203b9`.
 

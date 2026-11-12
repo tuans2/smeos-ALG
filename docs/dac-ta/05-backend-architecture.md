@@ -32,7 +32,7 @@ floraos-core/
 
 Mọi module đủ **bốn** thư mục. `mapping-engine` của LocalBudd hiện chỉ có `adapters` — không lặp lại lỗi đó.
 
-`domain/` không import Prisma. Đó là điều kiện để test luật nghiệp vụ chạy không cần cơ sở dữ liệu, và là lý do bộ test giá của FloraOS chuyển sang được nguyên vẹn.
+`domain/` không import Prisma. Đó là điều kiện để test luật nghiệp vụ chạy không cần cơ sở dữ liệu, và là lý do bộ test giá của ALG chuyển sang được nguyên vẹn.
 
 ## 2. Bốn lớp, một chiều phụ thuộc
 

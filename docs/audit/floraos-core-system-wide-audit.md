@@ -1,4 +1,4 @@
-# Báo cáo Audit Toàn diện Toàn bộ Hệ thống FloraOS Core (System-Wide Baseline Specification)
+# Báo cáo Audit Toàn diện Toàn bộ Hệ thống ALG Core (System-Wide Baseline Specification)
 
 > **Mã tài liệu**: `AUDIT-FLORAOS-CORE-SYSTEM-WIDE-2026-10`  
 > **Thời điểm thẩm tra**: 06/10/2026  
@@ -11,7 +11,7 @@
 ## 1. TỔNG QUAN KIẾN TRÚC TOÀN HỆ THỐNG
 
 ### 1.1 Khái quát Vận hành & Mô hình Saas
-FloraOS là nền tảng SaaS đa khách thuê (Multi-tenant B2B) chuyên sâu cho ngành hoa tươi và điện hoa tại Việt Nam, kết hợp tự động hóa vận hành cửa hàng với trí tuệ nhân tạo (AI Vision, AI Content, AI Video, AI Chat, Market Intelligence).
+ALG là nền tảng SaaS đa khách thuê (Multi-tenant B2B) chuyên sâu cho ngành hoa tươi và điện hoa tại Việt Nam, kết hợp tự động hóa vận hành cửa hàng với trí tuệ nhân tạo (AI Vision, AI Content, AI Video, AI Chat, Market Intelligence).
 
 Hệ thống hoạt động trên nguyên tắc **Clean Architecture 4 tầng** (`domain/`, `use-cases/`, `infra/`, `adapters/`), đảm bảo:
 - **Tầng Domain thuần khiết**: 100% không import Prisma hay thư viện ngoài, cho phép kiểm thử luật nghiệp vụ không phụ thuộc CSDL.
@@ -31,11 +31,11 @@ Hệ thống hoạt động trên nguyên tắc **Clean Architecture 4 tầng** 
 
 ## 2. MA TRẬN PHÂN TÍCH 10 TRỤ CỘT CHỨC NĂNG CỐT LÕI
 
-Dưới đây là đánh giá line-by-line hiện trạng 10 phân hệ nghiệp vụ chính của FloraOS Core:
+Dưới đây là đánh giá line-by-line hiện trạng 10 phân hệ nghiệp vụ chính của ALG Core:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 FLORAOS CORE ARCHITECTURE                               │
+│                                 ALG CORE ARCHITECTURE                               │
 ├────────────────────────┬───────────────────────────┬───────────────────────────────────┤
 │  1. SMART INGESTION    │    2. CREATIVE & CONTENT  │     3. COMMERCIAL & SALES         │
 │  - M01a Vision BOM     │    - Creative Studio (14) │     - M01c Sales Pitch A6         │
@@ -196,7 +196,7 @@ Dưới đây là đánh giá line-by-line hiện trạng 10 phân hệ nghiệp
 
 ## 4. DANH MỤC NỢ KỸ THUẬT & KHUYẾN NGHỊ NÂNG CẤP ENTERPRISE
 
-Từ kết quả thẩm định line-by-line, dưới đây là các khuyến nghị quan trọng nhất để đưa FloraOS Core lên chuẩn **Thương Mại Cấp Doanh Nghiệp (Enterprise Commercial-Ready)**:
+Từ kết quả thẩm định line-by-line, dưới đây là các khuyến nghị quan trọng nhất để đưa ALG Core lên chuẩn **Thương Mại Cấp Doanh Nghiệp (Enterprise Commercial-Ready)**:
 
 ### 4.1 Khắc phục Vi phạm SRP (Tệp giao diện quá giới hạn 350 dòng)
 Các file giao diện trung tâm đang gánh quá nhiều logic và vượt xa quy định code hygiene:

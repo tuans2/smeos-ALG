@@ -1,6 +1,6 @@
 /**
  * Đăng ký Hành động tiếp theo (Next Actions Registry) — Kiến trúc Journey-First.
- * Nguồn đặc tả: FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§2.3, §19)
+ * Nguồn đặc tả: ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§2.3, §19)
  *
  * Luật Clean Architecture: Thuần túy không import React, không import Prisma.
  * UX Lint R8: Không chứa mã kỹ thuật (M01a, M04b, RBAC...) trong nhãn/mô tả.

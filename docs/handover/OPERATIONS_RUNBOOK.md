@@ -1,4 +1,4 @@
-# Sổ tay vận hành smeOS (bàn giao)
+# Sổ tay vận hành ALG (bàn giao)
 
 Bản nháp bàn giao 28/10/2026 — soạn từ mã nguồn (`render.yaml`, `package.json`, `.env.example`, `CLAUDE.md`) và kết quả audit (`docs/audit/`). Mục đánh dấu **[CẦN XÁC NHẬN]** chưa có bằng chứng trong repo; chủ sản phẩm điền trước khi giao cho khách.
 

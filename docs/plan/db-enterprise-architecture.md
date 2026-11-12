@@ -1,9 +1,9 @@
-# Kế hoạch hoàn thiện kiến trúc CSDL smeOS — Production · Commercial · Enterprise
+# Kế hoạch hoàn thiện kiến trúc CSDL ALG — Production · Commercial · Enterprise
 
 - Trạng thái: `PROPOSED` — lập 05/11/2026. Chuyển `ACTIVE` khi PO duyệt ADR-012…016 (mục 0).
 - Quyết định nền: `docs/adr/ADR-012.md` (mô hình tầng) · `ADR-013.md` (cách ly, toàn vẹn) · `ADR-014.md` (dữ liệu cá nhân) ·
   `ADR-015.md` (vận hành) · `ADR-016.md` (cô lập theo gói).
-- Đầu vào: báo cáo "Audit kiến trúc CSDL smeOS 4 tầng" (G1–G17, 05/11/2026) · `docs/audit/architecture-audit/15_PO_DECISION_REGISTER.md`
+- Đầu vào: báo cáo "Audit kiến trúc CSDL ALG 4 tầng" (G1–G17, 05/11/2026) · `docs/audit/architecture-audit/15_PO_DECISION_REGISTER.md`
   · `16_IMPLEMENTATION_PLAN.md` / `18_IMPLEMENTATION_CHECKLIST.md` (các mục P1-01, P1-02, P2-A2…A5, P2-F1…F3, P3-03, P3-09
   được kế hoạch này thay thế hoặc chi tiết hoá — đánh dấu ở cột "Thay").
 - Cách giao: mỗi ô checklist một PR (D-42). Mục **[SCHEMA]** cần PO duyệt từng PR (D-29); mục **[VẬN HÀNH]** đổi

@@ -97,4 +97,4 @@ tạo. Điều hành và người được giao quản lý mọi chi nhánh th�
 
 ## 9.14 Đăng nhập một lần
 
-Đã đăng nhập smeOS thì mở các ứng dụng liên kết của hệ thống không phải đăng nhập lại. Mỗi lần mở, phiên liên kết có hiệu lực 15 phút.
+Đã đăng nhập ALG thì mở các ứng dụng liên kết của hệ thống không phải đăng nhập lại. Mỗi lần mở, phiên liên kết có hiệu lực 15 phút.

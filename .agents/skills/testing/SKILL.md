@@ -1,11 +1,11 @@
 ---
 name: testing
 description: >-
-  Quy tắc testing cho FloraOS. Kích hoạt khi agent viết test, debug test failure,
+  Quy tắc testing cho ALG. Kích hoạt khi agent viết test, debug test failure,
   cấu hình Vitest/Playwright, hoặc cần chạy test suite (unit, tenant, e2e).
 ---
 
-# Testing — FloraOS
+# Testing — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 
@@ -32,7 +32,7 @@ describe("myAction", () => {
 })
 ```
 
-### Tenant isolation test (Chuẩn FloraOS: 404 chứ không 403)
+### Tenant isolation test (Chuẩn ALG: 404 chứ không 403)
 ```typescript
 // tests/tenant/<resource>.test.ts — khuôn thật, xem tests/tenant/greeting-card.test.ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest"

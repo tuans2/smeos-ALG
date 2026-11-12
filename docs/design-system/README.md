@@ -1,8 +1,8 @@
-# smeOS Design System — Single Source of Truth (SSOT)
+# ALG Design System — Single Source of Truth (SSOT)
 
 > **Cấp thẩm quyền:** `CANONICAL` · **Cấp bậc tài liệu:** `Level 3` · **Phiên bản:** `1.3.3` (theo ADR-011 D-UI-12; lịch sử ở `CHANGELOG.md`)  
 > **Chủ quản:** Product Owner / Lead UI-UX Architect  
-> **Nguyên tắc cốt lõi:** **Code là nguồn sự thật**. Tài liệu này đóng vai trò chỉ mục trung tâm và hợp đồng quy chuẩn (Contract) cho toàn bộ giao diện của nền tảng SaaS Đa ngành SMEOS.
+> **Nguyên tắc cốt lõi:** **Code là nguồn sự thật**. Tài liệu này đóng vai trò chỉ mục trung tâm và hợp đồng quy chuẩn (Contract) cho toàn bộ giao diện của nền tảng SaaS Đa ngành ALG.
 
 ---
 

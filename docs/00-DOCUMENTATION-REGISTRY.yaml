@@ -9,8 +9,8 @@ documents:
   # LEVEL 1: MASTER STRATEGY & SYSTEM STATUS
   # =========================================================================
   - id: "DOC-01-V2-TARGET-ARCH"
-    path: "docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"
-    title: "FloraOS SaaS Target Architecture V2"
+    path: "docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"
+    title: "ALG SaaS Target Architecture V2"
     domain: "Master Strategy"
     layer: "Level 1"
     purpose: "Định hướng kiến trúc tổng thể toàn hệ sinh thái, ranh giới module, lộ trình V2 (Thắng tuyệt đối mọi đặc tả khác)"
@@ -33,7 +33,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Engineering Lead"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-01-REMEDIATION-ENTERPRISE-UI"
@@ -66,7 +66,7 @@ documents:
 
   - id: "DOC-01-CONTEXT"
     path: "CONTEXT.md"
-    title: "Bối cảnh sản phẩm smeOS"
+    title: "Bối cảnh sản phẩm ALG"
     domain: "Master Strategy"
     layer: "Level 2"
     purpose: "Bản đồ nghiệp vụ một trang cho agent và người mới: sản phẩm, mô hình 4 tầng, khối nghiệp vụ, thuật ngữ, chỉ mục nguồn chi tiết. Không phải SSOT — mâu thuẫn thì tin nguồn được trỏ tới và mã"
@@ -75,7 +75,7 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md", "docs/kien-truc/TRANG_THAI.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md", "docs/kien-truc/TRANG_THAI.md"]
     supersedes: []
 
   - id: "DOC-01-QUYET-DINH-RS"
@@ -93,8 +93,8 @@ documents:
     supersedes: []
 
   - id: "DOC-01-V2-3-HARDENING-PATCH"
-    path: "docs/kien-truc/Nâng cấp tasks/FloraOS_Core_v2_3_FINAL_Hardening_Patch.md"
-    title: "FloraOS Core Architecture Final Hardening Patch (v2.2 → v2.3)"
+    path: "docs/kien-truc/Nâng cấp tasks/ALG_Core_v2_3_FINAL_Hardening_Patch.md"
+    title: "ALG Core Architecture Final Hardening Patch (v2.2 → v2.3)"
     domain: "Master Architecture"
     layer: "Level 1"
     purpose: "Đặc tả chuẩn hóa Journey UX Contract v2, Decision Ownership & Registry, Fact PROJECTED/INDEPENDENT, và các phán quyết ADR-001/006"
@@ -103,11 +103,11 @@ documents:
     canonical: true
     ssot: true
     owner: "Chief Architect / Product Owner"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-MSC-00-SOURCE"
-    path: "docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/00_TAI_LIEU_GOC.md"
+    path: "docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/00_TAI_LIEU_GOC.md"
     title: "Marketing & Sales Center — tài liệu kiến trúc nghiệp vụ gốc (PO 01/11/2026)"
     domain: "Marketing & Sales Center"
     layer: "Level 2"
@@ -117,11 +117,11 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-MSC-01-ASSESSMENT"
-    path: "docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/01_DANH_GIA_DONG_BO.md"
+    path: "docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/01_DANH_GIA_DONG_BO.md"
     title: "Đánh giá đồng bộ Marketing & Sales Center với hệ thống"
     domain: "Marketing & Sales Center"
     layer: "Level 2"
@@ -131,11 +131,11 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-MSC-02-ASSET-CATALOG"
-    path: "docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/02_DANH_MUC_ASSET.md"
+    path: "docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/02_DANH_MUC_ASSET.md"
     title: "Danh mục 77 asset + Bộ nhận diện thương hiệu"
     domain: "Marketing & Sales Center"
     layer: "Level 2"
@@ -145,11 +145,11 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-MSC-03-PLAN"
-    path: "docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/03_KE_HOACH_TRIEN_KHAI.md"
+    path: "docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/03_KE_HOACH_TRIEN_KHAI.md"
     title: "Kế hoạch triển khai Marketing & Sales Center trên /cong-cu"
     domain: "Marketing & Sales Center"
     layer: "Level 2"
@@ -159,7 +159,7 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   # =========================================================================
@@ -176,7 +176,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Product Manager"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-02-TECH-REQ"
@@ -204,12 +204,12 @@ documents:
     canonical: true
     ssot: true
     owner: "Infrastructure Lead"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-02-4TIER-NAV-SSOT"
-    path: "docs/kien-truc/SMEOS_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md"
-    title: "smeOS 4-Tier Architecture & Navigation SSOT"
+    path: "docs/kien-truc/ALG_4_TIER_ARCHITECTURE_AND_NAVIGATION_SSOT.md"
+    title: "ALG 4-Tier Architecture & Navigation SSOT"
     domain: "Master Architecture & Navigation"
     layer: "Level 2"
     purpose: "Đặc tả chuẩn hóa kiến trúc 4 tầng (SaaS Mother, SaaS Ngành Affiliate, ChainOS, StoreOS) và ma trận cấu trúc điều hướng sidebar"
@@ -218,12 +218,12 @@ documents:
     canonical: true
     ssot: true
     owner: "Product Owner / Chief Architect"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md", "docs/dac-ta/03b-role-ux.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md", "docs/dac-ta/03b-role-ux.md"]
     supersedes: []
 
   - id: "DOC-02-PRODUCT-JOURNEY"
-    path: "docs/dac-ta/FLORAOS_PRODUCT_TO_MARKET_USER_JOURNEY.md"
-    title: "FloraOS Product-to-Market User Journey (14 Chặng)"
+    path: "docs/dac-ta/ALG_PRODUCT_TO_MARKET_USER_JOURNEY.md"
+    title: "ALG Product-to-Market User Journey (14 Chặng)"
     domain: "Product UX"
     layer: "Level 2"
     purpose: "Đặc tả hành trình khép kín 14 bước từ ảnh chụp sản phẩm hoa tươi đến bán hàng và tối ưu doanh thu"
@@ -236,8 +236,8 @@ documents:
     supersedes: []
 
   - id: "DOC-02-BUSINESS-PROFILE-SPEC"
-    path: "docs/dac-ta/FLORAOS_BUSINESS_PROFILE_AND_INPUT_SPEC.md"
-    title: "FloraOS Business Profile & Raw Input Specification"
+    path: "docs/dac-ta/ALG_BUSINESS_PROFILE_AND_INPUT_SPEC.md"
+    title: "ALG Business Profile & Raw Input Specification"
     domain: "Product Data Architecture"
     layer: "Level 2"
     purpose: "Đặc tả kiến trúc và cấu trúc đầy đủ Hồ sơ Cửa hàng (business_profiles + brand_profiles), toàn bộ trường thông tin, phân tầng nguyên liệu đầu vào (ảnh, video, văn bản) và cơ chế hợp nhất tạo nội dung đa kênh"
@@ -249,7 +249,7 @@ documents:
     dependencies:
       - "docs/dac-ta/00-PRD.md"
       - "docs/dac-ta/07-database-specification.md"
-      - "docs/dac-ta/FLORAOS_PRODUCT_TO_MARKET_USER_JOURNEY.md"
+      - "docs/dac-ta/ALG_PRODUCT_TO_MARKET_USER_JOURNEY.md"
     supersedes: []
 
   - id: "DOC-02-FE-ARCH"
@@ -382,7 +382,7 @@ documents:
     supersedes: []
 
   - id: "DOC-03-PRODUCT-CATALOG-GOVERNANCE"
-    path: "docs/dac-ta/FLORAOS_PRODUCT_CATALOG_GOVERNANCE_SPEC.md"
+    path: "docs/dac-ta/ALG_PRODUCT_CATALOG_GOVERNANCE_SPEC.md"
     title: "Quản trị danh mục sản phẩm theo vai trò"
     domain: "Products / RBAC"
     layer: "Level 3"
@@ -410,7 +410,7 @@ documents:
     supersedes: []
 
   - id: "DOC-03-TEMPLATE-SSOT"
-    path: "docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md"
+    path: "docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md"
     title: "Template System SSOT Specification"
     domain: "Template System"
     layer: "Level 3"
@@ -420,11 +420,11 @@ documents:
     canonical: true
     ssot: true
     owner: "Design System Lead"
-    dependencies: ["docs/kien-truc/FLORAOS_TEMPLATE_ENGINE_ARCHITECTURE.md"]
+    dependencies: ["docs/kien-truc/ALG_TEMPLATE_ENGINE_ARCHITECTURE.md"]
     supersedes: []
 
   - id: "DOC-03-TEMPLATE-ENGINE-ARCH"
-    path: "docs/kien-truc/FLORAOS_TEMPLATE_ENGINE_ARCHITECTURE.md"
+    path: "docs/kien-truc/ALG_TEMPLATE_ENGINE_ARCHITECTURE.md"
     title: "Template Engine Clean Architecture"
     domain: "Template System"
     layer: "Level 3"
@@ -438,7 +438,7 @@ documents:
     supersedes: []
 
   - id: "DOC-03-M04-IMAGE-OPTIMIZER-FULL"
-    path: "docs/kien-truc/M04_FLORAOS_PRODUCT_IMAGE_OPTIMIZER_FULL.md"
+    path: "docs/kien-truc/M04_ALG_PRODUCT_IMAGE_OPTIMIZER_FULL.md"
     title: "M04 Product Image Optimizer Full Specification"
     domain: "Module M04"
     layer: "Level 3"
@@ -452,7 +452,7 @@ documents:
     supersedes: []
 
   - id: "DOC-03-M04-CREATIVE-STUDIO-ARCH"
-    path: "docs/kien-truc/FLORAOS_CREATIVE_STUDIO_ARCHITECTURE.md"
+    path: "docs/kien-truc/ALG_CREATIVE_STUDIO_ARCHITECTURE.md"
     title: "Creative Studio Architecture (Chặng 01–14)"
     domain: "Module M04"
     layer: "Level 3"
@@ -462,11 +462,11 @@ documents:
     canonical: true
     ssot: true
     owner: "Media AI Lead"
-    dependencies: ["docs/kien-truc/M04_FLORAOS_PRODUCT_IMAGE_OPTIMIZER_FULL.md"]
+    dependencies: ["docs/kien-truc/M04_ALG_PRODUCT_IMAGE_OPTIMIZER_FULL.md"]
     supersedes: []
 
   - id: "DOC-03-M04-CREATIVE-IO-SPEC"
-    path: "docs/dac-ta/FLORAOS_CREATIVE_STUDIO_IO_SPEC.md"
+    path: "docs/dac-ta/ALG_CREATIVE_STUDIO_IO_SPEC.md"
     title: "Creative Studio I/O Specification (Chặng 01–14)"
     domain: "Module M04"
     layer: "Level 3"
@@ -476,7 +476,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Media AI Lead"
-    dependencies: ["docs/kien-truc/FLORAOS_CREATIVE_STUDIO_ARCHITECTURE.md"]
+    dependencies: ["docs/kien-truc/ALG_CREATIVE_STUDIO_ARCHITECTURE.md"]
     supersedes: []
 
   - id: "DOC-03-M04-CREATIVE-STAGE-SCHEMAS"
@@ -490,11 +490,11 @@ documents:
     canonical: true
     ssot: false
     owner: "Media AI Lead"
-    dependencies: ["docs/dac-ta/FLORAOS_CREATIVE_STUDIO_IO_SPEC.md"]
+    dependencies: ["docs/dac-ta/ALG_CREATIVE_STUDIO_IO_SPEC.md"]
     supersedes: []
 
   - id: "DOC-03-M04-CREATIVE-JOURNEY"
-    path: "docs/dac-ta/FLORAOS_CREATIVE_STUDIO_JOURNEY.md"
+    path: "docs/dac-ta/ALG_CREATIVE_STUDIO_JOURNEY.md"
     title: "Creative Studio User Journey Specification (Chặng 01–14)"
     domain: "Module M04"
     layer: "Level 3"
@@ -504,11 +504,11 @@ documents:
     canonical: true
     ssot: true
     owner: "Product UX Lead"
-    dependencies: ["docs/dac-ta/FLORAOS_PRODUCT_TO_MARKET_USER_JOURNEY.md"]
+    dependencies: ["docs/dac-ta/ALG_PRODUCT_TO_MARKET_USER_JOURNEY.md"]
     supersedes: []
 
   - id: "DOC-03-M07-MARKET-INTEL-ARCH"
-    path: "docs/kien-truc/FLORAOS_MARKET_INTELLIGENCE_ARCHITECTURE.md"
+    path: "docs/kien-truc/ALG_MARKET_INTELLIGENCE_ARCHITECTURE.md"
     title: "Market Intelligence Engine Architecture"
     domain: "Module M02/M07"
     layer: "Level 3"
@@ -518,12 +518,12 @@ documents:
     canonical: true
     ssot: true
     owner: "Intelligence Lead"
-    dependencies: ["docs/dac-ta/FloraOS-Intelligence-Engine_FINAL_v2.0.md"]
+    dependencies: ["docs/dac-ta/ALG-Intelligence-Engine_FINAL_v2.0.md"]
     supersedes: []
 
   - id: "DOC-03-M07-INTEL-V2"
-    path: "docs/dac-ta/FloraOS-Intelligence-Engine_FINAL_v2.0.md"
-    title: "FloraOS Intelligence Engine v2.0 Specification"
+    path: "docs/dac-ta/ALG-Intelligence-Engine_FINAL_v2.0.md"
+    title: "ALG Intelligence Engine v2.0 Specification"
     domain: "Module M02/M07"
     layer: "Level 3"
     purpose: "Đặc tả phiên bản v2.0 bóc tách nguyên tử sản phẩm hoa tươi bằng Multimodal Vision AI"
@@ -536,7 +536,7 @@ documents:
     supersedes: ["docs/dac-ta/FloraOS-Core_Market_Intelligence_Engine_FINAL.md"]
 
   - id: "DOC-03-M08-CHAT-ASSISTANT-ARCH"
-    path: "docs/kien-truc/FLORAOS_AI_CHAT_ASSISTANT_OMNICHANNEL_ARCHITECTURE.md"
+    path: "docs/kien-truc/ALG_AI_CHAT_ASSISTANT_OMNICHANNEL_ARCHITECTURE.md"
     title: "M08 AI Chat Assistant & Omnichannel Architecture"
     domain: "Module M08"
     layer: "Level 3"
@@ -550,7 +550,7 @@ documents:
     supersedes: []
 
   - id: "DOC-03-COORD-MI-CONTRACT"
-    path: "docs/dac-ta/FLORAOS_COORDINATOR_MASTER_INDEX_CONTRACT.md"
+    path: "docs/dac-ta/ALG_COORDINATOR_MASTER_INDEX_CONTRACT.md"
     title: "Hợp đồng Master Index × Điều phối (Chức năng 12)"
     domain: "Module Coordinator (Chức năng 12)"
     layer: "Level 3"
@@ -560,11 +560,11 @@ documents:
     canonical: true
     ssot: true
     owner: "Product Owner / Backend Lead"
-    dependencies: ["docs/dac-ta/07-database-specification.md", "docs/dac-ta/FLORAOS_COORDINATOR_FIELD_SPEC.md"]
+    dependencies: ["docs/dac-ta/07-database-specification.md", "docs/dac-ta/ALG_COORDINATOR_FIELD_SPEC.md"]
     supersedes: ["docs/archive/merged/FLORAOS_COORDINATOR_CANONICAL.md", "docs/archive/merged/FLORAOS_MASTER_INDEX_COORDINATOR_UPGRADE_REPORT.md"]
 
   - id: "DOC-03-COORD-FIELD-SPEC"
-    path: "docs/dac-ta/FLORAOS_COORDINATOR_FIELD_SPEC.md"
+    path: "docs/dac-ta/ALG_COORDINATOR_FIELD_SPEC.md"
     title: "Đặc tả trường dữ liệu Template & Form — Điều phối (T01–T27)"
     domain: "Module Coordinator (Chức năng 12)"
     layer: "Level 3"
@@ -574,7 +574,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Product Owner / Coordinator Lead"
-    dependencies: ["docs/dac-ta/FLORAOS_COORDINATOR_MASTER_INDEX_CONTRACT.md", "docs/FLORAOS_COORDINATOR_AI_AGENT_PACKAGE/FLORAOS_COORDINATOR_TEMPLATE_ARCHITECTURE.md"]
+    dependencies: ["docs/dac-ta/ALG_COORDINATOR_MASTER_INDEX_CONTRACT.md", "docs/ALG_COORDINATOR_AI_AGENT_PACKAGE/ALG_COORDINATOR_TEMPLATE_ARCHITECTURE.md"]
     supersedes: ["docs/archive/merged/FLORAOS_COORDINATOR_TEMPLATE_FIELD_SPEC_PRODUCTION_READY.md", "docs/archive/merged/FLORAOS_COORDINATOR_TEMPLATE_FORM_FIELDS_SYNCHRONIZED_WITH_MASTER_INDEX.md"]
 
   - id: "DOC-03-UX-ARCH"
@@ -607,7 +607,7 @@ documents:
 
   - id: "DOC-03-UX-CONSTITUTION"
     path: "docs/dac-ta/03a-ux-constitution.md"
-    title: "FloraOS UX Constitution — Chuẩn chất lượng UX toàn cục"
+    title: "ALG UX Constitution — Chuẩn chất lượng UX toàn cục"
     domain: "UX/UI"
     layer: "Level 3"
     purpose: "Chuẩn chất lượng UX toàn cục: thứ bậc thông tin L0–L4, mật độ, content budget, trạng thái, WCAG 2.2, Screen Contract, UX Lint, định nghĩa Production/Commercial-ready"
@@ -635,7 +635,7 @@ documents:
 
   - id: "DOC-03-DESIGN-SYSTEM-SSOT"
     path: "docs/design-system/README.md"
-    title: "smeOS Design System — Single Source of Truth"
+    title: "ALG Design System — Single Source of Truth"
     domain: "UX/UI"
     layer: "Level 3"
     purpose: "Chỉ mục SSOT và hợp đồng toàn diện về Design Tokens, Component Primitives, Layout Archetypes, Responsive, A11y và Gates"
@@ -662,7 +662,7 @@ documents:
     supersedes: []
 
   - id: "DOC-03-UX-WRITING"
-    path: "docs/dac-ta/SMEOS_UX_WRITING_GLOSSARY.md"
+    path: "docs/dac-ta/ALG_UX_WRITING_GLOSSARY.md"
     title: "UX Writing Standard — giọng điệu & mẫu câu thông báo"
     domain: "UX/UI"
     layer: "Level 3"
@@ -676,8 +676,8 @@ documents:
     supersedes: []
 
   - id: "DOC-03-ROLE-UX-CONTRACT"
-    path: "docs/kien-truc/FLORAOS_ROLE_UX_EXECUTION_CONTRACT.md"
-    title: "FLORAOS-UX-ROLE-001 — Role UX AI Agent Execution Contract v1.1"
+    path: "docs/kien-truc/ALG_ROLE_UX_EXECUTION_CONTRACT.md"
+    title: "ALG-UX-ROLE-001 — Role UX AI Agent Execution Contract v1.1"
     domain: "UX/UI"
     layer: "Level 3"
     purpose: "Hợp đồng gốc cho AI Agent (khung audit Phần B, anti-pattern, handoff, exception); 03b-role-ux.md thắng khi khác biệt"
@@ -691,7 +691,7 @@ documents:
 
   - id: "DOC-03-SCREEN-CONTRACTS"
     path: "docs/dac-ta/screen-contracts/README.md"
-    title: "FloraOS Screen Contracts — Chỉ mục & Quy chuẩn Hợp đồng Giao diện"
+    title: "ALG Screen Contracts — Chỉ mục & Quy chuẩn Hợp đồng Giao diện"
     domain: "UX/UI"
     layer: "Level 3"
     purpose: "Chỉ mục và quy chuẩn hồ sơ hợp đồng giao diện từng màn theo 03a-ux-constitution.md. Từng Screen Contract thành phần không cần mục REGISTRY riêng, README này đóng vai trò chỉ mục tổng hợp"
@@ -719,7 +719,7 @@ documents:
     superseded_by: "docs/dac-ta/03-ux-architecture.md"
 
   - id: "DOC-03-UX-10-CHUC-NANG"
-    path: "docs/FloraOS-UIUX-10-chuc-nang.md"
+    path: "docs/ALG-UIUX-10-chuc-nang.md"
     title: "Đặc tả Thiết kế 10 Màn hình Giao diện Lõi"
     domain: "UX/UI"
     layer: "Level 3"
@@ -761,7 +761,7 @@ documents:
     supersedes: []
 
   - id: "DOC-03-STORE-13-USER-JOURNEYS"
-    path: "docs/dac-ta/FLORAOS_STORE_13_USER_JOURNEYS_DETAIL_SPEC.md"
+    path: "docs/dac-ta/ALG_STORE_13_USER_JOURNEYS_DETAIL_SPEC.md"
     title: "Đặc tả Chi tiết User Journey 13 Chức năng Quản trị Cửa hàng"
     domain: "Journey / Store UX"
     layer: "Level 3"
@@ -771,7 +771,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Lead UX Architect"
-    dependencies: ["docs/kien-truc/Nâng cấp tasks/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/screen-contracts/_journey-home-store.md"]
+    dependencies: ["docs/kien-truc/Nâng cấp tasks/ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/screen-contracts/_journey-home-store.md"]
     supersedes: []
 
   # =========================================================================
@@ -788,7 +788,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Engineering Lead"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-05-TECHNICAL-DEBT"
@@ -816,7 +816,7 @@ documents:
     canonical: true
     ssot: true
     owner: "Frontend Lead"
-    dependencies: ["docs/FloraOS-UIUX-10-chuc-nang.md"]
+    dependencies: ["docs/ALG-UIUX-10-chuc-nang.md"]
     supersedes: ["docs/UIUX-Feature-Checklist.md", "docs/UIUX-Integrate-Checklist.md"]
 
   - id: "DOC-05-ROADMAP"
@@ -830,7 +830,7 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Manager"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-05-CONSOLE-VAN-HANH"
@@ -858,12 +858,12 @@ documents:
     canonical: true
     ssot: true
     owner: "Platform Lead"
-    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    dependencies: ["docs/kien-truc/ALG_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
   - id: "DOC-05-HO-SO-BAN-GIAO"
     path: "docs/kien-truc/HO_SO_BAN_GIAO.md"
-    title: "Hồ sơ bàn giao smeOS"
+    title: "Hồ sơ bàn giao ALG"
     domain: "Operations"
     layer: "Level 5"
     purpose: "Điểm vào cho đội nhận bàn giao: thành phần hệ thống, biến môi trường, kiểm soát bảo mật, cổng CI, việc còn mở"
@@ -919,7 +919,7 @@ documents:
 
   - id: "DOC-05-BAO-CAO-ANH-XA-123"
     path: "docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md"
-    title: "Báo cáo ánh xạ 123 chức năng bàn giao ALG với mã nguồn smeOS"
+    title: "Báo cáo ánh xạ 123 chức năng bàn giao ALG với mã nguồn ALG"
     domain: "Operations"
     layer: "Level 5"
     purpose: "Trạng thái Hoàn thiện / Dang dở / Chưa hoàn thành của từng chức năng trong checklist bàn giao ALG, kèm bằng chứng file:dòng, test và phần còn thiếu"
@@ -947,7 +947,7 @@ documents:
 
   - id: "DOC-05-TAI-LIEU-KY-THUAT-123"
     path: "docs/tai-lieu-ky-thuat/README.md"
-    title: "Tài liệu kỹ thuật smeOS — 123 chức năng bàn giao ALG"
+    title: "Tài liệu kỹ thuật ALG — 123 chức năng bàn giao ALG"
     domain: "Architecture"
     layer: "Level 5"
     purpose: "Bản đồ mã cho đội kỹ thuật: kiến trúc, cách ly dữ liệu và phân quyền, quy trình thay đổi, vận hành; mỗi chức năng có mã chính, dữ liệu, quyền, test, điểm cần sửa khi nâng cấp và giới hạn hiện tại"
@@ -961,7 +961,7 @@ documents:
 
   - id: "DOC-05-HUONG-DAN-SU-DUNG-123"
     path: "docs/huong-dan-su-dung/README.md"
-    title: "Hướng dẫn sử dụng smeOS — 123 chức năng"
+    title: "Hướng dẫn sử dụng ALG — 123 chức năng"
     domain: "Operations"
     layer: "Level 5"
     purpose: "Hướng dẫn thao tác cho nhân sự cửa hàng và đội vận hành nền tảng theo 10 nhóm chức năng: ai dùng, mở ở đâu, các bước, lưu ý"
@@ -974,8 +974,8 @@ documents:
     supersedes: []
 
   - id: "DOC-05-RA-SOAT-COMMIT-SMEOS"
-    path: "docs/kien-truc/RA_SOAT_COMMIT_SMEOS.md"
-    title: "Rà soát từng commit smeOS"
+    path: "docs/kien-truc/RA_SOAT_COMMIT_ALG.md"
+    title: "Rà soát từng commit ALG"
     domain: "Operations"
     layer: "Level 5"
     purpose: "Checklist 134 commit sau 8c53b38 theo 12 cụm, kết luận từng commit và bảng phát hiện của đợt rà soát trước bàn giao"
@@ -1040,7 +1040,7 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner / Engineering Lead"
-    dependencies: ["docs/dac-ta/FLORAOS_COORDINATOR_FIELD_SPEC.md", "docs/dac-ta/FLORAOS_COORDINATOR_MASTER_INDEX_CONTRACT.md", "docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md"]
+    dependencies: ["docs/dac-ta/ALG_COORDINATOR_FIELD_SPEC.md", "docs/dac-ta/ALG_COORDINATOR_MASTER_INDEX_CONTRACT.md", "docs/kien-truc/KE_HOACH_CONSOLE_VAN_HANH.md"]
     supersedes: []
 
   - id: "DOC-05-KE-HOACH-ROLE-CAPABILITY"
@@ -1054,7 +1054,7 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner / Chief Architect"
-    dependencies: ["docs/FLORAOS_CORE_ROLE_CAPABILITY_ARCHITECTURE_UPGRADE.md", "docs/dac-ta/03b-role-ux.md", "docs/dac-ta/02-function-catalog.md"]
+    dependencies: ["docs/ALG_CORE_ROLE_CAPABILITY_ARCHITECTURE_UPGRADE.md", "docs/dac-ta/03b-role-ux.md", "docs/dac-ta/02-function-catalog.md"]
     supersedes: []
 
   - id: "DOC-05-KE-HOACH-JOURNEY-FIRST-UX"
@@ -1068,7 +1068,7 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner / Chief Architect"
-    dependencies: ["docs/kien-truc/Nâng cấp tasks/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md", "docs/kien-truc/KE_HOACH_THUC_THI_NANG_CAP_ROLE_CAPABILITY_ARCHITECTURE.md"]
+    dependencies: ["docs/kien-truc/Nâng cấp tasks/ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md", "docs/kien-truc/KE_HOACH_THUC_THI_NANG_CAP_ROLE_CAPABILITY_ARCHITECTURE.md"]
     supersedes: []
 
   - id: "DOC-05-KE-HOACH-MA-TRAN-THE-CHAO"
@@ -1100,7 +1100,7 @@ documents:
     supersedes: []
 
   - id: "DOC-05-SPEC-JOURNEY-LANDING-CATALOG-REQUIREMENTS"
-    path: "docs/dac-ta/FLORAOS_JOURNEY_FIRST_UX_LANDING_CATALOG_EXECUTION_SPEC_FINAL.md"
+    path: "docs/dac-ta/ALG_JOURNEY_FIRST_UX_LANDING_CATALOG_EXECUTION_SPEC_FINAL.md"
     title: "Đặc tả yêu cầu Journey-First: Tạo Landing Page & Tạo Catalog Số"
     domain: "Role UX & Content Engine"
     layer: "Level 5"
@@ -1110,11 +1110,11 @@ documents:
     canonical: true
     ssot: true
     owner: "Product Owner / UX Architect"
-    dependencies: ["docs/kien-truc/Nâng cấp tasks/FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md"]
+    dependencies: ["docs/kien-truc/Nâng cấp tasks/ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md", "docs/dac-ta/03b-role-ux.md"]
     supersedes: []
 
   - id: "DOC-05-SPEC-JOURNEY-UX-LANDING-CATALOG"
-    path: "docs/dac-ta/FLORAOS_JOURNEY_FIRST_UX_LANDING_AND_CATALOG_SPEC.md"
+    path: "docs/dac-ta/ALG_JOURNEY_FIRST_UX_LANDING_AND_CATALOG_SPEC.md"
     title: "Bản đồ mã — Tạo Landing Page & Tạo Catalog Số"
     domain: "Role UX & Content Engine"
     layer: "Level 5"
@@ -1124,11 +1124,11 @@ documents:
     canonical: false
     ssot: false
     owner: "Product Owner / UX Architect"
-    dependencies: ["docs/dac-ta/FLORAOS_JOURNEY_FIRST_UX_LANDING_CATALOG_EXECUTION_SPEC_FINAL.md", "docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md"]
+    dependencies: ["docs/dac-ta/ALG_JOURNEY_FIRST_UX_LANDING_CATALOG_EXECUTION_SPEC_FINAL.md", "docs/kien-truc/KE_HOACH_THUC_THI_JOURNEY_FIRST_UX_ARCHITECTURE.md"]
     supersedes: []
 
   - id: "DOC-05-CHECKLIST-CREATIVE-STUDIO"
-    path: "docs/dac-ta/FLORAOS_CREATIVE_STUDIO_CHECKLIST.md"
+    path: "docs/dac-ta/ALG_CREATIVE_STUDIO_CHECKLIST.md"
     title: "Creative Studio Execution Checklist"
     domain: "Module M04"
     layer: "Level 5"
@@ -1176,15 +1176,15 @@ documents:
     title: "Kế hoạch Hoàn thiện Template System (Đã gộp vào Template SSOT §7)"
     domain: "Template System"
     layer: "Archive"
-    purpose: "Kế hoạch thi công Template System — nội dung chính đã tích hợp vào FLORAOS_TEMPLATE_SYSTEM_SSOT.md"
+    purpose: "Kế hoạch thi công Template System — nội dung chính đã tích hợp vào ALG_TEMPLATE_SYSTEM_SSOT.md"
     status: "ARCHIVED"
     authority: "Archive"
     canonical: false
     ssot: false
     owner: "Design System Lead"
-    dependencies: ["docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md"]
+    dependencies: ["docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md"]
     supersedes: []
-    superseded_by: "docs/kien-truc/FLORAOS_TEMPLATE_SYSTEM_SSOT.md"
+    superseded_by: "docs/kien-truc/ALG_TEMPLATE_SYSTEM_SSOT.md"
 
   - id: "DOC-05-AS-IS-SPEC-2026-10-07"
     path: "docs/kien-truc/as-is/README.md"
@@ -1261,7 +1261,7 @@ documents:
 
   - id: "DOC-ARC-UX-CONSTITUTION-DRAFT"
     path: "docs/archive/drafts/FLORAOS_UX_CONSTITUTION_DRAFT.md"
-    title: "FLORAOS-UX-CONSTITUTION-001 — Global UX Quality & Production Readiness (bản nhận 26/09)"
+    title: "ALG-UX-CONSTITUTION-001 — Global UX Quality & Production Readiness (bản nhận 26/09)"
     domain: "UX/UI"
     layer: "Archive"
     purpose: "Đã nâng thành DOC-03-UX-CONSTITUTION ngày 26/09/2026"

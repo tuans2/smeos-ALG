@@ -1,4 +1,4 @@
-# SMEOS · 02 · Storage (đối chiếu code 30/10/2026)
+# ALG · 02 · Storage (đối chiếu code 30/10/2026)
 
 Áp dụng của [universal/02](../universal/02-storage.md). Nguồn: khung SDAGF và audit `docs/governance/sdagf/`, `docs/audit/sdagf-2026-10/` (`672ca64`); chữ ký theo phương thức `e0bedb8`; xoá payload `20861a4`; vòng đời + outbox + legal hold `bf0ea76`; đối soát + audit xuất `1df8926`; registry SSOT + legal hold tổ chức `a95ac1e`; Kho dữ liệu v2 `bdab759`, `587c147`; chặn xoá ảnh đang dùng (audit lại 04/11/2026).
 

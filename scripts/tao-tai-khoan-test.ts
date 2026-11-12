@@ -9,7 +9,7 @@ import { QA_ORGANIZATION_NAME, createQaAccounts, qaAccountsProblems } from "@/mo
  *   MAT_KHAU_TEST01='…' MAT_KHAU_TEST02='…' npm run tao-tai-khoan-test            # chỉ kiểm tra
  *   MAT_KHAU_TEST01='…' MAT_KHAU_TEST02='…' npm run tao-tai-khoan-test -- --xac-nhan
  *
- * Tuỳ chọn: --chu=<email> (mặc định test01@smeos.com), --nhan-vien=<email> (test02@smeos.com),
+ * Tuỳ chọn: --chu=<email> (mặc định test01@avilotusgroup.com), --nhan-vien=<email> (test02@avilotusgroup.com),
  * --vai=<sale|dieu_phoi|…>. Mật khẩu đọc từ biến môi trường để không nằm trong tham số dòng lệnh.
  */
 function arg(name: string): string | undefined {
@@ -18,8 +18,8 @@ function arg(name: string): string | undefined {
 
 async function main(): Promise<void> {
   const input = {
-    ownerEmail: arg("chu") ?? "test01@smeos.com",
-    staffEmail: arg("nhan-vien") ?? "test02@smeos.com",
+    ownerEmail: arg("chu") ?? "test01@avilotusgroup.com",
+    staffEmail: arg("nhan-vien") ?? "test02@avilotusgroup.com",
     staffRoleKey: arg("vai") ?? "sale",
     ownerPassword: process.env.MAT_KHAU_TEST01 ?? "",
     staffPassword: process.env.MAT_KHAU_TEST02 ?? "",

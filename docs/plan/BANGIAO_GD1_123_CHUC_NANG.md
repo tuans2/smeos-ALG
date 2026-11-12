@@ -4,7 +4,7 @@
 
 ALG (Công ty Cổ phần Công nghệ Avi Lotus Group) sẽ nhận một repo riêng gồm SaaS Mother, ChainOS, StoreOS và đúng 123 chức năng trong `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`. Chưa gói nào được giao. Giao xong là xong, ALG tự phát triển tiếp.
 
-smeOS vẫn là repo chính, phát triển đủ 4 tầng. Repo của ALG là bản **sinh ra** từ smeOS theo danh sách giai đoạn, không phải repo song song phải duy trì.
+ALG vẫn là repo chính, phát triển đủ 4 tầng. Repo của ALG là bản **sinh ra** từ ALG theo danh sách giai đoạn, không phải repo song song phải duy trì.
 
 Hiện trạng đã đo:
 - Bản xuất đầy đủ: typecheck 0 lỗi, `npm test` 4.649/4.649.
@@ -41,7 +41,7 @@ Hiện trạng đã đo:
 | Vận hành | Runbook đúng thực tế; diễn tập khôi phục CSDL đạt (chưa từng làm); giám sát và cảnh báo chạy |
 | Bàn giao | Tài liệu kỹ thuật và hướng dẫn sử dụng khớp bản giao; danh sách giấy phép bên thứ ba |
 
-**Điểm duyệt:** chủ dự án chốt ngày 10/11/2026: giao 10 trang từng chờ quyết và 23 trang khung; 9.14 theo hướng đăng bài ngay trong smeOS. Chi tiết: [phạm vi](BANGIAO_GD1_PHAM_VI.md).
+**Điểm duyệt:** chủ dự án chốt ngày 10/11/2026: giao 10 trang từng chờ quyết và 23 trang khung; 9.14 theo hướng đăng bài ngay trong ALG. Chi tiết: [phạm vi](BANGIAO_GD1_PHAM_VI.md).
 
 ## Bước 2 — Dựng cơ chế (không đổi hành vi khi chưa bật)
 
@@ -72,7 +72,7 @@ Hiện trạng đã đo:
 **Trạng thái 10/11/2026 — mã Bước 2 xong, chờ CI:**
 
 - 2.1–2.2: `src/lib/delivery/delivery-phase.ts`, `route-match.ts`; danh sách route sinh vào `gd1.routes.json` bằng `npm run release:routes` (test giữ khớp mã). `src/proxy.ts` trả 404 cho trang/API ngoài phạm vi; menu (`nav-phase.ts`), lưới công cụ, hành trình lọc theo phạm vi; tầng SaaS Ngành không có menu. Không đặt biến thì không đổi gì (có test).
-- 2.3: `npm run release:cut -- gd1 <mốc> <thư mục>` (`scripts/release/`). Khối chỉ thuộc smeOS đánh dấu `@release-strip` trong mã (seed cửa hàng riêng, trang chủ tầng Ngành). Lớp phủ `releases/gd1/overlay/` mới có README; `.env.example`, `render.yaml`, CI riêng cho ALG chưa làm.
+- 2.3: `npm run release:cut -- gd1 <mốc> <thư mục>` (`scripts/release/`). Khối chỉ thuộc ALG đánh dấu `@release-strip` trong mã (seed cửa hàng riêng, trang chủ tầng Ngành). Lớp phủ `releases/gd1/overlay/` mới có README; `.env.example`, `render.yaml`, CI riêng cho ALG chưa làm.
 - 2.4: `node scripts/handover-check.mjs --dir <bản cắt> --recipient ALG --baseline releases/gd1/leak-baseline.json`. Baseline hiện có 337 mục (số điện thoại, email, tên bên khác, mật khẩu viết cứng, đường dẫn máy) — dọn ở Bước 4, chỉ được giảm.
 - 2.5: [báo cáo phụ thuộc](BANGIAO_GD1_PHU_THUOC.md): 1 lời gọi proxy SocialFlow, 28 liên kết tới trang không giao, các mô-đun bị cắt giữa chừng. Worker `media_ai` chỉ nhận tác vụ âm thanh/video khi bản cài có mô-đun đó.
 - 2.6: `.github/workflows/release-gd1.yml` — workflow riêng chứ không thêm vào `ci.yml`, để không chạy trên `main` và không chặn deploy của Render. Test tenant/platform trên bản cắt chạy hằng đêm; E2E trên bản cắt chưa có.
@@ -91,7 +91,7 @@ Hiện trạng đã đo:
 ## Bước 4 — Hoàn thiện đến khi đạt tiêu chuẩn
 
 - Đã biết: mở 13 chức năng đang khoá; xử lý 5 chức năng làm một phần (4.30, 4.32, 8.1, 9.1, 9.14); sửa lỗi audit thuộc phạm vi (ví dụ L-05 nút Lưu ở `/dieu-phoi/doi-tac`).
-- 9.14: đăng bài đã chạy ngay trong smeOS (D-46), không còn ứng dụng liên kết. Nghiệm thu mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên 15 phút kiểm bằng test. Cần báo ALG đổi câu chữ bước I-09.
+- 9.14: đăng bài đã chạy ngay trong ALG (D-46), không còn ứng dụng liên kết. Nghiệm thu mở Công cụ → Tạo nội dung → Đăng tự động không phải đăng nhập lại; phiên 15 phút kiểm bằng test. Cần báo ALG đổi câu chữ bước I-09.
 - Gỡ phần còn gọi SocialFlow/LocalBudd khỏi bản giao: khối bài đăng ở trang chủ (`marketing-workspace.tsx`), route proxy, biến `SOCIALFLOW_URL`, `LOCALBUDD_URL`, chữ "SocialFlow" trên màn hình.
 - Mỗi đầu việc: code + test + tài liệu trong một commit; Thẻ chào và Catalog phải có test khoá hành vi trước khi sửa.
 - Việc có ảnh do người dùng tải lên đi theo quyết định Q12 trong `KE_HOACH_HOAN_THIEN_54_CHUC_NANG.md`; phát sinh khác thì hỏi bạn.
@@ -118,8 +118,8 @@ Hiện trạng đã đo:
 |---|---|
 | Thử nhà cung cấp thật | Bước 3 làm local; khi cần thử thật sẽ hỏi bạn việc dựng staging trên Render (có chi phí, đổi `render.yaml`) |
 | Kiểm bằng trình đọc màn hình | Không nằm trong tiêu chuẩn, ghi "Chưa kiểm" như đợt trước |
-| Nhánh về `main` | Không merge cho đến khi bạn quyết. Nên merge sau khi giao, nếu không các bản sửa ở bước 4 không về smeOS và sẽ khó xung đột |
-| `LICENSE` | Giữ trong bản giao. Câu chữ hiện ghi toàn bộ phần mềm thuộc ALG, trong khi smeOS tiếp tục phát triển: nên để pháp lý xem lại |
+| Nhánh về `main` | Không merge cho đến khi bạn quyết. Nên merge sau khi giao, nếu không các bản sửa ở bước 4 không về ALG và sẽ khó xung đột |
+| `LICENSE` | Giữ trong bản giao. Câu chữ hiện ghi toàn bộ phần mềm thuộc ALG, trong khi ALG tiếp tục phát triển: nên để pháp lý xem lại |
 
 ## Rủi ro chính
 

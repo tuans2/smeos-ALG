@@ -5,12 +5,12 @@
 > trang của nền tảng, rồi hệ thống tự đăng. Mã nguồn: `src/modules/social-publishing/` (khoá ứng dụng đọc ở
 > `adapters/oauth/app-config.ts`). Thiếu khoá của nền tảng nào → kênh đó hiện "Chưa mở".
 
-Ai làm: quản trị nền tảng SMEOS (người giữ tài khoản doanh nghiệp với Meta / Zalo / TikTok). Khoá bí mật nhập ở phần
+Ai làm: quản trị nền tảng ALG (người giữ tài khoản doanh nghiệp với Meta / Zalo / TikTok). Khoá bí mật nhập ở phần
 biến môi trường của dịch vụ web trên Render (Environment → Secret), **không** gửi qua chat, không ghi vào mã hay tài liệu.
 
 ## 0. Địa chỉ cần khai báo ở cả 3 nền tảng
 
-`<PUBLIC_APP_URL>` là địa chỉ công khai của SMEOS (vd. `https://app.avilotusgroup.com`; biến `PUBLIC_APP_URL`, trống thì lấy
+`<PUBLIC_APP_URL>` là địa chỉ công khai của ALG (vd. `https://app.avilotusgroup.com`; biến `PUBLIC_APP_URL`, trống thì lấy
 `RENDER_EXTERNAL_URL`). Địa chỉ gọi về (redirect URI / callback URL) phải khai **đúng từng ký tự**:
 
 | Nền tảng | Địa chỉ gọi về |
@@ -30,7 +30,7 @@ kho tệp phải truy cập được từ Internet (môi trường máy thử d�
    `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, `business_management`, `instagram_basic`,
    `instagram_content_publish`.
 4. **Business Verification** (xác minh doanh nghiệp) và **App Review** cho từng quyền ở bước 3: quay video luồng
-   "bấm Kết nối → chọn Trang → đăng bài" trên SMEOS. Trước khi được duyệt, chỉ tài khoản có vai trò trong ứng dụng
+   "bấm Kết nối → chọn Trang → đăng bài" trên ALG. Trước khi được duyệt, chỉ tài khoản có vai trò trong ứng dụng
    (Admin/Developer/Tester) kết nối được — dùng để thử.
 5. Chuyển ứng dụng sang **Live**. Lấy **App ID** và **App Secret** (Settings → Basic).
 6. Đặt biến môi trường: `META_APP_ID`, `META_APP_SECRET`.

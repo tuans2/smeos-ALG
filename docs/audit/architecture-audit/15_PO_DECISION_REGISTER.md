@@ -41,9 +41,9 @@
 | D-33 | Kênh SMS/Zalo/Web Push | **a** — hoàn thiện cả ba | Web Push cần khoá VAPID, service worker, bảng đăng ký |
 | D-34 | AI ở worker | **a** — worker đọc chính sách AI chung từ CSDL | |
 | D-35 | Khoá công cụ API dùng chung | Theo đề xuất: không khoá API dùng chung; công cụ khác khoá cả API | |
-| D-36 | Phạm vi repo | **a** — chỉ `smeOS`; kiểm tra bỏ LocalBudd, SocialFlow | Kết quả ở §3: **LocalBudd bỏ được; SocialFlow chưa** → câu hỏi mới D-46 |
+| D-36 | Phạm vi repo | **a** — chỉ `ALG`; kiểm tra bỏ LocalBudd, SocialFlow | Kết quả ở §3: **LocalBudd bỏ được; SocialFlow chưa** → câu hỏi mới D-46 |
 | D-37 | `floraos-core` | **a** — archive | Việc tay của PO, sau khi xác nhận Render deploy từ `smeOS` |
-| D-38 | Chủ Landing/Catalog/QR | **a** — core (`smeOS`) | Đã đúng trong mã (§3) |
+| D-38 | Chủ Landing/Catalog/QR | **a** — core (`ALG`) | Đã đúng trong mã (§3) |
 | D-39 | SSO liên-app | Theo D-36 | Gỡ khi cả hai app ngừng (phụ thuộc D-46) |
 | D-40 | Khách đầu tiên | **c** — cả cửa hàng lẫn chuỗi | Workstream 4 tầng thuộc đường găng |
 | D-41 | Bàn giao | **c** — mã nguồn + toàn bộ tài liệu | Rà tài liệu trước khi giao; câu hỏi tệp agent — I-4 |
@@ -81,18 +81,18 @@
 | R-2 (D-24) | Một người vận hành giữ mọi mã N | Cảnh báo khi có thao tác nhạy cảm (`N3` nạp credit, `N7` tạo tổ chức, `N14` legal hold) gửi qua email; hướng dẫn cấp người thay thế bằng script khi cần (runbook) |
 | R-3 (D-26) | Không kiểm thử xâm nhập | Tự rà theo OWASP ASVS mức 2 (P3-06); CodeQL + gitleaks + npm audit giữ bắt buộc; công bố trong hồ sơ bàn giao là chưa pentest |
 
-## 3. Kết quả kiểm tra D-36: quan hệ `smeOS` ↔ LocalBudd, SocialFlow
+## 3. Kết quả kiểm tra D-36: quan hệ `ALG` ↔ LocalBudd, SocialFlow
 
 ### 3.1 LocalBudd — **bỏ được**
-- `localbudd` (commit cuối `9b55cb9`, 09/09/2026, 131 tệp) là app độc lập: có `users`/`sessions` riêng, 17 bảng (projects, pages, page_versions, layouts, design_*, generation_jobs, qa_results, publish_records…), **không gọi `smeOS`**.
-- `smeOS` đã có đủ chức năng tương đương: soạn landing (`modules/landing-page` + `content-engine/landing-generate`), xuất bản thành trang `/c/[slug]` qua `catalog-links` (Screen Contract `landing-page.md`), catalog/QR, content engine.
-- `smeOS` không có giao diện nào gọi proxy `client=LOCALBUDD`. Phần còn sót chỉ là mã chờ LocalBudd làm client: tiền tố proxy `LOCALBUDD`, client token `LOCALBUDD`, `integration/business-profile` (bắt buộc client LocalBudd), script `dev:all`.
+- `localbudd` (commit cuối `9b55cb9`, 09/09/2026, 131 tệp) là app độc lập: có `users`/`sessions` riêng, 17 bảng (projects, pages, page_versions, layouts, design_*, generation_jobs, qa_results, publish_records…), **không gọi `ALG`**.
+- `ALG` đã có đủ chức năng tương đương: soạn landing (`modules/landing-page` + `content-engine/landing-generate`), xuất bản thành trang `/c/[slug]` qua `catalog-links` (Screen Contract `landing-page.md`), catalog/QR, content engine.
+- `ALG` không có giao diện nào gọi proxy `client=LOCALBUDD`. Phần còn sót chỉ là mã chờ LocalBudd làm client: tiền tố proxy `LOCALBUDD`, client token `LOCALBUDD`, `integration/business-profile` (bắt buộc client LocalBudd), script `dev:all`.
 - Chưa kiểm chứng: LocalBudd có đang chạy ở đâu (có `vercel.json`) và còn dữ liệu khách thật không → xuất dữ liệu trước khi archive (hạng mục P2-G2).
 
 ### 3.2 SocialFlow — **chưa bỏ được**
-Content engine đã chuyển về `smeOS` (P27: `/noi-dung` gọi thẳng `content-engine`). Nhưng **đăng bài tự động chưa được chép về**: `smeOS` không có bảng bài đăng, không có bản cài `PublisherProvider`, không có mã gọi API đăng bài của Facebook/Instagram/Zalo. Các chức năng sau vẫn gọi SocialFlow qua proxy:
+Content engine đã chuyển về `ALG` (P27: `/noi-dung` gọi thẳng `content-engine`). Nhưng **đăng bài tự động chưa được chép về**: `ALG` không có bảng bài đăng, không có bản cài `PublisherProvider`, không có mã gọi API đăng bài của Facebook/Instagram/Zalo. Các chức năng sau vẫn gọi SocialFlow qua proxy:
 
-| Chức năng | Mã trong `smeOS` | Endpoint SocialFlow |
+| Chức năng | Mã trong `ALG` | Endpoint SocialFlow |
 |---|---|---|
 | Lịch đăng: danh sách, lên lịch hàng loạt, đăng, thử lại | `src/app/(app)/lich-dang/page.tsx` | `api/m07/posts`, `.../batch-schedule`, `.../publish`, `.../retry`, `api/posts/.../publish` |
 | Kết nối tài khoản mạng xã hội (gửi **tên đăng nhập + mật khẩu** tài khoản MXH sang SocialFlow) | `components/channel-connections/use-channel-accounts.ts`, trang `/ket-noi` | `api/accounts` |
@@ -105,7 +105,7 @@ Content engine đã chuyển về `smeOS` (P27: `/noi-dung` gọi thẳng `conte
 
 | Mã | Câu hỏi | Phương án | Đề xuất |
 |---|---|---|---|
-| **D-46** | Đăng bài mạng xã hội (đang phụ thuộc SocialFlow) | a) Xây đăng bài ngay trong `smeOS` → bỏ SocialFlow · b) Giữ SocialFlow làm dịch vụ ngoài · c) Bỏ tính năng | **ĐÃ QUYẾT 01/11/2026: a** — phương án chi tiết ở `17_SOCIALFLOW_REPLACEMENT_PLAN.md` (Workstream S); câu hỏi phụ S-1…S-5 ở `17` §7 |
+| **D-46** | Đăng bài mạng xã hội (đang phụ thuộc SocialFlow) | a) Xây đăng bài ngay trong `ALG` → bỏ SocialFlow · b) Giữ SocialFlow làm dịch vụ ngoài · c) Bỏ tính năng | **ĐÃ QUYẾT 01/11/2026: a** — phương án chi tiết ở `17_SOCIALFLOW_REPLACEMENT_PLAN.md` (Workstream S); câu hỏi phụ S-1…S-5 ở `17` §7 |
 | I-1 | Danh sách mã quyền mong muốn cho `product_manager`; nhãn mới cho `crm` và `customer_service` (D-06) | PO cung cấp | — |
 | I-2 | "3 tháng" áp cho loại dữ liệu nào? Dữ liệu đơn hàng/chứng từ thường phải lưu lâu hơn theo pháp luật kế toán, thuế | a) 3 tháng cho log, thông báo, hội thoại, dữ liệu marketing; dữ liệu đơn hàng giữ theo nghĩa vụ pháp lý nhưng ẩn danh hoá thông tin cá nhân sau 3 tháng kể từ khi hoàn tất đơn · b) 3 tháng cho mọi dữ liệu | ★ **a**; nên hỏi ý kiến pháp lý → trả lời ở **D-50** (05/11/2026) |
 | I-3 | Nội dung SLA: giờ hỗ trợ, thời gian phản hồi P1/P2/P3, kênh báo sự cố | PO cung cấp | — |

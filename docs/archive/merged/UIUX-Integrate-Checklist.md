@@ -5,7 +5,7 @@
 > Tệp này đã được hợp nhất cùng `UIUX-Feature-Checklist.md` vào **[`docs/UIUX-Execution-Checklist.md`](../../UIUX-Execution-Checklist.md)**.  
 > Vui lòng theo dõi và cập nhật tiến độ thực thi UI & API tại tài liệu hợp nhất để đảm bảo tính duy nhất của dữ liệu.
 
-**Mục đích:** Nối từng trang UI trong `docs/FloraOS-UIUX-10-chuc-nang.md` với API thật ở `src/app/api/v1/`.
+**Mục đích:** Nối từng trang UI trong `docs/ALG-UIUX-10-chuc-nang.md` với API thật ở `src/app/api/v1/`.
 
 **Nguyên tắc:**
 - Không mock trong UI khi backend đã có — gọi API thật, xử lý 401/403/409/502

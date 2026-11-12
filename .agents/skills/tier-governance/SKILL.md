@@ -1,7 +1,7 @@
 ---
 name: tier-governance
 description: >-
-  Kiến trúc 4 tầng SMEOS (SaaS Mother → SaaS Ngành → ChainOS → StoreOS): xác định tầng,
+  Kiến trúc 4 tầng ALG (SaaS Mother → SaaS Ngành → ChainOS → StoreOS): xác định tầng,
   ma trận quản trị (ưu đãi, cam kết, chính sách, thanh toán, phí gia công, mẫu), khoá cứng
   tầng trên, khoá công cụ chuỗi → chi nhánh, gói dịch vụ, plugin ngành, xem trước tầng.
   Kích hoạt khi sửa governance-matrix, governance-decisions, components/governance,

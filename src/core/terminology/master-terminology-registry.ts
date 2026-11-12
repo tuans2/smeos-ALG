@@ -8,7 +8,7 @@
  */
 
 import type {
-  SmeOsTier,
+  AlgTier,
   SaasMotherTerminology,
   SaasIndustryTerminology,
   ChainOsTerminology,
@@ -76,6 +76,6 @@ const TIER_TERMS: TierTerminologyMap = {
   TIER_4_STORE: STORE_OS_TERMS,
 }
 
-export function getTierTerminology<T extends SmeOsTier>(tier: T): TierTerminologyMap[T] {
+export function getTierTerminology<T extends AlgTier>(tier: T): TierTerminologyMap[T] {
   return TIER_TERMS[tier]
 }

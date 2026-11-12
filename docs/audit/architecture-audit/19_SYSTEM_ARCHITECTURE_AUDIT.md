@@ -7,7 +7,7 @@
 
 ## 1. Kết luận
 
-SMEOS là một **modular monolith có kỷ luật ở mức tệp, nhưng rối ở mức module**.
+ALG là một **modular monolith có kỷ luật ở mức tệp, nhưng rối ở mức module**.
 
 - **Tốt:** Prisma chỉ nằm trong `infra/`. Không có `domain/` nào import Prisma. Mọi route đều có gác tenant hoặc năng lực, hoặc nằm trong danh sách miễn trừ có lý do. Ở mức tệp gần như không có vòng phụ thuộc (6 vòng runtime). AI phía TS chỉ đi qua một cổng.
 - **Chưa tốt:** 29/52 module nằm chung **một** thành phần liên thông mạnh (SCC). Lý do là module import thẳng vào `infra/` và `use-cases/` của nhau, và không module nào có API công khai. 35 bảng bị từ hai module trở lên ghi trực tiếp. Riêng `orders` bị ghi bởi 4 module trong 24 tệp.

@@ -1,4 +1,4 @@
-# Kế hoạch nâng cấp UI/UX SMEOS lên Enterprise Grade, Commercial & Production Ready
+# Kế hoạch nâng cấp UI/UX ALG lên Enterprise Grade, Commercial & Production Ready
 
 - Trạng thái: `ACTIVE` — lập 01/11/2026 · Quyết định nền: `docs/adr/ADR-011.md` · Đầu vào: `docs/audit/ui-architecture-audit/`.
 - Danh sách việc chi tiết (ID, tệp, gate, tiêu chí xong): `docs/plan/ui-enterprise-upgrade-backlog.md`.

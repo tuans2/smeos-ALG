@@ -1,4 +1,4 @@
-# AGENT RULES & STANDARDS — FLORAOS CORE
+# AGENT RULES & STANDARDS — ALG CORE
 
 > This document is the **mandatory core rulebook** for all AI coding agents.
 > Designed in a **3-Tier Architecture (Global / Project-Enterprise / On-Demand Skills)** to optimize context token efficiency and ensure zero-friction portability to other SaaS projects.
@@ -68,7 +68,7 @@ When rules conflict, resolve strictly in this order (lower numbers ALWAYS take p
 ---
 
 # 🏢 PART II: PROJECT & ENTERPRISE CONSTRAINTS (Project Tier)
-*Specific to FloraOS — Customize this section when porting to another repository.*
+*Specific to ALG — Customize this section when porting to another repository.*
 
 ## 8. STRICT LOCALIZATION REQUIREMENT
 - **User-Facing Text MUST BE 100% VIETNAMESE**:
@@ -116,7 +116,7 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
   7. `J7` "WRAP, not REPLACE" & Expert Mode: Wrap existing dashboards as journey destinations; provide toggleable Expert Mode for power users.
 - **Core Modules & UI Kit**: `src/modules/journey/` (domain/catalog) & `src/components/journey/` (`ChoiceGrid`, `ActionCard`, `JourneyShell`, `NextActions`).
 
-## 14. KNOWN FAILURE PATTERNS (FloraOS Battle-Tested Log)
+## 14. KNOWN FAILURE PATTERNS (ALG Battle-Tested Log)
 | # | Issue | Root Cause | Standard Remedy |
 |---|---|---|---|
 | 1 | `server-only` crash in Vitest | Missing `react-server` condition in Vitest | Use stub at `tests/helpers/server-only-stub.ts` |
@@ -146,7 +146,7 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 
 ## 15. OPS COPILOT KNOWLEDGE SYNC & ZERO-LEAKAGE PERIMETER
 - **Mandatory Triad Sync**: Any modification to webapp UI, routes, action buttons, or business workflows (`src/app/(app)/`) MUST update both:
-  1. User Guide SSOT (`docs/production-feature-map/Huong_Dan_Su_Dung_FloraOS_DungchoDIEUHANH.md`)
+  1. User Guide SSOT (`docs/production-feature-map/Huong_Dan_Su_Dung_ALG_DungchoDIEUHANH.md`)
   2. OPS Copilot Knowledge Nodes (`src/modules/chat-assistant/ops-copilot/knowledge-base/node-*.ts`)
 - **Zero-Leakage Security Perimeter**: User-facing manual & Copilot knowledge MUST ONLY contain what shop staff see and interact with on the browser.
   - **STRICTLY PROHIBITED**: Third-party AI providers (OpenAI, Anthropic, Dify), API raw costs, `.env` variables, database schema/SQL, raw capability codes (`A3`, `F4`, `T2`), internal stack traces, and multi-tenant infrastructure internals.
@@ -169,4 +169,4 @@ API Route (src/app/api/v1/) → handle() → requireTenantContext() → requireC
 | 4-tier governance, nav theo tầng, khoá công cụ, gói dịch vụ, plugin ngành | [`tier-governance`](skills/tier-governance/SKILL.md) |
 | Ghi/đọc/xoá tệp, thùng rác, legal hold, Kho dữ liệu | [`storage`](skills/storage/SKILL.md) |
 | Sự kiện & kênh thông báo | [`notifications`](skills/notifications/SKILL.md) |
-| Tiêu chuẩn kiến trúc (chung + SMEOS, trạng thái ✅/🟡/🔴) | [`standards/README.md`](standards/README.md) |
+| Tiêu chuẩn kiến trúc (chung + ALG, trạng thái ✅/🟡/🔴) | [`standards/README.md`](standards/README.md) |

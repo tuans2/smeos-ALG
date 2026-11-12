@@ -192,7 +192,7 @@ Chi tiết, bằng chứng và khuyến nghị ở `13_CROSS_TIER_CONSISTENCY_AU
 Khuyến nghị gộp: `13` §10.
 
 ### ARC-040 … ARC-043 — Cấp hệ sinh thái
-Chi tiết ở `14_ECOSYSTEM_AUDIT.md` §2–§3. Lỗi cấp hệ sinh thái cần quyết định ở nhiều repo; không sửa được chỉ trong `smeOS`.
+Chi tiết ở `14_ECOSYSTEM_AUDIT.md` §2–§3. Lỗi cấp hệ sinh thái cần quyết định ở nhiều repo; không sửa được chỉ trong `ALG`.
 
 ## 3. Phân bố
 
@@ -202,4 +202,4 @@ Chi tiết ở `14_ECOSYSTEM_AUDIT.md` §2–§3. Lỗi cấp hệ sinh thái c�
 | P1 | 13 (ARC-003, 004, 005, 006, 007, 008, 009, 011, 028, 033, 034, 035, 041) |
 | P2 | 24 |
 | P3 | 4 |
-| **Tổng** | **43** (39 cấp repo `smeOS`, 4 cấp hệ sinh thái: ARC-040 … 043) |
+| **Tổng** | **43** (39 cấp repo `ALG`, 4 cấp hệ sinh thái: ARC-040 … 043) |

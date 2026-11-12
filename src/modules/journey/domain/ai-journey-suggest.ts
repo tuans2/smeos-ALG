@@ -1,6 +1,6 @@
 /**
  * Đề xuất lộ trình thông minh (AI Journey Suggest) — Kiến trúc Journey-First.
- * Nguồn đặc tả: FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§2.4, §7.3)
+ * Nguồn đặc tả: ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§2.4, §7.3)
  *
  * Luật nghiệp vụ ALG (AGENTS.md):
  * "BẮT BUỘC HỎI & CHỐT VỚI CHỦ SẢN PHẨM TRƯỚC KHI THỰC HIỆN:

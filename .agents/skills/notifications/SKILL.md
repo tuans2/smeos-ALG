@@ -1,7 +1,7 @@
 ---
 name: notifications
 description: >-
-  Hệ thống thông báo 4 tầng SMEOS: danh mục sự kiện theo tầng, động cơ cascading-policy
+  Hệ thống thông báo 4 tầng ALG: danh mục sự kiện theo tầng, động cơ cascading-policy
   (kích hoạt kênh → khoá cứng theo phạm vi → ghi đè từ dưới lên), notifyOrganization,
   adapter kênh (in-app, email, Telegram; SMS/Push/Zalo là stub), deep link, SSE.
   Kích hoạt khi sửa src/modules/notification, components/notification, hoặc thêm sự kiện gửi từ use-case.

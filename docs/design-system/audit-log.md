@@ -13,7 +13,7 @@ AI: nhập đầu vào, kết quả · Tự chọn: bước 1–4, xuất bản 
 | D08-02 | **P0** | Trang công khai luôn có 3 **đánh giá 5 sao viết cứng** gắn "đã xác minh" | Bỏ dữ liệu cứng; mục đánh giá chỉ hiện khi có đánh giá thật (hiện chưa có nguồn → ẩn) |
 | D08-03 | **P1** | Nội dung mẫu + mẫu trang công khai cam kết thay cửa hàng: "hoàn tiền 100%, 1 đổi 1", "giao 90–120 phút / 2h", "tươi 3–5 ngày", "nhập khẩu Hà Lan, Ecuador", "florist 7 năm", "VAT đầy đủ", "100% ảnh thật" | Câu trung tính, không con số/cam kết khi tiệm chưa khai; chính sách → "liên hệ tiệm" |
 | D08-04 | **P1** | Đồng hồ "Ưu đãi đặt sớm 02 : 14 : 35" là chuỗi cố định (khẩn cấp giả) trên trang công khai | Gỡ |
-| D08-05 | **P1** | Trang công khai ghi "Tiệm hoa smeOS" (tên nền tảng) thay tên tiệm — nội dung mẫu dựng trước khi hồ sơ tải xong | Màn cha tải hồ sơ trước, truyền `shopName` |
+| D08-05 | **P1** | Trang công khai ghi "Tiệm hoa ALG" (tên nền tảng) thay tên tiệm — nội dung mẫu dựng trước khi hồ sơ tải xong | Màn cha tải hồ sơ trước, truyền `shopName` |
 | D08-06 | **P1** | Xuất bản công khai (R3) không có xác nhận; 3 nút "Xuất bản" cùng lúc ở bước 4 | Một nút, qua `ConfirmDialog` (`use-confirm-publish.tsx`) |
 | D08-07 | **P1** | 390px: nút chính luồng AI bị cắt chữ ("tích & Tự động thiết") | Xếp chồng trên di động, nút rộng, nhãn ngắn |
 | D08-08 | P1 | Lỗi xuất bản đọc `data.message` — API trả `{ error: { message } }` nên lý do thật không bao giờ hiện | Đọc `error.message` |
@@ -37,7 +37,7 @@ AI: nhập, chọn phong cách, sẵn sàng, đã xuất bản · **trang công 
 | D09-02 | **P1** | Luồng tự chọn: xuất bản xong bị đưa về màn chọn chế độ → **không bao giờ thấy link/QR** vừa tạo | Giữ wizard ở bước 4 |
 | D09-03 | **P1** | Xuất bản catalog (R3) không xác nhận | `useConfirmPublish` |
 | D09-04 | P1 | "Tích hợp Chatbot AI — tư vấn 24/7 bằng catalog này" — không có tích hợp | Gỡ |
-| D09-05 | P2 | Mã "T1" hiện làm tên phong cách; tên mẫu/phong cách tiếng Anh ("Signature Collection", "Bento 2026 đang trending"…); trang công khai hiện "EDITORIAL HIGH-FASHION • EDITORIAL MAGAZINE"; khẩu hiệu "smeOS 2026" trên catalog của tiệm | Tên tiếng Việt (id giữ nguyên), `templateDisplayName`, bỏ nhãn kỹ thuật trên trang công khai |
+| D09-05 | P2 | Mã "T1" hiện làm tên phong cách; tên mẫu/phong cách tiếng Anh ("Signature Collection", "Bento 2026 đang trending"…); trang công khai hiện "EDITORIAL HIGH-FASHION • EDITORIAL MAGAZINE"; khẩu hiệu "ALG 2026" trên catalog của tiệm | Tên tiếng Việt (id giữ nguyên), `templateDisplayName`, bỏ nhãn kỹ thuật trên trang công khai |
 | D09-06 | P2 | Tên catalog "Bộ sưu tập: Mẫu kho: Bó hồng đỏ Ohara..." | Bỏ phần ô nhập tự ghép, chỉ "…" khi cắt |
 | D09-07 | P2 | Hai nút chính ở trạng thái kết quả; lưới 4 cột bước 4 làm gãy nút ("Sao chép" bị cắt); "Copy", "(Next Best Actions)" | Một nút chính; lưới 2 cột; chữ tiếng Việt |
 | D09-08 | P2 | Chấm chuyển trang xem trước 8px (WCAG 2.5.8 target-size); ô link chỉ đọc không nhãn | Vùng nhấn 24px + `aria-current`; `aria-label` |

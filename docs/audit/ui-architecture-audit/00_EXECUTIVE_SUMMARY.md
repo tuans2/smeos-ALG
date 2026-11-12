@@ -1,11 +1,11 @@
-# SMEOS — Audit toàn diện UI Architecture & Design System (01/11/2026)
+# ALG — Audit toàn diện UI Architecture & Design System (01/11/2026)
 
 > Loại: **AUDIT** (chỉ đọc). Không sửa mã sản phẩm, CSS, token hay kiến trúc. Nhánh `claude/smeos-ui-audit-ecw5lv`, gốc `d4625c98`.
 > Trạng thái tài liệu: `DRAFT — chờ PO duyệt`. Không tạo chuẩn mới; mọi đề xuất là đầu vào để PO quyết.
 
 ## 1. Kết luận một câu
 
-SMEOS có **bộ luật UX viết rất dày** (03a/03c, 12 pattern, archetype A–F, OPERATING_PRINCIPLES) và **một số cổng tự động thật** (ux-lint ratchet R1–R16, test cấm `lucide-react`, axe + visual Playwright trên CI), nhưng **Design System và Component System chưa phải SSOT thực thi được**: token bị lách bằng bảng màu đổi tên, preset runtime chỉ phủ một phần, component chuẩn có tỉ lệ dùng thấp, Screen Contract phủ ~57% nhóm tuyến và không có cơ chế kiểm, tài liệu `docs/ui-ux/` mô tả trạng thái không khớp code. **Chưa đạt Enterprise Grade; đạt mức “thương mại có giới hạn” cho StoreOS.**
+ALG có **bộ luật UX viết rất dày** (03a/03c, 12 pattern, archetype A–F, OPERATING_PRINCIPLES) và **một số cổng tự động thật** (ux-lint ratchet R1–R16, test cấm `lucide-react`, axe + visual Playwright trên CI), nhưng **Design System và Component System chưa phải SSOT thực thi được**: token bị lách bằng bảng màu đổi tên, preset runtime chỉ phủ một phần, component chuẩn có tỉ lệ dùng thấp, Screen Contract phủ ~57% nhóm tuyến và không có cơ chế kiểm, tài liệu `docs/ui-ux/` mô tả trạng thái không khớp code. **Chưa đạt Enterprise Grade; đạt mức “thương mại có giới hạn” cho StoreOS.**
 
 ## 2. Bảng điểm theo miền
 

@@ -7,7 +7,7 @@ Nội bộ — nằm trong `.agents/` nên **không** vào bản giao khách (`.
 | Lớp | Thư mục | Dùng cho | Nội dung |
 |---|---|---|---|
 | **Chung** | `universal/` | Mọi dự án SaaS sau này | Nguyên tắc, mẫu kiến trúc, checklist, cách cưỡng chế bằng test. Không nhắc tên ngành, tên sản phẩm, đường dẫn cụ thể. |
-| **Áp dụng SMEOS** | `smeos/` | Dự án SMEOS | Ánh xạ từng nguyên tắc vào code thật: file, hàm, test, trạng thái (✅ đã có / 🟡 lộ trình / 🔴 lệch chuẩn). |
+| **Áp dụng ALG** | `smeos/` | Dự án ALG | Ánh xạ từng nguyên tắc vào code thật: file, hàm, test, trạng thái (✅ đã có / 🟡 lộ trình / 🔴 lệch chuẩn). |
 
 Dự án mới: chép `universal/`, viết thư mục áp dụng riêng theo mẫu `smeos/`.
 
@@ -21,7 +21,7 @@ Dự án mới: chép `universal/`, viết thư mục áp dụng riêng theo m�
 
 ## Danh mục
 
-| # | Chủ đề | Chung | SMEOS |
+| # | Chủ đề | Chung | ALG |
 |---|---|---|---|
 | 01 | Quản trị phân tầng SaaS (Mother → Ngành → Chuỗi → Cửa hàng) | [universal/01-tiered-saas-governance.md](universal/01-tiered-saas-governance.md) | [smeos/01-tier-governance.md](smeos/01-tier-governance.md) |
 | 02 | Storage (vòng đời tệp, ký URL, registry, legal hold) | [universal/02-storage.md](universal/02-storage.md) | [smeos/02-storage.md](smeos/02-storage.md) |

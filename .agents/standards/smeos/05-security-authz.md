@@ -1,4 +1,4 @@
-# SMEOS · 05 · Bảo mật, phân quyền & nhật ký (đối chiếu code 30/10/2026)
+# ALG · 05 · Bảo mật, phân quyền & nhật ký (đối chiếu code 30/10/2026)
 
 Áp dụng của [universal/05](../universal/05-security-authz.md). Nguồn: review cluster B/H (`39ea423`, `d73e148`), audit hệ thống 28/10 (`cff9ba7`…`d606655`, 613 commit), webhook (`a1e6b75`, AUD-028), CodeQL (`56783a0`, `0301a4d`), lỗ chéo tenant (`eb790f1`, AUD-042), capability (`61859c8`, `7bf51ba` J7).
 

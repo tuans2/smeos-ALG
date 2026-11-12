@@ -5,8 +5,8 @@
 ## 1. Vai và mục đích
 - Vai chính (03b): `platform_admin`
 - Phạm vi: platform
-- Việc chính: Khởi động công tác vận hành toàn hệ thống FloraOS (ChoiceGrid 10 tác vụ)
-- Câu hỏi chính: "Bạn muốn làm gì với FloraOS hôm nay?"
+- Việc chính: Khởi động công tác vận hành toàn hệ thống ALG (ChoiceGrid 10 tác vụ)
+- Câu hỏi chính: "Bạn muốn làm gì với ALG hôm nay?"
 - Mật độ: MEDIUM
 
 ## 2. Hiện trạng (audit)
@@ -18,7 +18,7 @@
 ## 3. Thứ bậc thông tin
 | Lớp | Nội dung | Vị trí hiển thị |
 |---|---|---|
-| L0 Thiết yếu | Tiêu đề "Bạn muốn làm gì với FloraOS?" | Khung nhìn đầu |
+| L0 Thiết yếu | Tiêu đề "Bạn muốn làm gì với ALG?" | Khung nhìn đầu |
 | L1 Hành động | 10 thẻ tác vụ (Báo cáo, Tổ chức, Người dùng, Gói dịch vụ, Năng lực, AI & Credit, Kết nối, Sức khỏe, Cài đặt, Kiểm toán) | Lưới thẻ chính |
 | L2 Ngữ cảnh | Danh mục tính năng quản trị | Lớp mở rộng |
 | L3 Chi tiết | Các trang chức năng tương ứng tại `/van-hanh/*` | Route chi tiết |

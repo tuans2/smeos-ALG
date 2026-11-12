@@ -1,12 +1,12 @@
 ---
 name: database-schema
 description: >-
-  Quy tắc làm việc với Prisma schema và database cho FloraOS. Kích hoạt khi
+  Quy tắc làm việc với Prisma schema và database cho ALG. Kích hoạt khi
   agent cần sửa prisma/schema.prisma, tạo migration, thay đổi data model,
   hoặc làm việc trực tiếp với PostgreSQL.
 ---
 
-# Database & Prisma Schema — FloraOS
+# Database & Prisma Schema — ALG
 
 > Rà theo mã thật: 05/10/2026. Đường dẫn và lệnh `npm run` trong tệp này được `npm run check:docs` kiểm tự động.
 

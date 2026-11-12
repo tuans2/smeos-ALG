@@ -1,6 +1,6 @@
 /**
  * Danh mục Journey tĩnh cho 3 Role cấp cao.
- * Nguồn đặc tả: FLORAOS_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§5.3, §7, §11)
+ * Nguồn đặc tả: ALG_CORE_JOURNEY_FIRST_UX_ARCHITECTURE_FINAL.md (§5.3, §7, §11)
  *
  * Luật Clean Architecture: Không import React, không import Prisma.
  * UX Lint R8: Không hiển thị mã kỹ thuật (M01a, M04b, RBAC...) trên label/description.

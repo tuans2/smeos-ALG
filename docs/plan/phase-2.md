@@ -1,6 +1,6 @@
 # Giai đoạn 2 — Kế hoạch Nâng cấp Toàn diện Kiến trúc Repositories (38 Modules)
 
-> **Mục tiêu**: Chuyển đổi toàn bộ 38 modules của `smeOS` sang kiến trúc **Clean Architecture / Hexagonal Ports & Adapters** một cách an toàn, tuyệt đối không làm gián đoạn các tính năng đang vận hành.
+> **Mục tiêu**: Chuyển đổi toàn bộ 38 modules của `ALG` sang kiến trúc **Clean Architecture / Hexagonal Ports & Adapters** một cách an toàn, tuyệt đối không làm gián đoạn các tính năng đang vận hành.
 > **Trọng tâm Đợt 1**: Hoàn thiện 100% cho 4 module nghiệp vụ cốt lõi trước, sau đó mở rộng tuần tự theo 4 Wave.
 
 ---

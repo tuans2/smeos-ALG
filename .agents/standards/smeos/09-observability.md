@@ -1,4 +1,4 @@
-# SMEOS · 09 · Giám sát & truy vết (đối chiếu code 30/10/2026)
+# ALG · 09 · Giám sát & truy vết (đối chiếu code 30/10/2026)
 
 Áp dụng của [universal/09](../universal/09-observability.md). Ràng buộc gốc: D19 "không thêm hạ tầng" — log JSON ra `stdout`, không SDK. Thêm công cụ theo dõi lỗi/metrics/trace là **dependency + nhà cung cấp mới → PO duyệt**.
 

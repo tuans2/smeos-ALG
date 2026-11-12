@@ -1,4 +1,4 @@
-# SMEOS · 06 · Thông báo (đối chiếu code 30/10/2026)
+# ALG · 06 · Thông báo (đối chiếu code 30/10/2026)
 
 Áp dụng của [universal/06](../universal/06-notifications.md). Nguồn: ma trận 4 tầng 27/10 (`7c3f058`, `666b370`, `4fcd5a7`), khoá theo phạm vi + escape (`b4eba22`, AUD-014…025), capability F1/F2/N2 (`61859c8`), gửi theo sự kiện đơn (`1c625c5`, `afcf5a6`, AUD-041). Đặc tả: `docs/kien-truc/NOTIFICATION_SYSTEM_ARCHITECTURE.md`.
 

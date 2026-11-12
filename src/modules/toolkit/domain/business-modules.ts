@@ -1,7 +1,7 @@
 /**
  * 6 Business Modules của ALG trên /cong-cu (PO 01/11/2026).
  *
- * SSOT: `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/01_DANH_GIA_DONG_BO.md` §2
+ * SSOT: `docs/kien-truc/Nâng cấp tasks/ALG_Marketing_Sales_Center/01_DANH_GIA_DONG_BO.md` §2
  * và `02_DANH_MUC_ASSET.md`.
  *
  * Thay thế growth-modules.ts (10 module cũ).

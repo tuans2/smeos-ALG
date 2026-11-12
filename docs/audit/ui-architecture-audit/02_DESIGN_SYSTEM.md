@@ -6,7 +6,7 @@
 
 | Hạng mục | Trạng thái | Bằng chứng | Khoảng trống |
 |---|---|---|---|
-| Visual identity | Đã triển khai | `globals.css:4-19` (bộ nhận diện “Mộc Lan”, font Be Vietnam Pro), `DESIGN_STYLE_PROPOSAL.md` | Nhận diện gắn với **ngành hoa**; chưa tách “nhận diện SMEOS (nền tảng)” khỏi “nhận diện ngành/tiệm”. |
+| Visual identity | Đã triển khai | `globals.css:4-19` (bộ nhận diện “Mộc Lan”, font Be Vietnam Pro), `DESIGN_STYLE_PROPOSAL.md` | Nhận diện gắn với **ngành hoa**; chưa tách “nhận diện ALG (nền tảng)” khỏi “nhận diện ngành/tiệm”. |
 | Design principles / direction | Đã triển khai (tài liệu) | `page-archetypes.md` (“Clean SaaS Dashboard”), `OPERATING_PRINCIPLES.md` §6 (“Thoáng – Ít chữ – Icon lớn”) | Hai định hướng song song: §6 “thoáng, icon 64px” vs archetype B/C/D “mật độ hữu ích”. Không có quy tắc khi nào áp dụng cái nào ngoài “màn tổng quan/lưới thẻ”. |
 | Visual hierarchy, whitespace | Một phần | §6.3–6.4 (padding ≥20px, gap ≥16/24px, giữa khu ≥32px) | Không có **token khoảng cách** — chỉ số đo bằng class Tailwind; không kiểm tự động. |
 | Information density | Có nhưng bất nhất | `DESIGN_TOKENS.md` §5 ma trận density; `globals.css:436-452` `[data-density]` → `--table-py`, `--card-padding` | **0 component đọc `--table-py`/`--card-padding`**; `DENSITY_CONFIG` (`tokens.ts`) 0 nơi dùng ngoài `ui-system`. Density là tính năng chết. |
@@ -42,7 +42,7 @@
 | Weight | Bất nhất | `font-extrabold` 552, `font-black` 135 | Không có token weight; không quy định dùng 800/900. |
 | Letter spacing / line-height | Một phần | line-height gắn từng cỡ; `tracking-*` 363 lần tự do | Không có token tracking. |
 | Truncation | Một phần | `truncate` 320, `line-clamp` 85 | Không có quy tắc chung (khi nào cắt, có tooltip đầy đủ không). |
-| Đa ngôn ngữ | Một phần | `SMEOS_I18N_STANDARD.md`, `useI18n()`; `<html lang="vi">` cố định (`layout.tsx:23`) | Không có kiểm độ dài chuỗi/tràn khi đổi ngôn ngữ. |
+| Đa ngôn ngữ | Một phần | `ALG_I18N_STANDARD.md`, `useI18n()`; `<html lang="vi">` cố định (`layout.tsx:23`) | Không có kiểm độ dài chuỗi/tràn khi đổi ngôn ngữ. |
 
 ## B4. Color System
 

@@ -1,4 +1,4 @@
-# SMEOS · 07 · AI & Content Engine (đối chiếu code 30/10/2026)
+# ALG · 07 · AI & Content Engine (đối chiếu code 30/10/2026)
 
 Áp dụng của [universal/07](../universal/07-ai-content.md). Skill chi tiết: `.agents/skills/ai-integration/SKILL.md`. Nguồn: tách repo interface (`eaac8e9`), SSRF + prompt QC theo ngành (`d73e148`), QC khi AI lỗi (`d6fe1bf`), prompt v2 + copy guard (`38079f9`), ghi chú bán hàng (`c1d34c4`, `f023bfa`), mẫu dự phòng + log phiên bản (`85d2ffd`), capability J7 (`7bf51ba`).
 

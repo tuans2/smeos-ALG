@@ -26,14 +26,14 @@ acceptance:
 - Mật độ: MEDIUM (thẻ thông tin rõ ràng, bảng trường nguyên tử thu gọn/mở rộng được).
 
 ## 2. Hiện trạng (audit)
-- Dữ liệu: `KNOWLEDGE_MODULES` (SSOT tĩnh định nghĩa 7 phân hệ cốt lõi FloraOS)
+- Dữ liệu: `KNOWLEDGE_MODULES` (SSOT tĩnh định nghĩa 7 phân hệ cốt lõi ALG)
 - Khối: 5 khối chính:
-  1. Header chuẩn Top-Right Action (K2: 1 primary "Mở FloraOS Copilot" + 1 secondary "Kênh hội thoại đa kênh")
+  1. Header chuẩn Top-Right Action (K2: 1 primary "Mở ALG Copilot" + 1 secondary "Kênh hội thoại đa kênh")
   2. Banner hướng dẫn chuẩn K1 (`FeatureGuidanceCard` duy nhất)
   3. Thước đo tiến độ dữ liệu cửa hàng (`OnboardingProgressBar`)
   4. Thanh tìm kiếm & bộ lọc phân hệ
   5. Danh sách thẻ phân hệ `KnowledgeModuleCard` (chứa bảng dữ liệu nguyên tử + so sánh đúng/sai + nút hành động 1-chạm)
-- Nút primary: Đúng 1 nút "Mở FloraOS Copilot" ở header
+- Nút primary: Đúng 1 nút "Mở ALG Copilot" ở header
 - FeatureGuidanceCard: Đúng 1 card duy nhất theo chuẩn K1 (đã loại bỏ card lặp lại trong các thẻ con)
 - Trạng thái có sẵn: tải ☑ rỗng ☑ thành công ☑
 
@@ -41,12 +41,12 @@ acceptance:
 | Lớp | Nội dung | Vị trí hiển thị |
 |---|---|---|
 | L0 Thiết yếu | Tên phân hệ, huy hiệu phân hệ, thanh tìm kiếm | Header trang & Header từng thẻ |
-| L1 Hành động | Mở FloraOS Copilot, Nút điều hướng đến phân hệ | Header trang & Chân thẻ |
+| L1 Hành động | Mở ALG Copilot, Nút điều hướng đến phân hệ | Header trang & Chân thẻ |
 | L2 Ngữ cảnh | Banner K1, Tiến độ onboarding, So sánh cách làm chuẩn vs sai lầm | FeatureGuidanceCard & Box Good/Bad practice |
 | L3 Chi tiết | Bảng danh sách trường dữ liệu nguyên tử (kiểu dữ liệu, mô tả, ví dụ SSOT) | Bảng có thể thu gọn/mở rộng trong thẻ |
 
 ## 4. Hành động
-- Chính (1): `Mở FloraOS Copilot (⌘K)` (`variant: "primary"`).
+- Chính (1): `Mở ALG Copilot (⌘K)` (`variant: "primary"`).
 - Phụ (≤ 2):
   - `Kênh hội thoại đa kênh` (`variant: "outline"`).
   - `👉 [Hành động phân hệ]` (`variant: "primary"`, trên từng thẻ phân hệ).
@@ -73,7 +73,7 @@ acceptance:
 - Bảng biểu: `<table>` có cấu trúc `<thead/tbody>`, các trường bắt buộc có dấu `*` và `span` trợ năng.
 
 ## 9. AI
-- Kết nối trực tiếp với FloraOS Copilot qua sự kiện toàn cục `floraos:open-copilot`, tự động gửi câu hỏi mẫu cho từng phân hệ.
+- Kết nối trực tiếp với ALG Copilot qua sự kiện toàn cục `floraos:open-copilot`, tự động gửi câu hỏi mẫu cho từng phân hệ.
 
 ## 10. Dữ liệu và quyền
 - Nguồn sự thật: Catalog `KNOWLEDGE_MODULES` (`src/components/knowledge-base/knowledge-data.ts`).

@@ -1,7 +1,7 @@
 /**
  * Danh mục 14 vai trải nghiệm (Role UX) — nguồn chuẩn trong mã của
  * `docs/dac-ta/03b-role-ux.md` (PO duyệt 26/09/2026, contract
- * FLORAOS-UX-ROLE-001 v1.1).
+ * ALG-UX-ROLE-001 v1.1).
  *
  * VAI TRẢI NGHIỆM ≠ VAI PHÂN QUYỀN. Bảng `roles` (vai phân quyền, bản ghi) và
  * mã năng lực vẫn quyết định người dùng LÀM ĐƯỢC gì. Danh mục này chỉ quyết
