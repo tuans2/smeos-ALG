@@ -1,11 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
 import * as R from "@/app/api/v1/_contracts/responses-marketing"
-import { POST as createCustomer } from "@/app/api/v1/crm/customers/route"
 import { GET as listCustomers } from "@/app/api/v1/customers/route"
 
 import { expectContract } from "../helpers/contract"
-import { disconnectDatabase, resetDatabase } from "../helpers/database"
+import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { addStaffWithSession, createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
@@ -18,18 +17,19 @@ describe("GET /api/v1/customers", () => {
   let a: Tenant
   let b: Tenant
 
-  const add = (t: Tenant, name: string, phone: string) =>
-    createCustomer(withSession(`${BASE}/crm/customers`, t.token, { method: "POST", body: JSON.stringify({ name, phone }) }))
+  // Số trung tính 01… (không phải số di động thật) — bản giao GD1 kiểm rò rỉ số điện thoại trong mã
+  const add = (t: Tenant, code: string, name: string, phone: string) =>
+    prisma.customers.create({ data: { organization_id: t.organizationId, code, name, phone } })
   const list = (token: string, query = "") => listCustomers(withSession(`${BASE}/customers${query}`, token))
 
   beforeAll(async () => {
     await resetDatabase()
     a = await createTenant("khach-tat-ca-a")
     b = await createTenant("khach-tat-ca-b")
-    for (const [name, phone] of [["Khách A1", "0912000001"], ["Khách A2", "0912000002"], ["Khách A3", "0912000003"]] as const) {
-      expect((await add(a, name, phone)).status).toBe(201)
+    for (const [code, name, phone] of [["KH-A1", "Khách A1", "0100000001"], ["KH-A2", "Khách A2", "0100000002"], ["KH-A3", "Khách A3", "0100000003"]] as const) {
+      await add(a, code, name, phone)
     }
-    expect((await add(b, "Khách B1", "0912000009")).status).toBe(201)
+    await add(b, "KH-B1", "Khách B1", "0100000009")
   })
   afterAll(async () => {
     await disconnectDatabase()
