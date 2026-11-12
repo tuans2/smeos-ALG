@@ -1,6 +1,11 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
+import { randomUUID } from "node:crypto"
+
+import { GET as listOrganizationsRoute } from "@/app/api/v1/organizations/route"
 import { GET as listProducts, POST as createProduct } from "@/app/api/v1/products/route"
+import { POST as switchOrganizationRoute } from "@/app/api/v1/session/organization/route"
+import { RoleRepository } from "@/modules/organization/infra/role-repository"
 import { logIn } from "@/modules/organization/use-cases/log-in"
 import { setOrganizationLifecycle } from "@/modules/platform/use-cases/set-organization-lifecycle"
 
@@ -80,5 +85,46 @@ describe("vòng đời tổ chức", () => {
 
     await prisma.organizations.update({ where: { id: a.organizationId }, data: { lifecycle_status: "DELETED" } })
     await expect(setOrganizationLifecycle(pctx, { organizationId: a.organizationId, status: "ACTIVE" })).rejects.toMatchObject({ code: "CONFLICT" })
+  })
+
+  describe("audit User Journey UJ-27 (R2-02): người thuộc nhiều tổ chức", () => {
+    /** Chủ tiệm A (tham gia A trước) được mời làm nhân viên ở B. */
+    async function joinB() {
+      const role = await new RoleRepository().findSystemRoleByKey("sale")
+      await prisma.memberships.create({
+        data: { id: randomUUID(), organization_id: b.organizationId, user_id: a.userId, role_id: role!.id, status: "ACTIVE", invited_at: new Date(Date.now() + 1000), joined_at: new Date() },
+      })
+    }
+    const listOrgs = async () => (await readJson(await listOrganizationsRoute(withSession(`${BASE}/organizations`, a.token)))).data as { id: string; lifecycle_status: string }[]
+    const switchTo = (organizationId: string) =>
+      switchOrganizationRoute(withSession(`${BASE}/session/organization`, a.token, { method: "POST", body: JSON.stringify({ organization_id: organizationId }) }))
+
+    it("tổ chức cũ nhất bị tạm ngưng → đăng nhập vào tổ chức còn hoạt động, không bị khoá cả tài khoản", async () => {
+      await joinB()
+      await setOrganizationLifecycle(pctx, { organizationId: a.organizationId, status: "SUSPENDED" })
+      const login = await logIn(credentialsOf("vong-doi-a"))
+      expect(login.organizationId).toBe(b.organizationId)
+    })
+
+    it("mọi tổ chức đều tạm ngưng → vẫn báo tổ chức tạm ngưng như cũ", async () => {
+      await joinB()
+      await setOrganizationLifecycle(pctx, { organizationId: a.organizationId, status: "SUSPENDED" })
+      await setOrganizationLifecycle(pctx, { organizationId: b.organizationId, status: "SUSPENDED" })
+      await expect(logIn(credentialsOf("vong-doi-a"))).rejects.toMatchObject({ code: "ORGANIZATION_INACTIVE" })
+    })
+
+    it("danh sách 'Tổ chức của tôi' nêu trạng thái; không chuyển được sang tổ chức đang tạm ngưng (403 có câu báo), chuyển được sang tổ chức đang rời nền tảng", async () => {
+      await joinB()
+      await setOrganizationLifecycle(pctx, { organizationId: b.organizationId, status: "SUSPENDED" })
+      expect(Object.fromEntries((await listOrgs()).map((o) => [o.id, o.lifecycle_status]))).toEqual({ [a.organizationId]: "ACTIVE", [b.organizationId]: "SUSPENDED" })
+
+      const blocked = await switchTo(b.organizationId)
+      expect(blocked.status).toBe(403)
+      expect((await readJson(blocked)).error).toMatchObject({ code: "ORGANIZATION_INACTIVE" })
+      expect((await prisma.sessions.findFirstOrThrow({ where: { user_id: a.userId, revoked_at: null } })).organization_id).toBe(a.organizationId)
+
+      await setOrganizationLifecycle(pctx, { organizationId: b.organizationId, status: "OFFBOARDING", offboardingUntil: new Date(Date.now() + 30 * DAY) })
+      expect((await switchTo(b.organizationId)).status).toBe(200)
+    })
   })
 })

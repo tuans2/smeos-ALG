@@ -5,6 +5,8 @@ export type OrganizationSummary = {
   name: string
   slug: string
   type: string
+  /** Trạng thái vòng đời — "Tổ chức của tôi" nêu tổ chức đang tạm ngưng (audit User Journey UJ-27). */
+  lifecycle_status: string
 }
 
 /**
@@ -21,5 +23,6 @@ export async function listOrganizations(userId: string): Promise<OrganizationSum
     name: row.name,
     slug: row.slug,
     type: row.type,
+    lifecycle_status: row.lifecycle_status ?? "ACTIVE",
   }))
 }

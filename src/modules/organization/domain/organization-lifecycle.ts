@@ -21,6 +21,11 @@ export function lifecycleAccess(status: OrganizationLifecycleStatus): LifecycleA
   return "blocked"
 }
 
+/** Thành viên vào được tổ chức này không (xem hoặc làm) — `false` với tổ chức tạm ngưng / đã đóng. */
+export function canEnterOrganization(status: OrganizationLifecycleStatus): boolean {
+  return lifecycleAccess(status) !== "blocked"
+}
+
 /** Đổi trạng thái hợp lệ: tổ chức đã xoá không đổi lại được; không tự chuyển sang `DELETED` qua Console. */
 export function canChangeLifecycle(from: OrganizationLifecycleStatus, to: OrganizationLifecycleStatus): boolean {
   if (from === "DELETED" || to === "DELETED") return false

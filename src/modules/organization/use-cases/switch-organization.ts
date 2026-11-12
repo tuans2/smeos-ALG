@@ -1,4 +1,5 @@
 import { notFound } from "@/core/http/errors"
+import { assertOrganizationLifecycle } from "./assert-organization-lifecycle"
 import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
 import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
@@ -24,6 +25,8 @@ export async function switchOrganization(input: {
     input.organizationId
   )
   if (!membership || membership.status !== "ACTIVE") throw notFound()
+  // Tổ chức tạm ngưng / đã đóng → không chuyển vào (audit User Journey UJ-27): trước đây chuyển được rồi mọi màn 403
+  await assertOrganizationLifecycle(input.organizationId, "GET")
 
   await getSessionRepository().setActiveOrganization(input.sessionId, input.organizationId)
 
@@ -36,5 +39,6 @@ export async function switchOrganization(input: {
     name: organization.name,
     slug: organization.slug,
     type: organization.type,
+    lifecycle_status: organization.lifecycle_status ?? "ACTIVE",
   }
 }

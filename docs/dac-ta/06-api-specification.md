@@ -68,8 +68,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | POST | `/auth/logout` | — | |
 | GET | `/auth/me` | — | Người dùng, tổ chức hiện tại, danh sách năng lực đã tính |
 | GET | `/auth/session-status` | — | Kiểm nhanh phiên còn sống; giao diện hỏi mỗi 15 giây và khi quay lại tab |
-| GET | `/organizations` | — | Các tổ chức người dùng là thành viên |
-| POST | `/session/organization` | — | Đổi tổ chức đang hoạt động |
+| GET | `/organizations` | — | Các tổ chức người dùng là thành viên, kèm `lifecycle_status` (audit User Journey UJ-27) |
+| POST | `/session/organization` | — | Đổi tổ chức đang hoạt động · tổ chức tạm ngưng / đã đóng → 403 `ORGANIZATION_INACTIVE` (UJ-27). Đăng nhập chọn tổ chức đầu tiên còn vào được; chỉ chặn đăng nhập khi mọi tổ chức đều tạm ngưng / đã đóng |
 | GET | `/session/invitations` | — | Lời mời vào tổ chức khác của chính người đang đăng nhập (thành viên `INVITED` chưa quá 14 ngày) — UJ-14 |
 | POST | `/session/invitations/:id/accept` | — | Nhận lời mời của chính mình → thành viên đang hoạt động; của người khác → 404; quá 14 ngày → 409 (UJ-14) |
 | POST | `/session/invitations/:id/decline` | — | Từ chối lời mời của chính mình (xoá thành viên `INVITED`) — UJ-14 |

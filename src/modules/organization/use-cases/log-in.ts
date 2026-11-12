@@ -8,6 +8,7 @@ import { SessionRepository, getSessionRepository } from "@/modules/organization/
 import { hashSessionToken, newSessionToken } from "@/modules/organization/infra/session-token"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
 import { assertOrganizationLifecycle } from "./assert-organization-lifecycle"
+import { canEnterOrganization } from "@/modules/organization/domain/organization-lifecycle"
 import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
 
 export type LogInInput = { email: string; password: string }
@@ -42,9 +43,12 @@ export async function logIn(input: LogInInput): Promise<LogInResult> {
 
   // Tổ chức đang hoạt động của phiên chọn phía máy chủ, không nhận từ client.
   // Người dùng đổi nó về sau qua `POST /session/organization`.
-  const membership = await memberships.findFirstActiveForUser(user.id)
-  // Tổ chức tạm ngưng / đã đóng → không đăng nhập (ADR-016 D-S5); đang rời nền tảng vẫn vào xem được
-  if (membership) await assertOrganizationLifecycle(membership.organization_id, "GET")
+  // Tổ chức tạm ngưng / đã đóng → không vào (ADR-016 D-S5); đang rời nền tảng vẫn vào xem được. Người thuộc nhiều tổ
+  // chức vào tổ chức đầu tiên còn vào được; chỉ khi không còn tổ chức nào mới chặn đăng nhập (audit User Journey UJ-27).
+  const active = await memberships.listActiveWithLifecycleForUser(user.id)
+  const usable = active.find((m) => canEnterOrganization(m.lifecycleStatus))
+  if (!usable && active[0]) await assertOrganizationLifecycle(active[0].organizationId, "GET")
+  const membership = usable ? { organization_id: usable.organizationId } : null
 
   const now = new Date()
   const token = newSessionToken()

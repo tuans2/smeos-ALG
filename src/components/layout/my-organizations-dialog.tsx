@@ -11,6 +11,14 @@ import { Skeleton } from "@/components/ui/skeleton"
 interface OrganizationItem {
   id: string
   name: string
+  lifecycle_status?: string
+}
+
+/** Tổ chức tạm ngưng / đã đóng không chuyển vào được; đang rời nền tảng chỉ xem (audit User Journey UJ-27). */
+const INACTIVE_LABEL: Record<string, { label: string; tone: "warning" | "danger"; canSwitch: boolean }> = {
+  SUSPENDED: { label: "Đang tạm ngưng", tone: "danger", canSwitch: false },
+  DELETED: { label: "Đã đóng", tone: "danger", canSwitch: false },
+  OFFBOARDING: { label: "Chỉ xem", tone: "warning", canSwitch: true },
 }
 
 interface InvitationItem {
@@ -99,18 +107,24 @@ export function MyOrganizationsDialog({ open, onOpenChange }: { open: boolean; o
         <section className="flex flex-col gap-2">
           <h3 className="text-body-sm font-bold text-text">Cửa hàng bạn đang tham gia</h3>
           {orgs.length === 0 && <Skeleton className="h-12 w-full rounded-xl" />}
-          {orgs.map((org) => (
-            <div key={org.id} className="flex items-center justify-between gap-2 rounded-xl border border-border p-3">
-              <span className="truncate text-body-sm font-semibold text-text">{org.name}</span>
-              {org.id === currentId ? (
-                <Badge tone="success">Đang dùng</Badge>
-              ) : (
-                <Button type="button" size="sm" variant="secondary" disabled={busy !== null} onClick={() => void switchTo(org.id)}>
-                  {busy === `switch:${org.id}` ? "Đang chuyển…" : "Chuyển sang"}
-                </Button>
-              )}
-            </div>
-          ))}
+          {orgs.map((org) => {
+            const inactive = INACTIVE_LABEL[org.lifecycle_status ?? ""]
+            return (
+              <div key={org.id} className="flex items-center justify-between gap-2 rounded-xl border border-border p-3">
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="truncate text-body-sm font-semibold text-text">{org.name}</span>
+                  {inactive && <Badge tone={inactive.tone}>{inactive.label}</Badge>}
+                </div>
+                {org.id === currentId ? (
+                  <Badge tone="success">Đang dùng</Badge>
+                ) : inactive && !inactive.canSwitch ? null : (
+                  <Button type="button" size="sm" variant="secondary" disabled={busy !== null} onClick={() => void switchTo(org.id)}>
+                    {busy === `switch:${org.id}` ? "Đang chuyển…" : "Chuyển sang"}
+                  </Button>
+                )}
+              </div>
+            )
+          })}
         </section>
       </div>
     </Dialog>
