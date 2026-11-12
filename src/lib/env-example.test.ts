@@ -39,6 +39,19 @@ describe(".env.example nạp được sau khi điền khoá theo README", () => 
     })
   }
 
+  // Ứng viên 3 bàn giao GD1: lớp phủ còn trỏ tài khoản CSDL cũ nên `npm run db:deploy` theo README bị từ chối đăng nhập
+  for (const rel of files) {
+    it(`${rel} trỏ đúng CSDL mà docker-compose.yml dựng`, () => {
+      const compose = readFileSync(path.join(ROOT, "docker-compose.yml"), "utf8")
+      const pick = (key: string) => new RegExp(`${key}:\\s*(\\S+)`).exec(compose)?.[1]
+      const port = /"(\d+):5432"/.exec(compose)?.[1]
+      const base = `postgresql://${pick("POSTGRES_USER")}:${pick("POSTGRES_PASSWORD")}@localhost:${port}/${pick("POSTGRES_DB")}`
+      const env = parseEnvFile(path.join(ROOT, rel))
+      expect(env.DATABASE_URL).toBe(base)
+      expect(env.DATABASE_URL_TEST).toBe(`${base}_test`)
+    })
+  }
+
   it("ô chọn-một để trống coi như chưa đặt", async () => {
     const { envSchema } = await import("./env")
     const parsed = envSchema.parse({ ...REQUIRED, STORAGE_DELETE_PAYLOADS: "", ALLOW_LOCAL_STORAGE: "", DB_RLS_MODE: "", STORAGE_SIGNING_SECRET: "" })

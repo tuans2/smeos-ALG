@@ -33,21 +33,13 @@ npm run seed:field-registry   # danh mục trường dữ liệu nền tảng (�
 npm run dev               # http://localhost:3200
 ```
 
-Người vận hành đầu tiên (hệ thống mới chưa có ai để duyệt đăng ký): đăng ký một tài khoản ở `/dang-nhap` → "Đăng ký mới", rồi chạy
-
-```bash
-npm run gan-van-hanh-nen-tang -- --email=<địa chỉ vừa đăng ký>
-```
-
-Lệnh gán đủ quyền Console Vận hành (`/van-hanh`) và duyệt luôn tài khoản đó. Từ đây người vận hành duyệt các đăng ký khác ở `/van-hanh/dang-ky`.
-
 Worker: `npm run worker:vision`, `npm run worker:media` (cần Python 3.11+, `pip install -r workers/requirements.txt`).
 
 Người vận hành nền tảng đầu tiên (Console `/van-hanh`):
 
 1. Mở `/dang-nhap?che-do=dang-ky`, đăng ký tài khoản của người vận hành (tài khoản ở trạng thái chờ duyệt).
 2. Chạy `npm run gan-van-hanh-nen-tang -- --email=<email vừa đăng ký>`: cấp đủ mã vận hành và duyệt tài khoản.
-3. Đăng nhập rồi vào `/van-hanh`. Các cửa hàng sau đó tạo ở Console → Tổ chức, hoặc duyệt ở Console → Đăng ký.
+3. Đăng nhập rồi vào `/van-hanh`. Các cửa hàng sau đó tạo ở Console → Tổ chức, hoặc duyệt ở `/van-hanh/dang-ky`.
 
 ## Kiểm tra trước khi đưa mã lên
 
