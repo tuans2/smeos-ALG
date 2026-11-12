@@ -118,6 +118,9 @@ export const trackingVerifyBody = z.object({ phoneLast4: z.string().regex(/^\d{4
 
 // brochure/tracking/[code]/change-request/route.ts
 const changeRequestAddressPart = z.string().max(ADDRESS_PART_MAX)
+/** `POST /public/brochure/tracking/:code/photo-feedback` — khách góp ý ảnh thành phẩm (checklist ALG 5.13). */
+export const photoFeedbackBody = z.object({ message: z.string().trim().min(3, "Nhập góp ý (ít nhất 3 ký tự)").max(500) })
+
 export const changeRequestBody = z.object({
   /** Khách mở trang không từ link của đơn → chứng minh bằng 4 số cuối SĐT người đặt. */
   phoneLast4: z.string().regex(/^\d{4}$/).optional(),

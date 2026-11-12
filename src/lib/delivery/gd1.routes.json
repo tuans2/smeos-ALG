@@ -495,6 +495,7 @@
     "/api/v1/public/brochure/tracking/[code]/approve-photo",
     "/api/v1/public/brochure/tracking/[code]/change-request",
     "/api/v1/public/brochure/tracking/[code]/flower-substitute-response",
+    "/api/v1/public/brochure/tracking/[code]/photo-feedback",
     "/api/v1/public/brochure/tracking/[code]/substitute-response",
     "/api/v1/public/catalog/[slug]",
     "/api/v1/public/catalog/[slug]/lead",
