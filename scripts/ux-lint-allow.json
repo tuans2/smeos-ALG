@@ -280,6 +280,11 @@
       "rule": "R18",
       "path": "src/components/product-photo-studio/enhance-comparison.tsx",
       "reason": "Ô kéo so sánh ảnh trước/sau: input range trong suốt phủ toàn bộ khung ảnh để kéo ở bất kỳ đâu, đã có aria-label; Slider dạng thanh không thay được (Đợt 4, D4-08)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/subcontract/[orderCode]/page.tsx",
+      "reason": "Trang công khai cho xưởng gia công nhận đơn (không đăng nhập, không có khung ứng dụng) — tiêu đề trang là <h1> căn giữa, cùng nguyên tắc PO 03/11/2026 cho trang công khai (Đợt 4)"
     }
   ]
 }

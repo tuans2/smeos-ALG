@@ -191,7 +191,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
 
       {open && (
         <div
-          role="listbox"
+          role="group"
           aria-label="Chọn tầng / vai trò"
           className="absolute left-0 top-full z-[9999] mt-1.5 w-64 overflow-hidden rounded-xl border border-primary/20 bg-surface shadow-2xl"
         >
@@ -209,7 +209,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
               const isActive = roleKey === preset.roleKey
               const isLoading = loading === preset.roleKey
               return (
-                <li key={preset.roleKey} role="option" aria-selected={isActive}>
+                <li key={preset.roleKey}>
                   <Button variant="ghost"
                     type="button"
                     disabled={isLoading}
@@ -217,6 +217,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
                       if (!isLoading) applyOverride(preset)
                     }}
                     aria-disabled={isLoading}
+                    aria-pressed={isActive}
                     className={cn("h-auto", "justify-start", 
                       "flex w-full items-center gap-2 px-3 py-2 text-left text-caption transition-colors cursor-pointer",
                       isActive

@@ -59,12 +59,12 @@ type UploadedPhoto = Photo & { assetId: string }
 type JobStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED" | "CANCELLED"
 type JobState = { id: string; status: JobStatus; stage: string | null; result: string | null; error: string | null }
 
-type RunPhase = "uploading" | "queuing" | "waiting" | "processing"
+type RunPhase = "uploading" | "queuing" | "waiting" | "analyzing"
 const RUN_PHASES: { key: RunPhase; label: string }[] = [
   { key: "uploading", label: "Tải ảnh lên" },
   { key: "queuing", label: "Tạo lượt phân tích" },
   { key: "waiting", label: "Xếp hàng chờ xử lý" },
-  { key: "processing", label: "Phân tích ảnh (AI)" },
+  { key: "analyzing", label: "Phân tích ảnh (AI)" },
 ]
 
 async function extractError(res: Response, fallback: string): Promise<string> {
@@ -293,7 +293,7 @@ export function UploadWizard() {
     }
     const { job: row } = (await res.json()) as { job: JobState }
     setJob(row)
-    if (row.status === "PROCESSING") setRunPhase("processing")
+    if (row.status === "PROCESSING") setRunPhase("analyzing")
 
     if (row.status === "COMPLETED") {
       await loadAnalyses(jobId, assets)
@@ -431,7 +431,7 @@ export function UploadWizard() {
           await loadAnalyses(jobId, [])
         } else if (row.status === "PENDING" || row.status === "PROCESSING") {
           setStep("running")
-          setRunPhase(row.status === "PROCESSING" ? "processing" : "waiting")
+          setRunPhase(row.status === "PROCESSING" ? "analyzing" : "waiting")
           soLuotHoiRef.current = 0
           await pollJob(jobId, [])
         }
@@ -808,7 +808,7 @@ function RunningStep({
                 {isActive && p.key === "waiting" && job?.status === "PENDING" && (
                   <div className="mt-0.5 text-caption text-text-muted">Chờ tới lượt trong hàng đợi worker...</div>
                 )}
-                {isActive && p.key === "processing" && (
+                {isActive && p.key === "analyzing" && (
                   <div className="mt-0.5 text-caption text-text-muted">
                     {job?.stage === "DETECTING" ? "Đang nhận diện cấu phần trong ảnh..." : "Đang xử lý..."}
                   </div>

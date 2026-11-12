@@ -1,18 +1,5 @@
 {
-  "summary": {
-    "app/subcontract": {
-      "R20": 1
-    },
-    "components/catalog": {
-      "R14": 3
-    },
-    "components/layout": {
-      "R18": 3
-    },
-    "components/upload": {
-      "R14": 1
-    }
-  },
-  "total": 8,
-  "updatedAt": "2026-11-12T07:53:51.522Z"
+  "summary": {},
+  "total": 0,
+  "updatedAt": "2026-11-12T08:36:01.790Z"
 }

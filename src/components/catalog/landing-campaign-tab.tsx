@@ -69,8 +69,8 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
   const [isAiGenerating, setIsAiGenerating] = useState(false)
   // Chỉ liệt kê bước có việc thật (03c UX-016) — trước đây có 2 bước "thị giác/chất lượng ảnh" tự chuyển xong theo giờ.
   const [aiSteps, setAiSteps] = useState<ProcessingStep[]>([
-    { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "pending" },
-    { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "pending" },
+    { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "idle" },
+    { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "idle" },
   ])
   const [isPublishing, setIsPublishing] = useState(false)
   const [isPublished, setIsPublished] = useState(false)
@@ -86,7 +86,7 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
     setFallbackReason(null)
     setAiSteps([
       { id: "content", label: "Soạn thảo tiêu đề & nội dung chiến dịch", status: "running" },
-      { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "pending" },
+      { id: "layout", label: "Tự động hoàn thiện cấu hình từng bước", status: "idle" },
     ])
 
     try {
@@ -142,12 +142,12 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
       // Content done
       setAiSteps((prev) =>
         prev.map((s) =>
-          s.id === "content" ? { ...s, status: "done" } : s.id === "layout" ? { ...s, status: "running" } : s
+          s.id === "content" ? { ...s, status: "succeeded" } : s.id === "layout" ? { ...s, status: "running" } : s
         )
       )
 
       setAiSteps((prev) =>
-        prev.map((s) => (s.id === "layout" ? { ...s, status: "done" } : s))
+        prev.map((s) => (s.id === "layout" ? { ...s, status: "succeeded" } : s))
       )
 
       setCampaignSlug(`campaign-${matchedOccasion}-${Math.random().toString(36).substring(2, 6)}`)
