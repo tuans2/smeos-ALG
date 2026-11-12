@@ -1,8 +1,9 @@
 import { serializeSsoCookie } from "@/core/http/cookies"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { resolveSession } from "@/modules/organization/use-cases/resolve-session"
 import { ssoClaimsFor, SSO_TOKEN_TTL_SECONDS } from "@/modules/sso/domain/sso-claims"
 import { signSsoToken } from "@/modules/sso/infra/sso-jwt"
+import { defineRoute } from "@/core/http/define-route"
 
 /**
  * B1 (Unified Shell) — điểm làm mới cho JWT liên-app ngắn hạn (15 phút,
@@ -22,19 +23,22 @@ import { signSsoToken } from "@/modules/sso/infra/sso-jwt"
  * được trình duyệt gốc, nên giá trị JWT trả cả trong JSON để app gọi tự làm
  * việc đó.
  */
-export const POST = handle(async (request) => {
-  const resolved = await resolveSession(request)
+export const POST = defineRoute({
+  auth: { kind: "custom", reason: "làm mới phiên SSO của chính mình (resolveSession)" },
+  handler: async ({ request }) => {
+    const resolved = await resolveSession(request)
 
-  const claims = ssoClaimsFor({
-    userId: resolved.user.id,
-    organizationId: resolved.session.organization_id,
-    email: resolved.user.email,
-    now: new Date(),
-  })
-  const ssoToken = signSsoToken(claims)
+    const claims = ssoClaimsFor({
+      userId: resolved.user.id,
+      organizationId: resolved.session.organization_id,
+      email: resolved.user.email,
+      now: new Date(),
+    })
+    const ssoToken = signSsoToken(claims)
 
-  return jsonResponse(
-    { sso_token: ssoToken, expires_at: claims.exp },
-    { headers: { "set-cookie": serializeSsoCookie(ssoToken, SSO_TOKEN_TTL_SECONDS) } }
-  )
+    return jsonResponse(
+      { sso_token: ssoToken, expires_at: claims.exp },
+      { headers: { "set-cookie": serializeSsoCookie(ssoToken, SSO_TOKEN_TTL_SECONDS) } }
+    )
+  },
 })

@@ -7,25 +7,25 @@
  * - Calculates affected store counts and risk classification (R1 vs R2)
  */
 
-import { requireCapability } from "@/core/rbac/capabilities"
 import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { ChainCollectionProfileRepository } from "@/modules/field-platform/infra/chain-collection-repository"
 import { previewChainCollectionProfile } from "@/modules/field-platform/use-cases/preview-chain-collection-profile"
 import { type CollectionRule } from "@/modules/field-platform/domain/chain-collection-profile"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "F1")
-  const repo = new ChainCollectionProfileRepository()
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "F1" },
+  handler: async ({ request, ctx }) => {
+    const repo = new ChainCollectionProfileRepository()
 
-  const body = (await request.json()) as { rules?: CollectionRule[] } | null
-  // Thiếu hoặc sai dạng → 400 (audit API §17 — trước đây `Error` trần → 500)
-  if (!body || !Array.isArray(body.rules)) throw validationFailed({ rules: "Danh sách quy tắc (rules) là bắt buộc." })
+    const body = (await request.json()) as { rules?: CollectionRule[] } | null
+    // Thiếu hoặc sai dạng → 400 (audit API §17 — trước đây `Error` trần → 500)
+    if (!body || !Array.isArray(body.rules)) throw validationFailed({ rules: "Danh sách quy tắc (rules) là bắt buộc." })
 
-  const result = await previewChainCollectionProfile(ctx.organizationId, body.rules, repo)
-  return jsonResponse({ data: result })
+    const result = await previewChainCollectionProfile(ctx.organizationId, body.rules, repo)
+    return jsonResponse({ data: result })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

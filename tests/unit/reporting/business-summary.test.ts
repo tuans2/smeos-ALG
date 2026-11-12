@@ -22,7 +22,7 @@ describe("rangePeriod — kỳ theo giờ Việt Nam", () => {
 
 describe("summarizeBusiness", () => {
   const orders = { total: 150, completed: 90, cancelled: 10, overdueOpen: 3, completionRate: 60 }
-  const revenue = { expectedVnd: 70_000_000, netCollectedVnd: 52_000_000, collectionRate: 74.3 }
+  const revenue = { expectedVnd: 70_000_000, netCollectedVnd: 52_000_000, collectionRate: 74.3, draftCount: 0, draftVnd: 0 }
   const products = Array.from({ length: 8 }, (_, i) => ({ productId: `p${i}`, name: `Mẫu ${i}`, quantity: 8 - i, valueVnd: (8 - i) * 100_000 }))
 
   it("đủ 150 đơn: giá trị đơn, đã thu, trung bình trên đơn chưa huỷ, đơn đang xử lý", () => {
@@ -37,9 +37,18 @@ describe("summarizeBusiness", () => {
   })
 
   it("kỳ chưa có đơn: không chia cho 0", () => {
-    const s = summarizeBusiness({ total: 0, completed: 0, cancelled: 0, overdueOpen: 0, completionRate: null }, { expectedVnd: 0, netCollectedVnd: 0, collectionRate: null }, [])
+    const s = summarizeBusiness({ total: 0, completed: 0, cancelled: 0, overdueOpen: 0, completionRate: null }, { expectedVnd: 0, netCollectedVnd: 0, collectionRate: null, draftCount: 0, draftVnd: 0 }, [])
     expect(s.averageOrderValueVnd).toBe(0)
     expect(s.openOrders).toBe(0)
+  })
+
+  // PO 12/11/2026 (audit BL-30): đơn Nháp không vào "Giá trị đơn", trung bình hay "đang xử lý" — hiện riêng "chờ chốt"
+  it("đơn chờ chốt tách riêng khỏi trung bình và đơn đang xử lý", () => {
+    const s = summarizeBusiness(orders, { ...revenue, draftCount: 20, draftVnd: 4_000_000 }, products)
+    expect(s.averageOrderValueVnd).toBe(583_333)
+    expect(s.openOrders).toBe(30)
+    expect(s).toMatchObject({ draftOrders: 20, draftValueVnd: 4_000_000 })
+    expect(businessSummaryCsv(s, "Tiệm", { from: "2026-11-01", to: "2026-11-07" })).toContain("Đơn chờ chốt,20")
   })
 
   it("CSV có cả giá trị đơn và đã thu, tên sản phẩm có dấu nháy được thoát", () => {

@@ -3,30 +3,36 @@
  * GET: liệt kê (tuỳ chọn ?entity=ORDER|PARTNER). PATCH: sửa cấu hình
  * platform-wide của MỘT trường đã xây. POST: tạo trường tự tạo (D13).
  */
-import { handle, jsonResponse } from "@/core/http/response"
-import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { jsonResponse } from "@/core/http/response"
 import { listFields } from "@/modules/field-platform/use-cases/list-fields"
 import { updateFieldConfig } from "@/modules/field-platform/use-cases/update-field-config"
 import { createCustomField } from "@/modules/field-platform/use-cases/create-custom-field"
 import { updateFieldConfigSchema, createCustomFieldSchema, parseBody } from "@/modules/field-platform/adapters/http-schemas"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const pctx = await requirePlatformContext(request)
-  const url = new URL(request.url)
-  const entity = url.searchParams.get("entity") ?? undefined
-  return jsonResponse({ data: await listFields(pctx, entity) })
+export const GET = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ request, pctx }) => {
+    const url = new URL(request.url)
+    const entity = url.searchParams.get("entity") ?? undefined
+    return jsonResponse({ data: await listFields(pctx, entity) })
+  },
 })
 
-export const PATCH = handle(async (request) => {
-  const pctx = await requirePlatformContext(request)
-  const body = await parseBody(request, updateFieldConfigSchema)
-  return jsonResponse({ data: await updateFieldConfig(pctx, body) })
+export const PATCH = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ request, pctx }) => {
+    const body = await parseBody(request, updateFieldConfigSchema)
+    return jsonResponse({ data: await updateFieldConfig(pctx, body) })
+  },
 })
 
-export const POST = handle(async (request) => {
-  const pctx = await requirePlatformContext(request)
-  const body = await parseBody(request, createCustomFieldSchema)
-  return jsonResponse({ data: await createCustomField(pctx, body) })
+export const POST = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ request, pctx }) => {
+    const body = await parseBody(request, createCustomFieldSchema)
+    return jsonResponse({ data: await createCustomField(pctx, body) })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

@@ -2,13 +2,15 @@
  * GET /api/v1/platform/jobs/failed — hàng đợi lỗi xuyên tổ chức (`N5`, ROADMAP E5.2).
  * Không trả payload/output của job.
  */
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { listFailedJobsForOps } from "@/modules/platform/use-cases/manage-failed-jobs"
-import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const pctx = await requirePlatformContext(request)
-  return jsonResponse({ data: await listFailedJobsForOps(pctx) })
+export const GET = defineRoute({
+  auth: { kind: "platform", capability: null, reason: "mã năng lực nền tảng kiểm ở use-case (requirePlatformCapability)" },
+  handler: async ({ pctx }) => {
+    return jsonResponse({ data: await listFailedJobsForOps(pctx) })
+  },
 })
 
 export const dynamic = "force-dynamic" as const

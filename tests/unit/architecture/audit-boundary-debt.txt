@@ -119,3 +119,12 @@ video/jobs/[id]/approve-video
 video/jobs/[id]/storyboard
 vision/analyses
 workspaces
+# Lộ ra 12/11/2026 (không phải nợ mới): test trước đó chỉ nhận route tenant qua `requireTenantContext(`, nên route ghi
+# viết bằng `defineRoute` (`auth: { kind: "tenant" }`) lọt khỏi kiểm tra. Sửa test xong thấy 7 route có sẵn chưa ghi kiểm toán.
+brand-kit/identity-options
+brand-kit/identity-options/[id]/select
+internal-chat/conversations/[id]/images
+internal-chat/conversations/[id]/mute
+notification/push-subscriptions
+session/invitations/[id]/accept
+session/invitations/[id]/decline

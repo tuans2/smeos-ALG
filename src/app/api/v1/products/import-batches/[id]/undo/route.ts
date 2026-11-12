@@ -1,12 +1,12 @@
-import { requireCapability } from "@/core/rbac/capabilities"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { undoImportBatch } from "@/modules/products/use-cases/product-import-batches"
+import { defineRoute } from "@/core/http/define-route"
 
 /** `POST /products/import-batches/:id/undo` (`H3`) — hoàn tác lô nhập trong 24 giờ. */
-export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "H3")
-  const { id } = await context.params
-  return jsonResponse(await undoImportBatch(ctx, id))
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "H3" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    return jsonResponse(await undoImportBatch(ctx, id))
+  },
 })

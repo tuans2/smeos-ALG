@@ -11,7 +11,7 @@ import { MAX_LISTINGS_PER_PUSH } from "@/core/ports/sales-channel-catalog-provid
 import { MAX_AVAILABILITY_PER_PUSH } from "@/core/ports/sales-channel-order-provider"
 import { toChannelListing } from "@/modules/products/domain/channel-listing"
 import { findManifest } from "../domain/connector-catalog"
-import { channelInStock, chunk, mapChannelOrder } from "../domain/sales-order-mapping"
+import { channelInStock, channelPrepaidVnd, chunk, mapChannelOrder } from "../domain/sales-order-mapping"
 import { isUsable } from "../domain/connection-lifecycle"
 import { openCredential } from "../infra/credential-vault"
 import type { ConnectionRecord } from "../infra/connection-repository"
@@ -142,10 +142,14 @@ export async function importChannelOrder(
     if (!order) throw new Error("ORDER_NOT_FOUND")
     const skus = order.items.flatMap((i) => (i.sellerSku ? [i.sellerSku] : []))
     const bySku = await deps.sales.productIdsBySkuSystem(connection.organizationId, skus)
-    const mapped = mapChannelOrder(order, bySku, findManifest(connection.connectorKey)?.label ?? "kênh bán")
+    const channelLabel = findManifest(connection.connectorKey)?.label ?? "kênh bán"
+    const mapped = mapChannelOrder(order, bySku, channelLabel)
     if (!mapped) throw new Error("EMPTY_ORDER")
     const systemCtx: TenantContext = { organizationId: connection.organizationId, workspaceId: "system", userId: "system", branchId: null, capabilities: new Set() }
     const created = await deps.createOrder(systemCtx, mapped.input)
+    // Sàn đã thu → ghi sổ thu ngay; thu hộ khi giao → không ghi (audit BL-34)
+    const prepaid = channelPrepaidVnd(order.payment, created.totalVnd)
+    if (prepaid > 0) await deps.recordPrepayment(systemCtx, { orderId: created.id, amountVnd: prepaid, externalOrderId, channelLabel })
     await deps.sales.finishOrderSystem(connection.id, externalOrderId, { orderId: created.id })
     return created.id
   } catch (err) {

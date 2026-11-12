@@ -5,23 +5,23 @@
  * (khác `GET /api/v1/platform/catalogs`, đòi N12). Gác `R1` như cột năng lực đặc tả 06 (audit API §31,
  * 11/11/2026 — trước đây chỉ kiểm phiên).
  */
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { listCatalogsForTenant } from "@/modules/field-platform/use-cases/list-catalogs-for-tenant"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R1")
-  const url = new URL(request.url)
-  const keysParam = url.searchParams.get("keys")
-  const keys = keysParam
-    ? keysParam
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-    : undefined
-  return jsonResponse({ data: await listCatalogsForTenant(keys) })
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "R1" },
+  handler: async ({ request, ctx }) => {
+    const url = new URL(request.url)
+    const keysParam = url.searchParams.get("keys")
+    const keys = keysParam
+      ? keysParam
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : undefined
+    return jsonResponse({ data: await listCatalogsForTenant(keys) })
+  },
 })
 
 export const dynamic = "force-dynamic" as const
