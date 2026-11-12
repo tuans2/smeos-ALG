@@ -135,6 +135,8 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | [x] | P-6b Hạn lưu dữ liệu khách — PO duyệt 12/11/2026: hội thoại (xoá tin nhắn, giữ vỏ) / lead không thành đơn / phiên Thẻ chào không đặt 3 tháng (ẩn danh), hồ sơ khách 24 tháng không hoạt động (ẩn danh, kể cả khách có đơn đã thu), báo giá + đơn huỷ chưa thu 5 năm (xoá) — đặc tả 07 §54 | P2-F2 | `tests/tenant/retention-sweep-customer.test.ts`: đơn đã thu giữ nguyên; legal hold giữ |
 | [ ] | P-6c Chứng từ ghi sổ 10 năm từ cuối năm tài chính (đơn đã thu, phiếu thu, sổ credit, `usage`) — hoãn (PO 12/11/2026) tới khi pháp lý xác nhận mốc | P2-F2 | Xoá không vỡ đối soát |
 | [ ] | P-7 [SCHEMA] `data_subject_requests` + xoá/xuất | P2-F1 | Xoá lan sang tổ chức được chia sẻ |
+| [x] | P-7a [SCHEMA] `data_subject_requests` + API xuất / xoá / sửa (`/crm/customers/:id/data-requests/*`, `/crm/data-requests`) — PO duyệt 12/11/2026; hạn 72 giờ — đặc tả 07 §55, đặc tả 06 | P2-F1 | `tests/tenant/data-subject-requests.test.ts`: chi nhánh được chia sẻ thấy bản đã xoá; 404 tổ chức khác |
+| [ ] | P-7b Màn hình yêu cầu dữ liệu cá nhân cho nhân viên; bản CSV của gói xuất | P2-F1 | E2E UX |
 | [ ] | P-8 [PO] Chọn vùng dữ liệu; đổi mặc định `data_region` theo quyết định | — | Ghi sổ quyết định |
 
 ### GĐ5 — Cô lập theo gói và vòng đời tenant (ADR-016)

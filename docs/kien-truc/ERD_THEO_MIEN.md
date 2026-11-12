@@ -5,7 +5,7 @@ Sinh từ `prisma/schema.prisma` bởi `scripts/gen-erd.mjs` (kế hoạch DB, b
 (PK, FK, `organization_id`) và khoá ngoại tới bảng cha; bảng của miền khác chỉ hiện tên. Cột đầy đủ, ý nghĩa và quy tắc
 ở đặc tả `docs/dac-ta/07-database-specification.md`. `tests/unit/architecture/erd.test.ts` đỏ khi tệp này lệch schema.
 
-Tổng: 156 bảng, 10 miền.
+Tổng: 157 bảng, 10 miền.
 
 ## Tổ chức, người dùng, phân quyền
 
@@ -100,6 +100,7 @@ erDiagram
   customer_occasions
   customer_segments
   customers
+  data_subject_requests
   field_config_overrides
   field_definitions
   generation_jobs
@@ -235,6 +236,7 @@ erDiagram
   organizations ||--o{ customer_occasions : "organization_id"
   organizations ||--o{ customer_segments : "organization_id"
   organizations ||--o{ customers : "organization_id"
+  organizations ||--o{ data_subject_requests : "organization_id"
   organizations ||--o{ field_config_overrides : "organization_id"
   organizations ||--o{ generation_jobs : "organization_id"
   organizations ||--o{ greeting_catalog_events : "organization_id"
@@ -405,7 +407,7 @@ erDiagram
 
 ## Khách hàng và bán hàng
 
-Bảng: `customers`, `customer_consents`, `customer_interactions`, `customer_occasions`, `customer_segments`, `occasions`, `leads`, `quotations`, `quotation_items`, `quotation_revisions`, `vouchers`, `voucher_batches`, `voucher_redemptions`, `pricing_rules`, `shop_reviews`.
+Bảng: `customers`, `customer_consents`, `data_subject_requests`, `customer_interactions`, `customer_occasions`, `customer_segments`, `occasions`, `leads`, `quotations`, `quotation_items`, `quotation_revisions`, `vouchers`, `voucher_batches`, `voucher_redemptions`, `pricing_rules`, `shop_reviews`.
 
 ```mermaid
 erDiagram
@@ -415,6 +417,11 @@ erDiagram
     String branch_id FK
   }
   customer_consents {
+    String id PK
+    String organization_id FK
+    String customer_id FK
+  }
+  data_subject_requests {
     String id PK
     String organization_id FK
     String customer_id FK
@@ -504,6 +511,7 @@ erDiagram
   branches |o--o{ customers : "branch_id"
   branches |o--o{ pricing_rules : "branch_id"
   customers |o--o{ chat_conversations : "customer_id"
+  customers |o--o{ data_subject_requests : "customer_id"
   customers |o--o{ greeting_sessions : "customer_id"
   customers |o--o{ leads : "customer_id"
   customers |o--o{ orders : "customer_id, organization_id"
@@ -524,6 +532,7 @@ erDiagram
   organizations ||--o{ customer_occasions : "organization_id"
   organizations ||--o{ customer_segments : "organization_id"
   organizations ||--o{ customers : "organization_id"
+  organizations ||--o{ data_subject_requests : "organization_id"
   organizations ||--o{ leads : "organization_id"
   organizations ||--o{ occasions : "organization_id"
   organizations ||--o{ pricing_rules : "organization_id"

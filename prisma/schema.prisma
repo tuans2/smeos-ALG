@@ -279,6 +279,7 @@ model organizations {
   notification_user_preferences                    notification_user_preferences[]
   notification_inbox                               notification_inbox[]
   push_subscriptions                               push_subscriptions[]
+  data_subject_requests                            data_subject_requests[]
   materials                                        materials[]
   material_price_history                           material_price_history[]
   product_recipes                                  product_recipes[]
@@ -2322,6 +2323,7 @@ model customers {
 
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
   voucher_redemptions_by_customer_id voucher_redemptions[] @relation("fk_voucher_redemptions_customer_id")
+  data_subject_requests              data_subject_requests[]
 
   @@unique([organization_id, phone_hash]) // P-5c: một khách mỗi số (mọi cách viết) trong tổ chức
   @@unique([organization_id, code])
@@ -2730,6 +2732,48 @@ model retention_policies {
   updated_by       String?
   updated_at       DateTime         @default(now()) @updatedAt @db.Timestamptz(3)
   created_at       DateTime         @default(now()) @db.Timestamptz(3)
+}
+
+enum data_subject_request_type {
+  EXPORT
+  ERASE
+  RECTIFY
+}
+
+enum data_subject_request_status {
+  RECEIVED
+  COMPLETED
+  REJECTED
+}
+
+/// Yêu cầu của khách về dữ liệu cá nhân của mình (ADR-014 D-P5, bước P-7): xuất, xoá (ẩn danh xuyên bảng), sửa.
+/// Không lưu dữ liệu cá nhân: `note` là ghi chú nghiệp vụ, `result` chỉ có số dòng theo bảng.
+model data_subject_requests {
+  id              String                      @id @default(uuid())
+  organization_id String
+  /// Khách yêu cầu; khách bị xoá hẳn (Q4) thì null, yêu cầu vẫn giữ làm bằng chứng.
+  customer_id     String?
+  type            data_subject_request_type
+  status          data_subject_request_status @default(RECEIVED)
+  /// `users.id` người tiếp nhận
+  received_by     String
+  received_at     DateTime                    @default(now()) @db.Timestamptz(3)
+  /// Hạn xử lý (`DSR_DUE_HOURS`, `src/modules/crm/domain/data-subject-request.ts`)
+  due_at          DateTime                    @db.Timestamptz(3)
+  note            String?
+  completed_by    String?
+  completed_at    DateTime?                   @db.Timestamptz(3)
+  /// Số dòng đã ẩn danh / xoá / xuất theo bảng — không chứa dữ liệu cá nhân
+  result          Json?
+  created_at      DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime                    @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  customer     customers?    @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─────────────────────────────────────────────────────────────────────────

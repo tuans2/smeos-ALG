@@ -70,6 +70,11 @@ describe("xoá hẳn tổ chức đã rời nền tảng", () => {
 
   it("xoá: giữ chứng từ + nhật ký, ẩn danh khách và người nhận (giữ hoá đơn VAT), tệp vào hàng đợi; tổ chức khác nguyên vẹn", async () => {
     const kept = await seed(a, "a")
+    // Khách thứ hai có đơn đã thu: hai khách cùng bị ẩn danh không được trùng khoá duy nhất số điện thoại
+    const second = await prisma.customers.create({ data: { organization_id: a.organizationId, code: "KH3-a", name: "Chị Vy", phone: "0100000004" } })
+    await prisma.orders.create({
+      data: { organization_id: a.organizationId, code: "DH3-a", customer_id: second.id, status: "COMPLETED", total_vnd: 200_000, paid_vnd: 200_000, balance_vnd: 0, created_by: a.userId },
+    })
     await seed(b, "b")
     const otherBefore = await countsOf(b.organizationId)
     const auditBefore = await prisma.audit_logs.count({ where: { organization_id: a.organizationId } })
@@ -83,7 +88,8 @@ describe("xoá hẳn tổ chức đã rời nền tảng", () => {
     expect(result.fileKeysQueued).toBe(1)
     expect(result.deleted).toEqual(expect.arrayContaining(plan))
 
-    expect(await countsOf(a.organizationId)).toEqual({ products: 0, customers: 1, orders: 1, assets: 0, memberships: 0, orderEvents: 0 })
+    expect(await countsOf(a.organizationId)).toEqual({ products: 0, customers: 2, orders: 2, assets: 0, memberships: 0, orderEvents: 0 })
+    expect(await prisma.customers.count({ where: { organization_id: a.organizationId, phone_hash: null } })).toBe(2)
     expect(await prisma.order_items.count({ where: { order_id: kept.paidOrderId } })).toBe(1)
     expect(await prisma.order_payments.count({ where: { order_id: kept.paidOrderId } })).toBe(1)
     expect(await prisma.audit_logs.count({ where: { organization_id: a.organizationId } })).toBe(auditBefore)
