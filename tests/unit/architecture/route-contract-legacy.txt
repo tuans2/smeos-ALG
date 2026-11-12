@@ -12,7 +12,6 @@ chat/channels
 chat/public/widget
 chat/webhooks/facebook
 chat/webhooks/zalo
-coordinator/orders/[id]/dispatch-to-chat
 coordinator/templates/[id]/reminders
 greeting-card/cancellation-requests
 greeting-card/cancellation-requests/[id]/decision
@@ -80,22 +79,12 @@ greeting-card/tracking/decide-dismiss
 greeting-card/tracking/dismiss
 greeting-card/tracking/restore
 greeting-card/tracking/timeline
-integration-tokens
-internal-chat/conversations
-internal-chat/conversations/[id]/messages
-internal-chat/messages/[id]/action
 internal/chain-dispatch-sweep
 internal/health
 internal/integrations-sweep
 jobs/batch
 media/background-removal
 notification/channels
-notification/inbox
-notification/inbox/[id]/read
-notification/inbox/mark-all-read
-notification/org-hard-locks
-notification/preferences
-notification/store-hard-locks
 notification/stream
 orders/my-work
 organizations
@@ -159,5 +148,3 @@ session/organization
 session/password
 sso/refresh
 storage/[...key]
-storage/trash/[id]
-storage/trash/[id]/restore

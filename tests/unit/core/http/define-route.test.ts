@@ -6,7 +6,8 @@ import { AppError } from "@/core/http/errors"
 
 const ctx = { organizationId: "org-a", workspaceId: "ws", userId: "u-1", branchId: null, capabilities: new Set(["L1"]) }
 let currentCtx = ctx
-const requireTenantContext = vi.fn(async () => ({ ctx: currentCtx }))
+const currentResolved = { user: { id: "u-1" }, session: { id: "s-1" } }
+const requireTenantContext = vi.fn(async () => ({ ctx: currentCtx, resolved: currentResolved }))
 vi.mock("@/modules/organization/use-cases/resolve-session", () => ({ requireTenantContext: () => requireTenantContext() }))
 vi.mock("@/modules/platform/use-cases/resolve-platform-session", () => ({
   requirePlatformContext: async () => ({ userId: "op-1", capabilities: new Set(["N1"]) }),
@@ -113,6 +114,11 @@ describe("defineRoute", () => {
   it("cron: thiếu CRON_SECRET hợp lệ → 401", async () => {
     const POST = defineRoute({ auth: { kind: "cron" }, handler: async () => ok(null) })
     expect((await POST(req("/internal/x", { method: "POST" }))).status).toBe(401)
+  })
+
+  it("tenant: handler nhận cả phiên đã xác thực (resolved)", async () => {
+    const route = defineRoute({ auth: { kind: "tenant", capability: null, reason: "của chính mình" }, handler: async ({ resolved }) => ok(resolved.session.id) })
+    expect(await (await route(req("/x"))).json()).toEqual({ data: "s-1" })
   })
 
   it("platform: kiểm mã năng lực nền tảng", async () => {
