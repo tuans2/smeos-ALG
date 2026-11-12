@@ -24,6 +24,7 @@ import { PATCH as partnershipStatus } from "@/app/api/v1/coordinator/partners/[i
 import { PATCH as partnerTools } from "@/app/api/v1/coordinator/partners/[id]/tools/route"
 import { POST as linkExisting } from "@/app/api/v1/coordinator/partners/link-existing/route"
 import { GET as listPartners, POST as createPartner } from "@/app/api/v1/coordinator/partners/route"
+import { GET as listChainPartners, POST as provisionChainPartner } from "@/app/api/v1/coordinator/chain-partners/route"
 import { POST as acknowledge } from "@/app/api/v1/coordinator/reminders/acknowledge/route"
 import { GET as reminders } from "@/app/api/v1/coordinator/reminders/route"
 import { GET as getPolicy, PUT as putPolicy } from "@/app/api/v1/coordinator/settings/reminders/route"
@@ -75,12 +76,12 @@ describe("hợp đồng — Điều phối", () => {
     const partner = await expectContract(
       await createPartner(send("/partners", "POST", { code: "XUONG-01", name: "Xưởng 01", phone: "0912345678", capacityDaily: 10 })),
       201,
-      O.createPartnerResponse,
+      O.partnerResponse,
       "co-partner"
     )
-    const partnerId = (partner.partner as { id: string }).id
+    const partnerId = (partner.data as { id: string }).id
     await expectContract(await patchPartner(send(`/partners/${partnerId}`, "PATCH", { code: "XUONG-01", name: "Xưởng số 1", phone: "0912345678" }), ps({ id: partnerId })), 200, O.partnerResponse, "co-partner")
-    await expectContract(await listPartners(get("/partners?active=1")), 200, O.chainPartnersResponse, "co-partners")
+    await expectContract(await listPartners(get("/partners?active=1")), 200, O.partnersResponse, "co-partners")
     await expectContract(await assignPartner(send(`/orders/${id}/assign-partner`, "POST", { partnerId, agreedCraftFeeVnd: 150_000 }), ps({ id })), 200, R.coordinatorOrderResponse, "co-order")
     const imageId = await asset()
     await expectContract(
@@ -141,15 +142,15 @@ describe("hợp đồng — Điều phối", () => {
   it("chuỗi: cửa hàng đối tác (tạo, liên kết, trạng thái, công cụ), gửi thẻ đơn sang chat", async () => {
     await makeChainOrganization(t)
     const provisioned = await expectContract(
-      await createPartner(send("/partners", "POST", {
+      await provisionChainPartner(send("/chain-partners", "POST", {
         partnerStoreName: "Tiệm Quận 7", partnerCode: "Q7", contactName: "Chị Hạnh", contactPhone: "0909123456", contactEmail: "q7@vi-du.test", province: "TP.HCM",
       })),
       201,
-      O.createPartnerResponse,
+      O.chainPartnerProvisionedResponse,
       "co-provision"
     )
-    const partnership = provisioned.data as { id: string; partnerOrgId: string }
-    await expectContract(await listPartners(get("/partners")), 200, O.chainPartnersResponse, "co-chain-partners")
+    const partnership = (provisioned.data as { partnership: { id: string; partnerOrgId: string } }).partnership
+    await expectContract(await listChainPartners(get("/chain-partners")), 200, O.chainPartnersResponse, "co-chain-partners")
     await expectContract(await partnerTools(send(`/partners/${partnership.id}/tools`, "PATCH", { unlockedTools: ["catalog"] }), ps({ id: partnership.id })), 200, O.partnerToolsResponse, "co-tools")
     const id = await newOrder()
     await expectContract(

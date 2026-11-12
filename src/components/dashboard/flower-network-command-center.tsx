@@ -60,12 +60,12 @@ export function FlowerNetworkCommandCenter() {
     setError(null)
     try {
       const [partnersData, ordersData, coordOrdersData] = await Promise.all([
-        layJson<{ partners: Partner[] }>("/api/v1/coordinator/partners?active=1").catch(() => ({ partners: [] })),
+        layJson<{ data: Partner[] }>("/api/v1/coordinator/partners?active=1").catch(() => ({ data: [] })),
         layJson<{ data?: unknown[]; meta?: { total?: number } }>("/api/v1/orders?limit=10").catch(() => ({ data: [], meta: { total: 0 } })),
         layJson<{ orders?: Array<{ riskLevel: string }> }>("/api/v1/coordinator/orders?limit=50").catch(() => ({ orders: [] })),
       ])
 
-      const activeList = (partnersData?.partners ?? []).filter((p) => p.isActive)
+      const activeList = (partnersData?.data ?? []).filter((p) => p.isActive)
       setPartners(activeList.slice(0, 5))
 
       const orderCount = ordersData?.meta?.total ?? 0

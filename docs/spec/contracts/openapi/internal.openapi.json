@@ -21749,6 +21749,445 @@
         "x-capability": "H1"
       }
     },
+    "/coordinator/chain-partners": {
+      "get": {
+        "operationId": "listChainPartners",
+        "summary": "Cửa hàng đối tác của chuỗi",
+        "tags": [
+          "Điều phối — đối tác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "ACTIVE",
+                "SUSPENDED",
+                "TERMINATED"
+              ]
+            }
+          },
+          {
+            "name": "province",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Liên kết",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "chainOrgId": {
+                            "type": "string"
+                          },
+                          "partnerOrgId": {
+                            "type": "string"
+                          },
+                          "partnerCode": {
+                            "type": "string"
+                          },
+                          "partnershipType": {
+                            "type": "string",
+                            "enum": [
+                              "SUBCONTRACTOR",
+                              "FRANCHISE"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "PENDING",
+                              "ACTIVE",
+                              "SUSPENDED",
+                              "TERMINATED"
+                            ]
+                          },
+                          "commissionRate": {
+                            "type": "number"
+                          },
+                          "capacityDaily": {
+                            "type": "number"
+                          },
+                          "contactName": {
+                            "type": "string"
+                          },
+                          "contactPhone": {
+                            "type": "string"
+                          },
+                          "contactEmail": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": "string"
+                          },
+                          "province": {
+                            "type": "string"
+                          },
+                          "district": {
+                            "type": "string"
+                          },
+                          "partnerOrgName": {
+                            "type": "string"
+                          },
+                          "partnerOrgSlug": {
+                            "type": "string"
+                          },
+                          "unlockedTools": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "chainOrgId",
+                          "partnerOrgId",
+                          "partnerCode",
+                          "partnershipType",
+                          "status",
+                          "capacityDaily",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "total"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "F1"
+      },
+      "post": {
+        "operationId": "provisionChainPartner",
+        "summary": "Tạo tài khoản cửa hàng đối tác mới",
+        "description": "Chỉ Điều hành (`F2` hardCap). Mật khẩu tạm trả MỘT lần (`temporary_password`). Sai lược đồ → 400 `details.reason` (một chuỗi).",
+        "tags": [
+          "Điều phối — đối tác"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "partnerStoreName": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "partnerCode": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "partnershipType": {
+                    "type": "string",
+                    "enum": [
+                      "SUBCONTRACTOR",
+                      "FRANCHISE"
+                    ]
+                  },
+                  "contactName": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "contactPhone": {
+                    "type": "string",
+                    "minLength": 8
+                  },
+                  "contactEmail": {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 10
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "province": {
+                    "type": "string"
+                  },
+                  "district": {
+                    "type": "string"
+                  },
+                  "capacityDaily": {
+                    "type": "number"
+                  },
+                  "commissionRate": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "partnerStoreName",
+                  "partnerCode",
+                  "contactName",
+                  "contactPhone",
+                  "contactEmail"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cửa hàng đối tác",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "partnership": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "chainOrgId": {
+                              "type": "string"
+                            },
+                            "partnerOrgId": {
+                              "type": "string"
+                            },
+                            "partnerCode": {
+                              "type": "string"
+                            },
+                            "partnershipType": {
+                              "type": "string",
+                              "enum": [
+                                "SUBCONTRACTOR",
+                                "FRANCHISE"
+                              ]
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "PENDING",
+                                "ACTIVE",
+                                "SUSPENDED",
+                                "TERMINATED"
+                              ]
+                            },
+                            "commissionRate": {
+                              "type": "number"
+                            },
+                            "capacityDaily": {
+                              "type": "number"
+                            },
+                            "contactName": {
+                              "type": "string"
+                            },
+                            "contactPhone": {
+                              "type": "string"
+                            },
+                            "contactEmail": {
+                              "type": "string"
+                            },
+                            "address": {
+                              "type": "string"
+                            },
+                            "province": {
+                              "type": "string"
+                            },
+                            "district": {
+                              "type": "string"
+                            },
+                            "partnerOrgName": {
+                              "type": "string"
+                            },
+                            "partnerOrgSlug": {
+                              "type": "string"
+                            },
+                            "unlockedTools": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "chainOrgId",
+                            "partnerOrgId",
+                            "partnerCode",
+                            "partnershipType",
+                            "status",
+                            "capacityDaily",
+                            "createdAt",
+                            "updatedAt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "temporary_password": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "partnership"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          }
+        },
+        "x-capability": "F2"
+      }
+    },
     "/coordinator/exceptions/{id}/resolve": {
       "post": {
         "operationId": "resolveCoordinatorException",
@@ -44331,7 +44770,8 @@
     "/coordinator/partners": {
       "get": {
         "operationId": "listCoordinatorPartners",
-        "summary": "Đối tác gia công hoặc cửa hàng đối tác của chuỗi",
+        "summary": "Đối tác gia công của Điều phối",
+        "description": "`active=1` chỉ đối tác đang hoạt động. Cửa hàng đối tác của chuỗi ở `/coordinator/chain-partners` (tách 12/11/2026).",
         "tags": [
           "Điều phối — đối tác"
         ],
@@ -44352,36 +44792,6 @@
                 "1"
               ]
             }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "PENDING",
-                "ACTIVE",
-                "SUSPENDED",
-                "TERMINATED"
-              ]
-            }
-          },
-          {
-            "name": "province",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -44401,302 +44811,77 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "partners": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "code": {
-                                "type": "string"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "phone": {
-                                "type": "string"
-                              },
-                              "address": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "district": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "province": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
-                              },
-                              "tier": {
-                                "type": "string"
-                              },
-                              "rating": {
-                                "type": "number"
-                              },
-                              "capacityDaily": {
-                                "type": "number"
-                              },
-                              "isActive": {
-                                "type": "boolean"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "code",
-                              "name",
-                              "phone",
-                              "address",
-                              "district",
-                              "province",
-                              "tier",
-                              "rating",
-                              "capacityDaily",
-                              "isActive"
-                            ],
-                            "additionalProperties": false
-                          }
-                        }
-                      },
-                      "required": [
-                        "partners"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "success": {
-                          "type": "boolean",
-                          "const": true
-                        },
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "chainOrgId": {
-                                "type": "string"
-                              },
-                              "partnerOrgId": {
-                                "type": "string"
-                              },
-                              "partnerCode": {
-                                "type": "string"
-                              },
-                              "partnershipType": {
-                                "type": "string",
-                                "enum": [
-                                  "SUBCONTRACTOR",
-                                  "FRANCHISE"
-                                ]
-                              },
-                              "status": {
-                                "type": "string",
-                                "enum": [
-                                  "PENDING",
-                                  "ACTIVE",
-                                  "SUSPENDED",
-                                  "TERMINATED"
-                                ]
-                              },
-                              "commissionRate": {
-                                "type": "number"
-                              },
-                              "capacityDaily": {
-                                "type": "number"
-                              },
-                              "contactName": {
-                                "type": "string"
-                              },
-                              "contactPhone": {
-                                "type": "string"
-                              },
-                              "contactEmail": {
-                                "type": "string"
-                              },
-                              "address": {
-                                "type": "string"
-                              },
-                              "province": {
-                                "type": "string"
-                              },
-                              "district": {
-                                "type": "string"
-                              },
-                              "partnerOrgName": {
-                                "type": "string"
-                              },
-                              "partnerOrgSlug": {
-                                "type": "string"
-                              },
-                              "unlockedTools": {
-                                "anyOf": [
-                                  {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "createdAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              },
-                              "updatedAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "chainOrgId",
-                              "partnerOrgId",
-                              "partnerCode",
-                              "partnershipType",
-                              "status",
-                              "capacityDaily",
-                              "createdAt",
-                              "updatedAt"
-                            ],
-                            "additionalProperties": false
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "phone": {
+                            "type": "string"
+                          },
+                          "address": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "district": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "province": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "tier": {
+                            "type": "string"
+                          },
+                          "rating": {
+                            "type": "number"
+                          },
+                          "capacityDaily": {
+                            "type": "number"
+                          },
+                          "isActive": {
+                            "type": "boolean"
                           }
                         },
-                        "partners": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string"
-                              },
-                              "chainOrgId": {
-                                "type": "string"
-                              },
-                              "partnerOrgId": {
-                                "type": "string"
-                              },
-                              "partnerCode": {
-                                "type": "string"
-                              },
-                              "partnershipType": {
-                                "type": "string",
-                                "enum": [
-                                  "SUBCONTRACTOR",
-                                  "FRANCHISE"
-                                ]
-                              },
-                              "status": {
-                                "type": "string",
-                                "enum": [
-                                  "PENDING",
-                                  "ACTIVE",
-                                  "SUSPENDED",
-                                  "TERMINATED"
-                                ]
-                              },
-                              "commissionRate": {
-                                "type": "number"
-                              },
-                              "capacityDaily": {
-                                "type": "number"
-                              },
-                              "contactName": {
-                                "type": "string"
-                              },
-                              "contactPhone": {
-                                "type": "string"
-                              },
-                              "contactEmail": {
-                                "type": "string"
-                              },
-                              "address": {
-                                "type": "string"
-                              },
-                              "province": {
-                                "type": "string"
-                              },
-                              "district": {
-                                "type": "string"
-                              },
-                              "partnerOrgName": {
-                                "type": "string"
-                              },
-                              "partnerOrgSlug": {
-                                "type": "string"
-                              },
-                              "unlockedTools": {
-                                "anyOf": [
-                                  {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "string"
-                                    }
-                                  },
-                                  {
-                                    "type": "null"
-                                  }
-                                ]
-                              },
-                              "createdAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              },
-                              "updatedAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "chainOrgId",
-                              "partnerOrgId",
-                              "partnerCode",
-                              "partnershipType",
-                              "status",
-                              "capacityDaily",
-                              "createdAt",
-                              "updatedAt"
-                            ],
-                            "additionalProperties": false
-                          }
-                        },
-                        "total": {
-                          "type": "number"
-                        }
-                      },
-                      "required": [
-                        "success",
-                        "data",
-                        "partners",
-                        "total"
-                      ],
-                      "additionalProperties": false
+                        "required": [
+                          "id",
+                          "code",
+                          "name",
+                          "phone",
+                          "address",
+                          "district",
+                          "province",
+                          "tier",
+                          "rating",
+                          "capacityDaily",
+                          "isActive"
+                        ],
+                        "additionalProperties": false
+                      }
                     }
-                  ]
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -44711,12 +44896,12 @@
             "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "R1 hoặc F1"
+        "x-capability": "R1"
       },
       "post": {
         "operationId": "createCoordinatorPartner",
-        "summary": "Tạo cửa hàng đối tác (tài khoản mới) hoặc đối tác gia công ngoài",
-        "description": "Thân có `partnerStoreName`/`contactEmail` → tạo cửa hàng đối tác (`F2`, mật khẩu tạm trả MỘT lần); còn lại → đối tác gia công (`R4`).",
+        "summary": "Tạo đối tác gia công ngoài",
+        "description": "Trùng mã → 409.",
         "tags": [
           "Điều phối — đối tác"
         ],
@@ -44730,116 +44915,53 @@
           "content": {
             "application/json": {
               "schema": {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "partnerStoreName": {
-                        "type": "string",
-                        "minLength": 2
-                      },
-                      "partnerCode": {
-                        "type": "string",
-                        "minLength": 2
-                      },
-                      "partnershipType": {
-                        "type": "string",
-                        "enum": [
-                          "SUBCONTRACTOR",
-                          "FRANCHISE"
-                        ]
-                      },
-                      "contactName": {
-                        "type": "string",
-                        "minLength": 2
-                      },
-                      "contactPhone": {
-                        "type": "string",
-                        "minLength": 8
-                      },
-                      "contactEmail": {
-                        "type": "string",
-                        "format": "email",
-                        "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
-                      },
-                      "password": {
-                        "type": "string",
-                        "minLength": 10
-                      },
-                      "address": {
-                        "type": "string"
-                      },
-                      "province": {
-                        "type": "string"
-                      },
-                      "district": {
-                        "type": "string"
-                      },
-                      "capacityDaily": {
-                        "type": "number"
-                      },
-                      "commissionRate": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "partnerStoreName",
-                      "partnerCode",
-                      "contactName",
-                      "contactPhone",
-                      "contactEmail"
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{2,32}$"
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "phone": {
+                    "type": "string",
+                    "pattern": "^\\+?[0-9 .-]{8,15}$"
+                  },
+                  "address": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "district": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "province": {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  "tier": {
+                    "default": "STANDARD",
+                    "type": "string",
+                    "enum": [
+                      "STANDARD",
+                      "PREFERRED",
+                      "VIP"
                     ]
                   },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "string",
-                        "pattern": "^[A-Za-z0-9_-]{2,32}$"
-                      },
-                      "name": {
-                        "type": "string",
-                        "minLength": 1,
-                        "maxLength": 200
-                      },
-                      "phone": {
-                        "type": "string",
-                        "pattern": "^\\+?[0-9 .-]{8,15}$"
-                      },
-                      "address": {
-                        "type": "string",
-                        "maxLength": 500
-                      },
-                      "district": {
-                        "type": "string",
-                        "maxLength": 100
-                      },
-                      "province": {
-                        "type": "string",
-                        "maxLength": 100
-                      },
-                      "tier": {
-                        "default": "STANDARD",
-                        "type": "string",
-                        "enum": [
-                          "STANDARD",
-                          "PREFERRED",
-                          "VIP"
-                        ]
-                      },
-                      "capacityDaily": {
-                        "default": 10,
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 1000
-                      }
-                    },
-                    "required": [
-                      "code",
-                      "name",
-                      "phone"
-                    ]
+                  "capacityDaily": {
+                    "default": 10,
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 1000
                   }
+                },
+                "required": [
+                  "code",
+                  "name",
+                  "phone"
                 ]
               }
             }
@@ -44862,193 +44984,74 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
+                  "type": "object",
+                  "properties": {
+                    "data": {
                       "type": "object",
                       "properties": {
-                        "partner": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "code": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "phone": {
-                              "type": "string"
-                            },
-                            "address": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "district": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "province": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "tier": {
-                              "type": "string"
-                            },
-                            "rating": {
-                              "type": "number"
-                            },
-                            "capacityDaily": {
-                              "type": "number"
-                            },
-                            "isActive": {
-                              "type": "boolean"
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "code",
-                            "name",
-                            "phone",
-                            "address",
-                            "district",
-                            "province",
-                            "tier",
-                            "rating",
-                            "capacityDaily",
-                            "isActive"
-                          ],
-                          "additionalProperties": false
-                        }
-                      },
-                      "required": [
-                        "partner"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "success": {
-                          "type": "boolean",
-                          "const": true
-                        },
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "chainOrgId": {
-                              "type": "string"
-                            },
-                            "partnerOrgId": {
-                              "type": "string"
-                            },
-                            "partnerCode": {
-                              "type": "string"
-                            },
-                            "partnershipType": {
-                              "type": "string",
-                              "enum": [
-                                "SUBCONTRACTOR",
-                                "FRANCHISE"
-                              ]
-                            },
-                            "status": {
-                              "type": "string",
-                              "enum": [
-                                "PENDING",
-                                "ACTIVE",
-                                "SUSPENDED",
-                                "TERMINATED"
-                              ]
-                            },
-                            "commissionRate": {
-                              "type": "number"
-                            },
-                            "capacityDaily": {
-                              "type": "number"
-                            },
-                            "contactName": {
-                              "type": "string"
-                            },
-                            "contactPhone": {
-                              "type": "string"
-                            },
-                            "contactEmail": {
-                              "type": "string"
-                            },
-                            "address": {
-                              "type": "string"
-                            },
-                            "province": {
-                              "type": "string"
-                            },
-                            "district": {
-                              "type": "string"
-                            },
-                            "partnerOrgName": {
-                              "type": "string"
-                            },
-                            "partnerOrgSlug": {
-                              "type": "string"
-                            },
-                            "unlockedTools": {
-                              "anyOf": [
-                                {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string"
-                                  }
-                                },
-                                {
-                                  "type": "null"
-                                }
-                              ]
-                            },
-                            "createdAt": {
-                              "type": "string",
-                              "format": "date-time",
-                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                            },
-                            "updatedAt": {
-                              "type": "string",
-                              "format": "date-time",
-                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                            }
-                          },
-                          "required": [
-                            "id",
-                            "chainOrgId",
-                            "partnerOrgId",
-                            "partnerCode",
-                            "partnershipType",
-                            "status",
-                            "capacityDaily",
-                            "createdAt",
-                            "updatedAt"
-                          ],
-                          "additionalProperties": false
-                        },
-                        "temporaryPassword": {
+                        "id": {
                           "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "phone": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "district": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "province": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tier": {
+                          "type": "string"
+                        },
+                        "rating": {
+                          "type": "number"
+                        },
+                        "capacityDaily": {
+                          "type": "number"
+                        },
+                        "isActive": {
+                          "type": "boolean"
                         }
                       },
                       "required": [
-                        "success",
-                        "data"
+                        "id",
+                        "code",
+                        "name",
+                        "phone",
+                        "address",
+                        "district",
+                        "province",
+                        "tier",
+                        "rating",
+                        "capacityDaily",
+                        "isActive"
                       ],
                       "additionalProperties": false
                     }
-                  ]
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }
@@ -45075,7 +45078,7 @@
             "$ref": "#/components/responses/Error422"
           }
         },
-        "x-capability": "R4 hoặc F2"
+        "x-capability": "R4"
       }
     },
     "/coordinator/partners/{id}": {
@@ -45171,7 +45174,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "partner": {
+                    "data": {
                       "type": "object",
                       "properties": {
                         "id": {
@@ -45234,7 +45237,7 @@
                     }
                   },
                   "required": [
-                    "partner"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
