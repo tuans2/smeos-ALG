@@ -8,6 +8,7 @@
 | Không làm | Không chạy DB, không chạy test, không bấm thử giao diện. Mức "Đã xác nhận" = thấy rõ trong mã; "Khả năng cao" = đường mã cho phép, chưa thử thực tế. |
 | Trạng thái | Chỉ báo cáo — không sửa mã. Đề xuất chuẩn hoá ở `01-de-xuat-chuan-hoa.md`. Một số đề xuất đụng schema/tenancy → cần PO duyệt trước (CLAUDE.md "Stop and ask"). |
 | Cập nhật 07/11/2026 | Đối chiếu lại trên `main` `ec801dc`: O1, O2, O3 đã sửa (kế hoạch BL); O4, O6, O7, U1 sửa một phần. Bảng chi tiết và kế hoạch xử lý: `02-ke-hoach-xu-ly.md`. |
+| Cập nhật 12/11/2026 | Đối chiếu lại trên `main` `631c4921`: 19/39 đã sửa, 7 một phần, 12 còn, 1 phân loại lại; thêm 10 phát hiện mới R2-01 … R2-10. Chi tiết: `03-doi-chieu-2026-11-12.md`. |
 
 ## 1. Kết luận chính
 
