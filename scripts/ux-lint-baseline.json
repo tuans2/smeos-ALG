@@ -1,8 +1,7 @@
 {
   "summary": {
     "app/(app)": {
-      "R18": 3,
-      "R20": 1
+      "R18": 1
     },
     "app/subcontract": {
       "R20": 1
@@ -23,12 +22,12 @@
       "R18": 4
     },
     "components/templates": {
-      "R18": 4
+      "R18": 2
     },
     "components/upload": {
       "R14": 1
     }
   },
-  "total": 28,
-  "updatedAt": "2026-11-12T00:10:00.785Z"
+  "total": 23,
+  "updatedAt": "2026-11-12T00:16:42.997Z"
 }
