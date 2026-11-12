@@ -37,7 +37,7 @@ export function BranchPartnerList() {
     setSaving(b.branchCode)
     setError(null)
     try {
-      await apiSend(`${BRANCH_LIST_URL}/${encodeURIComponent(b.branchCode)}`, "PATCH", { isActive: !b.isActive }, "Không đổi được trạng thái")
+      await apiSend(`${BRANCH_LIST_URL}/${encodeURIComponent(b.branchCode)}`, "PATCH", { is_active: !b.isActive }, "Không đổi được trạng thái")
       await mutate()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Không đổi được trạng thái")

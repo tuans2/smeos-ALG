@@ -5,6 +5,7 @@ import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-c
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { catalogProductBody, catalogProductRemoveBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 type Context = { params: Promise<{ id: string }> }
 
@@ -15,9 +16,10 @@ export const POST = defineRoute({
     const body = await request.json().catch(() => ({}))
     const parsed = catalogProductBody.safeParse(body)
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
     await assertCanEditCatalog(ctx, id)
     const repo = new GreetingCardRepository()
-    const item = await repo.addProductToCatalog(ctx, id, parsed.data.productId)
+    const item = await repo.addProductToCatalog(ctx, id, input.productId)
     return jsonResponse({ data: item }, { status: 201 })
   },
 })
@@ -29,9 +31,10 @@ export const DELETE = defineRoute({
     const body = await request.json().catch(() => ({}))
     const parsed = catalogProductRemoveBody.safeParse(body)
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
     await assertCanEditCatalog(ctx, id)
     const repo = new GreetingCardRepository()
-    await repo.removeProductFromCatalog(ctx, id, parsed.data.productId)
-    return jsonResponse({ data: { product_id: parsed.data.productId, removed: true } })
+    await repo.removeProductFromCatalog(ctx, id, input.productId)
+    return jsonResponse({ data: { product_id: input.productId, removed: true } })
   },
 })

@@ -62,8 +62,8 @@ export function FlowerSubstituteForm({ orderId, onClose, onDone }: { orderId: st
     setError(null)
     try {
       await apiSend(`/api/v1/greeting-card/orders/${orderId}/flower-substitute`, "POST", {
-        lineIndex, replacementName: name.trim(), ...(color.trim() ? { replacementColor: color.trim() } : {}),
-        photoAssetId: photo.assetId, reason: reason.trim(),
+        line_index: lineIndex, replacement_name: name.trim(), ...(color.trim() ? { replacement_color: color.trim() } : {}),
+        photo_asset_id: photo.assetId, reason: reason.trim(),
       }, "Chưa gửi được đề xuất")
       onDone()
     } catch (err) {

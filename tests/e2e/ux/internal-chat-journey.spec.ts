@@ -53,7 +53,7 @@ test("walkthrough: chuỗi giao đơn, cửa hàng nhận thẻ, nhắn tin, ả
      VALUES (gen_random_uuid()::text, $1, 'DH-0911-01', 'BROCHURE', 'CONFIRMED', 650000, 650000, 0, $2, $3, $4, now()) RETURNING id`,
     [chain.orgId, chain.userId, JSON.stringify({ street: "5 Xuân Thuỷ, Dịch Vọng Hậu, Hà Nội", parts: { houseNumber: "5", street: "Xuân Thuỷ", ward: "Dịch Vọng Hậu", province: "Hà Nội" } }), JSON.stringify({ date: "10/11/2026", timeSlot: "14:00 - 16:00" })]
   )
-  const dispatch = await chainPage.request.post(`/api/v1/greeting-card/orders/${order.id}/chain-dispatch`, { headers, data: { approvedBranchIds: ["DT-HN-01"] } })
+  const dispatch = await chainPage.request.post(`/api/v1/greeting-card/orders/${order.id}/chain-dispatch`, { headers, data: { approved_branch_ids: ["DT-HN-01"] } })
   expect(dispatch.ok(), await dispatch.text()).toBe(true)
 
   const say = await chainPage.request.post(`/api/v1/internal-chat/conversations/${roomId}/messages`, { headers, data: { content: "Chào tiệm, chiều nay có đơn giao Cầu Giấy, tiệm nhận giúp nhé." } })

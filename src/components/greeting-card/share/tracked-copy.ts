@@ -56,7 +56,7 @@ export async function copyFromServer(produce: () => Promise<string>): Promise<st
 
 /** Link bộ sưu tập mang tên người đang đăng nhập (`/s/<mã>`), dạng đầy đủ để gửi khách. */
 export async function createShareUrl(catalogId: string, channel?: string | null): Promise<string> {
-  const res = await apiSend<{ data: { path: string } }>("/api/v1/greeting-card/share-links", "POST", { catalogId, channel: channel || null }, "Không tạo được link")
+  const res = await apiSend<{ data: { path: string } }>("/api/v1/greeting-card/share-links", "POST", { catalog_id: catalogId, channel: channel || null }, "Không tạo được link")
   return `${window.location.origin}${res.data.path}`
 }
 

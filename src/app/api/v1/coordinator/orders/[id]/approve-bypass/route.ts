@@ -26,6 +26,7 @@ import {
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { bypassDecisionBody } from "@/app/api/v1/_contracts/requests-coordinator"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 const STEP_LABEL = { QC: "ảnh thành phẩm", SHIPPER: "thông tin shipper", POD: "ảnh giao hàng" } as const
 
@@ -37,8 +38,9 @@ export const POST = defineRoute({
     const body = await request.json().catch(() => ({}))
     const parsed = bypassDecisionBody.safeParse(body)
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
 
-    const { step, decision, reviewNote } = parsed.data
+    const { step, decision, reviewNote } = input
     const repo = new SubcontractOrderRepository()
     const order = await repo.findSubcontractById(orderId, ctx.organizationId)
     if (!order) throw notFound()

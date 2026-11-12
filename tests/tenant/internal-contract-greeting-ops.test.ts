@@ -98,17 +98,17 @@ describe("hợp đồng — Thẻ chào: vận hành", () => {
     for (const query of ["view=list", "view=queue", "view=kanban", `view=calendar&from=${today}&to=${DATE}`, "view=dashboard"]) {
       await expectContract(await tracking(get(`/tracking?${query}`)), 200, B.trackingResponse, "gc-tracking")
     }
-    await expectContract(await timeline(get(`/tracking/timeline?orderId=${a.orderId}`)), 200, R.timelineResponse, "gc-timeline")
+    await expectContract(await timeline(get(`/tracking/timeline?order_id=${a.orderId}`)), 200, R.timelineResponse, "gc-timeline")
     // Có R6: bỏ trực tiếp; khôi phục; đề xuất của Sale rồi Điều hành quyết
     await expectContract(
-      await dismiss(send("/tracking/dismiss", "POST", { id: a.orderId, type: "ORDER", reasonId: "duplicate", reasonText: "Đơn trùng" })),
+      await dismiss(send("/tracking/dismiss", "POST", { id: a.orderId, type: "ORDER", reason_id: "duplicate", reason_text: "Đơn trùng" })),
       200,
       R.dismissProposalResponse,
       "gc-dismiss"
     )
     await expectContract(await restore(send("/tracking/restore", "POST", { id: a.orderId, type: "ORDER", reason: "Nhầm" })), 200, R.restoredResponse, "gc-restore")
     const sale = await addStaffWithSession(t, "sale", "sale-de-xuat-bo")
-    const proposal = withSession(`${BASE}/tracking/dismiss`, sale.token, { method: "POST", body: JSON.stringify({ id: a.orderId, type: "ORDER", reasonId: "duplicate", reasonText: "Đơn trùng" }) })
+    const proposal = withSession(`${BASE}/tracking/dismiss`, sale.token, { method: "POST", body: JSON.stringify({ id: a.orderId, type: "ORDER", reason_id: "duplicate", reason_text: "Đơn trùng" }) })
     expect((await dismiss(proposal)).status).toBe(200)
     await expectContract(await decideDismiss(send("/tracking/decide-dismiss", "POST", { id: a.orderId, type: "ORDER", approve: false })), 200, R.dismissDecisionResponse, "gc-decide-dismiss")
   })
@@ -117,13 +117,13 @@ describe("hợp đồng — Thẻ chào: vận hành", () => {
     const o = await newOrder()
     await expectContract(await recipients(get("/messages/recipients")), 200, R.recipientsResponse, "gc-recipients")
     const sent = await expectContract(
-      await sendMessage(send("/messages", "POST", { orderId: o.orderId, to: { kind: "ROLE", role: "COORDINATOR" }, body: "Khách hẹn giao sớm" })),
+      await sendMessage(send("/messages", "POST", { order_id: o.orderId, to: { kind: "ROLE", role: "COORDINATOR" }, body: "Khách hẹn giao sớm" })),
       201,
       R.messageSentResponse,
       "gc-message"
     )
-    await expectContract(await thread(get(`/messages?orderId=${o.orderId}`)), 200, R.threadResponse, "gc-thread")
-    await expectContract(await markRead(send("/messages/read", "POST", { messageIds: [(sent.data as { id: string }).id] })), 200, R.messagesReadResponse, "gc-read")
+    await expectContract(await thread(get(`/messages?order_id=${o.orderId}`)), 200, R.threadResponse, "gc-thread")
+    await expectContract(await markRead(send("/messages/read", "POST", { message_ids: [(sent.data as { id: string }).id] })), 200, R.messagesReadResponse, "gc-read")
 
     const discount = await discountRequest(send(`/orders/${o.orderId}/discount-request`, "POST", { percent: 10, reason: "Khách quen" }), ps({ id: o.orderId }))
     const discountId = ((await discount.json()) as { data: { id: string } }).data.id
@@ -136,7 +136,7 @@ describe("hợp đồng — Thẻ chào: vận hành", () => {
     await expectContract(await decideChange(send(`/change-requests/${change.id}/decision`, "POST", { approve: true }), ps({ id: change.id })), 200, R.changeDecisionResponse, "gc-change-decision")
 
     const proposed = await expectContract(
-      await proposeCancel(send("/cancellation-requests", "POST", { orderId: o.orderId, type: "CANCEL_ONLY", reason: "Khách đổi ý" })),
+      await proposeCancel(send("/cancellation-requests", "POST", { order_id: o.orderId, type: "CANCEL_ONLY", reason: "Khách đổi ý" })),
       201,
       R.cancellationProposalResponse,
       "gc-cancel-proposal"
@@ -151,7 +151,7 @@ describe("hợp đồng — Thẻ chào: vận hành", () => {
     // Giữ bất biến orders_money_check: balance_vnd = total_vnd − paid_vnd
     const { total_vnd } = await prisma.orders.findUniqueOrThrow({ where: { id: o.orderId }, select: { total_vnd: true } })
     await prisma.orders.update({ where: { id: o.orderId }, data: { paid_vnd: 150_000, balance_vnd: total_vnd.minus(150_000) } })
-    const proposed = await proposeCancel(send("/cancellation-requests", "POST", { orderId: o.orderId, type: "FULL_REFUND", reason: "Khách huỷ", refundAmountVnd: 150_000 }))
+    const proposed = await proposeCancel(send("/cancellation-requests", "POST", { order_id: o.orderId, type: "FULL_REFUND", reason: "Khách huỷ", refund_amount_vnd: 150_000 }))
     const requestId = ((await proposed.json()) as { data: { id: string } }).data.id
     const boss = await addStaffWithSession(t, "dieu_hanh", "dieu-hanh-hoan")
     const decision = withSession(`${BASE}/cancellation-requests/${requestId}/decision`, boss.token, { method: "POST", body: JSON.stringify({ approve: true }) })
@@ -177,7 +177,7 @@ describe("hợp đồng — Thẻ chào: vận hành", () => {
     const operator = await createTenant("van-hanh-nen-tang-tc")
     await new PlatformOperatorRepository().grant(operator.userId, [...ALL_PLATFORM_CAPABILITY_CODES], null)
     const policy = withSession(`${BASE}/integrations/staff-notifications/saas-policy`, operator.token, {
-      method: "PUT", body: JSON.stringify({ targetOrganizationId: t.organizationId, allowedChannels: ["APP_INBOX", "TELEGRAM"] }),
+      method: "PUT", body: JSON.stringify({ target_organization_id: t.organizationId, allowed_channels: ["APP_INBOX", "TELEGRAM"] }),
     })
     // @release-strip
     await expectContract(await saasPolicy(policy), 200, O.staffNotifySavedResponse, "gc-saas-policy")
@@ -203,6 +203,6 @@ describe("hợp đồng — Thẻ chào: vận hành", () => {
       "gc-branch-import"
     )
     await expectContract(await listBranches(get("/chain-branches")), 200, O.chainBranchesResponse, "gc-branches")
-    await expectContract(await patchBranch(send("/chain-branches/CN-Q3", "PATCH", { isActive: false }), ps({ branchCode: "CN-Q3" })), 200, O.chainBranchPatchResponse, "gc-branch-patch")
+    await expectContract(await patchBranch(send("/chain-branches/CN-Q3", "PATCH", { is_active: false }), ps({ branchCode: "CN-Q3" })), 200, O.chainBranchPatchResponse, "gc-branch-patch")
   })
 })

@@ -53,7 +53,7 @@ describe("cách ly tenant — thẻ đơn gia công trong phòng trao đổi", (
       },
     })
     const res = await chainDispatch(
-      withSession(`${BASE}/greeting-card/orders/${order.id}/chain-dispatch`, chain.token, { method: "POST", body: JSON.stringify({ approvedBranchIds: ["DT-HN-01"] }) }),
+      withSession(`${BASE}/greeting-card/orders/${order.id}/chain-dispatch`, chain.token, { method: "POST", body: JSON.stringify({ approved_branch_ids: ["DT-HN-01"] }) }),
       params({ id: order.id })
     )
     expect(res.status).toBe(200)

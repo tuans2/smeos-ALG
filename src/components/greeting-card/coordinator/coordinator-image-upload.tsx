@@ -115,7 +115,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
       const attachRes = await fetch(`/api/v1/greeting-card/orders/${orderId}/${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assetIds }),
+        body: JSON.stringify({ asset_ids: assetIds }),
       })
       if (!attachRes.ok) throw new Error(await readApiError(attachRes, "Lỗi gắn ảnh vào đơn hàng"))
       setState("success")
@@ -219,7 +219,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
               const res = await fetch(`/api/v1/greeting-card/orders/${orderId}/${endpoint}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ skipPhoto: true, skipReason: "Giao gấp theo yêu cầu" }),
+                body: JSON.stringify({ skip_photo: true, skip_reason: "Giao gấp theo yêu cầu" }),
               })
               if (!res.ok) throw new Error(await readApiError(res, "Lỗi khi bỏ qua ảnh"))
               setState("success")

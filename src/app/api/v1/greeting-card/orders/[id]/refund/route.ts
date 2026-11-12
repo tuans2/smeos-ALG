@@ -4,6 +4,7 @@ import { refundBrochureOrder } from "@/modules/greeting-card/use-cases/confirm-b
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { refundBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /** POST /api/v1/greeting-card/orders/[id]/refund — ghi nhận hoàn tiền (R10). */
 export const POST = defineRoute({
@@ -12,6 +13,7 @@ export const POST = defineRoute({
     const { id } = params as { id: string }
     const parsed = refundBody.safeParse(await request.json().catch(() => ({})))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    return jsonResponse({ data: await refundBrochureOrder(ctx, id, parsed.data) })
+    const input = camelKeys(parsed.data)
+    return jsonResponse({ data: await refundBrochureOrder(ctx, id, input) })
   },
 })

@@ -19,7 +19,7 @@ export function BrochureVisibilitySettings() {
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
   const data = view.data?.data
 
-  async function save(key: string, body: { userId?: string; mode: VisibilityMode | null }) {
+  async function save(key: string, body: { user_id?: string; mode: VisibilityMode | null }) {
     setSaving(key)
     setMessage(null)
     try {
@@ -71,7 +71,7 @@ export function BrochureVisibilitySettings() {
                     aria-label={`Quyền xem của ${m.name}`}
                     value={m.mode ?? ""}
                     disabled={saving !== null}
-                    onChange={(e) => void save(m.userId, { userId: m.userId, mode: (e.target.value || null) as VisibilityMode | null })}
+                    onChange={(e) => void save(m.userId, { user_id: m.userId, mode: (e.target.value || null) as VisibilityMode | null })}
                     className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm"
                   >
                     <option value="">Theo mặc định ({MODE_LABEL[data.defaultMode]})</option>

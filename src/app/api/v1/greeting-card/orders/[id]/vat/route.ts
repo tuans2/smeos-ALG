@@ -4,6 +4,7 @@ import { getOrderSlip, setOrderVat } from "@/modules/greeting-card/use-cases/ord
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { gcVatBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 type Ctx = { params: Promise<{ id: string }> }
 
@@ -23,6 +24,7 @@ export const PUT = defineRoute({
     const { id } = params as { id: string }
     const parsed = gcVatBody.safeParse(await request.json().catch(() => ({})))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    return jsonResponse({ data: await setOrderVat(ctx, id, parsed.data) })
+    const input = camelKeys(parsed.data)
+    return jsonResponse({ data: await setOrderVat(ctx, id, input) })
   },
 })

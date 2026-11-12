@@ -24,7 +24,7 @@ interface Props {
 
 /** Trao đổi nội bộ của một đơn: ai nhắn ai, ở bước nào; trả lời đi thẳng về người đã nhắn. */
 export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onBack, onChanged }: Props) {
-  const key = target.orderId ? `orderId=${target.orderId}` : `sessionId=${target.sessionId}`
+  const key = target.orderId ? `order_id=${target.orderId}` : `session_id=${target.sessionId}`
   const thread = useApi<{ data: { label: string; ownerSaleName: string | null; maxDiscountPercent: number; canDecideDiscount: boolean; messages: ThreadMessageView[] } }>(
     `/api/v1/greeting-card/messages?${key}`, { refreshInterval: 15_000 })
   const [replyTo, setReplyTo] = useState<{ id: string; senderName: string } | null>(null)
@@ -38,7 +38,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
   useEffect(() => {
     if (!unreadIds || sentRead.current === unreadIds) return
     sentRead.current = unreadIds
-    void apiSend("/api/v1/greeting-card/messages/read", "POST", { messageIds: unreadIds.split(",") }, "")
+    void apiSend("/api/v1/greeting-card/messages/read", "POST", { message_ids: unreadIds.split(",") }, "")
       .then(() => { void thread.mutate(); onChanged?.() }, () => { sentRead.current = "" })
   }, [unreadIds, onChanged, thread])
   useEffect(() => {

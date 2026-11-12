@@ -65,7 +65,7 @@ export function CoordinatorBypassReviewBanner({
         body: JSON.stringify({
           step,
           decision,
-          reviewNote:
+          review_note:
             decision === "APPROVE"
               ? "Điều phối đã duyệt bỏ qua do sự cố bất khả kháng"
               : "Điều phối từ chối yêu cầu bỏ qua, yêu cầu thực hiện đúng quy trình",

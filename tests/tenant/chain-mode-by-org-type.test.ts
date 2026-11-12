@@ -51,7 +51,7 @@ describe("chế độ Chuỗi theo loại tổ chức", () => {
     const orderId = await seedOrder(a)
     const url = `http://localhost/api/v1/greeting-card/orders/${orderId}/chain-dispatch`
     expect((await rankBranches(withSession(url, a.token), params({ id: orderId }))).status).toBe(409)
-    const post = await chainDispatch(withSession(url, a.token, { method: "POST", body: JSON.stringify({ approvedBranchIds: ["CN1"] }) }), params({ id: orderId }))
+    const post = await chainDispatch(withSession(url, a.token, { method: "POST", body: JSON.stringify({ approved_branch_ids: ["CN1"] }) }), params({ id: orderId }))
     expect(post.status).toBe(409)
     const imported = await bulkImport(
       withSession("http://localhost/api/v1/greeting-card/chain-branches/bulk-import", a.token, {

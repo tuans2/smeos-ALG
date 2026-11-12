@@ -47,7 +47,7 @@ describe("hợp đồng — Thẻ chào: bộ sưu tập và link", () => {
 
   it("bộ sưu tập: tạo, liệt kê, đọc, sửa, thêm/bỏ mẫu, tim, ảnh ghép, lưu trữ", async () => {
     const created = await expectContract(
-      await createCatalog(send("/catalogs", "POST", { code: "bst-tet", name: "Hoa Tết", productIds: productIds.slice(0, 2) })),
+      await createCatalog(send("/catalogs", "POST", { code: "bst-tet", name: "Hoa Tết", product_ids: productIds.slice(0, 2) })),
       201,
       R.catalogCreatedResponse,
       "catalog-created"
@@ -56,8 +56,8 @@ describe("hợp đồng — Thẻ chào: bộ sưu tập và link", () => {
     await expectContract(await listCatalogs(get("/catalogs?limit=10")), 200, R.catalogsResponse, "catalogs")
     await expectContract(await getCatalog(get(`/catalogs/${id}`), ps({ id })), 200, R.catalogResponse, "catalog")
     await expectContract(await patchCatalog(send(`/catalogs/${id}`, "PATCH", { name: "Hoa Tết 2027", description: "Mẫu mới" }), ps({ id })), 200, R.catalogResponse, "catalog")
-    await expectContract(await addProduct(send(`/catalogs/${id}/products`, "POST", { productId: productIds[2] }), ps({ id })), 201, R.catalogItemResponse, "catalog-item")
-    await expectContract(await removeProduct(send(`/catalogs/${id}/products`, "DELETE", { productId: productIds[2] }), ps({ id })), 200, R.catalogProductRemovedResponse, "catalog-item-removed")
+    await expectContract(await addProduct(send(`/catalogs/${id}/products`, "POST", { product_id: productIds[2] }), ps({ id })), 201, R.catalogItemResponse, "catalog-item")
+    await expectContract(await removeProduct(send(`/catalogs/${id}/products`, "DELETE", { product_id: productIds[2] }), ps({ id })), 200, R.catalogProductRemovedResponse, "catalog-item-removed")
     await expectContract(await hearts(get(`/catalogs/${id}/hearts`), ps({ id })), 200, R.catalogHeartsResponse, "catalog-hearts")
     const png = await collage(get(`/catalogs/${id}/collage`), ps({ id }))
     expect(png.status).toBe(200)
@@ -66,10 +66,10 @@ describe("hợp đồng — Thẻ chào: bộ sưu tập và link", () => {
   })
 
   it("link gửi khách, link chia sẻ, cài đặt hiển thị, thống kê", async () => {
-    const catalog = await createCatalog(send("/catalogs", "POST", { code: "bst-link", name: "Bộ link", productIds }))
+    const catalog = await createCatalog(send("/catalogs", "POST", { code: "bst-link", name: "Bộ link", product_ids: productIds }))
     const catalogId = ((await catalog.json()) as { data: { id: string } }).data.id
     const link = await expectContract(
-      await createSendLink(send("/send-links", "POST", { catalogId, customerName: "Chị Hoa", customerPhone: "0901234567" })),
+      await createSendLink(send("/send-links", "POST", { catalog_id: catalogId, customer_name: "Chị Hoa", customer_phone: "0901234567" })),
       201,
       R.sendLinkCreatedResponse,
       "send-link"
@@ -80,17 +80,17 @@ describe("hợp đồng — Thẻ chào: bộ sưu tập và link", () => {
     const sendCode = (link.data as { sendCode: string }).sendCode
     await expectContract(await copied(send(`/send-links/${sendCode}/copied`, "POST"), ps({ id: sendCode })), 200, R.copiedResponse, "send-link-copied")
     await expectContract(
-      await linkCustomer(send(`/send-links/${sessionId}/customer`, "PATCH", { customerName: "Chị Hoa Mai", customerPhone: null }), ps({ id: sessionId })),
+      await linkCustomer(send(`/send-links/${sessionId}/customer`, "PATCH", { customer_name: "Chị Hoa Mai", customer_phone: null }), ps({ id: sessionId })),
       200,
       R.linkCustomerResponse,
       "link-customer"
     )
     await expectContract(await revoke(send(`/send-links/${sessionId}/revoke`, "POST"), ps({ id: sessionId })), 200, R.revokedResponse, "send-link-revoked")
-    await expectContract(await createShareLink(send("/share-links", "POST", { catalogId, channel: "facebook" })), 201, R.shareLinkCreatedResponse, "share-link")
+    await expectContract(await createShareLink(send("/share-links", "POST", { catalog_id: catalogId, channel: "facebook" })), 201, R.shareLinkCreatedResponse, "share-link")
     await expectContract(await listShareLinks(get("/share-links")), 200, R.shareLinksResponse, "share-links")
     await expectContract(await getDisplay(get("/display-settings")), 200, R.displaySettingsResponse, "display-settings")
     await expectContract(
-      await putDisplay(send("/display-settings", "PUT", { pricing: { hidePrice: false, showDiscounts: true }, thankYou: { enabled: true, percent: 5 } })),
+      await putDisplay(send("/display-settings", "PUT", { pricing: { hidePrice: false, showDiscounts: true }, thank_you: { enabled: true, percent: 5 } })),
       200,
       R.displaySettingsResponse,
       "display-settings"

@@ -104,7 +104,7 @@ describe("toàn vẹn trạng thái đơn gia công", () => {
     const res = await confirmDelivery(
       withSession(`http://localhost/api/v1/coordinator/orders/${orderId}/confirm-delivery`, t.token, {
         method: "POST",
-        body: JSON.stringify({ confirmWithoutPhoto: true, reason: "Khách xác nhận đã nhận qua điện thoại" }),
+        body: JSON.stringify({ confirm_without_photo: true, reason: "Khách xác nhận đã nhận qua điện thoại" }),
       }),
       params({ id: orderId })
     )
@@ -119,7 +119,7 @@ describe("toàn vẹn trạng thái đơn gia công", () => {
     const res = await chainDispatch(
       withSession(`http://localhost/api/v1/greeting-card/orders/${orderId}/chain-dispatch`, t.token, {
         method: "POST",
-        body: JSON.stringify({ approvedBranchIds: [BRANCH] }),
+        body: JSON.stringify({ approved_branch_ids: [BRANCH] }),
       }),
       params({ id: orderId })
     )

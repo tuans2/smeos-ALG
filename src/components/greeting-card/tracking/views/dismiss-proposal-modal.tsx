@@ -48,8 +48,8 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
         body: JSON.stringify({
           id: item.orderId ?? item.sessionId,
           type: item.orderId ? "ORDER" : "SESSION",
-          reasonId,
-          reasonText: finalReasonText,
+          reason_id: reasonId,
+          reason_text: finalReasonText,
           note: note.trim() || undefined,
         }),
       })

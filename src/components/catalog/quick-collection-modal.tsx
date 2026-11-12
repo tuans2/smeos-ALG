@@ -142,9 +142,9 @@ export function QuickCollectionModal({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          customerName: customerName.trim() || undefined,
-          customerPhone: customerPhone.trim() || undefined,
-          customCatalog: {
+          customer_name: customerName.trim() || undefined,
+          customer_phone: customerPhone.trim() || undefined,
+          custom_catalog: {
             name: liveResult.generatedName,
             description: liveResult.personalizedGreeting || "Bộ sưu tập sản phẩm tuyển chọn theo yêu cầu.",
             filters: {

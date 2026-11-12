@@ -75,10 +75,10 @@ export function CancellationProposalModal({
         "/api/v1/greeting-card/cancellation-requests",
         "POST",
         {
-          orderId,
+          order_id: orderId,
           type,
           reason: reason.trim(),
-          refundAmountVnd: refundNum,
+          refund_amount_vnd: refundNum,
           note: note.trim() || undefined,
         },
         "Không thể gửi đề xuất"

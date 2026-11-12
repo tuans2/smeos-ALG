@@ -14,7 +14,7 @@ import { PIPELINE_STEPS } from "@/modules/greeting-card/domain/tracking-pipeline
 export const cancellationDecisionBody = z.object({
   approve: z.boolean(),
   note: z.string().max(1000).optional().default(""),
-  actualRefundVnd: z.number().int().nonnegative().max(10_000_000_000).optional(),
+  actual_refund_vnd: z.number().int().nonnegative().max(10_000_000_000).optional(),
 })
 
 // cancellation-requests/[id]/follow-up/route.ts
@@ -22,25 +22,25 @@ export const cancellationFollowUpBody = z.object({ note: z.string().max(1000).op
 
 // cancellation-requests/route.ts
 export const cancellationRequestBody = z.object({
-  orderId: z.string().min(1, "Mã đơn hàng không được để trống"),
+  order_id: z.string().min(1, "Mã đơn hàng không được để trống"),
   type: z.enum(["CANCEL_ONLY", "FULL_REFUND", "PARTIAL_REFUND"]),
   reason: z.string().trim().min(3, "Lý do hủy/hoàn phải có ít nhất 3 ký tự").max(1000),
-  refundAmountVnd: z.number().int().nonnegative().max(10_000_000_000).optional().default(0),
+  refund_amount_vnd: z.number().int().nonnegative().max(10_000_000_000).optional().default(0),
   note: z.string().max(1000).optional(),
 })
 
 // catalogs/[id]/products/route.ts
-export const catalogProductBody = z.object({ productId: z.string().min(1) })
+export const catalogProductBody = z.object({ product_id: z.string().min(1) })
 
 // catalogs/[id]/products/route.ts
-export const catalogProductRemoveBody = z.object({ productId: z.string().min(1) })
+export const catalogProductRemoveBody = z.object({ product_id: z.string().min(1) })
 
 // catalogs/[id]/route.ts
 export const updateCatalogBody = z.object({
   name: z.string().trim().min(2).max(120).optional(),
   description: z.string().max(1000).nullable().optional(),
   type: z.enum(["STANDARD", "CLIENT"]).optional(),
-  isActive: z.boolean().optional(),
+  is_active: z.boolean().optional(),
   filters: z.record(z.string(), z.unknown()).nullable().optional(),
 })
 
@@ -51,11 +51,11 @@ export const createCatalogBody = z.object({
   type: z.enum(["STANDARD", "CLIENT"]).optional(),
   description: z.string().max(1000).nullable().optional(),
   filters: z.record(z.string(), z.unknown()).nullable().optional(),
-  productIds: z.array(z.string().min(1)).max(200).optional(),
+  product_ids: z.array(z.string().min(1)).max(200).optional(),
 })
 
 // chain-branches/[branchCode]/route.ts
-export const chainBranchPatchBody = z.object({ isActive: z.boolean() })
+export const chainBranchPatchBody = z.object({ is_active: z.boolean() })
 
 const branchPhone = z.string().trim().regex(/^\+?\d[\d .-]{7,18}$/, "Số điện thoại không hợp lệ")
 
@@ -108,19 +108,19 @@ export const discountDecisionBody = z.object({
   approve: z.boolean(),
   // Duyệt khác mức xin: gửi mức mới (vẫn trong trần của Điều hành)
   percent: z.number().int().min(1).max(100).optional(),
-  amountVnd: z.number().int().positive().max(1_000_000_000).optional(),
+  amount_vnd: z.number().int().positive().max(1_000_000_000).optional(),
   note: z.string().trim().max(500).default(""),
 })
 
 // display-settings/route.ts
 export const displaySettingsBody = z.object({
-  templateId: z.string().min(1).max(64).optional(),
+  template_id: z.string().min(1).max(64).optional(),
   fields: z.array(z.string().max(40)).max(20).optional(),
   /** Công tắc giá và thông tin giảm giá cho cả cửa hàng (ALG 5.5) */
   pricing: z.object({ hidePrice: z.boolean().optional(), showDiscounts: z.boolean().optional() }).strict().optional(),
   /** Mã cảm ơn dùng một lần sau đơn hoàn tất (ALG 5.15) */
-  thankYou: z.object({ enabled: z.boolean().optional(), percent: z.number().int().min(1).max(100).optional() }).strict().optional(),
-}).refine((b) => b.templateId !== undefined || b.pricing !== undefined || b.thankYou !== undefined, { message: "Không có cài đặt nào để lưu" })
+  thank_you: z.object({ enabled: z.boolean().optional(), percent: z.number().int().min(1).max(100).optional() }).strict().optional(),
+}).refine((b) => b.template_id !== undefined || b.pricing !== undefined || b.thank_you !== undefined, { message: "Không có cài đặt nào để lưu" })
 
 const secret = z.string().trim().min(4).max(2000)
 
@@ -150,30 +150,30 @@ export const staffNotifyBody = z.object({
 
 // integrations/staff-notifications/saas-policy/route.ts
 export const staffNotifySaasPolicyBody = z.object({
-  targetOrganizationId: z.string().uuid(),
-  allowedChannels: z.array(z.enum(STAFF_NOTIFY_CHANNELS)),
+  target_organization_id: z.string().uuid(),
+  allowed_channels: z.array(z.enum(STAFF_NOTIFY_CHANNELS)),
 })
 
 // integrations/telegram-dispatch/route.ts
 export const telegramTestBody = z.object({
-  chatId: z.string().min(1),
+  chat_id: z.string().min(1),
   message: z.string().max(1000).optional(),
 })
 
 // messages/read/route.ts
-export const messagesReadBody = z.object({ messageIds: z.array(z.string().min(1).max(64)).min(1).max(200) })
+export const messagesReadBody = z.object({ message_ids: z.array(z.string().min(1).max(64)).min(1).max(200) })
 
 const STEP_KEYS = ["GENERAL", ...PIPELINE_STEPS.map((s) => s.id)] as [string, ...string[]]
 
 // messages/route.ts
-export const messageRef = { orderId: z.string().min(1).max(64).optional(), sessionId: z.string().min(1).max(64).optional() }
+export const messageRef = { order_id: z.string().min(1).max(64).optional(), session_id: z.string().min(1).max(64).optional() }
 
 const messageRole = z.enum(["ADMIN", "SALE", "COORDINATOR"])
 
 // messages/route.ts
 export const sendMessageBody = z.object({
   ...messageRef,
-  stepKey: z.enum(STEP_KEYS).default("GENERAL"),
+  step_key: z.enum(STEP_KEYS).default("GENERAL"),
   // Vai người gửi KHÔNG nhận từ client — suy từ năng lực ở máy chủ
   to: z.discriminatedUnion("kind", [
     z.object({ kind: z.literal("ROLE"), role: messageRole }),
@@ -181,32 +181,32 @@ export const sendMessageBody = z.object({
     z.object({ kind: z.literal("USER"), userId: z.string().min(1).max(64) }),
   ]),
   body: z.string().trim().min(1, "Nhập nội dung tin nhắn").max(MAX_MESSAGE_LENGTH),
-  replyToId: z.string().min(1).max(64).optional(),
-}).refine((v) => !!v.orderId !== !!v.sessionId, { message: "Chọn đúng một đơn hoặc một link" })
+  reply_to_id: z.string().min(1).max(64).optional(),
+}).refine((v) => !!v.order_id !== !!v.session_id, { message: "Chọn đúng một đơn hoặc một link" })
 
 // payment-events/[id]/handle/route.ts
 export const paymentEventHandleBody = z.object({ note: z.string().trim().min(3, "Ghi chú cách đã xử lý (tối thiểu 3 ký tự)").max(500) })
 
 // sale-visibility/route.ts
 export const saleVisibilityBody = z.object({
-  userId: z.string().min(1).max(64).optional(),
+  user_id: z.string().min(1).max(64).optional(),
   mode: z.enum(["ALL", "OWN"]).nullable(),
 })
 
 // send-links/[id]/customer/route.ts
 export const linkCustomerBody = z.object({
-  customerName: z.string().max(100),
-  customerPhone: z.string().max(20).nullable().optional(),
+  customer_name: z.string().max(100),
+  customer_phone: z.string().max(20).nullable().optional(),
 })
 
 // send-links/route.ts
 export const createSendLinkBody = z.object({
-  catalogId: z.string().max(64).optional(),
-  catalogCode: z.string().max(40).optional(),
-  customerName: z.string().max(100).nullable().optional(),
-  customerPhone: z.string().max(20).nullable().optional(),
+  catalog_id: z.string().max(64).optional(),
+  catalog_code: z.string().max(40).optional(),
+  customer_name: z.string().max(100).nullable().optional(),
+  customer_phone: z.string().max(20).nullable().optional(),
   prefix: z.string().max(10).optional(),
-  customCatalog: z
+  custom_catalog: z
     .object({
       name: z.string().max(120),
       description: z.string().max(1000).nullable().optional(),
@@ -217,7 +217,7 @@ export const createSendLinkBody = z.object({
 })
 
 // share-links/route.ts
-export const shareLinkBody = z.object({ catalogId: z.string().min(1).max(64), channel: z.string().max(32).nullable().optional() })
+export const shareLinkBody = z.object({ catalog_id: z.string().min(1).max(64), channel: z.string().max(32).nullable().optional() })
 
 // tracking/decide-dismiss/route.ts
 export const decideDismissBody = z.object({
@@ -231,8 +231,8 @@ export const decideDismissBody = z.object({
 export const dismissBody = z.object({
   id: z.string().min(1, "Thiếu định danh đơn/link"),
   type: z.enum(["ORDER", "SESSION"]),
-  reasonId: z.string().min(1, "Vui lòng chọn lý do"),
-  reasonText: z.string().trim().min(2, "Lý do phải có tối thiểu 2 ký tự"),
+  reason_id: z.string().min(1, "Vui lòng chọn lý do"),
+  reason_text: z.string().trim().min(2, "Lý do phải có tối thiểu 2 ký tự"),
   note: z.string().max(500).optional(),
 })
 
@@ -246,10 +246,10 @@ export const restoreDismissBody = z.object({
 // tracking/timeline/route.ts
 export const timelineQuery = z
   .object({
-    orderId: z.string().max(64).optional(),
-    sessionId: z.string().max(64).optional(),
+    order_id: z.string().max(64).optional(),
+    session_id: z.string().max(64).optional(),
     limit: z.coerce.number().int().min(1).max(100).default(50),
     cursor: z.string().regex(/^\d{1,6}$/).optional(),
   })
-  .refine((v) => v.orderId || v.sessionId, { message: "Cần orderId hoặc sessionId" })
+  .refine((v) => v.order_id || v.session_id, { message: "Cần order_id hoặc session_id" })
 

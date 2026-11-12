@@ -54,7 +54,7 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
     setBusy(true)
     setError(null)
     try {
-      await apiSend(`/api/v1/greeting-card/orders/${orderId}/substitute`, "POST", { reason: reason.trim(), productIds: picked }, "Chưa gửi được đề xuất")
+      await apiSend(`/api/v1/greeting-card/orders/${orderId}/substitute`, "POST", { reason: reason.trim(), product_ids: picked }, "Chưa gửi được đề xuất")
       onDone()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Chưa gửi được đề xuất")

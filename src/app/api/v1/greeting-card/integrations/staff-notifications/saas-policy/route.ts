@@ -3,6 +3,7 @@ import { jsonResponse } from "@/core/http/response"
 import { updateSaasAllowedNotificationChannels } from "@/modules/greeting-card/use-cases/staff-notification-settings"
 import { staffNotifySaasPolicyBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * PUT /api/v1/greeting-card/integrations/staff-notifications/saas-policy
@@ -19,10 +20,11 @@ export const PUT = defineRoute({
     if (!parsed.success) {
       throw validationFailed({ issues: parsed.error.issues })
     }
+    const input = camelKeys(parsed.data)
 
     const result = await updateSaasAllowedNotificationChannels(
-      parsed.data.targetOrganizationId,
-      parsed.data.allowedChannels
+      input.targetOrganizationId,
+      input.allowedChannels
     )
 
     return jsonResponse({ data: result })

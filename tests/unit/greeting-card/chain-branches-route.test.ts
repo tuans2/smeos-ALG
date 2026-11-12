@@ -50,18 +50,18 @@ describe("chain-branches route", () => {
   })
 
   it("PATCH tạm dừng rồi bật lại", async () => {
-    expect((await patch("CN-BADINH", { isActive: false })).status).toBe(200)
+    expect((await patch("CN-BADINH", { is_active: false })).status).toBe(200)
     expect(rows.get("org-a")?.[0]?.isActive).toBe(false)
-    expect((await patch("CN-BADINH", { isActive: true })).status).toBe(200)
+    expect((await patch("CN-BADINH", { is_active: true })).status).toBe(200)
     expect(rows.get("org-a")?.[0]?.isActive).toBe(true)
   })
 
   it("PATCH chi nhánh của tổ chức khác: 404, không đổi gì", async () => {
-    expect((await patch("CN-KHAC", { isActive: false })).status).toBe(404)
+    expect((await patch("CN-KHAC", { is_active: false })).status).toBe(404)
     expect(rows.get("org-b")?.[0]?.isActive).toBe(true)
   })
 
-  it("PATCH thiếu isActive: 400", async () => {
+  it("PATCH thiếu is_active: 400", async () => {
     expect((await patch("CN-BADINH", {})).status).toBe(400)
   })
 })

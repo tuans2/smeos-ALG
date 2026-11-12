@@ -5,6 +5,7 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { dispatchAfterPaymentConfirmed } from "@/modules/greeting-card/use-cases/dispatch-after-payment"
 import { confirmPaymentBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const POST = defineRoute({
   auth: { kind: "tenant", capability: GREETING_CARD_CAPABILITY.paymentRecord },
@@ -16,14 +17,15 @@ export const POST = defineRoute({
     if (!parsed.success) {
       throw validationFailed({ issues: parsed.error.issues })
     }
+    const input = camelKeys(parsed.data)
 
     const result = await adminConfirmBrochurePayment(ctx, id, {
-      amountVnd: parsed.data.amountVnd,
-      reference: parsed.data.reference,
-      note: parsed.data.note,
+      amountVnd: input.amountVnd,
+      reference: input.reference,
+      note: input.note,
     })
     // Chuỗi: tiền đã ghi nhận → chọn cửa hàng gia công theo cài đặt; đơn đã mời rồi thì không phát lại
-    const dispatch = await dispatchAfterPaymentConfirmed(ctx, id, { manualDispatch: parsed.data.manualDispatch })
+    const dispatch = await dispatchAfterPaymentConfirmed(ctx, id, { manualDispatch: input.manualDispatch })
     return jsonResponse({ data: { ...result, dispatch } })
   },
 })

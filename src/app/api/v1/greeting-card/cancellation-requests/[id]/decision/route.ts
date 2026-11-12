@@ -7,6 +7,7 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { cancellationDecisionBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * `POST /api/v1/greeting-card/cancellation-requests/:id/decision`
@@ -19,23 +20,24 @@ export const POST = defineRoute({
     const { id } = params as { id: string }
     const parsed = cancellationDecisionBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
 
     const repo = new CancellationRepository()
     const info = await repo.getPendingInfo(ctx, id)
     if (!info) throw notFound()
     const denied = canDecideCancellation(info.type, ctx, { inTransit: isInTransit(info.deliveryStatus), requesterId: info.requesterId }, GREETING_CARD_CAPABILITY)
     if (denied) throw new AppError("CAPABILITY_DENIED", denied)
-    if (parsed.data.approve) await assertNotSelfApproval(ctx, info.requesterId)
+    if (input.approve) await assertNotSelfApproval(ctx, info.requesterId)
 
     const result = await repo.decide(ctx, {
       requestId: id,
-      approve: parsed.data.approve,
-      note: parsed.data.note,
-      actualRefundVnd: parsed.data.actualRefundVnd,
+      approve: input.approve,
+      note: input.note,
+      actualRefundVnd: input.actualRefundVnd,
     })
 
     // Báo khách khi đơn bị huỷ theo đề xuất (như nút Huỷ của sổ thu)
-    if (result.orderStatus === "CANCELLED" && parsed.data.approve) queueOrderNotification(ctx.organizationId, result.orderId, "CANCELLED")
+    if (result.orderStatus === "CANCELLED" && input.approve) queueOrderNotification(ctx.organizationId, result.orderId, "CANCELLED")
     return jsonResponse({ data: result })
   },
 })

@@ -8,6 +8,7 @@ import { catalogPolicyKeysChanged } from "@/modules/greeting-card/domain/catalog
 import { deleteGreetingCatalog, restoreGreetingCatalog } from "@/modules/greeting-card/use-cases/delete-greeting-catalog"
 import { updateCatalogBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 type Context = { params: Promise<{ id: string }> }
 
@@ -29,9 +30,10 @@ export const PATCH = defineRoute({
     const body = await request.json().catch(() => ({}))
     const parsed = updateCatalogBody.safeParse(body)
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
 
     // Ẩn/hiện luôn đi qua use-case (kiểm người tạo/L4 + audit); trường còn lại cập nhật thường
-    const { isActive, ...fields } = parsed.data
+    const { isActive, ...fields } = input
     const repo = new GreetingCardRepository()
     const editsContent = Object.values(fields).some((v) => v !== undefined)
     // Tên, mô tả, giao diện: chỉ người tạo hoặc L4 (PO 16/10/2026) — ẩn/hiện có luật riêng ở use-case

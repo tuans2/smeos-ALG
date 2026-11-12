@@ -66,7 +66,7 @@ export const COORDINATOR_OPERATIONS: OpenApiOperation[] = [
     description: "Đã có shipper → trả `alreadySubmitted`; khách chưa duyệt ảnh → 409." + NF, ok: [200, { description: "Shipper", schema: ops.setShipperResponse }], errors: ACT }),
   op(CHAIN, { method: "post", path: `${p}/confirm-delivery`, operationId: "confirmSubcontractDelivery", summary: "Xác nhận giao thành công (có ảnh hoặc không ảnh)", cap: "R5",
     body: req.confirmDeliveryBody, multipart: req.photoUploadForm,
-    description: "Multipart kèm ảnh giao hàng (AI kiểm, không khớp → 422); JSON `confirmWithoutPhoto` chỉ khi tiệm cho bỏ ảnh (không → 409)." + NF,
+    description: "Multipart kèm ảnh giao hàng (AI kiểm, không khớp → 422); JSON `confirm_without_photo` chỉ khi tiệm cho bỏ ảnh (không → 409)." + NF,
     ok: [200, { description: "Kết quả", schema: ops.confirmDeliveryResponse }], errors: ACT }),
   op(CHAIN, { method: "post", path: `${p}/craft-fee-complaint`, operationId: "complainCraftFee", summary: "Ghi khiếu nại chất lượng, trừ phí gia công theo chính sách", cap: "R3",
     body: req.craftFeeComplaintBody, description: "Đơn chưa có chi nhánh nhận → 409." + NF, ok: [200, { description: "Phí còn phải trả", schema: ops.craftFeeComplaintResponse }], errors: ACT }),

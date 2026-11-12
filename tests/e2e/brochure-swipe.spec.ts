@@ -67,7 +67,7 @@ test.describe("Brochure / Thẻ Chào — Luồng chính", () => {
 
     // Tạo catalog
     const catRes = await request.post(`${BASE}/api/v1/greeting-card/catalogs`, {
-      data: { code: `e2e-${Date.now()}`, name: "Catalog E2E Test", type: "STANDARD", productIds: [productId] },
+      data: { code: `e2e-${Date.now()}`, name: "Catalog E2E Test", type: "STANDARD", product_ids: [productId] },
     })
     expect(catRes.status()).toBe(201)
     const catJson = await catRes.json() as { data: { id: string } }
@@ -76,7 +76,7 @@ test.describe("Brochure / Thẻ Chào — Luồng chính", () => {
 
     // Tạo send link
     const linkRes = await request.post(`${BASE}/api/v1/greeting-card/send-links`, {
-      data: { catalogId, customerName: "Khách E2E", prefix: "T99" },
+      data: { catalog_id: catalogId, customer_name: "Khách E2E", prefix: "T99" },
     })
     expect(linkRes.status()).toBe(201)
     const linkJson = await linkRes.json() as { data: { sendCode: string } }

@@ -32,7 +32,7 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
     setBusy(true)
     setError(null)
     try {
-      await apiSend(`/api/v1/greeting-card/orders/${orderId}/delivery-failed`, "POST", { reason, note: note.trim(), chargeFee }, "Chưa ghi được")
+      await apiSend(`/api/v1/greeting-card/orders/${orderId}/delivery-failed`, "POST", { reason, note: note.trim(), charge_fee: chargeFee }, "Chưa ghi được")
       onDone()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Chưa ghi được")

@@ -27917,7 +27917,7 @@
                       "REJECT"
                     ]
                   },
-                  "reviewNote": {
+                  "review_note": {
                     "type": "string",
                     "maxLength": 300
                   }
@@ -32288,7 +32288,7 @@
       "post": {
         "operationId": "confirmSubcontractDelivery",
         "summary": "Xác nhận giao thành công (có ảnh hoặc không ảnh)",
-        "description": "Multipart kèm ảnh giao hàng (AI kiểm, không khớp → 422); JSON `confirmWithoutPhoto` chỉ khi tiệm cho bỏ ảnh (không → 409). Đơn của tổ chức khác → 404.",
+        "description": "Multipart kèm ảnh giao hàng (AI kiểm, không khớp → 422); JSON `confirm_without_photo` chỉ khi tiệm cho bỏ ảnh (không → 409). Đơn của tổ chức khác → 404.",
         "tags": [
           "Điều phối — chuỗi gia công"
         ],
@@ -32314,7 +32314,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "confirmWithoutPhoto": {
+                  "confirm_without_photo": {
                     "type": "boolean",
                     "const": true
                   },
@@ -32325,7 +32325,7 @@
                   }
                 },
                 "required": [
-                  "confirmWithoutPhoto",
+                  "confirm_without_photo",
                   "reason"
                 ]
               }
@@ -42730,23 +42730,23 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "shipperName": {
+                  "shipper_name": {
                     "type": "string",
                     "minLength": 2,
                     "maxLength": 80
                   },
-                  "shipperPhone": {
+                  "shipper_phone": {
                     "type": "string",
                     "pattern": "^(0|\\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\\d{7}$"
                   },
-                  "shipperNote": {
+                  "shipper_note": {
                     "type": "string",
                     "maxLength": 200
                   }
                 },
                 "required": [
-                  "shipperName",
-                  "shipperPhone"
+                  "shipper_name",
+                  "shipper_phone"
                 ]
               }
             }
@@ -69663,7 +69663,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "orderId": {
+                  "order_id": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -69680,7 +69680,7 @@
                     "minLength": 3,
                     "maxLength": 1000
                   },
-                  "refundAmountVnd": {
+                  "refund_amount_vnd": {
                     "default": 0,
                     "type": "integer",
                     "minimum": 0,
@@ -69692,7 +69692,7 @@
                   }
                 },
                 "required": [
-                  "orderId",
+                  "order_id",
                   "type",
                   "reason"
                 ]
@@ -69912,7 +69912,7 @@
                     "type": "string",
                     "maxLength": 1000
                   },
-                  "actualRefundVnd": {
+                  "actual_refund_vnd": {
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 10000000000
@@ -70430,7 +70430,7 @@
                       }
                     ]
                   },
-                  "productIds": {
+                  "product_ids": {
                     "maxItems": 200,
                     "type": "array",
                     "items": {
@@ -70871,7 +70871,7 @@
                       "CLIENT"
                     ]
                   },
-                  "isActive": {
+                  "is_active": {
                     "type": "boolean"
                   },
                   "filters": {
@@ -71408,13 +71408,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "productId": {
+                  "product_id": {
                     "type": "string",
                     "minLength": 1
                   }
                 },
                 "required": [
-                  "productId"
+                  "product_id"
                 ]
               }
             }
@@ -71544,13 +71544,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "productId": {
+                  "product_id": {
                     "type": "string",
                     "minLength": 1
                   }
                 },
                 "required": [
-                  "productId"
+                  "product_id"
                 ]
               }
             }
@@ -71768,12 +71768,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "isActive": {
+                  "is_active": {
                     "type": "boolean"
                   }
                 },
                 "required": [
-                  "isActive"
+                  "is_active"
                 ]
               }
             }
@@ -73712,7 +73712,7 @@
                     "minimum": 1,
                     "maximum": 100
                   },
-                  "amountVnd": {
+                  "amount_vnd": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 1000000000
@@ -73980,7 +73980,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "templateId": {
+                  "template_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -74005,7 +74005,7 @@
                     },
                     "additionalProperties": false
                   },
-                  "thankYou": {
+                  "thank_you": {
                     "type": "object",
                     "properties": {
                       "enabled": {
@@ -75468,12 +75468,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "targetOrganizationId": {
+                  "target_organization_id": {
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
-                  "allowedChannels": {
+                  "allowed_channels": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -75489,8 +75489,8 @@
                   }
                 },
                 "required": [
-                  "targetOrganizationId",
-                  "allowedChannels"
+                  "target_organization_id",
+                  "allowed_channels"
                 ]
               }
             }
@@ -75708,7 +75708,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "chatId": {
+                  "chat_id": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -75718,7 +75718,7 @@
                   }
                 },
                 "required": [
-                  "chatId"
+                  "chat_id"
                 ]
               }
             }
@@ -75805,7 +75805,7 @@
         ],
         "parameters": [
           {
-            "name": "chatId",
+            "name": "chat_id",
             "in": "query",
             "required": true,
             "schema": {
@@ -75979,7 +75979,7 @@
       "get": {
         "operationId": "getMessageThread",
         "summary": "Tin nhắn nội bộ của một đơn hoặc link",
-        "description": "Cần đúng một trong `orderId`/`sessionId`. Của tổ chức khác → 404.",
+        "description": "Cần đúng một trong `order_id`/`session_id`. Của tổ chức khác → 404.",
         "tags": [
           "Thẻ chào — theo dõi & Hộp việc"
         ],
@@ -75990,7 +75990,7 @@
         ],
         "parameters": [
           {
-            "name": "orderId",
+            "name": "order_id",
             "in": "query",
             "required": false,
             "schema": {
@@ -75998,7 +75998,7 @@
             }
           },
           {
-            "name": "sessionId",
+            "name": "session_id",
             "in": "query",
             "required": false,
             "schema": {
@@ -76264,17 +76264,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "orderId": {
+                  "order_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "sessionId": {
+                  "session_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "stepKey": {
+                  "step_key": {
                     "default": "GENERAL",
                     "type": "string",
                     "enum": [
@@ -76350,7 +76350,7 @@
                     "minLength": 1,
                     "maxLength": 2000
                   },
-                  "replyToId": {
+                  "reply_to_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -76455,7 +76455,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "messageIds": {
+                  "message_ids": {
                     "minItems": 1,
                     "maxItems": 200,
                     "type": "array",
@@ -76467,7 +76467,7 @@
                   }
                 },
                 "required": [
-                  "messageIds"
+                  "message_ids"
                 ]
               }
             }
@@ -77382,7 +77382,7 @@
                     "type": "string",
                     "maxLength": 500
                   },
-                  "manualDispatch": {
+                  "manual_dispatch": {
                     "type": "boolean"
                   }
                 }
@@ -77492,14 +77492,14 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "floristNote": {
+                  "florist_note": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 500
                   }
                 },
                 "required": [
-                  "floristNote"
+                  "florist_note"
                 ]
               }
             }
@@ -77581,7 +77581,7 @@
       "post": {
         "operationId": "cancelGreetingOrder",
         "summary": "Huỷ đơn (bắt buộc lý do)",
-        "description": "Đơn đang giao cần `confirmInTransit`. Đơn của tổ chức khác hoặc ngoài phạm vi Sale/chi nhánh → 404.",
+        "description": "Đơn đang giao cần `confirm_in_transit`. Đơn của tổ chức khác hoặc ngoài phạm vi Sale/chi nhánh → 404.",
         "tags": [
           "Thẻ chào — đơn hàng"
         ],
@@ -77612,7 +77612,7 @@
                     "minLength": 3,
                     "maxLength": 500
                   },
-                  "confirmInTransit": {
+                  "confirm_in_transit": {
                     "type": "boolean"
                   }
                 },
@@ -78035,7 +78035,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "approvedBranchIds": {
+                  "approved_branch_ids": {
                     "minItems": 1,
                     "maxItems": 10,
                     "type": "array",
@@ -78044,14 +78044,14 @@
                       "minLength": 1
                     }
                   },
-                  "subcontractPriceVnd": {
+                  "subcontract_price_vnd": {
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 9007199254740991
                   }
                 },
                 "required": [
-                  "approvedBranchIds"
+                  "approved_branch_ids"
                 ]
               }
             }
@@ -78361,7 +78361,7 @@
                       }
                     ]
                   },
-                  "manualDispatch": {
+                  "manual_dispatch": {
                     "type": "boolean"
                   }
                 }
@@ -78762,7 +78762,7 @@
       "post": {
         "operationId": "confirmGreetingPayment",
         "summary": "Điều hành xác nhận tiền khách đã trả",
-        "description": "Đơn chuỗi ở chế độ tự động mời chi nhánh ngay (`dispatch`); `manualDispatch` để tự chọn. Đơn của tổ chức khác hoặc ngoài phạm vi Sale/chi nhánh → 404.",
+        "description": "Đơn chuỗi ở chế độ tự động mời chi nhánh ngay (`dispatch`); `manual_dispatch` để tự chọn. Đơn của tổ chức khác hoặc ngoài phạm vi Sale/chi nhánh → 404.",
         "tags": [
           "Thẻ chào — thu tiền"
         ],
@@ -78788,7 +78788,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "amountVnd": {
+                  "amount_vnd": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 10000000000
@@ -78815,7 +78815,7 @@
                       }
                     ]
                   },
-                  "manualDispatch": {
+                  "manual_dispatch": {
                     "type": "boolean"
                   }
                 }
@@ -79082,7 +79082,7 @@
       "post": {
         "operationId": "markDeliveryFailed",
         "summary": "Báo giao không thành công",
-        "description": "`chargeFee` cộng phí giao lại vào đơn. Đơn của tổ chức khác hoặc ngoài phạm vi Sale/chi nhánh → 404.",
+        "description": "`charge_fee` cộng phí giao lại vào đơn. Đơn của tổ chức khác hoặc ngoài phạm vi Sale/chi nhánh → 404.",
         "tags": [
           "Thẻ chào — Điều phối"
         ],
@@ -79122,7 +79122,7 @@
                     "type": "string",
                     "maxLength": 300
                   },
-                  "chargeFee": {
+                  "charge_fee": {
                     "type": "boolean"
                   }
                 },
@@ -79248,7 +79248,7 @@
                     "minimum": 1,
                     "maximum": 100
                   },
-                  "amountVnd": {
+                  "amount_vnd": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 1000000000
@@ -79368,14 +79368,14 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "trackingNote": {
+                  "tracking_note": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 500
                   }
                 },
                 "required": [
-                  "trackingNote"
+                  "tracking_note"
                 ]
               }
             }
@@ -79744,20 +79744,20 @@
                     "type": "string",
                     "maxLength": 500
                   },
-                  "lineIndex": {
+                  "line_index": {
                     "type": "integer",
                     "minimum": 0,
                     "maximum": 100
                   },
-                  "replacementName": {
+                  "replacement_name": {
                     "type": "string",
                     "maxLength": 80
                   },
-                  "replacementColor": {
+                  "replacement_color": {
                     "type": "string",
                     "maxLength": 40
                   },
-                  "photoAssetId": {
+                  "photo_asset_id": {
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
@@ -79765,9 +79765,9 @@
                 },
                 "required": [
                   "reason",
-                  "lineIndex",
-                  "replacementName",
-                  "photoAssetId"
+                  "line_index",
+                  "replacement_name",
+                  "photo_asset_id"
                 ]
               }
             }
@@ -79979,12 +79979,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "assetId": {
+                  "asset_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "assetIds": {
+                  "asset_ids": {
                     "minItems": 1,
                     "maxItems": 7,
                     "type": "array",
@@ -79994,10 +79994,10 @@
                       "maxLength": 64
                     }
                   },
-                  "skipPhoto": {
+                  "skip_photo": {
                     "type": "boolean"
                   },
-                  "skipReason": {
+                  "skip_reason": {
                     "type": "string",
                     "maxLength": 300
                   }
@@ -80108,7 +80108,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "totalVnd": {
+                  "total_vnd": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 1000000000
@@ -80119,7 +80119,7 @@
                   }
                 },
                 "required": [
-                  "totalVnd"
+                  "total_vnd"
                 ]
               }
             }
@@ -80239,12 +80239,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "assetId": {
+                  "asset_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "assetIds": {
+                  "asset_ids": {
                     "minItems": 1,
                     "maxItems": 7,
                     "type": "array",
@@ -80254,10 +80254,10 @@
                       "maxLength": 64
                     }
                   },
-                  "skipPhoto": {
+                  "skip_photo": {
                     "type": "boolean"
                   },
-                  "skipReason": {
+                  "skip_reason": {
                     "type": "string",
                     "maxLength": 300
                   }
@@ -80368,7 +80368,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "amountVnd": {
+                  "amount_vnd": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 10000000000
@@ -80380,7 +80380,7 @@
                   }
                 },
                 "required": [
-                  "amountVnd",
+                  "amount_vnd",
                   "reason"
                 ]
               }
@@ -80997,7 +80997,7 @@
                     "type": "string",
                     "maxLength": 500
                   },
-                  "productIds": {
+                  "product_ids": {
                     "minItems": 1,
                     "maxItems": 5,
                     "type": "array",
@@ -81009,7 +81009,7 @@
                 },
                 "required": [
                   "reason",
-                  "productIds"
+                  "product_ids"
                 ]
               }
             }
@@ -81393,7 +81393,7 @@
                       }
                     ]
                   },
-                  "companyName": {
+                  "company_name": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -81404,7 +81404,7 @@
                       }
                     ]
                   },
-                  "taxCode": {
+                  "tax_code": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -81415,7 +81415,7 @@
                       }
                     ]
                   },
-                  "companyAddress": {
+                  "company_address": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -81997,7 +81997,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "userId": {
+                  "user_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -82401,7 +82401,7 @@
       "post": {
         "operationId": "createSendLink",
         "summary": "Tạo link gửi khách",
-        "description": "Từ bộ sưu tập có sẵn hoặc bộ riêng cho khách (`customCatalog`).",
+        "description": "Từ bộ sưu tập có sẵn hoặc bộ riêng cho khách (`custom_catalog`).",
         "tags": [
           "Thẻ chào — bộ sưu tập & link"
         ],
@@ -82417,15 +82417,15 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "catalogId": {
+                  "catalog_id": {
                     "type": "string",
                     "maxLength": 64
                   },
-                  "catalogCode": {
+                  "catalog_code": {
                     "type": "string",
                     "maxLength": 40
                   },
-                  "customerName": {
+                  "customer_name": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -82436,7 +82436,7 @@
                       }
                     ]
                   },
-                  "customerPhone": {
+                  "customer_phone": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -82451,7 +82451,7 @@
                     "type": "string",
                     "maxLength": 10
                   },
-                  "customCatalog": {
+                  "custom_catalog": {
                     "type": "object",
                     "properties": {
                       "name": {
@@ -82702,11 +82702,11 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "customerName": {
+                  "customer_name": {
                     "type": "string",
                     "maxLength": 100
                   },
-                  "customerPhone": {
+                  "customer_phone": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -82719,7 +82719,7 @@
                   }
                 },
                 "required": [
-                  "customerName"
+                  "customer_name"
                 ]
               }
             }
@@ -83003,7 +83003,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "catalogId": {
+                  "catalog_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -83021,7 +83021,7 @@
                   }
                 },
                 "required": [
-                  "catalogId"
+                  "catalog_id"
                 ]
               }
             }
@@ -86734,11 +86734,11 @@
                       "SESSION"
                     ]
                   },
-                  "reasonId": {
+                  "reason_id": {
                     "type": "string",
                     "minLength": 1
                   },
-                  "reasonText": {
+                  "reason_text": {
                     "type": "string",
                     "minLength": 2
                   },
@@ -86750,8 +86750,8 @@
                 "required": [
                   "id",
                   "type",
-                  "reasonId",
-                  "reasonText"
+                  "reason_id",
+                  "reason_text"
                 ]
               }
             }
@@ -87004,7 +87004,7 @@
         ],
         "parameters": [
           {
-            "name": "orderId",
+            "name": "order_id",
             "in": "query",
             "required": false,
             "schema": {
@@ -87013,7 +87013,7 @@
             }
           },
           {
-            "name": "sessionId",
+            "name": "session_id",
             "in": "query",
             "required": false,
             "schema": {

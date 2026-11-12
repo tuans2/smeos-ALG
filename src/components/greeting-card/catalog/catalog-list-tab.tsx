@@ -120,7 +120,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
       const res = await fetch(`/api/v1/greeting-card/catalogs/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: true }),
+        body: JSON.stringify({ is_active: true }),
       })
       if (!res.ok) setActionError(await readApiError(res, "Không khôi phục được bộ sưu tập"))
       await loadCatalogs()

@@ -56,7 +56,7 @@ export function CoordinatorAcceptRejectModal({
         await apiSend(
           `/api/v1/greeting-card/orders/${orderId}/accept`,
           "POST",
-          { note: note.trim() || undefined, ...(autoMode && manualDispatch ? { manualDispatch: true } : {}) },
+          { note: note.trim() || undefined, ...(autoMode && manualDispatch ? { manual_dispatch: true } : {}) },
           "Không thể xác nhận đã nhận tiền"
         )
       } else {

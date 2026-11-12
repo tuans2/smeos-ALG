@@ -106,7 +106,7 @@ export function useJourneyCatalogs() {
           name: input.name.trim(),
           code,
           type: "STANDARD",
-          ...(input.productIds ? { productIds: input.productIds } : {}),
+          ...(input.productIds ? { product_ids: input.productIds } : {}),
         }),
       })
       if (!res.ok) throw new Error(await readError(res, "Không tạo được bộ sưu tập. Mã link có thể đã được dùng."))
@@ -136,9 +136,9 @@ export function useJourneyCatalogs() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          catalogId: input.catalogId,
-          customerName: input.customerName.trim() || undefined,
-          customerPhone: input.customerPhone.trim() || undefined,
+          catalog_id: input.catalogId,
+          customer_name: input.customerName.trim() || undefined,
+          customer_phone: input.customerPhone.trim() || undefined,
         }),
       })
       if (!res.ok) throw new Error(await readError(res, "Không tạo được link gửi khách. Vui lòng thử lại."))

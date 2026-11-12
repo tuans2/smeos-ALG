@@ -164,13 +164,13 @@ export async function seedJourneyData(request: APIRequestContext): Promise<Journ
     ? await postJson<{ id?: string; code?: string }>(request, "/api/v1/greeting-card/catalogs", {
         code: `kiem-tro-nang-${suffix.toLowerCase()}`,
         name: "Bộ sưu tập kiểm trợ năng",
-        productIds: [productId],
+        product_ids: [productId],
       })
     : null
   const send = catalog?.id
     ? await postJson<{ sendCode?: string }>(request, "/api/v1/greeting-card/send-links", {
-        catalogId: catalog.id,
-        customerName: "Khách kiểm trợ năng",
+        catalog_id: catalog.id,
+        customer_name: "Khách kiểm trợ năng",
       })
     : null
   return {

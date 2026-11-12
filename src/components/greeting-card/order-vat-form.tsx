@@ -45,7 +45,7 @@ export function OrderVatForm({ vat, onSaved }: { vat: OrderVatData; onSaved: (ne
       const res = await apiSend<{ data: OrderVatData }>(
         `/api/v1/greeting-card/orders/${vat.orderId}/vat`,
         "PUT",
-        { enabled, rate, companyName, taxCode, companyAddress, email },
+        { enabled, rate, company_name: companyName, tax_code: taxCode, company_address: companyAddress, email },
         "Không lưu được hoá đơn VAT"
       )
       onSaved(res.data)

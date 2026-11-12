@@ -135,7 +135,7 @@ function CoordinatorTaskModal({
         description: <>Ghi chú phân công {terms.makerTitle.toLowerCase()} (tên nhân sự, yêu cầu). Trạng thái sẽ chuyển sang <strong>Đang {terms.makerAction.toLowerCase()}</strong>.</>,
         note: {
           path: "assign-florist",
-          field: "floristNote",
+          field: "florist_note",
           placeholder: `Vd: Phân công ${makerTitleShort} phụ trách — lưu ý yêu cầu đặc biệt của khách`,
           confirm: `Xác nhận Giao ${makerTitleShort}`,
         },
@@ -158,7 +158,7 @@ function CoordinatorTaskModal({
           : <>Nhập thông tin shipper / mã vận đơn. Trạng thái sẽ chuyển sang <strong>Đang giao hàng</strong>.</>,
         note: {
           path: "dispatch-shipping",
-          field: "trackingNote",
+          field: "tracking_note",
           placeholder: isStay ? "Vd: Quản gia Tuấn đón tiếp · SĐT: 0912345678 · Phòng 201" : "Vd: Anh Hùng GHN · 0912345678 · Mã VĐ: GHNXXX",
           confirm: isStay ? "Xác nhận Đón tiếp" : "Xác nhận Giao Ship",
         },

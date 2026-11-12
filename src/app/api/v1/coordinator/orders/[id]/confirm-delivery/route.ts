@@ -29,6 +29,7 @@ import {
 import { queueOrderNotification } from "@/modules/greeting-card/use-cases/notify-customer"
 import { confirmDeliveryBody } from "@/app/api/v1/_contracts/requests-coordinator"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 const MAX_POD_BYTES = 10 * 1024 * 1024
 
@@ -151,7 +152,8 @@ export const POST = defineRoute({
           Object.fromEntries(parsed.error.issues.map((i) => [i.path[0] ?? "body", i.message]))
         )
       }
-      confirmNote = parsed.data.reason
+      const input = camelKeys(parsed.data)
+      confirmNote = input.reason
       confirmMode = "without_photo"
     }
 
