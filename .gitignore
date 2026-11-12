@@ -91,3 +91,7 @@ ux-audit-output/
 
 # Google Service Account key files (NEVER commit)
 secrets/
+
+# Công cụ thử tải O-9: id tổ chức sinh ra ở CSDL tạm
+scripts/load-test/.seed.json
+scripts/load-test/.result.md

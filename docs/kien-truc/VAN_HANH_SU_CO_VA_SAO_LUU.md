@@ -118,3 +118,34 @@ ngữ cảnh. Khoá nhạy cảm (`password`, `token`, `cookie`, `phone`, `addre
 | Khoá nhà cung cấp AI/kho | Đổi ở nhà cung cấp trước, cập nhật Render, rồi thu hồi khoá cũ |
 
 Chạy lúc vắng khách, báo trước cho tiệm khi đổi `SESSION_SECRET`.
+
+## 5. Thử tải quy mô mục tiêu (ADR-015 D-O7, bước O-9)
+
+Chạy trên **CSDL khôi phục PITR** (cùng lượt diễn tập O-7 hoặc một bản riêng), không bao giờ trên production: công cụ
+từ chối mọi CSDL không tên `*_restore` / `*_load` / `*_test` (hoặc đúng tên trong `LOAD_TEST_DATABASE`). Dữ liệu sinh
+ra không có dữ liệu cá nhân thật; xoá CSDL tạm sau khi xong.
+
+1. Khôi phục PITR ra CSDL tạm, đặt tên `…_restore` (§1). Trỏ `DATABASE_URL` của máy chạy thử (Render shell của một dịch
+   vụ tạm, hoặc máy vận hành) tới CSDL đó, `DB_RLS_MODE` như production. Chạy `npm run db:verify` để chắc bản khôi phục lành.
+2. `npm run load:seed` — 1 chuỗi × 200 chi nhánh × 500 đơn/ngày × 12 tháng + 300 tiệm lẻ × 20 đơn/ngày (≈ 2,4 triệu đơn).
+   Thử nhanh trước bằng `-- --scale 0.02`. Sinh xong ghi `scripts/load-test/.seed.json`.
+3. `npm run load:run` (mặc định 200 lần × 10 luồng mỗi kịch bản; tăng bằng `-- --samples 500 --concurrency 20`). Đo
+   p50/p95/p99 của: đặt đơn (chuỗi, tiệm lẻ), danh sách đơn (chuỗi, tiệm lẻ), hàng điều phối chuỗi, báo cáo doanh thu 30
+   ngày. Mục tiêu D-O1: p95 ≤ 200 ms, báo cáo ≤ 2 s, **0 lỗi**. Kết quả in ra và ghi `scripts/load-test/.result.md`.
+   Log JSON của ứng dụng lẫn trong đầu ra: lọc bằng `2>&1 | grep -v '^{'`.
+4. Dán bảng kết quả vào biên bản dưới; kịch bản không đạt → mở việc sửa, ghi kế hoạch vào cột "Xử lý". O-9 chỉ đánh dấu
+   xong khi mọi kịch bản đạt hoặc có kế hoạch sửa được PO duyệt (ADR-015 §4).
+
+Đo ở tầng use-case trong ngữ cảnh tổ chức (`withTenantDb`, cùng đường RLS với request): không gồm mạng, phiên đăng nhập,
+dựng trang. Thời gian request thật = số này + phần HTTP; sau go-live đối chiếu với số liệu HTTP của Render và
+`pg_stat_statements` (O-3), theo SLO §10 của `docs/handover/OPERATIONS_RUNBOOK.md`.
+
+**Chạy thử công cụ 12/11/2026** (Postgres 16 cục bộ, quy mô 0,01, 100 lần × 10 luồng — chỉ để kiểm công cụ, không phải
+biên bản O-9): danh sách đơn chuỗi p95 97 ms, tiệm lẻ 44 ms, điều phối 10 ms, báo cáo 51 ms. **Đặt đơn của chuỗi: 70/100
+lỗi** "Đang có nhiều đơn tạo cùng lúc — vui lòng thử lại." (tiệm lẻ 1/100): mã đơn lấy từ số đơn trong ngày + thử lại
+tối đa 3 lần (`createWithFreshCode`, `src/modules/orders/use-cases/create-order.ts`), 10 đơn cùng lúc trong một tổ chức
+trùng mã quá 3 lần. Chặn go-live cho khách chuỗi — xem `docs/handover/GO_LIVE_CHECKLIST.md` mục B.
+
+| Ngày | CSDL (mốc PITR) | Quy mô | Lần × luồng | Kịch bản không đạt | Xử lý | Người chạy |
+|---|---|---|---|---|---|---|
+| | | | | | | |
