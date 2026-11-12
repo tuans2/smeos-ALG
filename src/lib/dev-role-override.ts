@@ -20,7 +20,7 @@
 import type { MockSession } from "@/lib/mock-data"
 
 /** Tên cookie dev override — dùng chung ở mọi nơi, không hardcode. */
-export const DEV_ROLE_COOKIE = "smeos_dev_role"
+export const DEV_ROLE_COOKIE = "alg_dev_role"
 
 export interface DevRoleOverride {
   roleKey: string

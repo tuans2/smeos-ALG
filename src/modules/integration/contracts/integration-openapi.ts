@@ -13,7 +13,7 @@ import * as res from "./http-responses"
  */
 export const INTEGRATION_OPENAPI_PATH = "docs/spec/contracts/openapi/integration.openapi.json"
 
-const BOTH = ["integrationToken", "smeosSso"]
+const BOTH = ["integrationToken", "algSso"]
 const BASE_ERRORS = [401, 429, 500]
 const tags = (name: string) => [name]
 
@@ -133,7 +133,7 @@ export function buildIntegrationOpenApi(): Record<string, unknown> {
     serverUrl: "/api/v1",
     securitySchemes: {
       integrationToken: { type: "http", scheme: "bearer", description: "Token máy gọi máy cấp theo tổ chức (`/integration-tokens`)" },
-      smeosSso: { type: "apiKey", in: "header", name: "x-smeos-sso", description: "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-floraos-sso` vẫn nhận)" },
+      algSso: { type: "apiKey", in: "header", name: "x-alg-sso", description: "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-smeos-sso`, `x-floraos-sso` vẫn nhận)" },
     },
     operations: INTEGRATION_OPERATIONS,
   })

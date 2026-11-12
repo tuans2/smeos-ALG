@@ -2,7 +2,7 @@
 Worker xử lý tiến trình Render Video (M04c).
 Tuân thủ chuẩn D6-1 của floraos-core:
 - Lấy việc bằng SELECT ... FOR UPDATE SKIP LOCKED
-- Lắng nghe PostgreSQL LISTEN/NOTIFY qua kênh floraos_job_video_render
+- Lắng nghe PostgreSQL LISTEN/NOTIFY qua kênh alg_job_video_render (và kênh cũ floraos_job_video_render)
 - Cập nhật job_events (stage, progress, done) cho SSE client
 - Cập nhật video_jobs sang RENDER_COMPLETED
 - Tích hợp kiến trúc Provider Pattern:
@@ -52,6 +52,11 @@ def publish_render(out_file: Path, storage_key: str) -> None:
 
 def notify_channel_for(feature: str) -> str:
     """Tên kênh LISTEN/NOTIFY tương ứng."""
+    return "alg_job_" + re.sub(r"[^a-zA-Z0-9_]", "_", feature)
+
+
+def legacy_notify_channel_for(feature: str) -> str:
+    """Kênh tên cũ trước khi đổi tên ALG (12/11/2026) — vẫn nghe để không lỡ tín hiệu từ web chưa cập nhật."""
     return "floraos_job_" + re.sub(r"[^a-zA-Z0-9_]", "_", feature)
 
 
@@ -230,9 +235,10 @@ def run_worker(db_url: Optional[str] = None):
 
     while True:
         try:
-            with psycopg.connect(dsn, autocommit=True, application_name="smeos-worker:video") as conn:
+            with psycopg.connect(dsn, autocommit=True, application_name="alg-worker:video") as conn:
                 set_db_context(conn, None)  # nhận job đi qua mọi tổ chức — quyền hệ thống (RLS)
                 conn.execute(f"LISTEN {channel}")
+                conn.execute(f"LISTEN {legacy_notify_channel_for(FEATURE)}")
                 print(f"📡 [VideoWorker] Đã kết nối Postgres và lắng nghe kênh {channel}", flush=True)
 
                 while True:

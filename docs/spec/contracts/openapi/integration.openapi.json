@@ -24,7 +24,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -526,7 +526,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "responses": {
@@ -740,7 +740,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "responses": {
@@ -902,7 +902,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1001,7 +1001,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1144,7 +1144,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1344,7 +1344,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1519,7 +1519,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -1599,7 +1599,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -1861,7 +1861,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -2392,7 +2392,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -2727,7 +2727,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "parameters": [
@@ -2952,7 +2952,7 @@
             "integrationToken": []
           },
           {
-            "smeosSso": []
+            "algSso": []
           }
         ],
         "requestBody": {
@@ -3115,11 +3115,11 @@
         "scheme": "bearer",
         "description": "Token máy gọi máy cấp theo tổ chức (`/integration-tokens`)"
       },
-      "smeosSso": {
+      "algSso": {
         "type": "apiKey",
         "in": "header",
-        "name": "x-smeos-sso",
-        "description": "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-floraos-sso` vẫn nhận)"
+        "name": "x-alg-sso",
+        "description": "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-smeos-sso`, `x-floraos-sso` vẫn nhận)"
       }
     },
     "headers": {

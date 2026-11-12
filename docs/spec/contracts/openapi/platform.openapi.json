@@ -10291,7 +10291,7 @@
       "platformSession": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "smeos_session",
+        "name": "alg_session",
         "description": "Phiên đăng nhập của người vận hành nền tảng"
       }
     },

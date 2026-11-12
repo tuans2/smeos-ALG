@@ -1,5 +1,5 @@
 import { AppError, unauthenticated } from "@/core/http/errors"
-import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
+import { readSessionCookie } from "@/core/http/cookies"
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { isUsable } from "@/modules/organization/domain/session-policy"
 import { SessionRepository, getSessionRepository } from "@/modules/organization/infra/session-repository"
@@ -28,7 +28,7 @@ import { PlatformOperatorRepository, getPlatformOperatorRepository } from "@/mod
  * thực".
  */
 export async function requirePlatformContext(request: Request): Promise<PlatformContext> {
-  const token = readCookie(request, SESSION_COOKIE)
+  const token = readSessionCookie(request)
   if (!token) throw unauthenticated()
 
   const session = await getSessionRepository().findByTokenHash(hashSessionToken(token))

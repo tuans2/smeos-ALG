@@ -29,7 +29,7 @@ export function buildPlatformOpenApi(): Record<string, unknown> {
     ].join(" "),
     serverUrl: "/api/v1",
     securitySchemes: {
-      platformSession: { type: "apiKey", in: "cookie", name: "smeos_session", description: "Phiên đăng nhập của người vận hành nền tảng" },
+      platformSession: { type: "apiKey", in: "cookie", name: "alg_session", description: "Phiên đăng nhập của người vận hành nền tảng" },
     },
     operations: PLATFORM_OPERATIONS,
   })

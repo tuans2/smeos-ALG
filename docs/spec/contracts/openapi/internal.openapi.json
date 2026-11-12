@@ -124231,7 +124231,7 @@
       "post": {
         "operationId": "switchOrganization",
         "summary": "Đổi tổ chức đang hoạt động của phiên",
-        "description": "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Phát lại cookie `smeos_sso`.",
+        "description": "Chỗ duy nhất client được nêu tên tổ chức; mọi route khác lấy tổ chức từ phiên. Không phải thành viên đang hoạt động của tổ chức đó → 404. Phát lại cookie `alg_sso`.",
         "tags": [
           "Phiên — tổ chức & mật khẩu"
         ],
@@ -127174,7 +127174,7 @@
       "post": {
         "operationId": "refreshSsoToken",
         "summary": "Làm mới JWT liên-app cho Unified Shell",
-        "description": "Gọi máy-chủ-tới-máy-chủ từ LocalBudd/SocialFlow, chuyển tiếp cookie phiên. JWT 15 phút: trả trong thân (để app gọi tự đặt cookie cho trình duyệt) và header `Set-Cookie` `smeos_sso`.",
+        "description": "Gọi máy-chủ-tới-máy-chủ từ LocalBudd/SocialFlow, chuyển tiếp cookie phiên. JWT 15 phút: trả trong thân (để app gọi tự đặt cookie cho trình duyệt) và header `Set-Cookie` `alg_sso`.",
         "tags": [
           "Token tích hợp & SSO"
         ],
@@ -134976,13 +134976,13 @@
       "tenantSession": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "smeos_session",
+        "name": "alg_session",
         "description": "Phiên đăng nhập của thành viên tổ chức"
       },
       "platformSession": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "smeos_session",
+        "name": "alg_session",
         "description": "Phiên của người vận hành nền tảng (vài route cấu hình hộ tổ chức)"
       }
     },

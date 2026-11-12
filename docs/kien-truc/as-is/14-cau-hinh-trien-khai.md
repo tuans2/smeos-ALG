@@ -23,7 +23,7 @@
 | Worker media | `PHOTOROOM_API_KEY`, `PHOTOROOM_TIMEOUT_SECONDS`, `FAL_KEY`, `FAL_TIMEOUT_SECONDS`, `REPLICATE_API_TOKEN`, `STABILITY_API_KEY`, `GOOGLE_VERTEX_API_KEY`, `IOPAINT_URL`, `IOPAINT_MODEL`, `IOPAINT_DEVICE`, `IOPAINT_TIMEOUT_SECONDS`, `VARIANT_PROVIDER_ORDER`, `VARIANT_SEGMENTATION_MODEL`, `VARIANT_SEGMENTATION_TIMEOUT_SECONDS`, `VARIANT_INTEGRITY_THRESHOLD`, `DEFAULT_ENHANCER_PROVIDER`, `REALESRGAN_MODEL_PATH` | Không | `workers/media_ai/**` |
 | Worker video/âm thanh | `RUNWAYML_API_SECRET`, `AI_VIDEO_PROVIDER`, `GOOGLE_VEO_API_KEY`, `HEYGEN_API_KEY`, `ELEVENLABS_API_KEY`, `MINIMAX_API_KEY`, `MINIMAX_GROUP_ID` | Không | `workers/media_ai/{video,audio}/**`, `src/modules/audio-studio/**` |
 | Thị trường | `SERPAPI_API_KEY` | Không | `src/modules/market-intelligence/adapters/*` |
-| Khác | `LOG_LEVEL`, `FLORAOS_DEBUG_MAU` (worker); `JOB_RATE_LIMIT_WINDOW_SECONDS`, `JOB_RATE_LIMIT_PER_WINDOW` | Không | worker; `src/modules/jobs/` |
+| Khác | `LOG_LEVEL`, `ALG_DEBUG_MAU` (worker; tên cũ `FLORAOS_DEBUG_MAU` vẫn nhận); `JOB_RATE_LIMIT_WINDOW_SECONDS`, `JOB_RATE_LIMIT_PER_WINDOW` | Không | worker; `src/modules/jobs/` |
 
 Giá trị thật trên mọi môi trường: NOT VERIFIED (không đọc `.env`).
 

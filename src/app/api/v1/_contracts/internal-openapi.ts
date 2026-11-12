@@ -57,8 +57,8 @@ export function buildInternalOpenApi(): Record<string, unknown> {
     ].join(" "),
     serverUrl: "/api/v1",
     securitySchemes: {
-      tenantSession: { type: "apiKey", in: "cookie", name: "smeos_session", description: "Phiên đăng nhập của thành viên tổ chức" },
-      platformSession: { type: "apiKey", in: "cookie", name: "smeos_session", description: "Phiên của người vận hành nền tảng (vài route cấu hình hộ tổ chức)" },
+      tenantSession: { type: "apiKey", in: "cookie", name: "alg_session", description: "Phiên đăng nhập của thành viên tổ chức" },
+      platformSession: { type: "apiKey", in: "cookie", name: "alg_session", description: "Phiên của người vận hành nền tảng (vài route cấu hình hộ tổ chức)" },
     },
     operations: INTERNAL_OPERATIONS,
   })

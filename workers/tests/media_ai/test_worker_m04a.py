@@ -246,4 +246,5 @@ class TestHongKyThuat:
 
 class TestKenhNotify:
     def test_ten_kenh_khop_voi_phia_ts(self):
-        assert worker.notify_channel_for("media.optimize") == "floraos_job_media_optimize"
+        assert worker.notify_channel_for("media.optimize") == "alg_job_media_optimize"
+        assert worker.legacy_notify_channel_for("media.optimize") == "floraos_job_media_optimize"

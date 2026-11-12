@@ -56,6 +56,11 @@ STORAGE_ROOT = REPO_ROOT / "var" / "storage"
 def notify_channel_for(feature: str) -> str:
     """Mirror của `notifyChannelFor` (`postgres-queue-provider.ts`) — hai bên
     phải tính ra cùng một tên kênh, không có nguồn sự thật chung nào khác."""
+    return "alg_job_" + re.sub(r"[^a-zA-Z0-9_]", "_", feature)
+
+
+def legacy_notify_channel_for(feature: str) -> str:
+    """Kênh tên cũ trước khi đổi tên ALG (12/11/2026) — vẫn nghe để không lỡ tín hiệu từ web chưa cập nhật."""
     return "floraos_job_" + re.sub(r"[^a-zA-Z0-9_]", "_", feature)
 
 
@@ -472,6 +477,7 @@ def _vong_lap(conn: psycopg.Connection, co: "_CoDungLai", poll_interval_seconds:
     channel = notify_channel_for(FEATURE)
     with conn.cursor() as cur:
         cur.execute(f"LISTEN {channel}")
+        cur.execute(f"LISTEN {legacy_notify_channel_for(FEATURE)}")
 
     while not co.dung:
         job = claim_next(conn, FEATURE)
@@ -499,7 +505,7 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
 
     while not co.dung:
         try:
-            with psycopg.connect(database_url, autocommit=True, application_name="smeos-worker:vision") as conn:
+            with psycopg.connect(database_url, autocommit=True, application_name="alg-worker:vision") as conn:
                 set_db_context(conn, None)  # nhận job đi qua mọi tổ chức — quyền hệ thống (RLS)
                 log.info("worker %s đã nối cơ sở dữ liệu, chờ việc", FEATURE)
                 backoff = BACKOFF_DAU_GIAY
