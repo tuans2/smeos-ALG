@@ -27,12 +27,12 @@ export function CatalogLayoutSection() {
             description="Theo dõi và tối ưu hiệu suất các chiến dịch đa kênh theo thời gian thực."
             breadcrumbItems={[
               { label: "Trang chủ", href: "/" },
-              { label: "Tiếp thị", href: "/marketing" },
+              { label: "Tiếp thị", href: "/quang-ba/chien-dich" },
               { label: "Chiến dịch" },
             ]}
             badge={<Badge tone="success">Đang kích hoạt</Badge>}
             tip="Chiến dịch tự động đồng bộ hóa trên các kênh liên kết"
-            backHref="/marketing"
+            backHref="/quang-ba/chien-dich"
             backLabel="Quay lại danh mục"
             actions={
               <Button variant="primary" size="sm" onClick={() => {}}>

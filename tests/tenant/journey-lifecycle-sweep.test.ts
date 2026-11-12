@@ -63,6 +63,26 @@ describe("lượt quét vòng đời báo giá và gói dịch vụ", () => {
     expect(await expireOverdueQuotations(now)).toBe(0)
   })
 
+  it("audit User Journey L2 (UJ-31): báo giá hết hạn → lead 'Đã báo giá' về 'Theo dõi' (có audit); lead đã chốt bằng đơn khác giữ nguyên", async () => {
+    const lead = (t: Tenant, status: string) =>
+      prisma.leads.create({
+        data: { organization_id: t.organizationId, source: "MANUAL", status, name: "Khách Quen", phone: "0100000001", consent_at: now, consent_version: "v1" },
+      })
+    const sent = await lead(a, "QUOTATION_SENT")
+    const won = await lead(b, "WON")
+    const q1 = await quotation(a, "SENT", days(-1))
+    const q2 = await quotation(b, "SENT", days(-1))
+    await prisma.quotations.update({ where: { id: q1 }, data: { lead_id: sent.id } })
+    await prisma.quotations.update({ where: { id: q2 }, data: { lead_id: won.id } })
+
+    expect(await expireOverdueQuotations(now)).toBe(2)
+    expect((await prisma.leads.findUniqueOrThrow({ where: { id: sent.id } })).status).toBe("FOLLOW_UP")
+    expect((await prisma.leads.findUniqueOrThrow({ where: { id: won.id } })).status).toBe("WON")
+    const logs = await prisma.audit_logs.findMany({ where: { organization_id: a.organizationId, entity_id: sent.id } })
+    expect(logs).toHaveLength(1)
+    expect(await prisma.audit_logs.count({ where: { organization_id: b.organizationId, entity_id: won.id } })).toBe(0)
+  })
+
   it("gói sắp hết kỳ được mở hoá đơn kỳ sau dù tiệm không đăng nhập; gói còn xa hạn không bị đụng", async () => {
     const base = { plan: "STARTER", cycle: "MONTHLY" as const, price_vnd: 300_000, status: "ACTIVE" as const }
     const dueSoon = await prisma.subscriptions.create({

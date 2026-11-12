@@ -9,6 +9,13 @@ import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { XCircle } from "@/components/ui/icon-set/x-circle"
 import { Input } from "@/components/ui/input"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
+import { stockBadge, type StockBadgeIcon } from "@/components/availability/stock-status-badge"
+
+const BADGE_ICONS: Record<StockBadgeIcon, typeof CheckCircle2> = {
+  "in-stock": CheckCircle2,
+  "pre-order": AlertTriangle,
+  "out-of-stock": XCircle,
+}
 
 export interface QuickStockBoardProps {
   products: AvailabilityBoardProduct[]
@@ -65,20 +72,10 @@ export function QuickStockBoard({ products }: QuickStockBoardProps) {
               </tr>
             ) : (
               filtered.map((p) => {
-                const status = p.inventoryStatus ?? "IN_STOCK"
-                let badgeColor = "bg-success/15 text-success"
-                let Icon = CheckCircle2
-                let label = "Còn hàng"
-
-                if (status === "LOW_STOCK") {
-                  badgeColor = "bg-warning/15 text-warning-text"
-                  Icon = AlertTriangle
-                  label = "Sắp hết hàng"
-                } else if (status === "OUT_OF_STOCK") {
-                  badgeColor = "bg-danger/15 text-danger"
-                  Icon = XCircle
-                  label = "Tạm hết hàng"
-                }
+                const badge = stockBadge(p.inventoryStatus)
+                const badgeColor = badge.className
+                const Icon = BADGE_ICONS[badge.icon]
+                const label = badge.label
 
                 return (
                   <tr key={p.id} className="border-b border-border hover:bg-surface-alt/40 transition-colors">
