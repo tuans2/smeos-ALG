@@ -74,6 +74,14 @@ describe("CRM Domain Rules — Ngành hoa M09", () => {
       expect(deriveCustomerLifecycleStage({ orderCount: 6, totalSpentVnd: 6_000_000, lastOrderAt: lastOrder }, fixedNow)).toBe("AT_RISK")
     })
 
+    it("audit BL-31: có hạng (tính theo ngưỡng ngành) thì dùng hạng, không dùng ngưỡng cứng ngành hoa", () => {
+      const lastOrder = new Date("2026-05-20T12:00:00Z").toISOString() // 130 ngày trước
+      // Ngành ngưỡng cao: 6 đơn / 6 triệu mới là Bạc → không phải khách giá trị cao → nhánh 2+ đơn: quá 120 ngày là DORMANT
+      expect(deriveCustomerLifecycleStage({ orderCount: 6, totalSpentVnd: 6_000_000, tier: "SILVER", lastOrderAt: lastOrder }, fixedNow)).toBe("DORMANT")
+      // Ngành ngưỡng thấp: 2 đơn đã là Vàng → khách giá trị cao → 91-180 ngày là AT_RISK
+      expect(deriveCustomerLifecycleStage({ orderCount: 2, totalSpentVnd: 800_000, tier: "GOLD", lastOrderAt: lastOrder }, fixedNow)).toBe("AT_RISK")
+    })
+
     it("khách VIP/GOLD không mua > 180 ngày là DORMANT", () => {
       const lastOrder = new Date("2026-01-01T12:00:00Z").toISOString() // ~270 ngày trước
       expect(deriveCustomerLifecycleStage({ orderCount: 6, totalSpentVnd: 6_000_000, lastOrderAt: lastOrder }, fixedNow)).toBe("DORMANT")

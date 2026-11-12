@@ -29,6 +29,7 @@ import type { IGenerationJobRepository } from "@/modules/jobs/domain/repositorie
 import { getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
+import { aiFailureMessage } from "@/modules/usage/domain/ai-failure-message"
 
 import type { PackageChannel } from "../../creative-production/domain/campaign-package-rules"
 import {
@@ -386,7 +387,6 @@ export async function generateContent(
   } catch (error) {
     const message = error instanceof Error ? error.message : "Lỗi không xác định"
     await jobRepo.finishInline(ctx, enq.job.id, { ok: false, error: message, now: new Date() })
-    await refundJob(ctx, enq.job.id).catch(() => undefined)
-    throw new AppError("INTERNAL", `Content Engine chưa viết được bài (đã hoàn credit): ${message}`)
+    throw new AppError("INTERNAL", aiFailureMessage("AI chưa viết được bài", (await refundJob(ctx, enq.job.id).catch(() => null))?.refunded === true))
   }
 }

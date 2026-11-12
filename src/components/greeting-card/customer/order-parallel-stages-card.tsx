@@ -3,6 +3,7 @@
 import React from "react"
 import { CheckCircle2, Clock, XCircle, ShieldCheck, Sparkles } from "@/components/ui/icons"
 import { getIndustryOrderTerms } from "@/modules/organization/domain/industry-profile"
+import { paymentProgress } from "@/modules/orders/domain/payment-progress"
 
 export interface OrderParallelStagesProps {
   isPaid?: boolean
@@ -35,8 +36,9 @@ export function OrderParallelStagesCard({
   const isAccepted = !isRejected && (productionStatus !== "WAITING" || orderStatus === "CONFIRMED" || orderStatus === "PROCESSING")
 
   const hasMoney = paidVnd > 0 || legacyIsPaid === true
-  const isFullyPaid = (totalVnd > 0 && paidVnd >= totalVnd) || (legacyIsPaid && totalVnd <= 0)
-  const isDeposit = totalVnd > 0 && paidVnd > 0 && paidVnd < totalVnd
+  const progress = paymentProgress(totalVnd, paidVnd)
+  const isFullyPaid = (totalVnd > 0 && progress === "PAID") || (legacyIsPaid && totalVnd <= 0)
+  const isDeposit = progress === "DEPOSIT"
 
   const ot = getIndustryOrderTerms(industryKey)
 

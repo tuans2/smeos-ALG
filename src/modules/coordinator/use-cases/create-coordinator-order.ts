@@ -9,6 +9,7 @@
 import { AppError, validationFailed } from "@/core/http/errors"
 import { vnTodayIso } from "@/lib/vn-date"
 import { newOrderDeliveryErrors } from "@/modules/orders/domain/order-input-rules"
+import { assertWithinPriceBounds } from "@/modules/costing/use-cases/price-floor-guard"
 import type { CoordinatorEntrySource } from "@/modules/orders/domain/order-source"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { ICustomerRepository } from "@/modules/crm/domain/repositories/customer-repository.interface"
@@ -90,6 +91,10 @@ export async function createCoordinatorOrder(
       ...(deliveryErrors.deliveryDate ? { deliveryTargetAt: deliveryErrors.deliveryDate } : {}),
       ...(deliveryErrors.recipientPhone ? { recipientPhone: deliveryErrors.recipientPhone } : {}),
     })
+  }
+  // Giá ở màn Điều phối qua cùng sàn (C10) và trần (C9) như sổ đơn, báo giá (audit BL-20). Giá 0 = chờ báo giá.
+  if (input.productId && input.unitPriceVnd > 0) {
+    await assertWithinPriceBounds(ctx, [{ productId: input.productId, quantity: 1 }], input.unitPriceVnd, input.unitPriceVnd)
   }
   // ĐP-2.9 (26/09/2026): có `customerId` → tên/hạng/SĐT LẤY từ Customer
   // Master Index, bỏ qua giá trị client gửi (Hợp đồng MI §5 điểm 5,7 — hạng
@@ -221,6 +226,7 @@ export async function createCoordinatorOrder(
               productId: input.productId ?? null,
               description: input.productTitle,
               quantity: 1,
+              unitPriceVnd: input.unitPriceVnd,
               metadata: {
                 flowers: input.flowers,
                 sampleImageUrl: input.sampleImageUrl ?? null,

@@ -45,17 +45,14 @@ export async function convertChatToDraftOrder(
     })
   }
 
-  // Tạo đơn hàng nháp vào M10
+  // Tạo đơn nháp chỉ với thông tin khách đã cho — KHÔNG điền SĐT, người nhận, địa chỉ hay lời chúc mặc định (audit
+  // BL-25: lời chúc bịa từng có thể bị in lên thiệp). Trường thiếu được mở yêu cầu bổ sung (`syncOrderInfoRequests`).
   const order = await ingestOrder(ctx, {
     source: "CHAT",
     customerId: conversation.customerId,
-    cardMessage: customerInfo?.cardMessage || `Chúc mừng kỷ niệm / sinh nhật!`,
+    ...(customerInfo?.cardMessage?.trim() ? { cardMessage: customerInfo.cardMessage.trim() } : {}),
     internalNote: `[Tạo tự động từ AI Chatbot] Mẫu: ${product.name}. Gói: ${product.bom.wrapStyle}`,
-    deliveryAddress: {
-      recipientName: customerInfo?.recipientName || "Khách đặt qua Chat",
-      phone: customerInfo?.phone || "0900000000",
-      street: customerInfo?.street || "Nhận tại cửa hàng",
-    },
+    ...chatDeliveryAddress(customerInfo),
     items: [
       {
         productId: product.id,
@@ -71,9 +68,18 @@ export async function convertChatToDraftOrder(
     ctx,
     conversationId,
     "SYSTEM",
-    `⚡ Đã khởi tạo thành công Đơn hàng nháp **#${order.code}** (${product.name} — ${formatQuotePriceForChat(priceVnd)}) vào hệ thống Vận hành M10.`,
+    `⚡ Đã khởi tạo thành công Đơn hàng nháp **#${order.code}** (${product.name} — ${formatQuotePriceForChat(priceVnd)}) vào sổ đơn hàng.`,
     { createdOrderId: order.id, orderCode: order.code }
   )
 
   return { order }
+}
+
+/** Địa chỉ giao từ thông tin khách đã cho; không cho gì → không gắn địa chỉ. Trường thiếu để trống, không bịa. */
+export function chatDeliveryAddress(info: { recipientName?: string | undefined; phone?: string | undefined; street?: string | undefined } | undefined) {
+  const recipientName = info?.recipientName?.trim() ?? ""
+  const phone = info?.phone?.trim() ?? ""
+  const street = info?.street?.trim() ?? ""
+  if (!recipientName && !phone && !street) return {}
+  return { deliveryAddress: { recipientName, phone, street } }
 }

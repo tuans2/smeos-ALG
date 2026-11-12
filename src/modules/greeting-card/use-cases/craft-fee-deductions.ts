@@ -6,7 +6,7 @@
 
 import { craftFeeDeduction, type CraftFeeDeductionKind, type CraftFeePolicy } from "../domain/craft-fee-policy"
 import type { CraftFeeRecord, SubcontractOrderState } from "../domain/subcontract-order"
-import { parseDeliveryTimestampMs } from "../domain/subcontract-countdown"
+import { deliveryDeadlineMs } from "@/modules/orders/domain/delivery-slot"
 import { craftFeePolicyOf, type ICraftFeeFactsStore } from "./suggest-craft-fee"
 
 type Metadata = Record<string, unknown>
@@ -33,8 +33,9 @@ export function withCraftFeeDeduction(
   return { meta: { ...meta, subcontract_dispatch: { ...sub, craftFee } }, applied: true }
 }
 
-function lateMinutes(deliveryWindow: Record<string, unknown>, deliveredAt: Date): number {
-  const due = parseDeliveryTimestampMs(
+/** Phút trễ so với giờ hẹn; khung giờ không nêu giờ cụ thể → 0 (không có giờ hẹn thì không có "trễ" — audit BL-24). */
+export function lateMinutes(deliveryWindow: Record<string, unknown>, deliveredAt: Date): number {
+  const due = deliveryDeadlineMs(
     typeof deliveryWindow.date === "string" ? deliveryWindow.date : null,
     typeof deliveryWindow.timeSlot === "string" ? deliveryWindow.timeSlot : null
   )
