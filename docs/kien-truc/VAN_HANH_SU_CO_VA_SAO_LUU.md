@@ -29,6 +29,19 @@
 5. **Diễn tập mỗi quý** trên một instance tạm, rồi xoá nó. Chưa diễn tập lần nào thì chưa được
    coi RTO là đã chứng minh.
 
+**Diễn tập PITR (ADR-015 D-O3, O-7) — làm theo, ghi biên bản ngay dưới:**
+
+1. Ghi giờ bắt đầu. Render → `smeos-postgres` → *Recovery* → mốc 1 giờ trước → instance tạm.
+2. Trên Render shell (biến `DATABASE_URL` tạm trỏ instance tạm): `npm run db:verify` → lưu bản in.
+3. Trên production: `npm run db:verify` → so với bước 2 (số dòng chỉ được thấp hơn bằng lượng ghi trong 1 giờ; schema trùng;
+   `đơn lệch sổ thu` không tăng).
+4. Diễn tập khôi phục riêng một tổ chức thử (runbook §17, S-4) từ instance tạm, đo thời gian.
+5. Ghi giờ xong → RTO; xoá instance tạm. Mục tiêu RTO ≤ 1 giờ (toàn CSDL), ≤ 4 giờ (một tổ chức).
+
+| Ngày | Người làm | Mốc khôi phục | RTO toàn CSDL | RTO một tổ chức | `db:verify` khớp | Ghi chú |
+|---|---|---|---|---|---|---|
+| *(chưa diễn tập)* | | | | | | |
+
 Ảnh và video không nằm trong Postgres mà ở kho đối tượng (`STORAGE_*`). Bật versioning hoặc sao
 chép chéo vùng ở nhà cung cấp kho.
 
