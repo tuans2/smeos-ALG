@@ -2612,67 +2612,71 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "snapshot": {
+                    "data": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "code": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "price": {
-                          "type": "number"
-                        },
-                        "imageUrl": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "driveLink": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "flowersSummary": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "selectedAt": {
-                          "type": "string"
+                        "snapshot": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "code": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "price": {
+                              "type": "number"
+                            },
+                            "imageUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "driveLink": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "description": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "flowersSummary": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "selectedAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "code",
+                            "name",
+                            "price",
+                            "imageUrl",
+                            "selectedAt"
+                          ],
+                          "additionalProperties": false
                         }
                       },
                       "required": [
-                        "id",
-                        "code",
-                        "name",
-                        "price",
-                        "imageUrl",
-                        "selectedAt"
+                        "snapshot"
                       ],
                       "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "snapshot"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -6100,17 +6104,26 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "message": {
-                      "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "approved": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "approved"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "message"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -7867,13 +7880,22 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "const": true
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "accepted": {
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "accepted"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "ok"
+                    "data"
                   ],
                   "additionalProperties": false
                 }

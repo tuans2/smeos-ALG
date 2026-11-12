@@ -60,7 +60,7 @@ export function ChainPartnerCreateModal({
     try {
       let credential: PartnerCredential | undefined
       if (activeTab === "NEW") {
-        const res = await fetch("/api/v1/coordinator/partners", {
+        const res = await fetch("/api/v1/coordinator/chain-partners", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -76,12 +76,13 @@ export function ChainPartnerCreateModal({
         })
         const json = await res.json()
         if (!res.ok) {
-          setErrorMsg(json.message || "Không thể cấp tài khoản đối tác")
+          setErrorMsg(json.error?.message || "Không thể cấp tài khoản đối tác")
           return
         }
         // Mật khẩu ban đầu — máy chủ chỉ trả về một lần (audit AUD-009)
-        if (json.temporaryPassword) {
-          credential = { storeName: partnerStoreName, email: contactEmail, temporaryPassword: json.temporaryPassword }
+        const temporaryPassword = json.data?.temporary_password as string | undefined
+        if (temporaryPassword) {
+          credential = { storeName: partnerStoreName, email: contactEmail, temporaryPassword }
         }
       } else {
         const res = await fetch("/api/v1/coordinator/partners/link-existing", {

@@ -141,14 +141,11 @@ export const POST = defineRoute({
     }
 
     if (result.kind === "xong" && !result.output.fallback) {
-      return jsonResponse({
-        success: true,
-        suggestions: result.output.suggestions,
-      })
+      return jsonResponse({ data: { suggestions: result.output.suggestions } })
     }
     await credit.release()
     if (result.kind === "xong") {
-      return jsonResponse({ success: true, suggestions: result.output.suggestions, fallback: true })
+      return jsonResponse({ data: { suggestions: result.output.suggestions, fallback: true } })
     }
 
     // Nếu AI Gateway tạm thời không chạy được (ví dụ offline mock hoặc hết quota)
@@ -159,10 +156,6 @@ export const POST = defineRoute({
       `${text} — Cam kết chuẩn chất lượng uy tín`,
     ]
 
-    return jsonResponse({
-      success: true,
-      suggestions: fallbackSuggestions,
-      fallback: true,
-    })
+    return jsonResponse({ data: { suggestions: fallbackSuggestions, fallback: true } })
   },
 })

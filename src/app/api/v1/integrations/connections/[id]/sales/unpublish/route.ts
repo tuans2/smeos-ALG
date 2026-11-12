@@ -13,6 +13,6 @@ export const POST = defineRoute({
     const parsed = salesProductsBody.safeParse(await req.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ productIds: "Chọn từ 1 đến 100 sản phẩm" })
     await unpublishProducts(ctx, { connectionId: id, productIds: parsed.data.productIds })
-    return jsonResponse({ ok: true })
+    return jsonResponse({ data: { id, unpublished: true } })
   },
 })

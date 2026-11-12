@@ -39,7 +39,7 @@ export const POST = defineRoute({
       reason: body.reason ?? undefined,
     })
 
-    return jsonResponse({ success: true, hardLock: body })
+    return jsonResponse({ data: body })
   },
 })
 
@@ -56,6 +56,6 @@ export const DELETE = defineRoute({
       removedBy: pctx.userId,
     })
 
-    return jsonResponse({ success: true, removed: body })
+    return jsonResponse({ data: body })
   },
 })

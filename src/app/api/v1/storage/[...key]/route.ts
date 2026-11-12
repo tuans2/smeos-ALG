@@ -76,7 +76,7 @@ export const PUT = defineRoute<Signed, undefined, undefined, KeyParams>({
     if (!check.ok) throw validationFailed({ file: UPLOAD_ERRORS[check.reason] })
     await getStorageProvider().put(key, body, check.contentType)
 
-    return jsonResponse({ ok: true, key })
+    return jsonResponse({ data: { key } })
   },
 })
 

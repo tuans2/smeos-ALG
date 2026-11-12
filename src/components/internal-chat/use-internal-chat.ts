@@ -43,7 +43,7 @@ export function useInternalChat() {
       const res = await fetch(API)
       if (res.status === 403) return setListState("forbidden")
       const json = await res.json()
-      if (!json.success || !Array.isArray(json.data)) return setListState("error")
+      if (!res.ok || !Array.isArray(json.data)) return setListState("error")
       const list = json.data as InternalChatConversation[]
       setConversations(list)
       setListState("ready")
@@ -66,7 +66,7 @@ export function useInternalChat() {
       if (activeId.current !== convId) return
       if (res.status === 404 || res.status === 403) return setThreadState("forbidden")
       const json = await res.json()
-      if (!json.success || !Array.isArray(json.data)) return setThreadState("error")
+      if (!res.ok || !Array.isArray(json.data)) return setThreadState("error")
       // Giữ nguyên tin ảnh đã tải: URL ký đổi mỗi lần đọc, thay vào sẽ làm ảnh tải lại 5 giây/lần
       const incoming = json.data as InternalChatMessage[]
       setMessages((prev) => {
@@ -90,7 +90,7 @@ export function useInternalChat() {
       try {
         const res = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(target) })
         const json = await res.json()
-        if (json.success && json.data) setActiveConv(json.data)
+        if (res.ok && json.data) setActiveConv(json.data)
       } catch {
         // Không mở được phòng: vẫn hiện danh sách
       }
@@ -154,7 +154,7 @@ export function useInternalChat() {
         body: JSON.stringify({ content: text }),
       })
       const json = await res.json()
-      if (json.success && json.data) {
+      if (res.ok && json.data) {
         setMessages((prev) => [...prev, json.data])
         return true
       }

@@ -115,8 +115,8 @@ test.describe("Brochure / Thẻ Chào — Luồng chính", () => {
       data: { productId, product: { price: 1000 } },
     })
     expect(res.status()).toBe(200)
-    const json = await res.json() as { snapshot: { price: number } }
-    expect(json.snapshot.price).toBe(650000)
+    const json = await res.json() as { data: { snapshot: { price: number } } }
+    expect(json.data.snapshot.price).toBe(650000)
   })
 
   test("3. Khách đặt hoa qua brochure — ưu đãi Giảm 10% trên tổng đơn", async () => {

@@ -149,6 +149,7 @@ Phần tiếp: [09b-api-j-w.md](09b-api-j-w.md).
 | POST | `/coordinator/orders/[id]/qc` | recordQcInspection | Phiên | R3 | — | 1 tệp: `coordinator/coordinator-api.ts` |
 | PATCH | `/coordinator/orders/[id]/stage` | updateCoordinatorStage | Phiên | R3 | — | 1 tệp: `coordinator/coordinator-api.ts` |
 | GET · POST | `/coordinator/partners` | createPartner, listPartners | Phiên | R1 R4 | query: active | 4 tệp: `coordinator/coordinator-api.ts`, `coordinator/partner-create-form.tsx` … |
+| GET · POST | `/coordinator/chain-partners` | listChainPartners, provisionChainPartner | Phiên | F1 F2 | query: status, province, q | 2 tệp: `organization/use-chain-partners.ts`, `dieu-phoi/doi-tac/chain-partner-create-modal.tsx` (tách 12/11/2026) |
 | PATCH | `/coordinator/partners/[id]` | updatePartner | Phiên | R4 | — | 1 tệp: `coordinator/partner-management-modal.tsx` |
 
 #### `creative-production`

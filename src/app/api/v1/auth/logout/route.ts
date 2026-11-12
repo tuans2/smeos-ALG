@@ -13,7 +13,7 @@ export const POST = defineRoute({
     // (vd một tab khác, hoặc bị sao chép) vẫn còn hiệu lực tới khi tự hết hạn
     // (tối đa 15 phút) — JWT không thu hồi được giữa chừng như session gốc.
     return jsonResponse(
-      { ok: true },
+      { data: { logged_out: true } },
       {
         headers: {
           "set-cookie": [serializeClearedSessionCookie(), serializeClearedSsoCookie(), ...serializeClearedLegacyCookies()],

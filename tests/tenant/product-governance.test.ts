@@ -117,7 +117,7 @@ describe("quản trị danh mục: đề xuất sửa, phiên bản, lô nhập"
       overwrite_existing: true,
     })))
     expect(res.status).toBe(201)
-    const body = await readJson(res)
+    const body = (await readJson(res)).data as Record<string, unknown>
     const batchId = body.batch_id as string
     expect((await prisma.products.findUniqueOrThrow({ where: { id: existing.id as string } })).name).toBe("Tên ghi đè")
     expect(await prisma.product_import_batches.count({ where: { id: batchId } })).toBe(1)

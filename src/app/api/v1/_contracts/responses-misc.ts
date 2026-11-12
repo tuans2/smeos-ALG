@@ -143,7 +143,7 @@ export const voucherBatchResponse = z.strictObject({
   batch: voucherBatch,
   codes: z.array(z.strictObject({ code: z.string(), usedCount: z.number(), usageLimit: z.number().nullable(), isActive: z.boolean(), lastUsedAt: timestamp.nullable() })),
 })
-export const okResponse = z.strictObject({ ok: z.literal(true) })
+export const voucherBatchToggledResponse = z.strictObject({ data: z.strictObject({ id: z.string(), is_active: z.boolean() }) })
 
 // ── Bản in ──────────────────────────────────────────────────────────────────
 const preflightReport = z.strictObject({

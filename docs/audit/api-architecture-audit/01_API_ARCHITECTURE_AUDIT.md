@@ -764,3 +764,27 @@ Phát hiện ngoài phạm vi (có từ trước, chưa sửa — ghi rõ trong 
 - `GET /chat/public-limits` và `GET /chat/channels` không kiểm mã năng lực (test gác quyền xét theo tệp nên lệnh ghi cùng tệp che mất).
 - `GET /catalog-links/[slug]` tra link catalog không cần phiên, không giới hạn tần suất.
 - `GET /product-photo`, `GET /product-image-set` trả danh mục tĩnh không cần phiên.
+
+**Đợt 3 — đã làm (12/11/2026):** bọc **96 route** Thẻ chào (99 → **3** còn trong danh sách — chỉ còn 3 webhook/widget chat ngoại lệ; **538/541** route khai bằng `defineRoute`). Không đổi hợp đồng, không sửa tệp nào trong `src/modules/greeting-card/**` hay `src/components/greeting-card/**` (phạm vi luật B5) — bộ test Thẻ chào sẵn có chạy không sửa làm test khoá hành vi.
+- 59 route `greeting-card/*` bọc bằng công cụ; 7 route `greeting-card/orders/[id]/*` dùng chung hàm dựng `coordinatorHandler` (`_coordinator-handlers.ts`) — hàm dựng chuyển sang `defineRoute`.
+- 24 route công khai (`brochure`, `greeting-catalog`, `subcontract`) mở đầu bằng giới hạn tần suất theo IP → `kind: "public"` + `rateLimit`; 5 route giới hạn theo mã đơn sau khi đọc mã → `kind: "custom"` để giữ thứ tự.
+- `internal/chain-dispatch-sweep` (349 dòng): tách 8 tác vụ quét phụ sang `_side-sweeps.ts` (chạy tuần tự đúng thứ tự cũ, phản hồi giữ nguyên thứ tự trường) rồi bọc `custom` — route còn 329 dòng.
+- Lý do `capability: null` của 2 route đề xuất huỷ sửa tay: quyền kiểm trong handler (`ctx.capabilities.has`, `canDecideCancellation`), không phải ở use-case như công cụ đoán.
+
+Đợt 5 (lược đồ thân/query, snake_case) đổi hợp đồng — làm theo module, phía gọi sửa cùng commit; `/public`, `/integration` cần PO duyệt.
+
+**Đợt 4 — đã làm (12/11/2026):** envelope lệch **65 → 17** mục (`api-envelope-legacy.txt`, chia nhóm kèm lý do). Đổi hợp đồng nội bộ — route, lược đồ phản hồi, OpenAPI, test hợp đồng và mọi phía gọi ở giao diện sửa cùng commit.
+- Thông báo: lệnh ghi trả `{ data: <thân đã lưu> }`; tuỳ chọn bị khoá cứng → **422** `UNPROCESSABLE_ENTITY`, `details.violation = "LOCKED_BY_UPPER"` (trước: 403 `{ error: "chuỗi" }`), cùng cách tích hợp/kênh bán báo khoá tầng trên.
+- 19 thao tác không trả bản ghi → `{ data: { id, <việc>: true } }` (lược đồ dùng chung `actionDone`, `_contracts/responses-actions.ts`), vd. xoá, khôi phục, thu hồi, ngắt kết nối, đăng xuất (`{ data: { logged_out: true } }`).
+- Chat nội bộ: danh sách `{ data, meta: { total } }`, tin nhắn `{ data, next_cursor }`; `content-engine/rewrite`, banner, nhập hàng loạt, cron `chain-dispatch-sweep` bọc kết quả trong `data`; `product-copies` trả `{ data: copy }`.
+- Sửa kèm: trang `/noi-bo/ket-noi` còn đòi `success` sau khi route bỏ cờ đó (phát hiện khi rà phía gọi, sửa trước khi đẩy).
+
+Widget chat công khai (`/chat/public/widget`, vẫn chạy `asSystemDb` ngoài `handle()`) trả `{ data }` / `{ error: { code, message } }`; khung chat trên trang công khai đọc `body.data` / `body.error.message`.
+
+Còn 17 mục: 12 ngoại lệ lâu dài (webhook Facebook/Zalo/Zalo OA/SePay do nhà cung cấp quy định thân; `/api/health*`, `/api/dev/role-override`); 5 còn nợ — `coordinator/partners` (một route hai nghiệp vụ, cần tách trước; khi tách sửa luôn `control-tower-dashboard` đang gọi danh sách không kèm `active` nên nhận đối tác chuỗi thay vì đối tác gia công), 4 route Thẻ chào (`greeting-catalog/[id]/event`, `catalogs/[id]/products`, `brochure/[sendCode]/select`, `tracking/[code]/approve-photo`): đổi envelope buộc sửa test hợp đồng/E2E Thẻ chào đang có, trái luật B5 ("test Thẻ chào sẵn có chạy xanh không sửa") — cần PO cho phép.
+
+**Phát hiện quyền truy cập — PO duyệt xử lý (12/11/2026):** `GET /chat/channels`, `GET /chat/public-limits` đòi `W1` (cùng mã xem danh mục tích hợp — bảng kênh chat nằm trong màn Tích hợp; chọn `W1` thay `T4` để vai Điều phối vẫn mở được màn); `GET /catalog-links/[slug]` thêm trần 60 lượt/phút/IP (`kind: "public"`); `GET /product-photo`, `GET /product-image-set` đòi đăng nhập. Test: `tests/unit/core/http/access-findings-routes.test.ts`; đặc tả 06 và OpenAPI cập nhật.
+
+**4 route Thẻ chào (PO cho phép sửa test Thẻ chào, 12/11/2026):** `public/greeting-catalog/[id]/event` → 202 `{ data: { accepted: true } }`; `greeting-card/catalogs/[id]/products` DELETE → `{ data: { product_id, removed: true } }`; `public/brochure/[sendCode]/select` → `{ data: { snapshot } }` (`brochure-customer-experience` đọc `data.snapshot`); `public/brochure/tracking/[code]/approve-photo` → `{ data: { code, approved: true } }`. Test sửa đúng 3 chỗ kiểm hình dạng cũ (2 test hợp đồng, E2E `brochure-swipe` bước 2b); các test Thẻ chào khác giữ nguyên. Envelope lệch **17 → 13**.
+
+**Tách `coordinator/partners` (PO duyệt 12/11/2026):** `/coordinator/partners` chỉ còn đối tác gia công (`GET` `R1`, `?active=1`; `POST` `R4`; `PATCH /[id]`) và trả `{ data }`; cửa hàng đối tác của chuỗi sang `/coordinator/chain-partners` (`GET` `F1` → `{ data, meta: { total } }`; `POST` `F2` cấp tài khoản → `{ data: { partnership, temporary_password? } }`). Route con `link-existing`, `[id]/status`, `[id]/tools` giữ đường dẫn. Sửa kèm hai lỗi cùng gốc: `control-tower-dashboard` (gọi danh sách không kèm `active`) và `PartnerManagementModal` (màn đối tác gia công) từng nhận danh sách đối tác chuỗi; hai form tạo đối tác đọc lỗi ở `error.message` thay vì `message`. Envelope lệch **13 → 12** — chỉ còn ngoại lệ lâu dài.

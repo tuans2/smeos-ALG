@@ -44,9 +44,8 @@ export const GET = defineRoute({
     }
 
     return jsonResponse({
-      success: true,
       data: result.items,
-      total: result.total,
+      meta: { total: result.total },
     })
   },
 })
@@ -64,7 +63,7 @@ export const POST = defineRoute({
         { userId: ctx.userId, organizationId: ctx.organizationId, branchId: ctx.branchId },
         room.data
       )
-      return jsonResponse({ success: true, data: conversation })
+      return jsonResponse({ data: conversation })
     }
 
     const parsed = createInternalConversationBody.safeParse(body)
@@ -101,7 +100,6 @@ export const POST = defineRoute({
     })
 
     return jsonResponse({
-      success: true,
       data: conversation,
     })
   },

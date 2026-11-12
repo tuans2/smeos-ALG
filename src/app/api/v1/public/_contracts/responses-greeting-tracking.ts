@@ -134,7 +134,7 @@ export const trackingResponse = z.strictObject({
   trackingStep: z.strictObject({ stepIndex: z.number(), title: z.string(), description: z.string(), percentage: z.number() }),
 })
 
-export const approvePhotoResponse = z.strictObject({ success: z.literal(true), message: z.string() })
+export const approvePhotoResponse = z.strictObject({ data: z.strictObject({ code: z.string(), approved: z.literal(true) }) })
 
 export const changeRequestResponse = z.strictObject({
   data: z.strictObject({ id: z.string(), status: z.literal("PENDING"), changes: z.array(changeEntry), expectedFeeDeltaVnd: z.number() }),
@@ -143,6 +143,6 @@ export const changeRequestResponse = z.strictObject({
 export const substituteAnswerResponse = z.strictObject({ data: substituteProposal })
 export const flowerSubstituteAnswerResponse = z.strictObject({ data: flowerSubstituteProposal })
 
-export const catalogEventResponse = z.strictObject({ ok: z.literal(true) })
+export const catalogEventResponse = z.strictObject({ data: z.strictObject({ accepted: z.literal(true) }) })
 /** Đơn đặt từ catalog Thẻ chào — kèm cookie chủ phiên của link mới (`set-cookie`). */
 export const greetingCatalogOrderResponse = submittedOrder

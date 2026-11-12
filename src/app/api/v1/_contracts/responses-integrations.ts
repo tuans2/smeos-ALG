@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { actionDone } from "./responses-actions"
 
 import { GOVERNANCE_TIERS } from "@/core/governance/layered-resolver"
 
@@ -117,4 +118,7 @@ export const tokenIssuedResponse = z.strictObject({
 
 /** `expires_at`: giây Unix (khác các mốc giờ ISO khác). */
 export const ssoRefreshResponse = z.strictObject({ sso_token: z.string(), expires_at: z.number() })
-export const okResponse = z.strictObject({ ok: z.literal(true) })
+export const disconnectedResponse = actionDone("disconnected")
+export const replayedResponse = actionDone("replayed")
+export const unpublishedResponse = actionDone("unpublished")
+export const revokedResponse = actionDone("revoked")

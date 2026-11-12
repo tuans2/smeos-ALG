@@ -5,9 +5,9 @@ import type { ChainPartnershipEntity } from "@/modules/chain-partnership/domain/
 
 async function fetchChainPartners(): Promise<ChainPartnershipEntity[] | null> {
   try {
-    const res = await fetch("/api/v1/coordinator/partners")
+    const res = await fetch("/api/v1/coordinator/chain-partners")
     const json = await res.json()
-    return json.success && Array.isArray(json.data) ? (json.data as ChainPartnershipEntity[]) : null
+    return res.ok && Array.isArray(json.data) ? (json.data as ChainPartnershipEntity[]) : null
   } catch {
     return null // lỗi mạng: giữ danh sách cũ
   }

@@ -44,10 +44,10 @@ export const TOOLS_OPERATIONS: OpenApiOperation[] = [
   op(TPL, { method: "put", path: "/template-overrides", operationId: "setTemplateOverride", summary: "Ghi đè một trường của mẫu", cap: "F2", body: req.putTemplateOverrideBody,
     description: "Chỉ các cặp mẫu/trường đã có nơi đọc thật trong mã; khác → 400. Giá trị cắt khoảng trắng, quá độ dài → 400.", ok: [200, { description: "Ghi đè", schema: res.templateOverrideResponse }], errors: BODY_ERRORS }),
   op(TPL, { method: "delete", path: "/template-overrides/{templateKey}/{fieldKey}", operationId: "removeTemplateOverride", summary: "Bỏ ghi đè, về giá trị mặc định", cap: "F2",
-    description: "Chưa có ghi đè → 404.", ok: [200, { description: "Đã bỏ", schema: res.okResponse }], errors: [404] }),
+    description: "Chưa có ghi đè → 404.", ok: [200, { description: "Đã bỏ", schema: res.overrideRemovedResponse }], errors: [404] }),
 
   op(ORG, { method: "get", path: "/noi-bo/identity", operationId: "getOrganizationIdentity", summary: "Định danh tổ chức của phiên, liên kết chuỗi, thành viên", cap: "F1",
-    description: "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`. Envelope cũ `{ success, data }`.",
+    description: "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`.",
     ok: [200, { description: "Định danh", schema: res.identityResponse }], errors: [404] }),
 
   proxyOp("get", "proxyGet"),

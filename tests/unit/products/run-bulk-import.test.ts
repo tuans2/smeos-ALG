@@ -10,7 +10,7 @@ describe("runBulkImport", () => {
   it("gửi theo lô 250 và cộng dồn kết quả", async () => {
     const fetchMock = vi.fn(async (_url: string, init: RequestInit) => {
       const n = (JSON.parse(String(init.body)) as { items: unknown[] }).items.length
-      return new Response(JSON.stringify({ created_count: n, skipped_count: 0, failed_count: 0, failed: [] }))
+      return new Response(JSON.stringify({ data: { created_count: n, skipped_count: 0, failed_count: 0, failed: [] } }))
     })
     vi.stubGlobal("fetch", fetchMock)
     const result = await runBulkImport(rows, () => {})
@@ -23,7 +23,7 @@ describe("runBulkImport", () => {
     vi.stubGlobal("fetch", vi.fn(async () => {
       call++
       return call === 1
-        ? new Response(JSON.stringify({ created_count: 250, skipped_count: 0, failed_count: 0 }))
+        ? new Response(JSON.stringify({ data: { created_count: 250, skipped_count: 0, failed_count: 0 } }))
         : new Response("boom", { status: 500 })
     }))
     const result = await runBulkImport(rows, () => {})
@@ -34,7 +34,7 @@ describe("runBulkImport", () => {
   })
 
   it("cộng dồn số ảnh được bù cho mã đã có", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ created_count: 0, skipped_count: 250, images_attached_count: 7, failed_count: 0 }))))
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ data: { created_count: 0, skipped_count: 250, images_attached_count: 7, failed_count: 0 } }))))
     const result = await runBulkImport(rows, () => {})
     expect(result.imagesAttachedCount).toBe(14)
   })

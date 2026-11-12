@@ -63,10 +63,10 @@ describe("hợp đồng — Trung tâm Tích hợp, token tích hợp, SSO", () 
     const events = await expectContract(await listEvents(get(`/integrations/connections/${conn.id}/events?limit=10`), ps(conn.id)), 200, R.eventsResponse, "int-events")
     const eventId = String((events.events as { id: string }[])[0]!.id)
     await prisma.integration_events.update({ where: { id: eventId }, data: { status: "DEAD" } })
-    await expectContract(await replay(send(`/integrations/events/${eventId}/replay`, "POST"), ps(eventId)), 200, R.okResponse, "int-replay")
+    await expectContract(await replay(send(`/integrations/events/${eventId}/replay`, "POST"), ps(eventId)), 200, R.replayedResponse, "int-replay")
     expect((await listEvents(get(`/integrations/connections/${conn.id}/events?limit=500`), ps(conn.id))).status).toBe(400)
 
-    await expectContract(await disconnect(send(`/integrations/connections/${conn.id}`, "DELETE"), ps(conn.id)), 200, R.okResponse, "int-disconnect")
+    await expectContract(await disconnect(send(`/integrations/connections/${conn.id}`, "DELETE"), ps(conn.id)), 200, R.disconnectedResponse, "int-disconnect")
   })
 
   it("kênh bán: tin đăng và đơn, đăng, đẩy còn/hết hàng, gỡ", async () => {
@@ -78,7 +78,7 @@ describe("hợp đồng — Trung tâm Tích hợp, token tích hợp, SSO", () 
     await expectContract(await publish(send(`/integrations/connections/${id}/sales/publish`, "POST", { productIds: [product.id] }), ps(id)), 200, R.listingsResponse, "int-publish")
     await expectContract(await getSales(get(`/integrations/connections/${id}/sales`), ps(id)), 200, R.salesResponse, "int-sales")
     await expectContract(await availability(send(`/integrations/connections/${id}/sales/availability`, "POST"), ps(id)), 200, R.availabilityResponse, "int-availability")
-    await expectContract(await unpublish(send(`/integrations/connections/${id}/sales/unpublish`, "POST", { productIds: [product.id] }), ps(id)), 200, R.okResponse, "int-unpublish")
+    await expectContract(await unpublish(send(`/integrations/connections/${id}/sales/unpublish`, "POST", { productIds: [product.id] }), ps(id)), 200, R.unpublishedResponse, "int-unpublish")
   })
 
   it("quản trị tích hợp của chuỗi: đọc, đặt chế độ; cửa hàng không phải chuỗi → 422", async () => {
@@ -92,7 +92,7 @@ describe("hợp đồng — Trung tâm Tích hợp, token tích hợp, SSO", () 
     const id = String(issued.id)
     await expectContract(await listTokens(get("/integration-tokens")), 200, R.tokensResponse, "token-list")
     await expectContract(await rotateToken(send(`/integration-tokens/${id}/rotate`, "POST"), ps(id)), 201, R.tokenIssuedResponse, "token-rotate")
-    await expectContract(await revokeToken(send(`/integration-tokens/${id}`, "DELETE"), ps(id)), 200, R.okResponse, "token-revoke")
+    await expectContract(await revokeToken(send(`/integration-tokens/${id}`, "DELETE"), ps(id)), 200, R.revokedResponse, "token-revoke")
     expect((await revokeToken(send(`/integration-tokens/${id}`, "DELETE", undefined, chain), ps(id))).status).toBe(404)
 
     const sso = await ssoRefresh(send("/sso/refresh", "POST"))

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { actionDone } from "./responses-actions"
 
 import { data, timestamp } from "./responses-orders"
 
@@ -59,7 +60,7 @@ export const customerMasterIndex = z.strictObject({
 export const customersResponse = z.strictObject({ items: z.array(customerMasterIndex), total: z.number() })
 export const customerResponse = z.strictObject({ customer: customerMasterIndex })
 export const customerMasterIndexResponse = z.strictObject({ masterIndex: customerMasterIndex })
-export const deleteCustomerResponse = z.strictObject({ success: z.literal(true) })
+export const deleteCustomerResponse = actionDone("deleted")
 /** Bản ghi `customer_occasions`. */
 export const occasionResponse = z.strictObject({
   occasion: z.strictObject({

@@ -4,6 +4,7 @@
  * Quyền H6 gác ở use-case `approveProductCopy` (RS-9 18/09).
  */
 import { defineRoute } from "@/core/http/define-route";
+import { jsonResponse } from "@/core/http/response";
 import type { TenantContext } from "@/core/tenancy";
 import { approveProductCopy } from "@/modules/product-copies/use-cases/approve-product-copy";
 import { getProductCopy } from "@/modules/product-copies/use-cases/get-product-copy";
@@ -16,10 +17,7 @@ async function approveHandler({ ctx, params }: { ctx: TenantContext; params: Rec
   // Return full product copy with approval state
   const copy = await getProductCopy(ctx, id);
 
-  return new Response(JSON.stringify(copy), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return jsonResponse({ data: copy });
 }
 
 export const POST = defineRoute({

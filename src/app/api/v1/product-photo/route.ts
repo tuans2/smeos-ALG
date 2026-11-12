@@ -43,8 +43,8 @@ export const POST = defineRoute({
 })
 
 export const GET = defineRoute({
-  auth: { kind: "custom", reason: "chỉ trả danh mục preset tĩnh — không đọc dữ liệu, không đòi phiên (có từ trước)" },
-  handler: async ({  }) => {
+  auth: { kind: "tenant", capability: null, reason: "danh mục preset tĩnh cho màn tạo ảnh — chỉ cần đăng nhập (PO 12/11/2026)" },
+  handler: async () => {
     return jsonResponse({
       presets: BACKGROUND_PRESETS,
       aspect_ratios: ASPECT_RATIO_OPTIONS,

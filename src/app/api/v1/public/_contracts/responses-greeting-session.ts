@@ -5,7 +5,7 @@ import { productSnapshot, shippingSettings, shopInfo, vietQrInstructions } from 
 /** Phản hồi phiên khách Thẻ chào `/public/brochure/{sendCode}/*` (audit API đợt 6). */
 export const brochureOpenedResponse = z.strictObject({ opened: z.boolean() })
 export const brochureEventResponse = z.strictObject({ recorded: z.literal(true) })
-export const brochureSelectResponse = z.strictObject({ success: z.literal(true), snapshot: productSnapshot })
+export const brochureSelectResponse = z.strictObject({ data: z.strictObject({ snapshot: productSnapshot }) })
 export const paymentNotifyResponse = z.strictObject({ success: z.boolean(), message: z.string() })
 export const paymentProofResponse = z.strictObject({ assetId: z.string(), url: z.string() })
 export const brochureUnlockResponse = z.strictObject({ unlocked: z.literal(true) })

@@ -58,7 +58,7 @@ export const MISC_OPERATIONS: OpenApiOperation[] = [
   op(VOUCHER, { method: "get", path: "/vouchers/batches/{id}", operationId: "getVoucherBatch", summary: "Một đợt kèm danh sách mã", cap: "Q8", description: NF,
     ok: [200, { description: "Đợt và mã", schema: res.voucherBatchResponse }], errors: [404] }),
   op(VOUCHER, { method: "patch", path: "/vouchers/batches/{id}", operationId: "toggleVoucherBatch", summary: "Tạm dừng / mở lại cả đợt", cap: "Q8", body: req.voucherBatchActiveBody,
-    description: `Trả \`{ ok: true }\` cũ. ${NF}`, ok: [200, { description: "Đã đổi", schema: res.okResponse }], errors: [...BODY_ERRORS, 404] }),
+    description: NF, ok: [200, { description: "Đã đổi", schema: res.voucherBatchToggledResponse }], errors: [...BODY_ERRORS, 404] }),
   op(VOUCHER, { method: "get", path: "/vouchers/batches/{id}/export", operationId: "exportVoucherCodes", summary: "Tải danh sách mã (CSV)", cap: "Q8",
     description: `Ghi nhật ký xuất dữ liệu. ${NF}`, ok: [200, { description: "Tệp CSV", contentType: "text/csv" }], errors: [404] }),
 
