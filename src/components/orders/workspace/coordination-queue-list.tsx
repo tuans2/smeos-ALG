@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatCurrency, formatDateTime } from "@/lib/i18n/formatters"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 interface QueueItem {
   orderId: string
@@ -66,9 +67,11 @@ export function CoordinationQueueList() {
           </li>
         ))}
       </ul>
-      <Link href="/dieu-phoi" className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-body-sm font-semibold text-text hover:bg-surface-alt">
-        Xử lý trong Tháp điều phối
-      </Link>
+      {isHrefOpen("/dieu-phoi") && (
+        <Link href="/dieu-phoi" className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-body-sm font-semibold text-text hover:bg-surface-alt">
+          Xử lý trong Tháp điều phối
+        </Link>
+      )}
     </div>
   )
 }

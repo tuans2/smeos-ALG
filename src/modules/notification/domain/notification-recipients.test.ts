@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { getNotificationEvent } from "./events"
-import { fillDeepLink, MAX_RECIPIENTS_PER_EVENT, selectRecipients } from "./notification-recipients"
+import { fillDeepLink, MAX_RECIPIENTS_PER_EVENT, selectRecipients, openDeepLink } from "./notification-recipients"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 const orderReceived = getNotificationEvent("ORDER_RECEIVED")!
 
@@ -31,5 +32,19 @@ describe("fillDeepLink", () => {
     expect(fillDeepLink("/don-hang/{orderId}", { orderId: "a b" })).toBe("/don-hang/a%20b")
     expect(fillDeepLink("/don-hang/{orderId}", {})).toBeUndefined()
     expect(fillDeepLink(undefined, {})).toBeUndefined()
+  })
+})
+
+describe("openDeepLink (audit N-05)", () => {
+  it("bỏ link tới tuyến đang khoá, giữ link tới tuyến mở; tin vẫn gửi được vì chỉ link bị bỏ", () => {
+    const lockedOn = (href: string) => isHrefOpen(href, true, false)
+    expect(openDeepLink("/dieu-phoi", lockedOn)).toBeUndefined()
+    expect(openDeepLink("/so-lieu", lockedOn)).toBeUndefined()
+    expect(openDeepLink("/don-hang/abc", lockedOn)).toBe("/don-hang/abc")
+    expect(openDeepLink(undefined, lockedOn)).toBeUndefined()
+  })
+
+  it("khoá tắt (staging, bản giao GD1): giữ nguyên link", () => {
+    expect(openDeepLink("/dieu-phoi", (href) => isHrefOpen(href, false, false))).toBe("/dieu-phoi")
   })
 })
