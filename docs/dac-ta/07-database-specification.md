@@ -594,7 +594,7 @@ model provider_cost_entries {
 }
 ```
 
-Gói thuê bao (checklist ALG 10.7, PO Q9). Một tổ chức một thuê bao; giá theo kỳ nhập ở Console (`N19`). Hoá đơn kỳ đầu hạn trả ngay — chưa thu thì `OVERDUE` (chỉ xem); kỳ sau sinh 7 ngày trước `current_period_end`, hạn = ngày bắt đầu kỳ sau. Ghi đã thu (SePay theo `code` trong nội dung chuyển khoản, hoặc Console) dời kỳ hiện tại; `payment_reference` duy nhất chống ghi trùng. `plan_credit_period`/`plan_credit_granted`: credit tặng theo gói của tháng (PO Q10) — đầu tháng cấp `GIFT`, phần tháng trước chưa dùng thu hồi `EXPIRE`. Gói đang thuê bao quyết định tính năng (`entitlement-service`), đứng trước `organizations.credit_plan`. Tài khoản nhận tiền của nền tảng ở `platform_settings.platform_billing_account`.
+Gói thuê bao (checklist ALG 10.7, PO Q9). Một tổ chức một thuê bao; giá theo kỳ nhập ở Console (`N19`). Hoá đơn kỳ đầu hạn trả ngay — chưa thu thì `OVERDUE` (chỉ xem); kỳ sau sinh 7 ngày trước `current_period_end`, hạn = ngày bắt đầu kỳ sau. Ghi đã thu (SePay theo `code` trong nội dung chuyển khoản, hoặc Console) dời kỳ hiện tại; `payment_reference` duy nhất chống ghi trùng. `plan_credit_period`/`plan_credit_granted`: credit tặng theo gói của tháng (PO Q10) — đầu tháng cấp `GIFT`, phần tháng trước chưa dùng thu hồi `EXPIRE`. Gói đang thuê bao quyết định tính năng (`entitlement-service`), đứng trước `organizations.credit_plan`. Tài khoản nhận tiền của nền tảng ở `platform_settings.platform_billing_account`. Đổi gói (audit BL-27, PO 12/11/2026): nâng gói cùng chu kỳ áp ngay kèm hoá đơn bù phần còn lại của kỳ; hạ gói hoặc đổi chu kỳ ghi `pending_change` (`{ plan, cycle, priceVnd, includedCreditsMonthly, effectiveAt }`, migration `20261112160000_subscription_pending_change`) — gói, giá, credit tặng hiện tại giữ tới `effectiveAt` (hết kỳ lúc đổi), hoá đơn kỳ từ mốc đó theo gói mới; áp khi kỳ dời sang kỳ mới (thu tiền kỳ sau) hoặc khi bộ xét thuê bao thấy đã qua mốc. Chuyển dư trừ vào hoá đơn kỳ kế tiếp; kỳ neo theo ngày của hoá đơn đầu.
 
 ```prisma
 enum subscription_cycle          { MONTHLY  YEARLY }
@@ -613,6 +613,7 @@ model subscriptions {
   current_period_end       DateTime
   plan_credit_period       String?
   plan_credit_granted      Int                 @default(0)
+  pending_change           Json?               // hạ gói / đổi chu kỳ chờ áp từ kỳ sau (BL-27, 12/11/2026)
   created_by               String?
   created_at               DateTime            @default(now())
   updated_at               DateTime            @updatedAt

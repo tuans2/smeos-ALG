@@ -1,6 +1,6 @@
 import { log } from "@/core/observability/log"
 import type { DbClient } from "@/modules/organization/infra/db-client"
-import { planChangeKind, prorationVnd, repricedPendingAmount, splitOverpayment } from "../domain/plan-change"
+import { parsePendingChange, planChangeKind, prorationVnd, repricedPendingAmount, splitOverpayment } from "../domain/plan-change"
 import { addCycle, type SubscriptionCycle } from "../domain/subscription-rules"
 import { anchorDayOf, ensureInvoice, markInvoicePaid, uniqueCode } from "./subscription-repository"
 
@@ -16,6 +16,7 @@ interface SubBilling {
   cycle: string
   current_period_start: Date
   current_period_end: Date
+  pending_change?: unknown
 }
 
 /**
@@ -24,8 +25,10 @@ interface SubBilling {
  */
 export async function applyPlanChangeBilling(db: DbClient, sub: SubBilling, next: { priceVnd: number; cycle: SubscriptionCycle; now: Date }) {
   const before = { priceVnd: sub.price_vnd, cycle: sub.cycle as SubscriptionCycle }
+  // Hoá đơn kỳ sau đang theo giá của gói chờ áp (nếu có) — chênh lệch tính từ giá đó
+  const nextPeriodPrice = parsePendingChange(sub.pending_change)?.priceVnd ?? before.priceVnd
   const kind = planChangeKind(before, next)
-  if (kind === "NONE") return null
+  if (kind === "NONE" && nextPeriodPrice === next.priceVnd) return null
   const anchor = await anchorDayOf(db, sub.id, sub.current_period_start)
   const pending = await db.subscription_invoices.findMany({
     where: { subscription_id: sub.id, status: "PENDING", period_start: { gte: sub.current_period_end } },
@@ -34,7 +37,7 @@ export async function applyPlanChangeBilling(db: DbClient, sub: SubBilling, next
   for (const inv of pending) {
     await db.subscription_invoices.update({
       where: { id: inv.id },
-      data: { amount_vnd: repricedPendingAmount(inv.amount_vnd, before.priceVnd, next.priceVnd), period_end: addCycle(inv.period_start, next.cycle, anchor) },
+      data: { amount_vnd: repricedPendingAmount(inv.amount_vnd, nextPeriodPrice, next.priceVnd), period_end: addCycle(inv.period_start, next.cycle, anchor) },
     })
   }
   if (kind !== "UPGRADE") return null
