@@ -945,6 +945,20 @@ documents:
     dependencies: ["docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx", "docs/audit/feature-completeness-2026-11/README.md"]
     supersedes: []
 
+  - id: "DOC-05-BANGIAO-GD1-NGHIEM-THU-BAN-CAT"
+    path: "docs/audit/gd1-buoc6/README.md"
+    title: "Dựng bản cắt GD1 từ môi trường trắng và chạy kịch bản nghiệm thu — 11/11/2026"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Kết quả Bước 6 trên ứng viên gd1-rc-2026-11-11-2: cổng kiểm, kết quả từng bước trong 141 bước nghiệm thu, lỗi phát hiện kèm vị trí mã, ảnh bằng chứng và checklist đã điền"
+    status: "SUPPORTING"
+    authority: "Level 5"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/plan/BANGIAO_GD1_123_CHUC_NANG.md", "docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx"]
+    supersedes: []
+
   - id: "DOC-05-BANGIAO-GD1-PHAM-VI"
     path: "docs/plan/BANGIAO_GD1_PHAM_VI.md"
     title: "Phạm vi Giai đoạn 1 — 123 chức năng bàn giao ALG"

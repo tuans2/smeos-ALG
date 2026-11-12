@@ -150,7 +150,7 @@ export default function DonHangPage() {
         ))}
       </div>
 
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-8">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-8">
         {activeTab === "leads" && <LeadQueueTab />}
         {activeTab === "sale" && (
           <>
@@ -177,7 +177,7 @@ export default function DonHangPage() {
             <AllOrdersTab orders={orders} onSelect={setSelectedOrderId} onCreate={() => setCreateOpen(true)} />
           </div>
         )}
-      </main>
+      </div>
 
       <CreateOrderModal isOpen={createOpen} onClose={() => setCreateOpen(false)} onSuccess={() => loadOrders()} />
       <OrderDetailModal orderId={selectedOrderId} onClose={() => setSelectedOrderId(null)} onUpdated={() => loadOrders()} />

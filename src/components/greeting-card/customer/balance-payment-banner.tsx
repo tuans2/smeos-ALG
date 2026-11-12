@@ -10,7 +10,7 @@ export interface BalancePaymentBannerProps {
   paidVnd: number
   productionStatus: string
   deliveryStatus?: string | undefined
-  photoApprovalStatus?: "NONE" | "PENDING" | "APPROVED" | "AUTO_APPROVED" | undefined
+  photoApprovalStatus?: "NONE" | "PENDING" | "FEEDBACK" | "APPROVED" | "AUTO_APPROVED" | undefined
   hasProductPhotos: boolean
   onScrollToPayment?: () => void
 }
@@ -35,7 +35,7 @@ export function BalancePaymentBanner({
   if (!isUnpaid || !isReadyOrDelivering) return null
 
   const remainingVnd = totalVnd - paidVnd
-  const isPendingApproval = hasProductPhotos && photoApprovalStatus === "PENDING"
+  const isPendingApproval = hasProductPhotos && (photoApprovalStatus === "PENDING" || photoApprovalStatus === "FEEDBACK")
   const isDelivering = deliveryStatus === "DELIVERING" || deliveryStatus === "DISPATCHED"
 
   return (

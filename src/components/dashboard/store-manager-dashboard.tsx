@@ -146,7 +146,7 @@ export function StoreManagerDashboard() {
         actions=<UserMenu initials={userInitials} />
       />
 
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 lg:grid lg:grid-cols-3 lg:items-start lg:gap-5">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 lg:grid lg:grid-cols-3 lg:items-start lg:gap-5">
         {loi && (
           <div className="lg:col-span-3">
             <InlineError message={loi} onRetry={napLai} />
@@ -310,7 +310,7 @@ export function StoreManagerDashboard() {
             </Card>
           )}
         </div>
-      </main>
+      </div>
     </div>
   )
 }

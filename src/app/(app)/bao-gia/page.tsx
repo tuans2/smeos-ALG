@@ -139,7 +139,7 @@ export default function BaoGiaPage() {
       </div>
 
       {/* Main Workspace */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-6 max-w-7xl mx-auto w-full">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 max-w-7xl mx-auto w-full">
         {loading ? (
           <SkeletonBlock lines={4} label="Đang tải dữ liệu sản phẩm..." />
         ) : activeTab === "CUSTOMER" ? (
@@ -159,7 +159,7 @@ export default function BaoGiaPage() {
         ) : (
           <QuotationsListView />
         )}
-      </main>
+      </div>
     </div>
   )
 }

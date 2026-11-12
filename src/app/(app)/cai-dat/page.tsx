@@ -1,6 +1,7 @@
 "use client"
 
 import { useI18n } from "@/lib/i18n"
+import { RequireCapability } from "@/components/layout/require-capability"
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Palette } from "@/components/ui/icon-set/palette"
@@ -343,7 +344,7 @@ export default function CaiDatTiemPage() {
         </div>
       }
     >
-      <CaiDatTiemContent />
+      <RequireCapability anyOf={["F2", "R5"] /* sửa hồ sơ hoặc điều phối giao hàng (tab nhắc việc) — PO 11/11/2026 */}><CaiDatTiemContent /></RequireCapability>
     </Suspense>
   )
 }

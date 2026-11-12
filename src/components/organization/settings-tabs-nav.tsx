@@ -66,8 +66,9 @@ export function SettingsTabsNav({
   ]
 
   return (
-    <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface border border-border overflow-x-auto">
-      {tabs.map((tab) => {
+    // Cột trái (từ md): danh sách dọc; điện thoại: một hàng cuộn ngang. Số thứ tự theo tab đang hiện, không nhảy số.
+    <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-surface border border-border overflow-x-auto md:flex-col md:items-stretch md:overflow-visible">
+      {tabs.map((tab, index) => {
         const Icon = tab.icon
         const isActive = activeTab === tab.key
         return (
@@ -75,14 +76,15 @@ export function SettingsTabsNav({
             type="button"
             key={tab.key}
             onClick={() => onSelectTab(tab.key)}
-            className={`h-auto flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-caption font-bold transition-all whitespace-nowrap cursor-pointer ${
+            aria-current={isActive ? "page" : undefined}
+            className={`h-auto flex shrink-0 items-center gap-2 px-3.5 py-2.5 rounded-xl text-caption font-bold transition-all whitespace-nowrap cursor-pointer md:w-full md:justify-start md:whitespace-normal md:text-left ${
               isActive
                 ? "bg-primary text-primary-foreground shadow-xs hover:bg-primary"
                 : "text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
-            <Icon size={15} />
-            <span>{tab.label}</span>
+            <Icon size={15} aria-hidden="true" className="shrink-0" />
+            <span>{index + 1}. {tab.label}</span>
           </Button>
         )
       })}

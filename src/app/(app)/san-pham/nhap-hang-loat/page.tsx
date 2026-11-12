@@ -208,7 +208,7 @@ export default function BulkImportProductsPage() {
         onTabChange={setActiveTab}
         showBranchesTab={isChain}
       />
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-w-6xl mx-auto w-full">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 max-w-6xl mx-auto w-full">
         {activeTab === "branches" && isChain ? (
           <BranchImportPanel />
         ) : (
@@ -239,7 +239,7 @@ export default function BulkImportProductsPage() {
             />
           </>
         )}
-      </main>
+      </div>
     </div>
   )
 }

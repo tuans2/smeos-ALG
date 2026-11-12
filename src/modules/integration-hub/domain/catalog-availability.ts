@@ -25,12 +25,15 @@ export interface AvailabilityInput {
   readonly isProduction: boolean
   /** Tuyến đang bị khoá tính năng (production). */
   readonly isRouteLocked?: (href: string) => boolean
+  /** Trang của tích hợp không có trong bản cài này (bản giao theo giai đoạn) → ẩn hẳn, không còn liên kết chết. */
+  readonly isRouteOutOfPhase?: (href: string) => boolean
   /** Chế độ hiệu lực do tầng trên đặt cho đầu nối (GĐ3); vắng = ALLOW_OWN. */
   readonly modeOf?: (connectorKey: string) => GovernanceMode
 }
 
 export function availabilityOf(manifest: ConnectorManifest, input: AvailabilityInput): ConnectorAvailability {
   if (manifest.devOnly && input.isProduction) return "HIDDEN"
+  if (manifest.featureRoute && input.isRouteOutOfPhase?.(manifest.featureRoute)) return "HIDDEN"
   const role = manifest.tiers[input.tier]
   if (role === "NONE") return "HIDDEN"
   const mode = manifest.governable ? (input.modeOf?.(manifest.key) ?? "ALLOW_OWN") : "ALLOW_OWN"

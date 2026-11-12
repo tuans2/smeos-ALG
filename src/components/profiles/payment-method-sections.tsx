@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
+import { VietQrSample } from "./vietqr-sample"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from "@/components/ui/switch"
 import type {
@@ -51,8 +52,9 @@ export function BankTransferSection({ config, updateConfig }: SectionProps) {
       {config.enableVietQr && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
           <div className="space-y-1">
-            <label className="text-caption font-bold text-text">Mã ngân hàng (VietQR)</label>
+            <label htmlFor="pay-bank-id" className="text-caption font-bold text-text">Mã ngân hàng (VietQR)</label>
             <Input
+              id="pay-bank-id"
               value={config.bankId}
               onChange={(e) => updateConfig({ bankId: e.target.value.toUpperCase() })}
               placeholder="VD: VCB, MB, TCB, ACB, TPB..."
@@ -60,8 +62,9 @@ export function BankTransferSection({ config, updateConfig }: SectionProps) {
           </div>
 
           <div className="space-y-1">
-            <label className="text-caption font-bold text-text">Tên ngân hàng hiển thị</label>
+            <label htmlFor="pay-bank-name" className="text-caption font-bold text-text">Tên ngân hàng hiển thị</label>
             <Input
+              id="pay-bank-name"
               value={config.bankName}
               onChange={(e) => updateConfig({ bankName: e.target.value })}
               placeholder="VD: Vietcombank, Ngân hàng Quân Đội..."
@@ -69,8 +72,9 @@ export function BankTransferSection({ config, updateConfig }: SectionProps) {
           </div>
 
           <div className="space-y-1">
-            <label className="text-caption font-bold text-text">Số tài khoản nhận tiền</label>
+            <label htmlFor="pay-account-no" className="text-caption font-bold text-text">Số tài khoản nhận tiền</label>
             <Input
+              id="pay-account-no"
               value={config.accountNo}
               onChange={(e) => updateConfig({ accountNo: e.target.value })}
               placeholder="VD: 0071001234567"
@@ -78,14 +82,16 @@ export function BankTransferSection({ config, updateConfig }: SectionProps) {
           </div>
 
           <div className="space-y-1">
-            <label className="text-caption font-bold text-text">Tên chủ tài khoản</label>
+            <label htmlFor="pay-account-name" className="text-caption font-bold text-text">Tên chủ tài khoản</label>
             <Input
+              id="pay-account-name"
               value={config.accountName}
               onChange={(e) => updateConfig({ accountName: e.target.value.toUpperCase() })}
               placeholder="VD: NGUYEN VAN A"
               className="uppercase"
             />
           </div>
+          <VietQrSample bankId={config.bankId} accountNo={config.accountNo} accountName={config.accountName} />
         </div>
       )}
     </div>

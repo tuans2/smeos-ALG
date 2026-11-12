@@ -9,6 +9,7 @@ import {
   readWrapStyle,
 } from "@/modules/products/domain/master-index-fields"
 import { createProductSnapshot } from "../domain/greeting-card-rules"
+import { recipeFromAttributes } from "../domain/recipe-snapshot"
 import { resolvePricedVariants } from "../domain/brochure-pricing"
 import type { GreetingCatalogProduct, ProductSnapshot } from "../domain/greeting-card-types"
 import { parsePricing, sellableOptions, summarizePricing, variantImageAssetIds } from "@/modules/products/domain/product-pricing"
@@ -67,6 +68,7 @@ export function toCatalogProduct(item: CatalogItemRow, imageUrls: Map<string, st
     driveLink,
     description: readDescription(src),
     flowersSummary: flowers.length > 0 ? flowers.join(", ") : null,
+    recipe: recipeFromAttributes(p.attributes),
     occasion: occasions.length > 0 ? occasions.join(", ") : null,
     style: readStyle(src),
     craftStyle: typeof attrs.craftStyle === "string" && attrs.craftStyle ? attrs.craftStyle : null,
@@ -88,6 +90,11 @@ export function collectImageAssetIds(items: CatalogItemRow[]): string[] {
 }
 
 /** Đóng băng mẫu đã chọn. Mẫu chưa niêm yết giá ghi giá 0 = "Liên hệ" (cửa hàng báo giá sau). */
+/** Bản gửi cho trang khách: bỏ công thức nội bộ (chỉ dùng chép vào ảnh chụp mẫu của đơn). */
+export function forCustomer({ recipe: _recipe, ...product }: GreetingCatalogProduct): GreetingCatalogProduct {
+  return product
+}
+
 export function snapshotOf(product: GreetingCatalogProduct, now = new Date()): ProductSnapshot {
   return createProductSnapshot({ ...product, price: product.price ?? 0 }, now.toISOString())
 }

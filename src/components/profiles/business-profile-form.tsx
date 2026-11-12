@@ -140,10 +140,10 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-1" className="block text-caption font-semibold text-text mb-1.5">
               Tên hiển thị cửa hàng <span className="text-danger">*</span>
             </label>
-            <Input
+            <Input id="profile-field-1"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder={indPlaceholders.displayName}
@@ -155,10 +155,10 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
           </div>
 
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-2" className="block text-caption font-semibold text-text mb-1.5">
               Tên pháp lý công ty / Hộ kinh doanh
             </label>
-            <Input
+            <Input id="profile-field-2"
               value={legalName}
               onChange={(e) => setLegalName(e.target.value)}
               placeholder={indPlaceholders.legalName}
@@ -166,10 +166,10 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
           </div>
 
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-3" className="block text-caption font-semibold text-text mb-1.5">
               Mã số thuế (nếu có)
             </label>
-            <Input
+            <Input id="profile-field-3"
               value={taxCode}
               onChange={(e) => setTaxCode(e.target.value)}
               placeholder="0101234567"
@@ -204,12 +204,12 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-4" className="block text-caption font-semibold text-text mb-1.5">
               Hotline / Số Zalo tư vấn chính
             </label>
             <div className="relative">
               <Phone size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none" />
-              <Input
+              <Input id="profile-field-4"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="0912 345 678"
@@ -219,12 +219,12 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
           </div>
 
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-5" className="block text-caption font-semibold text-text mb-1.5">
               Email chăm sóc khách hàng
             </label>
             <div className="relative">
               <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none" />
-              <Input
+              <Input id="profile-field-5"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -239,12 +239,12 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-6" className="block text-caption font-semibold text-text mb-1.5">
               Địa chỉ cửa hàng chính
             </label>
             <div className="relative">
               <MapPin size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none" />
-              <Input
+              <Input id="profile-field-6"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Số 123 Đường Hoa Hồng, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh"
@@ -254,12 +254,12 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
           </div>
 
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-7" className="block text-caption font-semibold text-text mb-1.5">
               Website cửa hàng (nếu có)
             </label>
             <div className="relative">
               <Globe size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none" />
-              <Input
+              <Input id="profile-field-7"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder="https://tiemhoathaomoc.vn"
@@ -283,10 +283,10 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
           </div>
 
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-8" className="block text-caption font-semibold text-text mb-1.5">
               Fanpage Facebook
             </label>
-            <Input
+            <Input id="profile-field-8"
               value={facebookUrl}
               onChange={(e) => setFacebookUrl(e.target.value)}
               placeholder="https://facebook.com/tiemhoathaomoc"
@@ -309,10 +309,10 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-9" className="block text-caption font-semibold text-text mb-1.5">
               Giờ mở cửa buổi sáng
             </label>
-            <Input
+            <Input id="profile-field-9"
               type="time"
               aria-label="Giờ mở cửa buổi sáng"
               value={openTime}
@@ -320,10 +320,10 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
             />
           </div>
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
+            <label htmlFor="profile-field-10" className="block text-caption font-semibold text-text mb-1.5">
               Giờ đóng cửa buổi tối
             </label>
-            <Input
+            <Input id="profile-field-10"
               type="time"
               aria-label="Giờ đóng cửa buổi tối"
               value={closeTime}

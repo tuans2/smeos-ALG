@@ -39,6 +39,12 @@ describe("Danh mục đầu nối", () => {
     expect(availabilityOf(echo, { ...base, tier: "STORE" })).toBe("AVAILABLE")
   })
 
+  it("trang của tích hợp không có trong bản cài theo giai đoạn thì ẩn thẻ, không còn liên kết chết", () => {
+    const chain = findManifest("chain_link")!
+    expect(availabilityOf(chain, { ...base, tier: "STORE" })).toBe("LEGACY")
+    expect(availabilityOf(chain, { ...base, tier: "STORE", isRouteOutOfPhase: (href) => href === "/noi-bo/ket-noi" })).toBe("HIDDEN")
+  })
+
   it("đầu nối nhiều tài khoản vẫn kết nối thêm được sau khi đã kết nối", () => {
     const echo = findManifest("test_echo")!
     const a = availabilityOf(echo, { ...base, tier: "STORE", connectedKeys: new Set(["test_echo"]) })

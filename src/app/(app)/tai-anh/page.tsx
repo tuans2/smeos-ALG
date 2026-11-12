@@ -969,7 +969,7 @@ export default function TaiAnhPage() {
       )}
 
       {/* Main Workspace - 100% Full Width, No Split Screen */}
-      <main className="flex flex-1 flex-col overflow-y-auto p-[18px]">
+      <div className="flex flex-1 flex-col overflow-y-auto p-[18px]">
         {activeTab === "m01a" && (
           <>
             {/* Phase: Upload */}
@@ -1603,7 +1603,7 @@ export default function TaiAnhPage() {
             />
           </div>
         )}
-      </main>
+      </div>
     </div>
   )
 }

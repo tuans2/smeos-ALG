@@ -93,6 +93,8 @@ export const brochureViewResponse = z.strictObject({
   shipping: shippingSettings,
   payment: vietQrInstructions.nullable(),
   trackingTriggerPolicy: z.enum(["PAYMENT_ONLY", "PAYMENT_OR_COORDINATOR"]).optional(),
+  /** Số phút tự duyệt chuyển khoản có ảnh bill khi tiệm bật; null = chỉ Điều hành duyệt */
+  autoApprovePaymentMinutes: z.number().int().positive().nullable().optional(),
   /** Công tắc "Đặt hàng" / "Liên hệ" của chủ cửa hàng cho Bộ sưu tập riêng */
   entryActions: z.strictObject({ order: z.boolean(), contact: z.boolean() }),
 })

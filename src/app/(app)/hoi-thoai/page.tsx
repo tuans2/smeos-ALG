@@ -182,7 +182,7 @@ export default function ChatAssistantPage() {
       </header>
 
       {/* 2. Main content */}
-      <main className="flex-1 p-4 sm:p-6 space-y-5 max-w-7xl mx-auto w-full flex flex-col">
+      <div className="flex-1 p-4 sm:p-6 space-y-5 max-w-7xl mx-auto w-full flex flex-col">
         {/* Khối hướng dẫn SSOT FeatureGuidanceCard */}
         <FeatureGuidanceCard
           badgeLabel="HƯỚNG DẪN TƯ VẤN"
@@ -440,7 +440,7 @@ export default function ChatAssistantPage() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

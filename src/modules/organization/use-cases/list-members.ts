@@ -23,6 +23,8 @@ export async function listMembers(ctx: TenantContext): Promise<MemberSummary[]> 
   const dispatchCodeById = new Map(branches.filter((b) => b.accepts_dispatch).map((b) => [b.id, b.code]))
   const users = getUserRepository()
   const roles = getRoleRepository()
+  // Email nhân viên chỉ cho người quản lý nhân viên (tạo, gỡ, phân vai) — Sale/Điều phối xem tên và vai (PO 11/11/2026)
+  const managesStaff = ["A3", "F4", "F5"].some((code) => ctx.capabilities.has(code))
 
   return Promise.all(
     memberships.map(async (membership) => {
@@ -33,7 +35,7 @@ export async function listMembers(ctx: TenantContext): Promise<MemberSummary[]> 
       return {
         id: membership.id,
         user: user
-          ? { id: user.id, name: user.name, email: user.email, ...(ctx.capabilities.has("A3") ? { phone: user.phone } : {}) }
+          ? { id: user.id, name: user.name, email: managesStaff ? user.email : "", ...(ctx.capabilities.has("A3") ? { phone: user.phone } : {}) }
           : { id: membership.user_id, name: null, email: "" },
         role: role ? { id: role.id, key: role.key, name: role.name } : null,
         branch_id: membership.branch_id,
