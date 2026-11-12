@@ -79,7 +79,7 @@ Ba mốc, mỗi mốc gồm mọi dòng của mốc trước:
 
 | ☐ | Việc | Ai | Bằng chứng | Tham chiếu |
 |---|---|---|---|---|
-| [ ] | **Sửa lỗi đặt đơn đồng thời trong một tổ chức**: chạy thử 12/11/2026 cho 70/100 đơn của chuỗi lỗi "Đang có nhiều đơn tạo cùng lúc" ở 10 luồng — mã đơn lấy từ số đơn trong ngày, thử lại 3 lần (`src/modules/orders/use-cases/create-order.ts`, `createWithFreshCode`). Cần cách cấp mã không đụng nhau (vd. bộ đếm theo tổ chức/ngày) + test đồng thời | KT (PO duyệt cách làm) | Test + `load:run` đặt đơn chuỗi 0 lỗi | `VAN_HANH_SU_CO_VA_SAO_LUU.md` §5 |
+| [x] | Lỗi đặt đơn đồng thời trong một tổ chức (thử tải 12/11/2026: 70/100 đơn của chuỗi lỗi ở 10 luồng, mã đơn trùng) — **đã sửa 12/11/2026**: số mã đơn cấp từ bộ đếm `order_code_sequences`; chạy lại `load:run` 100 × 10 luồng: 0 lỗi | KT | `tests/tenant/order-code-sequences.test.ts` + bảng chạy lại ở §5 | đặc tả 07 §57 |
 | [ ] | O-9 ở **đủ quy mô** D-O7 (200 chi nhánh × 500 đơn/ngày × 12 tháng + 300 tiệm lẻ), p95 ≤ 200 ms, báo cáo ≤ 2 s | VH + KT | Biên bản §5 | ADR-015 D-O7 |
 | [ ] | Postgres dòng Pro + bật HA (D-O2 G-b) | VH + PO | Ảnh gói | ADR-015 D-O2 |
 | [ ] | RLS chặn thật (`DB_RLS_MODE=enforce`) sau 14 ngày liền không có log `kind=pending` / `kind=unclassified` (I-6) | VH + KT | Truy vấn log 14 ngày + biến môi trường | runbook §12 |

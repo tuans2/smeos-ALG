@@ -7,18 +7,33 @@ import { inBranchScope } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { brochureLockReason, manualStatusBlockReason } from "../domain/order-rules"
 import { deliveryWindowChangeEvent } from "../domain/delivery-window-change"
-import { checkLifecycleTransition } from "../domain/order-lifecycle"
+import {
+  checkLifecycleTransition,
+  closedOrderEditBlockReason,
+  COORDINATED_PROGRESS_MESSAGE,
+  touchesLifecycleAxes,
+} from "../domain/order-lifecycle"
 import type { OrderRecord, UpdateOrderInput } from "../domain/order-types"
 import type { IOrderRepository, PendingOrderEvent } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
+/** Phần của cổng Điều phối cần ở đây — khai cấu trúc, không import module Điều phối (cổng thật: `edit-order.ts`). */
+export interface CoordinationCheck {
+  isUnderCoordination(ctx: TenantContext, orderId: string): Promise<boolean>
+}
+
+/**
+ * `coordination` có giá trị → chặn đổi trục khi đơn đang ở Điều phối (`editOrder`, audit User Journey UJ-09). Hàng đợi
+ * thợ gọi không kèm cổng này: mô hình giao việc cho thợ còn chờ PO (audit User Journey R2-05/R2-06, UQ16).
+ */
 export async function updateOrderProgress(
   ctx: TenantContext,
   orderId: string,
   input: UpdateOrderInput,
   repo: IOrderRepository = getOrderRepository(),
-  notify: typeof notifyOrganization = notifyOrganization
+  notify: typeof notifyOrganization = notifyOrganization,
+  coordination: CoordinationCheck | null = null
 ): Promise<OrderRecord> {
   const existing = await repo.findById(ctx.organizationId, orderId)
   // Ngoài chi nhánh được giao → như không tồn tại (checklist ALG 9.13)
@@ -28,6 +43,13 @@ export async function updateOrderProgress(
 
   const brochureLock = brochureLockReason(existing)
   if (brochureLock) throw new AppError("CONFLICT", brochureLock)
+
+  const closed = closedOrderEditBlockReason(existing.status, input)
+  if (closed) throw new AppError("CONFLICT", closed)
+
+  if (coordination && touchesLifecycleAxes(input) && (await coordination.isUnderCoordination(ctx, orderId))) {
+    throw new AppError("CONFLICT", COORDINATED_PROGRESS_MESSAGE)
+  }
 
   if (input.status && input.status !== existing.status) {
     const blocked = manualStatusBlockReason(input.status)

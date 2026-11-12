@@ -9,6 +9,7 @@ import { quotedTotalAfterPromotion } from "../domain/promotion-pricing"
 import { IN_TRANSIT_CANCEL_WARNING, isInTransit } from "../domain/cancellation-request"
 import { getVoucherRedemptionRepository } from "@/modules/promotions/infra/voucher-redemption-repository"
 import { returnStock } from "@/modules/orders/infra/order-stock"
+import { releaseOrderBookings } from "@/modules/availability/infra/order-booking-hold"
 
 export interface IncomingPayment {
   amountVnd: number
@@ -290,6 +291,7 @@ export class BrochurePaymentRepository {
       if (moved.count === 0) throw conflict("Đơn hàng vừa thay đổi trạng thái, vui lòng tải lại")
       await getVoucherRedemptionRepository(tx).releaseForOrder(ctx.organizationId, order.id)
       await returnStock(ctx.organizationId, order.id, tx) // hoàn tồn đã trừ lúc đặt (PO 07/11/2026)
+      await releaseOrderBookings(ctx.organizationId, order.id, tx) // trả lịch đặt chỗ (UJ-23)
       await tx.order_events.create({
         data: {
           organization_id: ctx.organizationId,
