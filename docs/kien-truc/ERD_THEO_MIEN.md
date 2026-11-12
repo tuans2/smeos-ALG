@@ -146,6 +146,7 @@ erDiagram
   order_qc_records
   order_recipients
   orders
+  partner_settlements
   partners
   platform_access_logs
   platform_operators
@@ -283,6 +284,7 @@ erDiagram
   organizations ||--o{ orders : "organization_id"
   organizations ||--o{ organization_links : "child_org_id"
   organizations ||--o{ organization_links : "parent_org_id"
+  organizations ||--o{ partner_settlements : "organization_id"
   organizations ||--o{ partners : "organization_id"
   organizations ||--o{ platform_access_logs : "organization_id"
   organizations ||--o{ pricing_rules : "organization_id"
@@ -545,7 +547,7 @@ erDiagram
 
 ## Đơn hàng và điều phối
 
-Bảng: `orders`, `order_items`, `order_recipients`, `shared_order_access`, `order_events`, `order_payments`, `order_assignments`, `order_coordinations`, `order_exceptions`, `order_qc_records`, `order_info_requests`, `order_change_requests`, `order_approval_requests`, `partners`, `partner_marketplace_stores`, `partner_marketplace_share_links`, `product_bookings`, `staff_notifications`.
+Bảng: `orders`, `order_items`, `order_recipients`, `shared_order_access`, `order_events`, `order_payments`, `order_assignments`, `order_coordinations`, `order_exceptions`, `order_qc_records`, `order_info_requests`, `order_change_requests`, `order_approval_requests`, `partners`, `partner_settlements`, `partner_marketplace_stores`, `partner_marketplace_share_links`, `product_bookings`, `staff_notifications`.
 
 ```mermaid
 erDiagram
@@ -624,6 +626,11 @@ erDiagram
     String id PK
     String organization_id FK
   }
+  partner_settlements {
+    String id PK
+    String organization_id FK
+    String partner_id FK
+  }
   partner_marketplace_stores {
     String id PK
   }
@@ -698,11 +705,13 @@ erDiagram
   organizations ||--o{ order_qc_records : "organization_id"
   organizations ||--o{ order_recipients : "organization_id"
   organizations ||--o{ orders : "organization_id"
+  organizations ||--o{ partner_settlements : "organization_id"
   organizations ||--o{ partners : "organization_id"
   organizations ||--o{ product_bookings : "organization_id"
   organizations ||--o{ shared_order_access : "organization_id"
   organizations ||--o{ staff_notifications : "organization_id"
   partners |o--o{ order_coordinations : "partner_id"
+  partners ||--o{ partner_settlements : "partner_id"
   product_variants |o--o{ order_items : "variant_id"
   products |o--o{ order_items : "product_id"
   products ||--o{ product_bookings : "product_id"

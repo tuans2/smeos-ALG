@@ -244,6 +244,7 @@ model organizations {
   voice_clones                                     voice_clones[]
   music_tracks                                     music_tracks[]
   partners                                         partners[]
+  partner_settlements                              partner_settlements[]
   order_coordinations                              order_coordinations[]
   order_qc_records                                 order_qc_records[]
   order_payments                                   order_payments[]
@@ -3491,9 +3492,44 @@ model partners {
 
   organization  organizations         @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   coordinations order_coordinations[]
+  settlements   partner_settlements[]
 
   @@unique([organization_id, code])
   @@index([organization_id, is_active])
+}
+
+/// Sổ quyết toán tiền công đối tác theo kỳ (PO 12/11/2026, audit BL-22). Chụp các đơn đối tác đã đóng trong kỳ
+/// (`order_coordinations.closed_at`, giờ Việt Nam) với tiền công lúc đóng đơn. `status`: PENDING (Chờ đối soát) →
+/// RECONCILED (Đã đối soát) → PAID (Đã thanh toán). Kỳ của một đối tác không chồng nhau (kiểm ở use-case). TENANT ISOLATION.
+model partner_settlements {
+  id                String    @id @default(uuid())
+  organization_id   String
+  partner_id        String
+  /// Ngày đầu / cuối kỳ (giờ Việt Nam, gồm cả hai đầu).
+  period_from       DateTime  @db.Date
+  period_to         DateTime  @db.Date
+  status            String    @default("PENDING")
+  order_count       Int
+  total_payout_vnd  Decimal   @db.Decimal(14, 2)
+  /// [{ orderId, code, closedAt, payoutVnd }] — chụp lúc lập sổ.
+  items             Json
+  note              String?
+  created_by        String
+  reconciled_by     String?
+  reconciled_at     DateTime? @db.Timestamptz(3)
+  paid_by           String?
+  paid_at           DateTime? @db.Timestamptz(3)
+  /// Mã giao dịch / số phiếu chi khi trả đối tác.
+  payment_reference String?
+  created_at        DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime  @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  partner      partners      @relation(fields: [partner_id], references: [id])
+
+  @@unique([organization_id, partner_id, period_from])
+  @@index([organization_id, status])
+  @@index([partner_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Hồ sơ điều phối tiến trình của từng đơn hàng. TENANT ISOLATION.

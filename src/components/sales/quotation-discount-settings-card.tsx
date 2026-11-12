@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { BadgePercent } from "@/components/ui/icons"
+import { BadgePercent } from "@/components/ui/icon-set/badge-percent"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { useSession } from "@/lib/session"
 import { ORDER_DISCOUNT_SETTINGS_KEY, parseSaleMaxDiscountPercent } from "@/modules/sales/domain/quotation-discount"

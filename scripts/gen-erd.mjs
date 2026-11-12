@@ -25,7 +25,7 @@ export const DOMAINS = [
   ]],
   ["Đơn hàng và điều phối", [
     "orders", "order_items", "order_recipients", "shared_order_access", "order_events", "order_payments", "order_assignments", "order_coordinations",
-    "order_exceptions", "order_qc_records", "order_info_requests", "order_change_requests", "order_approval_requests", "partners",
+    "order_exceptions", "order_qc_records", "order_info_requests", "order_change_requests", "order_approval_requests", "partners", "partner_settlements",
     "partner_marketplace_stores", "partner_marketplace_share_links", "product_bookings", "staff_notifications",
   ]],
   ["Thẻ chào", [
