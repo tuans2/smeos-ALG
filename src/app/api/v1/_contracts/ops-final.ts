@@ -17,7 +17,7 @@ export const FINAL_OPERATIONS: OpenApiOperation[] = [
   op(LINK, { method: "post", path: "/catalog-links", operationId: "createCatalogLink", summary: "Tạo link catalog", cap: "J1", body: req.createCatalogLinkBody,
     description: "`slug` tự sinh nếu bỏ trống; có dấu/ký tự lạ được chuẩn hoá (`Có Dấu!` → `co-dau`). Trùng → 400 `details.slug`.", ok: [201, { description: "Link", schema: res.catalogLinkCreatedResponse }], errors: BODY_ERRORS }),
   op(LINK, { method: "get", path: "/catalog-links/{slug}", operationId: "getCatalogLinkPublic", summary: "Xem link catalog (khách quét QR, không đăng nhập)", cap: null, auth: "public",
-    description: "Công khai có chủ đích. Link đã thu hồi hoặc mã lạ → 404. Thân không bọc `{ data }`; có `created_by` (mã người tạo, audit API §32).", ok: [200, { description: "Link", schema: res.catalogLinkPublicResponse }], errors: [404] }),
+    description: "Công khai có chủ đích. Trần 60 lượt/phút/IP (→ 429). Link đã thu hồi hoặc mã lạ → 404. Thân không bọc `{ data }`; có `created_by` (mã người tạo, audit API §32).", ok: [200, { description: "Link", schema: res.catalogLinkPublicResponse }], errors: [404, 429] }),
   op(LINK, { method: "patch", path: "/catalog-links/{slug}", operationId: "updateCatalogLink", summary: "Sửa tên, mô tả, bộ lọc", cap: "J1", body: req.updateCatalogLinkBody,
     description: `Thân không bọc \`{ data }\`. ${NF}`, ok: [200, { description: "Link", schema: res.catalogLinkResponse }], errors: [...BODY_ERRORS, 404] }),
   op(LINK, { method: "post", path: "/catalog-links/{slug}/revoke", operationId: "revokeCatalogLink", summary: "Thu hồi link (không xoá bản ghi)", cap: "J2",

@@ -13342,7 +13342,7 @@
       "get": {
         "operationId": "getCatalogLinkPublic",
         "summary": "Xem link catalog (khách quét QR, không đăng nhập)",
-        "description": "Công khai có chủ đích. Link đã thu hồi hoặc mã lạ → 404. Thân không bọc `{ data }`; có `created_by` (mã người tạo, audit API §32).",
+        "description": "Công khai có chủ đích. Trần 60 lượt/phút/IP (→ 429). Link đã thu hồi hoặc mã lạ → 404. Thân không bọc `{ data }`; có `created_by` (mã người tạo, audit API §32).",
         "tags": [
           "Link catalog"
         ],
@@ -13460,6 +13460,9 @@
           },
           "404": {
             "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
           }
         },
         "x-capability": "công khai"
@@ -15826,7 +15829,7 @@
       "get": {
         "operationId": "listChatChannels",
         "summary": "Kênh chat, biểu phí và trạng thái",
-        "description": "Chưa gác mã năng lực (RS-8 đặc tả 06). Khoá bí mật đã che.",
+        "description": "Xem trong màn Tích hợp — cùng mã xem danh mục tích hợp (PO 12/11/2026; trước đó không gác mã). Khoá bí mật đã che.",
         "tags": [
           "Trợ lý AI — kênh & hạn mức"
         ],
@@ -16038,7 +16041,7 @@
             "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "phiên đăng nhập"
+        "x-capability": "W1"
       },
       "post": {
         "operationId": "configureChatChannel",
@@ -17815,7 +17818,7 @@
             "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "phiên đăng nhập"
+        "x-capability": "W1"
       },
       "post": {
         "operationId": "requestPublicChatLimits",
@@ -115395,11 +115398,15 @@
       "get": {
         "operationId": "listProductImageSetBundles",
         "summary": "Gói bộ ảnh đa kênh có sẵn",
-        "description": "Danh mục tĩnh, không cần phiên (không đọc dữ liệu tổ chức).",
+        "description": "Danh mục tĩnh, không đọc dữ liệu tổ chức — cần đăng nhập (PO 12/11/2026; trước đó công khai).",
         "tags": [
           "Ảnh studio & bộ ảnh sản phẩm"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Danh mục",
@@ -115512,9 +115519,18 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       },
       "post": {
         "operationId": "createProductImageSetJob",
@@ -116580,11 +116596,15 @@
       "get": {
         "operationId": "listProductPhotoPresets",
         "summary": "Phông nền và tỉ lệ khung có sẵn cho ảnh studio",
-        "description": "Danh mục tĩnh, không cần phiên (không đọc dữ liệu tổ chức).",
+        "description": "Danh mục tĩnh, không đọc dữ liệu tổ chức — cần đăng nhập (PO 12/11/2026; trước đó công khai).",
         "tags": [
           "Ảnh studio & bộ ảnh sản phẩm"
         ],
-        "security": [],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Danh mục",
@@ -116670,9 +116690,18 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "công khai"
+        "x-capability": "phiên đăng nhập"
       },
       "post": {
         "operationId": "createProductPhotoJob",

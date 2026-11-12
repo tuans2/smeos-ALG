@@ -19,7 +19,7 @@ describe("GET /api/v1/noi-bo/identity", () => {
     getOrganizationIdentity.mockReset().mockImplementation(async () => ({ id: "org-a", name: "Tiệm A" }))
   })
 
-  it("giữ hình dạng { success, data } mà trang Kết nối đang đọc", async () => {
+  it("trả { data } mà trang Kết nối đang đọc", async () => {
     const res = await get()
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ data: { id: "org-a", name: "Tiệm A" } })

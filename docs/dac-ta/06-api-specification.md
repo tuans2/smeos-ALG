@@ -526,7 +526,7 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET · POST | `/catalog-links` | `J1` | Route phiên (cookie), dùng bởi giao diện core |
-| GET | `/catalog-links/:slug` | **chưa gác** — có chủ đích, xem **RS-8** | Công khai, khách quét QR không đăng nhập |
+| GET | `/catalog-links/:slug` | **chưa gác** — có chủ đích, xem **RS-8** | Công khai, khách quét QR không đăng nhập; trần 60 lượt/phút/IP (PO 12/11/2026) |
 | PATCH | `/catalog-links/:slug` | `J1` | Trước 18/09 nằm nhầm ở đường dẫn `/revoke` (xem trên) |
 | POST | `/catalog-links/:slug/revoke` | `J2` | Thu hồi; không xoá bản ghi |
 | GET · POST | `/integration/catalog-links` | `J1` (nhánh SSO) | Mới 18/09 (RS-3) — `LocalBudd` gọi thay mặt người dùng đang đăng nhập · GET `?include_revoked=` nhận `true/false/1/0/yes/no/on/off`, giá trị khác → 400; trước 07/11/2026 mọi chuỗi khác rỗng (kể cả `false`) đều thành `true` |
@@ -720,9 +720,9 @@ Mỗi chỉ số trả kèm `nguon` và `den_ngay`. Dữ liệu kế thừa từ
 | GET | `/chat/conversations/:id/messages` | `T1` · `T2` | Thay cho `GET /conversations/:id` của bản cũ |
 | POST | `/chat/conversations/:id/messages` | `T2` | |
 | POST | `/chat/conversations/:id/create-order` | `T3` | Chuyển hội thoại thành đơn nháp — M10 |
-| GET · POST | `/chat/channels` | GET: **chưa gác** — xem **RS-8** · POST: `T4` (kiểm ở use-case) | Cấu hình kênh. GET (danh sách kênh, khoá bí mật đã che) chưa gác mã năng lực; POST gọi `configure-chat-channel.ts`, use-case gác `T4` |
+| GET · POST | `/chat/channels` | GET: `W1` · POST: `T4` (kiểm ở use-case) | Cấu hình kênh. GET (danh sách kênh, khoá bí mật đã che) đòi `W1` — xem trong màn Tích hợp (PO 12/11/2026; trước đó chưa gác, RS-8); POST gọi `configure-chat-channel.ts`, use-case gác `T4` |
 | POST | `/chat/public/widget` | — *(công khai)* | Khung chat AI trên trang công khai do công cụ SMEOS tạo. Thân: `slug`, `surface` (`catalog` · `landing_page` · `store_profile` · `sales_link` · `greeting_catalog` · `business_card`; `landing_page` tính kênh `LANDING_PAGE`, còn lại `STOREFRONT_CATALOG`), `visitorId`, `message`. Trang bị tắt trong `config.publicSurfaces` → 404 (chủ tiệm bật/tắt từng loại trang qua `POST /chat/channels` → `config.publicSurfaces`, màn Kênh tích hợp; trang bị tắt không vẽ khung chat — `PublicChatSlot`). Giới hạn mặc định 20 tin/khách và 60 tin/IP mỗi 10 phút, tách theo tiệm; nâng chỉ khi nền tảng duyệt (`config.publicChatLimits.approvedAt`, trần 200/600) → 429. Chỉ cùng nguồn gốc — chưa mở CORS cho website ngoài; lỗi 500 không trả chi tiết nội bộ |
-| GET · POST | `/chat/public-limits` | POST: `T4` | Hạn mức chat AI trên trang công khai của tiệm phiên. GET: mức đang áp dụng (`current`) và yêu cầu chờ duyệt (`pending`). POST `{ perVisitor, perIp, note? }`: xin nâng — chỉ nhận mức chọn sẵn (50/150, 100/300, 200/600) và cao hơn mức hiện tại (400); đang có yêu cầu chờ → 409. Lưu ở `organizations.settings.pending_public_chat_limits`; Admin nền tảng duyệt qua `PATCH /platform/organizations/:id` |
+| GET · POST | `/chat/public-limits` | GET: `W1` · POST: `T4` | Hạn mức chat AI trên trang công khai của tiệm phiên. GET: mức đang áp dụng (`current`) và yêu cầu chờ duyệt (`pending`). POST `{ perVisitor, perIp, note? }`: xin nâng — chỉ nhận mức chọn sẵn (50/150, 100/300, 200/600) và cao hơn mức hiện tại (400); đang có yêu cầu chờ → 409. Lưu ở `organizations.settings.pending_public_chat_limits`; Admin nền tảng duyệt qua `PATCH /platform/organizations/:id` |
 | GET · POST | `/chat/webhooks/facebook` | — *(chữ ký nền tảng)* | |
 | POST | `/chat/webhooks/zalo` | — *(chữ ký nền tảng)* | |
 
