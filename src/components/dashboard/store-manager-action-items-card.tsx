@@ -10,6 +10,7 @@ import { Clock } from "@/components/ui/icon-set/clock"
 import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 export type DraftOrder = {
   id: string
@@ -89,7 +90,7 @@ export function StoreManagerActionItemsCard({
               onClick={onScrollToJobs}
             />
           )}
-          {soChoDuyet !== null && soChoDuyet > 0 && (
+          {soChoDuyet !== null && soChoDuyet > 0 && isHrefOpen("/duyet") && (
             <DongCanThiep
               icon={Clock}
               nhan="Kết quả chờ duyệt"

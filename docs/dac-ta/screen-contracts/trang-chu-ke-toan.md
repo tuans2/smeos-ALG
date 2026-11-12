@@ -1,5 +1,7 @@
 # Screen Contract: Trang chủ Kế toán
 
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Lối tắt "Số liệu kinh doanh" (`/so-lieu`) và "Mức dùng và hạn mức" (`/muc-dung`) ẩn khi tuyến đang khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
 | Thuộc tính | Giá trị |
 |---|---|
 | Đường dẫn | `/` (trang chủ cho vai `ke_toan`) |
