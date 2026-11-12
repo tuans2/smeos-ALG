@@ -26,5 +26,4 @@ Tên tệp: `<mã chức năng>-<bước>-<mô tả>-<khổ>.png`, khổ 1280 (m
 1. Khối "Thẩm định AI" trong hộp phê duyệt biên lai không thoát khỏi "Đang đọc dữ liệu biên lai..." khi AI không chạy được (chưa xác định là kẹt vô hạn hay chỉ chậm).
 2. Ảnh QR trống trên local vì máy không ra được mạng tới dịch vụ sinh ảnh VietQR (cần kiểm trên môi trường có mạng).
 3. Trang khách 390px: bong bóng chat che chữ tên ngân hàng; thanh tiến độ đè chữ hai khung giờ ("07:30–09:30" và "10:00–12:00").
-4. Trang khách `/b/<mã>` đã có đơn: khi nhập sai 4 số (số người nhận thay vì người đặt), thông báo không nói rõ cần số của người đặt.
-5. Đầu trang Thẻ chào có một nút tròn trống chữ giữa "Hướng dẫn" và "Gửi nhanh" (có huy hiệu số) — cần kiểm như lỗi icon co ở nút Copilot.
+4. Đầu trang Thẻ chào có một nút tròn trống chữ giữa "Hướng dẫn" và "Gửi nhanh" (có huy hiệu số) — cần kiểm như lỗi icon co ở nút Copilot.
