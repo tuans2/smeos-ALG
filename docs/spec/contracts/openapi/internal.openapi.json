@@ -100593,7 +100593,7 @@
       "patch": {
         "operationId": "markInboxRead",
         "summary": "Đánh dấu một tin đã đọc",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Tin của người/tổ chức khác → 200 `success: false`, không đổi gì. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Tin của người/tổ chức khác → 200 `success: false`, không đổi gì.",
         "tags": [
           "Thông báo — hộp thư"
         ],
@@ -100631,16 +100631,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "id": {
-                      "type": "string"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "read": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "read"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "id"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -100667,7 +100676,7 @@
       "post": {
         "operationId": "markAllInboxRead",
         "summary": "Đánh dấu đã đọc toàn bộ",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực.",
         "tags": [
           "Thông báo — hộp thư"
         ],
@@ -100695,17 +100704,21 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "count": {
-                      "type": "number"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "count"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "count"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -100834,7 +100847,7 @@
       "post": {
         "operationId": "setOrgHardLock",
         "summary": "Đặt khoá cứng một sự kiện × kênh",
-        "description": "Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Khoá cứng tầng `CHAIN`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -100902,11 +100915,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "hardLock": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -100915,8 +100924,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "hardLock"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -100947,7 +100955,7 @@
       "delete": {
         "operationId": "removeOrgHardLock",
         "summary": "Gỡ khoá cứng một sự kiện × kênh",
-        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101008,11 +101016,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "removed": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -101021,8 +101025,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "removed"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101147,7 +101150,7 @@
       "patch": {
         "operationId": "updateOrgNotificationPolicy",
         "summary": "Đặt chính sách sự kiện × kênh × vai",
-        "description": "`roleKey` = `*` áp mọi vai. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "`roleKey` = `*` áp mọi vai.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101225,11 +101228,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "updated": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -101238,8 +101237,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "updated"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101365,7 +101363,7 @@
       "patch": {
         "operationId": "updateNotificationPreference",
         "summary": "Bật/tắt một sự kiện × kênh cho tôi",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng (tầng Mẹ, ngành, chuỗi hoặc chính cửa hàng) → 403 với thân `{ error: \"chuỗi\", reason }` (ngoại lệ envelope). Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng (tầng Mẹ, ngành, chuỗi hoặc chính cửa hàng) → 422 `UNPROCESSABLE_ENTITY`, `details.violation = \"LOCKED_BY_UPPER\"` kèm `tier`, `reason`.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101435,11 +101433,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "updated": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -101448,8 +101442,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "updated"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -101473,6 +101466,9 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
           }
         },
         "x-capability": "phiên đăng nhập"
@@ -101890,7 +101886,6 @@
       "patch": {
         "operationId": "updateStoreNotificationDefault",
         "summary": "Đặt mặc định cửa hàng (kèm khung giờ)",
-        "description": "Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -101966,11 +101961,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "updated": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -101979,8 +101970,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "updated"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -102115,7 +102105,7 @@
       "post": {
         "operationId": "setStoreHardLock",
         "summary": "Đặt khoá cứng một sự kiện × kênh",
-        "description": "Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Khoá cứng tầng `STORE`, phạm vi = tổ chức của phiên — người dùng trong phạm vi không tự bật/tắt được sự kiện × kênh đã khoá.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -102183,11 +102173,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "hardLock": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -102196,8 +102182,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "hardLock"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -102228,7 +102213,7 @@
       "delete": {
         "operationId": "removeStoreHardLock",
         "summary": "Gỡ khoá cứng một sự kiện × kênh",
-        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200. Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Thân JSON ở lệnh DELETE. Không có khoá → vẫn 200.",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -102289,11 +102274,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "removed": {
+                    "data": {
                       "type": "object",
                       "propertyNames": {
                         "type": "string"
@@ -102302,8 +102283,7 @@
                     }
                   },
                   "required": [
-                    "success",
-                    "removed"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
