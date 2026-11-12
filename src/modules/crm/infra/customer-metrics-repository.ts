@@ -30,13 +30,19 @@ export async function syncCustomerMetrics(organizationId: string, customerId: st
   })
 }
 
-/** Khách có đơn đổi (trạng thái, tiền) từ `since` — mọi tổ chức, cho bộ quét nền; theo thứ tự thời điểm đổi. */
-export async function customersWithChangedOrders(since: Date, take: number) {
+/**
+ * Đơn có khách vừa đổi (trạng thái, tiền) từ `since` — mọi tổ chức, cho bộ quét nền; theo `(updated_at, id)`.
+ * Có `afterId` thì lấy SAU dòng `(since, afterId)`: con trỏ hai thành phần nên hơn `take` đơn cùng một mốc giờ (cập nhật
+ * hàng loạt) không làm bộ quét đứng mãi ở một trang (audit BL-31). Bên gọi tự bỏ khách trùng.
+ */
+export async function customersWithChangedOrders(since: Date, take: number, afterId?: string) {
   return prisma.orders.findMany({
-    where: { updated_at: { gte: since }, customer_id: { not: null } },
-    distinct: ["organization_id", "customer_id"],
-    orderBy: { updated_at: "asc" },
+    where: {
+      customer_id: { not: null },
+      ...(afterId ? { OR: [{ updated_at: { gt: since } }, { updated_at: since, id: { gt: afterId } }] } : { updated_at: { gte: since } }),
+    },
+    orderBy: [{ updated_at: "asc" }, { id: "asc" }],
     take,
-    select: { organization_id: true, customer_id: true, updated_at: true },
+    select: { id: true, organization_id: true, customer_id: true, updated_at: true },
   })
 }
