@@ -51,7 +51,7 @@ export async function getIntegrationHub(ctx: TenantContext, deps: HubDeps = defa
     deps.events.countByStatusSince(ctx, "DEAD", since),
   ])
   const connectedKeys = new Set([...records.map((r) => r.connectorKey), ...managedConnected])
-  const input = { tier: profile.tier, planFeatures: profile.planFeatures, connectedKeys, isProduction: deps.isProduction, isRouteLocked: deps.isRouteLocked, modeOf: governance.modeOf }
+  const input = { tier: profile.tier, planFeatures: profile.planFeatures, connectedKeys, isProduction: deps.isProduction, isRouteLocked: deps.isRouteLocked, isRouteOutOfPhase: deps.isRouteOutOfPhase, modeOf: governance.modeOf }
 
   const catalog = CONNECTOR_CATALOG.map((m) => ({ manifest: m, availability: availabilityOf(m, input) }))
     .filter(({ availability }) => availability !== "HIDDEN")

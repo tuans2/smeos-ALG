@@ -36,6 +36,8 @@ acceptance:
 | L3 Định lượng | Công thức nguyên vật liệu (BOM) và số lượng | CreateBomCard |
 | L4 Tiếp thị | Câu chuyện sản phẩm, thông điệp ý nghĩa | CreateStoryCard |
 
+Mặc định khi mở form: trạng thái **Bản nháp**; công thức là các dòng trống theo vai của ngành (ngành hoa: Hoa chính, Hoa phụ, Lá đệm), ví dụ chỉ nằm ở chữ gợi ý — dòng không tên không được lưu (PO 11/11/2026).
+
 ## 4. Trạng thái
 - **Sẵn sàng:** Form rỗng với các giá trị mặc định theo plugin ngành.
 - **Đang gửi (submitting):** Nút lưu hiển thị trạng thái "Đang lưu..." và khoá double-submit.

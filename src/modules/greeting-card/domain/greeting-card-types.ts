@@ -1,3 +1,4 @@
+import type { RecipeFlower } from "./recipe-snapshot"
 import type { AddressParts } from "./delivery-address"
 
 /**
@@ -37,6 +38,8 @@ export interface ProductSnapshot {
   driveLink?: string | null | undefined
   description?: string | null | undefined
   flowersSummary?: string | null | undefined
+  /** Công thức của mẫu lúc chốt — phiếu thợ và đề xuất thay hoa đọc (`recipe-snapshot.ts`) */
+  flowers?: RecipeFlower[] | undefined
   selectedAt: string
 }
 
@@ -56,6 +59,8 @@ export interface GreetingCatalogProduct {
   /** Kiểu dáng tính phí chế tác (`attributes.craftStyle`, PO Q8) — chỉ dùng tính giá ngày lễ */
   craftStyle?: string | null | undefined
   flowersSummary?: string | null | undefined
+  /** Công thức có cấu trúc (nội bộ, không trả cho trang khách) — chép vào ảnh chụp mẫu của đơn */
+  recipe?: RecipeFlower[] | undefined
   /** Loại sản phẩm (bó, giỏ, kệ…) — từ Master Index */
   category?: string | null | undefined
   /** Màu chủ đạo — từ Master Index */

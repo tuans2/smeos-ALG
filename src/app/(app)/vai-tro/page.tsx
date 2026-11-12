@@ -154,7 +154,7 @@ export default function VaiTroPage() {
         )}
       </header>
 
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 xl:grid xl:grid-cols-3 xl:items-start">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 xl:grid xl:grid-cols-3 xl:items-start">
         {NHOM.map((nhom) => (
           <section key={nhom} aria-labelledby={`nhom-${nhom}`} className="flex flex-col">
             <h2 id={`nhom-${nhom}`} className="mb-1.5 px-1 text-caption font-bold uppercase tracking-wider text-text-muted">
@@ -167,7 +167,7 @@ export default function VaiTroPage() {
             </ul>
           </section>
         ))}
-      </main>
+      </div>
     </div>
   )
 }

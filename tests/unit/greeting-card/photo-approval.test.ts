@@ -50,4 +50,16 @@ describe("khách duyệt ảnh thành phẩm trước khi giao (PO 15/10/2026)",
     expect(orderPhotoApproval(order({ appliedPolicies: { photoApprovalCountdownMinutes: 5 } }), settings(STANDARD_WORKFLOW_POLICY), 10, at(6)).status).toBe("AUTO_APPROVED")
     expect(orderPhotoApproval(order(null), settings(STRICT_WORKFLOW_POLICY), 10, at(1)).countdownMinutes).toBe(30)
   })
+  it("khách góp ý sau lần tải ảnh mới nhất → FEEDBACK: không tự duyệt, chặn giao; ảnh mới chạy lại đồng hồ (ALG 5.13)", () => {
+    const base = { mode: "AUTO_PASS_10M" as const, reviewMinutes: 10, uploadedAt, customerApprovedAt: null }
+    const fb = photoApprovalState({ ...base, feedbackAt: at(3), now: at(30) })
+    expect(fb.status).toBe("FEEDBACK")
+    expect(photoApprovalDispatchBlocker(fb)).toContain("góp ý")
+    expect(photoApprovalState({ ...base, uploadedAt: at(5), feedbackAt: at(3), now: at(6) }).status).toBe("PENDING")
+    const milestones = photoMilestonesOf([
+      { notes: "PRODUCT_PHOTO_UPLOADED", created_at: uploadedAt },
+      { notes: "CUSTOMER_PHOTO_FEEDBACK", created_at: at(2) },
+    ])
+    expect(milestones.feedbackAt).toEqual(at(2))
+  })
 })

@@ -50,6 +50,7 @@ export async function connectWithSecret(
     connectedKeys: new Set(existing.map((c) => c.connectorKey)),
     isProduction: deps.isProduction,
     isRouteLocked: deps.isRouteLocked,
+    isRouteOutOfPhase: deps.isRouteOutOfPhase,
     modeOf: governance.modeOf,
   })
   if (availability === "HIDDEN") throw notFound()

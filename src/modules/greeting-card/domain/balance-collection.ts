@@ -6,8 +6,9 @@
  * - không bắt thu đủ trước giao + shipper không thu tiền mặt (mặc định) → thu bất cứ lúc nào;
  * - không bắt thu đủ trước giao + shipper thu tiền mặt → chỉ sau khi giao thành công;
  * - bắt thu đủ trước giao → hoa xong và khách duyệt ảnh thành phẩm (tự duyệt sau 10 phút);
- *   tiệm bỏ qua ảnh thành phẩm thì hoa xong là đủ.
+ *   tiệm bỏ qua ảnh thành phẩm thì hoa xong là đủ; khách góp ý ảnh thì chờ cửa hàng gửi lại ảnh.
  */
+import { photoMilestonesOf } from "./photo-approval"
 
 /** Ảnh thành phẩm tự coi như khách đã duyệt sau 10 phút. */
 export const PHOTO_AUTO_APPROVE_MS = 10 * 60_000
@@ -41,6 +42,10 @@ export function balanceCollectionBlocker(order: BalanceCollectionOrder, policy: 
   // Tiệm bỏ qua ảnh thành phẩm → không có ảnh nào để khách duyệt; hoa xong là đủ để thu
   if (!productPhoto) return null
   if (order.qcRecords.some((qc) => qc.notes === "CUSTOMER_PHOTO_APPROVED")) return null
+  const { uploadedAt, feedbackAt } = photoMilestonesOf(order.qcRecords.map((qc) => ({ notes: qc.notes, created_at: new Date(qc.created_at) })))
+  if (uploadedAt && feedbackAt && feedbackAt >= uploadedAt) {
+    return "Khách đã góp ý ảnh thành phẩm — cửa hàng chỉnh và gửi lại ảnh trước khi thu phần còn lại."
+  }
   if (nowMs >= new Date(productPhoto.created_at).getTime() + PHOTO_AUTO_APPROVE_MS) return null
   return "Đơn hàng đang chờ khách duyệt ảnh thành phẩm trước khi giao. Chưa thể ghi nhận thanh toán lần 2."
 }

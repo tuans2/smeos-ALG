@@ -216,6 +216,7 @@ export class BrochureOrderRepository {
             send_code: true,
             status: true,
             payment_proof_asset_id: true,
+            sale_id: true, // gửi thông báo cho Sale phụ trách (không trả ra trang khách)
             catalog: { select: { filters: true } },
           },
         },

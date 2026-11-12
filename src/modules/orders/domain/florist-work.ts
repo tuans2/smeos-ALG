@@ -60,5 +60,35 @@ export function toFloristItem(item: { description: string | null; quantity: numb
   }
   const variant = meta.variant && typeof meta.variant === "object" ? (meta.variant as Record<string, unknown>) : {}
   const stemCount = typeof variant.stemCount === "number" && variant.stemCount > 0 ? variant.stemCount : null
-  return { description: item.description, quantity: item.quantity, variantName: text(variant.name), stemCount, recipe, sampleImageUrl: text(meta.sampleImageUrl) }
+  // Đơn Điều phối ghi `sampleImageUrl`; ảnh chụp mẫu của đơn Thẻ Chào ghi `imageUrl`
+  const sampleImageUrl = text(meta.sampleImageUrl) ?? text(meta.imageUrl)
+  return { description: item.description, quantity: item.quantity, variantName: text(variant.name), stemCount, recipe, sampleImageUrl }
+}
+
+/** Ảnh mẫu và công thức đọc từ sản phẩm lúc in — dùng khi dòng hàng không mang theo (đơn tạo tay) hoặc ảnh đã hết hạn ký. */
+export interface FloristProductFallback {
+  imageUrl: string | null
+  recipe: RecipeLine[]
+}
+
+export function withProductFallback(item: FloristItem, product: FloristProductFallback | undefined): FloristItem {
+  if (!product) return item
+  return {
+    ...item,
+    sampleImageUrl: product.imageUrl ?? item.sampleImageUrl,
+    recipe: item.recipe.length > 0 ? item.recipe : product.recipe,
+  }
+}
+
+// Ghi chú về tiền (đối soát, xác nhận thu, báo giá, phí giao lại) không in lên phiếu xưởng — thợ không thấy giá (4.9)
+const MONEY_NOTE_TAGS = ["[Báo giá]", "[Điều hành: chưa nhận được tiền]", "[Điều phối xác nhận đã nhận tiền]", "[Điều hành xác nhận đơn]"]
+
+/** Ghi chú nội bộ còn lại cho xưởng: bỏ dòng về tiền, bỏ nhãn "Chờ báo giá" và phần phí giao lại. */
+export function floristNoteFrom(internalNote: string | null | undefined): string {
+  return (internalNote ?? "")
+    .split("\n")
+    .filter((line) => !MONEY_NOTE_TAGS.some((tag) => line.trim().startsWith(tag)))
+    .map((line) => line.replace("[Chờ báo giá]", "").replace(/\s*·\s*phí giao lại[^·]*$/u, "").replace(/\s{2,}/g, " ").trim())
+    .filter(Boolean)
+    .join("\n")
 }

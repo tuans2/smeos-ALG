@@ -117,5 +117,6 @@ def cau_hinh_log() -> None:
     handler.setFormatter(JsonFormatter())
     root = logging.getLogger()
     root.handlers[:] = [handler]
-    root.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
+    # `LOG_LEVEL=` để trống trong .env (mẫu .env.example) nghĩa là dùng mặc định, không làm worker dừng.
+    root.setLevel((os.environ.get("LOG_LEVEL") or "").strip().upper() or "INFO")
     bat_sentry()

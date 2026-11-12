@@ -108,7 +108,7 @@ export default function GiaPage() {
         }
       />
 
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 max-w-4xl mx-auto w-full">
         <p className="rounded-xl bg-surface-alt px-3.5 py-2.5 text-body-sm text-text">
           Muốn giá vốn tự cộng từ công thức và đơn giá nguyên liệu?{" "}
           <Link href="/tinh-gia/gia-von" className="font-semibold text-primary underline-offset-2 hover:underline">
@@ -154,7 +154,7 @@ export default function GiaPage() {
 
         <CustomerTierPricingCard canEdit={coQuyenSua} />
         <QuotationDiscountSettingsCard />
-      </main>
+      </div>
     </div>
   )
 }

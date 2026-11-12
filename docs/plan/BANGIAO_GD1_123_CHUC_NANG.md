@@ -134,6 +134,8 @@ Hiện trạng đã đo:
 
 Kết quả trên bản dựng sạch (sau khi áp 4 sửa): kiểm rò rỉ sạch; typecheck, ESLint ratchet, UX lint, `check:docs`; `npm test` 699 tệp; `test:platform` 18 tệp; `test:tenant` 266 tệp (4 ca đỏ do mục 4, chạy lại đạt); `build`; người vận hành đầu tiên đăng nhập và mở Console; `pytest` worker đạt (Python 3.13); E2E 30/31 — ca đỏ còn lại là ảnh mốc `/khach-hang` 390px lệch 8% điểm ảnh do phông chữ máy dựng hẹp hơn máy CI (hai nút nằm cùng hàng), CI cùng commit xanh. Ghi chú: E2E trên bản build production cần `ALLOW_LOCAL_STORAGE=true` (đã ghi trong `.env.example`).
 
+**Kịch bản nghiệm thu trên bản cắt (6.3):** 84/141 bước đã chạy — 55 Đạt, 17 Không đạt, 12 chờ môi trường thật, 57 chưa chạy. Báo cáo, checklist đã điền và ảnh: [`docs/audit/gd1-buoc6/`](../audit/gd1-buoc6/README.md).
+
 Còn lại: chủ dự án chạy lại kịch bản nghiệm thu trên ứng viên mới (6.3), đọc lại danh sách tệp (6.4), rồi quyết định tạo repo giao ALG.
 
 **Điểm duyệt:** bạn xác nhận mới tạo repo và giao cho ALG (hành động ra bên ngoài, không tự làm).

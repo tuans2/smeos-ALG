@@ -14,7 +14,7 @@ export const SYSTEM_ROLES = [
   { key: "marketing", name: "Marketing" },
   { key: "crm", name: "Chăm sóc khách hàng" },
   { key: "customer_service", name: "Chăm sóc khách hàng (CSKH)" },
-  { key: "experience_user", name: "Experience User" },
+  { key: "experience_user", name: "Người dùng trải nghiệm" },
   // PO 22/10/2026 — tài khoản của chi nhánh/cửa hàng nhận đơn gia công trong chuỗi (trang /cua-hang)
   { key: "cua_hang", name: "Cửa hàng nhận gia công" },
   // PO Q7 04/11/2026 — checklist ALG 1.12

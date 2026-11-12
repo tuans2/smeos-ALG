@@ -79,7 +79,7 @@ export function AccountingWorkspace() {
         title={orgName}
         actions=<UserMenu initials={userInitials} />
       />
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
         <FeatureGuidanceCard
           id="accounting_workspace_guidance"
           badgeLabel="BÀN LÀM VIỆC KẾ TOÁN"
@@ -113,7 +113,7 @@ export function AccountingWorkspace() {
             </div>
           ))}
         </Card>
-      </main>
+      </div>
     </div>
   )
 }

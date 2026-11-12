@@ -219,3 +219,10 @@ export const listQuotationsQuery = z.object({
   /** 1–100, mặc định 20. */
   limit: limit100,
 })
+
+// orders/[id]/delivery-window/route.ts — R21, PO 11/11/2026
+export const deliveryWindowChangeBody = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ngày giao dạng YYYY-MM-DD"),
+  time_slot: z.string().trim().max(40).optional(),
+  reason: z.string().trim().min(3, "Cần ghi lý do đổi giờ giao").max(300),
+})

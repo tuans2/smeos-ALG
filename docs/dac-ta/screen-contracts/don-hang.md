@@ -50,12 +50,14 @@ SSOT: `docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §6. Archetype: bản
   - `POST /api/v1/orders` → `R2` (`order.create`)
   - `GET /api/v1/orders/:id` → `R1`
   - `PATCH /api/v1/orders/:id` → `R3` (`order.update`)
+  - `PATCH /api/v1/orders/:id/delivery-window` → `R21` (`order.delivery_window.update`)
 - **Khối chính:**
   - Header chuẩn: 1 nút chính "Tạo đơn mới", 2 nút phụ "Làm mới", "Trang chủ".
   - Feature guidance card: `OrderGuidanceCard`.
   - Bộ lọc & tìm kiếm nhanh: ô input tìm kiếm theo mã đơn, tên người nhận, SĐT.
   - Lọc nâng cao (`OrderAdvancedFilters`, checklist ALG 4.3) ở tab Tất cả đơn và bảng Thẻ Chào của Điều hành: khoảng ngày giao, nhân viên bán (hiện khi có `F1`), chi nhánh (hiện khi tổ chức có từ 2 chi nhánh và có `F6`).
   - Chi tiết đơn có khối "Thông tin cần bổ sung" (checklist ALG 4.14) và nút In mở `/in-phieu/[id]` (phiếu xưởng A6, băng rôn).
+  - Chi tiết đơn ngoài Thẻ Chào có nút "Đổi giờ giao" (hiện khi có `R21`, checklist ALG 4.6): mở form ngày giao, khung giờ, lý do (bắt buộc); lưu xong lịch sử đơn ghi "Đổi giờ giao" kèm giá trị cũ → mới, người đổi, thời điểm và lý do. Vai không có `R3` (Sale) chỉ đổi được đơn mình tạo.
   - Vùng hiển thị đơn hàng: 4 cột Kanban trên Desktop (`lg:`), Danh sách phân tab trạng thái trên Mobile (< `lg:`).
 - **Trạng thái:** Tải (`loading`), Rỗng (`EmptyState` kèm nút hành động "Tạo đơn mới"), Modals (`CreateOrderModal`, `OrderDetailModal`).
 
@@ -95,5 +97,5 @@ SSOT: `docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §6. Archetype: bản
 | Responsive | PASS | 390px dạng tab lọc, 1280px 4 cột hoàn hảo |
 | Trợ năng | PASS | Button đạt touch target ≥ 44px, focus visible |
 | Dữ liệu | PASS | Kết nối API Orders thật |
-| Quyền | PASS | Gating theo R1, R2, R3 |
+| Quyền | PASS | Gating theo R1, R2, R3, R21 |
 | Nhất quán | PASS | 100% token Semantic, font token chuẩn |

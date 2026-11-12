@@ -25,8 +25,12 @@ export async function grantPlatformOperator(
   if (user.approval_status === "REJECTED") {
     throw new Error("Tài khoản này đã bị từ chối khi duyệt đăng ký — không tự mở lại khi gán quyền vận hành.")
   }
-  const operatorId = await deps.operators.grant(user.id, [...capabilityCodes], grantedBy)
-  if (user.approval_status !== "PENDING") return { operatorId, approved: false }
+  // Duyệt TRƯỚC khi gán quyền: `decide` đòi bản ghi còn PENDING, còn `grant` chỉ duyệt bản ghi còn PENDING —
+  // chạy theo thứ tự này thì mỗi tài khoản chỉ được duyệt một lần, dù gọi qua use-case hay gọi `grant` trực tiếp.
+  if (user.approval_status !== "PENDING") {
+    return { operatorId: await deps.operators.grant(user.id, [...capabilityCodes], grantedBy), approved: false }
+  }
   const decision = await deps.approvals.decide(user.id, "APPROVE", grantedBy ?? user.id)
+  const operatorId = await deps.operators.grant(user.id, [...capabilityCodes], grantedBy)
   return { operatorId, approved: true, ...(decision.temporaryPassword ? { temporaryPassword: decision.temporaryPassword } : {}) }
 }

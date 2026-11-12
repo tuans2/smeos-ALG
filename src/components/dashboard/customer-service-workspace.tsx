@@ -123,7 +123,7 @@ export function CustomerServiceWorkspace() {
       />
 
       {/* Main Body */}
-      <main className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
         <FeatureGuidanceCard
           id="customer_service_workspace_guidance"
           badgeLabel="HƯỚNG DẪN BÀN LÀM VIỆC CSKH"
@@ -298,7 +298,7 @@ export function CustomerServiceWorkspace() {
             </Button>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   )
 }

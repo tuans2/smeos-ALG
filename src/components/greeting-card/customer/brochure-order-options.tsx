@@ -114,7 +114,8 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
         </label>
       )}
 
-      {/* Khối Mã ưu đãi — luôn có cho mọi ngành */}
+      {/* Khối Mã ưu đãi — chỉ khi tiệm bật nhận mã giảm giá (tắt thì máy chủ bỏ qua mã, không để khách nhập vô ích) */}
+      {shipping.vouchersEnabled === true && (
       <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30">
         <div className="flex items-center justify-between">
           <span className="text-caption font-bold text-text flex items-center gap-1.5">
@@ -125,6 +126,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
         <div className="flex gap-2">
           <Input
             type="text"
+            aria-label="Mã ưu đãi"
             value={voucherInput}
             maxLength={40}
             placeholder=""
@@ -141,6 +143,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
         </div>
         {errors.voucherCode && <span className="text-caption text-danger">{errors.voucherCode}</span>}
       </div>
+      )}
 
       {quote?.awaitingQuote ? (
         <p role="status" className="text-body-sm text-text-muted border-t border-border pt-2">
