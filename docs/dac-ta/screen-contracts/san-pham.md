@@ -79,3 +79,7 @@ acceptance:
 | Dữ liệu | PASS | Kết nối API Products thật |
 | Quyền | PASS | Gating theo L1, L3 |
 | Nhất quán | PASS | 100% token Semantic và font token |
+
+## Thay đổi Đợt 4 (12/11/2026)
+
+- `ProductThumb` bắt lỗi tải ảnh → ô "Chưa có ảnh" (không để chữ thay thế đè nhãn, ST-01). Nhãn trạng thái tách khỏi nút ảnh để tên nút khớp chữ hiển thị (WCAG 2.5.3, D4-10).

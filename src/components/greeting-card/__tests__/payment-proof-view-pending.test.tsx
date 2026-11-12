@@ -14,3 +14,13 @@ describe("OrderPaymentProofView — biên lai chưa có kết quả AI", () => {
     expect(html).not.toContain("animate-spin")
   })
 })
+
+describe("PaymentProofBadge — chưa có kết quả AI", () => {
+  it("ghi 'Có ảnh bill', không xoay, không nói đang đọc", async () => {
+    const { PaymentProofBadge } = await import("@/components/greeting-card/admin/payment-proof-badge")
+    const html = renderToStaticMarkup(<PaymentProofBadge hasProofUrl analysis={null} />)
+    expect(html).toContain("Có ảnh bill")
+    expect(html).not.toContain("Đang đọc")
+    expect(html).not.toContain("animate-spin")
+  })
+})

@@ -75,6 +75,7 @@ dùng lại: `FlowerImage`, `TrackingStepperView` · tạo mới: `sales/sales-k
 |---|---|---|---|---|
 | Thông báo rải rác 6 nơi | Một Hộp việc | Gom về 🔔 Hộp việc, bỏ "Cập nhật mới" ở tab | PO 06/10/2026: tập trung, không phân tâm | tin nhắn PO |
 | Ghi chú không người nhận, vai tự chọn | Tin có người nhận, trả lời đúng người | Bảng `greeting_messages` + đã đọc | Thông báo đúng người, chống giả vai | PO duyệt đổi schema 06/10/2026 |
+| Nút Hộp việc mất icon; mã bước "(T01)…" và "P1 •" ở bảng điều phối; huy hiệu "Đang đọc bill" xoay mãi | Icon hiện đủ; không mã kỹ thuật; trạng thái trung tính | `Button` giữ icon (`[&_svg]:shrink-0`); bỏ mã; "Có ảnh bill" | Đợt 4, D4-11/D4-13/D4-14 | `inbox-button.tsx`, `coordinator-*`, `payment-proof-badge.tsx` |
 
 ## 13. QA Matrix
 | Chiều | Kết quả | Ghi chú |

@@ -90,6 +90,7 @@ acceptance:
 | Mỗi card module đều nhúng `FeatureGuidanceCard` | Tuân thủ luật K1 (tối đa 1 card/màn) | Thay bằng Header thông thường trong Card con, chỉ giữ 1 card ở đầu trang | Tránh spam visual và giảm mỏi mắt cho người dùng | `knowledge-module-card.tsx` |
 | Button dùng class `bg-red-600` | Token ngữ nghĩa hệ thống | Dùng `variant="primary"` | Nhất quán design system | `knowledge-module-card.tsx` |
 | Mã phân hệ lộ thô "M01 Vision, M02 Giá..." | Tránh lộ mã kỹ thuật | Đổi nhãn thành "Nhận diện ảnh, Cấu hình giá..." | Tuân thủ UX Rule nhãn thân thiện | `tri-thuc/page.tsx` |
+| Nút "Hỏi ALG Copilot về phân hệ này" cao 15px | Vùng bấm ≥ 24px (44px cảm ứng) | `TEXT_BUTTON_HIT_AREA` | Đợt 4, D4-07 | `knowledge-module-card.tsx` |
 
 ## 13. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

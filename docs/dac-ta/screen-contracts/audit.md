@@ -83,6 +83,7 @@ acceptance:
 |---|---|---|---|---|
 | Tuyến `/audit` đang `COMING_SOON` | Triển khai màn hình thật | Nối endpoint `GET /api/v1/audit-logs` gác `G9` | Cung cấp khả năng giám sát tuân thủ cho Điều hành (T5.D8) | `audit/page.tsx` |
 | Xem dữ liệu payload JSON | Đối chiếu trước sau trực quan | Dùng `Dialog` Base-UI chia 2 cột Before / After | Giúp Điều hành dễ dàng nhận biết sự thay đổi | `audit/page.tsx` |
+| Thẻ nhật ký 390px tràn ngang với mã hành động dài | Không tràn ngang | Hàng cho xuống dòng, nhãn ngắt chữ | RESP-01 (đo sau đổi ALG) | `audit/page.tsx` |
 
 ## 13. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

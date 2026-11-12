@@ -85,14 +85,15 @@ export default function DonHangPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* 1. Header chuẩn ALG */}
-      <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 sm:px-6 py-4">
+      <header className="flex flex-shrink-0 flex-wrap items-center justify-between gap-y-3 border-b border-border bg-surface px-4 sm:px-6 py-4">
         <PageHeader
           title={t("orders.header.title")}
           tip="Theo dõi mọi đơn từ lúc nhận đến khi giao: mới nhận, đang làm, đang giao và đã xong."
         />
 
         {/* Top-Right Action Header: 1 primary + 2 secondary/ghost */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Chữ trong nút không gãy dòng; thiếu chỗ thì cả hàng nút xuống dưới tiêu đề (Đợt 4, D4-01 VD-03) */}
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 [&_button]:whitespace-nowrap">
           <Button size="sm" onClick={() => setCreateOpen(true)} className="flex items-center gap-1.5 font-semibold">
             <Plus size={16} /> <span className="text-caption sm:text-body-sm">{t("orders.header.createOrder")}</span>
           </Button>

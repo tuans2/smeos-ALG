@@ -21,15 +21,16 @@ export function PaymentProofBadge({
 }: PaymentProofBadgeProps) {
   if (!hasProofUrl) return null
 
-  // Đang phân tích hoặc chưa có kết quả AI
+  // Chưa có kết quả AI: tiệm tắt "AI đọc bill" (mặc định) hoặc đang xử lý — không ghi "đang đọc" vì có thể
+  // không bao giờ có kết quả (Đợt 4, D4-14)
   if (!analysis) {
     return (
       <span
-        title="Đang đọc dữ liệu từ ảnh bill..."
+        title="Có ảnh bill — chưa có kết quả đọc tự động, xem ảnh để đối chiếu"
         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-surface-alt text-text-muted border border-border ${className}`}
       >
-        <Clock size={12} className="animate-spin motion-reduce:animate-none text-text-muted" aria-hidden="true" />
-        <span>Đang đọc bill</span>
+        <Clock size={12} className="text-text-muted" aria-hidden="true" />
+        <span>Có ảnh bill</span>
       </span>
     )
   }

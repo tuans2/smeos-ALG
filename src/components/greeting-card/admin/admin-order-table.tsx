@@ -227,7 +227,7 @@ export function AdminOrderTable({
                         type="button"
                         size="sm"
                         onClick={() => onAction({ type: "collect", order: o })}
-                        className={collectButton.className}
+                        className={`${collectButton.className} whitespace-nowrap`}
                       >
                         <Check size={13} /> {collectButton.label}
                       </Button>

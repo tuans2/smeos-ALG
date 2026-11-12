@@ -385,7 +385,7 @@ export function PlatformDataHub() {
     <div className="space-y-5">
       {/* Breadcrumb */}
       <div className="space-y-1">
-        <nav className="flex items-center gap-2 text-caption font-bold text-text-muted flex-wrap">
+        <nav aria-label="Đường dẫn" className="flex items-center gap-2 text-caption font-bold text-text-muted flex-wrap">
           <Button variant="ghost"
             type="button"
             onClick={handleBackToOrgs}
