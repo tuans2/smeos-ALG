@@ -18,6 +18,8 @@ acceptance:
 
 > **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Nút "Theo dõi tiến trình" (sang `/job`) ẩn khi `/job` đang khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
 
+> **Đồng ý của khách (12/11/2026, audit L-06):** chức năng gửi tới khách (nhắc mua lại) không bị khoá vì "đồng ý" ở trang này — trang của một sản phẩm không có khách cụ thể. Thẻ chức năng hiện ghi chú "Chỉ gửi cho khách đã đồng ý nhận tin"; khách chưa đồng ý bị loại khi lập danh sách gửi.
+
 **Mã màn:** `SCR-STORE-san-pham-id-tinh-nang` · **Tuyến:** `/san-pham/[id]/tinh-nang` · **Tầng:** `STORE` · **Bố cục:** `C` · **Tệp chính:** `src/app/(app)/san-pham/[id]/tinh-nang/page.tsx`
 
 Đặc tả nghiệp vụ chi tiết: [`san-pham.md`](./san-pham.md). Tệp này là front-matter v2 cho `check:screen-contracts`; hiện trạng dưới đây đo bằng đọc mã ngày 05/11/2026, không phải kiểm chạy thật.
