@@ -1,6 +1,6 @@
 # Đối chiếu 123 chức năng với kho ảnh màn hình (BẢN NHÁP)
 
-Nguồn danh mục: `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`. Ảnh nằm ngoài git (xem `INDEX.md`), đường dẫn tính từ thư mục kho ảnh.
+Nguồn danh mục: `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`. Ảnh nằm ngoài git (xem `INDEX.md`), đường dẫn tính từ thư mục kho ảnh; riêng ảnh luồng upload (`luong-upload-anh/`) nằm trong repo cạnh tệp này.
 
 **Lưu ý trung thực:** ảnh được gán theo route, chưa ai mở từng ảnh để xác nhận đúng chức năng. Cột "Ảnh" chỉ là đại diện (tối đa 3).
 
@@ -8,8 +8,8 @@ Nguồn danh mục: `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`. �
 
 | Trạng thái | Số chức năng |
 |---|---:|
-| Có ảnh | 95 |
-| Một phần | 15 |
+| Có ảnh | 98 |
+| Một phần | 12 |
 | Không có màn hình riêng (đề xuất, chờ PO) | 7 |
 | Có ảnh (đại diện, cần PO xác nhận) | 3 |
 | Có ảnh (trong chi tiết sản phẩm, chưa xác nhận khối) | 3 |
@@ -94,16 +94,16 @@ Giải thích: **Có ảnh** = có ít nhất 1 ảnh gán; **Một phần** = c
 | 4.12 | Bảng điều phối phân cấp mức rủi ro trễ giờ | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
 | 4.13 | Phân công thợ cắm & hàng đợi chế tác | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
 | 4.14 | Theo dõi đơn thiếu thông tin | Có ảnh | `shots/dieu_hanh/desktop/don-hang.png`<br>`shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/don-hang__click1-Khách-tiềm-năng.png` | — |
-| 4.15 | Kiểm tra chất lượng QC | Một phần | `shots/dieu_hanh/desktop/don-hang.png`<br>`shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/don-hang__click1-Khách-tiềm-năng.png` | Thiếu: màn QC với ảnh thật |
-| 4.16 | AI chấm ảnh QC so với mẫu gốc | Một phần | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | Thiếu: kết quả AI chấm ảnh |
+| 4.15 | Kiểm tra chất lượng QC | Có ảnh | `luong-upload-anh/4.15-01-qc-mo-hop-thoai-1280.png`<br>`luong-upload-anh/4.15-02-qc-da-chon-anh-1280.png`<br>`luong-upload-anh/4.15-03-qc-sau-khi-luu-1280.png` | Luồng upload 12/11: Điều phối tải ảnh thành phẩm, thẻ chuyển "Chờ khách duyệt ảnh" |
+| 4.16 | AI chấm ảnh QC so với mẫu gốc | Một phần | `luong-upload-anh/4.15-03-qc-sau-khi-luu-1280.png` | Local không có khoá AI: bước chấm ảnh lỗi thì bị bỏ qua (không chặn luồng), nên không có màn kết quả AI chấm |
 | 4.17 | Bàn giao shipper & lên lịch giao lại | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
-| 4.18 | Ảnh xác nhận giao hàng tận tay (POD) bắt buộc | Một phần | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | Thiếu: màn ảnh giao tận tay |
+| 4.18 | Ảnh xác nhận giao hàng tận tay (POD) bắt buộc | Có ảnh | `luong-upload-anh/4.18-01-giao-ship-1280.png`<br>`luong-upload-anh/4.18-03-anh-nguoi-nhan-da-chon-1280.png`<br>`luong-upload-anh/4.18-04-da-giao-xong-1280.png` | Luồng upload 12/11: Giao Ship rồi tải ảnh người nhận |
 | 4.19 | Bảng điều phối đối tác ngoài, đếm ngược | Một phần | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | Mới có trang gia công/chợ đối tác; chưa có đơn đã được nhận |
 | 4.20 | Cổng chi nhánh cách ly đơn hàng | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
 | 4.21 | Cấu hình sức chứa tối đa theo khung giờ/lễ | Có ảnh | `shots/dieu_hanh/desktop/cai-dat.png`<br>`shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/cai-dat__click1--s-1-s.png` | — |
 | 4.22 | Lập kế hoạch thanh toán cọc/còn lại tự động | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
 | 4.23 | Mã VietQR động | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
-| 4.24 | Tải ảnh biên lai chuyển khoản & AI gợi ý | Một phần | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | Thiếu: khách tải ảnh biên lai |
+| 4.24 | Tải ảnh biên lai chuyển khoản & AI gợi ý | Một phần | `luong-upload-anh/4.24-02-khach-da-tai-bien-lai-390.png`<br>`luong-upload-anh/4.24-03-khach-da-bao-chuyen-khoan-390.png`<br>`luong-upload-anh/4.24-06-tiem-xem-bien-lai-ai-ket-qua-1280.png` | Khách tải biên lai + tiệm xem biên lai đã chụp; khối "Thẩm định AI" dừng ở "Đang đọc dữ liệu biên lai..." (local không có khoá AI). Tài khoản ngân hàng là giả lập trên DB local |
 | 4.25 | Điều hành "Xác nhận tiền về" mở đơn cắm | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
 | 4.26 | Thu phần tiền còn lại | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
 | 4.27 | Ghi nhận hoàn tiền khi hủy đơn | Có ảnh | `shots/dieu_hanh/desktop/the-chao.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-chi-tiet-the.png`<br>`shots2/dieu_hanh/desktop/the-chao__banhang-cho-khach.png` | — |
@@ -129,7 +129,7 @@ Giải thích: **Có ảnh** = có ít nhất 1 ảnh gán; **Một phần** = c
 | 5.10 | Đặt hoa trực tiếp từ Thẻ Chào | Có ảnh | `shots2/public/desktop/b_T01-3FZV23AA.png`<br>`shots2/public/desktop/b_T01-B2MYYW0W.png`<br>`shots2/public/desktop/b_T01-NKM44ECM.png` | — |
 | 5.11 | Nút "Nhắn tư vấn mẫu này" gắn mã sản phẩm | Có ảnh | `shots2/public/desktop/b_T01-3FZV23AA.png`<br>`shots2/public/desktop/b_T01-B2MYYW0W.png`<br>`shots2/public/desktop/b_T01-NKM44ECM.png` | — |
 | 5.12 | Trang khách xem tiến độ cắm & ảnh thành phẩm | Có ảnh | `shots2/public/desktop/b_T01-3FZV23AA.png`<br>`shots2/public/desktop/b_T01-B2MYYW0W.png`<br>`shots2/public/desktop/b_T01-NKM44ECM.png` | — |
-| 5.13 | Khách duyệt ảnh QC thành phẩm trong 10 phút | Một phần | `shots2/public/desktop/b_T01-3FZV23AA.png`<br>`shots2/public/desktop/b_T01-B2MYYW0W.png`<br>`shots2/public/desktop/b_T01-NKM44ECM.png` | Thiếu: khách duyệt ảnh thành phẩm |
+| 5.13 | Khách duyệt ảnh QC thành phẩm trong 10 phút | Có ảnh | `luong-upload-anh/5.13-01-khach-xem-anh-thanh-pham-390.png`<br>`luong-upload-anh/5.13-01-khach-xem-anh-thanh-pham-1280.png`<br>`luong-upload-anh/5.13-02-khach-da-dong-y-anh-390.png` | Luồng upload 12/11: khách xem ảnh thành phẩm có đồng hồ duyệt, bấm đồng ý |
 | 5.14 | Đề xuất thay loại hoa thiếu qua link duyệt | Một phần | `shots2/public/desktop/b_T01-3FZV23AA.png`<br>`shots2/public/desktop/b_T01-B2MYYW0W.png`<br>`shots2/public/desktop/b_T01-NKM44ECM.png` | Thiếu: trang khách xem đề xuất đổi hoa |
 | 5.15 | Màn hình cảm ơn, mã giảm giá & đặt lại đơn | Một phần | `shots2/public/desktop/b_T01-3FZV23AA.png`<br>`shots2/public/desktop/b_T01-B2MYYW0W.png`<br>`shots2/public/desktop/b_T01-NKM44ECM.png` | Thiếu: màn cảm ơn sau đơn |
 
@@ -151,8 +151,8 @@ Giải thích: **Có ảnh** = có ít nhất 1 ảnh gán; **Một phần** = c
 
 | Mã | Chức năng | Trạng thái | Ảnh đại diện | Ghi chú |
 |---|---|---|---|---|
-| 7.1 | AI nhận diện ảnh mẫu (loại hoa, cành, màu) | Một phần | `shots/dieu_hanh/desktop/tai-anh.png`<br>`shots2/dieu_hanh/desktop/tai-anh__tab1-Nhận-diện-ảnh.png`<br>`shots2/dieu_hanh/desktop/tai-anh__tab2-Bài-giới-thiệu.png` | Mới có màn khởi đầu, chưa có kết quả nhận diện |
-| 7.2 | Bộ nội dung marketing tự động từ 1 ảnh | Một phần | `shots/dieu_hanh/desktop/san-pham.png`<br>`shots/dieu_hanh/desktop/san-pham_kha-dung.png`<br>`shots/dieu_hanh/desktop/san-pham_nhap-hang-loat.png` | Mới có màn khởi đầu, chưa có bộ nội dung |
+| 7.1 | AI nhận diện ảnh mẫu (loại hoa, cành, màu) | Một phần | `luong-upload-anh/7.1-01-da-chon-anh-1280.png`<br>`luong-upload-anh/7.1-03-buoc-2-1280.png`<br>`luong-upload-anh/7.1-04-kho-anh-luot-chay-1280.png` | Tải ảnh và tạo job nhận diện đã chụp; job xếp hàng chờ worker/AI nên chưa có màn kết quả |
+| 7.2 | Bộ nội dung marketing tự động từ 1 ảnh | Một phần | `luong-upload-anh/7.2-01-chua-co-anh-da-nhan-dien-1280.png`<br>`luong-upload-anh/7.2-01-chua-co-anh-da-nhan-dien-390.png` | Bài giới thiệu chỉ dùng ảnh đã nhận diện xong; phụ thuộc 7.1 nên cần AI chạy thật |
 | 7.3 | Màn hình kiểm tra sẵn sàng sản phẩm ra thị trường | Có ảnh | `shots/dieu_hanh/desktop/tai-anh.png`<br>`shots2/dieu_hanh/desktop/tai-anh__tab1-Nhận-diện-ảnh.png`<br>`shots2/dieu_hanh/desktop/tai-anh__tab2-Bài-giới-thiệu.png` | — |
 
 ### 8. Landing page bán hàng
