@@ -56,7 +56,7 @@ export function checkProductionUpdate(params: {
   finishedAssetCount: number
 }): RuleResult {
   if (params.stage !== "IN_PRODUCTION") {
-    return { ok: false, reason: `Chỉ cập nhật tiến độ khi đơn đang cắm (hiện: ${params.stage}).` }
+    return { ok: false, reason: `Chỉ cập nhật tiến độ khi đơn đang chế tác (đơn đang ở bước "${stageLabel(params.stage)}").` }
   }
   if (!Number.isInteger(params.progressPercent) || params.progressPercent < 0 || params.progressPercent > 100) {
     return { ok: false, reason: "Tiến độ phải là số nguyên 0–100." }
