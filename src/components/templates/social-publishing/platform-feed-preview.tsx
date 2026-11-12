@@ -96,7 +96,7 @@ function resolvePlatform(p?: string | null): PlatformKey {
 
 export function PlatformFeedPreview({
   post,
-  shopName = "Cửa Hàng Trải Nghiệm smeOS",
+  shopName = "Cửa Hàng Trải Nghiệm ALG",
   fallbackImageUrl = "/images/sample-flower.jpg",
 }: PlatformFeedPreviewProps) {
   const [platformOverride, setPlatformOverride] = useState<{

@@ -1,10 +1,10 @@
 /**
  * Thương hiệu nền tảng (đổi nhận diện ALG mức 3, 12/11/2026 — chờ PO xác nhận).
  * Một nơi duy nhất cho tên và logo hiển thị; màu và phông nằm ở `src/styles/tokens/` (preset `alg`).
- * `productName` tạm giữ "smeOS" cho tới khi chủ dự án chốt tên sản phẩm hiển thị.
+ * Tên hiển thị "ALG" (viết tắt AVI Lotus Group) — chủ dự án chốt 12/11/2026.
  */
 export const BRAND = {
-  productName: "smeOS",
+  productName: "ALG",
   companyName: "AVI Lotus Group",
   logo: {
     horizontalDark: "/brand/avi-lotus/logo-horizontal-dark.png",

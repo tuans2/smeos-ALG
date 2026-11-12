@@ -332,7 +332,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       </div>
 
       <footer className="text-center text-caption text-text-muted mt-8">
-        Đặt hàng trực tuyến · Vận hành bởi smeOS
+        Đặt hàng trực tuyến · Vận hành bởi ALG
       </footer>
     </div>
     </CustomerJourneyContext.Provider>

@@ -6,7 +6,7 @@ import GlobalError from "./global-error"
 describe("GlobalError — trang lỗi gốc", () => {
   it("tự khai <title> vì layout gốc (và metadata) bị thay thế", () => {
     const html = renderToStaticMarkup(<GlobalError error={new Error("x")} reset={() => {}} />)
-    expect(html).toContain("<title>smeOS tạm thời không tải được</title>")
+    expect(html).toContain("<title>ALG tạm thời không tải được</title>")
     expect(html).toContain('lang="vi"')
   })
 

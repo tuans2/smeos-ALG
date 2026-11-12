@@ -134,7 +134,7 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
           className="h-auto p-0 inline-flex items-center gap-1.5 text-caption font-bold text-primary hover:underline"
         >
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Hỏi smeOS Copilot về phân hệ này</span>
+          <span>Hỏi ALG Copilot về phân hệ này</span>
         </Button>
 
         <Link href={module.routePath as Route}>

@@ -76,7 +76,7 @@ export class DifyChatProvider {
 
       // Trả lời hướng dẫn chung nếu chưa khớp chính xác 1 mục
       return {
-        replyText: `Dạ em là smeOS AI Copilot! Em có thể hướng dẫn anh/chị thao tác toàn bộ tính năng trên hệ thống:\n\n- **M01**: Phân tích ảnh sản phẩm Phân tích ảnh hoa & bóc tách BOM thành phần bóc tách BOM thành phần\n- **M02**: Cấu hình bảng giá niêm yết\n- **M04c**: Dựng video marketing 9:16 cho TikTok/Reels\n- **M06**: Xuất mã QR & quản lý Catalog trực tuyến\n- **M09**: Quản lý khách hàng, phân tầng RFM & nhắc ngày kỷ niệm\n- **M10**: Tạo đơn hàng, in phiếu chế tác xưởng (ẩn giá) & phiếu giao A6\n\nAnh/chị đang cần hỗ trợ thao tác chức năng nào ạ?`,
+        replyText: `Dạ em là ALG AI Copilot! Em có thể hướng dẫn anh/chị thao tác toàn bộ tính năng trên hệ thống:\n\n- **M01**: Phân tích ảnh sản phẩm Phân tích ảnh hoa & bóc tách BOM thành phần bóc tách BOM thành phần\n- **M02**: Cấu hình bảng giá niêm yết\n- **M04c**: Dựng video marketing 9:16 cho TikTok/Reels\n- **M06**: Xuất mã QR & quản lý Catalog trực tuyến\n- **M09**: Quản lý khách hàng, phân tầng RFM & nhắc ngày kỷ niệm\n- **M10**: Tạo đơn hàng, in phiếu chế tác xưởng (ẩn giá) & phiếu giao A6\n\nAnh/chị đang cần hỗ trợ thao tác chức năng nào ạ?`,
         suggestedProducts: [],
         userIntent: "SAAS_HELP",
       }

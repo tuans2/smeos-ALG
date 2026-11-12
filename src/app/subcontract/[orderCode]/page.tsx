@@ -103,7 +103,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
     <main className="min-h-screen bg-bg py-8 px-4 flex flex-col items-center justify-center">
       <header className="mb-6 text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary-dark text-caption font-bold mb-2">
-          <Shield size={14} /> Hệ Thống Điều Phối Chuỗi smeOS
+          <Shield size={14} /> Hệ Thống Điều Phối Chuỗi ALG
         </div>
         <h1 className="text-title-lg font-black text-text">
           Tiếp Nhận Đơn Hàng Gia Công
@@ -113,7 +113,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
         </p>
         {orderData.inAppChatUrl?.startsWith("/tin-nhan") && (
           <p className="mt-3 text-caption text-text-muted max-w-sm mx-auto">
-            Cửa hàng đã có tài khoản smeOS —{" "}
+            Cửa hàng đã có tài khoản ALG —{" "}
             <a href={orderData.inAppChatUrl} className="font-semibold text-primary underline underline-offset-2">
               làm đơn trong Trao đổi nội bộ
             </a>{" "}

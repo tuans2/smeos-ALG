@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import localFont from "next/font/local"
 import "./globals.css"
 import { publicAppUrl } from "@/lib/public-url"
+import { BRAND } from "@/lib/brand"
 
 // Phông thương hiệu AVI Lotus Group: Google Sans (SIL OFL 1.1 — giấy phép kèm trong thư mục phông).
 // Bản biến thiên trục đậm 400–700, đã lọc Latin + tiếng Việt và nén woff2; tự lưu, không gọi CDN.
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
   // Ảnh xem trước khi dán link vào Zalo/Facebook cần URL tuyệt đối; thiếu dòng này
   // Next.js rơi về http://localhost:<PORT> ở mọi môi trường ngoài Vercel.
   ...(appUrl ? { metadataBase: new URL(appUrl) } : {}),
-  title: "smeOS",
+  title: BRAND.productName,
   description: "Nền tảng quản trị kinh doanh đa ngành cho SME",
 }
 

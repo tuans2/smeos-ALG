@@ -72,7 +72,7 @@ export function UiStudioDrawer() {
                   </div>
                   <div>
                     <h2 className="text-body-sm font-bold text-text leading-tight">
-                      smeOS UI Studio
+                      ALG UI Studio
                     </h2>
                     <p className="text-caption text-text-muted mt-0.5">
                       Chuyển đổi phong cách & mật độ giao diện (ADR-011 D-UI-03)

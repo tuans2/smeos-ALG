@@ -4,7 +4,8 @@ import type { CatalogCollageData } from "@/modules/greeting-card/use-cases/catal
 export const COLLAGE_SIZE = { width: 1200, height: 630 }
 
 // Bộ dựng ảnh (satori) không đọc CSS token — màu viết thẳng theo bảng màu "điện ảnh" của thumbnail.
-const C = { ink: "#120A0D", wine: "#6B1A2E", champ: "#D9B877", cream: "#FBF5EE", bar: "#000000" }
+// Bảng màu ALG: xanh Botanical Garden (#133D31), vàng Yellow Balloon (#E7C447), trắng Wispy Clouds (#F0EFEF)
+const C = { ink: "#071A14", wine: "#133D31", champ: "#E7C447", cream: "#F0EFEF", bar: "#000000" }
 
 const GALLERY = { width: 560, height: 482, gap: 12 }
 const MAIN_WIDTH = Math.round((GALLERY.width - GALLERY.gap) * 0.7)
@@ -139,7 +140,7 @@ function EmptyGallery({ logo, shopName }: { logo: string | null; shopName: strin
         width: GALLERY.width,
         height: GALLERY.height,
         borderRadius: 6,
-        backgroundImage: `radial-gradient(circle at 70% 30%, #7A2238 0%, #3A0F1C 55%, ${C.ink} 100%)`,
+        backgroundImage: `radial-gradient(circle at 70% 30%, #1F5A49 0%, #0C2920 55%, ${C.ink} 100%)`,
       }}
     >
       <LogoMark logo={logo} shopName={shopName} size={130} wide />

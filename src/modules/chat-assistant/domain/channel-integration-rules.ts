@@ -12,7 +12,7 @@ import type {
 export const CHANNEL_PRICING_CATALOG: Record<SupportedChatChannel, ChannelPricingInfo> = {
   INTERNAL_DASHBOARD: {
     channel: "INTERNAL_DASHBOARD",
-    name: "smeOS In-App Copilot",
+    name: "ALG In-App Copilot",
     description: "Trợ lý nội bộ 24/7 hỗ trợ chủ shop và nhân viên thao tác toàn hệ thống",
     isFree: true,
     monthlyCreditCost: 0,

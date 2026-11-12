@@ -122,7 +122,7 @@ export function BrochureLanguageSettings() {
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-bold bg-warning-bg text-warning-text border border-warning/20">
-              <Lock size={13} /> Gói quốc tế: cần quản trị viên smeOS mở khóa
+              <Lock size={13} /> Gói quốc tế: cần quản trị viên ALG mở khóa
             </span>
           )}
         </div>
@@ -191,7 +191,7 @@ export function BrochureLanguageSettings() {
                     )}
                   </div>
                   <p className="text-caption text-text-muted">
-                    {isEnUnlocked ? "Cho khách nước ngoài / kiều bào" : "Liên hệ quản trị viên smeOS để bật"}
+                    {isEnUnlocked ? "Cho khách nước ngoài / kiều bào" : "Liên hệ quản trị viên ALG để bật"}
                   </p>
                 </div>
               </div>

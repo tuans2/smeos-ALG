@@ -48,7 +48,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
 
   const described = await describeSession(resolved)
 
-  const rawOrgName = described.organization?.name ?? "smeOS"
+  const rawOrgName = described.organization?.name ?? "ALG"
   const cleanOrgName = rawOrgName.replace(/\s*\(\s*dev\s*\)/gi, "").trim()
   const industry = described.organization?.industry ?? "FLORAL"
   // Quyền vượt khoá ngành lấy từ mã năng lực nền tảng (N1/N12), không từ đuôi email (rà soát H11)

@@ -81,7 +81,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M09",
     title: "Quét và nhắc nhở ngày kỷ niệm của khách hàng",
     keywords: ["ngày kỷ niệm", "nhắc sinh nhật", "nhắc hẹn", "quét dịp", "ngày của mẹ", "kỷ niệm ngày cưới"],
-    summary: "smeOS tự động quét các ngày kỷ niệm diễn ra trong 14 ngày tới của khách hàng và đưa ra gợi ý sản phẩm, tone màu phù hợp nhất để nhân viên chủ động liên hệ tư vấn.",
+    summary: "ALG tự động quét các ngày kỷ niệm diễn ra trong 14 ngày tới của khách hàng và đưa ra gợi ý sản phẩm, tone màu phù hợp nhất để nhân viên chủ động liên hệ tư vấn.",
     steps: [
       "Vào mục 'Khách hàng'",
       "Ở góc trên bên phải, bấm nút '⚡ Quét dịp sắp tới (14 ngày)'",
@@ -96,7 +96,7 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M09",
     title: "Bảo vệ quyền riêng tư và tiếp thị (Consent Engine)",
     keywords: ["quyền riêng tư", "consent", "đồng ý nhận tin", "chặn spam", "zalo zns", "sms brandname"],
-    summary: "smeOS tuân thủ chính sách bảo vệ người tiêu dùng, chỉ cho phép gửi tin nhắn Zalo ZNS hoặc SMS tiếp thị khi khách hàng đã được cấp phép (Granted Consent).",
+    summary: "ALG tuân thủ chính sách bảo vệ người tiêu dùng, chỉ cho phép gửi tin nhắn Zalo ZNS hoặc SMS tiếp thị khi khách hàng đã được cấp phép (Granted Consent).",
     steps: [
       "Vào mục 'Khách hàng'",
       "Chọn khách hàng cần kiểm tra -> Chọn tab 'Quyền riêng tư (Consent)'",
@@ -195,12 +195,12 @@ export const SAAS_KNOWLEDGE_BASE: SaasKnowledgeItem[] = [
     moduleCode: "M03",
     title: "Nhập sản phẩm từ Excel & Bảo mật link Google Drive",
     keywords: ["google drive", "link drive", "quyền riêng tư", "bảo mật link", "drive thumbnail", "nhập excel", "công khai", "người xem", "kho ảnh", "lộ link"],
-    summary: "Hướng dẫn phân quyền thư mục Google Drive ở chế độ 'Người xem' (Viewer) cho kho ảnh sản phẩm, và giải pháp bảo mật tối đa bằng cách kéo thả folder ảnh trực tiếp từ máy tính lên smeOS Native Storage có mã hóa HMAC.",
+    summary: "Hướng dẫn phân quyền thư mục Google Drive ở chế độ 'Người xem' (Viewer) cho kho ảnh sản phẩm, và giải pháp bảo mật tối đa bằng cách kéo thả folder ảnh trực tiếp từ máy tính lên ALG Native Storage có mã hóa HMAC.",
     steps: [
-      "Trên Google Drive: Tạo riêng thư mục '[smeOS] Kho Ảnh Mẫu', tuyệt đối không để chung với tài liệu tài chính hay hợp đồng",
+      "Trên Google Drive: Tạo riêng thư mục '[ALG] Kho Ảnh Mẫu', tuyệt đối không để chung với tài liệu tài chính hay hợp đồng",
       "Cài đặt chia sẻ: Chọn 'Bất kỳ ai có đường liên kết' -> Đặt vai trò 'Người xem' (Viewer) để chỉ cho xem ảnh mẫu bán hàng, không thể sửa hay xóa",
       "Để bảo mật tuyệt đối và hiển thị ảnh tức thì: Tại màn hình '/san-pham/nhap-hang-loat', kéo thả cả folder ảnh từ máy tính vào ô '2. Thư mục ảnh sản phẩm'",
-      "Hệ thống smeOS sẽ lưu ảnh vào Cloud Storage riêng của cửa hàng, bảo vệ bằng Signed URL có chữ ký HMAC tự hết hạn sau 24h",
+      "Hệ thống ALG sẽ lưu ảnh vào Cloud Storage riêng của cửa hàng, bảo vệ bằng Signed URL có chữ ký HMAC tự hết hạn sau 24h",
     ],
     routePath: "/san-pham/nhap-hang-loat",
     actionLabel: "Mở Nhập Hàng Loạt & Ảnh",

@@ -57,7 +57,7 @@ describe("Kiến trúc phân tách: Ops Copilot (Vận hành SaaS) vs Sales Conc
         query: "Hệ thống có những tính năng gì hỗ trợ tiệm hoa?",
       })
 
-      expect(result.replyText).toContain("smeOS Ops Copilot")
+      expect(result.replyText).toContain("ALG Ops Copilot")
       expect(result.replyText).toContain("Phân tích hoa")
       expect(result.replyText).toContain("Đơn Hàng & Xưởng")
       // Không chứa nội dung mời chào mua hoa cho khách

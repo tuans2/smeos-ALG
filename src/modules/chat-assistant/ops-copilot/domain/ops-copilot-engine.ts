@@ -41,7 +41,7 @@ export class OpsCopilotEngine {
     const trimmed = input.query.trim()
     if (!trimmed) {
       return {
-        replyText: "Dạ, em là smeOS Ops Copilot! Anh/chị cần hướng dẫn thao tác tính năng nào trên hệ thống ạ?",
+        replyText: "Dạ, em là ALG Ops Copilot! Anh/chị cần hướng dẫn thao tác tính năng nào trên hệ thống ạ?",
       }
     }
 

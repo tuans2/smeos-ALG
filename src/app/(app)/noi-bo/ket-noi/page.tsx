@@ -166,7 +166,7 @@ export default function KetNoiPage() {
             Profile Kết Nối Nội Bộ
           </span>
         }
-        description="Mã định danh được dùng để kết nối và xác nhận danh tính trong hệ thống smeOS"
+        description="Mã định danh được dùng để kết nối và xác nhận danh tính trong hệ thống ALG"
         actions={
           <Link
             href="/tin-nhan"

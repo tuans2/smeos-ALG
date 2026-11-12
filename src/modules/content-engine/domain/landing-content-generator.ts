@@ -83,7 +83,7 @@ export interface GeneratedLandingPackage {
  * Sinh gói nội dung hoàn chỉnh cho 7 Sections của Landing Page
  */
 export function generateLandingPageContent(input: LandingContentInput): GeneratedLandingPackage {
-  const shop = input.shopName || "Tiệm hoa smeOS"
+  const shop = input.shopName || "Tiệm hoa ALG"
   const occasion = input.occasionLabel || "Dịp Đặc Biệt"
   const directive = input.userDirectives ? sanitizeFlowerText(input.userDirectives) : ""
   // Ưu đãi chỉ khi tiệm bật "Giảm %" trong Hồ sơ tiệm — không có thì không hứa giảm giá

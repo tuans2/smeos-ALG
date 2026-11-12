@@ -4,7 +4,7 @@ import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-
 import { PosterBannerClient } from "@/components/ad-banner-poster/poster-banner-client"
 
 export const metadata = {
-  title: "Tạo poster và banner quảng cáo | smeOS",
+  title: "Tạo poster và banner quảng cáo | ALG",
   description: "Tạo bộ ấn phẩm quảng cáo đa kênh, đa kích thước (1:1, 4:5, 9:16, 16:9, A4) chuẩn sàn bằng AI",
 }
 

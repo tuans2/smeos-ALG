@@ -4,7 +4,7 @@ import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-
 import { ProductPhotoStudioEntry } from "@/components/product-photo-studio/product-photo-studio-entry"
 
 export const metadata = {
-  title: "Tạo ảnh sản phẩm chuyên nghiệp | smeOS",
+  title: "Tạo ảnh sản phẩm chuyên nghiệp | ALG",
   description: "Biến ảnh chụp thô bằng điện thoại thành ảnh studio thương mại đạt chuẩn sàn bằng AI",
 }
 

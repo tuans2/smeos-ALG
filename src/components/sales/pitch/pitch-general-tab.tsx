@@ -135,7 +135,7 @@ export function PitchGeneralTab({
             value={shopName}
             onChange={(e) => setShopName(e.target.value)}
             className="w-full"
-            placeholder="smeOS Boutique"
+            placeholder="ALG Boutique"
           />
         </div>
       </div>

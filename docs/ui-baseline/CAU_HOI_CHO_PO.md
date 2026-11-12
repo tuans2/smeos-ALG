@@ -12,7 +12,7 @@ Người giao việc đã quyết ngày 11/11/2026; **PO cần xác nhận trư�
 | 1 | 6 hạng mục theo khuyến nghị | T3-1, T3-3, T3-4, T3-5(a), T3-2 (phương án A), T3-6 (phương án A) — mỗi mục một commit có test; kiểm trên server: hai nút nổi xếp cột góc dưới phải, không chồng nhau, không đè thanh đáy ở 390 và 1280px. T3-5(b) đã đúng sẵn ở production (bộ lọc chỉ hiện ở dev); T3-5(c) giữ nguyên nhãn |
 | 2 | Chụp luồng upload trên local | Xem `luong-upload-anh/README.md`: 4.15, 4.18, 5.13 đủ; 4.24 đủ trừ bước AI; 4.16, 7.1, 7.2 dừng ở bước AI |
 | 3 | Xử lý lớp màu không token | Phương án B (codemod sang token sẵn có) + luật lint R24 |
-| 4 | Đổi theo bộ nhận diện ALG | **Chờ người giao việc cung cấp bộ nhận diện** (xem `KIEM_KE_THUONG_HIEU_VA_MAU_CUNG.md` §5) |
+| 4 | Đổi theo bộ nhận diện ALG — mức 3, tên "ALG" | Đã làm, xem `BAO_CAO_DOI_THUONG_HIEU_ALG.md` |
 | — | Thanh trượt (`Slider`) | Chưa có quyết định |
 
 ---

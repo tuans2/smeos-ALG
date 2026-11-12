@@ -13,7 +13,7 @@ export const homeEn = {
   },
   tiers: {
     mother: {
-      title: "WHAT WOULD YOU LIKE TO DO WITH SMEOS PLATFORM?",
+      title: "WHAT WOULD YOU LIKE TO DO WITH ALG PLATFORM?",
       subtitle: "Task direction center for Platform Operations Administrators",
     },
     industry: {
@@ -53,7 +53,7 @@ export const homeEn = {
   actionCards: {
     report: {
       title: "View Reports",
-      desc: "Track revenue, orders, and smeOS activity for your shop.",
+      desc: "Track revenue, orders, and ALG activity for your shop.",
     },
     trends: {
       title: "Trending Bouquets",

@@ -273,7 +273,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
             {activeTab === "privacy" && (
               <div className="space-y-4">
                 <div className="rounded-lg bg-info-bg border border-info/30 p-3 text-caption text-info">
-                  🛡️ <strong>Chính sách bảo vệ người tiêu dùng:</strong> smeOS chỉ gửi tin nhắn nhắc nhở hoặc tiếp thị qua các kênh khách hàng đã đồng ý (Consent).
+                  🛡️ <strong>Chính sách bảo vệ người tiêu dùng:</strong> ALG chỉ gửi tin nhắn nhắc nhở hoặc tiếp thị qua các kênh khách hàng đã đồng ý (Consent).
                 </div>
 
                 <div className="divide-y divide-border rounded-xl border border-border">

@@ -68,7 +68,7 @@ export function MobileNavDrawer({ children }: { children: React.ReactNode }) {
             <Menu size={22} />
           </Button>
           <span className="truncate text-title-sm font-bold text-text">
-            {(orgName || "smeOS").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
+            {(orgName || "ALG").replace(/\s*\(\s*dev\s*\)/gi, "").trim()}
           </span>
         </header>
       )}

@@ -34,7 +34,7 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   {
     id: "view-store-overview",
     goal: "Xem báo cáo",
-    description: "Xem doanh thu, số đơn hàng và hoạt động trên smeOS của cửa hàng.",
+    description: "Xem doanh thu, số đơn hàng và hoạt động trên ALG của cửa hàng.",
     icon: "BarChart3",
     roleScope: "STORE",
     category: "SINGLE",
@@ -335,8 +335,8 @@ export const STORE_JOURNEYS: JourneyDefinition[] = [
   },
   {
     id: "customer-service-chatbot",
-    goal: "Hỏi trợ lý smeOS",
-    description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng smeOS.",
+    goal: "Hỏi trợ lý ALG",
+    description: "Trợ lý AI giải đáp thắc mắc và hướng dẫn bạn dùng ALG.",
     icon: "Bot",
     badgeText: "Trợ lý AI",
     roleScope: "STORE",

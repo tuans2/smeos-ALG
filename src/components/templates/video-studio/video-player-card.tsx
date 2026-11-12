@@ -142,7 +142,7 @@ export function VideoPlayerCard({
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="text-caption font-bold text-white/90">@smeOS Studio</div>
+            <div className="text-caption font-bold text-white/90">@ALG Studio</div>
             {normalizedVideoUrl && (
               <Button variant="ghost"
                 type="button"

@@ -107,7 +107,7 @@ export class MultiChannelDispatchNotifier implements IDispatchNotifier {
     const isInvite = baseActions.some((a) => a.text === CLAIM_BUTTON_TEXT)
     const chatSent = partnerOrgId && !target.existingTelegramCard ? await postToPartnerRoom(ctx, target, partnerOrgId, isInvite) : false
     const actions = partnerOrgId
-      ? [...baseActions, { text: "💬 Mở trong smeOS", url: `${publicAppUrl()}/tin-nhan?chuoi=${ctx.organizationId}` }]
+      ? [...baseActions, { text: "💬 Mở trong ALG", url: `${publicAppUrl()}/tin-nhan?chuoi=${ctx.organizationId}` }]
       : baseActions
 
     const fullText = `<b>${target.title ?? `🌸 [ĐƠN GIA CÔNG #${target.orderCode}]`}</b>\n\n${target.messageText}`

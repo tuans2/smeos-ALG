@@ -50,7 +50,7 @@ export function FloraOSGlobalCopilot() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: "smeOS In-App Copilot",
+        title: "ALG In-App Copilot",
         channel: "INTERNAL_DASHBOARD",
       }),
     })
@@ -85,7 +85,7 @@ export function FloraOSGlobalCopilot() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            title: "smeOS In-App Copilot",
+            title: "ALG In-App Copilot",
             channel: "INTERNAL_DASHBOARD",
           }),
         })
@@ -188,7 +188,7 @@ export function FloraOSGlobalCopilot() {
             type="button"
             variant="ghost"
             onClick={() => setIsOpen(true)}
-            aria-label="Mở smeOS Copilot"
+            aria-label="Mở ALG Copilot"
             className="group relative flex h-11 w-11 p-0 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl transition-all hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
@@ -197,7 +197,7 @@ export function FloraOSGlobalCopilot() {
             </span>
             <Bot className="h-5 w-5 shrink-0 transition-transform group-hover:rotate-6" />
             <div className="pointer-events-none absolute right-full mr-2.5 hidden sm:flex items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-button)] bg-text/90 px-2.5 py-1 text-caption font-bold text-white shadow-md backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity">
-              <span>smeOS Copilot</span>
+              <span>ALG Copilot</span>
               <kbd className="rounded bg-white/20 px-1 py-0.2 text-caption font-mono">⌘K</kbd>
             </div>
           </Button>
@@ -215,7 +215,7 @@ export function FloraOSGlobalCopilot() {
           <div
             role="dialog"
             aria-modal="true"
-            aria-label="smeOS Ops Copilot"
+            aria-label="ALG Ops Copilot"
             className={cn(
               "fixed z-50 flex flex-col bg-surface border border-border shadow-2xl overflow-hidden",
               "inset-x-0 bottom-0 rounded-t-2xl max-h-[85dvh] h-[540px] pb-[env(safe-area-inset-bottom)]",
@@ -234,7 +234,7 @@ export function FloraOSGlobalCopilot() {
                 </span>
                 <div>
                   <div className="text-caption font-extrabold text-text flex items-center gap-1.5">
-                    smeOS Ops Copilot
+                    ALG Ops Copilot
                     <span className="inline-block h-2 w-2 rounded-full bg-success animate-pulse motion-reduce:animate-none" />
                   </div>
                   <div className="text-caption font-medium text-text-muted">Trợ lý Vận hành & Hướng dẫn</div>
@@ -300,7 +300,7 @@ export function FloraOSGlobalCopilot() {
                   {sending && (
                     <div className="flex items-center gap-2 text-caption text-text-muted p-2 rounded-xl bg-surface-alt animate-pulse motion-reduce:animate-none">
                       <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none text-primary" />
-                      <span>smeOS Copilot đang tra cứu và soạn câu trả lời...</span>
+                      <span>ALG Copilot đang tra cứu và soạn câu trả lời...</span>
                     </div>
                   )}
                 </>

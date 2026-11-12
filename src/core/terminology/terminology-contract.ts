@@ -20,7 +20,7 @@ export type SmeOsTier =
  * 🏛️ TẦNG 1: Thuật ngữ Chuẩn hóa Nền tảng SaaS Mẹ
  */
 export interface SaasMotherTerminology {
-  readonly platformName: string           // "smeOS — Nền tảng Điều hành Doanh nghiệp"
+  readonly platformName: string           // "ALG — Nền tảng Điều hành Doanh nghiệp"
   readonly platformAdminTitle: string     // "Quản trị viên nền tảng"
   readonly tenantEntityTitle: string      // "Tổ chức / Doanh nghiệp"
   readonly subscriptionPlanTitle: string  // "Gói giải pháp dịch vụ"

@@ -221,7 +221,7 @@ export function IndustrySelectSection({
               <Lock size={14} className="text-text-muted shrink-0" />
               <span>Ngành nghề được khóa để bảo vệ toàn vẹn dữ liệu mẫu sản phẩm và catalog đã tạo.</span>
             </div>
-            <p className="text-caption text-text-muted shrink-0">Cần đổi ngành? Liên hệ quản trị viên smeOS.</p>
+            <p className="text-caption text-text-muted shrink-0">Cần đổi ngành? Liên hệ quản trị viên ALG.</p>
           </div>
         )}
 

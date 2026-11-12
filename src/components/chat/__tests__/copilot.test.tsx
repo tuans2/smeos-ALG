@@ -13,8 +13,8 @@ describe("FloraOSGlobalCopilot (S3-04, UI-F-01)", () => {
   it("renders floating trigger button with accessible label and keyboard hint", () => {
     const html = renderToStaticMarkup(<FloraOSGlobalCopilot />)
 
-    expect(html).toContain('aria-label="Mở smeOS Copilot"')
-    expect(html).toContain("smeOS Copilot")
+    expect(html).toContain('aria-label="Mở ALG Copilot"')
+    expect(html).toContain("ALG Copilot")
     expect(html).toContain("⌘K")
   })
 })

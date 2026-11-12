@@ -31,7 +31,7 @@ interface LandingCampaignTabProps {
 }
 export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: LandingCampaignTabProps) {
   const { business } = useTenantProfile()
-  const currentShopName = shopName || business?.display_name || "Tiệm hoa smeOS"
+  const currentShopName = shopName || business?.display_name || "Tiệm hoa ALG"
 
   // Phase: mode-selection → input → (executing via wizard) → published
   const [journeyPhase, setJourneyPhase] = useState<"mode-selection" | "input" | "wizard">("mode-selection")

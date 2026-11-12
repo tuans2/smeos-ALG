@@ -149,7 +149,7 @@ export function ScheduledPulsePanel({
                     onCheckedChange={(checked) => setNotifyCopilot((checked === true))}
                     className="h-4 w-4 rounded accent-primary"
                   />
-                  <span>smeOS Copilot chào buổi sáng</span>
+                  <span>ALG Copilot chào buổi sáng</span>
                 </label>
                 <label className="flex items-center gap-2 text-caption text-text cursor-pointer">
                   <Checkbox

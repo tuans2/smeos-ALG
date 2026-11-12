@@ -79,7 +79,7 @@ export default function DangKyThanhCongPage() {
 
         {/* Branding */}
         <p className="text-center text-caption text-text-muted">
-          smeOS Platform · Giai đoạn thử nghiệm (Beta)
+          ALG Platform · Giai đoạn thử nghiệm (Beta)
         </p>
       </div>
     </main>

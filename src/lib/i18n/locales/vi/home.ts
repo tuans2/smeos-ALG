@@ -14,7 +14,7 @@ export const homeVi = {
   },
   "tiers": {
     "mother": {
-      "title": "QUẢN TRỊ NỀN TẢNG SMEOS",
+      "title": "QUẢN TRỊ NỀN TẢNG ALG",
       "subtitle": "Chọn phân hệ quản lý hệ thống."
     },
     "industry": {
@@ -54,7 +54,7 @@ export const homeVi = {
   "actionCards": {
     "report": {
       "title": "Xem báo cáo",
-      "desc": "Xem doanh thu, số đơn hàng và hoạt động trên smeOS của cửa hàng."
+      "desc": "Xem doanh thu, số đơn hàng và hoạt động trên ALG của cửa hàng."
     },
     "trends": {
       "title": "Xu hướng thị trường",

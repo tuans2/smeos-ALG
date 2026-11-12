@@ -238,7 +238,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
         {isWatermarked && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10 rotate-12">
             <span className="text-display font-black uppercase tracking-widest text-white">
-              smeOS Banner
+              ALG Banner
             </span>
           </div>
         )}

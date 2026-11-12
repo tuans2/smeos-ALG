@@ -5,7 +5,7 @@ import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-
 import { LandingPageStudioClient } from "@/components/landing-page/landing-page-studio-client"
 
 export const metadata = {
-  title: "Tạo Landing Page cửa hàng hoặc chuỗi | smeOS",
+  title: "Tạo Landing Page cửa hàng hoặc chuỗi | ALG",
   description: "Xây dựng trang giới thiệu trực tuyến chuyên nghiệp, tối ưu di động với link chia sẻ riêng bằng AI",
 }
 

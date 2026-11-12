@@ -16,7 +16,7 @@ import type {
 } from "./terminology-contract"
 
 export const SAAS_MOTHER_TERMS: SaasMotherTerminology = {
-  platformName: "smeOS — Hệ Điều Hành Doanh Nghiệp Tinh Gọn",
+  platformName: "ALG — Hệ Điều Hành Doanh Nghiệp Tinh Gọn",
   platformAdminTitle: "Quản trị viên nền tảng",
   tenantEntityTitle: "Tổ chức doanh nghiệp",
   subscriptionPlanTitle: "Gói giải pháp dịch vụ",
