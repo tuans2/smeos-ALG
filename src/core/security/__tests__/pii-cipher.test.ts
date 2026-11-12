@@ -17,7 +17,9 @@ describe("pii-cipher", () => {
     expect(a).not.toContain("0912")
     expect(decryptPii(key, a)).toBe("0912 345 678")
     expect(piiKeyVersion(a)).toBe(1)
-    const tampered = a.slice(0, -2) + (a.endsWith("A") ? "B" : "A") + a.slice(-1)
+    // Đổi ký tự kế cuối thành một ký tự KHÁC nó (trước đây so với ký tự cuối → ~1/64 lần chuỗi không đổi, test đỏ ngẫu nhiên)
+    const tampered = a.slice(0, -2) + (a.at(-2) === "A" ? "B" : "A") + a.slice(-1)
+    expect(tampered).not.toBe(a)
     expect(() => decryptPii(key, tampered)).toThrow()
     expect(() => decryptPii(newDataKey(master).key, a)).toThrow() // khoá của tổ chức khác
   })
