@@ -43,3 +43,9 @@ ccbec661ad7921774cb8376bbccf33c63f894139:tests/tenant/internal-contract-integrat
 # Giá trị giả của test (nhánh claude/bold-meitner-nk07bd, 11/11/2026): `SESSION_SECRET` mẫu trong
 # tests/unit/lib/env-empty-values.test.ts, không phải bí mật thật (đã đọc tận mắt). CI tải mọi nhánh nên quét cả nhánh này.
 439e71d9f0efec341c97ca769f747bd14e221ebb:tests/unit/lib/env-empty-values.test.ts:generic-api-key:7
+# Tên khoá localStorage thu gọn menu, alg_nav_collapsed_v1 (nhánh claude/fervent-pascal-ilhcgb, 12/11/2026), đổi tên
+# từ smeos_nav_collapsed_v1; không phải bí mật (đã đọc tận mắt). CI tải mọi nhánh nên quét cả nhánh này.
+4e7ba0de870c316043d8e39ebcb50bb1d8c4679e:src/components/layout/nav-storage.ts:generic-api-key:12
+# Dòng chú thích dòng 46 trong .gitleaksignore của nhánh claude/exciting-keller-eoif17 (12/11/2026) chép lại đúng tên
+# khoá trên nên cũng bị báo; không phải bí mật (đã đọc tận mắt). CI tải mọi nhánh nên quét cả nhánh này.
+87134b04819aa1ae35c488b289aea2533af2fe77:.gitleaksignore:generic-api-key:46
