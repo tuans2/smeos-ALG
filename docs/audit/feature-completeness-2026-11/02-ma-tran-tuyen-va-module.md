@@ -150,7 +150,7 @@ Từ 12/11/2026 mọi tuyến khoá đều có guard URL (L-03 đã sửa; `test
 | `chat-assistant` | 10 | 11 | 5 | 2 | 6/13 | 8 | 11 |  |
 | `content-engine` | 27 | 7 | 5 | 2 | 10/33 | 6 | 12 |  |
 | `content-studio` | 2 | 2 | 1 | 0 | 2/1 | 4 | 1 | Mới sau lần 1 (Tạo nội dung 4 bước, PR #11/#12) |
-| `coordinator` | 21 | 21 | 10 | 1 | 8/14 | 22 | 10 | `connectors/crm-notification-connector.ts` trả `true` mà không làm gì — mã chết, không nơi nào gọi |
+| `coordinator` | 21 | 21 | 10 | 1 | 8/14 | 22 | 10 | Mã chết `DirectCrmNotificationConnector` đã xoá 12/11 (L-07) |
 | `costing` | 9 | 2 | 1 | 0 | 5/0 | 9 | 7 |  |
 | `creative-production` | 19 | 13 | 4 | 3 | 2/21 | 22 | 10 | `narrative-ai-adapter.ts` là stub, dùng luật thay AI |
 | `crm` | 10 | 20 | 10 | 0 | 9/11 | 17 | 7 |  |

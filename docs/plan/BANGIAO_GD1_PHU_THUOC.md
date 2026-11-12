@@ -8,7 +8,7 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 |---|---:|---:|
 | Trang | 90 | 27 |
 | API | 488 | 61 |
-| Tệp trong `src/` | 3589 | 675 |
+| Tệp trong `src/` | 3589 | 674 |
 
 ## Code trong phạm vi chạm vùng không giao
 
@@ -47,7 +47,7 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `chain-partnership` | 13/14 |
 | `chat-assistant` | 51/54 |
 | `content-engine` | 42/44 |
-| `coordinator` | 57/76 |
+| `coordinator` | 57/75 |
 | `creative-production` | 17/68 |
 | `crm` | 40/41 |
 | `field-platform` | 41/46 |
