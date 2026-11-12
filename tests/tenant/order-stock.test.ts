@@ -59,8 +59,8 @@ describe("tồn kho theo số lượng", () => {
     const res = await postOrder(withSession(`${BASE}/orders`, a.token, {
       method: "POST",
       body: JSON.stringify({
-        branchId,
-        deliveryAddress: { recipientName: "Trần Thị Bình", phone: "0901 234 567", street: "12 Lê Lợi" },
+        branch_id: branchId,
+        delivery_address: { recipientName: "Trần Thị Bình", phone: "0901 234 567", street: "12 Lê Lợi" },
         items: [{ description: "Phí gói quà", quantity: 1, unitPriceVnd: 20_000, metadata: { note: "giấy kraft", stock: { inventoryId: inv.id, quantity: 500 } } }],
       }),
     }))

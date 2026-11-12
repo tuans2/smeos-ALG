@@ -61,7 +61,7 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
     const resAssignB = await assignFloristRoute(
       withSession(`${BASE}/orders/${orderId}/assign`, b.token, {
         method: "POST",
-        body: JSON.stringify({ assigneeId: b.userId }),
+        body: JSON.stringify({ assignee_id: b.userId }),
       }),
       { params: Promise.resolve({ id: orderId }) }
     )
@@ -73,7 +73,7 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
     const resAssignA = await assignFloristRoute(
       withSession(`${BASE}/orders/${orderId}/assign`, a.token, {
         method: "POST",
-        body: JSON.stringify({ assigneeId: a.userId }),
+        body: JSON.stringify({ assignee_id: a.userId }),
       }),
       { params: Promise.resolve({ id: orderId }) }
     )

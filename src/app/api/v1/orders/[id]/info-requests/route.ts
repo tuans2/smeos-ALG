@@ -7,6 +7,7 @@ import { jsonResponse } from "@/core/http/response"
 import { createOrderInfoRequest, syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { createInfoRequestBody } from "@/app/api/v1/_contracts/requests-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const GET = defineRoute({
   auth: { kind: "tenant", capability: "R1" },
@@ -20,7 +21,7 @@ export const POST = defineRoute({
   auth: { kind: "tenant", capability: "R3" },
   handler: async ({ request, ctx, params }) => {
     const { id } = params as { id: string }
-    const body = createInfoRequestBody.parse(await request.json())
+    const body = camelKeys(createInfoRequestBody.parse(await request.json()))
     const created = await createOrderInfoRequest(ctx, id, { ...body, dueAt: body.dueAt ? new Date(body.dueAt) : null, channel: body.channel ?? null })
     return jsonResponse({ data: created }, { status: 201 })
   },

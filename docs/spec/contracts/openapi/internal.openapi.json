@@ -103866,10 +103866,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "branchId": {
+                  "branch_id": {
                     "type": "string"
                   },
-                  "customerId": {
+                  "customer_id": {
                     "type": "string"
                   },
                   "items": {
@@ -103911,20 +103911,20 @@
                       ]
                     }
                   },
-                  "pricingRuleRef": {
+                  "pricing_rule_ref": {
                     "type": "object",
                     "propertyNames": {
                       "type": "string"
                     },
                     "additionalProperties": {}
                   },
-                  "cardMessage": {
+                  "card_message": {
                     "type": "string"
                   },
-                  "internalNote": {
+                  "internal_note": {
                     "type": "string"
                   },
-                  "deliveryWindow": {
+                  "delivery_window": {
                     "type": "object",
                     "properties": {
                       "date": {
@@ -103939,7 +103939,7 @@
                       "date"
                     ]
                   },
-                  "deliveryAddress": {
+                  "delivery_address": {
                     "type": "object",
                     "properties": {
                       "recipientName": {
@@ -104861,7 +104861,7 @@
       "patch": {
         "operationId": "updateOrder",
         "summary": "Sửa đơn / chuyển trạng thái sản xuất, giao hàng",
-        "description": "Không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` (422) — đi qua thu tiền, hoàn tất, huỷ. Đơn đã sang Điều phối không đổi được `status`/`productionStatus`/`deliveryStatus` (409) — đi qua `/coordinator/orders/{id}/stage`. Đơn hoàn tất / đã huỷ chỉ sửa `internalNote` (409).",
+        "description": "Không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` (422) — đi qua thu tiền, hoàn tất, huỷ. Đơn đã sang Điều phối không đổi được `status`/`production_status`/`delivery_status` (409) — đi qua `/coordinator/orders/{id}/stage`. Đơn hoàn tất / đã huỷ chỉ sửa `internal_note` (409).",
         "tags": [
           "Đơn hàng"
         ],
@@ -104898,7 +104898,7 @@
                       "CANCELLED"
                     ]
                   },
-                  "productionStatus": {
+                  "production_status": {
                     "type": "string",
                     "enum": [
                       "WAITING",
@@ -104908,7 +104908,7 @@
                       "READY"
                     ]
                   },
-                  "deliveryStatus": {
+                  "delivery_status": {
                     "type": "string",
                     "enum": [
                       "PENDING",
@@ -104918,13 +104918,13 @@
                       "FAILED"
                     ]
                   },
-                  "cardMessage": {
+                  "card_message": {
                     "type": "string"
                   },
-                  "internalNote": {
+                  "internal_note": {
                     "type": "string"
                   },
-                  "deliveryWindow": {
+                  "delivery_window": {
                     "type": "object",
                     "properties": {
                       "date": {
@@ -104938,7 +104938,7 @@
                       "date"
                     ]
                   },
-                  "deliveryAddress": {
+                  "delivery_address": {
                     "type": "object",
                     "properties": {
                       "recipientName": {
@@ -105426,7 +105426,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "assigneeId": {
+                  "assignee_id": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -105441,7 +105441,7 @@
                   }
                 },
                 "required": [
-                  "assigneeId"
+                  "assignee_id"
                 ]
               }
             }
@@ -107271,12 +107271,12 @@
                     "minLength": 1,
                     "maxLength": 500
                   },
-                  "requestedFrom": {
+                  "requested_from": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 200
                   },
-                  "dueAt": {
+                  "due_at": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -107304,7 +107304,7 @@
                   "field",
                   "label",
                   "reason",
-                  "requestedFrom"
+                  "requested_from"
                 ]
               }
             }
@@ -123131,7 +123131,7 @@
             }
           },
           {
-            "name": "leadId",
+            "name": "lead_id",
             "in": "query",
             "required": false,
             "schema": {
@@ -123139,7 +123139,7 @@
             }
           },
           {
-            "name": "customerId",
+            "name": "customer_id",
             "in": "query",
             "required": false,
             "schema": {
@@ -123502,19 +123502,7 @@
                       "null"
                     ]
                   },
-                  "leadId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
                   "customer_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "customerId": {
                     "type": [
                       "string",
                       "null"
@@ -123526,19 +123514,7 @@
                       "null"
                     ]
                   },
-                  "assetUsageId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
                   "valid_until": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "validUntil": {
                     "type": [
                       "string",
                       "null"
@@ -123548,16 +123524,7 @@
                     "type": "number",
                     "minimum": 0
                   },
-                  "discountAmount": {
-                    "type": "number",
-                    "minimum": 0
-                  },
                   "shipping_fee": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 100000000
-                  },
-                  "shippingFee": {
                     "type": "number",
                     "minimum": 0,
                     "maximum": 100000000
@@ -124258,26 +124225,11 @@
                       "null"
                     ]
                   },
-                  "validUntil": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
                   "discount_amount": {
                     "type": "number",
                     "minimum": 0
                   },
-                  "discountAmount": {
-                    "type": "number",
-                    "minimum": 0
-                  },
                   "shipping_fee": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 100000000
-                  },
-                  "shippingFee": {
                     "type": "number",
                     "minimum": 0,
                     "maximum": 100000000
