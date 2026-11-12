@@ -15,9 +15,9 @@ const API = "/api/v1/internal-chat/conversations"
 function requestedRoomTarget(): Record<string, string> | null {
   const q = new URLSearchParams(window.location.search)
   const pick = (k: string) => q.get(k)
-  if (pick("doi-tac")) return { partnerOrgId: pick("doi-tac")! }
-  if (pick("chuoi")) return { chainOrgId: pick("chuoi")! }
-  if (pick("chi-nhanh")) return { branchId: pick("chi-nhanh")! }
+  if (pick("doi-tac")) return { partner_org_id: pick("doi-tac")! }
+  if (pick("chuoi")) return { chain_org_id: pick("chuoi")! }
+  if (pick("chi-nhanh")) return { branch_id: pick("chi-nhanh")! }
   return null
 }
 

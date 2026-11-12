@@ -75,12 +75,12 @@ describe("màn Đơn cần giao của Shipper", () => {
 
     expect((await send(hung.token, id, { event: "PICKED_UP" })).status).toBe(200)
     expect((await prisma.order_coordinations.findUniqueOrThrow({ where: { order_id: id } })).delivery_state).toBe("PICKED_UP")
-    expect((await send(hung.token, id, { event: "DELIVERED_SUCCESS", recipientSignedName: "Bình" })).status).toBe(422)
+    expect((await send(hung.token, id, { event: "DELIVERED_SUCCESS", recipient_signed_name: "Bình" })).status).toBe(422)
 
     const photo = await prisma.assets.create({
       data: { organization_id: a.organizationId, kind: "ORIGINAL", storage_key: `org/${a.organizationId}/unfiled/pod.png`, mime_type: "image/png", created_by: hung.userId },
     })
-    expect((await send(hung.token, id, { event: "DELIVERED_SUCCESS", podAssetId: photo.id })).status).toBe(200)
+    expect((await send(hung.token, id, { event: "DELIVERED_SUCCESS", pod_asset_id: photo.id })).status).toBe(200)
     expect((await prisma.order_coordinations.findUniqueOrThrow({ where: { order_id: id } })).stage).toBe("DELIVERED")
     expect((await runs(hung.token)).runs).toHaveLength(0)
   })

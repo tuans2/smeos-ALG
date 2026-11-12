@@ -31,7 +31,7 @@ const params = <T extends Record<string, string>>(p: T) => ({ params: Promise.re
 
 async function connectEcho(t: Tenant): Promise<{ id: string; connectionRef: string }> {
   const res = await connect(
-    withSession(`${BASE}/connections`, t.token, { method: "POST", body: JSON.stringify({ connectorKey: "test_echo", secret: SECRET }) })
+    withSession(`${BASE}/connections`, t.token, { method: "POST", body: JSON.stringify({ connector_key: "test_echo", secret: SECRET }) })
   )
   expect(res.status).toBe(201)
   const body = (await readJson(res)) as { connection: { id: string; connectionRef: string } }

@@ -15,7 +15,7 @@ export const integrationApi = {
   connect: (connectorKey: string, secret: string) =>
     call<{ connection: ConnectionView }>("/api/v1/integrations/connections", {
       method: "POST",
-      body: JSON.stringify({ connectorKey, secret }),
+      body: JSON.stringify({ connector_key: connectorKey, secret }),
     }),
   disconnect: (id: string) => call<{ ok: true }>(`/api/v1/integrations/connections/${id}`, { method: "DELETE" }),
   test: (id: string) => call<{ connection: ConnectionView }>(`/api/v1/integrations/connections/${id}/test`, { method: "POST" }),

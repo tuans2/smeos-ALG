@@ -11,7 +11,7 @@ export const GET = defineRoute({
   auth: { kind: "tenant", capability: "F1" },
   handler: async ({ request, ctx }) => {
     const url = new URL(request.url)
-    const roleKey = url.searchParams.get("roleKey") ?? undefined
+    const roleKey = url.searchParams.get("role_key") ?? undefined
 
     const defaults = await getStoreNotificationDefaults(ctx.organizationId, roleKey)
     return jsonResponse({ data: defaults })
@@ -20,17 +20,16 @@ export const GET = defineRoute({
 
 export const PATCH = defineRoute({
   auth: { kind: "tenant", capability: "F2" },
-  handler: async ({ request, ctx }) => {
-    const body = patchStoreDefaultSchema.parse(await request.json())
-
+  body: patchStoreDefaultSchema,
+  handler: async ({ ctx, body }) => {
     await updateStoreNotificationDefault({
       organizationId: ctx.organizationId,
-      eventKey: body.eventKey,
+      eventKey: body.event_key,
       channel: body.channel as NotifyChannel,
-      roleKey: body.roleKey,
+      roleKey: body.role_key,
       enabled: body.enabled,
-      scheduleStart: body.scheduleStart ?? undefined,
-      scheduleEnd: body.scheduleEnd ?? undefined,
+      scheduleStart: body.schedule_start ?? undefined,
+      scheduleEnd: body.schedule_end ?? undefined,
     })
 
     return jsonResponse({ data: body })

@@ -4,6 +4,7 @@ import { preflightBody } from "@/app/api/v1/_contracts/requests-misc"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { getPrintPreset, runPreflightCheck, type PrintPresetCode } from "@/modules/print/domain/print-preset"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const POST = defineRoute({
   auth: { kind: "tenant", capability: null, reason: "quyền kiểm trong handler: M5, Q1" },
@@ -25,9 +26,10 @@ export const POST = defineRoute({
       }
       throw validationFailed(details)
     }
+    const input = camelKeys(parsed.data)
 
-    const preset = getPrintPreset(parsed.data.presetCode as PrintPresetCode)
-    const report = runPreflightCheck(parsed.data, preset)
+    const preset = getPrintPreset(input.presetCode as PrintPresetCode)
+    const report = runPreflightCheck(input, preset)
 
     return jsonResponse({ data: report })
   },

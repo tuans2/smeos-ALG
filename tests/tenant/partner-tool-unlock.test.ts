@@ -43,7 +43,7 @@ describe("PATCH coordinator/partners/[id]/tools", () => {
   })
 
   it("chuỗi sở hữu ghi được; các khoá settings khác giữ nguyên", async () => {
-    const res = await call(chain, partnershipId, { unlockedTools: ["catalog", "the-chao", "catalog"] })
+    const res = await call(chain, partnershipId, { unlocked_tools: ["catalog", "the-chao", "catalog"] })
     expect(res.status).toBe(200)
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: partner.organizationId } })
     expect(org.settings).toMatchObject({
@@ -54,20 +54,20 @@ describe("PATCH coordinator/partners/[id]/tools", () => {
   })
 
   it("lưu [] (khoá hết) được giữ là mảng rỗng, không bị hiểu thành null", async () => {
-    await call(chain, partnershipId, { unlockedTools: [] })
+    await call(chain, partnershipId, { unlocked_tools: [] })
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: partner.organizationId } })
     expect((org.settings as Record<string, unknown>).unlocked_tools).toEqual([])
   })
 
   it("chuỗi khác gọi vào quan hệ không phải của mình → 404, dữ liệu không đổi", async () => {
-    const res = await call(outsider, partnershipId, { unlockedTools: ["catalog"] })
+    const res = await call(outsider, partnershipId, { unlocked_tools: ["catalog"] })
     expect(res.status).toBe(404)
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: partner.organizationId } })
     expect((org.settings as Record<string, unknown>).unlocked_tools).toBeUndefined()
   })
 
   it("mã công cụ sai định dạng bị từ chối", async () => {
-    const res = await call(chain, partnershipId, { unlockedTools: ["<script>"] })
+    const res = await call(chain, partnershipId, { unlocked_tools: ["<script>"] })
     expect(res.status).toBe(400)
   })
 })

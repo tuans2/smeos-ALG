@@ -6909,16 +6909,16 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "productId": {
+                  "product_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "checkInDate": {
+                  "check_in_date": {
                     "type": "string",
                     "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
                   },
-                  "checkOutDate": {
+                  "check_out_date": {
                     "type": "string",
                     "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
                   },
@@ -6928,9 +6928,9 @@
                   }
                 },
                 "required": [
-                  "productId",
-                  "checkInDate",
-                  "checkOutDate"
+                  "product_id",
+                  "check_in_date",
+                  "check_out_date"
                 ]
               }
             }
@@ -15349,11 +15349,11 @@
                       "null"
                     ]
                   },
-                  "legalEntityId": {
+                  "legal_entity_id": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "fieldCeilings": {
+                  "field_ceilings": {
                     "type": "object",
                     "propertyNames": {
                       "type": "string"
@@ -15368,15 +15368,15 @@
                       ]
                     }
                   },
-                  "validUntil": {
+                  "valid_until": {
                     "type": "string"
                   }
                 },
                 "required": [
                   "name",
                   "code",
-                  "legalEntityId",
-                  "fieldCeilings"
+                  "legal_entity_id",
+                  "field_ceilings"
                 ]
               }
             }
@@ -16073,7 +16073,7 @@
                       "EMBEDDED_WIDGET"
                     ]
                   },
-                  "isEnabled": {
+                  "is_enabled": {
                     "type": "boolean"
                   },
                   "config": {
@@ -16137,7 +16137,7 @@
                 },
                 "required": [
                   "channel",
-                  "isEnabled"
+                  "is_enabled"
                 ]
               }
             }
@@ -17839,12 +17839,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "perVisitor": {
+                  "per_visitor": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
                   },
-                  "perIp": {
+                  "per_ip": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
@@ -17862,8 +17862,8 @@
                   }
                 },
                 "required": [
-                  "perVisitor",
-                  "perIp"
+                  "per_visitor",
+                  "per_ip"
                 ]
               }
             }
@@ -19292,18 +19292,18 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "occasionId": {
+                  "occasion_id": {
                     "type": "string",
                     "minLength": 1
                   },
-                  "occasionLabel": {
+                  "occasion_label": {
                     "type": "string",
                     "minLength": 1
                   },
-                  "archetypeId": {
+                  "archetype_id": {
                     "type": "string"
                   },
-                  "selectedProducts": {
+                  "selected_products": {
                     "default": [],
                     "type": "array",
                     "items": {
@@ -19339,10 +19339,10 @@
                       ]
                     }
                   },
-                  "userDirectives": {
+                  "user_directives": {
                     "type": "string"
                   },
-                  "discountPercent": {
+                  "discount_percent": {
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 99
@@ -19359,13 +19359,13 @@
                       "type": "string"
                     }
                   },
-                  "targetAudience": {
+                  "target_audience": {
                     "type": "string"
                   },
-                  "designDirection": {
+                  "design_direction": {
                     "type": "string"
                   },
-                  "pageType": {
+                  "page_type": {
                     "type": "string",
                     "enum": [
                       "STORE_BRAND",
@@ -19376,8 +19376,8 @@
                   }
                 },
                 "required": [
-                  "occasionId",
-                  "occasionLabel"
+                  "occasion_id",
+                  "occasion_label"
                 ]
               }
             }
@@ -19740,7 +19740,7 @@
       "post": {
         "operationId": "validateFlowerContent",
         "summary": "Kiểm văn bản với từ điển từ cấm ngành hoa và phong cách cấm của thương hiệu",
-        "description": "Chỉ cần phiên của tổ chức. `autoSanitize: true` → kèm `sanitizedText` (thay bằng gợi ý). Văn bản rỗng → 400.",
+        "description": "Chỉ cần phiên của tổ chức. `auto_sanitize: true` → kèm `sanitizedText` (thay bằng gợi ý). Văn bản rỗng → 400.",
         "tags": [
           "Quản trị AI"
         ],
@@ -19760,7 +19760,7 @@
                     "type": "string",
                     "minLength": 1
                   },
-                  "autoSanitize": {
+                  "auto_sanitize": {
                     "type": "boolean"
                   }
                 },
@@ -21966,30 +21966,30 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "partnerStoreName": {
+                  "partner_store_name": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "partnerCode": {
+                  "partner_code": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "partnershipType": {
+                  "partnership_type": {
                     "type": "string",
                     "enum": [
                       "SUBCONTRACTOR",
                       "FRANCHISE"
                     ]
                   },
-                  "contactName": {
+                  "contact_name": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "contactPhone": {
+                  "contact_phone": {
                     "type": "string",
                     "minLength": 8
                   },
-                  "contactEmail": {
+                  "contact_email": {
                     "type": "string",
                     "format": "email",
                     "pattern": "^(?:[A-Za-z0-9_'+\\-]+\\.)*[A-Za-z0-9_'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
@@ -22007,19 +22007,19 @@
                   "district": {
                     "type": "string"
                   },
-                  "capacityDaily": {
+                  "capacity_daily": {
                     "type": "number"
                   },
-                  "commissionRate": {
+                  "commission_rate": {
                     "type": "number"
                   }
                 },
                 "required": [
-                  "partnerStoreName",
-                  "partnerCode",
-                  "contactName",
-                  "contactPhone",
-                  "contactEmail"
+                  "partner_store_name",
+                  "partner_code",
+                  "contact_name",
+                  "contact_phone",
+                  "contact_email"
                 ]
               }
             }
@@ -35420,19 +35420,19 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "targetPartnerOrgId": {
+                  "target_partner_org_id": {
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
-                  "targetPartnerUserId": {
+                  "target_partner_user_id": {
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   }
                 },
                 "required": [
-                  "targetPartnerOrgId"
+                  "target_partner_org_id"
                 ]
               }
             }
@@ -45997,7 +45997,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "unlockedTools": {
+                  "unlocked_tools": {
                     "maxItems": 200,
                     "type": "array",
                     "items": {
@@ -46007,7 +46007,7 @@
                   }
                 },
                 "required": [
-                  "unlockedTools"
+                  "unlocked_tools"
                 ]
               }
             }
@@ -46112,27 +46112,27 @@
                     "type": "string",
                     "minLength": 2
                   },
-                  "partnerCode": {
+                  "partner_code": {
                     "type": "string",
                     "minLength": 2
                   },
-                  "partnershipType": {
+                  "partnership_type": {
                     "type": "string",
                     "enum": [
                       "SUBCONTRACTOR",
                       "FRANCHISE"
                     ]
                   },
-                  "commissionRate": {
+                  "commission_rate": {
                     "type": "number"
                   },
-                  "capacityDaily": {
+                  "capacity_daily": {
                     "type": "number"
                   }
                 },
                 "required": [
                   "identifier",
-                  "partnerCode"
+                  "partner_code"
                 ]
               }
             }
@@ -46483,7 +46483,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "orderId": {
+                  "order_id": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -46506,7 +46506,7 @@
                       "DISMISSED"
                     ]
                   },
-                  "snoozeMinutes": {
+                  "snooze_minutes": {
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 120
@@ -46517,7 +46517,7 @@
                   }
                 },
                 "required": [
-                  "orderId",
+                  "order_id",
                   "milestone",
                   "action"
                 ]
@@ -68720,16 +68720,16 @@
                       "DELIVERY_FAILED"
                     ]
                   },
-                  "podAssetId": {
+                  "pod_asset_id": {
                     "type": "string",
                     "format": "uuid",
                     "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
-                  "recipientSignedName": {
+                  "recipient_signed_name": {
                     "type": "string",
                     "maxLength": 200
                   },
-                  "failureReason": {
+                  "failure_reason": {
                     "type": "string",
                     "maxLength": 500
                   }
@@ -88114,7 +88114,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "connectorKey": {
+                  "connector_key": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -88133,7 +88133,7 @@
                   }
                 },
                 "required": [
-                  "connectorKey",
+                  "connector_key",
                   "secret"
                 ]
               }
@@ -89025,7 +89025,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "productIds": {
+                  "product_ids": {
                     "minItems": 1,
                     "maxItems": 100,
                     "type": "array",
@@ -89037,7 +89037,7 @@
                   }
                 },
                 "required": [
-                  "productIds"
+                  "product_ids"
                 ]
               }
             }
@@ -89181,7 +89181,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "productIds": {
+                  "product_ids": {
                     "minItems": 1,
                     "maxItems": 100,
                     "type": "array",
@@ -89193,7 +89193,7 @@
                   }
                 },
                 "required": [
-                  "productIds"
+                  "product_ids"
                 ]
               }
             }
@@ -89661,7 +89661,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "connectorKey": {
+                  "connector_key": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -89676,7 +89676,7 @@
                   }
                 },
                 "required": [
-                  "connectorKey",
+                  "connector_key",
                   "mode"
                 ]
               }
@@ -89986,7 +89986,7 @@
       "post": {
         "operationId": "createInternalConversation",
         "summary": "Tạo hoặc lấy lại hội thoại nội bộ",
-        "description": "Thân `{ partnerOrgId }` / `{ chainOrgId }` / `{ branchId }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi).",
+        "description": "Thân `{ partner_org_id }` / `{ chain_org_id }` / `{ branch_id }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -90006,42 +90006,42 @@
                       {
                         "type": "object",
                         "properties": {
-                          "partnerOrgId": {
+                          "partner_org_id": {
                             "type": "string",
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                           }
                         },
                         "required": [
-                          "partnerOrgId"
+                          "partner_org_id"
                         ],
                         "additionalProperties": false
                       },
                       {
                         "type": "object",
                         "properties": {
-                          "chainOrgId": {
+                          "chain_org_id": {
                             "type": "string",
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                           }
                         },
                         "required": [
-                          "chainOrgId"
+                          "chain_org_id"
                         ],
                         "additionalProperties": false
                       },
                       {
                         "type": "object",
                         "properties": {
-                          "branchId": {
+                          "branch_id": {
                             "type": "string",
                             "format": "uuid",
                             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                           }
                         },
                         "required": [
-                          "branchId"
+                          "branch_id"
                         ],
                         "additionalProperties": false
                       }
@@ -90050,7 +90050,7 @@
                   {
                     "type": "object",
                     "properties": {
-                      "conversationType": {
+                      "conversation_type": {
                         "type": "string",
                         "enum": [
                           "CHAIN_PARTNER",
@@ -90061,24 +90061,24 @@
                         "type": "string",
                         "maxLength": 200
                       },
-                      "targetOrganizationId": {
+                      "target_organization_id": {
                         "type": "string",
                         "format": "uuid",
                         "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       },
-                      "targetUserId": {
+                      "target_user_id": {
                         "type": "string",
                         "format": "uuid",
                         "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       },
-                      "orderId": {
+                      "order_id": {
                         "type": "string",
                         "format": "uuid",
                         "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       }
                     },
                     "required": [
-                      "conversationType"
+                      "conversation_type"
                     ]
                   }
                 ]
@@ -91331,7 +91331,7 @@
                       "REJECT_ORDER"
                     ]
                   },
-                  "rejectedReason": {
+                  "rejected_reason": {
                     "type": "string",
                     "maxLength": 500
                   }
@@ -93260,12 +93260,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "productId": {
+                  "product_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
                   },
-                  "masterImageId": {
+                  "master_image_id": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
@@ -93292,7 +93292,7 @@
                   }
                 },
                 "required": [
-                  "productId",
+                  "product_id",
                   "feature",
                   "capabilities",
                   "module"
@@ -93794,7 +93794,7 @@
                     "type": "string",
                     "maxLength": 20
                   },
-                  "assigneeUserId": {
+                  "assignee_user_id": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -100946,7 +100946,7 @@
             }
           },
           {
-            "name": "unreadOnly",
+            "name": "unread_only",
             "in": "query",
             "required": false,
             "schema": {
@@ -101368,7 +101368,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -101393,7 +101393,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
                   "enabled"
                 ]
@@ -101476,7 +101476,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -101495,7 +101495,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel"
                 ]
               }
@@ -101671,7 +101671,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -101688,14 +101688,14 @@
                       "MESSENGER"
                     ]
                   },
-                  "roleKey": {
+                  "role_key": {
                     "type": "string",
                     "minLength": 1
                   },
                   "enabled": {
                     "type": "boolean"
                   },
-                  "priorityOverride": {
+                  "priority_override": {
                     "type": "string",
                     "enum": [
                       "NORMAL",
@@ -101705,9 +101705,9 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
-                  "roleKey",
+                  "role_key",
                   "enabled"
                 ]
               }
@@ -101884,7 +101884,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -101904,14 +101904,14 @@
                   "enabled": {
                     "type": "boolean"
                   },
-                  "muteUntil": {
+                  "mute_until": {
                     "type": "string",
                     "format": "date-time",
                     "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
                   "enabled"
                 ]
@@ -102299,7 +102299,7 @@
         ],
         "parameters": [
           {
-            "name": "roleKey",
+            "name": "role_key",
             "in": "query",
             "required": false,
             "schema": {
@@ -102406,7 +102406,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -102423,24 +102423,24 @@
                       "MESSENGER"
                     ]
                   },
-                  "roleKey": {
+                  "role_key": {
                     "type": "string",
                     "minLength": 1
                   },
                   "enabled": {
                     "type": "boolean"
                   },
-                  "scheduleStart": {
+                  "schedule_start": {
                     "type": "string"
                   },
-                  "scheduleEnd": {
+                  "schedule_end": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
-                  "roleKey",
+                  "role_key",
                   "enabled"
                 ]
               }
@@ -102626,7 +102626,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -102651,7 +102651,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel",
                   "enabled"
                 ]
@@ -102734,7 +102734,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "eventKey": {
+                  "event_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -102753,7 +102753,7 @@
                   }
                 },
                 "required": [
-                  "eventKey",
+                  "event_key",
                   "channel"
                 ]
               }
@@ -103008,7 +103008,7 @@
                       "SOLEMN"
                     ]
                   },
-                  "sortOrder": {
+                  "sort_order": {
                     "type": "integer",
                     "minimum": -9007199254740991,
                     "maximum": 9007199254740991
@@ -103167,12 +103167,12 @@
                       "SOLEMN"
                     ]
                   },
-                  "sortOrder": {
+                  "sort_order": {
                     "type": "integer",
                     "minimum": -9007199254740991,
                     "maximum": 9007199254740991
                   },
-                  "isActive": {
+                  "is_active": {
                     "type": "boolean"
                   }
                 }
@@ -103866,10 +103866,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "branchId": {
+                  "branch_id": {
                     "type": "string"
                   },
-                  "customerId": {
+                  "customer_id": {
                     "type": "string"
                   },
                   "items": {
@@ -103911,20 +103911,20 @@
                       ]
                     }
                   },
-                  "pricingRuleRef": {
+                  "pricing_rule_ref": {
                     "type": "object",
                     "propertyNames": {
                       "type": "string"
                     },
                     "additionalProperties": {}
                   },
-                  "cardMessage": {
+                  "card_message": {
                     "type": "string"
                   },
-                  "internalNote": {
+                  "internal_note": {
                     "type": "string"
                   },
-                  "deliveryWindow": {
+                  "delivery_window": {
                     "type": "object",
                     "properties": {
                       "date": {
@@ -103939,7 +103939,7 @@
                       "date"
                     ]
                   },
-                  "deliveryAddress": {
+                  "delivery_address": {
                     "type": "object",
                     "properties": {
                       "recipientName": {
@@ -104861,7 +104861,7 @@
       "patch": {
         "operationId": "updateOrder",
         "summary": "Sửa đơn / chuyển trạng thái sản xuất, giao hàng",
-        "description": "Không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` (422) — đi qua thu tiền, hoàn tất, huỷ. Đơn đã sang Điều phối không đổi được `status`/`productionStatus`/`deliveryStatus` (409) — đi qua `/coordinator/orders/{id}/stage`. Đơn hoàn tất / đã huỷ chỉ sửa `internalNote` (409).",
+        "description": "Không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` (422) — đi qua thu tiền, hoàn tất, huỷ. Đơn đã sang Điều phối không đổi được `status`/`production_status`/`delivery_status` (409) — đi qua `/coordinator/orders/{id}/stage`. Đơn hoàn tất / đã huỷ chỉ sửa `internal_note` (409).",
         "tags": [
           "Đơn hàng"
         ],
@@ -104898,7 +104898,7 @@
                       "CANCELLED"
                     ]
                   },
-                  "productionStatus": {
+                  "production_status": {
                     "type": "string",
                     "enum": [
                       "WAITING",
@@ -104908,7 +104908,7 @@
                       "READY"
                     ]
                   },
-                  "deliveryStatus": {
+                  "delivery_status": {
                     "type": "string",
                     "enum": [
                       "PENDING",
@@ -104918,13 +104918,13 @@
                       "FAILED"
                     ]
                   },
-                  "cardMessage": {
+                  "card_message": {
                     "type": "string"
                   },
-                  "internalNote": {
+                  "internal_note": {
                     "type": "string"
                   },
-                  "deliveryWindow": {
+                  "delivery_window": {
                     "type": "object",
                     "properties": {
                       "date": {
@@ -104938,7 +104938,7 @@
                       "date"
                     ]
                   },
-                  "deliveryAddress": {
+                  "delivery_address": {
                     "type": "object",
                     "properties": {
                       "recipientName": {
@@ -105426,7 +105426,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "assigneeId": {
+                  "assignee_id": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -105441,7 +105441,7 @@
                   }
                 },
                 "required": [
-                  "assigneeId"
+                  "assignee_id"
                 ]
               }
             }
@@ -107271,12 +107271,12 @@
                     "minLength": 1,
                     "maxLength": 500
                   },
-                  "requestedFrom": {
+                  "requested_from": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 200
                   },
-                  "dueAt": {
+                  "due_at": {
                     "anyOf": [
                       {
                         "type": "string",
@@ -107304,7 +107304,7 @@
                   "field",
                   "label",
                   "reason",
-                  "requestedFrom"
+                  "requested_from"
                 ]
               }
             }
@@ -113247,7 +113247,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "presetCode": {
+                  "preset_code": {
                     "type": "string",
                     "enum": [
                       "A4",
@@ -113260,36 +113260,36 @@
                       "STICKER_50X50"
                     ]
                   },
-                  "imageWidthPx": {
+                  "image_width_px": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
                   },
-                  "imageHeightPx": {
+                  "image_height_px": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
                   },
-                  "colorMode": {
+                  "color_mode": {
                     "type": "string",
                     "enum": [
                       "RGB",
                       "CMYK"
                     ]
                   },
-                  "hasQrCode": {
+                  "has_qr_code": {
                     "type": "boolean"
                   },
-                  "qrSizeMm": {
+                  "qr_size_mm": {
                     "type": "number",
                     "exclusiveMinimum": 0
                   },
-                  "hasContentOutsideSafeZone": {
+                  "has_content_outside_safe_zone": {
                     "type": "boolean"
                   }
                 },
                 "required": [
-                  "presetCode"
+                  "preset_code"
                 ]
               }
             }
@@ -114449,14 +114449,14 @@
                   "subtitle": {
                     "type": "string"
                   },
-                  "storeName": {
+                  "store_name": {
                     "type": "string"
                   },
-                  "includeBleedMarks": {
+                  "include_bleed_marks": {
                     "default": true,
                     "type": "boolean"
                   },
-                  "imageDataUrl": {
+                  "image_data_url": {
                     "type": "string",
                     "maxLength": 28000000
                   }
@@ -123135,7 +123135,7 @@
             }
           },
           {
-            "name": "leadId",
+            "name": "lead_id",
             "in": "query",
             "required": false,
             "schema": {
@@ -123143,7 +123143,7 @@
             }
           },
           {
-            "name": "customerId",
+            "name": "customer_id",
             "in": "query",
             "required": false,
             "schema": {
@@ -123506,19 +123506,7 @@
                       "null"
                     ]
                   },
-                  "leadId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
                   "customer_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "customerId": {
                     "type": [
                       "string",
                       "null"
@@ -123530,19 +123518,7 @@
                       "null"
                     ]
                   },
-                  "assetUsageId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
                   "valid_until": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "validUntil": {
                     "type": [
                       "string",
                       "null"
@@ -123552,16 +123528,7 @@
                     "type": "number",
                     "minimum": 0
                   },
-                  "discountAmount": {
-                    "type": "number",
-                    "minimum": 0
-                  },
                   "shipping_fee": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 100000000
-                  },
-                  "shippingFee": {
                     "type": "number",
                     "minimum": 0,
                     "maximum": 100000000
@@ -124262,26 +124229,11 @@
                       "null"
                     ]
                   },
-                  "validUntil": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
                   "discount_amount": {
                     "type": "number",
                     "minimum": 0
                   },
-                  "discountAmount": {
-                    "type": "number",
-                    "minimum": 0
-                  },
                   "shipping_fee": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 100000000
-                  },
-                  "shippingFee": {
                     "type": "number",
                     "minimum": 0,
                     "maximum": 100000000
@@ -127748,7 +127700,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "authorName": {
+                  "author_name": {
                     "type": "string"
                   },
                   "occasion": {
@@ -127765,12 +127717,12 @@
                   "comment": {
                     "type": "string"
                   },
-                  "isVisible": {
+                  "is_visible": {
                     "type": "boolean"
                   }
                 },
                 "required": [
-                  "authorName",
+                  "author_name",
                   "rating",
                   "comment"
                 ]
@@ -127899,7 +127851,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "authorName": {
+                  "author_name": {
                     "type": "string"
                   },
                   "occasion": {
@@ -127916,7 +127868,7 @@
                   "comment": {
                     "type": "string"
                   },
-                  "isVisible": {
+                  "is_visible": {
                     "type": "boolean"
                   }
                 }
@@ -132075,7 +132027,7 @@
       "get": {
         "operationId": "listTemplateOverrides",
         "summary": "Ghi đè của một mẫu",
-        "description": "Thiếu `templateKey` → 400. `next_cursor` luôn `null`.",
+        "description": "Thiếu `template_key` → 400. `next_cursor` luôn `null`.",
         "tags": [
           "Ghi đè mẫu"
         ],
@@ -132086,7 +132038,7 @@
         ],
         "parameters": [
           {
-            "name": "templateKey",
+            "name": "template_key",
             "in": "query",
             "required": true,
             "schema": {
@@ -132218,7 +132170,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "templateFamily": {
+                  "template_family": {
                     "type": "string",
                     "enum": [
                       "GT",
@@ -132228,11 +132180,11 @@
                       "OT"
                     ]
                   },
-                  "templateKey": {
+                  "template_key": {
                     "type": "string",
                     "minLength": 1
                   },
-                  "fieldKey": {
+                  "field_key": {
                     "type": "string",
                     "minLength": 1
                   },
@@ -132242,9 +132194,9 @@
                   }
                 },
                 "required": [
-                  "templateFamily",
-                  "templateKey",
-                  "fieldKey",
+                  "template_family",
+                  "template_key",
+                  "field_key",
                   "value"
                 ]
               }
@@ -132734,7 +132686,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "aiMonthlyLimit": {
+                  "ai_monthly_limit": {
                     "anyOf": [
                       {
                         "type": "integer",
@@ -132748,7 +132700,7 @@
                   }
                 },
                 "required": [
-                  "aiMonthlyLimit"
+                  "ai_monthly_limit"
                 ]
               }
             }

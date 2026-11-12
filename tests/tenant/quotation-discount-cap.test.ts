@@ -22,7 +22,7 @@ describe("trần chiết khấu báo giá qua route", () => {
 
   const post = (token: string, discountAmount: number) =>
     createQuotation(withSession("http://localhost/api/v1/quotations", token, {
-      method: "POST", body: JSON.stringify({ items: [{ name: "Bó hoa", qty: 1, unitPrice: 1_000_000 }], discountAmount }),
+      method: "POST", body: JSON.stringify({ items: [{ name: "Bó hoa", qty: 1, unitPrice: 1_000_000 }], discount_amount: discountAmount }),
     }))
 
   it("Sale: trong 20% mặc định được, quá 20% → 422; chủ tiệm (C10) được tới 50%, quá 50% → 422", async () => {

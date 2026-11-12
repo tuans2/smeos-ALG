@@ -47,7 +47,7 @@ describe("theo dõi đơn thiếu thông tin", () => {
     expect(((await readJson(await listOpen(withSession(`${BASE}/info-requests`, a.token)))).data as Req[])).toHaveLength(2)
 
     const patched = await patchOrder(withSession(`${BASE}/${id}`, a.token, {
-      method: "PATCH", body: JSON.stringify({ deliveryAddress: { recipientName: "Bình", phone: "0901234567", street: "12 Phố Huế" } }),
+      method: "PATCH", body: JSON.stringify({ delivery_address: { recipientName: "Bình", phone: "0901234567", street: "12 Phố Huế" } }),
     }), params(id))
     expect(patched.status).toBe(200)
     expect((await requests(a.token, id)).map((r) => r.status)).toEqual(["RECEIVED", "RECEIVED"])
@@ -55,7 +55,7 @@ describe("theo dõi đơn thiếu thông tin", () => {
   })
 
   it("đơn đủ thông tin không sinh yêu cầu; tổ chức khác → 404 / danh sách rỗng", async () => {
-    const id = await newOrder(a.token, { deliveryAddress: { recipientName: "Bình", phone: "0901234567", street: "12 Phố Huế" } })
+    const id = await newOrder(a.token, { delivery_address: { recipientName: "Bình", phone: "0901234567", street: "12 Phố Huế" } })
     expect(await requests(a.token, id)).toHaveLength(0)
     const other = await newOrder(a.token)
     expect((await listForOrder(withSession(`${BASE}/${other}/info-requests`, b.token), params(other))).status).toBe(404)
@@ -67,7 +67,7 @@ describe("theo dõi đơn thiếu thông tin", () => {
     const later = new Date(Date.now() + 3 * 3600_000)
     expect((await syncOrderInfoRequests(a.ctx, id, later)).map((r) => r.status)).toEqual(["OVERDUE", "OVERDUE"])
 
-    const body = { field: "custom:giờ nhận", label: "Giờ nhận hoa", reason: "Khách chưa chốt giờ", requestedFrom: "Khách qua Zalo" }
+    const body = { field: "custom:giờ nhận", label: "Giờ nhận hoa", reason: "Khách chưa chốt giờ", requested_from: "Khách qua Zalo" }
     const sale = await addStaffWithSession(a, "sale", "lan")
     expect((await createRequest(withSession(`${BASE}/${id}/info-requests`, sale.token, { method: "POST", body: JSON.stringify(body) }), params(id))).status).toBe(403)
     const created = await createRequest(withSession(`${BASE}/${id}/info-requests`, a.token, { method: "POST", body: JSON.stringify(body) }), params(id))

@@ -17,16 +17,15 @@ export const GET = defineRoute({
 
 export const PATCH = defineRoute({
   auth: { kind: "tenant", capability: "F2" },
-  handler: async ({ request, ctx }) => {
-    const body = patchOrgPolicySchema.parse(await request.json())
-
+  body: patchOrgPolicySchema,
+  handler: async ({ ctx, body }) => {
     await updateOrgNotificationPolicy({
       organizationId: ctx.organizationId,
-      eventKey: body.eventKey,
+      eventKey: body.event_key,
       channel: body.channel as NotifyChannel,
-      roleKey: body.roleKey,
+      roleKey: body.role_key,
       enabled: body.enabled,
-      priorityOverride: body.priorityOverride as NotifyPriority | undefined,
+      priorityOverride: body.priority_override as NotifyPriority | undefined,
     })
 
     return jsonResponse({ data: body })

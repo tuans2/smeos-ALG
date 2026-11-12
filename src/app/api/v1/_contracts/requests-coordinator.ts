@@ -41,8 +41,8 @@ export const craftFeeComplaintBody = z.object({ reason: z.string().trim().min(5)
 
 // orders/[id]/dispatch-to-chat/route.ts
 export const dispatchToChatBody = z.object({
-  targetPartnerOrgId: z.string().uuid(),
-  targetPartnerUserId: z.string().uuid().optional(),
+  target_partner_org_id: z.string().uuid(),
+  target_partner_user_id: z.string().uuid().optional(),
 })
 
 const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
@@ -67,40 +67,40 @@ export const partnershipStatusBody = z.object({
 // partners/[id]/tools/route.ts
 export const partnerToolsBody = z.object({
   // Mã công cụ là navKey dạng chữ thường-gạch-ngang; giới hạn độ dài để không ghi rác vào settings
-  unlockedTools: z.array(z.string().regex(/^[a-z0-9-]{1,64}$/)).max(200),
+  unlocked_tools: z.array(z.string().regex(/^[a-z0-9-]{1,64}$/)).max(200),
 })
 
 // partners/link-existing/route.ts
 export const linkExistingBody = z.object({
   identifier: z.string().min(2, "Vui lòng nhập Email đại diện hoặc Mã/Slug của cửa hàng"),
-  partnerCode: z.string().min(2, "Mã đối tác phải từ 2 ký tự"),
-  partnershipType: z.enum(["SUBCONTRACTOR", "FRANCHISE"]).optional(), // BRANCH bỏ — ADR-012 D-T2
-  commissionRate: z.number().optional(),
-  capacityDaily: z.number().optional(),
+  partner_code: z.string().min(2, "Mã đối tác phải từ 2 ký tự"),
+  partnership_type: z.enum(["SUBCONTRACTOR", "FRANCHISE"]).optional(), // BRANCH bỏ — ADR-012 D-T2
+  commission_rate: z.number().optional(),
+  capacity_daily: z.number().optional(),
 })
 
 // partners/route.ts
 export const provisionPartnerBody = z.object({
-  partnerStoreName: z.string().min(2, "Tên cửa hàng phải từ 2 ký tự"),
-  partnerCode: z.string().min(2, "Mã đối tác phải từ 2 ký tự"),
-  partnershipType: z.enum(["SUBCONTRACTOR", "FRANCHISE"]).optional(), // BRANCH bỏ — ADR-012 D-T2
-  contactName: z.string().min(2, "Tên người đại diện không được để trống"),
-  contactPhone: z.string().min(8, "Số điện thoại không hợp lệ"),
-  contactEmail: z.string().email("Email không hợp lệ"),
+  partner_store_name: z.string().min(2, "Tên cửa hàng phải từ 2 ký tự"),
+  partner_code: z.string().min(2, "Mã đối tác phải từ 2 ký tự"),
+  partnership_type: z.enum(["SUBCONTRACTOR", "FRANCHISE"]).optional(), // BRANCH bỏ — ADR-012 D-T2
+  contact_name: z.string().min(2, "Tên người đại diện không được để trống"),
+  contact_phone: z.string().min(8, "Số điện thoại không hợp lệ"),
+  contact_email: z.string().email("Email không hợp lệ"),
   password: z.string().min(10, "Mật khẩu tối thiểu 10 ký tự").optional(),
   address: z.string().optional(),
   province: z.string().optional(),
   district: z.string().optional(),
-  capacityDaily: z.number().optional(),
-  commissionRate: z.number().optional(),
+  capacity_daily: z.number().optional(),
+  commission_rate: z.number().optional(),
 })
 
 // reminders/acknowledge/route.ts
 export const acknowledgeReminderBody = z.object({
-  orderId: z.string().min(1, "orderId không được để trống"),
+  order_id: z.string().min(1, "orderId không được để trống"),
   milestone: z.enum(["M0", "M1", "M2", "M3", "M4", "M5"]),
   action: z.enum(["ACKNOWLEDGED", "SNOOZED", "DISMISSED"]),
-  snoozeMinutes: z.number().int().min(1).max(120).optional(),
+  snooze_minutes: z.number().int().min(1).max(120).optional(),
   note: z.string().max(500).optional(),
 })
 

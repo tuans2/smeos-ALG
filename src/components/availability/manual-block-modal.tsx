@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"
 
+import { snakeKeys } from "@/lib/case-keys"
 export interface ManualBlockModalProps {
   isOpen: boolean
   onClose: () => void
@@ -61,12 +62,12 @@ export function ManualBlockModal({
       const res = await fetch("/api/v1/availability/blocks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(snakeKeys({
           productId,
           checkInDate,
           checkOutDate,
           note: note.trim() || undefined,
-        }),
+        })),
       })
 
       const data = await res.json()

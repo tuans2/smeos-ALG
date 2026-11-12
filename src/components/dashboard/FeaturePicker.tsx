@@ -164,8 +164,8 @@ export function FeaturePicker({
               "Idempotency-Key": crypto.randomUUID(),
             },
             body: JSON.stringify({
-              productId,
-              masterImageId,
+              product_id: productId,
+              master_image_id: masterImageId,
               feature: jobFeature,
               capabilities: capabilitiesList,
               module,

@@ -57,7 +57,7 @@ describe("hợp đồng — thông báo", () => {
     // @release-strip
     await expectContract(await readOne(send(`/inbox/${item.id}/read`, "PATCH"), ps(item.id)), 200, R.inboxReadResponse, "notif-read")
     // @release-strip-end
-    await expectContract(await listInbox(get("/inbox?unreadOnly=true")), 200, R.inboxResponse, "notif-inbox-unread")
+    await expectContract(await listInbox(get("/inbox?unread_only=true")), 200, R.inboxResponse, "notif-inbox-unread")
     // @release-strip
     await expectContract(await readAll(send("/inbox/mark-all-read", "POST")), 200, R.inboxReadAllResponse, "notif-read-all")
     // @release-strip-end
@@ -76,31 +76,31 @@ describe("hợp đồng — thông báo", () => {
   })
 
   it("tuỳ chọn, chính sách tổ chức, mặc định cửa hàng", async () => {
-    await expectContract(await patchPrefs(send("/preferences", "PATCH", { eventKey, channel: "EMAIL", enabled: false })), 200, R.updatedResponse, "notif-pref-patch")
+    await expectContract(await patchPrefs(send("/preferences", "PATCH", { event_key: eventKey, channel: "EMAIL", enabled: false })), 200, R.updatedResponse, "notif-pref-patch")
     await expectContract(await prefs(get("/preferences")), 200, R.preferencesResponse, "notif-prefs")
-    await expectContract(await patchOrgPolicy(send("/org-policy", "PATCH", { eventKey, channel: "EMAIL", roleKey: "*", enabled: true, priorityOverride: "URGENT" })), 200, R.updatedResponse, "notif-org-patch")
+    await expectContract(await patchOrgPolicy(send("/org-policy", "PATCH", { event_key: eventKey, channel: "EMAIL", role_key: "*", enabled: true, priority_override: "URGENT" })), 200, R.updatedResponse, "notif-org-patch")
     await expectContract(await orgPolicy(get("/org-policy")), 200, R.preferencesResponse, "notif-org")
     await expectContract(
-      await patchStoreDefaults(send("/store-defaults", "PATCH", { eventKey, channel: "EMAIL", roleKey: "owner", enabled: true, scheduleStart: "08:00", scheduleEnd: "20:00" })),
+      await patchStoreDefaults(send("/store-defaults", "PATCH", { event_key: eventKey, channel: "EMAIL", role_key: "owner", enabled: true, schedule_start: "08:00", schedule_end: "20:00" })),
       200, R.updatedResponse, "notif-store-patch"
     )
-    await expectContract(await storeDefaults(get("/store-defaults?roleKey=owner")), 200, R.preferencesResponse, "notif-store")
+    await expectContract(await storeDefaults(get("/store-defaults?role_key=owner")), 200, R.preferencesResponse, "notif-store")
   })
 
   it("khoá cứng tầng chuỗi và cửa hàng; tuỳ chọn bị khoá → 422 LOCKED_BY_UPPER", async () => {
     for (const [lock, list, unlock, tier] of [[orgLock, orgLocks, orgUnlock, "org"], [storeLock, storeLocks, storeUnlock, "store"]] as const) {
-      await expectContract(await lock(send(`/${tier}-hard-locks`, "POST", { eventKey, channel: "SMS", enabled: false, reason: "Tiệm không dùng SMS" })), 200, R.hardLockSetResponse, `notif-${tier}-lock`)
+      await expectContract(await lock(send(`/${tier}-hard-locks`, "POST", { event_key: eventKey, channel: "SMS", enabled: false, reason: "Tiệm không dùng SMS" })), 200, R.hardLockSetResponse, `notif-${tier}-lock`)
       const locks = await expectContract(await list(get(`/${tier}-hard-locks`)), 200, R.hardLocksResponse, `notif-${tier}-locks`)
       expect((locks.data as unknown[]).length).toBe(1)
-      const pref = await patchPrefs(send("/preferences", "PATCH", { eventKey, channel: "SMS", enabled: true }))
+      const pref = await patchPrefs(send("/preferences", "PATCH", { event_key: eventKey, channel: "SMS", enabled: true }))
       // Cả khoá tầng chuỗi lẫn tầng cửa hàng đều chặn tuỳ chọn cá nhân (audit API §15 — trước đây khoá cửa hàng lọt qua)
       expect(pref.status).toBe(422)
       const err = (await readJson(pref)).error as { code: string; details: { violation: string } }
       expect(err.code).toBe("UNPROCESSABLE_ENTITY")
       expect(err.details.violation).toBe("LOCKED_BY_UPPER")
-      await expectContract(await unlock(send(`/${tier}-hard-locks`, "DELETE", { eventKey, channel: "SMS" })), 200, R.hardLockRemovedResponse, `notif-${tier}-unlock`)
+      await expectContract(await unlock(send(`/${tier}-hard-locks`, "DELETE", { event_key: eventKey, channel: "SMS" })), 200, R.hardLockRemovedResponse, `notif-${tier}-unlock`)
       // Gỡ lần hai (không còn khoá) vẫn 200.
-      expect((await unlock(send(`/${tier}-hard-locks`, "DELETE", { eventKey, channel: "SMS" }))).status).toBe(200)
+      expect((await unlock(send(`/${tier}-hard-locks`, "DELETE", { event_key: eventKey, channel: "SMS" }))).status).toBe(200)
     }
   })
 })

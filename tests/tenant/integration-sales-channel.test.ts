@@ -15,7 +15,7 @@ const SECRET = "tenant-shop-secret-0123456789"
 const params = <T extends Record<string, string>>(p: T) => ({ params: Promise.resolve(p) })
 
 async function connectShop(t: Tenant) {
-  const res = await connect(withSession(`${BASE}/connections`, t.token, { method: "POST", body: JSON.stringify({ connectorKey: "test_shop", secret: SECRET }) }))
+  const res = await connect(withSession(`${BASE}/connections`, t.token, { method: "POST", body: JSON.stringify({ connector_key: "test_shop", secret: SECRET }) }))
   expect(res.status).toBe(201)
   return ((await readJson(res)) as { connection: { id: string; connectionRef: string } }).connection
 }
@@ -64,13 +64,13 @@ describe("cách ly tenant — kênh bán hàng (Trung tâm Tích hợp GĐ4A)", 
     const conn = await connectShop(a)
     expect((await getSales(withSession(`${BASE}/connections/${conn.id}/sales`, b.token), params({ id: conn.id }))).status).toBe(404)
     const publishB = await publish(
-      withSession(`${BASE}/connections/${conn.id}/sales/publish`, b.token, { method: "POST", body: JSON.stringify({ productIds: [product.id] }) }),
+      withSession(`${BASE}/connections/${conn.id}/sales/publish`, b.token, { method: "POST", body: JSON.stringify({ product_ids: [product.id] }) }),
       params({ id: conn.id })
     )
     expect(publishB.status).toBe(404)
 
     const publishA = await publish(
-      withSession(`${BASE}/connections/${conn.id}/sales/publish`, a.token, { method: "POST", body: JSON.stringify({ productIds: [product.id] }) }),
+      withSession(`${BASE}/connections/${conn.id}/sales/publish`, a.token, { method: "POST", body: JSON.stringify({ product_ids: [product.id] }) }),
       params({ id: conn.id })
     )
     expect(publishA.status).toBe(200)

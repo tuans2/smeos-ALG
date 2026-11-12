@@ -89,19 +89,19 @@ export const channelProviderTestBody = z.object({ channel: PROVIDER_CHANNEL, pho
 // notification/hard-locks/route.ts
 const NOTIFY_CHANNEL = z.enum(["APP_INBOX", "EMAIL", "PUSH", "TELEGRAM", "ZALO", "SMS", "WHATSAPP", "MESSENGER"])
 export const setHardLockBody = z.object({
-  eventKey: z.string().min(1),
+  event_key: z.string().min(1),
   channel: NOTIFY_CHANNEL,
   enabled: z.boolean(),
   reason: z.string().optional(),
 })
 export const removeHardLockBody = z.object({
-  eventKey: z.string().min(1),
+  event_key: z.string().min(1),
   channel: NOTIFY_CHANNEL,
 })
 
 // notification/visibility/route.ts
 export const eventVisibilityBody = z.object({
-  eventKey: z.string().min(1),
+  event_key: z.string().min(1),
   tier: z.enum(["INDUSTRY", "CHAIN", "STORE"]),
   visible: z.boolean(),
 })
@@ -213,7 +213,7 @@ export const fieldEntityQuery = z.object({ entity: z.enum(["ORDER", "PARTNER"]).
 export const governanceSystemQuery = z.object({ system: z.string() })
 export const integrationScopeQuery = z.object({ scope: z.string().optional() })
 export const marginQuery = z.object({ period: z.string().regex(/^\d{4}-\d{2}$/).optional() })
-export const hardLocksQuery = z.object({ eventKey: z.string().optional() })
+export const hardLocksQuery = z.object({ event_key: z.string().optional() })
 export const exportQuery = z.object({ type: z.enum(["full", "csv"]).optional() })
 export const recordsQuery = z.object({ page: z.string().regex(/^\d+$/).optional(), export: z.literal("csv").optional() })
 export const usageQuery = z.object({ since: z.iso.datetime().optional() })

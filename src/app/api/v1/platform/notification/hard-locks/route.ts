@@ -12,7 +12,7 @@ export const GET = defineRoute({
   auth: { kind: "platform", capability: null, reason: "chỉ đọc — mọi người vận hành nền tảng" },
   handler: async ({ request }) => {
     const url = new URL(request.url)
-    const eventKey = url.searchParams.get("eventKey") ?? undefined
+    const eventKey = url.searchParams.get("event_key") ?? undefined
 
     const locks = await listHardLocks({
       tier: "MOTHER",
@@ -26,11 +26,10 @@ export const GET = defineRoute({
 
 export const POST = defineRoute({
   auth: { kind: "platform", capability: "N2" },
-  handler: async ({ request, pctx: platform }) => {
-    const body = setHardLockBody.parse(await request.json())
-
+  body: setHardLockBody,
+  handler: async ({ pctx: platform, body }) => {
     await setHardLock({
-      eventKey: body.eventKey,
+      eventKey: body.event_key,
       channel: body.channel as NotifyChannel,
       tier: "MOTHER",
       scopeId: "GLOBAL",
@@ -45,11 +44,10 @@ export const POST = defineRoute({
 
 export const DELETE = defineRoute({
   auth: { kind: "platform", capability: "N2" },
-  handler: async ({ request, pctx }) => {
-    const body = removeHardLockBody.parse(await request.json())
-
+  body: removeHardLockBody,
+  handler: async ({ pctx, body }) => {
     await removeHardLock({
-      eventKey: body.eventKey,
+      eventKey: body.event_key,
       channel: body.channel as NotifyChannel,
       tier: "MOTHER",
       scopeId: "GLOBAL",

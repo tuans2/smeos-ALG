@@ -63,9 +63,9 @@ export const bannerSaveBody = z.object({
 
 // template-overrides/route.ts
 export const putTemplateOverrideBody = z.object({
-  templateFamily: z.enum(TEMPLATE_FAMILIES),
-  templateKey: z.string().min(1),
-  fieldKey: z.string().min(1),
+  template_family: z.enum(TEMPLATE_FAMILIES),
+  template_key: z.string().min(1),
+  field_key: z.string().min(1),
   value: z.string().min(1),
 })
 
@@ -73,7 +73,7 @@ export const putTemplateOverrideBody = z.object({
 const ENTITY = z.enum(["ORDER", "PARTNER"])
 export const fieldConfigQuery = z.object({ entity: ENTITY.optional() })
 export const fieldCatalogsQuery = z.object({ keys: z.string().optional() })
-export const templateOverridesQuery = z.object({ templateKey: z.string() })
+export const templateOverridesQuery = z.object({ template_key: z.string() })
 export const proxyQuery = z.object({ client: z.enum(["SOCIALFLOW", "LOCALBUDD"]) })
 /** Thân chuyển nguyên văn sang hệ thống đích (không kiểm ở core). */
 export const proxyBody = z.unknown()

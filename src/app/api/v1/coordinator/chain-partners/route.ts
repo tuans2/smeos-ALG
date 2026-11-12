@@ -6,6 +6,7 @@ import { ListChainPartnersUseCase } from "@/modules/chain-partnership/use-cases/
 import { ProvisionPartnerAccountUseCase } from "@/modules/chain-partnership/use-cases/provision-partner-account"
 import { provisionPartnerBody } from "@/app/api/v1/_contracts/requests-coordinator"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * Cửa hàng đối tác của chuỗi (`organization_links`). Tách khỏi `/coordinator/partners` (PO 12/11/2026): route cũ
@@ -38,6 +39,7 @@ export const POST = defineRoute({
       const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
       throw validationFailed({ reason: errorDetails })
     }
+    const input = camelKeys(parsed.data)
 
     const partnershipRepo = getChainPartnershipRepository()
     const chatRepo = getInternalChatRepository()
@@ -46,18 +48,18 @@ export const POST = defineRoute({
     const { partnership, temporaryPassword } = await useCase.execute(
       {
         chainOrgId: ctx.organizationId,
-        partnerStoreName: parsed.data.partnerStoreName,
-        partnerCode: parsed.data.partnerCode,
-        partnershipType: parsed.data.partnershipType,
-        contactName: parsed.data.contactName,
-        contactPhone: parsed.data.contactPhone,
-        contactEmail: parsed.data.contactEmail,
-        password: parsed.data.password,
-        address: parsed.data.address,
-        province: parsed.data.province,
-        district: parsed.data.district,
-        capacityDaily: parsed.data.capacityDaily,
-        commissionRate: parsed.data.commissionRate,
+        partnerStoreName: input.partnerStoreName,
+        partnerCode: input.partnerCode,
+        partnershipType: input.partnershipType,
+        contactName: input.contactName,
+        contactPhone: input.contactPhone,
+        contactEmail: input.contactEmail,
+        password: input.password,
+        address: input.address,
+        province: input.province,
+        district: input.district,
+        capacityDaily: input.capacityDaily,
+        commissionRate: input.commissionRate,
       },
       ctx.userId
     )

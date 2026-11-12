@@ -78,7 +78,7 @@ describe("hợp đồng — viết nội dung AI, xu hướng thị trường", 
   })
 
   it("landing page, catalog, viết lại nhanh khi AI không chạy được (nội dung dựng sẵn)", async () => {
-    const landing = await landingGenerate(send("/content-engine/landing-generate", "POST", { occasionId: "tet", occasionLabel: "Tết Nguyên Đán", selectedProducts: [{ name: "Bó hồng đỏ", price: 450000 }] }))
+    const landing = await landingGenerate(send("/content-engine/landing-generate", "POST", { occasion_id: "tet", occasion_label: "Tết Nguyên Đán", selected_products: [{ name: "Bó hồng đỏ", price: 450000 }] }))
     await expectContract(landing, 200, R.landingContentResponse, "landing-generate")
     const catalog = await catalogGenerate(send("/content-engine/catalog-generate", "POST", { collectionName: "Hoa Tết 2027", productCount: 3 }))
     await expectContract(catalog, 200, R.catalogContentResponse, "catalog-generate")

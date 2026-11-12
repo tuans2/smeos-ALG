@@ -18,10 +18,10 @@ describe("mã năng lực cho cấu hình thông báo & đối tác chuỗi", ()
   let saleToken: string
   const send = (token: string, path: string, method: string, body: unknown) =>
     withSession(`http://localhost/api/v1/${path}`, token, { method, body: JSON.stringify(body) })
-  const lock = { eventKey: "ORDER_RECEIVED", channel: "EMAIL", enabled: false }
+  const lock = { event_key: "ORDER_RECEIVED", channel: "EMAIL", enabled: false }
   const partner = (code: string) => ({
-    partnerStoreName: `Tiệm ${code}`, partnerCode: code, contactName: "Chủ tiệm",
-    contactPhone: "0987654321", contactEmail: `${code.toLowerCase()}@vi-du.test`,
+    partner_store_name: `Tiệm ${code}`, partner_code: code, contact_name: "Chủ tiệm",
+    contact_phone: "0987654321", contact_email: `${code.toLowerCase()}@vi-du.test`,
   })
 
   beforeEach(async () => {
@@ -36,7 +36,7 @@ describe("mã năng lực cho cấu hình thông báo & đối tác chuỗi", ()
   })
 
   it("nhân viên bán hàng (không có F2) không sửa được chính sách / khoá cứng của tổ chức", async () => {
-    expect((await patchOrgPolicy(send(saleToken, "notification/org-policy", "PATCH", { ...lock, roleKey: "*" }))).status).toBe(403)
+    expect((await patchOrgPolicy(send(saleToken, "notification/org-policy", "PATCH", { ...lock, role_key: "*" }))).status).toBe(403)
     expect((await postStoreLock(send(saleToken, "notification/store-hard-locks", "POST", lock))).status).toBe(403)
     expect(await prisma.governance_decisions.count({ where: { system: "notification.hard_lock" } })).toBe(0)
   })
@@ -47,7 +47,7 @@ describe("mã năng lực cho cấu hình thông báo & đối tác chuỗi", ()
 
   it("nhân viên không có F2 không cấp được tài khoản đối tác, không mở khoá công cụ", async () => {
     expect((await provisionPartner(send(saleToken, "coordinator/chain-partners", "POST", partner("P-01")))).status).toBe(403)
-    const res = await patchTools(send(saleToken, "coordinator/partners/x/tools", "PATCH", { unlockedTools: [] }), {
+    const res = await patchTools(send(saleToken, "coordinator/partners/x/tools", "PATCH", { unlocked_tools: [] }), {
       params: Promise.resolve({ id: "x" }),
     })
     expect(res.status).toBe(403)

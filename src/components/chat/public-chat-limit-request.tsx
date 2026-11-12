@@ -53,7 +53,7 @@ export function PublicChatLimitRequest() {
       const res = await fetch("/api/v1/chat/public-limits", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ perVisitor: tier.perVisitor, perIp: tier.perIp, note: note || null }),
+        body: JSON.stringify({ per_visitor: tier.perVisitor, per_ip: tier.perIp, note: note || null }),
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

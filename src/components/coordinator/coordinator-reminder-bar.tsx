@@ -75,10 +75,10 @@ export function CoordinatorReminderBar({ onSelectOrder }: CoordinatorReminderBar
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        orderId,
+        order_id: orderId,
         milestone,
         action,
-        snoozeMinutes,
+        snooze_minutes: snoozeMinutes,
       }),
     })
     await fetchReminders()

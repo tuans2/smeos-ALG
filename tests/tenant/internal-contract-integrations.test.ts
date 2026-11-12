@@ -50,7 +50,7 @@ describe("hợp đồng — Trung tâm Tích hợp, token tích hợp, SSO", () 
   })
 
   it("kết nối: tạo, tổng quan, kiểm tra, đổi khoá, nhật ký, phát lại, ngắt", async () => {
-    const created = await expectContract(await connect(send("/integrations/connections", "POST", { connectorKey: "test_echo", secret: SECRET })), 201, R.connectionResponse, "int-connect")
+    const created = await expectContract(await connect(send("/integrations/connections", "POST", { connector_key: "test_echo", secret: SECRET })), 201, R.connectionResponse, "int-connect")
     const conn = created.connection as { id: string; connectionRef: string }
     await expectContract(await getHub(get("/integrations")), 200, R.hubResponse, "int-hub")
     await expectContract(await testConnection(send(`/integrations/connections/${conn.id}/test`, "POST"), ps(conn.id)), 200, R.connectionResponse, "int-test")
@@ -73,18 +73,18 @@ describe("hợp đồng — Trung tâm Tích hợp, token tích hợp, SSO", () 
     const product = await prisma.products.create({
       data: { organization_id: t.organizationId, code: "KB-01", name: "Bó hồng đỏ", status: "ACTIVE", attributes: { price: 400000, price_vnd: 400000 } as never },
     })
-    const created = await connect(send("/integrations/connections", "POST", { connectorKey: "test_shop", secret: SECRET }))
+    const created = await connect(send("/integrations/connections", "POST", { connector_key: "test_shop", secret: SECRET }))
     const id = String(((await created.json()) as { connection: { id: string } }).connection.id)
-    await expectContract(await publish(send(`/integrations/connections/${id}/sales/publish`, "POST", { productIds: [product.id] }), ps(id)), 200, R.listingsResponse, "int-publish")
+    await expectContract(await publish(send(`/integrations/connections/${id}/sales/publish`, "POST", { product_ids: [product.id] }), ps(id)), 200, R.listingsResponse, "int-publish")
     await expectContract(await getSales(get(`/integrations/connections/${id}/sales`), ps(id)), 200, R.salesResponse, "int-sales")
     await expectContract(await availability(send(`/integrations/connections/${id}/sales/availability`, "POST"), ps(id)), 200, R.availabilityResponse, "int-availability")
-    await expectContract(await unpublish(send(`/integrations/connections/${id}/sales/unpublish`, "POST", { productIds: [product.id] }), ps(id)), 200, R.unpublishedResponse, "int-unpublish")
+    await expectContract(await unpublish(send(`/integrations/connections/${id}/sales/unpublish`, "POST", { product_ids: [product.id] }), ps(id)), 200, R.unpublishedResponse, "int-unpublish")
   })
 
   it("quản trị tích hợp của chuỗi: đọc, đặt chế độ; cửa hàng không phải chuỗi → 422", async () => {
     await expectContract(await getGovernance(get("/integrations/governance", chain)), 200, R.governanceResponse, "int-governance")
-    await expectContract(await putGovernance(send("/integrations/governance", "PUT", { connectorKey: "facebook_messenger", mode: "FORBID" }, chain)), 200, R.governanceResponse, "int-governance-put")
-    expect((await putGovernance(send("/integrations/governance", "PUT", { connectorKey: "facebook_messenger", mode: "FORBID" }))).status).toBe(422)
+    await expectContract(await putGovernance(send("/integrations/governance", "PUT", { connector_key: "facebook_messenger", mode: "FORBID" }, chain)), 200, R.governanceResponse, "int-governance-put")
+    expect((await putGovernance(send("/integrations/governance", "PUT", { connector_key: "facebook_messenger", mode: "FORBID" }))).status).toBe(422)
   })
 
   it("token tích hợp: cấp, danh sách, xoay, thu hồi; SSO làm mới", async () => {

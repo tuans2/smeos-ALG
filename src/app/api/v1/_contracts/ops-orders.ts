@@ -20,7 +20,7 @@ export const ORDER_OPERATIONS: OpenApiOperation[] = [
   op(ORDERS, { method: "get", path: "/orders/{id}", operationId: "getOrder", summary: "Chi tiết đơn kèm SLA", cap: "R1",
     ok: [200, { description: "Đơn và số đo SLA", schema: res.orderDetailResponse }], errors: [404] }),
   op(ORDERS, { method: "patch", path: "/orders/{id}", operationId: "updateOrder", summary: "Sửa đơn / chuyển trạng thái sản xuất, giao hàng", cap: "R3", body: req.patchOrderBody,
-    description: "Không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` (422) — đi qua thu tiền, hoàn tất, huỷ. Đơn đã sang Điều phối không đổi được `status`/`productionStatus`/`deliveryStatus` (409) — đi qua `/coordinator/orders/{id}/stage`. Đơn hoàn tất / đã huỷ chỉ sửa `internalNote` (409).",
+    description: "Không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` (422) — đi qua thu tiền, hoàn tất, huỷ. Đơn đã sang Điều phối không đổi được `status`/`production_status`/`delivery_status` (409) — đi qua `/coordinator/orders/{id}/stage`. Đơn hoàn tất / đã huỷ chỉ sửa `internal_note` (409).",
     ok: [200, { description: "Đơn sau khi sửa", schema: res.orderResponse }], errors: [...BODY_ERRORS, 404, 409, 422] }),
   op(ORDERS, { method: "post", path: "/orders/{id}/assign", operationId: "assignOrder", summary: "Giao việc chế tác cho nhân sự", cap: "R4", body: req.assignOrderBody,
     description: "Người nhận phải là thành viên đang hoạt động (khác → 422); giao lại thu hồi phân công cũ.",

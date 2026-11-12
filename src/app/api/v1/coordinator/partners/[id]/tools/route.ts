@@ -4,6 +4,7 @@ import { setPartnerUnlockedTools } from "@/modules/chain-partnership/infra/partn
 import { getChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
 import { partnerToolsBody } from "@/app/api/v1/_contracts/requests-coordinator"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const PATCH = defineRoute({
   auth: { kind: "tenant", capability: "F2" },
@@ -28,8 +29,9 @@ export const PATCH = defineRoute({
     if (!parsed.success) {
       throw validationFailed({ reason: "Dữ liệu danh mục công cụ không hợp lệ" })
     }
+    const input = camelKeys(parsed.data)
 
-    const saved = await setPartnerUnlockedTools(partnership.partnerOrgId, [...new Set(parsed.data.unlockedTools)])
+    const saved = await setPartnerUnlockedTools(partnership.partnerOrgId, [...new Set(input.unlockedTools)])
     if (!saved) {
       throw notFound()
     }
@@ -38,7 +40,7 @@ export const PATCH = defineRoute({
       data: {
         partnershipId,
         partnerOrgId: partnership.partnerOrgId,
-        unlockedTools: parsed.data.unlockedTools,
+        unlockedTools: input.unlockedTools,
       },
     })
   },

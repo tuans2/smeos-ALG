@@ -18,41 +18,41 @@ export const notifyChannelSchema = z.enum([
 
 // org-policy/route.ts
 export const patchOrgPolicySchema = z.object({
-  eventKey: z.string().min(1),
+  event_key: z.string().min(1),
   channel: notifyChannelSchema,
-  roleKey: z.string().min(1),
+  role_key: z.string().min(1),
   enabled: z.boolean(),
-  priorityOverride: z.enum(["NORMAL", "URGENT", "CRITICAL"]).optional(),
+  priority_override: z.enum(["NORMAL", "URGENT", "CRITICAL"]).optional(),
 })
 
 // preferences/route.ts
 export const patchPreferenceSchema = z.object({
-  eventKey: z.string().min(1),
+  event_key: z.string().min(1),
   channel: notifyChannelSchema,
   enabled: z.boolean(),
-  muteUntil: z.string().datetime().optional(),
+  mute_until: z.string().datetime().optional(),
 })
 
 // store-defaults/route.ts
 export const patchStoreDefaultSchema = z.object({
-  eventKey: z.string().min(1),
+  event_key: z.string().min(1),
   channel: notifyChannelSchema,
-  roleKey: z.string().min(1),
+  role_key: z.string().min(1),
   enabled: z.boolean(),
-  scheduleStart: z.string().optional(),
-  scheduleEnd: z.string().optional(),
+  schedule_start: z.string().optional(),
+  schedule_end: z.string().optional(),
 })
 
 // org-hard-locks/route.ts, store-hard-locks/route.ts
 export const postHardLockSchema = z.object({
-  eventKey: z.string().min(1),
+  event_key: z.string().min(1),
   channel: notifyChannelSchema,
   enabled: z.boolean(),
   reason: z.string().optional(),
 })
 
 export const deleteHardLockSchema = z.object({
-  eventKey: z.string().min(1),
+  event_key: z.string().min(1),
   channel: notifyChannelSchema,
 })
 
@@ -60,8 +60,8 @@ export const deleteHardLockSchema = z.object({
 const int = z.string().regex(/^-?\d+$/)
 
 export const eventsQuery = z.object({ tier: z.enum(["MOTHER", "INDUSTRY", "CHAIN", "STORE"]).optional() })
-export const inboxQuery = z.object({ page: int.optional(), limit: int.optional(), unreadOnly: z.enum(["true", "false"]).optional() })
-export const storeDefaultsQuery = z.object({ roleKey: z.string().optional() })
+export const inboxQuery = z.object({ page: int.optional(), limit: int.optional(), unread_only: z.enum(["true", "false"]).optional() })
+export const storeDefaultsQuery = z.object({ role_key: z.string().optional() })
 
 // push-subscriptions/route.ts — thiết bị nhận Web Push của chính người gọi (checklist 4.30)
 const pushEndpoint = z.string().url().max(1000)

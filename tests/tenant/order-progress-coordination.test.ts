@@ -50,7 +50,7 @@ describe("PATCH /orders/:id — tiến độ đơn đang ở Điều phối, đ�
     const before = await axes()
     const eventsBefore = await prisma.order_events.count({ where: { order_id: orderId } })
 
-    for (const body of [{ productionStatus: "ASSIGNED" }, { deliveryStatus: "DISPATCHED" }, { status: "PROCESSING" }]) {
+    for (const body of [{ production_status: "ASSIGNED" }, { delivery_status: "DISPATCHED" }, { status: "PROCESSING" }]) {
       const res = await patch(a, body)
       expect(res.status).toBe(409)
       expect(JSON.stringify(await readJson(res))).toMatch(/Điều phối/)
@@ -59,18 +59,18 @@ describe("PATCH /orders/:id — tiến độ đơn đang ở Điều phối, đ�
     expect(await prisma.order_events.count({ where: { order_id: orderId } })).toBe(eventsBefore)
     expect((await prisma.order_coordinations.findUniqueOrThrow({ where: { order_id: orderId } })).stage).toBe("INTAKE")
 
-    const info = await patch(a, { cardMessage: "Chúc mừng sinh nhật" })
+    const info = await patch(a, { card_message: "Chúc mừng sinh nhật" })
     expect(info.status).toBe(200)
     expect((await prisma.orders.findUniqueOrThrow({ where: { id: orderId } })).card_message).toBe("Chúc mừng sinh nhật")
   })
 
   it("tổ chức khác → 404, không lộ là đơn đang ở Điều phối", async () => {
     await toCoordinator()
-    expect((await patch(b, { productionStatus: "ASSIGNED" })).status).toBe(404)
+    expect((await patch(b, { production_status: "ASSIGNED" })).status).toBe(404)
   })
 
   it("đơn chưa sang Điều phối: đổi trục chế tác như cũ; ghi nhật ký kiểm toán không chép dữ liệu cá nhân", async () => {
-    const res = await patch(a, { productionStatus: "ASSIGNED", cardMessage: "Chúc mừng sinh nhật" })
+    const res = await patch(a, { production_status: "ASSIGNED", card_message: "Chúc mừng sinh nhật" })
     expect(res.status).toBe(200)
     expect((await axes()).production).toBe("ASSIGNED")
 
@@ -84,12 +84,12 @@ describe("PATCH /orders/:id — tiến độ đơn đang ở Điều phối, đ�
     for (const status of ["CANCELLED", "COMPLETED"] as const) {
       await prisma.orders.update({ where: { id: orderId }, data: { status } })
       const blocked = [
-        { deliveryAddress: { recipientName: "Trần Thị Bình", phone: "0901 234 567", street: "12 Lê Lợi" } },
-        { cardMessage: "Lời chúc mới" },
-        { deliveryStatus: "DISPATCHED" },
+        { delivery_address: { recipientName: "Trần Thị Bình", phone: "0901 234 567", street: "12 Lê Lợi" } },
+        { card_message: "Lời chúc mới" },
+        { delivery_status: "DISPATCHED" },
       ]
       for (const body of blocked) expect((await patch(a, body)).status).toBe(409)
-      const note = await patch(a, { internalNote: `Ghi chú sau khi ${status}` })
+      const note = await patch(a, { internal_note: `Ghi chú sau khi ${status}` })
       expect(note.status).toBe(200)
       expect((await prisma.orders.findUniqueOrThrow({ where: { id: orderId } })).internal_note).toBe(`Ghi chú sau khi ${status}`)
     }

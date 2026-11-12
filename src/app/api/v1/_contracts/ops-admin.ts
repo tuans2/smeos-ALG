@@ -52,6 +52,6 @@ export const ADMIN_OPERATIONS: OpenApiOperation[] = [
   op(AI, { method: "post", path: "/ai-requests/review", operationId: "reviewAiRequest", summary: "Duyệt / từ chối / sửa một đầu ra AI", cap: "U3", body: req.reviewAiRequestBody,
     description: `Ghi nhật ký kiểm toán. ${NF}`, ok: [200, { description: "Quyết định", schema: res.reviewDecisionResponse }], errors: [...BODY_ERRORS, 404] }),
   op(AI, { method: "post", path: "/content-guard/validate", operationId: "validateFlowerContent", summary: "Kiểm văn bản với từ điển từ cấm ngành hoa và phong cách cấm của thương hiệu", cap: null, auth: "session",
-    body: req.validateContentBody, description: "Chỉ cần phiên của tổ chức. `autoSanitize: true` → kèm `sanitizedText` (thay bằng gợi ý). Văn bản rỗng → 400.",
+    body: req.validateContentBody, description: "Chỉ cần phiên của tổ chức. `auto_sanitize: true` → kèm `sanitizedText` (thay bằng gợi ý). Văn bản rỗng → 400.",
     ok: [200, { description: "Kết quả kiểm", schema: res.contentGuardResponse }], errors: BODY_ERRORS }),
 ]

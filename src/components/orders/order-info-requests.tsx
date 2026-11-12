@@ -62,7 +62,7 @@ export function OrderInfoRequests({ orderId }: { orderId: string }) {
     try {
       await call(base, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ field: `custom:${label.slice(0, 50)}`, label, reason: `Cần bổ sung ${label.toLowerCase()}`, requestedFrom: draft.requestedFrom.trim() || "Khách đặt hàng", dueAt: new Date(Date.now() + 2 * 3600_000).toISOString() }),
+        body: JSON.stringify({ field: `custom:${label.slice(0, 50)}`, label, reason: `Cần bổ sung ${label.toLowerCase()}`, requested_from: draft.requestedFrom.trim() || "Khách đặt hàng", due_at: new Date(Date.now() + 2 * 3600_000).toISOString() }),
       })
       setDraft({ label: "", requestedFrom: draft.requestedFrom })
       await reload()

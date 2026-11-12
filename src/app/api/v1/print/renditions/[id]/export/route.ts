@@ -4,6 +4,7 @@ import { printExportBody } from "@/app/api/v1/_contracts/requests-misc"
 import { exportPrintPdfUseCase } from "@/modules/print/use-cases/export-print-pdf.use-case"
 import { recordDataExport } from "@/modules/audit/use-cases/record-data-export"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const POST = defineRoute({
   auth: { kind: "tenant", capability: "M5" },
@@ -19,13 +20,14 @@ export const POST = defineRoute({
       }
       throw validationFailed(details)
     }
+    const input = camelKeys(parsed.data)
 
     const result = await exportPrintPdfUseCase(ctx, id, {
-      title: parsed.data.title ?? undefined,
-      subtitle: parsed.data.subtitle ?? undefined,
-      storeName: parsed.data.storeName ?? undefined,
-      includeBleedMarks: parsed.data.includeBleedMarks,
-      imageDataUrl: parsed.data.imageDataUrl ?? undefined,
+      title: input.title ?? undefined,
+      subtitle: input.subtitle ?? undefined,
+      storeName: input.storeName ?? undefined,
+      includeBleedMarks: input.includeBleedMarks,
+      imageDataUrl: input.imageDataUrl ?? undefined,
     })
 
     await recordDataExport(ctx, "print_renditions", { rendition_id: id })

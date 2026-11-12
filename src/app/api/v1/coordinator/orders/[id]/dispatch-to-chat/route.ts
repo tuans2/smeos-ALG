@@ -7,6 +7,7 @@ import { isActivePartnerTarget } from "@/modules/chain-partnership/infra/partner
 import { formatCardAddress } from "@/modules/internal-chat/domain/card-address"
 import { dispatchToChatBody } from "@/app/api/v1/_contracts/requests-coordinator"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const POST = defineRoute({
   auth: { kind: "tenant", capability: "R3" },
@@ -19,6 +20,7 @@ export const POST = defineRoute({
       const errorDetails = parsed.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
       throw validationFailed({ reason: errorDetails })
     }
+    const input = camelKeys(parsed.data)
 
     // 1. Fetch order details via Clean OrderRepository (REQ-ARCH-006)
     const orderRepo = getOrderRepository()
@@ -28,7 +30,7 @@ export const POST = defineRoute({
       throw notFound()
     }
     // Chỉ gửi tới đối tác ACTIVE của chính chuỗi (và người nhận thuộc đối tác đó); khác → 404
-    if (!(await isActivePartnerTarget(ctx.organizationId, parsed.data.targetPartnerOrgId, parsed.data.targetPartnerUserId))) {
+    if (!(await isActivePartnerTarget(ctx.organizationId, input.targetPartnerOrgId, input.targetPartnerUserId))) {
       throw notFound()
     }
 
@@ -45,8 +47,8 @@ export const POST = defineRoute({
       coordinatorUserId: ctx.userId,
       coordinatorRole: resolved.membership?.role_id ?? "coordinator",
       coordinatorOrgId: ctx.organizationId,
-      targetPartnerOrgId: parsed.data.targetPartnerOrgId,
-      targetPartnerUserId: parsed.data.targetPartnerUserId,
+      targetPartnerOrgId: input.targetPartnerOrgId,
+      targetPartnerUserId: input.targetPartnerUserId,
       // Không đưa tên người mua sang đối tác (trước đây gán nhầm tên người nhận vào "tên khách")
       recipientName: order.deliveryAddress?.recipientName ?? undefined,
       deliveryTime: order.deliveryWindow?.timeSlot ?? undefined,

@@ -51,14 +51,14 @@ describe("cách ly tenant — danh mục dịp tặng hoa (1.7)", () => {
     const valentine = (await list(a.token)).find((o) => o.code === "valentine")!
 
     const fromB = await patchOccasion(
-      withSession(`${BASE}/${valentine.id}`, b.token, { method: "PATCH", body: JSON.stringify({ isActive: false }) }),
+      withSession(`${BASE}/${valentine.id}`, b.token, { method: "PATCH", body: JSON.stringify({ is_active: false }) }),
       params(valentine.id)
     )
     expect(fromB.status).toBe(404)
     expect((await list(a.token)).find((o) => o.id === valentine.id)?.is_active).toBe(true)
 
     const res = await patchOccasion(
-      withSession(`${BASE}/${valentine.id}`, a.token, { method: "PATCH", body: JSON.stringify({ name: "Lễ Tình nhân", isActive: false }) }),
+      withSession(`${BASE}/${valentine.id}`, a.token, { method: "PATCH", body: JSON.stringify({ name: "Lễ Tình nhân", is_active: false }) }),
       params(valentine.id)
     )
     expect(res.status).toBe(200)

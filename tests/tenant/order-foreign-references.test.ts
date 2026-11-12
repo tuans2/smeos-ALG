@@ -32,7 +32,7 @@ describe("cách ly tenant — id tham chiếu khi tạo đơn", () => {
 
   it("khách của tổ chức khác → 404, không tạo đơn", async () => {
     const customerB = await prisma.customers.create({ data: { organization_id: b.organizationId, code: "KH-0001", name: "Khách B", phone: "0901234567" } })
-    expect((await post(a, { customerId: customerB.id, items: [item] })).status).toBe(404)
+    expect((await post(a, { customer_id: customerB.id, items: [item] })).status).toBe(404)
     expect(await prisma.orders.count({ where: { organization_id: a.organizationId } })).toBe(0)
   })
 
@@ -45,13 +45,13 @@ describe("cách ly tenant — id tham chiếu khi tạo đơn", () => {
   it("khách và sản phẩm của chính mình → tạo được", async () => {
     const customerA = await prisma.customers.create({ data: { organization_id: a.organizationId, code: "KH-0001", name: "Khách A", phone: "0901234568" } })
     const productA = await prisma.products.create({ data: { organization_id: a.organizationId, code: "SP-A", name: "Hoa A" } })
-    expect((await post(a, { customerId: customerA.id, items: [{ ...item, productId: productA.id }] })).status).toBe(201)
+    expect((await post(a, { customer_id: customerA.id, items: [{ ...item, productId: productA.id }] })).status).toBe(201)
   })
 
   it("đơn giá lẻ, số lượng quá lớn, ngày giao sai dạng → 400", async () => {
     expect((await post(a, { items: [{ ...item, unitPriceVnd: 1000.5 }] })).status).toBe(400)
     expect((await post(a, { items: [{ ...item, quantity: 1000 }] })).status).toBe(400)
-    expect((await post(a, { items: [item], deliveryWindow: { date: "mai giao" } })).status).toBe(400)
+    expect((await post(a, { items: [item], delivery_window: { date: "mai giao" } })).status).toBe(400)
   })
 
   // PO 07/11/2026 (Q5, audit BL-08): mã giảm giá không áp ở đơn chuẩn — trước đây `voucherId` được lưu mà không
@@ -74,7 +74,7 @@ describe("cách ly tenant — id tham chiếu khi tạo đơn", () => {
 
   it("xoá khách: đơn vẫn còn, chỉ gỡ liên kết khách (như SetNull cũ)", async () => {
     const customerA = await prisma.customers.create({ data: { organization_id: a.organizationId, code: "KH-0010", name: "Khách A", phone: "0901234561" } })
-    const res = await post(a, { customerId: customerA.id, items: [item] })
+    const res = await post(a, { customer_id: customerA.id, items: [item] })
     expect(res.status).toBe(201)
     expect(await new CustomerRepository().delete(a.ctx, customerA.id)).toBe(true)
     const row = await prisma.orders.findFirstOrThrow({ where: { organization_id: a.organizationId } })

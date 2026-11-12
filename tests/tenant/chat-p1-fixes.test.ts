@@ -48,7 +48,7 @@ describe("chat — cách ly thẻ hành động và sổ credit kênh ngoài", (
   async function orderCard() {
     const order = await readJson(await createOrder(send(a, "/orders", { items: [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 300000 }] })))
     const orderId = String((order as { order: { id: string } }).order.id)
-    const res = await dispatchToChat(send(a, `/coordinator/orders/${orderId}/dispatch-to-chat`, { targetPartnerOrgId: partner.organizationId, targetPartnerUserId: partner.userId }), ps(orderId))
+    const res = await dispatchToChat(send(a, `/coordinator/orders/${orderId}/dispatch-to-chat`, { target_partner_org_id: partner.organizationId, target_partner_user_id: partner.userId }), ps(orderId))
     expect(res.status).toBe(200)
     const data = ((await readJson(res)) as { data: { conversationId: string; message: { id: string; actionPayload: Record<string, unknown> } } }).data
     return { convId: data.conversationId, cardId: data.message.id, payload: data.message.actionPayload }
@@ -57,7 +57,7 @@ describe("chat — cách ly thẻ hành động và sổ credit kênh ngoài", (
   it("tổ chức khác bấm nút trên thẻ đơn → 404, thẻ và hội thoại không đổi", async () => {
     const { convId, cardId, payload } = await orderCard()
     const before = await prisma.internal_chat_messages.count({ where: { conversation_id: convId } })
-    const res = await cardAction(send(b, `/internal-chat/messages/${cardId}/action`, { action: "REJECT_ORDER", rejectedReason: "thử" }), ps(cardId))
+    const res = await cardAction(send(b, `/internal-chat/messages/${cardId}/action`, { action: "REJECT_ORDER", rejected_reason: "thử" }), ps(cardId))
     expect(res.status).toBe(404)
     const row = await prisma.internal_chat_messages.findUniqueOrThrow({ where: { id: cardId } })
     expect(row.action_payload).toEqual(payload)

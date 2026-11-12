@@ -40,7 +40,7 @@ describe("coordinator reminders: cách ly giữa các cửa hàng", () => {
         total_vnd: 100_000, paid_vnd: 100_000, balance_vnd: 0, created_by: "test",
       },
     })
-    const body = JSON.stringify({ orderId, milestone: "M0", action: "ACKNOWLEDGED" })
+    const body = JSON.stringify({ order_id: orderId, milestone: "M0", action: "ACKNOWLEDGED" })
     const init = { method: "POST", body, headers: { "content-type": "application/json" } }
 
     const res = await acknowledgePost(withSession("http://localhost/api/v1/coordinator/reminders/acknowledge", b.token, init))

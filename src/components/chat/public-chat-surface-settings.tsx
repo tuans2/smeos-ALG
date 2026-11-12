@@ -42,7 +42,7 @@ export function PublicChatSurfaceSettings({ channels, onChanged }: PublicChatSur
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           channel: item.channel,
-          isEnabled: item.isEnabled,
+          is_enabled: item.isEnabled,
           config: { ...item.config, publicSurfaces: toggleSurface(item.config, surface, enabled) },
         }),
       })
