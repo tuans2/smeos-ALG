@@ -8,7 +8,7 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 |---|---:|---:|
 | Trang | 90 | 26 |
 | API | 475 | 61 |
-| Tệp trong `src/` | 3502 | 656 |
+| Tệp trong `src/` | 3504 | 656 |
 
 ## Code trong phạm vi chạm vùng không giao
 
