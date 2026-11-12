@@ -8,14 +8,14 @@
  *
  * Body: `{ analysisId: string, productId?: string }`
  */
-import { handle, jsonResponse } from "@/core/http/response";
+import { jsonResponse } from "@/core/http/response";
+import { defineRoute } from "@/core/http/define-route";
+import type { TenantContext } from "@/core/tenancy";
 import { validationFailed } from "@/core/http/errors";
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session";
 import { readIdempotencyKey } from "@/modules/jobs/domain/idempotency";
 import { generateProductCopy } from "@/modules/product-copies/use-cases/generate-product-copy";
 
-async function generateHandler(request: Request) {
-  const { ctx } = await requireTenantContext(request);
+async function generateHandler({ request, ctx }: { request: Request; ctx: TenantContext }) {
 
   // Quyền H5 gác ở use-case `generateProductCopy` (RS-9 18/09).
   const idempotencyKey = readIdempotencyKey(request);
@@ -37,6 +37,9 @@ async function generateHandler(request: Request) {
   return jsonResponse(result);
 }
 
-export const POST = handle(generateHandler);
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: null, reason: "H5 kiểm ở use-case (generateProductCopy)" },
+  handler: generateHandler,
+});
 export const dynamic = "force-dynamic" as const;
 export const revalidate = 0 as const;

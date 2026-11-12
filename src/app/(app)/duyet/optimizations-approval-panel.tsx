@@ -27,7 +27,8 @@ export function OptimizationsApprovalPanel({
   optimizations: PendingOptimization[]
   dangDuyet: string | null
   onApprove: (jobId: string, requiresWarning: boolean) => Promise<void>
-  onNavigateStudio: () => void
+  /** Không có khi trang Sáng tạo không thuộc giai đoạn bàn giao — ẩn nút. */
+  onNavigateStudio?: (() => void) | undefined
 }) {
   return (
     <Card className="flex flex-col gap-3 p-4">
@@ -36,10 +37,7 @@ export function OptimizationsApprovalPanel({
         <EmptyState
           title="Không có ảnh tối ưu nào chờ duyệt"
           reason="Không có tác vụ xử lý tối ưu ảnh nào đang chờ duyệt."
-          action={{
-            label: "Tới Creative Studio",
-            onClick: onNavigateStudio,
-          }}
+          action={onNavigateStudio ? { label: "Tới Creative Studio", onClick: onNavigateStudio } : undefined}
         />
       ) : (
         <div className="flex flex-col divide-y divide-border">

@@ -3,7 +3,16 @@ import path from "node:path"
 
 import { describe, expect, it } from "vitest"
 
-import { acceptedViolations, loadManifest, renderReport, renderRoutes, reportFile, routesFile } from "../../../scripts/release/gen-phase-routes"
+import {
+  acceptedViolations,
+  gatedLinks,
+  loadManifest,
+  renderCutRoutes,
+  renderReport,
+  renderRoutes,
+  reportFile,
+  routesFile,
+} from "../../../scripts/release/gen-phase-routes"
 import { apiReferences, importSpecifiers, normalizeApiRef, routesForRef } from "../../../scripts/release/trace-imports"
 import { tracePhase } from "../../../scripts/release/trace-phase"
 
@@ -64,12 +73,46 @@ describe("phạm vi gd1 dò từ code hiện tại", () => {
 
   it("danh sách route và báo cáo phụ thuộc đã sinh lại (npm run release:routes)", () => {
     expect(readFileSync(path.join(root, routesFile("gd1")), "utf8")).toBe(renderRoutes("gd1", trace))
-    expect(readFileSync(path.join(root, reportFile("gd1")), "utf8")).toBe(renderReport("gd1", trace, acceptedViolations(manifest)))
+    expect(readFileSync(path.join(root, reportFile("gd1")), "utf8")).toBe(renderReport("gd1", trace, acceptedViolations(manifest), gatedLinks(manifest)))
+  })
+
+  it("bản cắt gắn sẵn giai đoạn, chặn trang đã cắt, API lấy theo route còn trên đĩa bản cắt", () => {
+    const cutApis = ["/api/v1/creative-production/packages"]
+    const cutTrace = { ...trace, blockedPages: [], blockedApis: cutApis }
+    const routes = JSON.parse(renderCutRoutes("gd1", cutTrace, trace)) as Record<string, unknown>
+    expect(routes.builtIn).toBe(true)
+    expect(routes.pages).toEqual(trace.pages)
+    expect(routes.blockedPages).toEqual([...trace.blockedPages].sort())
+    expect(routes.blockedPages).toContain("/creative-studio")
+    expect(routes.blockedApis).toEqual(cutApis)
+  })
+
+  it("giao diện được giao không còn nhắc ứng dụng liên kết cũ (SocialFlow, LocalBudd) ngoài chú thích", () => {
+    const comment = /^\s*(\/\/|\*|\/\*|\{\/\*)/
+    const hits = trace.files
+      .filter((file) => /\.tsx$/.test(file) || /\/(domain|i18n)\/.*\.ts$/.test(file))
+      .flatMap((file) =>
+        readFileSync(path.join(root, file), "utf8")
+          .split("\n")
+          .map((line, i) => ({ line, at: `${file}:${i + 1}` }))
+          .filter(({ line }) => /SocialFlow|LocalBudd/.test(line) && !comment.test(line)),
+      )
+      .map(({ at }) => at)
+    expect(hits).toEqual([])
   })
 
   it("không có phụ thuộc mới vào vùng không giao", () => {
     const accepted = acceptedViolations(manifest)
     expect(trace.violations.map((v) => `${v.from} → ${v.to}`).filter((key) => !accepted.has(key))).toEqual([])
+  })
+
+  it("mọi liên kết tới trang không giao đều đã ẩn theo giai đoạn, và tệp đó thật sự kiểm `isHrefInPhase`", () => {
+    const gated = gatedLinks(manifest)
+    expect(trace.deadLinks.map((l) => `${l.from} → ${l.to}`).filter((key) => !gated.has(key))).toEqual([])
+    const current = new Set(trace.deadLinks.map((l) => `${l.from} → ${l.to}`))
+    expect([...gated].filter((key) => !current.has(key))).toEqual([])
+    const files = new Set(trace.deadLinks.map((l) => l.from))
+    expect([...files].filter((file) => !readFileSync(path.join(root, file), "utf8").includes("isHrefInPhase("))).toEqual([])
   })
 
   it("phụ thuộc đã ghi nhận vẫn còn thật — hết thì xoá khỏi manifest", () => {

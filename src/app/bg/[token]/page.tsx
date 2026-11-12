@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 export default async function PublicQuotationPage({ params }: PageProps) {
   const { token } = await params
   const quotation =
-    token.length <= 128 ? await getQuotationRepository().findPublicByToken(token) : null
+    token.length <= 128 ? await asSystemDb("page:/bg", () => getQuotationRepository().findPublicByToken(token)) : null
 
   if (!quotation) {
     notFound()

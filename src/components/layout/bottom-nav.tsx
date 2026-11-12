@@ -15,6 +15,9 @@ import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { mobileSecondSlot, NAV_ENTRIES, type NavEntry } from "./nav-model"
 import { NAV_ICONS as ICONS } from "./nav-icons"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
+import { isHrefOpen } from "@/lib/feature-lock"
+import { requestOpenMobileNav } from "./mobile-nav-context"
 
 export function BottomNav() {
   const pathname = usePathname()
@@ -31,7 +34,7 @@ export function BottomNav() {
   if (hasH1) {
     centerAction = { href: "/tai-anh", label: "Tải ảnh", icon: Camera }
   } else {
-    const fallbackHref = roleUx?.navPriority.find((h) => h !== slot2.href && h !== "/") ?? "/san-pham"
+    const fallbackHref = roleUx?.navPriority.find((h) => h !== slot2.href && h !== "/" && isHrefOpen(h)) ?? "/san-pham"
     const fallbackEntry = NAV_ENTRIES.find((e) => e.href === fallbackHref)
     centerAction = {
       href: fallbackEntry?.href ?? "/san-pham",
@@ -100,8 +103,8 @@ export function BottomNav() {
         </span>
       </Link>
 
-      {/* 4. Duyệt hoặc Job */}
-      {canApprove ? (
+      {/* 4. Duyệt hoặc Job — ẩn khi tuyến đang khoá "Sắp ra mắt" (audit N-05) */}
+      {!isHrefOpen(canApprove ? "/duyet" : "/job") ? null : canApprove ? (
         (() => {
           const isDuyetActive = pathname === "/duyet" || pathname.startsWith("/duyet/")
           return (
@@ -146,12 +149,23 @@ export function BottomNav() {
         })()
       )}
 
-      {/* 5. Thêm */}
+      {/* 5. Thêm — trang /them không thuộc giai đoạn bàn giao thì mở menu ☰ thay vì sang trang không có */}
       {(() => {
-        const isThemActive = pathname === "/them" || pathname.startsWith("/them/")
+        const themInPhase = isHrefInPhase("/them")
+        const isThemActive = themInPhase && (pathname === "/them" || pathname.startsWith("/them/"))
         return (
           <Link
-            href={"/them" as never}
+            href={(themInPhase ? "/them" : pathname) as never}
+            {...(themInPhase
+              ? {}
+              : {
+                  role: "button",
+                  "aria-haspopup": "dialog" as const,
+                  onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+                    e.preventDefault()
+                    requestOpenMobileNav()
+                  },
+                })}
             aria-current={isThemActive ? "page" : undefined}
             className={cn(
               "relative flex flex-1 flex-col items-center justify-center gap-1 text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors",

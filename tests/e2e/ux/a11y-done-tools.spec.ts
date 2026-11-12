@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test"
 import AxeBuilder from "@axe-core/playwright"
 import { Client } from "pg"
+import { isHrefInPhase } from "../../../src/lib/delivery/delivery-phase"
 import { createTestUserAndLogin } from "./helpers"
 
 const dbUrl = process.env.DATABASE_URL || "postgresql://alg:alg@localhost:5432/alg"
@@ -61,7 +62,8 @@ async function enableFlag(flag: string, orgId: string) {
 test.describe("Công cụ Hoàn thiện theo chuẩn 03c — trợ năng ở khổ 390px", () => {
   test.use({ viewport: { width: 390, height: 844 } })
 
-  for (const tool of DONE_TOOLS) {
+  // Bản cắt bàn giao (giai đoạn gắn sẵn) không có trang của công cụ ngoài phạm vi; smeOS không bật giai đoạn thì giữ đủ
+  for (const tool of DONE_TOOLS.filter((t) => isHrefInPhase(t.path))) {
     test(`${tool.name} (${tool.path}) không có lỗi trợ năng critical hoặc serious`, async ({ page }) => {
       const { orgId } = await createTestUserAndLogin(page)
       if (tool.flag) await enableFlag(tool.flag, orgId)

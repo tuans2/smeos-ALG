@@ -3,6 +3,7 @@
 import React from "react"
 import { Banknote, ArrowDownCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { hasBalanceDue } from "@/modules/orders/domain/payment-progress"
 
 export interface BalancePaymentBannerProps {
   totalVnd: number
@@ -24,7 +25,7 @@ export function BalancePaymentBanner({
   onScrollToPayment,
 }: BalancePaymentBannerProps) {
   // Hiển thị khi đơn chưa thanh toán đủ 100% và hoa đã xong hoặc đang giao
-  const isUnpaid = totalVnd > 0 && paidVnd < totalVnd
+  const isUnpaid = hasBalanceDue(totalVnd, paidVnd)
   const isReadyOrDelivering =
     productionStatus === "READY" ||
     productionStatus === "DONE" ||

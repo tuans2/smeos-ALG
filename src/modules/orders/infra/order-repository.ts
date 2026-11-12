@@ -7,6 +7,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { vnDayBounds } from "@/lib/vn-date"
 import { takeStock } from "./order-stock"
+import { clientItemMetadata } from "../domain/order-item-metadata"
 import { storedDeliveryAddress, upsertOrderRecipient } from "./order-recipient-repository"
 import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "./order-recipient-view"
 import type {
@@ -132,6 +133,7 @@ export class OrderRepository implements IOrderRepository {
           owner_sale_id: input.ownerSaleId ?? null,
           lead_id: input.leadId ?? null,
           idempotency_key: input.idempotencyKey ?? null,
+          idempotency_body_hash: input.idempotencyBodyHash ?? null,
           events: {
             create: {
               axis: "order",
@@ -157,7 +159,7 @@ export class OrderRepository implements IOrderRepository {
             description: it.description ?? null,
             quantity: it.quantity,
             unit_price_vnd: it.unitPriceVnd,
-            metadata: (stock[i] ? { ...(it.metadata ?? {}), stock: stock[i] } : it.metadata) as unknown as Prisma.InputJsonValue ?? undefined,
+            metadata: (stock[i] ? { ...clientItemMetadata(it.metadata), stock: stock[i] } : clientItemMetadata(it.metadata)) as unknown as Prisma.InputJsonValue ?? undefined, // BL-19
           })),
         })
       }
@@ -186,12 +188,12 @@ export class OrderRepository implements IOrderRepository {
     return row ? mapPrismaOrder(row) : null
   }
 
-  async findByIdempotencyKey(organizationId: string, key: string): Promise<OrderRecord | null> {
+  async findByIdempotencyKey(organizationId: string, key: string): Promise<{ order: OrderRecord; bodyHash: string | null } | null> {
     const row = await prisma.orders.findUnique({
       where: { organization_id_idempotency_key: { organization_id: organizationId, idempotency_key: key } },
       include: { items: true, events: true },
     })
-    return row ? mapPrismaOrder(row) : null
+    return row ? { order: mapPrismaOrder(row), bodyHash: row.idempotency_body_hash } : null
   }
 
   async findByCode(organizationId: string, code: string): Promise<OrderRecord | null> {

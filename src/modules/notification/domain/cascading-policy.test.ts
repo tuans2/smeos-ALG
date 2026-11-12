@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest"
 import {
   resolveCascadingPreference,
   getAppliedHardLock,
+  getLockForUserPreference,
   type HardLockEntry,
 } from "./cascading-policy"
 
@@ -123,6 +124,25 @@ describe("Cascading Policy — Notification Resolution", () => {
       })
       expect(res.enabled).toBe(true)
       expect(res.decidedBy).toBe("MOTHER_DEFAULT")
+    })
+  })
+
+  describe("getLockForUserPreference — tuỳ chọn cá nhân (audit API §15)", () => {
+    const storeLock: HardLockEntry = { eventKey: "ORDER_RECEIVED", channel: "TELEGRAM", tier: "STORE", scopeId: "store-1", enabled: false }
+
+    it("khoá tầng cửa hàng của chính cửa hàng chặn tuỳ chọn cá nhân", () => {
+      expect(getLockForUserPreference([storeLock], "ORDER_RECEIVED", "TELEGRAM", { storeOrgId: "store-1" })?.tier).toBe("STORE")
+    })
+
+    it("khoá của cửa hàng khác, sự kiện khác hoặc kênh khác không chặn", () => {
+      expect(getLockForUserPreference([storeLock], "ORDER_RECEIVED", "TELEGRAM", { storeOrgId: "store-2" })).toBeNull()
+      expect(getLockForUserPreference([storeLock], "ORDER_PAID", "TELEGRAM", { storeOrgId: "store-1" })).toBeNull()
+      expect(getLockForUserPreference([storeLock], "ORDER_RECEIVED", "EMAIL", { storeOrgId: "store-1" })).toBeNull()
+    })
+
+    it("nhiều khoá cùng áp → tầng cao nhất thắng", () => {
+      const mother: HardLockEntry = { ...storeLock, tier: "MOTHER", scopeId: "GLOBAL" }
+      expect(getLockForUserPreference([storeLock, mother], "ORDER_RECEIVED", "TELEGRAM", { storeOrgId: "store-1" })?.tier).toBe("MOTHER")
     })
   })
 

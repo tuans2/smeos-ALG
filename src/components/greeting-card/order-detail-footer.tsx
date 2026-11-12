@@ -11,6 +11,7 @@ import { CoordinatorConfirmBalanceModal } from "./coordinator/coordinator-confir
 import { CoordinatorConfirmDepositModal } from "./coordinator/coordinator-confirm-deposit-modal"
 import type { OrderDetailModalTarget, BrochureOrderDetailModalProps } from "./brochure-order-detail-modal"
 import { useApi } from "./greeting-api"
+import { paymentProgress } from "@/modules/orders/domain/payment-progress"
 
 /** Footer action bar + cancellation proposal modal — tách riêng khỏi BrochureOrderDetailModal để tuân thủ giới hạn SRP 350 dòng. */
 export function OrderDetailFooter({
@@ -55,7 +56,7 @@ export function OrderDetailFooter({
 
   const totalVnd = target.totalVnd ?? 0
   const paidVnd = target.paidVnd ?? 0
-  const isDepositOrder = paidVnd > 0 && paidVnd < totalVnd
+  const isDepositOrder = paymentProgress(totalVnd, paidVnd) === "DEPOSIT"
   const balanceVnd = Math.max(0, totalVnd - paidVnd)
   const hasBalanceProofOrReport = Boolean(target.paymentProofBalanceUrl || target.customerReportedPaid)
   const hasDepositProofOrReport = Boolean(target.paymentProofUrl || target.customerReportedPaid)

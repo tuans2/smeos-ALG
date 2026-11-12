@@ -7,10 +7,11 @@
 
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { clientIp, enforceRateLimit } from "@/core/http/rate-limit"
 import { issuesToDetails, rejectBotSubmission } from "@/modules/greeting-card/contracts/public-order-schema"
 import { placePublicCatalogOrder } from "@/modules/orders/use-cases/place-public-catalog-order"
+import { defineRoute } from "@/core/http/define-route"
 
 const bodySchema = z.object({
   productId: z.string().max(64),
@@ -26,12 +27,15 @@ const bodySchema = z.object({
   website: z.string().max(200).optional(),
 })
 
-export const POST = handle<[{ params: Promise<{ slug: string }> }]>(async (request, context) => {
-  await enforceRateLimit(request, { scope: "catalog-order", limit: 10, windowMs: 10 * 60_000 })
-  const { slug } = await context.params
-  const parsed = bodySchema.safeParse(await request.json().catch(() => null))
-  if (!parsed.success) throw validationFailed(issuesToDetails(parsed.error.issues))
-  rejectBotSubmission(parsed.data)
-  const { website: _bot, ...input } = parsed.data
-  return jsonResponse(await placePublicCatalogOrder(slug, input, clientIp(request)), { status: 201 })
+export const POST = defineRoute({
+  auth: { kind: "public" },
+  rateLimit: { scope: "catalog-order", limit: 10, windowMs: 10 * 60_000, per: "ip" },
+  handler: async ({ request, params }) => {
+    const { slug } = params as { slug: string }
+    const parsed = bodySchema.safeParse(await request.json().catch(() => null))
+    if (!parsed.success) throw validationFailed(issuesToDetails(parsed.error.issues))
+    rejectBotSubmission(parsed.data)
+    const { website: _bot, ...input } = parsed.data
+    return jsonResponse(await placePublicCatalogOrder(slug, input, clientIp(request)), { status: 201 })
+  },
 })

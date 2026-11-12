@@ -4,7 +4,9 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { GET as getOptimizationRoute } from "@/app/api/v1/media/optimizations/[id]/route"
 import { POST as approveRoute } from "@/app/api/v1/media/optimizations/[id]/approve/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as downloadRoute } from "@/app/api/v1/media/optimizations/[id]/download/route"
+// @release-strip-end
 import { POST as createOptimizationRoute } from "@/app/api/v1/media/optimizations/route"
 import { GET as integrationMasterImageRoute } from "@/app/api/v1/integration/products/[id]/master-image/route"
 import { POST as issueTokenRoute } from "@/app/api/v1/integration-tokens/route"
@@ -301,11 +303,13 @@ describe("cách ly tenant — M04a tối ưu ảnh và hai cổng (P9)", () => {
   describe("tải về — không phải phê duyệt", () => {
     it("tải được ảnh đã qua cổng mà KHÔNG làm nó thành ảnh chính thức", async () => {
       const { jobId, masterAssetId } = await seedJobDaChay(a, "GOOD")
+      // @release-strip
       const body = await readJson(
         await downloadRoute(withSession(`${BASE}/media/optimizations/${jobId}/download`, a.token), params(jobId))
       )
       expect(body.asset_id).toBe(masterAssetId)
       expect(typeof body.url).toBe("string")
+      // @release-strip-end
 
       // M04 mục 5.1 — tải về không phải phê duyệt.
       const asset = await prisma.assets.findUnique({ where: { id: masterAssetId! } })
@@ -314,10 +318,12 @@ describe("cách ly tenant — M04a tối ưu ảnh và hai cổng (P9)", () => {
 
     it("ảnh bị từ chối không tải được", async () => {
       const { jobId } = await seedJobDaChay(a, "REJECTED")
+      // @release-strip
       const response = await downloadRoute(
         withSession(`${BASE}/media/optimizations/${jobId}/download`, a.token), params(jobId)
       )
       expect(response.status).toBe(409)
+      // @release-strip-end
     })
   })
 

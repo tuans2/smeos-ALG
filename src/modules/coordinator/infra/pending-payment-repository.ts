@@ -21,6 +21,21 @@ export class PendingPaymentRepository {
     return moved.count > 0
   }
 
+  /** Tổng tiền các khoản thu (không gồm hoàn) còn chờ xác nhận của đơn. */
+  async pendingTotalVnd(ctx: TenantContext, orderId: string): Promise<number> {
+    const agg = await this.db.order_payments.aggregate({
+      where: { ...scopedWhere(ctx, { order_id: orderId, status: "PENDING" }), kind: { not: "REFUND" as const } },
+      _sum: { amount_vnd: true },
+    })
+    return Number(agg._sum?.amount_vnd ?? 0)
+  }
+
+  /** Đơn bị huỷ → mọi khoản còn chờ xác nhận chuyển "Đã từ chối" trong giao dịch huỷ (audit BL-21). Trả số khoản. */
+  async rejectAllForOrder(ctx: TenantContext, orderId: string): Promise<number> {
+    const moved = await this.db.order_payments.updateMany({ where: scopedWhere(ctx, { order_id: orderId, status: "PENDING" }), data: { status: "REJECTED" } })
+    return moved.count
+  }
+
   /** Cộng khoản đã xác nhận vào đơn, chỉ khi số đã thu chưa đổi kể từ lúc đọc. */
   async applyToOrder(ctx: TenantContext, orderId: string, expectedPaidVnd: number, paidAfter: number, balanceAfter: number): Promise<boolean> {
     const moved = await this.db.orders.updateMany({

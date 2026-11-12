@@ -14,13 +14,15 @@ export function startCustomerMetricsSweep(): void {
   if (process.env["CUSTOMER_METRICS_SWEEP"] === "off") return
   g[STARTED] = true
   let since = new Date(Date.now() - CUSTOMER_METRICS_LOOKBACK_MS)
+  let afterId: string | undefined
   let running = false
   const timer = setInterval(() => {
     if (running) return
     running = true
-    sweepCustomerMetrics(since)
+    sweepCustomerMetrics(since, undefined, afterId)
       .then((r) => {
         since = r.nextSince
+        afterId = r.nextAfterId
         if (r.synced > 0 || r.failed > 0) log.info("crm.customer_metrics_swept", { feature: "crm", synced: r.synced, failed: r.failed })
       })
       .catch((error: unknown) => {

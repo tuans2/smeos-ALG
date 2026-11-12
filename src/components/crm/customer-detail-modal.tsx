@@ -11,6 +11,7 @@ import type { CustomerMasterIndex } from "@/modules/crm/domain/customer-master-i
 import { useSession } from "@/lib/session"
 import { CustomerDetailTabs, type CustomerDetailTab } from "./customer-detail-tabs"
 import { CustomerOrdersTab } from "./customer-orders-tab"
+import { CustomerDataRequestsPanel } from "./customer-data-requests-panel"
 
 interface CustomerDetailModalProps {
   customerId: string | null
@@ -305,6 +306,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
                     )
                   })}
                 </div>
+                <CustomerDataRequestsPanel customerId={customerId} code={data.code} onErased={() => { onUpdated(); void fetch(`/api/v1/crm/customers/${customerId}`).then((r) => r.json()).then((res) => setData(res.customer)) }} />
               </div>
             )}
           </div>

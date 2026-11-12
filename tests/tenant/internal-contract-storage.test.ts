@@ -3,7 +3,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 import * as R from "@/app/api/v1/_contracts/responses-storage"
 import { PATCH as patchUsage } from "@/app/api/v1/asset-usages/[id]/route"
 import { GET as listUsages, POST as createUsage } from "@/app/api/v1/asset-usages/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { POST as approveAsset } from "@/app/api/v1/assets/[id]/approve/route"
+// @release-strip-end
 import { DELETE as deleteAsset, GET as getAsset } from "@/app/api/v1/assets/[id]/route"
 import { GET as viewUrl } from "@/app/api/v1/assets/[id]/view-url/route"
 import { GET as listAssets, POST as registerAsset } from "@/app/api/v1/assets/route"
@@ -69,7 +71,9 @@ describe("hợp đồng — tư liệu, nơi dùng tư liệu, kho tệp", () =>
     const unsigned = new URL(fileUrl.pathname, "http://localhost")
     expect((await readFile(new Request(unsigned), keyParams(unsigned))).status).toBe(400)
 
+    // @release-strip
     await expectContract(await approveAsset(send(`/assets/${id}/approve`, "POST"), ps(id)), 200, R.assetResponse, "asset-approve")
+    // @release-strip-end
     const second = await uploadPng()
     await registerAsset(send("/assets", "POST", { asset_id: second.assetId, kind: "ORIGINAL", storage_key: second.storageKey, mime_type: "image/png" }))
     const del = await deleteAsset(send(`/assets/${second.assetId}`, "DELETE"), ps(second.assetId))

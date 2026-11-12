@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 interface ShareCatalogModalProps {
   slug: string
@@ -145,7 +146,7 @@ ${catalogUrl}`
         </div>
 
         {/* 3. Deep Integration with Content Engine */}
-        <div className="p-4 rounded-2xl bg-surface-alt border border-primary/20 space-y-2.5">
+        {isHrefInPhase("/noi-dung") && <div className="p-4 rounded-2xl bg-surface-alt border border-primary/20 space-y-2.5">
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-primary shrink-0" />
             <span className="text-caption font-bold text-text">Quảng bá tự động với AI Content Engine</span>
@@ -160,7 +161,7 @@ ${catalogUrl}`
             <Sparkles size={14} />
             <span>Soạn bài chiến dịch cho Catalog này</span>
           </Button>
-        </div>
+        </div>}
       </div>
     </Dialog>
   )

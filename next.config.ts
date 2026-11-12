@@ -7,22 +7,8 @@ const SECURITY_HEADERS = [
   // SAMEORIGIN: khung "Xem trước" trong trang quản lý vẫn nhúng được trang khách
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
-  // CHỈ GHI NHẬN, KHÔNG CHẶN: trình duyệt báo về /api/v1/public/csp-report khi trang
-  // tải nguồn ngoài danh sách. Khách không bị ảnh hưởng. Đủ dữ liệu thì đổi sang
-  // "Content-Security-Policy" để chặn thật (nợ kỹ thuật CSP trong TECHNICAL_DEBT).
-  {
-    key: "Content-Security-Policy-Report-Only",
-    value: [
-      "default-src 'self'",
-      "script-src 'self'",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: blob: https:",
-      "connect-src 'self'",
-      "frame-ancestors 'self'",
-      "report-uri /api/v1/public/csp-report",
-    ].join("; "),
-  },
+  // Content-Security-Policy đặt ở src/proxy.ts (nonce mới mỗi request, chặn thật — ARC-022 A6, PO 12/11/2026),
+  // không đặt ở đây: header tĩnh không mang được nonce.
 ]
 
 const nextConfig: NextConfig = {

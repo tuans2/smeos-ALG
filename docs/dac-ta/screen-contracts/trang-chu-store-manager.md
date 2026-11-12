@@ -1,5 +1,7 @@
 # Screen Contract — Trang chủ Quản lý cửa hàng (StoreManagerDashboard)
 
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Dòng "Kết quả chờ duyệt" (sang `/duyet`) ẩn khi `/duyet` đang khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
 **Tuyến:** `/` · **Tệp chính:** `src/components/dashboard/store-manager-dashboard.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.A1
 
 ## 1. Vai và mục đích

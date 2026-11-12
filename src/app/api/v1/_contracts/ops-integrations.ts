@@ -58,7 +58,7 @@ export const INTEGRATION_HUB_OPERATIONS: OpenApiOperation[] = [
     description: "Giá trị `token` chỉ có trong chính phản hồi này — CSDL chỉ giữ HMAC; mất là phải xoay lại. `ttl_days` ngoài khoảng cho phép → 400.",
     ok: [201, { description: "Token mới", schema: res.tokenIssuedResponse }], errors: BODY_ERRORS }),
   op(TOKEN, { method: "post", path: "/integration-tokens/{id}/rotate", operationId: "rotateIntegrationToken", summary: "Xoay token — cấp token mới, giữ token cũ", cap: "F9",
-    description: "Hai token cùng hiệu lực trong thời gian xoay; thu hồi token cũ bằng `DELETE`. Token của tổ chức khác → 404.",
+    description: "Hai token cùng hiệu lực trong thời gian xoay; thu hồi token cũ bằng `DELETE`. Token mới giữ đúng thời hạn (số ngày) của token đang xoay. Token của tổ chức khác → 404.",
     ok: [201, { description: "Token mới", schema: res.tokenIssuedResponse }], errors: [404] }),
   op(TOKEN, { method: "delete", path: "/integration-tokens/{id}", operationId: "revokeIntegrationToken", summary: "Thu hồi token ngay", cap: "F9",
     description: "Không xoá bản ghi. Trả `{ ok: true }` cũ. Token của tổ chức khác → 404.", ok: [200, { description: "Đã thu hồi", schema: res.okResponse }], errors: [404] }),

@@ -23,6 +23,7 @@ vi.mock("@/modules/platform/adapters/google-workspace-client", async (importOrig
 }))
 
 import * as R from "@/app/api/v1/platform/_contracts/responses-data"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { POST as importPreview } from "@/app/api/v1/platform/marketplace/import-excel/preview/route"
 import { POST as importExcel } from "@/app/api/v1/platform/marketplace/import-excel/route"
 import { DELETE as revokeShare } from "@/app/api/v1/platform/marketplace/share-links/[id]/route"
@@ -33,10 +34,15 @@ import { GET as listStores } from "@/app/api/v1/platform/marketplace/stores/rout
 import { POST as syncPhotos } from "@/app/api/v1/platform/marketplace/sync-photos/route"
 import { POST as syncSheet } from "@/app/api/v1/platform/marketplace/sync/route"
 import { PUT as assetHold } from "@/app/api/v1/platform/orgs-data/[orgId]/assets/[assetId]/legal-hold/route"
+// @release-strip-end
 import { GET as exportOrg } from "@/app/api/v1/platform/orgs-data/[orgId]/export/route"
+// @release-strip
 import { PUT as orgHold } from "@/app/api/v1/platform/orgs-data/[orgId]/legal-hold/route"
+// @release-strip-end
 import { GET as records } from "@/app/api/v1/platform/orgs-data/[orgId]/records/[domain]/route"
+// @release-strip
 import { GET as folder } from "@/app/api/v1/platform/orgs-data/[orgId]/route"
+// @release-strip-end
 import { GET as orgsData } from "@/app/api/v1/platform/orgs-data/route"
 import { ALL_PLATFORM_CAPABILITY_CODES } from "@/core/platform/platform-capability-catalog"
 import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
@@ -74,6 +80,7 @@ describe("hợp đồng — Console Vận hành Nền tảng: chợ đối tác,
     await disconnectDatabase()
   })
 
+  // @release-strip
   it("chợ đối tác: đồng bộ, nhập tệp, ảnh, danh sách, link chia sẻ, xoá", async () => {
     await expectContract(await syncSheet(send("/marketplace/sync", "POST", {})), 200, R.marketplaceImportResponse, "marketplace-sync")
     await expectContract(await importPreview(upload("/marketplace/import-excel/preview")), 200, R.marketplacePreviewResponse, "marketplace-preview")
@@ -91,11 +98,14 @@ describe("hợp đồng — Console Vận hành Nền tảng: chợ đối tác,
     const expectedTotal = (again.data as { total: number }).total
     await expectContract(await bulkDelete(send("/marketplace/stores/bulk-delete", "POST", { all: true, expectedTotal })), 200, R.bulkDeleteStoresResponse, "stores-bulk-delete")
   })
+  // @release-strip-end
 
   it("dữ liệu tổ chức: tóm tắt, thư mục, bản ghi, CSV, ZIP, giữ pháp lý", async () => {
     const orgId = shop.organizationId
     await expectContract(await orgsData(get("/orgs-data")), 200, R.orgsDataResponse, "orgs-data")
+    // @release-strip
     await expectContract(await folder(get(`/orgs-data/${orgId}`), ps({ orgId })), 200, R.orgFolderResponse, "org-folder")
+    // @release-strip-end
     for (const domain of ["catalog", "orders", "members", "branches", "customers", "jobs"]) {
       await expectContract(await records(get(`/orgs-data/${orgId}/records/${domain}`), ps({ orgId, domain })), 200, R.orgRecordsResponse, "org-records")
     }
@@ -109,6 +119,7 @@ describe("hợp đồng — Console Vận hành Nền tảng: chợ đối tác,
       data: { organization_id: orgId, kind: "MASTER", state: "READY", mime_type: "image/jpeg", storage_key: `org/${orgId}/khong-sp/a.jpg`, created_by: shop.userId },
     })
     const until = new Date(Date.now() + 30 * 86_400_000).toISOString()
+    // @release-strip
     await expectContract(await orgHold(send(`/orgs-data/${orgId}/legal-hold`, "PUT", { until, reason: "Tranh chấp hợp đồng" }), ps({ orgId })), 200, R.legalHoldResponse, "legal-hold")
     await expectContract(
       await assetHold(send(`/orgs-data/${orgId}/assets/${asset.id}/legal-hold`, "PUT", { until: null, reason: "Hết tranh chấp" }), ps({ orgId, assetId: asset.id })),
@@ -116,5 +127,6 @@ describe("hợp đồng — Console Vận hành Nền tảng: chợ đối tác,
       R.legalHoldResponse,
       "legal-hold"
     )
+    // @release-strip-end
   })
 })

@@ -5,6 +5,7 @@
  * quản lý notification (Mother, Industry, Chain, Store).
  */
 
+import type * as React from "react"
 import type {
   NotificationTier,
   NotifyChannel,
@@ -74,6 +75,8 @@ export interface NotificationMatrixProps {
   loading?: boolean | undefined
   /** Error message nếu events API fail */
   error?: string | null | undefined
+  /** Khối riêng của tầng hiện trang (vd. Kênh liên lạc ở tầng Mẹ), đặt ngay dưới thẻ hướng dẫn. */
+  beforeMatrix?: React.ReactNode | undefined
 }
 
 /** Label tiếng Việt cho các nhóm sự kiện */

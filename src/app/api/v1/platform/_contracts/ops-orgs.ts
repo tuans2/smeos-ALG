@@ -42,7 +42,7 @@ export const ORG_OPERATIONS: OpenApiOperation[] = [
   op(ORGS, { method: "get", path: "/platform/organizations/{id}", operationId: "platformGetOrganization", summary: "Chi tiết một tổ chức", description: `Kèm yêu cầu đang chờ duyệt.${D60}`, cap: "N1",
     ok: [200, { description: "Tổ chức", schema: res.organizationResponse }], errors: [404] }),
   op(ORGS, { method: "patch", path: "/platform/organizations/{id}", operationId: "platformUpdateOrganization", summary: "Duyệt/từ chối yêu cầu của tổ chức",
-    description: `Đổi mô hình, mở khoá ngôn ngữ, gỡ yêu cầu chờ, duyệt hạn mức chat công khai, bật phạm vi chi nhánh đợt 1 — trả kết quả của thao tác cuối trong thân. Mã năng lực kiểm ở use-case (\`N2\`).${D60}`,
+    description: `Đổi mô hình, mở khoá ngôn ngữ, gỡ yêu cầu chờ, duyệt hạn mức chat công khai, bật phạm vi chi nhánh đợt 1, vòng đời (\`lifecycle_status\`), mức cô lập (\`isolation_tier\` — gói không cho phép → 422) — trả kết quả của thao tác cuối trong thân. Mã năng lực kiểm ở use-case (\`N2\`).${D60}`,
     cap: "N2", body: req.organizationPatchBody, ok: [200, { description: "Kết quả", schema: res.organizationPatchResponse }], errors: [...BODY_ERRORS, 404, 409, 422] }),
   op(ORGS, { method: "get", path: "/platform/pending-approvals", operationId: "platformPendingApprovals", summary: "Yêu cầu chờ duyệt (ngôn ngữ, mô hình, hạn mức chat)", cap: "N1",
     ok: [200, { description: "Hàng chờ", schema: res.pendingApprovalsResponse }] }),

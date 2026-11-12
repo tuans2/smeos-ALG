@@ -74,6 +74,18 @@ export const channelActivationBody = z.object({
   activated: z.boolean(),
 })
 
+// notification/providers/route.ts — sổ nhà cung cấp kênh (checklist 4.30). `provider: null` = gỡ; ô bí mật trống = giữ khoá cũ
+const PROVIDER_CHANNEL = z.enum(["SMS", "ZALO", "PUSH"])
+export const channelProviderSaveBody = z.object({
+  channel: PROVIDER_CHANNEL,
+  provider: z.string().min(1).max(64).nullable(),
+  values: z.record(z.string().max(64), z.string().max(4000)).default({}),
+})
+
+// notification/providers/test/route.ts
+// `phone` bắt buộc với SMS / Zalo (kiểm ở use-case); Web Push gửi tới thiết bị của chính người vận hành
+export const channelProviderTestBody = z.object({ channel: PROVIDER_CHANNEL, phone: z.string().min(8).max(20).optional() })
+
 // notification/hard-locks/route.ts
 const NOTIFY_CHANNEL = z.enum(["APP_INBOX", "EMAIL", "PUSH", "TELEGRAM", "ZALO", "SMS", "WHATSAPP", "MESSENGER"])
 export const setHardLockBody = z.object({
@@ -120,6 +132,11 @@ export const organizationPatchBody = z.object({
   public_chat_limits_decision: z.enum(["approve", "reject"]).optional(),
   /** Bật/tắt phạm vi chi nhánh đợt 1 (khách hàng) — D-59, ADR-012 T-5 */
   branch_scope_wave1: z.boolean().optional(),
+  /** Vòng đời tổ chức — tạm ngưng / mở lại / rời nền tảng (ADR-016 D-S5); `offboarding_until` bắt buộc khi OFFBOARDING */
+  lifecycle_status: z.enum(["ACTIVE", "SUSPENDED", "OFFBOARDING"]).optional(),
+  offboarding_until: z.iso.datetime().optional(),
+  /** Mức cô lập (ADR-016 D-S2) — gói hiện tại không cho phép → 422 */
+  isolation_tier: z.enum(["SHARED", "SHARED_PLUS", "DEDICATED"]).optional(),
 })
 
 // organizations/[id]/subscription/route.ts

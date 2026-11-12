@@ -15,7 +15,6 @@ import { NativeSelect } from "@/components/ui/select"
 import type { PartnerView } from "@/modules/coordinator/use-cases/manage-partners"
 import { PartnerCard } from "./partner-card"
 import { PartnerCreateForm } from "./partner-create-form"
-import { PartnerSettlementModal } from "./partner-settlement-modal"
 
 export interface PartnerManagementModalProps {
   isOpen: boolean
@@ -35,7 +34,6 @@ export function PartnerManagementModal({
   const [isAddingNew, setIsAddingNew] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
-  const [settlementPartner, setSettlementPartner] = useState<PartnerView | null>(null)
 
   const fetchPartners = useCallback(async () => {
     setLoading(true)
@@ -230,23 +228,11 @@ export function PartnerManagementModal({
                 key={p.id}
                 partner={p}
                 onToggleStatus={handleToggleStatus}
-                onOpenSettlement={(partner) => setSettlementPartner(partner)}
               />
             ))
           )}
         </div>
       </div>
-
-      {settlementPartner && (
-        <PartnerSettlementModal
-          open={Boolean(settlementPartner)}
-          onOpenChange={(open) => {
-            if (!open) setSettlementPartner(null)
-          }}
-          partnerId={settlementPartner.id}
-          partnerName={settlementPartner.name}
-        />
-      )}
     </Dialog>
   )
 }

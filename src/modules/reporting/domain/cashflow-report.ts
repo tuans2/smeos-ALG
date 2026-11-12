@@ -8,7 +8,7 @@ import type { BankEventRow, PaymentRow } from "./report-rows"
  */
 
 export const METHOD_LABEL: Record<string, string> = {
-  BANK_TRANSFER: "Chuyển khoản / VietQR", CASH: "Tiền mặt", CARD: "Thẻ", E_WALLET: "Ví điện tử", COD: "Thu hộ khi giao", OTHER: "Khác",
+  BANK_TRANSFER: "Chuyển khoản / VietQR", CASH: "Tiền mặt", CARD: "Thẻ", E_WALLET: "Ví điện tử", COD: "Thu hộ khi giao", MARKETPLACE: "Sàn thương mại điện tử", OTHER: "Khác",
 }
 
 const methodOf = (m: string | null) => (m && m in METHOD_LABEL ? m : "OTHER")

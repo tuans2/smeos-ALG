@@ -11,7 +11,9 @@ import { POST as rejectCr } from "@/app/api/v1/product-change-requests/[id]/reje
 import { GET as crQueue } from "@/app/api/v1/product-change-requests/route"
 import { GET as getImageSet } from "@/app/api/v1/product-image-set/[id]/route"
 import { GET as imageSetCatalog, POST as createImageSet } from "@/app/api/v1/product-image-set/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { POST as retryPhoto } from "@/app/api/v1/product-photo/[id]/retry/route"
+// @release-strip-end
 import { GET as getPhoto } from "@/app/api/v1/product-photo/[id]/route"
 import { GET as photoCatalog, POST as createPhoto } from "@/app/api/v1/product-photo/route"
 import { POST as crSubmit } from "@/app/api/v1/products/[id]/change-requests/route"
@@ -55,8 +57,10 @@ describe("hợp đồng — ảnh studio, bộ ảnh, đề xuất sửa sản p
     // Worker xong nhưng ảnh không giữ đúng sản phẩm (điểm thấp) → được làm lại.
     await prisma.generation_jobs.update({ where: { id }, data: { status: "COMPLETED", output: { identity_guard: { ssim: 0.4 } } } })
     await expectContract(await getPhoto(get(`/product-photo/${id}`), ps(id)), 200, R.photoResultResponse, "photo-get-failed-qc")
+    // @release-strip
     const retry = await retryPhoto(send(`/product-photo/${id}/retry`, "POST", { retry_hint: "nền sáng hơn" }, t, true), ps(id))
     await expectContract(retry, 201, R.jobCreatedResponse, "photo-retry")
+    // @release-strip-end
   })
 
   it("bộ ảnh: danh mục gói, tạo, xem", async () => {
@@ -102,8 +106,10 @@ describe("hợp đồng — ảnh studio, bộ ảnh, đề xuất sửa sản p
     expect(await st(createImageSet(send("/product-image-set", "POST", { asset_id: randomUUID() }, t, true)))).toBe(404)
     const done = await readJson(await createPhoto(send("/product-photo", "POST", { asset_id: assetId }, t, true)))
     const pid = String(done.job_id)
+    // @release-strip
     expect(await st(retryPhoto(send(`/product-photo/${pid}/retry`, "POST", {}, t, true), ps(pid)))).toBe(400) // chưa có điểm → coi như đạt
     expect(await st(retryPhoto(send(`/product-photo/${pid}/retry`, "POST", {}, other, true), ps(pid)))).toBe(404)
+    // @release-strip-end
     const rejected = (await readJson(await crQueue(get("/product-change-requests?status=REJECTED")))).data as { id: string }[]
     const crId = rejected[0]!.id
     expect(await st(approveCr(send(`/product-change-requests/${crId}/approve`, "POST", {}), ps(crId)))).toBe(422)

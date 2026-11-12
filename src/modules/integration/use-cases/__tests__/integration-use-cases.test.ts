@@ -151,6 +151,17 @@ describe("rotateIntegrationToken", () => {
     const repo = makeTokenRepo({ findById: vi.fn().mockResolvedValue(null) })
     await expect(rotateIntegrationToken(ctx, "nonexistent", repo)).rejects.toThrow()
   })
+
+  it("giữ thời hạn đã chọn lúc cấp (token 30 ngày xoay ra token 30 ngày, audit API §19)", async () => {
+    const short = makeToken({ created_at: new Date("2026-11-01T00:00:00Z"), expires_at: new Date("2026-12-01T00:00:00Z") })
+    const repo = makeTokenRepo({ findById: vi.fn().mockResolvedValue(short) })
+    const before = Date.now()
+    await rotateIntegrationToken(ctx, "tok-1", repo)
+    const { expiresAt } = vi.mocked(repo.create).mock.calls[0]![1] as { expiresAt: Date }
+    const days = (expiresAt.getTime() - before) / 86_400_000
+    expect(days).toBeGreaterThan(29.99)
+    expect(days).toBeLessThan(30.01)
+  })
 })
 
 // ============================================================

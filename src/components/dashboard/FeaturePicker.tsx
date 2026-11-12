@@ -97,7 +97,6 @@ export function FeaturePicker({
   const depContext = useMemo(() => ({
     hasApprovedAnalysis,
     hasApprovedMasterImage,
-    hasCustomerConsent: false, // TODO: check actual consent
   }), [hasApprovedAnalysis, hasApprovedMasterImage]);
 
   // Selected features array
@@ -510,7 +509,7 @@ function ModuleAccordion({
   isExpanded: boolean;
   onToggleExpand: () => void;
   userCapabilities: string[];
-  depContext: { hasApprovedAnalysis: boolean; hasApprovedMasterImage: boolean; hasCustomerConsent: boolean };
+  depContext: { hasApprovedAnalysis: boolean; hasApprovedMasterImage: boolean };
 }) {
   const visibleFeatures = getVisibleFeaturesByModule(group.module);
   const selectedCount = visibleFeatures.filter(f => selectedFeatures.has(f.key)).length;
@@ -595,7 +594,7 @@ function FeatureCard({
   userCanRun: boolean;
 }) {
   const enabled = userCanRun && depCheck.canRun;
-  const showTooltip = !enabled || feature.status === "coming_soon";
+  const showTooltip = !enabled || feature.status === "coming_soon" || Boolean(depCheck.reason);
 
   return (
     <TooltipProvider>
@@ -665,7 +664,7 @@ function FeatureCard({
         {showTooltip && (
           <TooltipContent side="top" align="center" className="max-w-xs p-2.5 text-caption">
             {!userCanRun && <p>❌ Bạn thiếu quyền: <code className="font-mono">{feature.rbacRun}</code></p>}
-            {!depCheck.canRun && depCheck.reason && <p>⏸ {depCheck.reason}</p>}
+            {depCheck.reason && <p>{depCheck.canRun ? "" : "⏸ "}{depCheck.reason}</p>}
             {feature.status === "coming_soon" && <p>🚧 Tính năng đang phát triển, chưa thể sử dụng</p>}
             {feature.creditCost && <p>💰 Chi phí ước tính: {feature.creditCost} credits (D14 placeholder)</p>}
           </TooltipContent>

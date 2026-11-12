@@ -376,6 +376,8 @@ model notification_inbox {
 ```
 # Platform Admin (Mother)
 GET/PATCH  /api/v1/platform/notification/channels          ← Kích hoạt kênh
+GET/PUT    /api/v1/platform/notification/providers         ← Sổ nhà cung cấp SMS/Zalo/Web Push (N2, khoá niêm phong, 4.30)
+POST       /api/v1/platform/notification/providers/test    ← Gửi tin thử
 GET/PATCH  /api/v1/platform/notification/visibility        ← Visibility Matrix
 GET/POST/DELETE /api/v1/platform/notification/hard-locks  ← Mother Hard Lock
 
@@ -389,6 +391,7 @@ GET/POST/DELETE /api/v1/notification/store-hard-locks     ← Store Hard Lock
 
 # User
 GET/PATCH  /api/v1/notification/preferences
+GET/POST/DELETE /api/v1/notification/push-subscriptions  ← Bật/tắt Web Push trên trình duyệt này (4.30)
 
 # Inbox
 GET        /api/v1/notification/inbox?page=1&limit=20

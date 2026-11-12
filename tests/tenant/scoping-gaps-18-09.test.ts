@@ -5,7 +5,9 @@ import { POST as assignFloristRoute } from "@/app/api/v1/orders/[id]/assign/rout
 import { POST as createCustomer } from "@/app/api/v1/crm/customers/route"
 import { POST as postConsent } from "@/app/api/v1/crm/customers/[id]/consent/route"
 import { GET as getTemplateOverrides, PUT as putTemplateOverride } from "@/app/api/v1/template-overrides/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { DELETE as deleteTemplateOverride } from "@/app/api/v1/template-overrides/[templateKey]/[fieldKey]/route"
+// @release-strip-end
 import { POST as issueToken } from "@/app/api/v1/integration-tokens/route"
 import { POST as postContentMetrics } from "@/app/api/v1/integration/content-metrics/route"
 
@@ -165,6 +167,7 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
     expect(forA?.value).toBe("Chúc mừng sinh nhật từ Tiệm hoa alpha")
     expect(forB?.value).toBe("Chúc mừng sinh nhật từ Tiệm hoa beta")
 
+    // @release-strip
     // B xoá đúng khoá đó — chỉ xoá dòng của B, dòng của A còn nguyên.
     const resDeleteB = await deleteTemplateOverride(
       withSession(`${BASE}/template-overrides/loi-chuc-sinh-nhat/tieu_de`, b.token, { method: "DELETE" }),
@@ -184,6 +187,7 @@ describe("cách ly tenant — bổ sung RS-2 (order_assignments, customer_consen
       { params: Promise.resolve({ templateKey: "loi-chuc-sinh-nhat", fieldKey: "tieu_de" }) }
     )
     expect(resDeleteBAgain.status).toBe(404)
+    // @release-strip-end
   })
 
   it("POST /integration/content-metrics — cùng platform/content_id/metric_date của hai tổ chức ghi thành HAI dòng riêng, không đè lên nhau", async () => {

@@ -153,6 +153,7 @@ const helper = readFileSync("tests/helpers/database.ts", "utf8") + readFileSync(
 const trunc = new Set([...helper.matchAll(/"([a-z_]+)"/g)].map((m) => m[1]))
 for (const t of tenant) if (!trunc.has(t)) bao(`bảng tenant "${t}" không nằm trong TENANT_TABLES — không được dọn giữa các ca thử`)
 
+// @release-strip — tài liệu cho agent (CLAUDE.md, .agents/) là nội bộ smeOS, không có trong bản giao GD1
 // ── 4. Tài liệu cho agent ─────────────────────────────────────────────────
 // CLAUDE.md nạp vào MỌI phiên — giữ nhỏ. Đường dẫn/lệnh trong tài liệu agent
 // phải có thật: link `file://` tuyệt đối tới máy cá nhân bị hỏng và `HARVEST_MANIFEST.md` sai chỗ
@@ -182,6 +183,7 @@ for (const f of agentDocs) {
     if (!existsSync(pth)) bao(`${f}: link "${m[1]}" không tồn tại`)
   }
 }
+// @release-strip-end
 
 console.log(loi === 0 ? "\n✓ Tài liệu khớp mã." : `\n✗ ${loi} chỗ lệch giữa tài liệu và mã.`)
 process.exit(loi === 0 ? 0 : 1)

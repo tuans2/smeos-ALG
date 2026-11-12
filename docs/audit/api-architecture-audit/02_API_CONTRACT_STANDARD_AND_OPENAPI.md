@@ -1,10 +1,10 @@
 # Đề xuất chuẩn API Contract v1.1 và OpenAPI (06/11/2026)
 
-> Trạng thái: **DRAFT — chờ PO duyệt**. Khi được duyệt, phần quy ước (§1–§8) chuyển vào đặc tả 06 §2
+> Trạng thái: **ĐÃ DUYỆT** (PO 07/11/2026, đợt 3–6; xem `01_API_ARCHITECTURE_AUDIT.md` §8–§13, §36–§37). Phần quy ước (§1–§8) đã chuyển vào đặc tả 06 §2
 > (`docs/dac-ta/06-api-specification.md`, SSOT) và skill `api-development`; tài liệu này không tự thành SSOT.
 > Căn cứ: `01_API_ARCHITECTURE_AUDIT.md` (mã phát hiện `API-xx`).
 
-**Quyết định PO 07/11/2026 (đợt 3).** (1) `limit` mặc định **25**; (2) route mới **snake_case**; (3) lỗi validation **giữ `details.issues`** — phần `details.fields` ở §4–§5 dưới đây KHÔNG áp dụng, để sau; (4) bật ratchet: route mới bắt buộc `defineRoute`, cấm envelope lệch. Đã thực thi: `src/core/http/define-route.ts`, `src/core/http/pagination.ts`, `src/core/http/contract-responses.ts`, `tests/unit/architecture/route-contract-ratchet.test.ts`; quy ước chép vào đặc tả 06 §2 và skill `api-development`. Phần còn là đề xuất: idempotency gắn băm thân (§7), version/deprecation (§8), OpenAPI (§9), các gate ở §10 ngoài hai ratchet trên.
+**Quyết định PO 07/11/2026 (đợt 3).** (1) `limit` mặc định **25**; (2) route mới **snake_case**; (3) lỗi validation **giữ `details.issues`** — phần `details.fields` ở §4–§5 dưới đây KHÔNG áp dụng, để sau; (4) bật ratchet: route mới bắt buộc `defineRoute`, cấm envelope lệch. Đã thực thi: `src/core/http/define-route.ts`, `src/core/http/pagination.ts`, `src/core/http/contract-responses.ts`, `tests/unit/architecture/route-contract-ratchet.test.ts`; quy ước chép vào đặc tả 06 §2 và skill `api-development`. Phần còn là đề xuất: idempotency gắn băm thân (§7), version/deprecation (§8), OpenAPI (§9), các gate ở §10 ngoài hai ratchet trên. **Cập nhật 11/11/2026:** §8 (sổ `DEPRECATIONS`, header `Deprecation`/`Sunset`) và §9 (OpenAPI 3.1 cho cả bốn bề mặt, `npm run check:openapi` gác qua `npm test`) đã thực thi; §7 áp cho job nội bộ (422 `IDEMPOTENCY_KEY_REUSED`), chưa áp cho `/integration/jobs` và `POST /orders`; `details.fields` (§4–§5) vẫn để sau.
 
 **Nguyên tắc áp dụng.** Chuẩn chỉ **bắt buộc cho route mới và route đang được sửa**; route cũ chuyển dần qua ratchet (như `lint:ratchet`). Không đổi path/hình dạng phản hồi của route đang chạy trong `/v1` — thay đổi phá vỡ chỉ qua §8. Không cần thêm dependency: zod 4 có sẵn `z.toJSONSchema`.
 

@@ -2015,6 +2015,12 @@
       ]
     },
     {
+      "reason": "Tài liệu API cho đối tác (trang mới 11/11/2026, ARC-024) — chưa thuộc phạm vi GD1; PO chuyển sang mục 9.5 nếu muốn giao",
+      "pages": [
+        "/tich-hop/tai-lieu-api"
+      ]
+    },
+    {
       "reason": "Sáng tạo ảnh, video, nội dung",
       "pages": [
         "/creative-studio",
@@ -2117,6 +2123,20 @@
       "prefixes": [
         "/api/v1/proxy"
       ]
+    },
+    {
+      "reason": "API của Creative Studio (trang /creative-studio không giao); chỉ giữ /api/v1/creative-production/providers cho Cài đặt AI",
+      "prefixes": [
+        "/api/v1/creative-production/content-drafts",
+        "/api/v1/creative-production/content-rewrites",
+        "/api/v1/creative-production/package",
+        "/api/v1/creative-production/packages",
+        "/api/v1/creative-production/plan",
+        "/api/v1/creative-production/produce",
+        "/api/v1/creative-production/scene-plans",
+        "/api/v1/creative-production/scene-revisions",
+        "/api/v1/creative-production/video-assembly"
+      ]
     }
   ],
   "rootFiles": [
@@ -2139,15 +2159,27 @@
   },
   "acceptedViolations": [
     {
-      "reason": "Khối bài đăng ở trang chủ còn gọi proxy SocialFlow — Bước 4 chuyển sang mô-đun social-publishing hoặc bỏ khối",
-      "items": [
-        "src/components/dashboard/marketing-workspace.tsx → /api/v1/proxy/[...path]"
-      ]
-    },
-    {
       "reason": "Lược đồ OpenAPI nội bộ (main, PR #16) nhắc route proxy trong chú thích — không phải phụ thuộc lúc chạy; bản cắt lọc operation theo route còn lại (isKnownApiRoute)",
       "items": [
         "src/app/api/v1/_contracts/requests-tools.ts → /api/v1/proxy/[...path]"
+      ]
+    }
+  ],
+  "gatedLinks": [
+    {
+      "reason": "Nút hoặc khối dẫn tới trang không giao ẩn khi trang không thuộc giai đoạn (isHrefInPhase); smeOS không bật giai đoạn thì giữ nguyên. Mục \"Thêm\" ở thanh dưới điện thoại mở ngăn menu thay vì sang /them. Trang Tiếp thị rơi về trang chủ cửa hàng và bị bỏ khỏi bản cắt (@release-strip).",
+      "items": [
+        "src/app/(app)/duyet/page.tsx → /creative-studio",
+        "src/app/(app)/tai-anh/page.tsx → /creative-studio",
+        "src/components/catalog/share-catalog-modal.tsx → /noi-dung",
+        "src/components/integrations/api-tokens-panel.tsx → /tich-hop/tai-lieu-api",
+        "src/components/dashboard/crm-toolkit-grid.tsx → /hoi-thoai",
+        "src/components/dashboard/crm-workspace.tsx → /hoi-thoai",
+        "src/components/dashboard/customer-service-workspace.tsx → /hoi-thoai",
+        "src/components/dashboard/store-growth-center.tsx → /creative-studio",
+        "src/components/dashboard/store-growth-center.tsx → /market-intelligence",
+        "src/components/organization/ai-channels-settings-tab.tsx → /ket-noi",
+        "src/components/products/one-image-kit-dialog.tsx → /in-an"
       ]
     }
   ],
@@ -2229,7 +2261,8 @@
       "docs/handover/OPERATIONS_RUNBOOK.md",
       "docs/design-system/",
       "docs/dac-ta/screen-contracts/",
-      "docs/dac-ta/ux-patterns/"
+      "docs/dac-ta/ux-patterns/",
+      "docs/kien-truc/HUONG_DAN_DANG_KY_UNG_DUNG_MXH.md"
     ],
     "removePaths": [
       {
@@ -2266,6 +2299,14 @@
           "scripts/release/",
           "scripts/handover-",
           "tests/unit/release/"
+        ]
+      },
+      {
+        "reason": "CI và quy trình nội bộ của smeOS (bản giao có CI riêng trong lớp phủ)",
+        "paths": [
+          ".github/workflows/release-gd1.yml",
+          ".github/workflows/ui-weekly.yml",
+          ".github/CODEOWNERS"
         ]
       }
     ],

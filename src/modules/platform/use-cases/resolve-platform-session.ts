@@ -1,3 +1,4 @@
+import { asSystemDb } from "@/core/tenancy/db-context"
 import { AppError, unauthenticated } from "@/core/http/errors"
 import { readSessionCookie } from "@/core/http/cookies"
 import type { PlatformContext } from "@/core/platform/platform-context"
@@ -54,7 +55,8 @@ export async function requirePlatformContext(request: Request): Promise<Platform
 /** Dùng khi ngữ cảnh nền tảng là tuỳ chọn (chưa có nơi dùng ở P25a). */
 export async function resolvePlatformSession(request: Request): Promise<PlatformContext | null> {
   try {
-    return await requirePlatformContext(request)
+    // Gọi từ layout Console (Server Component, ngoài `handle()`): tra phiên và quyền vận hành bằng quyền hệ thống
+    return await asSystemDb("platform:session", () => requirePlatformContext(request))
   } catch {
     return null
   }

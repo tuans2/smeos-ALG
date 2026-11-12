@@ -2,7 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient } from "@/generated/prisma/client"
 import { env } from "@/lib/env"
-import { decryptPiiRow, piiResultExtension, readWithPiiKeys } from "@/core/security/infra/pii-read"
+import { decryptPiiRow, ensurePiiKeys, piiResultExtension, readWithPiiKeys } from "@/core/security/infra/pii-read"
 import { assertNoPiiFilter, type RuntimeModels } from "@/core/security/infra/pii-guard"
 import { encryptPiiWriteArgs, type PiiBaseClient } from "@/core/security/infra/pii-write"
 import { applyRecipientView, planRecipientRead } from "@/modules/orders/infra/order-recipient-view"
@@ -67,7 +67,10 @@ function createClient(): PrismaClient {
         async $allOperations({ operation, args, query }) {
           const plan = planRecipientRead(operation, args as Parameters<typeof planRecipientRead>[1])
           if (!plan) return query(args)
-          return applyRecipientView(await query(plan.args as typeof args), plan.keepRecipient, (r) => decryptPiiRow("order_recipients", r))
+          const result = await query(plan.args as typeof args)
+          // Extension này chạy BÊN TRONG `readWithPiiKeys` của lớp trên: nạp khoá trước khi giải mã `recipient` (khoá nguội → 500)
+          await ensurePiiKeys(base, result)
+          return applyRecipientView(result, plan.keepRecipient, (r) => decryptPiiRow("order_recipients", r))
         },
       },
     },

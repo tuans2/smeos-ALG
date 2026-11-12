@@ -192,9 +192,21 @@ export function CraftFeeSettings() {
       <Group title="Điều chỉnh và khấu trừ">
         <NumberField label="Điều phối được sửa phí quanh mức gợi ý trong khoảng ±" value={policy.coordinatorAdjustPercent} onChange={(v) => set("coordinatorAdjustPercent", Math.min(100, v))} suffix="%" />
         <p className="text-caption text-text-muted">Sửa vượt khoảng này cần người có quyền Điều hành.</p>
-        <NumberField label="Trừ khi giao trễ giờ hẹn" value={policy.lateDeliveryDeductionPercent} onChange={(v) => set("lateDeliveryDeductionPercent", Math.min(100, v))} suffix="%" />
-        <NumberField label="Trừ khi khách khiếu nại" value={policy.complaintDeductionPercent} onChange={(v) => set("complaintDeductionPercent", Math.min(100, v))} suffix="%" />
-        <p className="text-caption text-text-muted">Để 0% thì chỉ ghi nhận, không trừ. Đổi % thì các đơn hoàn tất sau đó tự bị trừ.</p>
+        <label className="flex items-center gap-2 text-body-sm text-text">
+          <Checkbox checked={policy.deductionsEnabled} onCheckedChange={(checked) => set("deductionsEnabled", checked === true)} className="accent-primary" />
+          Áp dụng khấu trừ phí gia công
+        </label>
+        {policy.deductionsEnabled && (
+          <>
+            <NumberField label="Trừ khi giao trễ giờ hẹn" value={policy.lateDeliveryDeductionPercent} onChange={(v) => set("lateDeliveryDeductionPercent", Math.min(100, v))} suffix="%" />
+            <NumberField label="Chỉ tính trễ sau giờ hẹn quá" value={policy.lateGraceMinutes} onChange={(v) => set("lateGraceMinutes", Math.min(60, v))} suffix="phút" />
+            <NumberField label="Trừ khi khách khiếu nại" value={policy.complaintDeductionPercent} onChange={(v) => set("complaintDeductionPercent", Math.min(100, v))} suffix="%" />
+          </>
+        )}
+        <p className="text-caption text-text-muted">
+          Tắt hoặc để 0% thì chỉ ghi nhận, không trừ. Tắt, hạ % hay tăng thời gian ân hạn áp dụng ngay cho cả đơn đang làm;
+          tăng % chỉ áp cho đơn gửi lời mời sau khi lưu. Đơn không có giờ hẹn cụ thể không bị tính trễ.
+        </p>
       </Group>
 
       <CraftFeePreview policy={policy} feeLabel={spec.feeLabel} />

@@ -18,12 +18,15 @@
 // tài khoản tự đăng ký (`POST /auth/signup`) luôn có workspace `EXPERIENCE`.
 
 import { getDictionary, translate } from "@/lib/i18n/server"
-import { cookies } from "next/headers"
+import { requestCookieHeader } from "@/lib/request-cookie-header"
 
 import { ExperienceGrid } from "@/components/dashboard/experience-grid"
 import { SalesWorkspace } from "@/components/dashboard/sales-workspace"
 import { ProductManagerWorkspace } from "@/components/dashboard/product-manager-workspace"
+// @release-strip — trang Tiếp thị chỉ dẫn tới công cụ không giao (Sáng tạo, Nội dung, Video, Lịch đăng) và gọi proxy SocialFlow
 import { MarketingWorkspace } from "@/components/dashboard/marketing-workspace"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
+// @release-strip-end
 import { CrmWorkspace } from "@/components/dashboard/crm-workspace"
 import { CustomerServiceWorkspace } from "@/components/dashboard/customer-service-workspace"
 import { StoreGrowthCenter } from "@/components/dashboard/store-growth-center"
@@ -43,11 +46,7 @@ import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-
 
 export default async function DashboardPage() {
   const dict = getDictionary("vi")
-  const cookieStore = await cookies()
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ")
+  const cookieHeader = await requestCookieHeader()
 
   const session = await resolveAppSession(cookieHeader)
   // Không có phiên hợp lệ: layout bọc ngoài (`(app)/layout.tsx`) đã chuyển
@@ -77,8 +76,12 @@ export default async function DashboardPage() {
       return <SalesWorkspace />
     case "PRODUCT_WORKSPACE":
       return <ProductManagerWorkspace />
+    // @release-strip
     case "CREATIVE_WORKSPACE":
-      return <MarketingWorkspace />
+      // Mọi lối đi của trang Tiếp thị dẫn tới công cụ ngoài giai đoạn bàn giao → dùng trang chủ cửa hàng (nhánh mặc định)
+      if (isHrefInPhase("/creative-studio")) return <MarketingWorkspace />
+      return <StoreJourneyHome />
+    // @release-strip-end
     case "CRM_WORKSPACE":
       return <CrmWorkspace />
     case "CUSTOMER_SERVICE_WORKSPACE":

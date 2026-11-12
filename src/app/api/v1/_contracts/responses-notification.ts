@@ -83,3 +83,10 @@ const hardLock = z.strictObject({
   reason: z.string().optional(),
 })
 export const hardLocksResponse = data(z.array(hardLock))
+
+/** Thiết bị nhận Web Push của chính người gọi (checklist 4.30). */
+export const pushStatusResponse = z.strictObject({
+  data: z.strictObject({ public_key: z.string().nullable(), available: z.boolean(), devices: z.number(), subscribed: z.boolean() }),
+})
+export const pushSubscribedResponse = z.strictObject({ data: z.strictObject({ subscribed: z.literal(true) }) })
+export const pushUnsubscribedResponse = z.strictObject({ data: z.strictObject({ removed: z.boolean() }) })

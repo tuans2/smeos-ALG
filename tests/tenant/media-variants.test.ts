@@ -3,9 +3,11 @@ import { randomUUID } from "node:crypto"
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { POST as backgroundRemovalRoute } from "@/app/api/v1/media/background-removal/route"
+// @release-strip — route/mô-đun không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
 import { GET as getVariantRoute } from "@/app/api/v1/media/variants/[id]/route"
 import { POST as approveVariantRoute } from "@/app/api/v1/media/variants/[id]/approve/route"
 import { GET as downloadVariantRoute } from "@/app/api/v1/media/variants/[id]/download/route"
+// @release-strip-end
 import { GET as listVariantsRoute, POST as createVariantRoute } from "@/app/api/v1/media/variants/route"
 import type { TenantContext } from "@/core/tenancy"
 import { AssetRepository } from "@/modules/assets/infra/asset-repository"
@@ -333,10 +335,13 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
   describe("đọc kết quả", () => {
     it("trả URL ký có hạn cho từng biến thể, kèm số đo toàn vẹn", async () => {
       const { jobId } = await seedVariantJob(a, 1)
+      // @release-strip
       const body = await readJson(
         await getVariantRoute(withSession(`${BASE}/media/variants/${jobId}`, a.token), params(jobId))
       )
+      // @release-strip-end
 
+      // @release-strip
       const variants = body.variants as Array<Record<string, unknown>>
       expect(variants).toHaveLength(3)
       for (const v of variants) {
@@ -345,40 +350,49 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
         expect(String(v.url).startsWith("data:")).toBe(false)
         expect(v.approval_state).toBe("pending")
       }
+      // @release-strip-end
 
+      // @release-strip
       const toanVen = body.subject_integrity as Record<string, unknown>
       expect(toanVen.subject_pixel_identity).toBe(1)
       expect(toanVen.result).toBe("SAFE")
       expect((body.approval as Record<string, unknown>).can_approve).toBe(true)
+      // @release-strip-end
     })
 
     it("lõi lệch nhẹ bật cờ cảnh báo trước khi duyệt", async () => {
       const { jobId } = await seedVariantJob(a, 0.995)
+      // @release-strip
       const body = await readJson(
         await getVariantRoute(withSession(`${BASE}/media/variants/${jobId}`, a.token), params(jobId))
       )
       const approval = body.approval as Record<string, unknown>
       expect(approval.can_approve).toBe(true)
       expect(approval.requires_warning).toBe(true)
+      // @release-strip-end
     })
 
     it("job của tổ chức khác trả 404, không phải 403 (YC-T4)", async () => {
       const { jobId } = await seedVariantJob(a, 1)
+      // @release-strip
       const response = await getVariantRoute(
         withSession(`${BASE}/media/variants/${jobId}`, b.token),
         params(jobId)
       )
       expect(response.status).toBe(404)
+      // @release-strip-end
     })
 
     it("bị từ chối thì không có biến thể nào và không duyệt được", async () => {
       const { jobId } = await seedVariantJob(a, 0.4)
+      // @release-strip
       const body = await readJson(
         await getVariantRoute(withSession(`${BASE}/media/variants/${jobId}`, a.token), params(jobId))
       )
       expect(body.variants).toHaveLength(0)
       expect((body.approval as Record<string, unknown>).can_approve).toBe(false)
       expect((body.subject_integrity as Record<string, unknown>).result).toBe("REJECTED")
+      // @release-strip-end
     })
 
     it("phán quyết tính lại từ SỐ ĐO, không tin `result` trên dòng job", async () => {
@@ -386,15 +400,18 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
       // Giả cảnh worker cũ (hoặc bị sửa) ghi `result = SAFE` lên dòng job.
       await prisma.generation_jobs.update({ where: { id: jobId }, data: { result: "SAFE" } })
 
+      // @release-strip
       const body = await readJson(
         await getVariantRoute(withSession(`${BASE}/media/variants/${jobId}`, a.token), params(jobId))
       )
       expect((body.subject_integrity as Record<string, unknown>).result).toBe("REJECTED")
       expect((body.approval as Record<string, unknown>).can_approve).toBe(false)
+      // @release-strip-end
     })
   })
 
   describe("cổng duyệt biến thể", () => {
+    // @release-strip — route không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
     it("duyệt ĐÚNG tấm được chỉ định, hai tấm còn lại vẫn chờ", async () => {
       const { jobId, variantIds } = await seedVariantJob(a, 1)
       const response = await approveVariantRoute(
@@ -418,9 +435,11 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
       expect(audit).toHaveLength(1)
       expect(audit[0]!.entity_id).toBe(variantIds[1])
     })
+    // @release-strip-end
 
     it("REJECTED trả 409, KHÔNG phải 403", async () => {
       const { jobId, variantIds } = await seedVariantJob(a, 0.4, { ghiAsset: true })
+      // @release-strip
       const response = await approveVariantRoute(
         withSession(`${BASE}/media/variants/${jobId}/approve`, a.token, {
           method: "POST",
@@ -429,6 +448,7 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
         params(jobId)
       )
       expect(response.status).toBe(409)
+      // @release-strip-end
       const rows = await prisma.assets.findMany({ where: { id: { in: variantIds } } })
       expect(rows.every((r) => r.approval_state === "PENDING")).toBe(true)
     })
@@ -436,6 +456,7 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
     it("asset của job KHÁC không duyệt được qua job này", async () => {
       const mot = await seedVariantJob(a, 1)
       const hai = await seedVariantJob(a, 1)
+      // @release-strip
       // Cùng tổ chức, cùng năng lực — chỉ khác job. Kiểm riêng vì nếu use-case
       // chỉ lọc theo tổ chức thì đây là đường đi vòng qua cổng toàn vẹn.
       const response = await approveVariantRoute(
@@ -446,10 +467,12 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
         params(mot.jobId)
       )
       expect(response.status).toBe(404)
+      // @release-strip-end
     })
 
     it("duyệt hai lần trả 409, không ghi đè người duyệt trước", async () => {
       const { jobId, variantIds } = await seedVariantJob(a, 1)
+      // @release-strip
       const goi = () =>
         approveVariantRoute(
           withSession(`${BASE}/media/variants/${jobId}/approve`, a.token, {
@@ -460,10 +483,12 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
         )
       expect((await goi()).status).toBe(200)
       expect((await goi()).status).toBe(409)
+      // @release-strip-end
     })
 
     it("tổ chức khác không duyệt được biến thể của mình", async () => {
       const { jobId, variantIds } = await seedVariantJob(a, 1)
+      // @release-strip
       const response = await approveVariantRoute(
         withSession(`${BASE}/media/variants/${jobId}/approve`, b.token, {
           method: "POST",
@@ -472,17 +497,20 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
         params(jobId)
       )
       expect(response.status).toBe(404)
+      // @release-strip-end
     })
   })
 
   describe("tải về tách khỏi duyệt (M04 mục 5.1)", () => {
     it("tải được biến thể CHƯA duyệt, và nó vẫn chưa duyệt sau đó", async () => {
       const { jobId, variantIds } = await seedVariantJob(a, 1)
+      // @release-strip
       const response = await downloadVariantRoute(
         withSession(`${BASE}/media/variants/${jobId}/download?asset_id=${variantIds[0]}`, a.token),
         params(jobId)
       )
       expect(response.status).toBe(200)
+      // @release-strip-end
 
       const row = await prisma.assets.findUnique({ where: { id: variantIds[0]! } })
       expect(row?.approval_state).toBe("PENDING")
@@ -490,20 +518,24 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
 
     it("thiếu asset_id trả 400 — một lượt có nhiều biến thể", async () => {
       const { jobId } = await seedVariantJob(a, 1)
+      // @release-strip
       const response = await downloadVariantRoute(
         withSession(`${BASE}/media/variants/${jobId}/download`, a.token),
         params(jobId)
       )
       expect(response.status).toBe(400)
+      // @release-strip-end
     })
 
     it("lượt bị cổng toàn vẹn từ chối thì không tải được", async () => {
       const { jobId, variantIds } = await seedVariantJob(a, 0.4, { ghiAsset: true })
+      // @release-strip
       const response = await downloadVariantRoute(
         withSession(`${BASE}/media/variants/${jobId}/download?asset_id=${variantIds[0]}`, a.token),
         params(jobId)
       )
       expect(response.status).toBe(409)
+      // @release-strip-end
     })
   })
 
@@ -521,6 +553,7 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
       expect(data[0]!.total_count).toBe(3)
     })
 
+    // @release-strip — route không có trong bản giao GD1; phần còn lại của test vẫn chạy trên bản cắt
     it("lượt duyệt hết một phần vẫn nằm trong hàng chờ", async () => {
       const { jobId, variantIds } = await seedVariantJob(a, 1)
       await approveVariantRoute(
@@ -538,6 +571,7 @@ describe("cách ly tenant — M04b biến thể marketing (P24)", () => {
       expect(data).toHaveLength(1)
       expect(data[0]!.pending_count).toBe(2)
     })
+    // @release-strip-end
 
     it("lượt bị từ chối không vào hàng chờ duyệt", async () => {
       await seedVariantJob(a, 0.4)

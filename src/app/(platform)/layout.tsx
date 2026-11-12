@@ -8,7 +8,7 @@
 // không có dòng `platform_operators` đang hoạt động) → về "/", không lộ
 // rằng route này tồn tại.
 
-import { cookies } from "next/headers"
+import { requestCookieHeader } from "@/lib/request-cookie-header"
 import { redirect } from "next/navigation"
 
 import { resolvePlatformSession } from "@/modules/platform/use-cases/resolve-platform-session"
@@ -18,11 +18,7 @@ import { AppShell } from "@/components/layout/app-shell"
 import { resolveUiTheme } from "@/lib/ui-system/resolve-ui-theme"
 
 export default async function PlatformLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies()
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ")
+  const cookieHeader = await requestCookieHeader()
   const request = new Request("http://localhost/", { headers: { cookie: cookieHeader } })
 
   const pctx = await resolvePlatformSession(request)

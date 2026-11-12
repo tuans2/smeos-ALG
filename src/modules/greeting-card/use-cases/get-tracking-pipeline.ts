@@ -18,6 +18,7 @@ import {
 import { dismissalOf } from "../domain/dismissal-policy"
 import { orderProductView, productImagesFor } from "./order-product-views"
 import { resolveCoordinatorId } from "../domain/coordinator-owner"
+import { paymentProgress } from "@/modules/orders/domain/payment-progress"
 
 /** Trường JSON lỏng (ảnh chụp mẫu, địa chỉ, khung giờ, metadata ghi chú) — đọc phòng thủ, không `any`. */
 type LooseJson = {
@@ -52,7 +53,7 @@ function resolveOrderStep(order: {
   if (order.production_status === "ARRANGING") {
     return "STEP_6_ARRANGING"
   }
-  if (order.status === "CONFIRMED" || (paid > 0 && paid >= total)) {
+  if (order.status === "CONFIRMED" || paymentProgress(total, paid) === "PAID") {
     return "STEP_5_PAYMENT_CONFIRMED"
   }
   if (order.sessionStatus === "PAYMENT_REPORTED" || paid > 0) {

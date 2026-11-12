@@ -17,6 +17,8 @@ acceptance:
 
 # Screen Contract — Quản lý Đơn hàng & Vận hành Xưởng (`/don-hang`)
 
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Nút "Theo dõi ở Điều phối" trong chi tiết đơn và "Xử lý trong Tháp điều phối" của hàng chờ điều phối ẩn khi `/dieu-phoi` đang khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
 **Tuyến:** `/don-hang` · **Tệp chính:** `src/app/(app)/don-hang/page.tsx` · **Cập nhật:** 31/10/2026 (mục Đơn hàng theo vai — Đơn hàng đa nguồn P4) · **Thẻ:** T5.B2
 
 ## 0. Cập nhật 31/10/2026 — mục Đơn hàng theo vai (Đơn hàng đa nguồn P4)

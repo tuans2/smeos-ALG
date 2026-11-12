@@ -1,6 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
+import Link from "next/link"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { InlineError } from "@/components/ui/inline-error"
@@ -12,7 +14,7 @@ import { formatDateTime } from "./integration-labels"
 type TokenRow = { id: string; client: string; created_at: string; expires_at: string; revoked_at: string | null; expired?: boolean }
 type Issued = { client: string; token: string }
 
-const CLIENT_LABEL: Record<string, string> = { SOCIALFLOW: "SocialFlow — đăng bài", LOCALBUDD: "LocalBudd — quảng bá địa phương" }
+const CLIENT_LABEL: Record<string, string> = { SOCIALFLOW: "Ứng dụng đăng bài", LOCALBUDD: "Ứng dụng quảng bá địa phương" }
 
 async function call<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, { ...init, headers: { "Content-Type": "application/json" } })
@@ -97,11 +99,19 @@ export function ApiTokensPanel() {
             Cấp khoá cho {label.split(" — ")[0]}
           </Button>
         ))}
+        {/* Trang tài liệu chưa thuộc bản giao GD1 — ẩn khi bật giai đoạn (gatedLinks) */}
+        {isHrefInPhase("/tich-hop/tai-lieu-api") && <Link
+          // `as never`: bản cắt GD1 không có trang này nên typed routes không biết route (cùng cách các liên kết gatedLinks khác)
+          href={"/tich-hop/tai-lieu-api" as never}
+          className="inline-flex min-h-8 items-center px-2 text-body-sm font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          Xem tài liệu API
+        </Link>}
       </div>
       {rows === null ? (
         <SkeletonBlock lines={2} label="Đang tải danh sách khoá" />
       ) : rows.length === 0 ? (
-        <EmptyState title="Chưa cấp khoá nào" reason="Cấp khoá khi bạn muốn nối SocialFlow hoặc LocalBudd với cửa hàng." />
+        <EmptyState title="Chưa cấp khoá nào" reason="Cấp khoá khi bạn muốn nối ứng dụng đăng bài hoặc quảng bá địa phương với cửa hàng." />
       ) : (
         <ul className="divide-y divide-border rounded-xl border border-border">
           {rows.map((row) => {

@@ -47,6 +47,7 @@ export function NotificationMatrixPage({
   onRemoveHardLock,
   loading = false,
   error,
+  beforeMatrix,
 }: NotificationMatrixProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedGroup, setSelectedGroup] = useState<NotificationEventGroup | "ALL">("ALL")
@@ -193,6 +194,8 @@ export function NotificationMatrixPage({
           "Tìm kiếm theo tên sự kiện hoặc lọc theo nhóm để nhanh chóng tìm đúng cài đặt.",
         ]}
       />
+
+      {beforeMatrix}
 
       {/* ── FILTER BAR ── */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">

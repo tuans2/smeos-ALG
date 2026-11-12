@@ -114,7 +114,15 @@ export function planCut(root: string, manifest: CutManifest, npmScripts: Record<
 
   // scripts/: chỉ giữ tệp được lệnh npm hoặc CI còn lại dùng tới, kèm import của chúng
   const dropped = new Set(droppedNpmScripts.map((s) => s.name))
-  const workflowText = all.filter((f) => f.startsWith(".github/workflows/")).map((f) => readSource(root, f)).join("\n")
+  // Workflow của bản giao: bản trong lớp phủ thay bản của smeOS cùng đường dẫn; workflow bị bỏ không tính
+  const overlayPrefix = `${cut.overlay}/`
+  const workflows = new Set([
+    ...all.filter((f) => f.startsWith(".github/workflows/") && candidate.has(f)),
+    ...all.filter((f) => f.startsWith(`${overlayPrefix}.github/workflows/`)).map((f) => f.slice(overlayPrefix.length)),
+  ])
+  const workflowText = [...workflows]
+    .map((f) => readSource(root, existsSync(path.join(root, overlayPrefix, f)) ? `${overlayPrefix}${f}` : f))
+    .join("\n")
   const scriptRoots = [
     ...Object.entries(npmScripts).filter(([name]) => !dropped.has(name)).flatMap(([, command]) => commandPaths(command)),
     ...commandPaths(workflowText),

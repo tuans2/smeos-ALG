@@ -156,6 +156,28 @@ export const notificationEventsResponse = data(
 export const channelActivationsResponse = data(z.record(z.string(), z.boolean()))
 export const channelActivationSavedResponse = z.strictObject({ success: z.literal(true), channel: z.string(), activated: z.boolean() })
 
+const providerChannel = z.enum(["SMS", "ZALO", "PUSH"])
+const providerDefinition = z.strictObject({
+  key: z.string(),
+  channel: providerChannel,
+  label: z.string(),
+  fields: z.array(z.strictObject({ name: z.string(), label: z.string(), secret: z.boolean(), required: z.boolean() })),
+  ready: z.boolean(),
+  pending: z.string().optional(),
+})
+const maskedProvider = z.strictObject({
+  channel: providerChannel,
+  provider: z.string().nullable(),
+  values: z.record(z.string(), z.string()),
+  secretsSet: z.record(z.string(), z.boolean()),
+  configured: z.boolean(),
+  ready: z.boolean(),
+  pending: z.string().nullable(),
+})
+export const channelProvidersResponse = data(z.strictObject({ catalog: z.array(providerDefinition), channels: z.array(maskedProvider.extend({ activated: z.boolean() })) }))
+export const channelProviderSavedResponse = data(maskedProvider)
+export const channelProviderTestResponse = data(z.strictObject({ channel: z.string(), success: z.boolean(), messageId: z.string().optional(), error: z.string().optional() }))
+
 const hardLock = z.strictObject({ eventKey: z.string(), channel: notifyChannel, enabled: z.boolean(), reason: z.string().optional() })
 export const hardLocksResponse = data(z.array(hardLock.extend({ tier: notifyTier, scopeId: z.string() })))
 export const hardLockSetResponse = z.strictObject({ success: z.literal(true), hardLock })

@@ -6,6 +6,7 @@ import { bestMatch } from "./route-match"
  *
  * Bật bằng `NEXT_PUBLIC_DELIVERY_PHASE=gd1`. Không đặt biến (hoặc giá trị lạ) thì mọi route mở như cũ.
  * Danh sách route sinh từ `gd1.manifest.json` bằng `npm run release:routes`; test giữ nó khớp với code.
+ * Bản cắt ghi `builtIn: true` vào danh sách: chế độ luôn bật, không cần biến (menu không trỏ tới trang đã cắt).
  */
 export type DeliveryPhase = "gd1"
 
@@ -17,6 +18,8 @@ export interface PhaseRoutes {
   /** Route có thật nhưng ngoài phạm vi — bị trả 404 khi bật chế độ. */
   blockedPages: string[]
   blockedApis: string[]
+  /** Chỉ có ở bản cắt: chế độ giai đoạn luôn bật. `blockedPages` khi đó là trang đã bị cắt khỏi bản giao. */
+  builtIn?: boolean
 }
 
 const ROUTES: Record<DeliveryPhase, PhaseRoutes> = { gd1: gd1Routes as PhaseRoutes }
@@ -25,9 +28,19 @@ export function resolveDeliveryPhase(value: string | undefined | null): Delivery
   return value === "gd1" ? value : null
 }
 
-/** Đọc biến môi trường; `NEXT_PUBLIC_` được Next.js gắn cứng lúc build nên client và server thấy cùng giá trị. */
+/** Giai đoạn gắn sẵn trong bản cắt (`builtIn`); ở smeOS là null. */
+export function builtInDeliveryPhase(routes: Record<DeliveryPhase, PhaseRoutes> = ROUTES): DeliveryPhase | null {
+  return routes.gd1.builtIn ? "gd1" : null
+}
+
+/**
+ * Đọc biến môi trường, không có thì lấy giai đoạn gắn sẵn của bản cắt; `off` tắt hẳn, kể cả bản cắt.
+ * `NEXT_PUBLIC_` được Next.js gắn cứng lúc build nên client và server thấy cùng giá trị.
+ */
 export function activeDeliveryPhase(): DeliveryPhase | null {
-  return resolveDeliveryPhase(process.env.NEXT_PUBLIC_DELIVERY_PHASE)
+  const value = process.env.NEXT_PUBLIC_DELIVERY_PHASE
+  if (value === "off") return null
+  return resolveDeliveryPhase(value) ?? builtInDeliveryPhase()
 }
 
 export function phaseRoutes(phase: DeliveryPhase): PhaseRoutes {

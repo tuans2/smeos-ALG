@@ -1,4 +1,5 @@
 import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi"
+import { INTEGRATION_FIELD_SUNSET } from "@/modules/integration/domain/integration-field-sunset"
 import { INTEGRATION_RATE_LIMIT } from "@/modules/integration/domain/integration-rate-limit"
 
 import * as req from "./http-requests"
@@ -59,7 +60,7 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
   {
     method: "post", path: "/integration/jobs", operationId: "integrationCreateJob", tags: tags("Job & mức dùng"),
     summary: "Tạo job thay mặt tổ chức",
-    description: "Cùng đường kiểm hạn mức → ghi usage → tạo job như job nội bộ. Cùng `idempotency_key`, cùng `feature`/`payload` → trả job cũ với 200; cùng khoá mà thân khác hiện vẫn trả job cũ (máy chủ ghi cảnh báo) — sẽ đổi thành 422 `IDEMPOTENCY_KEY_REUSED` như API nội bộ sau thời gian báo trước (audit API-11); client nên tạo khoá mới cho mỗi yêu cầu mới.",
+    description: "Cùng đường kiểm hạn mức → ghi usage → tạo job như job nội bộ. Cùng `idempotency_key`, cùng `feature`/`payload` → trả job cũ với 200; cùng khoá mà thân khác: **trước 09/02/2027** vẫn trả job cũ (máy chủ ghi cảnh báo); **từ 09/02/2027 (00:00 UTC)** trả 422 `IDEMPOTENCY_KEY_REUSED` (`details.job_id` = job của yêu cầu trước), không tạo job — thay đổi đã báo trước 90 ngày từ 11/11/2026. Mỗi yêu cầu mới dùng một khoá mới.",
     security: BOTH, body: req.createJobBody,
     responses: {
       201: { description: "Job mới", schema: res.createJobResponse },
@@ -77,7 +78,7 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
   {
     method: "post", path: "/integration/assets", operationId: "integrationRegisterAsset", tags: tags("Asset"),
     summary: "Đăng ký asset dẫn xuất",
-    description: "`parent_asset_id` phải là asset `APPROVED` cùng tổ chức; asset mới luôn `PENDING`; `storage_key` phải khớp tổ chức/sản phẩm/asset. `generated_flags` (`{ generative_fill_used, requires_reshoot_warning }`) bắt buộc với asset dẫn xuất (YC-A5) dù lược đồ ghi tuỳ chọn — thiếu → 400.",
+    description: "`parent_asset_id` phải là asset `APPROVED` cùng tổ chức; asset mới luôn `PENDING`; `storage_key` phải khớp tổ chức/sản phẩm/asset. `generated_flags` (`{ generative_fill_used, requires_reshoot_warning }`) bắt buộc với asset dẫn xuất dù lược đồ ghi tuỳ chọn — thiếu → 400.",
     security: BOTH, body: req.registerAssetBody,
     responses: { 201: { description: "Asset đã đăng ký", schema: res.assetResponse } },
     errors: [400, 413, 404, ...BASE_ERRORS],
@@ -125,10 +126,13 @@ export function buildIntegrationOpenApi(): Record<string, unknown> {
     title: "ALG Integration API",
     version: "1.0.0",
     description: [
-      "Bề mặt máy gọi máy cho LocalBudd và SocialFlow (đặc tả 06 mục 11, đặc tả 08). Tổ chức luôn suy từ",
+      "Bề mặt máy gọi máy cho ứng dụng đối tác (LocalBudd, SocialFlow…). Tổ chức luôn suy từ",
       "chứng thư — không endpoint nào nhận `organization_id` từ client.",
       `Giới hạn tần suất: ${INTEGRATION_RATE_LIMIT.limit} lần/${INTEGRATION_RATE_LIMIT.windowMs / 1000} giây cho mỗi token`,
       "(nhánh SSO: mỗi người dùng trong một tổ chức). Lỗi theo envelope `Error`.",
+      `**Thay đổi đã báo trước, áp từ ${INTEGRATION_FIELD_SUNSET.effective} 00:00 UTC** (báo ${INTEGRATION_FIELD_SUNSET.announced}):`,
+      "(1) máy chủ bỏ các trường đánh dấu `deprecated` khỏi phản hồi; (2) `POST /integration/jobs` gửi lại cùng",
+      "`idempotency_key` mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED`.",
     ].join(" "),
     serverUrl: "/api/v1",
     securitySchemes: {

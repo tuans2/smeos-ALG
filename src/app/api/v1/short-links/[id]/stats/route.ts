@@ -3,15 +3,15 @@
  * J1: Tạo catalog.
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getShortLinkStats } from "@/modules/acquisition/use-cases/manage-short-links"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle<[{ params: Promise<{ id: string }> }]>(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "J1")
-  const { id } = await context.params
-  const days = Number(new URL(request.url).searchParams.get("days") ?? "30")
-  return jsonResponse(await getShortLinkStats(ctx, id, days))
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "J1" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const days = Number(new URL(request.url).searchParams.get("days") ?? "30")
+    return jsonResponse(await getShortLinkStats(ctx, id, days))
+  },
 })

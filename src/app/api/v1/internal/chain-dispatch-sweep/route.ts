@@ -20,8 +20,8 @@
 import { parseDeliveryTimestampMs } from "@/modules/greeting-card/domain/subcontract-countdown"
 import { purgeExpiredIdempotencyKeys } from "@/core/idempotency/infra/idempotency-repository"
 import { publicAppUrl } from "@/lib/public-url"
-import { jsonResponse } from "@/core/http/response"
-import { handle } from "@/core/http/response"
+import { AppError } from "@/core/http/errors"
+import { handle, jsonResponse } from "@/core/http/response"
 import { forceStepAllowed, isAuthorizedCronRequest } from "@/core/http/cron-auth"
 import { ChainDispatchSweepQuery } from "@/modules/greeting-card/infra/chain-dispatch-sweep-query"
 import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
@@ -38,6 +38,7 @@ import { deliveryAreaOf, formatDeliveryAddress, hasDeliveryAddress } from "@/mod
 import { GoongGeocoder } from "@/modules/greeting-card/adapters/goong-geocoder"
 import { resolveDeliveryLocation } from "@/modules/greeting-card/use-cases/resolve-geo-location"
 import { sweepProductProposalsIfDue } from "@/modules/products/use-cases/sweep-product-proposals"
+import { pushDueDeliveryReminders } from "@/modules/coordinator/use-cases/push-delivery-reminders"
 import { scanStuckJobs } from "@/modules/jobs/use-cases/scan-stuck-jobs"
 import { expireOverdueQuotations } from "@/modules/sales/use-cases/expire-quotations"
 import { sweepSubscriptions } from "@/modules/subscription/use-cases/sweep-subscriptions"
@@ -58,9 +59,7 @@ const MAX_REPORTED = 100
 
 export const POST = handle(async (request) => {
   // Bảo mật: xác thực cron secret header (production thiếu CRON_SECRET → luôn từ chối)
-  if (!isAuthorizedCronRequest(request)) {
-    return jsonResponse({ error: "Unauthorized" }, { status: 401 })
-  }
+  if (!isAuthorizedCronRequest(request)) throw new AppError("UNAUTHENTICATED", "Không được phép")
 
   const url = new URL(request.url)
   const forceStep = (forceStepAllowed() ? url.searchParams.get("forceStep") : null) as
@@ -308,16 +307,15 @@ export const POST = handle(async (request) => {
   if (!sweep.complete) log.warn("chain_dispatch_sweep.incomplete", { pages: sweep.pages, processed: totalProcessed })
   // Mẫu sản phẩm đề xuất (nhắc / hết hạn / dọn) — đi chung cron để không thêm dịch vụ Render.
   const productProposals = await sweepProductProposalsIfDue(now)
-  // YC-J10: job PROCESSING quá 15 phút → FAILED. Render không có cron riêng cho
-  // `scripts/scan-stuck-jobs.ts`, nên job kẹt làm /internal/health trả 503 mãi.
+  const deliveryReminders = await pushDueDeliveryReminders(now) // 4.32: đẩy tin nhắc giao M1/M2, mỗi mốc một lần
+  // YC-J10: job PROCESSING quá 15 phút → FAILED (Render không có cron riêng cho `scripts/scan-stuck-jobs.ts`).
   const stuckJobsFailed = await scanStuckJobs(now).catch((error: unknown) => {
     log.error("chain_dispatch_sweep.stuck_jobs_failed", { error: error instanceof Error ? error.message : String(error) })
     return null
   })
   // SDAGF P1: dọn thùng rác quá hạn + xoá payload trong hàng đợi.
   const storageLifecycle = await sweepStorageLifecycle(now)
-  // E5.3: khoá idempotent quá 30 ngày.
-  const idempotencyKeysPurged = await purgeExpiredIdempotencyKeys(now).catch(() => null)
+  const idempotencyKeysPurged = await purgeExpiredIdempotencyKeys(now).catch(() => null) // E5.3: khoá quá 30 ngày
   // ADR-014 P-5a: mã hoá theo lô cột cá nhân còn chữ rõ (dữ liệu cũ, lệnh ghi không rõ tổ chức)
   const piiEncrypted = await runPiiBackfill().catch((error: unknown) => {
     log.error("chain_dispatch_sweep.pii_backfill_failed", { error: error instanceof Error ? error.message : String(error) })
@@ -342,6 +340,7 @@ export const POST = handle(async (request) => {
     subscriptions,
     complete: sweep.complete,
     productProposals: productProposals ?? undefined,
+    deliveryReminders,
     sentDetails: sentDetails.length > 0 ? sentDetails.slice(0, MAX_REPORTED) : undefined,
     errorCount: errors.length,
     errors: errors.length > 0 ? errors.slice(0, MAX_REPORTED) : undefined,

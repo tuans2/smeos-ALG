@@ -5,10 +5,11 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { PrismaPg } from "@prisma/adapter-pg"
 import { PrismaClient } from "@/generated/prisma/client"
 import { RlsPool, setRlsAuditSink, type RlsAuditEvent, type RlsMode } from "@/core/tenancy/infra/rls-pool"
-import { asSystemDb, runWithDbContext, withTenantDb } from "@/core/tenancy/db-context"
+import { asSystemDb, markWebProcess, runWithDbContext, withRequestDb, withTenantDb } from "@/core/tenancy/db-context"
+import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, type Tenant } from "../helpers/fixtures"
+import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
  * Checklist ALG 1.18, ADR-013 D-I2/D-I3 — Row Level Security theo tổ chức. Client riêng trỏ cùng CSDL test, pool
@@ -117,6 +118,31 @@ describe("Row Level Security theo tổ chức", () => {
     // pool chỉ một kết nối — cùng kết nối vừa đặt tổ chức B
     expect(await runWithDbContext({ kind: "pending" }, () => enforce.customers.count())).toBe(0)
     expect(await withTenantDb(a.organizationId, () => enforce.customers.count())).toBe(1)
+  })
+
+  it("tiến trình web: truy vấn ngoài mọi ngữ cảnh không có quyền hệ thống → 0 dòng (fail-closed, audit DB-01)", async () => {
+    const FLAG = Symbol.for("smeos.db.failClosedOutsideContext")
+    // Pool dùng lại kết nối đã đặt tổ chức B ngay trước đó — truy vấn ngoài ngữ cảnh không được mang theo B
+    expect(await withTenantDb(b.organizationId, () => enforce.customers.count())).toBe(1)
+    expect(await enforce.customers.count()).toBe(2) // script / test: như hệ thống
+    markWebProcess()
+    try {
+      expect(await enforce.customers.count()).toBe(0)
+      expect(await enforce.customers.findMany()).toEqual([])
+    } finally {
+      delete (globalThis as Record<symbol, unknown>)[FLAG]
+    }
+  })
+
+  it("trang server có phiên: withRequestDb + requireTenantContext gắn đúng tổ chức của phiên", async () => {
+    const request = withSession("http://localhost/san-pham", a.token)
+    const names = await withRequestDb("/san-pham", async () => {
+      await requireTenantContext(request)
+      return enforce.customers.findMany({ select: { name: true } })
+    })
+    expect(names.map((c) => c.name)).toEqual(["Khách A"])
+    // Trước khi gắn: request chưa gắn tổ chức → 0 dòng
+    expect(await withRequestDb("/san-pham", () => enforce.customers.count())).toBe(0)
   })
 
   it("quyền hệ thống thấy mọi tổ chức (bộ quét nền, trang công khai tra theo mã)", async () => {

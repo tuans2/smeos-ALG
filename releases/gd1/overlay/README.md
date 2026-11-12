@@ -32,6 +32,14 @@ npm run db:seed
 npm run dev               # http://localhost:3200
 ```
 
+Người vận hành đầu tiên (hệ thống mới chưa có ai để duyệt đăng ký): đăng ký một tài khoản ở `/dang-nhap` → "Đăng ký mới", rồi chạy
+
+```bash
+npm run gan-van-hanh-nen-tang -- --email=<địa chỉ vừa đăng ký>
+```
+
+Lệnh gán đủ quyền Console Vận hành (`/van-hanh`) và duyệt luôn tài khoản đó. Từ đây người vận hành duyệt các đăng ký khác ở `/van-hanh/dang-ky`.
+
 Worker: `npm run worker:vision`, `npm run worker:media` (cần Python 3.11+, `pip install -r workers/requirements.txt`).
 
 ## Kiểm tra trước khi đưa mã lên
@@ -43,4 +51,12 @@ npm run build
 cd workers && python -m pytest tests -q
 ```
 
-`npm run test:tenant` và `npm run test:platform` xoá sạch dữ liệu và chỉ chạy trên cơ sở dữ liệu có tên kết thúc bằng `_test`.
+`npm run test:tenant` và `npm run test:platform` xoá sạch dữ liệu và chỉ chạy trên cơ sở dữ liệu có tên kết thúc bằng `_test` (`DATABASE_URL_TEST`). Dựng cơ sở dữ liệu này một lần sau `docker compose up -d`: `npm run db:test:setup`.
+
+## CI và triển khai
+
+- `.github/workflows/ci.yml`: typecheck, ESLint, đối chiếu tài liệu đặc tả với mã, kiểm kiến trúc và giao diện, unit test, chuẩn đa ngành, test cách ly tổ chức và nền tảng, build, worker, E2E, quét bí mật, `npm audit`.
+- `render.yaml`: Render Blueprint gồm web, worker `media_ai`, worker `vision`, cron 5 phút, Redis và Postgres. Render chỉ deploy commit trên `main` khi CI xanh.
+- Không đặt `NEXT_PUBLIC_APP_ENV=production`: biến này bật khoá "Sắp ra mắt" dành cho bản đầy đủ.
+- Khoá `PII_ENCRYPTION_KEY` tự tạo và sao lưu trước khi nhận dữ liệu khách thật (sổ tay vận hành §14).
+- Thêm `.github/CODEOWNERS` với tài khoản GitHub của người duyệt cho các vùng hệ thống thiết kế (`src/styles/tokens/`, `src/components/ui/`, `src/components/layout/`, `docs/design-system/`).

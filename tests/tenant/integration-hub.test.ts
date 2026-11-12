@@ -7,11 +7,21 @@ import { GET as listEvents } from "@/app/api/v1/integrations/connections/[id]/ev
 import { POST as replay } from "@/app/api/v1/integrations/events/[id]/replay/route"
 import { POST as webhook } from "@/app/api/v1/public/integrations/[connector]/[ref]/route"
 import { signEcho } from "@/modules/integration-hub/adapters/connectors/test-echo-connector"
+// @release-strip — webhook Facebook (chat đa kênh) không có trong bản giao GD1
 import { POST as facebookWebhook } from "@/app/api/v1/chat/webhooks/facebook/route"
+// @release-strip-end
+// @release-strip — chỉ dùng trong phần không có ở bản giao GD1
 import { sealChannelConfig } from "@/modules/chat-assistant/infra/channel-config-vault"
+// @release-strip-end
+// @release-strip — chỉ dùng trong phần không có ở bản giao GD1
 import { createHmac } from "node:crypto"
+// @release-strip-end
+// @release-strip — chỉ dùng trong phần không có ở bản giao GD1
 import type { Prisma } from "@/generated/prisma/client"
+// @release-strip-end
+// @release-strip — chỉ dùng trong phần không có ở bản giao GD1
 import { NextRequest } from "next/server"
+// @release-strip-end
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
@@ -101,6 +111,7 @@ describe("cách ly tenant — Trung tâm Tích hợp (GĐ1)", () => {
     expect(JSON.stringify(hubA)).not.toContain("hash-alpha")
   })
 
+  // @release-strip — webhook Facebook (chat đa kênh) không có trong bản giao GD1
   it("webhook Facebook ghi nhật ký vào đúng tổ chức của Trang, không lưu nội dung tin", async () => {
     const appSecret = "fb-app-secret-for-tenant-test"
     const previous = process.env["FB_APP_SECRET"]
@@ -140,6 +151,7 @@ describe("cách ly tenant — Trung tâm Tích hợp (GĐ1)", () => {
       else process.env["FB_APP_SECRET"] = previous
     }
   })
+  // @release-strip-end
 
   it("chữ ký sai bị từ chối và không ghi gì", async () => {
     const conn = await connectEcho(a)

@@ -4,11 +4,28 @@ import { existsSync, mkdirSync, symlinkSync, unlinkSync, readFileSync, readdirSy
 import path from "node:path"
 
 import { rebuildBaselines } from "./cut-baselines"
+import { alignDocs } from "./cut-docs"
+import { carryIgnores, parseGitleaksIgnore, renderGitleaksIgnore, type CarriedIgnores } from "./cut-gitleaks"
 import type { CutManifest, CutPlan } from "./cut-plan"
-import { renderRoutes, routesFile } from "./gen-phase-routes"
+import { renderCutRoutes, routesFile } from "./gen-phase-routes"
 import { tracePhase } from "./trace-phase"
 
 /** Thực hiện bản cắt trên cây đã giải nén (Bước 2.3 mục 3–7). Trả nội dung báo cáo. */
+/** `.gitleaksignore` của repo nguồn ở mốc cắt, đối chiếu với bản cắt (`cut-gitleaks.ts`). */
+function carryGitleaksIgnores(root: string, repo: string, ref: string): CarriedIgnores {
+  const show = (spec: string): string | null => {
+    try {
+      return execFileSync("git", ["show", spec], { cwd: repo, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 }).toString()
+    } catch {
+      return null
+    }
+  }
+  const source = show(`${ref}:.gitleaksignore`)
+  if (!source) return { entries: [], dropped: [] }
+  const readCut = (file: string) => (existsSync(path.join(root, file)) ? readFileSync(path.join(root, file), "utf8") : null)
+  return carryIgnores(parseGitleaksIgnore(source), (commit, file) => show(`${commit}:${file}`), readCut)
+}
+
 function removeEmptyDirs(dir: string): void {
   for (const entry of readdirSync(dir)) {
     const full = path.join(dir, entry)
@@ -65,8 +82,8 @@ export function applyCut(root: string, phase: string, manifest: CutManifest, pla
   writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`)
 
   const baselines = rebuildBaselines(root)
-  // Bản cắt không còn route ngoài phạm vi: danh sách chặn rỗng. Ghi trước khi sinh lại OpenAPI (đọc danh sách này)
-  writeFileSync(path.join(root, routesFile(phase)), renderRoutes(phase, tracePhase(root, manifest)))
+  // Chế độ giai đoạn gắn sẵn trong bản cắt. Ghi trước khi sinh lại OpenAPI (đọc danh sách này)
+  writeFileSync(path.join(root, routesFile(phase)), renderCutRoutes(phase, tracePhase(root, manifest), plan.trace))
   const regenerated = regenerate(root, repo, manifest.cut.regenerate, pkg.scripts)
   for (const [file, content] of overlay) {
     const target = path.join(root, file)
@@ -74,17 +91,26 @@ export function applyCut(root: string, phase: string, manifest: CutManifest, pla
     writeFileSync(target, content)
   }
 
+  // Tài liệu đặc tả theo đúng mã bản cắt (sau lớp phủ, trước commit)
+  const docs = alignDocs(root)
+
+  const commit = (message: string) => {
+    execFileSync("git", ["add", "-A"], { cwd: root })
+    execFileSync("git", ["-c", "user.name=ALG release", "-c", "user.email=release@invalid", "commit", "-q", "-m", message], { cwd: root })
+    return execFileSync("git", ["rev-parse", "HEAD"], { cwd: root }).toString().trim()
+  }
   execFileSync("git", ["init", "-q", "-b", "main"], { cwd: root })
-  execFileSync("git", ["add", "-A"], { cwd: root })
-  execFileSync(
-    "git",
-    ["-c", "user.name=ALG release", "-c", "user.email=release@invalid", "commit", "-q", "-m", `chore: bản giao ${phase.toUpperCase()}`],
-    { cwd: root },
-  )
+  const first = commit(`chore: bản giao ${phase.toUpperCase()}`)
+  const gitleaks = carryGitleaksIgnores(root, repo, ref)
+  if (gitleaks.entries.length) {
+    // Dấu vân tay gitleaks gắn với commit chứa dòng bị báo, nên ghi ở commit thứ hai trỏ về commit đầu
+    writeFileSync(path.join(root, ".gitleaksignore"), renderGitleaksIgnore(first, gitleaks.entries))
+    commit("chore: mang sang báo nhầm gitleaks đã duyệt")
+  }
 
   const files = listFiles(root).sort()
   const sums = files.map((file) => `${createHash("sha256").update(readFileSync(path.join(root, file))).digest("hex")}  ${file}`)
-  return renderCutReport({ phase, ref, plan, baselines, regenerated, overlay: overlayFiles, files: files.length, sums })
+  return renderCutReport({ phase, ref, plan, baselines, regenerated, overlay: overlayFiles, gitleaks, docs, files: files.length, sums })
 }
 
 interface ReportInput {
@@ -94,11 +120,13 @@ interface ReportInput {
   baselines: { file: string; removed: string[] }[]
   regenerated: string[]
   overlay: string[]
+  gitleaks: CarriedIgnores
+  docs: string[]
   files: number
   sums: string[]
 }
 
-function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, files, sums }: ReportInput): string {
+function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, gitleaks, docs, files, sums }: ReportInput): string {
   const byReason = new Map<string, number>()
   for (const removal of plan.removals) byReason.set(removal.reason, (byReason.get(removal.reason) ?? 0) + 1)
   const review = plan.droppedTests.filter((test) => test.touchesDelivered)
@@ -138,6 +166,15 @@ function renderCutReport({ phase, ref, plan, baselines, regenerated, overlay, fi
     "## Lớp phủ",
     "",
     ...(overlay.length ? overlay.map((file) => `- \`${file}\``) : ["Không có."]),
+    "",
+    "## Tài liệu căn theo bản cắt",
+    "",
+    ...(docs.length ? docs.map((line) => `- ${line}`) : ["Không có."]),
+    "",
+    "## Báo nhầm gitleaks mang sang",
+    "",
+    `Mang sang ${gitleaks.entries.length} dòng. Không mang sang (tệp không giao hoặc dòng đã đổi): ${gitleaks.dropped.length}.`,
+    ...gitleaks.dropped.map((entry) => `- \`${entry}\``),
     "",
     "## Phụ thuộc vào vùng không giao",
     "",

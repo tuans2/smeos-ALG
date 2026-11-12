@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto"
 
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import type { z } from "zod"
 
 import { POST as registerAsset } from "@/app/api/v1/integration/assets/route"
@@ -20,6 +20,7 @@ import { PUT as putBrandProfile } from "@/app/api/v1/brand-profile/route"
 import { PUT as putBusinessProfile } from "@/app/api/v1/business-profile/route"
 import { POST as createProduct } from "@/app/api/v1/products/route"
 import * as res from "@/modules/integration/contracts/http-responses"
+import { INTEGRATION_FIELD_SUNSET, SUNSET_FIELDS } from "@/modules/integration/domain/integration-field-sunset"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, readJson, withBearer, withSession, withSso, type Tenant } from "../helpers/fixtures"
@@ -169,5 +170,33 @@ describe("hợp đồng phản hồi — Integration API", () => {
       res.catalogLinkView
     )
     await expectContract(await revokeCatalogLink(sso(`${BASE}/integration/catalog-links/${slug}/revoke`, { method: "POST" }), params), 200, res.revokeCatalogLinkResponse)
+  })
+
+  it("từ 09/02/2027 (ARC-024): máy chủ bỏ trường nội bộ, phản hồi vẫn đúng lược đồ", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] })
+    try {
+      vi.setSystemTime(new Date(`${INTEGRATION_FIELD_SUNSET.effective}T00:00:00Z`))
+      const created = await expectContract(
+        await createJob(sso(`${BASE}/integration/jobs`, post({ feature: "landing.create", payload: { page: "go-truong" }, idempotency_key: "go-truong-1" }))),
+        201,
+        res.createJobResponse
+      )
+      const job = created.job as Record<string, unknown>
+      for (const field of SUNSET_FIELDS.job) expect(job).not.toHaveProperty(field)
+      expect(job).toHaveProperty("payload")
+      const usage = await expectContract(
+        await recordUsage(sso(`${BASE}/integration/usage`, post({ feature: "landing.create", status: "COMPLETED", cost_usd: 0.02, job_id: job.id }))),
+        201,
+        res.usageResponse
+      )
+      for (const field of SUNSET_FIELDS.usage) expect(usage).not.toHaveProperty(field)
+      const slug = `go-truong-${randomUUID().slice(0, 8)}`
+      const link = await expectContract(await createCatalogLink(sso(`${BASE}/integration/catalog-links`, post({ slug, name: "Sau ngày gỡ" }))), 201, res.catalogLinkRecord)
+      for (const field of SUNSET_FIELDS.catalogLink) expect(link).not.toHaveProperty(field)
+      const list = await expectContract(await listCatalogLinks(sso(`${BASE}/integration/catalog-links`)), 200, res.listCatalogLinksResponse)
+      for (const row of list.data as Record<string, unknown>[]) expect(row).not.toHaveProperty("created_by")
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })

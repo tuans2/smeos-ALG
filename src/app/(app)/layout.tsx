@@ -6,7 +6,7 @@
 // use-case mà GET /auth/me dùng, gọi trực tiếp trong Server Component thay
 // vì round-trip qua HTTP. Không có phiên hợp lệ → chuyển sang /dang-nhap.
 
-import { cookies } from "next/headers"
+import { requestCookieHeader } from "@/lib/request-cookie-header"
 import { redirect } from "next/navigation"
 
 import { SessionProvider } from "@/lib/session"
@@ -19,11 +19,7 @@ import { I18nProvider } from "@/lib/i18n"
 import { resolveUiTheme } from "@/lib/ui-system/resolve-ui-theme"
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies()
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ")
+  const cookieHeader = await requestCookieHeader()
 
   const session = await resolveAppSession(cookieHeader)
   if (!session) {

@@ -156,7 +156,14 @@ và worker (`workers/shared/rls.py`) đặt `app.org_id` theo tổ chức của 
 | `audit` (mặc định của blueprint) | Chính sách cho qua mọi dòng | Đặt ngữ cảnh; ghi log `db.rls.unscoped_query` khi request chưa gắn tổ chức chạm bảng thuộc tổ chức (`kind=pending`) hoặc truy vấn chạy ngoài request (`kind=unclassified`), kèm bảng và đường dẫn |
 | `enforce` | Truy vấn sai tổ chức trả 0 dòng; ghi sai tổ chức bị từ chối | Như `audit` |
 
-**Chuyển sang `enforce`:** khi 14 ngày liền không có log `db.rls.unscoped_query` `kind=pending` trên production. Đặt
+**Truy vấn ngoài mọi ngữ cảnh (11/11/2026, audit DB-01):** trong tiến trình web, truy vấn không nằm trong request (`handle()`),
+`withRequestDb` (trang server có phiên), `asSystemDb` (trang công khai, bộ quét nền) hay `withTenantDb` **không có quyền hệ
+thống** — ở `enforce` thấy 0 dòng bảng thuộc tổ chức (fail-closed). Script và công cụ ngoài web vẫn chạy như hệ thống (dùng
+`smeos_system` khi có I-1). Test `tests/unit/architecture/db-context-entrypoints.test.ts` đỏ nếu trang/route mới chạm CSDL mà
+không mở ngữ cảnh. Log `kind=unclassified` của `smeos-web` là chỗ còn sót (vd. callback nhận tin Redis) — sửa trước khi bật.
+
+**Chuyển sang `enforce`:** khi 14 ngày liền không có log `db.rls.unscoped_query` `kind=pending` hay `kind=unclassified` của
+`smeos-web` trên production. Đặt
 `DB_RLS_MODE=enforce` ở `smeos-web` và 3 worker cùng lúc (Render → Environment), deploy lại. Theo dõi lỗi 404/rỗng dữ liệu 24 giờ đầu.
 
 **Tắt khẩn cấp:** đặt lại `audit` (hoặc `off`) và deploy — không cần migration, có hiệu lực ngay khi tiến trình khởi động lại.
@@ -166,6 +173,10 @@ từng vai (`ALTER ROLE … PASSWORD`), rồi thay `DATABASE_URL` của từng d
 `smeos-web` → `alg_app`, 3 worker → `alg_worker`, script vận hành và bộ quét ngoài app → `alg_system` (bỏ qua RLS),
 báo cáo/điều tra → `alg_readonly` (luôn chặn theo tổ chức). Bước migration (pre-deploy) giữ tài khoản chủ sở hữu. Trước khi thay
 cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `alg_app`.
+
+Script cũng đặt giới hạn truy vấn
+(ADR-015 D-O5): 15 s cho `alg_app`, 120 s cho vai khác, giao dịch bỏ ngỏ 60 s — có hiệu lực ở kết nối mới (khởi động lại
+dịch vụ); chạy lại script an toàn.
 
 **Đổi tên vai `smeos_*` → `alg_*` (đổi thương hiệu ALG, 12/11/2026)** — chỉ cho CSDL đã tạo vai bằng bản cũ của
 `create-roles.sql`. Làm trong một khung bảo trì ngắn vì dịch vụ đăng nhập bằng tên cũ sẽ hỏng ngay sau bước 2:
@@ -251,3 +262,72 @@ Migration tự kiểm lại; còn thì dừng, không đổi gì, bản cũ vẫ
 `npx prisma migrate resolve --rolled-back 20261109090000_pii_encryption_cleanup` rồi deploy lại. Sau P-5d-2 chỉ quay lại
 được bản P-5d-1 (bản P-5c còn đọc `*_enc`).
 
+
+## 15. Vòng đời tổ chức — tạm ngưng, rời nền tảng, xoá (ADR-016 D-S5, 11/11/2026)
+
+`organizations.lifecycle_status` (đặc tả 07 §53). Admin SaaS (`N2`) đổi qua `PATCH /api/v1/platform/organizations/:id`:
+
+- `SUSPENDED` — thành viên và khoá tích hợp không vào được (403 `ORGANIZATION_INACTIVE`), dữ liệu giữ nguyên. Mở lại:
+  `ACTIVE`.
+- `OFFBOARDING` (kèm `offboarding_until` theo hợp đồng) — chỉ xem, để khách xuất dữ liệu bàn giao.
+- Quá `offboarding_until`, không còn legal hold → xoá hẳn trên Render shell của `smeos-web`:
+  1. Sao lưu CSDL.
+  2. `npm run tenant:purge -- --org <id> --operator <email>` — chỉ đọc, in số dòng sẽ xoá theo từng bảng.
+  3. Thêm `--confirm` để xoá. Giữ chứng từ ghi sổ và nhật ký, ẩn danh khách trên chứng từ; tổ chức chuyển `DELETED`; tệp
+     ảnh vào hàng đợi xoá kho; một dòng `platform_audit_logs`.
+
+## 16. Hạn lưu dữ liệu — `retention_policies` (ADR-014 D-P4, 11/11/2026)
+
+Job hằng đêm (1–5 giờ sáng giờ Việt Nam) trong `smeos-web`, đặc tả 07 §54. Bảy loại: `technical_logs`, `delivery_info`,
+`audit_logs`, `customer_conversations`, `customer_profiles`, `non_ledger_documents`, `finished_jobs` (job sinh ảnh / nội
+dung đã xong quá 30 ngày). Mặc định **chỉ đếm** số dòng quá hạn — log
+`retention.policy_ran` (`enforced: false`, `rows`) và cột `last_run_rows`; chưa xoá gì.
+
+1. Xem số dòng quá hạn trên Render shell của `smeos-web`: `npm run retention:sweep` (chỉ đọc, in số dòng theo bảng).
+2. Bật thực thi một loại (sau khi kế toán/pháp lý của khách xác nhận mốc, và đã sao lưu):
+   `UPDATE retention_policies SET enforce = true, updated_by = '<email người vận hành>' WHERE category = '<loại>';`
+   Đổi mốc: sửa `retention_months` (1–600). Đêm sau job xoá / ẩn danh thật; muốn chạy ngay:
+   `npm run retention:sweep -- --run`.
+3. Tổ chức đang legal hold (`organizations.legal_hold_until` ở tương lai) không bị xoá / ẩn danh gì.
+4. Tắt job khẩn cấp: biến môi trường `RETENTION_SWEEP=off` rồi khởi động lại dịch vụ; hoặc đặt `enforce = false`.
+5. Dữ liệu đã xoá vẫn còn trong bản sao lưu tới hết hạn giữ bản sao lưu (ADR-015); khôi phục từ bản cũ thì chạy lại
+   job.
+
+## 17. Xuất / nhập toàn bộ dữ liệu một tổ chức (ADR-016 D-S3, 12/11/2026)
+
+Dùng khi: chuyển khách sang triển khai riêng (`DEDICATED`), bàn giao dữ liệu khi khách rời nền tảng, khôi phục riêng một
+tổ chức (D-S4). Chạy trên Render shell của `smeos-web`; người vận hành cần mã `N2`; mỗi lần ghi `platform_audit_logs`.
+
+1. Xuất: `npm run tenant:transfer -- export --org <id> --out /tmp/<id>.json --operator <email>` — in số dòng từng bảng và
+   số tệp trong kho cần chép riêng (danh sách ở `files` của gói).
+2. Kiểm gói ở CSDL đích: `npm run tenant:transfer -- import --file <tệp> --operator <email>` — kiểm định dạng, checksum
+   từng bảng, phiên bản schema (migration cuối) phải trùng.
+3. Sao lưu CSDL đích, rồi thêm `--confirm` để nhập (một giao dịch; lỗi giữa chừng thì không ghi gì).
+4. Chép tệp trong `files` sang kho của đích (cùng khoá).
+
+Lưu ý:
+- Gói chứa dữ liệu cá nhân dạng bản mã và băm mật khẩu thành viên — lưu như bản sao lưu, xoá sau khi dùng.
+- CSDL đích phải dùng **cùng** `PII_ENCRYPTION_KEY` (khoá dữ liệu của tổ chức đi theo gói, được bọc bằng khoá chủ).
+- Tổ chức đã có ở đích → từ chối (khôi phục riêng: xoá dữ liệu hiện tại theo D-S4 trước). Thành viên đã có (cùng id)
+  giữ nguyên; liên kết tới tổ chức không có ở đích bị bỏ qua.
+- `scripts/handover-backup-engine.ts` vẫn giữ cho hai script dọn dữ liệu thử trước bàn giao (PO 11/11/2026).
+
+**Khôi phục riêng một tổ chức về một mốc (ADR-016 D-S4, mục tiêu ≤ 4 giờ):**
+
+1. Khôi phục PITR của nhà cung cấp ra một CSDL tạm tới mốc khách yêu cầu (ADR-015 D-O3); ghi giờ bắt đầu.
+2. Trỏ `DATABASE_URL` của Render shell tạm vào CSDL tạm, xuất tổ chức (bước 1 ở trên).
+3. Trên production: sao lưu, rồi `npm run tenant:transfer -- restore --file <tệp> --operator <email>` (kiểm), thêm
+   `--confirm` để chạy — một giao dịch: xoá dữ liệu hiện tại của tổ chức, nhập gói, chạy lại các yêu cầu xoá dữ liệu cá nhân
+   có sau mốc (khách đã xin xoá không "sống lại"); ghi `platform.organization_restored`.
+4. Chép tệp trong `files` nếu kho tệp cũng phải về mốc; xoá CSDL tạm và tệp gói. Ghi biên bản (giờ bắt đầu → xong) vào
+   `docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md`.
+
+## 18. Tăng trưởng bảng — phân vùng / bản sao đọc theo ngưỡng (ADR-015 D-O6, 12/11/2026)
+
+1. Mỗi tháng (hoặc khi cảnh báo dung lượng D-O8): `npm run db:growth` trên Render shell của `smeos-web` — 10 bảng lớn
+   nhất và bảng chạm ngưỡng. Số dòng là ước tính của Postgres (chạy `ANALYZE <bảng>` nếu nghi lệch).
+2. "theo dõi" (≥ 70% của 20 triệu dòng / 10 GB): bật xoá thật cho loại hạn lưu tương ứng (§16) nếu PO đã duyệt mốc.
+3. "XÉT PHÂN VÙNG" (≥ ngưỡng): đề xuất migration SQL tay phân vùng theo tháng, Prisma vẫn đọc bảng cha; thử trên CSDL
+   khôi phục PITR trước (ADR-015 D-O4) và cần PO duyệt — không tự làm.
+4. Báo cáo chậm (p95 truy vấn báo cáo > 2 s, `pg_stat_statements`) → cân nhắc bản sao đọc `smeos_readonly` (ADR-013);
+   thêm dịch vụ / gói CSDL là quyết định của PO (đổi `render.yaml`).

@@ -4,15 +4,19 @@
  * Có giới hạn tần suất theo IP và theo kết nối.
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
+import { jsonResponse } from "@/core/http/response"
 import { enforceRateLimit } from "@/core/http/rate-limit"
 import { handleInboundWebhook } from "@/modules/integration-hub/use-cases/handle-inbound-webhook"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (req, context: { params: Promise<{ connector: string; ref: string }> }) => {
-  const { connector, ref } = await context.params
-  await enforceRateLimit(req, { scope: "integration-webhook", limit: 300, windowMs: 60_000 })
-  await enforceRateLimit(req, { scope: "integration-webhook-ref", limit: 600, windowMs: 60_000, subject: ref })
-  const rawBody = await req.text()
-  const result = await handleInboundWebhook({ connectorKey: connector, connectionRef: ref, rawBody, headers: req.headers })
-  return jsonResponse(result)
+export const POST = defineRoute({
+  auth: { kind: "custom", reason: "webhook đối tác tích hợp — chữ ký kiểm trong use-case (handleInboundWebhook)" },
+  rateLimit: { scope: "integration-webhook", limit: 300, windowMs: 60_000, per: "ip" },
+  handler: async ({ request: req, params }) => {
+    const { connector, ref } = params as { connector: string; ref: string }
+    await enforceRateLimit(req, { scope: "integration-webhook-ref", limit: 600, windowMs: 60_000, subject: ref })
+    const rawBody = await req.text()
+    const result = await handleInboundWebhook({ connectorKey: connector, connectionRef: ref, rawBody, headers: req.headers })
+    return jsonResponse(result)
+  },
 })

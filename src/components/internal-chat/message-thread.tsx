@@ -16,7 +16,7 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { conversationName } from "./conversation-list"
 import { MessageItem } from "./message-item"
-import { LocalImagePreview } from "./local-image-preview"
+import { LocalImagePreview } from "@/components/upload/local-image-preview"
 import type { LoadState } from "./use-internal-chat"
 
 interface MessageThreadProps {

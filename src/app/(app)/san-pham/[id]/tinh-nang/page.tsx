@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import type { Route } from "next"
+import { isHrefOpen } from "@/lib/feature-lock"
 
 interface ProductData {
   id: string;
@@ -191,9 +192,11 @@ const handleMonitorJobs = () => {
           ))}
         </div>
         <div className="flex gap-2 mt-4">
-          <Button onClick={handleMonitorJobs}>
-            <Loader2 size={15} strokeWidth={2} /> Theo dõi tiến trình
-          </Button>
+          {isHrefOpen("/job") && (
+            <Button onClick={handleMonitorJobs}>
+              <Loader2 size={15} strokeWidth={2} /> Theo dõi tiến trình
+            </Button>
+          )}
           <Button variant="secondary" onClick={handleClose}>
             <ArrowLeft size={15} strokeWidth={2} /> Quay lại chọn thêm
           </Button>

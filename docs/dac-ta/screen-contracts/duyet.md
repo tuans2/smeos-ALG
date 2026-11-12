@@ -16,6 +16,8 @@ acceptance:
 
 # Screen Contract — Hàng đợi duyệt (`/duyet`)
 
+> **Trạng thái production (12/11/2026, audit L-03):** tuyến thuộc tiền tố khoá `/duyet` trong `LOCKED_ROUTE_PREFIXES` (`src/lib/feature-lock.ts`). `src/app/(app)/duyet/layout.tsx` bọc `FeatureLockedGuard`, nên khi `NEXT_PUBLIC_APP_ENV=production` cả URL gõ thẳng cũng hiện màn "Sắp ra mắt" (trước đây chỉ làm mờ mục sidebar). Bản giao GD1 không đặt biến này nên không bị khoá.
+
 **Tuyến:** `/duyet` · **Tệp chính:** `src/app/(app)/duyet/page.tsx` + `approval-tab-panels.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.A5
 
 ## 1. Vai và mục đích

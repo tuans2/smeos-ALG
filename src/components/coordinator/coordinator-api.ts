@@ -139,7 +139,7 @@ export const coordinatorApi = {
     orderCall(`${BASE}/orders/${id}/exceptions`, post(body)),
   resolveException: (exceptionId: string, resolution: string) =>
     orderCall(`${BASE}/exceptions/${exceptionId}/resolve`, post({ resolution })),
-  close: (id: string, body: { partnerRating?: number; partnerPayoutVnd?: number; notes?: string }) =>
+  close: (id: string, body: { partnerRating?: number; partnerPayoutVnd?: number; payoutReason?: string; notes?: string }) =>
     orderCall(`${BASE}/orders/${id}/close`, post(body)),
   cancel: (id: string, reason: string) => orderCall(`${BASE}/orders/${id}/cancel`, post({ reason })),
   updateCustomFields: (id: string, customFields: Record<string, unknown>) =>

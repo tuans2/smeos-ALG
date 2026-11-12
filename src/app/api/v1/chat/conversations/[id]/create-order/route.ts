@@ -4,28 +4,30 @@
  */
 
 import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { convertChatToDraftOrder } from "@/modules/chat-assistant/use-cases/convert-chat-to-draft-order"
+import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request, context: { params: Promise<{ id: string }> }) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "T3")
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "T3" },
+  handler: async ({ request, ctx, params }) => {
+    const { id } = params as { id: string }
+    const body = await request.json()
 
-  const { id } = await context.params
-  const body = await request.json()
+    if (!body.productId) {
+      throw validationFailed({ productId: "Mã sản phẩm hoa là bắt buộc để tạo đơn" })
+    }
 
-  if (!body.productId) {
-    throw validationFailed({ productId: "Mã sản phẩm hoa là bắt buộc để tạo đơn" })
-  }
+    const result = await convertChatToDraftOrder(ctx, id, body.productId, {
+      recipientName: body.recipientName,
+      phone: body.phone,
+      street: body.street,
+      cardMessage: body.cardMessage,
+    })
 
-  const result = await convertChatToDraftOrder(ctx, id, body.productId, {
-    recipientName: body.recipientName,
-    phone: body.phone,
-    street: body.street,
-    cardMessage: body.cardMessage,
-  })
-
-  return jsonResponse(result, { status: 201 })
+    // Thông tin khách chưa cho trong chat (SĐT, địa chỉ…) → yêu cầu bổ sung, thay vì điền mặc định (audit BL-25)
+    await syncOrderInfoRequests(ctx, result.order.id)
+    return jsonResponse(result, { status: 201 })
+  },
 })

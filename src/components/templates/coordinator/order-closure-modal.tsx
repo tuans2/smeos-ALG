@@ -25,7 +25,7 @@ export interface OrderClosureModalProps {
   isOpen: boolean
   order: CoordinationOrder | null
   onClose: () => void
-  onSubmit: (input: { partnerRating?: number; partnerPayoutVnd?: number; notes?: string }) => Promise<void>
+  onSubmit: (input: { partnerRating?: number; partnerPayoutVnd?: number; payoutReason?: string; notes?: string }) => Promise<void>
 }
 
 function slaSummary(order: CoordinationOrder): { label: string; tone: "ok" | "late" | "unknown" } {
@@ -40,7 +40,9 @@ function slaSummary(order: CoordinationOrder): { label: string; tone: "ok" | "la
 export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClosureModalProps) {
   const [partnerRating, setPartnerRating] = useState<number>(5)
   const [closureNotes, setClosureNotes] = useState("")
-  const [payout, setPayout] = useState<string>("")
+  // `null` = giữ số chuẩn của đơn (phí gia công còn trả / số thoả thuận, audit BL-22)
+  const [payout, setPayout] = useState<string | null>(null)
+  const [payoutReason, setPayoutReason] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -57,10 +59,18 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
   const ready = checks.every((c) => c.ok)
   const fmt = (iso: string | null) => (iso ? new Date(iso).toLocaleString("vi-VN") : "—")
 
+  const reference = order.partnerPayoutVnd
+  const payoutText = payout ?? (reference === null ? "" : String(reference))
+  const payoutNumber = payoutText.trim() === "" ? undefined : Number(payoutText)
+  const changed = reference !== null && payoutNumber !== undefined && payoutNumber !== reference
+
   const handleClose = async () => {
-    const payoutNumber = payout.trim() === "" ? undefined : Number(payout)
     if (payoutNumber !== undefined && (!Number.isFinite(payoutNumber) || payoutNumber < 0)) {
       setError("Tiền công đối tác phải là số không âm.")
+      return
+    }
+    if (changed && payoutReason.trim().length < 5) {
+      setError("Tiền công khác số đã chốt — ghi lý do điều chỉnh.")
       return
     }
     setBusy(true)
@@ -69,6 +79,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
       await onSubmit({
         ...(order.partner ? { partnerRating } : {}),
         ...(payoutNumber !== undefined ? { partnerPayoutVnd: payoutNumber } : {}),
+        ...(changed ? { payoutReason: payoutReason.trim() } : {}),
         ...(closureNotes.trim() ? { notes: closureNotes.trim() } : {}),
       })
     } catch (e) {
@@ -176,12 +187,27 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
             <Input
               type="number"
               min={0}
-              value={payout}
+              value={payoutText}
               onChange={(e) => setPayout(e.target.value)}
               placeholder="Để trống nếu chưa chốt"
               className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-danger"
             />
+            {reference !== null && (
+              <span className="mt-1 block text-text-muted">Số đã chốt: {reference.toLocaleString("vi-VN")} đ (phí gia công sau khấu trừ hoặc giá thoả thuận)</span>
+            )}
           </div>
+          {changed && (
+            <div>
+              <label className="font-bold text-text block mb-1">Lý do điều chỉnh tiền công:</label>
+              <Textarea
+                rows={2}
+                value={payoutReason}
+                onChange={(e) => setPayoutReason(e.target.value)}
+                placeholder="Ví dụ: đối tác làm thêm phụ kiện theo yêu cầu khách"
+                className="w-full p-2.5 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-danger"
+              />
+            </div>
+          )}
           <div>
             <label className="font-bold text-text block mb-1">Ghi chú nghiệm thu:</label>
             <Textarea

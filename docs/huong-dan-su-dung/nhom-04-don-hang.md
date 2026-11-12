@@ -217,3 +217,5 @@ mức âm cho phép và Điều hành được báo; vượt mức thì ngừng 
 ### 4.32 Nhắc trước giờ giao
 
 Hệ thống nhắc Điều phối trước giờ giao (mặc định 120 và 60 phút). Người có quyền cấu hình nhắc việc chỉnh mốc nhắc (ví dụ 60 và 30 phút) ở Cài đặt tiệm → tab **9. AI & kênh** → khối chính sách nhắc việc điều phối.
+
+Khi tới mốc, hệ thống gửi tin "Nhắc lịch giao" tới người điều phối và quản lý cửa hàng (hộp thông báo trong ứng dụng; Telegram, Zalo nếu kênh đã bật), bấm vào tin mở trang Điều phối. Mỗi mốc của mỗi đơn chỉ gửi một lần; mốc đã xác nhận ở thanh nhắc thì không gửi. Ai không muốn nhận có thể tắt sự kiện "Nhắc lịch giao" trong tuỳ chọn thông báo của mình.

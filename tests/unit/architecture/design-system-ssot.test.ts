@@ -2,6 +2,8 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
 import { describe, expect, it } from "vitest"
 
+import { builtInDeliveryPhase } from "@/lib/delivery/delivery-phase"
+
 /**
  * Quản trị SSOT Design System (ADR-011 D-UI-04, D-UI-07, D-UI-12):
  * - tài liệu `docs/design-system/` không được trỏ tới tệp không tồn tại
@@ -52,8 +54,10 @@ describe("Design System SSOT — liên kết tài liệu", () => {
   })
 })
 
-describe("Design System SSOT — CODEOWNERS", () => {
-  const rules = readFileSync(path.join(REPO, ".github/CODEOWNERS"), "utf8")
+// Bản cắt bàn giao không mang CODEOWNERS của smeOS (tên tài khoản riêng); bên nhận tự đặt chủ sở hữu.
+describe.skipIf(builtInDeliveryPhase() !== null)("Design System SSOT — CODEOWNERS", () => {
+  // Đọc khi chạy ca thử, không đọc lúc thu thập: khối bị bỏ qua vẫn chạy thân `describe`
+  const readRules = () => readFileSync(path.join(REPO, ".github/CODEOWNERS"), "utf8")
     .split("\n")
     .map((l) => l.trim())
     .filter((l) => l && !l.startsWith("#"))
@@ -63,6 +67,7 @@ describe("Design System SSOT — CODEOWNERS", () => {
     })
 
   it("các vùng ADR-011 D-UI-07 đều có chủ sở hữu", () => {
+    const rules = readRules()
     for (const p of ["/src/styles/tokens/", "/src/components/ui/", "/src/components/layout/", "/docs/design-system/"]) {
       const rule = rules.find((r) => r.pattern === p)
       expect(rule?.owners.length ?? 0, `CODEOWNERS thiếu ${p}`).toBeGreaterThan(0)
@@ -71,7 +76,7 @@ describe("Design System SSOT — CODEOWNERS", () => {
 
   it("chủ sở hữu là tên GitHub hợp lệ, không phải tên vai trò giữ chỗ", () => {
     const PLACEHOLDERS = new Set(["@po", "@owner", "@team", "@admin"])
-    for (const { pattern, owners } of rules) {
+    for (const { pattern, owners } of readRules()) {
       for (const o of owners) {
         expect(o, `${pattern}: ${o}`).toMatch(/^@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\/[A-Za-z0-9._-]+)?$/)
         expect(PLACEHOLDERS.has(o.toLowerCase()), `${pattern}: ${o} là tên giữ chỗ`).toBe(false)

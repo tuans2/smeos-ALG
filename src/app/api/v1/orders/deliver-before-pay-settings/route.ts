@@ -3,22 +3,23 @@
  * Body PUT `{ allowSelfDecide?, selfDecideMaxVnd?, minCompletedOrders?, collectDueDays? }`.
  */
 
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { getDeliverBeforePaySettings, updateDeliverBeforePaySettings } from "@/modules/orders/use-cases/deliver-before-pay-settings"
+import { defineRoute } from "@/core/http/define-route"
 
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R1")
-  return jsonResponse(await getDeliverBeforePaySettings(ctx))
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "R1" },
+  handler: async ({ ctx }) => {
+    return jsonResponse(await getDeliverBeforePaySettings(ctx))
+  },
 })
 
-export const PUT = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "F2")
-  const body: unknown = await request.json().catch(() => null)
-  return jsonResponse(await updateDeliverBeforePaySettings(ctx, body ?? {}))
+export const PUT = defineRoute({
+  auth: { kind: "tenant", capability: "F2" },
+  handler: async ({ request, ctx }) => {
+    const body: unknown = await request.json().catch(() => null)
+    return jsonResponse(await updateDeliverBeforePaySettings(ctx, body ?? {}))
+  },
 })
 
 export const dynamic = "force-dynamic"

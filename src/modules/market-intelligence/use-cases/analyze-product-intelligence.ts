@@ -33,6 +33,7 @@ import {
   type RealAttributeSignals,
 } from "../domain/trend-fit";
 import { synthesizeProductResearchQueries } from "../domain/synthesize-product-queries";
+import { AppError } from "@/core/http/errors";
 import { getAssetRepository } from "@/modules/assets/infra/asset-repository";
 import type { IAssetRepository } from "@/modules/assets/domain/repositories/asset-repository.interface";
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory";
@@ -97,6 +98,13 @@ async function lookupRealAttributeSignal(
   return null;
 }
 
+/**
+ * Thiếu đầu vào bắt buộc của Chặng 03 → 400 `details.<trường>` (audit API §22 — trước đây `Error` trần → 500).
+ */
+function missingInput(field: string, message: string): AppError {
+  return new AppError("VALIDATION_FAILED", message, { [field]: message })
+}
+
 export async function analyzeProductIntelligence(
   params: AnalyzeProductIntelligenceParams,
   repo: IMarketIntelligenceRepository = getMarketIntelligenceRepository(),
@@ -104,46 +112,34 @@ export async function analyzeProductIntelligence(
 ): Promise<ProductIntelligenceReport> {
   // BẮT BUỘC: Vision AI (Chặng 02 UNDERSTAND) phải trả dữ liệu thật, không fallback cứng
   if (!params.components || params.components.length === 0) {
-    throw new Error(
-      "[analyzeProductIntelligence] Thiếu components — Vision AI chưa bóc tách thành phần hoa. " +
-      "Hãy chạy Chặng 02 UNDERSTAND (analyzeProductVision) trước."
-    );
+    throw missingInput("components", "Thiếu components — Vision AI chưa bóc tách thành phần hoa. " +
+      "Hãy chạy Chặng 02 UNDERSTAND (analyzeProductVision) trước.");
   }
   const components = params.components;
 
   const rawAttributes = Array.isArray(params.attributes) ? params.attributes[0] : params.attributes;
   if (!rawAttributes) {
-    throw new Error(
-      "[analyzeProductIntelligence] Thiếu attributes — Vision AI chưa trả thuộc tính thị giác."
-    );
+    throw missingInput("attributes", "Thiếu attributes — Vision AI chưa trả thuộc tính thị giác.");
   }
   const attributes: ProductVisualAttributes = rawAttributes;
 
   if (!params.packaging) {
-    throw new Error(
-      "[analyzeProductIntelligence] Thiếu packaging — Vision AI chưa trả thông tin đóng gói."
-    );
+    throw missingInput("packaging", "Thiếu packaging — Vision AI chưa trả thông tin đóng gói.");
   }
   const packaging: ProductPackaging = params.packaging;
 
   if (!params.context) {
-    throw new Error(
-      "[analyzeProductIntelligence] Thiếu context — Vision AI chưa trả ngữ cảnh sản phẩm."
-    );
+    throw missingInput("context", "Thiếu context — Vision AI chưa trả ngữ cảnh sản phẩm.");
   }
   const context: ProductInferredContext = params.context;
 
   if (!params.productName) {
-    throw new Error(
-      "[analyzeProductIntelligence] Thiếu productName — Vision AI chưa trả tên sản phẩm."
-    );
+    throw missingInput("product_name", "Thiếu productName — Vision AI chưa trả tên sản phẩm.");
   }
 
   if (!params.assetId || !params.assetId.trim()) {
-    throw new Error(
-      "[analyzeProductIntelligence] Thiếu assetId — ảnh chưa được lưu vào kho ảnh " +
-      "(chặn cứng từ 22/09/2026, nợ #118). Tải ảnh qua /api/v1/assets/upload-url trước."
-    );
+    throw missingInput("asset_id", "Thiếu assetId — ảnh chưa được lưu vào kho ảnh " +
+      "(chặn cứng từ 22/09/2026, nợ #118). Tải ảnh qua /api/v1/assets/upload-url trước.");
   }
 
   // MẮC XÍCH ĐỒNG BỘ: Sinh từ khóa có chủ đích từ Vision output

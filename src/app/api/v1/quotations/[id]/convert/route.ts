@@ -1,15 +1,14 @@
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
+import { jsonResponse } from "@/core/http/response"
 import { convertQuotationToOrderUseCase } from "@/modules/sales/use-cases/convert-quotation-to-order.use-case"
+import { defineRoute } from "@/core/http/define-route"
 
-export const POST = handle(async (request, context) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "R15")
+export const POST = defineRoute({
+  auth: { kind: "tenant", capability: "R15" },
+  handler: async ({ ctx, params }) => {
+    const { id } = params as { id: string }
+    const result = await convertQuotationToOrderUseCase(ctx, id)
 
-  const { id } = (await (context as { params: Promise<{ id: string }> }).params)
-  const result = await convertQuotationToOrderUseCase(ctx, id)
-
-  return jsonResponse({ data: result })
+    return jsonResponse({ data: result })
+  },
 })
 

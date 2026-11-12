@@ -21,7 +21,8 @@
 9. [Chức năng 08: Kho Dữ Liệu Sản Phẩm (`/kho-du-lieu`)](#chuc-nang-08-kho-du-lieu-san-pham-kho-du-lieu)
 10. [Chức năng 09: Hồ Sơ Cửa Hàng (`/ho-so`)](#chuc-nang-09-ho-so-cua-hang-ho-so)
 11. [Chức năng 10: Cài Đặt & Quản Lý Thành Viên (`/cai-dat`)](#chuc-nang-10-cai-dat--quan-ly-thanh-vien-cai-dat)
-12. [Phụ lục: Danh sách nội dung cần xác minh thực tế](#phu-luc-danh-sach-noi-dung-can-xac-minh-thuc-te)
+12. [Chức năng 11: Khách Hàng — Yêu Cầu Về Dữ Liệu Cá Nhân (`/khach-hang`)](#chuc-nang-11-khach-hang--yeu-cau-ve-du-lieu-ca-nhan-khach-hang)
+13. [Phụ lục: Danh sách nội dung cần xác minh thực tế](#phu-luc-danh-sach-noi-dung-can-xac-minh-thuc-te)
 
 ---
 
@@ -445,6 +446,33 @@ Phân hệ **Cài Đặt & Quản Lý Thành Viên** (`/cai-dat` và `/cai-dat/t
 
 ### 6. Các chức năng liên quan
 * **Hồ Sơ Cửa Hàng (`/ho-so`)**, Tác động phân quyền hiển thị trên toàn bộ các trang hệ thống.
+
+---
+
+## CHỨC NĂNG 11: KHÁCH HÀNG — YÊU CẦU VỀ DỮ LIỆU CÁ NHÂN (`/khach-hang`)
+
+### 1. Chức năng dùng để làm gì?
+Khách có quyền xin **bản sao**, xin **sửa** hoặc xin **xoá** dữ liệu cá nhân của mình (tên, số điện thoại, địa chỉ, dịp kỷ niệm, tin nhắn…). Khu **"Yêu cầu về dữ liệu"** trong hồ sơ khách giúp tiệm làm đúng ba việc đó và ghi lại từng yêu cầu, hạn xử lý **72 giờ**.
+
+### 2. Ai sử dụng và khi nào?
+* **Người sử dụng**: Điều hành và nhân viên được giao quyền. Nút **Xuất dữ liệu** chỉ hiện với người có quyền xuất dữ liệu ra tệp; nút **Xoá dữ liệu** chỉ hiện với người có quyền xoá khách; **Ghi nhận yêu cầu sửa** cho người sửa được hồ sơ khách.
+* **Thời điểm sử dụng**: Khi khách nhắn, gọi hoặc đến tiệm đề nghị xem lại, sửa hoặc xoá thông tin của mình.
+
+### 3. Hướng dẫn thao tác từng bước & 4. Kết quả sau mỗi thao tác
+* **Bước 1**: Mở **Khách hàng** trên Sidebar, tìm khách, bấm **"Hồ sơ Master"** ở dòng của khách → hộp hồ sơ mở ra.
+* **Bước 2**: Chọn tab **"Quyền riêng tư"**, kéo xuống khu **"Yêu cầu về dữ liệu"** → thấy ba nút và danh sách yêu cầu cũ (loại, trạng thái *Đang chờ / Đã xử lý / Từ chối*, ngày nhận, hạn).
+* **Khách xin bản sao**: bấm **"Xuất dữ liệu"** → bấm **"Tải JSON"** hoặc **"Tải CSV"** (mở được bằng Excel) để gửi cho khách. *Kết quả*: tệp chứa hồ sơ, dịp kỷ niệm, đồng ý nhận tin, đơn hàng kèm người nhận và hoá đơn, tin nhắn, báo giá của khách; yêu cầu ghi là **Đã xử lý**.
+* **Khách xin sửa**: bấm **"Ghi nhận yêu cầu sửa"**, ghi khách muốn sửa gì, bấm **"Ghi nhận"** → yêu cầu **Đang chờ**. Sửa thông tin ở tab **Hồ sơ**, quay lại bấm **"Đã sửa xong"** (hoặc **"Từ chối"** nếu không sửa được). *Kết quả*: yêu cầu chuyển sang **Đã xử lý** / **Từ chối**.
+* **Khách xin xoá**: bấm **"Xoá dữ liệu"**, đọc kỹ thông báo, gõ **XOÁ** rồi bấm **"Xoá dữ liệu"**. *Kết quả*: tên khách thành "Khách đã xoá", số điện thoại, email, địa chỉ, ghi chú, dịp kỷ niệm và tin nhắn bị xoá; khách không còn nhận tin nhắn nhắc hẹn hay ưu đãi.
+
+### 5. Tình huống thực tế và lưu ý quan trọng
+* **Tình huống thực tế**: Khách nhắn Zalo "Tiệm xoá giúp em số điện thoại và địa chỉ nhé". Nhân viên mở hồ sơ khách → tab Quyền riêng tư → **Xoá dữ liệu** → gõ XOÁ → xác nhận. Đơn cũ của khách vẫn còn trong sổ đơn để đối chiếu doanh thu.
+* **Lưu ý quan trọng**: Xoá **không hoàn tác được**. Đơn hàng, phiếu thu và thông tin hoá đơn VAT **vẫn được giữ** để đối chiếu sổ sách. Chi nhánh làm đơn gia công cũng chỉ còn thấy thông tin đã xoá.
+* **Hạn 72 giờ**: yêu cầu đang chờ quá hạn hiện nhãn **"Quá hạn"** — xử lý sớm.
+
+### 6. Các chức năng liên quan
+* **Cài Đặt & Quản Lý Thành Viên (`/cai-dat/thanh-vien`)**: Điều hành giao quyền xuất / xoá dữ liệu khách cho nhân viên.
+* **Quản Lý Đơn Hàng (`/don-hang`)**: đơn của khách đã xoá vẫn hiện, không còn tên và số điện thoại người nhận.
 
 ---
 

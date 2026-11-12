@@ -20,6 +20,7 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { PageHeader } from "@/components/ui/page-header"
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 
 class ChuaDangNhap extends Error {}
 
@@ -170,8 +171,8 @@ export function CustomerServiceWorkspace() {
           </div>
         )}
 
-        {/* Hội thoại đang chờ */}
-        <section>
+        {/* Hội thoại đang chờ — ẩn khi trang Hội thoại không thuộc giai đoạn bàn giao */}
+        {isHrefInPhase("/hoi-thoai") && <section>
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-body font-semibold text-text">
               Hội thoại đang chờ
@@ -240,7 +241,7 @@ export function CustomerServiceWorkspace() {
               ))}
             </div>
           )}
-        </section>
+        </section>}
 
         {/* Dịp cần liên hệ hôm nay */}
         {daTai && !loi && todayReminders.length > 0 && (
@@ -275,15 +276,17 @@ export function CustomerServiceWorkspace() {
         <section>
           <h2 className="mb-2 text-body font-semibold text-text">Tác vụ nhanh</h2>
           <div className="grid grid-cols-2 gap-3">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => router.push("/hoi-thoai" as Route)}
-              className="flex items-center justify-center gap-2 h-12"
-            >
-              <MessageSquare size={16} />
-              Hội thoại
-            </Button>
+            {isHrefInPhase("/hoi-thoai") && (
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => router.push("/hoi-thoai" as Route)}
+                className="flex items-center justify-center gap-2 h-12"
+              >
+                <MessageSquare size={16} />
+                Hội thoại
+              </Button>
+            )}
             <Button
               type="button"
               variant="secondary"
