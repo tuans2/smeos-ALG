@@ -60,6 +60,9 @@ cd workers && python -m pytest tests -q
 
 `npm run test:tenant` và `npm run test:platform` xoá sạch dữ liệu và chỉ chạy trên cơ sở dữ liệu có tên kết thúc bằng `_test` (`DATABASE_URL_TEST`). Dựng cơ sở dữ liệu này một lần sau `docker compose up -d`: `npm run db:test:setup`.
 
+Bộ test đọc tệp `.env` của máy. Chạy test với các giá trị như CI: `OPENAI_API_KEY=ci-only-fake`, để trống `CRON_SECRET`, `REDIS_URL` và
+`NEXT_PUBLIC_APP_URL` (đặt biến môi trường trước lệnh sẽ được ưu tiên hơn `.env`).
+
 ## CI và triển khai
 
 - `.github/workflows/ci.yml`: typecheck, ESLint, đối chiếu tài liệu đặc tả với mã, kiểm kiến trúc và giao diện, unit test, chuẩn đa ngành, test cách ly tổ chức và nền tảng, build, worker, E2E, quét bí mật, `npm audit`.
