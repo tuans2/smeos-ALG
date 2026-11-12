@@ -19,7 +19,7 @@ export const DOMAINS = [
     "platform_access_logs", "decision_registry", "governance_decisions", "audit_logs", "reconciliation_findings",
   ]],
   ["Khách hàng và bán hàng", [
-    "customers", "customer_consents", "customer_interactions", "customer_occasions", "customer_segments", "occasions", "leads",
+    "customers", "customer_consents", "data_subject_requests", "customer_interactions", "customer_occasions", "customer_segments", "occasions", "leads",
     "quotations", "quotation_items", "quotation_revisions", "vouchers", "voucher_batches", "voucher_redemptions", "pricing_rules",
     "shop_reviews",
   ]],

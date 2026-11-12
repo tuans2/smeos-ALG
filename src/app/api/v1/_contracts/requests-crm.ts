@@ -42,3 +42,11 @@ export const listCustomersQuery = z.object({
 export const exportCustomersQuery = z.object({ format: z.enum(["xlsx", "json"]).optional(), tier: TIER.optional(), search: z.string().optional() })
 /** Số ngày quét tới, mặc định 14. */
 export const remindersQuery = z.object({ days: z.string().regex(/^\d+$/).optional() })
+
+/** Yêu cầu của khách về dữ liệu cá nhân (ADR-014 D-P5) — `note` là ghi chú nghiệp vụ, không ghi dữ liệu cá nhân vào đây. */
+export const dataRequestBody = z.object({ note: z.string().max(500).optional() })
+export const dataRequestsQuery = z.object({
+  status: z.enum(["RECEIVED", "COMPLETED", "REJECTED"]).optional(),
+  customer_id: z.string().optional(),
+})
+export const resolveDataRequestBody = z.object({ status: z.enum(["COMPLETED", "REJECTED"]), note: z.string().max(500).optional() })
