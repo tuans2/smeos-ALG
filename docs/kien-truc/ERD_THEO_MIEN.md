@@ -5,7 +5,7 @@ Sinh từ `prisma/schema.prisma` bởi `scripts/gen-erd.mjs` (kế hoạch DB, b
 (PK, FK, `organization_id`) và khoá ngoại tới bảng cha; bảng của miền khác chỉ hiện tên. Cột đầy đủ, ý nghĩa và quy tắc
 ở đặc tả `docs/dac-ta/07-database-specification.md`. `tests/unit/architecture/erd.test.ts` đỏ khi tệp này lệch schema.
 
-Tổng: 158 bảng, 10 miền.
+Tổng: 159 bảng, 10 miền.
 
 ## Tổ chức, người dùng, phân quyền
 
@@ -138,6 +138,7 @@ erDiagram
   order_approval_requests
   order_assignments
   order_change_requests
+  order_code_sequences
   order_coordinations
   order_events
   order_exceptions
@@ -275,6 +276,7 @@ erDiagram
   organizations ||--o{ order_approval_requests : "organization_id"
   organizations ||--o{ order_assignments : "organization_id"
   organizations ||--o{ order_change_requests : "organization_id"
+  organizations ||--o{ order_code_sequences : "organization_id"
   organizations ||--o{ order_coordinations : "organization_id"
   organizations ||--o{ order_events : "organization_id"
   organizations ||--o{ order_exceptions : "organization_id"
@@ -556,7 +558,7 @@ erDiagram
 
 ## Đơn hàng và điều phối
 
-Bảng: `orders`, `order_items`, `order_recipients`, `shared_order_access`, `order_events`, `order_payments`, `order_assignments`, `order_coordinations`, `order_exceptions`, `order_qc_records`, `order_info_requests`, `order_change_requests`, `order_approval_requests`, `partners`, `partner_settlements`, `partner_marketplace_stores`, `partner_marketplace_share_links`, `product_bookings`, `staff_notifications`.
+Bảng: `orders`, `order_code_sequences`, `order_items`, `order_recipients`, `shared_order_access`, `order_events`, `order_payments`, `order_assignments`, `order_coordinations`, `order_exceptions`, `order_qc_records`, `order_info_requests`, `order_change_requests`, `order_approval_requests`, `partners`, `partner_settlements`, `partner_marketplace_stores`, `partner_marketplace_share_links`, `product_bookings`, `staff_notifications`.
 
 ```mermaid
 erDiagram
@@ -568,6 +570,10 @@ erDiagram
     String voucher_id FK
     String source_session_id FK
     String lead_id FK
+  }
+  order_code_sequences {
+    String organization_id PK,FK
+    String prefix PK
   }
   order_items {
     String id PK
@@ -705,6 +711,7 @@ erDiagram
   organizations ||--o{ order_approval_requests : "organization_id"
   organizations ||--o{ order_assignments : "organization_id"
   organizations ||--o{ order_change_requests : "organization_id"
+  organizations ||--o{ order_code_sequences : "organization_id"
   organizations ||--o{ order_coordinations : "organization_id"
   organizations ||--o{ order_events : "organization_id"
   organizations ||--o{ order_exceptions : "organization_id"

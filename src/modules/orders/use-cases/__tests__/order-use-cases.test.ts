@@ -39,7 +39,7 @@ function createMockOrder(partial: Partial<OrderRecord> = {}): OrderRecord {
 describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", () => {
   it("createOrder delegates to repo and calculates order total", async () => {
     const mockRepo: IOrderRepository = {
-      countTodayOrders: vi.fn().mockResolvedValue(0),
+      allocateOrderCodeNumber: vi.fn().mockResolvedValue(1),
       create: vi.fn().mockImplementation((_orgId, code, input, totalVnd) =>
         Promise.resolve(createMockOrder({ code, totalVnd }))
       ),
@@ -70,7 +70,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
 
     expect(audit).toHaveBeenCalledWith(mockTenant, expect.objectContaining({ action: "order.create", entityType: "orders" }))
     expect(notify).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", eventKey: "ORDER_RECEIVED" }))
-    expect(mockRepo.countTodayOrders).toHaveBeenCalledWith("org-1")
+    expect(mockRepo.allocateOrderCodeNumber).toHaveBeenCalledWith("org-1", expect.stringMatching(/^DH\d{6}-$/))
     expect(mockRepo.create).toHaveBeenCalled()
     expect(order.totalVnd).toBe(500000)
     expect(order.code).toMatch(/^DH\d{6}-0001$/)
@@ -91,7 +91,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     })
 
     const mockRepo: IOrderRepository = {
-      countTodayOrders: vi.fn(),
+      allocateOrderCodeNumber: vi.fn(),
       create: vi.fn(),
       findById: vi.fn().mockResolvedValue(mockOrder),
       findByIdempotencyKey: vi.fn(),
@@ -113,7 +113,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     const updated = createMockOrder({ status: "PROCESSING", productionStatus: "ARRANGING" })
 
     const mockRepo: IOrderRepository = {
-      countTodayOrders: vi.fn(),
+      allocateOrderCodeNumber: vi.fn(),
       create: vi.fn(),
       findById: vi.fn().mockResolvedValue(existing),
       findByIdempotencyKey: vi.fn(),
@@ -152,7 +152,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     const updated = createMockOrder({ productionStatus: "ASSIGNED" })
 
     const mockRepo: IOrderRepository = {
-      countTodayOrders: vi.fn(),
+      allocateOrderCodeNumber: vi.fn(),
       create: vi.fn(),
       findById: vi.fn().mockResolvedValue(existing),
       findByIdempotencyKey: vi.fn(),
@@ -211,7 +211,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
 
   it("listOrders returns filtered list from repo", async () => {
     const mockRepo: IOrderRepository = {
-      countTodayOrders: vi.fn(),
+      allocateOrderCodeNumber: vi.fn(),
       create: vi.fn(),
       findById: vi.fn(),
       findByIdempotencyKey: vi.fn(),

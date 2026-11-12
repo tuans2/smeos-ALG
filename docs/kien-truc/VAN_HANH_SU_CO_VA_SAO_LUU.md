@@ -144,7 +144,9 @@ dựng trang. Thời gian request thật = số này + phần HTTP; sau go-live 
 biên bản O-9): danh sách đơn chuỗi p95 97 ms, tiệm lẻ 44 ms, điều phối 10 ms, báo cáo 51 ms. **Đặt đơn của chuỗi: 70/100
 lỗi** "Đang có nhiều đơn tạo cùng lúc — vui lòng thử lại." (tiệm lẻ 1/100): mã đơn lấy từ số đơn trong ngày + thử lại
 tối đa 3 lần (`createWithFreshCode`, `src/modules/orders/use-cases/create-order.ts`), 10 đơn cùng lúc trong một tổ chức
-trùng mã quá 3 lần. Chặn go-live cho khách chuỗi — xem `docs/handover/GO_LIVE_CHECKLIST.md` mục B.
+trùng mã quá 3 lần. **Đã sửa cùng ngày** (đặc tả 07 §57, bộ đếm `order_code_sequences`); chạy lại cùng cấu hình (quy mô
+0,01, 100 × 10 luồng): đặt đơn chuỗi 0 lỗi p95 183 ms, tiệm lẻ 0 lỗi p95 187 ms, danh sách đơn chuỗi 124 ms, điều phối
+17 ms, báo cáo 72 ms. Đặt đơn sát mục tiêu 200 ms ngay ở quy mô nhỏ trên máy cục bộ — xem kỹ ở lần chạy O-9 thật.
 
 | Ngày | CSDL (mốc PITR) | Quy mô | Lần × luồng | Kịch bản không đạt | Xử lý | Người chạy |
 |---|---|---|---|---|---|---|
