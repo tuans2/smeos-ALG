@@ -39,3 +39,19 @@ describe("FloatingItemSlot (T3-2, layouts.md §3)", () => {
     expect(studio).not.toContain("fixed bottom-24 right-6")
   })
 })
+
+describe("Nút UI Studio — nhãn truy cập chứa chữ nhìn thấy (T3-1, WCAG 2.5.3)", () => {
+  it("nhãn gồm 'UI Studio' và tên preset đang hiển thị", () => {
+    const studio = src("src/components/layout/ui-studio-drawer.tsx")
+    expect(studio).toContain("aria-label={`UI Studio ${presetWord} — mở bảng điều khiển giao diện`}")
+    expect(studio).toContain("{presetWord}")
+  })
+})
+
+describe("Nút Copilot — icon không bị co (T3-2)", () => {
+  it("nút tròn 44px không có padding, icon shrink-0", () => {
+    const copilot = src("src/components/chat/floraos-global-copilot.tsx")
+    expect(copilot).toContain("h-11 w-11 p-0")
+    expect(copilot).toMatch(/<Bot className="h-5 w-5 shrink-0/)
+  })
+})

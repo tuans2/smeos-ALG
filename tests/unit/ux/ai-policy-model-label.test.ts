@@ -16,7 +16,7 @@ describe("modelDescription", () => {
 
   it("trang không in thẳng display_name ra dòng Mô hình", () => {
     const src = readFileSync(join(process.cwd(), "src/app/(app)/cai-dat-ai/page.tsx"), "utf8")
-    expect(src).toContain("modelDescription(m.key, m.display_name)")
+    expect(src).toContain("modelDescription(m.key, m.display_name)).join(\" · \")")
     expect(src).toContain("<InfoTip")
   })
 })

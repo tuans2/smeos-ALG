@@ -222,7 +222,7 @@ export default function AiSettingsPage() {
                       Mô hình:{" "}
                       <span className="font-medium text-text">
                         {cap.allowed_models.length > 0
-                          ? cap.allowed_models.map((m) => modelDescription(m.key, m.display_name)).join(", ")
+                          ? cap.allowed_models.map((m) => modelDescription(m.key, m.display_name)).join(" · ")
                           : "Toàn bộ mô hình đạt chuẩn"}
                       </span>
                       {cap.allowed_models.length > 0 && (

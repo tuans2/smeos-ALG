@@ -32,6 +32,9 @@ export function UiStudioDrawer() {
     return () => window.removeEventListener("open-ui-studio", handleOpen)
   }, [])
 
+  // Nhãn truy cập phải chứa chữ nhìn thấy (WCAG 2.5.3): "UI Studio" + tên preset; ở 390px chỉ còn tên preset.
+  const presetWord = currentPreset.name.split(" ")[0]
+
   return (
     <>
       {/* Nút mở UI Studio: đăng ký vào lớp phần tử nổi thay vì tự định vị (T3-2) */}
@@ -41,7 +44,7 @@ export function UiStudioDrawer() {
           onClick={() => setIsOpen((prev) => !prev)}
           className="text-[length:inherit] h-auto font-[inherit] group relative flex items-center gap-2 px-3 py-2.5 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-text cursor-pointer hover:bg-surface"
           title="Tùy biến Giao diện & UI Presets"
-          aria-label="UI Studio — mở bảng điều khiển giao diện"
+          aria-label={`UI Studio ${presetWord} — mở bảng điều khiển giao diện`}
         >
           <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-primary-fg shadow-xs">
             <Palette className="w-3.5 h-3.5" />
@@ -49,8 +52,9 @@ export function UiStudioDrawer() {
           <span className="text-caption font-semibold pr-1 hidden sm:inline-block">
             UI Studio
           </span>
+          {" "}
           <span className="text-caption uppercase font-mono px-1.5 py-0.5 rounded-full bg-primary-muted text-primary border border-primary/20">
-            {currentPreset.name.split(" ")[0]}
+            {presetWord}
           </span>
         </Button>
       </FloatingItemSlot>

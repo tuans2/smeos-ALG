@@ -189,13 +189,13 @@ export function FloraOSGlobalCopilot() {
             variant="ghost"
             onClick={() => setIsOpen(true)}
             aria-label="Mở smeOS Copilot"
-            className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl transition-all hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="group relative flex h-11 w-11 p-0 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl transition-all hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
               <span className="absolute inline-flex h-full w-full animate-ping motion-reduce:animate-none rounded-full bg-success opacity-75" />
               <span className="relative inline-flex h-3 w-3 rounded-full border-2 border-white bg-success" />
             </span>
-            <Bot className="h-5 w-5 transition-transform group-hover:rotate-6" />
+            <Bot className="h-5 w-5 shrink-0 transition-transform group-hover:rotate-6" />
             <div className="pointer-events-none absolute right-full mr-2.5 hidden sm:flex items-center gap-1.5 whitespace-nowrap rounded-[var(--radius-button)] bg-text/90 px-2.5 py-1 text-caption font-bold text-white shadow-md backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity">
               <span>smeOS Copilot</span>
               <kbd className="rounded bg-white/20 px-1 py-0.2 text-caption font-mono">⌘K</kbd>
