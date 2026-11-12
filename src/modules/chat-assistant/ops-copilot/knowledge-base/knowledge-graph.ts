@@ -1,6 +1,6 @@
 /**
  * Cross-Module Knowledge Graph (Đồ thị Liên kết Tri thức Đa Phân Hệ).
- * Định nghĩa mạng lưới phụ thuộc và liên kết nghiệp vụ giữa 10 Chức năng SSOT.
+ * Định nghĩa mạng lưới phụ thuộc và liên kết nghiệp vụ giữa 11 Chức năng SSOT.
  */
 
 import type { RelatedKnowledgeLink } from "../pipeline/pipeline-types"
@@ -116,6 +116,17 @@ const KNOWLEDGE_GRAPH_RELATIONS: KnowledgeNodeRelation[] = [
         title: "Đồng bộ mã VietQR sang bộ sưu tập riêng",
         route: "/the-chao",
         relationReason: "Mọi thay đổi STK ngân hàng thụ hưởng sẽ cập nhật lập tức lên link gửi khách.",
+      },
+    ],
+  },
+  {
+    nodeId: "node-11-khach-hang-du-lieu",
+    relations: [
+      {
+        nodeId: "node-10-cai-dat-thanh-vien",
+        title: "Cấp Quyền Xuất / Xoá Dữ Liệu Khách",
+        route: "/cai-dat/thanh-vien",
+        relationReason: "Chỉ nhân viên được Điều hành giao quyền mới thấy nút xuất hoặc xoá dữ liệu khách.",
       },
     ],
   },
