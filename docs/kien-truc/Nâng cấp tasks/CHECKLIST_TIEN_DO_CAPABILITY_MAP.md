@@ -123,7 +123,7 @@
     - Khép kín hành trình chốt đơn 1-chạm: sinh mã đơn hàng `DH-{timestamp}`, tự động tạo mã VietQR Napas 247 định danh đối soát theo cú pháp `FLO {ORG} {ORDER_CODE}`.
     - Modal hiển thị ảnh mã QR, số tiền, số tài khoản, nội dung chuyển khoản với nút sao chép 1-chạm và tin nhắn phản hồi tự động trong hội thoại chat.
 - [x] **3. [Shop] Báo cáo & Phân tích hiệu quả quảng cáo đa kênh (`MK-10`)**
-  - **Mã nguồn:** `src/modules/content-engine/domain/ad-performance-analytics.ts`, `src/components/marketing/ad-performance-modal.tsx`, `src/app/(app)/so-lieu/page.tsx`
+  - **Mã nguồn:** `src/modules/content-engine/domain/ad-performance-analytics.ts` (chỉ còn luật tính ROAS; màn dữ liệu mẫu `ad-performance-modal.tsx` đã xoá 12/11/2026, audit BL-23)
   - **Mô tả:**
     - Đo lường và tính toán toàn diện các chỉ số quảng cáo: Lượt hiển thị (Impressions), Lượt nhấp (Clicks), CTR (%), Chi phí (Spend), CPC, Số đơn hàng (Conversions), CPA, Doanh thu (Revenue), ROAS (lần), ROI (%).
     - So sánh trực quan 4 kênh quảng cáo: Facebook Ads, TikTok Ads, Google Ads, Zalo Ads.
