@@ -115,6 +115,8 @@ export async function executeTenantPurge(organizationId: string, now: Date): Pro
     async (tx) => {
       await setPurgeReason(tx, "tenant_offboarding")
       await tx.$executeRawUnsafe(`SET LOCAL lock_timeout = '30s'`)
+      // Thao tác dài có chủ đích: vượt giới hạn 120 s của smeos_system (ADR-015 D-O5)
+      await tx.$executeRawUnsafe(`SET LOCAL statement_timeout = '30min'`)
       const [org] = await tx.$queryRawUnsafe<Array<{ s: string; u: Date | null; h: Date | null }>>(
         `SELECT lifecycle_status::text AS s, offboarding_until AS u, legal_hold_until AS h FROM "organizations" WHERE id = $1 FOR UPDATE`,
         organizationId,

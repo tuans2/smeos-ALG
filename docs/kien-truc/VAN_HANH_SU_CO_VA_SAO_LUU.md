@@ -11,6 +11,7 @@
 | PITR của Render (`smeos-postgres`, gói `basic-256mb`) | Khôi phục về một thời điểm bất kỳ, cách hiện tại ≥ 10 phút | 3 ngày (workspace Hobby) · 7 ngày (Pro trở lên) |
 | Export logic (*Recovery → Create export*) | Tệp `.dir.tar.gz` tải về được | 7 ngày trên Render; tự tải về để giữ lâu hơn |
 | `scripts/handover-backup-engine.ts` | Snapshot JSON dữ liệu giao dịch **một tenant** trước khi dọn | Theo nơi lưu tệp |
+| `npm run tenant:transfer` (ADR-016 D-S3) | Xuất / nhập **toàn bộ** dữ liệu một tenant theo sổ bảng, có phiên bản schema + checksum — runbook §17 | Theo nơi lưu tệp |
 
 **Mục tiêu đề xuất** (cần PO chốt với khách):
 
@@ -27,6 +28,19 @@
 4. Ghi biên bản: thời điểm khôi phục, khoảng dữ liệu mất, tiệm bị ảnh hưởng.
 5. **Diễn tập mỗi quý** trên một instance tạm, rồi xoá nó. Chưa diễn tập lần nào thì chưa được
    coi RTO là đã chứng minh.
+
+**Diễn tập PITR (ADR-015 D-O3, O-7) — làm theo, ghi biên bản ngay dưới:**
+
+1. Ghi giờ bắt đầu. Render → `smeos-postgres` → *Recovery* → mốc 1 giờ trước → instance tạm.
+2. Trên Render shell (biến `DATABASE_URL` tạm trỏ instance tạm): `npm run db:verify` → lưu bản in.
+3. Trên production: `npm run db:verify` → so với bước 2 (số dòng chỉ được thấp hơn bằng lượng ghi trong 1 giờ; schema trùng;
+   `đơn lệch sổ thu` không tăng).
+4. Diễn tập khôi phục riêng một tổ chức thử (runbook §17, S-4) từ instance tạm, đo thời gian.
+5. Ghi giờ xong → RTO; xoá instance tạm. Mục tiêu RTO ≤ 1 giờ (toàn CSDL), ≤ 4 giờ (một tổ chức).
+
+| Ngày | Người làm | Mốc khôi phục | RTO toàn CSDL | RTO một tổ chức | `db:verify` khớp | Ghi chú |
+|---|---|---|---|---|---|---|
+| *(chưa diễn tập)* | | | | | | |
 
 Ảnh và video không nằm trong Postgres mà ở kho đối tượng (`STORAGE_*`). Bật versioning hoặc sao
 chép chéo vùng ở nhà cung cấp kho.

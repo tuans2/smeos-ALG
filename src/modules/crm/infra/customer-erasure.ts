@@ -11,7 +11,12 @@ import { ERASED_CUSTOMER_NAME, ERASED_MARKER } from "@/modules/organization/doma
 export type ErasureCounts = Record<string, number>
 
 export async function eraseCustomerData(organizationId: string, customerId: string, now: Date): Promise<ErasureCounts> {
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction((tx) => eraseCustomerDataIn(tx, organizationId, customerId, now))
+}
+
+/** Như `eraseCustomerData` nhưng trong giao dịch của người gọi (khôi phục riêng một tổ chức chạy lại yêu cầu xoá). */
+export async function eraseCustomerDataIn(tx: Prisma.TransactionClient, organizationId: string, customerId: string, now: Date): Promise<ErasureCounts> {
+  {
     const org = { organization_id: organizationId }
     const mine = { ...org, customer_id: customerId }
     const orderIds = (await tx.orders.findMany({ where: mine, select: { id: true } })).map((o) => o.id)
@@ -55,5 +60,5 @@ export async function eraseCustomerData(organizationId: string, customerId: stri
       data: { customer_phone: null, customer_phone_hash: null, pod_recipient_name: null },
     })).count)
     return counts
-  })
+  }
 }
