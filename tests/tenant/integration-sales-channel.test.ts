@@ -88,4 +88,27 @@ describe("cách ly tenant — kênh bán hàng (Trung tâm Tích hợp GĐ4A)", 
     const row = await prisma.integration_sync_cursors.findFirstOrThrow()
     expect(row.organization_id).toBe(a.organizationId)
   })
+
+  it("audit BL-34: lượt nhập đơn chết giữa chừng (kẹt IN_PROGRESS quá hạn) → lượt sau nhận lại, không mất đơn", async () => {
+    const conn = await connectShop(a)
+    const repo = new SalesChannelRepository()
+    expect(await repo.claimOrderSystem(a.organizationId, conn.id, "SAN-001")).toBe(true)
+    expect(await repo.claimOrderSystem(a.organizationId, conn.id, "SAN-001")).toBe(false) // đang nhập thật → trùng
+    await prisma.sales_channel_orders.updateMany({ where: { external_order_id: "SAN-001" }, data: { updated_at: new Date(Date.now() - 20 * 60_000) } })
+    expect(await repo.claimOrderSystem(a.organizationId, conn.id, "SAN-001")).toBe(true)
+    await repo.finishOrderSystem(conn.id, "SAN-001", { orderId: (await prisma.orders.create({ data: { organization_id: a.organizationId, code: "DH261111-0099", total_vnd: 0, balance_vnd: 0, created_by: a.userId } })).id })
+    await prisma.sales_channel_orders.updateMany({ where: { external_order_id: "SAN-001" }, data: { updated_at: new Date(Date.now() - 20 * 60_000) } })
+    expect(await repo.claimOrderSystem(a.organizationId, conn.id, "SAN-001")).toBe(false) // đã nhập xong → trùng
+  })
+
+  it("audit BL-34: tồn theo số lượng cho kênh bán chỉ cộng tồn của chính tổ chức", async () => {
+    const pa = await prisma.products.create({ data: { organization_id: a.organizationId, code: "HOA-01", name: "Bó hồng", status: "ACTIVE" } })
+    const ba = await prisma.branches.create({ data: { organization_id: a.organizationId, name: "Q1", code: "Q1" } })
+    const ba2 = await prisma.branches.create({ data: { organization_id: a.organizationId, name: "Q3", code: "Q3" } })
+    await prisma.product_inventory.create({ data: { organization_id: a.organizationId, product_id: pa.id, branch_id: ba.id, quantity_available: 0 } })
+    await prisma.product_inventory.create({ data: { organization_id: a.organizationId, product_id: pa.id, branch_id: ba2.id, quantity_available: 2 } })
+    const repo = new SalesChannelRepository()
+    expect(await repo.trackedStock(a.ctx, [pa.id])).toEqual(new Map([[pa.id, 2]]))
+    expect(await repo.trackedStock(b.ctx, [pa.id])).toEqual(new Map())
+  })
 })

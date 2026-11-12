@@ -17,6 +17,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { planPayment, planRefund } from "@/modules/orders/workflow/standard-payment"
 import { CoordinatorPaymentRepository } from "../infra/coordinator-payment-repository"
 import { getCoordinatorRepository } from "../infra/coordinator-repository"
+import { PendingPaymentRepository } from "../infra/pending-payment-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import { audit, concurrentUpdate, getOrderView, loadEditableOrderOrThrow, loadOrderOrThrow, runCoordinatorTx } from "./shared"
 
@@ -59,6 +60,13 @@ export async function recordCoordinatorPayment(
     if (typeof plan === "string") throw new AppError("UNPROCESSABLE_ENTITY", `${plan}.`)
     // Sale/Điều phối ghi thu → chờ Điều hành xác nhận, chưa vào sổ (PO 04/11/2026, Q3 phương án b — ALG 1.16)
     const pending = input.kind !== "REFUND" && !hasCapability(ctx, PAYMENT_CONFIRM_CAPABILITY)
+    if (pending) {
+      // Các khoản đang chờ cộng lại không được vượt phần còn phải thu — trước đây chỉ lộ ra lúc duyệt (audit BL-21)
+      const waiting = await new PendingPaymentRepository(tx).pendingTotalVnd(ctx, row.id)
+      if (waiting > 0 && typeof planPayment({ ...order, paidVnd: order.paidVnd + waiting }, input.amountVnd) === "string") {
+        throw new AppError("UNPROCESSABLE_ENTITY", "Số tiền vượt phần còn phải thu khi tính cả các khoản đang chờ xác nhận.")
+      }
+    }
     const after = pending
       ? { paidVnd: order.paidVnd, balanceVnd: order.totalVnd - order.paidVnd }
       : { paidVnd: plan.paidAfter, balanceVnd: plan.balanceAfter }

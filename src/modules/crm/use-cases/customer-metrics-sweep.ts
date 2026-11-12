@@ -21,13 +21,15 @@ export interface CustomerMetricsDeps {
 export async function sweepCustomerMetrics(
   since: Date,
   deps: CustomerMetricsDeps = { changed: customersWithChangedOrders, sync: syncCustomerMetrics },
-): Promise<{ synced: number; failed: number; nextSince: Date }> {
+  afterId?: string,
+): Promise<{ synced: number; failed: number; nextSince: Date; nextAfterId: string | undefined }> {
   let cursor = since
+  let cursorId = afterId
   let synced = 0
   let failed = 0
   const seen = new Set<string>()
   for (let page = 0; page < CUSTOMER_METRICS_MAX_PAGES; page += 1) {
-    const rows = await deps.changed(cursor, BATCH)
+    const rows = await deps.changed(cursor, BATCH, cursorId)
     for (const r of rows) {
       const key = `${r.organization_id}:${r.customer_id}`
       if (!r.customer_id || seen.has(key)) continue
@@ -43,7 +45,8 @@ export async function sweepCustomerMetrics(
     const last = rows.at(-1)
     if (!last) break
     cursor = last.updated_at
+    cursorId = last.id
     if (rows.length < BATCH) break
   }
-  return { synced, failed, nextSince: cursor }
+  return { synced, failed, nextSince: cursor, nextAfterId: cursorId }
 }

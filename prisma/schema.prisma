@@ -2706,6 +2706,30 @@ model platform_settings {
   created_at DateTime @default(now()) @db.Timestamptz(3)
 }
 
+enum retention_action {
+  DELETE
+  ANONYMIZE
+}
+
+/// Hạn lưu theo loại dữ liệu (ADR-014 D-P4, bước P-6) — một dòng mỗi loại; đổi mốc = sửa dòng, không sửa mã.
+/// Bảng nền tảng, không có `organization_id` (đặc tả 07 mục 1, cùng hạng `platform_settings`). Job hằng đêm đọc bảng
+/// này; `enforce = false` thì chỉ đếm số dòng quá hạn. Loại dữ liệu hợp lệ: `RETENTION_CATEGORIES`
+/// (`src/modules/organization/domain/retention-policy.ts`).
+model retention_policies {
+  category         String           @id
+  /// CHECK 1–600 tháng (migration `*_retention_policies`).
+  retention_months Int
+  action           retention_action
+  /// false = chỉ đếm (mặc định); true = xoá / ẩn danh thật. PO bật từng loại.
+  enforce          Boolean          @default(false)
+  last_run_at      DateTime?        @db.Timestamptz(3)
+  /// Số dòng quá hạn (chế độ đếm) hoặc đã xử lý (chế độ thực thi) ở lần chạy cuối.
+  last_run_rows    Int?
+  updated_by       String?
+  updated_at       DateTime         @default(now()) @updatedAt @db.Timestamptz(3)
+  created_at       DateTime         @default(now()) @db.Timestamptz(3)
+}
+
 // ─────────────────────────────────────────────────────────────────────────
 // Nền quản trị trường (ĐP-3, 26/09/2026) — quản trị nền tảng sửa được mọi
 // trường đã xây, mọi danh mục, và tạo được trường HOÀN TOÀN MỚI, không cần

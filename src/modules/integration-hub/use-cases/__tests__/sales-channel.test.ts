@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { connectWithSecret } from "../manage-connection"
-import { importChannelOrder, publishProducts } from "../sales-channel"
+import { importChannelOrder, publishProducts, syncAvailability } from "../sales-channel"
+import { channelInStock } from "../../domain/sales-order-mapping"
 import { processDueEvents } from "../process-due-events"
 import type { SalesDeps } from "../sales-channel-deps"
 import type { ListingView } from "../../infra/sales-channel-repository"
@@ -22,7 +23,7 @@ const product = (id: string, code: string, extra: Partial<{ price_vnd: number | 
   masterImageUrl: extra.masterImageUrl ?? "https://cdn.example/x.jpg", barcode: null, weight_grams: null, tags: [],
 })
 
-function makeSalesDeps(products: ReturnType<typeof product>[]) {
+function makeSalesDeps(products: ReturnType<typeof product>[], stock: Record<string, number> = {}) {
   const base = makeFakeDeps()
   const listings = new Map<string, ListingView>()
   const claimed = new Map<string, string>()
@@ -37,6 +38,7 @@ function makeSalesDeps(products: ReturnType<typeof product>[]) {
         listings.set(input.productId, { productId: input.productId, status: input.status, externalId: input.externalId ?? null, lastError: input.lastError ?? null, lastSyncedAt: null })
       },
       listOrders: async () => [],
+      trackedStock: async (_ctx, ids) => new Map(ids.filter((id) => id in stock).map((id) => [id, stock[id]!])),
       claimOrderSystem: async (_o, _c, id) => {
         const state = claimed.get(id)
         if (state === "IMPORTED" || state === "IN_PROGRESS") return false
@@ -94,5 +96,25 @@ describe("Nhận đơn từ kênh bán", () => {
     const importOrder = vi.fn(async () => "order-x")
     expect(await processDueEvents(s.deps, importOrder)).toMatchObject({ done: 1 })
     expect(importOrder).toHaveBeenCalledWith(s.connections[0], "HOA-01x1")
+  })
+})
+
+describe("Còn/hết hàng trên kênh bán (audit BL-34)", () => {
+  it("đang mở bán và còn số lượng (nếu theo dõi) mới là còn hàng", () => {
+    expect(channelInStock("ACTIVE", undefined)).toBe(true)
+    expect(channelInStock("ACTIVE", 3)).toBe(true)
+    expect(channelInStock("ACTIVE", 0)).toBe(false)
+    expect(channelInStock("INACTIVE", 5)).toBe(false)
+  })
+
+  it("sản phẩm theo dõi tồn đã hết số lượng → đẩy hết hàng lên kênh", async () => {
+    const s = makeSalesDeps([product("p1", "HOA-01"), product("p2", "HOA-02")], { p1: 0 })
+    const conn = await connectWithSecret(orgA, { connectorKey: "test_shop", secret: SECRET }, s.deps)
+    await publishProducts(orgA, { connectionId: conn.id, productIds: ["p1", "p2"] }, s.deps)
+    const connector = s.deps.getConnector("test_shop")!
+    const push = vi.spyOn(connector.sales!, "pushAvailability")
+    expect(await syncAvailability(orgA, conn.id, s.deps)).toBe(2)
+    const pushed = push.mock.calls.flatMap((c) => c[2])
+    expect(pushed).toEqual(expect.arrayContaining([expect.objectContaining({ sku: "HOA-01", inStock: false }), expect.objectContaining({ sku: "HOA-02", inStock: true })]))
   })
 })

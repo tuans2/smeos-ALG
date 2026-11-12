@@ -163,6 +163,7 @@ export function evaluateCustomerForSegment(
       {
         totalSpentVnd: customer.totalSpentVnd,
         orderCount: customer.orderCount,
+        tier: customer.tier,
         lastOrderAt: customer.lastOrderAt ? String(customer.lastOrderAt) : undefined,
       },
       now

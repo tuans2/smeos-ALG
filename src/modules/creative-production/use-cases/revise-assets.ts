@@ -10,6 +10,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { GenerationJobRepository, getGenerationJobRepository } from "@/modules/jobs/infra/generation-job-repository"
 import { enqueueJob } from "@/modules/jobs/use-cases/enqueue-job"
 import { refundJob } from "@/modules/usage/use-cases/refund-job"
+import { aiFailureMessage } from "@/modules/usage/domain/ai-failure-message"
 import { BrandProfileRepository, getBrandProfileRepository } from "@/modules/profiles/infra/brand-profile-repository"
 
 import {
@@ -75,8 +76,8 @@ async function runInlineAiJob<O>(
   } catch (error) {
     const message = error instanceof Error ? error.message : "Lỗi không xác định"
     await jobs.finishInline(ctx, enq.job.id, { ok: false, error: message, now: new Date() })
-    await refundJob(ctx, enq.job.id).catch(() => undefined)
-    throw new AppError("INTERNAL", `AI chưa sửa được (đã hoàn credit): ${message}`)
+    const refunded = (await refundJob(ctx, enq.job.id).catch(() => null))?.refunded === true
+    throw new AppError("INTERNAL", aiFailureMessage("AI chưa sửa được", refunded))
   }
 }
 
