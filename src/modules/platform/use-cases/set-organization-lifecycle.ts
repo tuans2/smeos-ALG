@@ -11,12 +11,13 @@ import { canChangeLifecycle, type SettableLifecycleStatus } from "@/modules/orga
 import { lifecycleStatusOf, setLifecycleStatus } from "@/modules/organization/infra/organization-lifecycle-repository"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
+import { formatDate } from "@/lib/i18n/formatters"
 
 /** Câu báo chủ tiệm khi Admin đổi trạng thái (audit User Journey UJ-26) — không mã kỹ thuật. */
 export function lifecycleChangeNotice(status: SettableLifecycleStatus, offboardingUntil: Date | null): string {
   if (status === "SUSPENDED") return "Tài khoản cửa hàng đã bị tạm ngưng. Vui lòng liên hệ bộ phận hỗ trợ để biết lý do và cách mở lại."
   if (status === "OFFBOARDING") {
-    const until = offboardingUntil ? offboardingUntil.toLocaleDateString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }) : ""
+    const until = formatDate(offboardingUntil)
     return `Cửa hàng chuyển sang thời gian kết thúc dịch vụ: chỉ xem và tải dữ liệu${until ? ` đến ngày ${until}` : ""}.`
   }
   return "Cửa hàng đã hoạt động trở lại — mọi chức năng dùng được như bình thường."
