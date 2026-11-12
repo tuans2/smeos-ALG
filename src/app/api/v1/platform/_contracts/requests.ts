@@ -135,6 +135,8 @@ export const organizationPatchBody = z.object({
   /** Vòng đời tổ chức — tạm ngưng / mở lại / rời nền tảng (ADR-016 D-S5); `offboarding_until` bắt buộc khi OFFBOARDING */
   lifecycle_status: z.enum(["ACTIVE", "SUSPENDED", "OFFBOARDING"]).optional(),
   offboarding_until: z.iso.datetime().optional(),
+  /** Mức cô lập (ADR-016 D-S2) — gói hiện tại không cho phép → 422 */
+  isolation_tier: z.enum(["SHARED", "SHARED_PLUS", "DEDICATED"]).optional(),
 })
 
 // organizations/[id]/subscription/route.ts

@@ -21,6 +21,12 @@ export function findSubscription(organizationId: string, db: DbClient = prisma) 
   return db.subscriptions.findUnique({ where: { organization_id: organizationId }, select: SUB_SELECT })
 }
 
+/** Gói đang hiệu lực của tổ chức (thuê bao chưa huỷ), hoặc `null` — dùng cho mức cô lập (ADR-016 D-S2). */
+export async function effectivePlanOf(organizationId: string, db: DbClient = prisma): Promise<string | null> {
+  const sub = await findSubscription(organizationId, db)
+  return sub && sub.status !== "CANCELLED" ? sub.plan : null
+}
+
 export function listInvoices(organizationId: string, take = 12) {
   return prisma.subscription_invoices.findMany({ where: { organization_id: organizationId }, orderBy: { period_start: "desc" }, take })
 }

@@ -70,7 +70,7 @@ cần test khoá hành vi trước.
 | [x] | O-4 [VẬN HÀNH] Migration ở pre-deploy; production chỉ seed hệ thống | 015 | P1-01 | Build không chạm CSDL — PR #135; còn: export nhanh trước migration (cùng O-6) |
 | [x] | O-5 Script CI kiểm expand/contract trên `migration.sql` mới | 015 | — | Ca thử: `DROP COLUMN` không chú thích → đỏ — PR #135 |
 | [ ] | O-6 [VẬN HÀNH] Export đêm ra kho ngoài nhà cung cấp, giữ 35 ngày + 12 tháng | 015 | — | 7 bản liên tiếp |
-| [ ] | O-7 [VẬN HÀNH] Diễn tập PITR lần đầu + biên bản | 015 | P1-02 | RTO đo được ≤ 1 giờ |
+| [ ] | O-7 [VẬN HÀNH] Diễn tập PITR lần đầu + biên bản — **12/11/2026, chuẩn bị:** `npm run db:verify` (bộ kiểm tra dữ liệu chỉ đọc) + quy trình và bảng biên bản ở `VAN_HANH_SU_CO_VA_SAO_LUU.md` §1; còn: người vận hành diễn tập trên Render | 015 | P1-02 | RTO đo được ≤ 1 giờ |
 | [ ] | Dọn khoá `NOT VALID` còn sót của PR #127 (`VAN_HANH_CAP_NHAT_CSDL.md` §7) — **11/11/2026:** migration `20261111090000_validate_not_valid_constraints` tự `VALIDATE` khoá đã sạch; `npm run db:not-valid` đếm dòng sai, `-- --validate` sau khi dọn. Còn: chạy trên production, dọn dòng sai (PO duyệt theo từng khoá) | 015 | — | 0 dòng `NOT convalidated` (`npm run db:not-valid` in "không còn khoá NOT VALID") |
 | [x] | S-1 Sổ bảng-thuộc-tenant sinh từ schema; `TENANT_TABLES` đọc sổ | 016 | — | `check:docs` + test sổ khớp schema — PR #135 |
 | [x] | P-1 Nhãn `@pii` + `pii-registry` + test CI | 014 | — | Cột cá nhân không nhãn → đỏ |
@@ -108,7 +108,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | ☐ | Mục | Gate thêm |
 |---|---|---|
 | [ ] | I-1 [VẬN HÀNH] 5 tài khoản CSDL; mỗi dịch vụ một chuỗi kết nối | Không dịch vụ nào dùng tài khoản chủ |
-| [ ] | O-8 [VẬN HÀNH] `statement_timeout`, `idle_in_transaction_session_timeout` theo tài khoản | Truy vấn 20 s bị huỷ ở `smeos_app` |
+| [ ] | O-8 [VẬN HÀNH] `statement_timeout`, `idle_in_transaction_session_timeout` theo tài khoản — **12/11/2026, phần mã:** `scripts/db/create-roles.sql` đặt 15 s (`smeos_app`) / 120 s (worker, hệ thống, chỉ đọc) / giao dịch bỏ ngỏ 60 s; xoá / nhập / khôi phục tổ chức tự nâng trong giao dịch. Đã thử trên Postgres cục bộ: truy vấn 20 s của `smeos_app` bị huỷ ở 15 s. Còn: chạy lại script trên production (cùng lúc I-1) | Truy vấn 20 s bị huỷ ở `smeos_app` · `db-role-timeouts.test.ts` |
 | [x] | I-2a [SCHEMA] Nhật ký bất biến (trigger trên `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage`) + đường xoá `app.purge_reason` (`setPurgeReason`); thu quyền UPDATE/DELETE ở `create-roles.sql` (đặc tả 07 §46) | `tests/tenant/append-only-logs.test.ts`: `UPDATE audit_logs` bị từ chối; xoá ngoài đường purge bị từ chối |
 | [x] | I-2b [SCHEMA] `platform_access_logs` (D-I5) + ghi mỗi lần nhân viên nền tảng truy cập dữ liệu một tổ chức (16 handler Console) + tab "Truy cập của nền tảng" trong `/audit` cho chủ tổ chức (D-60, G9) — đặc tả 07 §47 | `tests/tenant/platform-access-isolation.test.ts`: truy cập Console → một dòng; chủ tổ chức thấy, tổ chức khác không; `platform-access-guard.test.ts` |
 | [x] | I-7 Test kiến trúc: route ghi có tenant phải ghi `audit_logs` hoặc có trong danh sách miễn — `tests/unit/architecture/audit-boundary.test.ts`; 123 route cũ chưa ghi vào tệp nợ chỉ co lại (nợ #204) | Test xanh |
@@ -135,16 +135,18 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | [x] | P-6b Hạn lưu dữ liệu khách — PO duyệt 12/11/2026: hội thoại (xoá tin nhắn, giữ vỏ) / lead không thành đơn / phiên Thẻ chào không đặt 3 tháng (ẩn danh), hồ sơ khách 24 tháng không hoạt động (ẩn danh, kể cả khách có đơn đã thu), báo giá + đơn huỷ chưa thu 5 năm (xoá) — đặc tả 07 §54 | P2-F2 | `tests/tenant/retention-sweep-customer.test.ts`: đơn đã thu giữ nguyên; legal hold giữ |
 | [ ] | P-6c Chứng từ ghi sổ 10 năm từ cuối năm tài chính (đơn đã thu, phiếu thu, sổ credit, `usage`) — hoãn (PO 12/11/2026) tới khi pháp lý xác nhận mốc | P2-F2 | Xoá không vỡ đối soát |
 | [ ] | P-7 [SCHEMA] `data_subject_requests` + xoá/xuất | P2-F1 | Xoá lan sang tổ chức được chia sẻ |
+| [x] | P-7a [SCHEMA] `data_subject_requests` + API xuất / xoá / sửa (`/crm/customers/:id/data-requests/*`, `/crm/data-requests`) — PO duyệt 12/11/2026; hạn 72 giờ — đặc tả 07 §55, đặc tả 06 | P2-F1 | `tests/tenant/data-subject-requests.test.ts`: chi nhánh được chia sẻ thấy bản đã xoá; 404 tổ chức khác |
+| [x] | P-7b Màn hình yêu cầu dữ liệu cá nhân trong hồ sơ khách (tab Quyền riêng tư) + bản CSV — PO chọn 12/11/2026; hướng dẫn sử dụng chức năng 11 + Ops Copilot node 11 | P2-F1 | `npm run ux:audit -- khach-hang-du-lieu` 10/10 sạch; `data-package-csv.test.ts` |
 | [ ] | P-8 [PO] Chọn vùng dữ liệu; đổi mặc định `data_region` theo quyết định | — | Ghi sổ quyết định |
 
 ### GĐ5 — Cô lập theo gói và vòng đời tenant (ADR-016)
 
 | ☐ | Mục | Gate thêm |
 |---|---|---|
-| [ ] | S-2 Xuất/nhập tenant theo sổ; thay `scripts/handover-backup-engine.ts` | Vòng tròn xuất → nhập khớp từng dòng |
+| [x] | S-2 Xuất/nhập tenant theo sổ — 12/11/2026: `npm run tenant:transfer` (đọc thô theo sổ D-S1, phiên bản schema + checksum từng bảng + danh sách tệp; nhập một giao dịch, vòng khoá ngoại điền sau) — runbook §17. `handover-backup-engine.ts` giữ cho hai script dọn dữ liệu thử (PO 11/11/2026) | `tests/tenant/tenant-export-import.test.ts`: vòng tròn xuất → xoá → nhập → xuất khớp từng bảng |
 | [x] | S-3 [SCHEMA nhỏ] `lifecycle_status`; tạm ngưng/rời/xoá — **11/11/2026:** S-3a cột + kiểm truy cập + Console đổi trạng thái; S-3b `npm run tenant:purge` xoá theo sổ, giữ chứng từ + nhật ký, ẩn danh (đặc tả 07 §53). Hai script dọn dữ liệu thử giữ nguyên (PO 11/11/2026, mục đích khác) | `organization-lifecycle.test.ts`, `tenant-purge.test.ts` (xoá không chạm tổ chức khác) |
-| [ ] | S-4 [VẬN HÀNH] Runbook + diễn tập khôi phục riêng một tenant | Biên bản ≤ 4 giờ |
-| [ ] | S-5 [SCHEMA nhỏ] `isolation_tier` gắn gói | Gói không cho phép → 422 |
+| [ ] | S-4 [VẬN HÀNH] Runbook + diễn tập khôi phục riêng một tenant — **12/11/2026, phần mã + runbook:** `npm run tenant:transfer -- restore` (một giao dịch: xoá dữ liệu hiện tại, nhập gói, chạy lại yêu cầu xoá dữ liệu cá nhân sau mốc) + runbook §17; còn diễn tập trên CSDL khôi phục PITR + biên bản | Biên bản ≤ 4 giờ · `tenant-restore.test.ts` |
+| [x] | S-5 [SCHEMA nhỏ] `isolation_tier` gắn gói — PO 12/11/2026 "theo quy mô": gói nhỏ / chưa thuê bao → `SHARED`, Mạng lưới thêm `SHARED_PLUS`, Doanh nghiệp cả ba; đổi / huỷ gói làm mức không còn hợp lệ → 422 (đặc tả 07 §56) | `organization-isolation-tier.test.ts`: gói không cho phép → 422 |
 | [ ] | S-6 [VẬN HÀNH] Mẫu triển khai `DEDICATED` + dựng thử một lần + sổ triển khai | Biên bản dựng từ đầu |
 
 ### GĐ6 — Bật enterprise và chứng minh
@@ -153,7 +155,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 |---|---|---|
 | [ ] | I-6 [SCHEMA] Bật RLS chặn thật trên production (mốc theo câu trả lời ADR-013 §6). **Chuẩn bị 11/11/2026:** vá fail-open (audit DB-01) — truy vấn ngoài mọi ngữ cảnh trong tiến trình web không còn quyền hệ thống; trang/route server mở ngữ cảnh, gác bằng `db-context-entrypoints.test.ts`; điều kiện bật thêm 14 ngày không có log `kind=unclassified` (runbook §12) | Test "bỏ `scopedWhere` → 0 dòng" chạy trên CSDL thật |
 | [ ] | O-9 [VẬN HÀNH] Thử tải quy mô mục tiêu trên CSDL khôi phục PITR | Biên bản p95 đạt SLO |
-| [ ] | O-10 Dọn `generation_jobs` cũ; bản sao đọc / phân vùng nếu chạm ngưỡng | Theo ngưỡng ADR-015 D-O6 |
+| [x] | O-10 Dọn `generation_jobs` cũ; bản sao đọc / phân vùng nếu chạm ngưỡng — 12/11/2026: loại hạn lưu `finished_jobs` (job xong quá 30 ngày, mặc định chỉ đếm) + `npm run db:growth` báo bảng chạm ngưỡng 20 triệu dòng / 10 GB (runbook §18). Phân vùng / bản sao đọc thật chỉ làm khi chạm ngưỡng — hiện chưa bảng nào | `retention-finished-jobs.test.ts`, `db-growth.test.ts` |
 | [x] | P3-03 ERD theo miền sinh từ schema (`npm run gen:erd` → `docs/kien-truc/ERD_THEO_MIEN.md`, 10 miền), kiểm trong CI qua `npm test` | `tests/unit/architecture/erd.test.ts`: tệp sinh khớp schema, mỗi model đúng một miền |
 | [ ] | [PO] Quyết định lại kiểm thử bảo mật bên ngoài (D-26 hiện "không làm") cho khách enterprise | Ghi sổ quyết định |
 | [ ] | Gói bằng chứng: điền cột "Bằng chứng" của mục 1 cho DoD-1 → DoD-17 | PO ký nhận |

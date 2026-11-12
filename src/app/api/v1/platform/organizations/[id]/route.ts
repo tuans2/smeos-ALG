@@ -7,6 +7,7 @@ import { approveOrganizationModelChange } from "@/modules/platform/use-cases/app
 import { decidePublicChatLimits } from "@/modules/platform/use-cases/decide-public-chat-limits"
 import { setBranchScopeWave1 } from "@/modules/platform/use-cases/set-branch-scope-wave"
 import { setOrganizationLifecycle } from "@/modules/platform/use-cases/set-organization-lifecycle"
+import { setOrganizationIsolationTier } from "@/modules/platform/use-cases/set-organization-isolation-tier"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { organizationPatchBody } from "@/app/api/v1/platform/_contracts/requests"
 
@@ -85,6 +86,10 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
       offboardingUntil: parsed.data.offboarding_until ? new Date(parsed.data.offboarding_until) : null,
       note: parsed.data.note ?? null,
     })
+  }
+
+  if (parsed.data.isolation_tier) {
+    result = await setOrganizationIsolationTier(pctx, { organizationId: id, tier: parsed.data.isolation_tier, note: parsed.data.note ?? null })
   }
 
   return jsonResponse({ data: result })

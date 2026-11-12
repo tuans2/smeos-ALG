@@ -17,7 +17,8 @@ export function parseSaleMaxDiscountPercent(settings: unknown): number {
   return typeof raw === "number" && Number.isInteger(raw) && raw >= 0 && raw <= PLATFORM_MAX_DISCOUNT_PERCENT ? raw : DEFAULT_SALE_MAX_DISCOUNT_PERCENT
 }
 
-const fmt = (vnd: number) => `${vnd.toLocaleString("vi-VN")}đ`
+/** 1.250.000đ — nhóm nghìn bằng dấu chấm, không gọi Intl (domain thuần, DOC-ARCH-I18N-001). */
+const fmt = (vnd: number) => `${String(Math.round(vnd)).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}đ`
 
 /** Lỗi (tiếng Việt) khi mức giảm vượt trần, hoặc `null`. `canExceedSaleCap` = người lưu có mã duyệt giá (C10). */
 export function quotationDiscountError(input: { subtotalVnd: number; discountVnd: number; saleMaxPercent: number; canExceedSaleCap: boolean }): string | null {

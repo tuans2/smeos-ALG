@@ -91,13 +91,11 @@ async function enqueueAssetFiles(tx: Tx, organizationId: string): Promise<number
 
 /** Ẩn danh dữ liệu cá nhân còn lại trên các dòng chứng từ giữ lại (giữ thông tin hoá đơn VAT). */
 async function anonymizeKept(tx: Tx, organizationId: string): Promise<void> {
-  await tx.customers.updateMany({
-    where: { organization_id: organizationId },
-    data: {
-      name: ERASED_CUSTOMER_NAME, phone: ERASED_MARKER, phone_hash: null, phone_last4: null, email: null, address: null,
-      notes: null, tags: [], preferred_flowers: [], preferred_colors: [], branch_id: null,
-    },
-  })
+  // SQL thô: lớp mã hoá của client Prisma tính lại `phone_hash` từ dấu `ERASED` thành "" — từ hai khách giữ lại trở lên
+  // sẽ trùng khoá duy nhất `(organization_id, phone_hash)` và cả lần xoá hỏng. Băm và 4 số cuối về NULL thật.
+  await tx.$executeRaw`UPDATE "customers" SET name = ${ERASED_CUSTOMER_NAME}, phone = ${ERASED_MARKER}, phone_hash = NULL,
+    phone_last4 = NULL, email = NULL, address = NULL, notes = NULL, tags = '{}', preferred_flowers = '{}',
+    preferred_colors = '{}', branch_id = NULL WHERE organization_id = ${organizationId}`
   await tx.orders.updateMany({
     where: { organization_id: organizationId },
     data: { card_message: null, internal_note: null, delivery_address: Prisma.DbNull },
@@ -117,6 +115,8 @@ export async function executeTenantPurge(organizationId: string, now: Date): Pro
     async (tx) => {
       await setPurgeReason(tx, "tenant_offboarding")
       await tx.$executeRawUnsafe(`SET LOCAL lock_timeout = '30s'`)
+      // Thao tác dài có chủ đích: vượt giới hạn 120 s của smeos_system (ADR-015 D-O5)
+      await tx.$executeRawUnsafe(`SET LOCAL statement_timeout = '30min'`)
       const [org] = await tx.$queryRawUnsafe<Array<{ s: string; u: Date | null; h: Date | null }>>(
         `SELECT lifecycle_status::text AS s, offboarding_until AS u, legal_hold_until AS h FROM "organizations" WHERE id = $1 FOR UPDATE`,
         organizationId,

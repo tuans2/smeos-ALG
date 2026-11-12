@@ -6893,6 +6893,14 @@
                             }
                           ]
                         },
+                        "isolationTier": {
+                          "type": "string",
+                          "enum": [
+                            "SHARED",
+                            "SHARED_PLUS",
+                            "DEDICATED"
+                          ]
+                        },
                         "unlockedLocales": {
                           "type": "array",
                           "items": {
@@ -6978,7 +6986,8 @@
                         "branchCount",
                         "workspaceKinds",
                         "lifecycleStatus",
-                        "offboardingUntil"
+                        "offboardingUntil",
+                        "isolationTier"
                       ],
                       "additionalProperties": false
                     }
@@ -7006,7 +7015,7 @@
       "patch": {
         "operationId": "platformUpdateOrganization",
         "summary": "Duyệt/từ chối yêu cầu của tổ chức",
-        "description": "Đổi mô hình, mở khoá ngôn ngữ, gỡ yêu cầu chờ, duyệt hạn mức chat công khai, bật phạm vi chi nhánh đợt 1 — trả kết quả của thao tác cuối trong thân. Mã năng lực kiểm ở use-case (`N2`). Ghi nhật ký truy cập nền tảng trước khi đọc/ghi (D-60).",
+        "description": "Đổi mô hình, mở khoá ngôn ngữ, gỡ yêu cầu chờ, duyệt hạn mức chat công khai, bật phạm vi chi nhánh đợt 1, vòng đời (`lifecycle_status`), mức cô lập (`isolation_tier` — gói không cho phép → 422) — trả kết quả của thao tác cuối trong thân. Mã năng lực kiểm ở use-case (`N2`). Ghi nhật ký truy cập nền tảng trước khi đọc/ghi (D-60).",
         "tags": [
           "Nền tảng — tổ chức"
         ],
@@ -7085,6 +7094,14 @@
                     "type": "string",
                     "format": "date-time",
                     "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                  },
+                  "isolation_tier": {
+                    "type": "string",
+                    "enum": [
+                      "SHARED",
+                      "SHARED_PLUS",
+                      "DEDICATED"
+                    ]
                   }
                 }
               }
@@ -7211,6 +7228,28 @@
                             "success",
                             "lifecycleStatus",
                             "offboardingUntil"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "success": {
+                              "type": "boolean",
+                              "const": true
+                            },
+                            "isolationTier": {
+                              "type": "string",
+                              "enum": [
+                                "SHARED",
+                                "SHARED_PLUS",
+                                "DEDICATED"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "success",
+                            "isolationTier"
                           ],
                           "additionalProperties": false
                         },
@@ -10876,6 +10915,7 @@
                   "CAPABILITY_DENIED",
                   "ENTITLEMENT_REQUIRED",
                   "PASSWORD_CHANGE_REQUIRED",
+                  "CROSS_ORIGIN_REJECTED",
                   "SUBSCRIPTION_OVERDUE",
                   "ORGANIZATION_INACTIVE",
                   "NOT_FOUND",

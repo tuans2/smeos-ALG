@@ -11,15 +11,20 @@
  * Lỗi đi qua `handle()` (audit API-04): trước đây `try/catch` bọc cả `requireTenantContext`, nên
  * chưa đăng nhập / phiên bị thay trả 500 `IDENTITY_ERROR` thay vì 401, và lỗi máy chủ không tới
  * error tracker. `handle()` vẫn không trả chi tiết/stack ra client.
+ *
+ * Gác `F1` (audit API §31, 11/11/2026): phản hồi có tên + email thành viên — cùng dữ liệu với
+ * `GET /members` (`F1`); trước đây mọi vai, kể cả Shipper, đều đọc được.
  */
 
 import { notFound } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
+import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getOrganizationIdentity } from "@/modules/organization/infra/identity-query"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  requireCapability(ctx, "F1")
   const identityData = await getOrganizationIdentity(ctx.organizationId)
   if (!identityData) throw notFound()
 

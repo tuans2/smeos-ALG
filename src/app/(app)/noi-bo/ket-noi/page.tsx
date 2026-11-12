@@ -117,7 +117,7 @@ export default function KetNoiPage() {
       .then(async (r) => {
         const res = await r.json().catch(() => null)
         if (!r.ok || !res?.success) {
-          throw new Error(res?.error?.message ?? res?.error ?? `Lỗi HTTP ${r.status}`)
+          throw new Error(r.status === 403 ? "Tài khoản của bạn chưa được xem thông tin thành viên của tổ chức." : (res?.error?.message ?? res?.error ?? `Lỗi HTTP ${r.status}`))
         }
         setData(res.data)
       })

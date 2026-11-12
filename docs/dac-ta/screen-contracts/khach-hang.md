@@ -15,7 +15,7 @@ acceptance:
 
 # Screen Contract — Quản lý Khách hàng & CRM (`/khach-hang`)
 
-**Tuyến:** `/khach-hang` · **Tệp chính:** `src/app/(app)/khach-hang/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.B3
+**Tuyến:** `/khach-hang` · **Tệp chính:** `src/app/(app)/khach-hang/page.tsx` · **Cập nhật:** 12/11/2026 · **Thẻ:** T5.B3
 
 ## 1. Vai và mục đích
 - **Vai chính (03b):** `sales`, `store_manager`, `marketer`.
@@ -32,6 +32,7 @@ acceptance:
   - `POST /api/v1/crm/customers` → `Q2` (`crm.create`)
   - `PATCH /api/v1/crm/customers/:id` → `Q3` (`crm.update`)
   - `GET /api/v1/crm/customers/:id/orders` → `Q1` + `R1` — tab "Đơn đã đặt" (checklist ALG 4.11), chỉ hiện khi có `R1`; bấm một đơn mở `OrderDetailModal`
+  - Tab "Quyền riêng tư" → khu "Yêu cầu về dữ liệu" (ADR-014 D-P5, P-7b): `GET /api/v1/crm/data-requests?customer_id=` → `Q1`; `POST /api/v1/crm/customers/:id/data-requests/export` → `R13` (tải JSON / CSV); `.../rectify` → `Q3`; `.../erase` → `Q4` (`ConfirmDialog` bắt gõ "XOÁ"); `PATCH /api/v1/crm/data-requests/:id` → `Q3`. Nút ẩn khi thiếu mã năng lực.
 - **Khối chính:**
   - Header: Nút chính "Thêm khách hàng", Nút phụ "Quét dịp sắp tới (14 ngày)".
   - FeatureGuidanceCard chuẩn hóa (tối đa 1 khối, 3 tips, không spam).
@@ -49,6 +50,7 @@ acceptance:
 | L1 Chi tiết khách | Dịp kỷ niệm sắp tới của từng khách | Cột bảng & Nâng lên đầu tab Hồ sơ modal |
 | L2 Phân tầng RFM | Phân hạng VIP, Vàng, Bạc, Đồng, Khách mới (bằng cả chữ + màu) | Cột Phân hạng |
 | L3 Chi tiết hồ sơ | Modal `CustomerDetailModal` (Hồ sơ Master, Đơn đã đặt, Dịp kỷ niệm, Consent riêng tư) | Modal popup |
+| L3 Yêu cầu về dữ liệu | Xuất / sửa / xoá dữ liệu cá nhân theo yêu cầu khách; danh sách yêu cầu, nhãn "Quá hạn" (72 giờ) | Cuối tab Quyền riêng tư |
 
 ## 4. Hành động
 - **Chính:** "Thêm khách hàng" (`variant="primary"`).

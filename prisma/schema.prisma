@@ -43,6 +43,12 @@ enum workspace_kind {
 
 /// ADR-016 D-S5 (S-3): vòng đời tổ chức. SUSPENDED: chặn mọi truy cập của thành viên, giữ dữ liệu. OFFBOARDING: chỉ xem
 /// (xuất bàn giao), xoá sau `offboarding_until`. DELETED: đã xoá theo sổ bảng-thuộc-tenant (S-3b).
+enum organization_isolation_tier {
+  SHARED
+  SHARED_PLUS
+  DEDICATED
+}
+
 enum organization_lifecycle_status {
   ACTIVE
   SUSPENDED
@@ -172,6 +178,8 @@ model organizations {
   lifecycle_changed_at DateTime?                     @db.Timestamptz(3)
   /// Hạn giữ dữ liệu khi rời nền tảng (theo hợp đồng); quá hạn thì xoá (S-3b) trừ khi có legal hold.
   offboarding_until    DateTime?                     @db.Timestamptz(3)
+  /// Mức cô lập (ADR-016 D-S2, bước S-5): gói thuê bao quyết định mức được phép (`isolation-tier.ts`).
+  isolation_tier       organization_isolation_tier   @default(SHARED)
   created_at           DateTime                      @default(now()) @db.Timestamptz(3)
   updated_at           DateTime                      @updatedAt @db.Timestamptz(3)
 
@@ -280,6 +288,7 @@ model organizations {
   notification_user_preferences                    notification_user_preferences[]
   notification_inbox                               notification_inbox[]
   push_subscriptions                               push_subscriptions[]
+  data_subject_requests                            data_subject_requests[]
   materials                                        materials[]
   material_price_history                           material_price_history[]
   product_recipes                                  product_recipes[]
@@ -2052,6 +2061,8 @@ model orders {
   source_session_id String? // greeting_sessions.id
   /// `Idempotency-Key` của `POST /api/v1/orders` (audit API-11, PO 07/11/2026): bấm đúp / gửi lại cùng khoá → trả đơn cũ.
   idempotency_key   String?
+  /// SHA-256 dạng chuẩn của thân đã kiểm (audit API-11, PO 11/11/2026): cùng khoá mà khác băm → 422. NULL ở đơn cũ.
+  idempotency_body_hash String?
   greeting_sessions greeting_sessions[]
 
   /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —
@@ -2321,6 +2332,7 @@ model customers {
 
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
   voucher_redemptions_by_customer_id voucher_redemptions[] @relation("fk_voucher_redemptions_customer_id")
+  data_subject_requests              data_subject_requests[]
 
   @@unique([organization_id, phone_hash]) // P-5c: một khách mỗi số (mọi cách viết) trong tổ chức
   @@unique([organization_id, code])
@@ -2729,6 +2741,48 @@ model retention_policies {
   updated_by       String?
   updated_at       DateTime         @default(now()) @updatedAt @db.Timestamptz(3)
   created_at       DateTime         @default(now()) @db.Timestamptz(3)
+}
+
+enum data_subject_request_type {
+  EXPORT
+  ERASE
+  RECTIFY
+}
+
+enum data_subject_request_status {
+  RECEIVED
+  COMPLETED
+  REJECTED
+}
+
+/// Yêu cầu của khách về dữ liệu cá nhân của mình (ADR-014 D-P5, bước P-7): xuất, xoá (ẩn danh xuyên bảng), sửa.
+/// Không lưu dữ liệu cá nhân: `note` là ghi chú nghiệp vụ, `result` chỉ có số dòng theo bảng.
+model data_subject_requests {
+  id              String                      @id @default(uuid())
+  organization_id String
+  /// Khách yêu cầu; khách bị xoá hẳn (Q4) thì null, yêu cầu vẫn giữ làm bằng chứng.
+  customer_id     String?
+  type            data_subject_request_type
+  status          data_subject_request_status @default(RECEIVED)
+  /// `users.id` người tiếp nhận
+  received_by     String
+  received_at     DateTime                    @default(now()) @db.Timestamptz(3)
+  /// Hạn xử lý (`DSR_DUE_HOURS`, `src/modules/crm/domain/data-subject-request.ts`)
+  due_at          DateTime                    @db.Timestamptz(3)
+  note            String?
+  completed_by    String?
+  completed_at    DateTime?                   @db.Timestamptz(3)
+  /// Số dòng đã ẩn danh / xoá / xuất theo bảng — không chứa dữ liệu cá nhân
+  result          Json?
+  created_at      DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime                    @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  customer     customers?    @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+
+  @@index([organization_id])
+  @@index([organization_id, status])
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─────────────────────────────────────────────────────────────────────────

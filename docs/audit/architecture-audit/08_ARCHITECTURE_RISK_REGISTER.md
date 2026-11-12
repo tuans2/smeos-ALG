@@ -28,10 +28,10 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 | ARC-019 | C | P2 | TB | TB | V | 3 | Cột trạng thái kiểu `String`; bảng con không `organization_id`; DB test dựng bằng `db push` | 19 |
 | ARC-020 | I | P2 | C | TB | V | 2 | Screen Contract phủ ~40% trang; tuân thủ tự khai | 17 |
 | ARC-021 | J | P2 | C | T | V | 2 | 74% tệp TSX chưa dùng i18n | 24 |
-| ARC-022 | F | P2 | T | C | V | 3 | CSP Report-Only; không CSRF token/kiểm Origin | 18 |
+| ARC-022 | F | ~~P2~~ **ĐÃ ĐÓNG 12/11/2026** (mã) | T | C | V | 4 | ~~Không kiểm Origin~~ (11/11/2026; production chạy `log` 1 tuần rồi `enforce`) · ~~CSP Report-Only~~ (CSP theo nonce, chặn ngay khi triển khai — D-68) | — |
 | ARC-023 | N | P2 | C | TB | V | 2 | Sentry tuỳ chọn, không khai ở `render.yaml`; không metrics; 62 `console.*`, 59 `print()` | 21 |
-| ARC-024 | D/O | P2 | TB | TB | V | 3 | Không OpenAPI; không tài liệu API cho khách; 6 route bỏ envelope | 23 |
-| ARC-025 | G/D | P2 | T | TB | V | 3 | `content-engine/rewrite` chưa gác mã năng lực (nợ #170) | 25 |
+| ARC-024 | D/O | P3 — **gần đóng** | TB | TB | V | 4 | ~~Không OpenAPI~~ · ~~không tài liệu cho đối tác~~ (trang `/tich-hop/tai-lieu-api` sau đăng nhập, 11/11/2026) · trường nội bộ Integration API đã báo gỡ, **tự gỡ 09/02/2027**; còn 67 mục envelope lệch nội bộ (ratchet) | 23 |
+| ARC-025 | G/D | ~~P2~~ ĐÃ ĐÓNG 07/11/2026 | T | TB | V | 4 | ~~`content-engine/rewrite` chưa gác mã năng lực~~ — gác `F2`/`L2`/`L3` + trừ credit | — |
 | ARC-026 | B/N | P3 | T | T | V | 3 | `vercel.json`, `cron-job-entry.txt` lỗi thời; `dify-chat-provider.ts` chết | 28 |
 | ARC-027 | C/O | P2 | C | T | V | 2 | Không có ERD | 26 |
 | ARC-028 | O | P1 | C | C | V | 2 | Gói bàn giao khách thiếu SLA, hướng dẫn quản trị/người dùng, quyền truy cập | 8 |
@@ -145,6 +145,8 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 - **Khuyến nghị:** Ratchet số chuỗi hardcode; ưu tiên thông báo lỗi, trạng thái rỗng, email/thông báo khách.
 
 ### ARC-022 — CSP/CSRF (P2) — xem `05` §1.
+- **Kiểm Origin (11/11/2026, D-25):** `src/core/http/origin-guard.ts` gọi trong `handle()` — lệnh ghi có cookie phiên và đăng nhập/đăng ký từ origin khác → 403 `CROSS_ORIGIN_REJECTED`; route `GET` không đổi trạng thái (test kiến trúc). `ORIGIN_CHECK_MODE`: production mặc định `log` — sau 1 tuần không có `security.cross_origin_request` hợp lệ trong log Render, đặt `ORIGIN_CHECK_MODE=enforce` (việc của PO trên Render, không sửa `render.yaml`).
+- **CSP (12/11/2026, A6, PO D-68 thay phần 2 tuần ghi nhận của D-25):** CSP theo nonce mỗi request (`src/core/http/csp.ts`, gắn ở `src/proxy.ts`), header `Content-Security-Policy` chặn thật ngay khi triển khai; `script-src 'self' 'nonce-…' 'strict-dynamic'`, `object-src 'none'`, `base-uri`/`form-action`/`frame-ancestors 'self'`; mọi trang render động để có nonce. `CSP_MODE=report-only` tạm lùi khi có sự cố; vi phạm vẫn báo về `/api/v1/public/csp-report`.
 
 ### ARC-023 — Quan trắc (P2)
 - **Bằng chứng:** `src/instrumentation.ts` (Sentry chỉ khi `SENTRY_DSN`); `render.yaml` không khai `SENTRY_DSN`; runbook §10 "chưa có công cụ metrics".
@@ -153,10 +155,14 @@ Miền: A Hệ thống · B Repo · C CSDL · D API · E Nghiệp vụ · F Bả
 ### ARC-024 — Hợp đồng API (P2)
 - **Bằng chứng:** không có tệp OpenAPI; 6 route dùng `NextResponse.json` trực tiếp (gồm webhook, dev).
 - **Khuyến nghị:** Sinh OpenAPI từ schema zod cho `/api/v1/integration/*` (bề mặt bên thứ ba) trước.
+- **Phần OpenAPI xong 11/11/2026:** `docs/spec/contracts/openapi/{integration,public,platform,internal}.openapi.json` sinh từ zod (đăng ký `DOC-03-OPENAPI-*`), `npm run check:openapi` gác qua `npm test`; route mới bắt buộc `defineRoute`, envelope lệch bị ratchet chặn (`docs/audit/api-architecture-audit/01_API_ARCHITECTURE_AUDIT.md` §8–§38).
+- **Còn mở (đính chính 11/11/2026 — trước đó ghi nhầm "đã đóng" cả mục):** (1) chưa có tài liệu API công bố cho đối tác/khách — tệp OpenAPI mới nằm trong repo; (2) phản hồi `/integration/*` trả nguyên bản ghi nội bộ (vd. `usage.user_id`, `generation_jobs.payload`) — thu gọn cần `/v2` hoặc báo trước 90 ngày; (3) 501 route cũ chưa theo chuẩn v1.1, 67 mục envelope lệch. Cần PO duyệt trước khi mở API thương mại cho bên thứ ba.
+- **Cập nhật 11/11/2026 (phần B, PO duyệt):** (1) tài liệu cho đối tác: trang `/tich-hop/tai-lieu-api`, xem sau đăng nhập với quyền quản lý khoá ứng dụng, hướng dẫn + tham chiếu sinh từ OpenAPI; (2) trường nội bộ Integration API đánh dấu `deprecated`, máy chủ tự bỏ từ 09/02/2027 (`integration-field-sunset.ts`). Còn: thông báo tới LocalBudd/SocialFlow/đối tác (việc của PO); 67 mục envelope nội bộ theo ratchet.
 
 ### ARC-025 — Route thiếu mã năng lực (P2)
 - **Bằng chứng:** `NO_CAPABILITY_GUARD["content-engine/rewrite"] = DEBT_170`.
 - **Khuyến nghị:** PO chốt mã, gác, xoá khỏi danh sách.
+- **Đã đóng 07/11/2026:** gác một trong `F2`/`L2`/`L3`, trừ credit `content.rewrite`, gỡ khỏi `NO_CAPABILITY_GUARD` (`01_API_ARCHITECTURE_AUDIT.md` §13).
 
 ### ARC-026 — Tàn dư cấu hình/mã (P3)
 - **Bằng chứng:** `vercel.json`, `cron-job-entry.txt`, `src/modules/chat-assistant/adapters/dify-chat-provider.ts` (không được import).

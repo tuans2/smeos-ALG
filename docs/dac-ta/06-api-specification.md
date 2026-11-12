@@ -36,6 +36,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | 400 | `VALIDATION_FAILED` | Thân yêu cầu sai lược đồ zod (`details.issues`), hoặc thân không phải JSON hợp lệ (`details.body`). `handle()` tự đổi `ZodError` và lỗi đọc JSON của thân thành mã này — trước 06/11/2026 hai lỗi đó ra 500 (audit API-01) |
 | 401 | `UNAUTHENTICATED` | Không có phiên hợp lệ |
 | 403 | `CAPABILITY_DENIED` | Thiếu mã năng lực. Thân lỗi nêu mã còn thiếu |
+| 403 | `CROSS_ORIGIN_REJECTED` | Lệnh ghi (`POST/PUT/PATCH/DELETE`) có cookie phiên, hoặc đăng nhập/đăng ký/dùng thử, gửi từ origin khác host của request và `PUBLIC_APP_URL` (`Origin`, hoặc `Sec-Fetch-Site` khi không có `Origin`). Miễn (đường dẫn sau `/api/v1/`): `public/`, `integration/`, `internal/`, `storage/`, webhook chat và SePay. Chế độ `ORIGIN_CHECK_MODE` (`log` mặc định trên production trong tuần theo dõi đầu, rồi `enforce`) — `src/core/http/origin-guard.ts` (ARC-022, PO D-25, 11/11/2026). Route `GET` không được đổi trạng thái (`tests/unit/architecture/get-no-side-effects.test.ts`) |
 | 404 | `NOT_FOUND` | Không tìm thấy, **hoặc thuộc tổ chức khác** |
 | 409 | `CONFLICT` | Xung đột trạng thái, ví dụ duyệt một bản ghi đã duyệt |
 | 413 | `PAYLOAD_TOO_LARGE` | Thân JSON vượt 2 MB (`details.max_bytes`); `handle()` chặn theo `content-length` hoặc khi đọc luồng vượt trần — tải tệp đi `formData`/URL ký, không qua trần này (07/11/2026, audit API-17) |
@@ -46,11 +47,13 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 **Bản ghi của tổ chức khác trả 404, không trả 403.** Trả 403 là xác nhận bản ghi đó tồn tại — rò rỉ thông tin xuyên tổ chức bằng chính mã lỗi.
 
-**Chống trùng.** Mọi `POST` tạo job nhận `Idempotency-Key`. Cùng khoá trong 24 giờ trả lại job cũ thay vì tạo job mới. Người dùng bấm hai lần không bị trừ credit hai lần. Cùng khoá mà `payload`/sản phẩm khác → 422 `IDEMPOTENCY_KEY_REUSED`, không tạo job (PO 09/11/2026, audit API-11; trước đó trả job cũ và chỉ ghi cảnh báo `jobs.idempotency_payload_mismatch` — cảnh báo vẫn ghi, không kèm nội dung). Miễn trừ có lý do (`KEY_REUSE_ALLOWED`, `src/modules/jobs/domain/idempotency.ts`): `creative.scene_plan` và `product.copy.generate` cố ý mở lại kết quả theo khoá cố định. `/integration/*` giữ hành vi cũ trong thời gian báo trước thay đổi phá vỡ (≥ 90 ngày, mục dưới). `POST /orders` chưa phát hiện được cùng khoá khác thân (không lưu thân).
+**Chống trùng.** Mọi `POST` tạo job nhận `Idempotency-Key`. Cùng khoá trong 24 giờ trả lại job cũ thay vì tạo job mới. Người dùng bấm hai lần không bị trừ credit hai lần. Cùng khoá mà `payload`/sản phẩm khác → 422 `IDEMPOTENCY_KEY_REUSED`, không tạo job (PO 09/11/2026, audit API-11; trước đó trả job cũ và chỉ ghi cảnh báo `jobs.idempotency_payload_mismatch` — cảnh báo vẫn ghi, không kèm nội dung). Miễn trừ có lý do (`KEY_REUSE_ALLOWED`, `src/modules/jobs/domain/idempotency.ts`): `creative.scene_plan` và `product.copy.generate` cố ý mở lại kết quả theo khoá cố định. `POST /integration/jobs` giữ hành vi cũ trong thời gian báo trước thay đổi phá vỡ (90 ngày, mục dưới): **báo 11/11/2026, áp 422 từ 09/02/2027 00:00 UTC** (`src/modules/integration/domain/integration-key-reuse.ts`, PO 11/11/2026). `POST /orders` cùng khoá khác thân → 422 (lưu băm thân, PO 11/11/2026).
 
 **Lưu đệm.** Phản hồi JSON mặc định `Cache-Control: no-store`; route tự đặt `cache-control` (ảnh công khai, tệp xuất) được giữ nguyên (07/11/2026, audit API-17). Ngoại lệ trả `no-cache` (`src/core/http/ack-routes.ts`): mọi phản hồi lỗi (≥ 400, chỉ có envelope `{ error }`) và route chỉ trả xác nhận mà trang khách gọi không đọc thân (`ACK_ONLY_ROUTES` — sự kiện catalog/brochure Thẻ chào, nhận chủ phiên brochure): với `no-store`, Chromium không hoàn tất request chưa đọc thân, giữ kết nối và trang không bao giờ rảnh mạng.
 
-**Version và gỡ endpoint (PO 07/11/2026, audit API-14).** Không thay đổi phá vỡ tại chỗ trong `/v1` (đổi/xoá trường, đổi kiểu, siết validation, đổi mã HTTP/lỗi, đổi ngữ nghĩa) — dựng endpoint mới song song. Thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở phản hồi, nới validation không phá vỡ; client phải bỏ qua trường/giá trị lạ. Endpoint cũ khai ở `DEPRECATIONS` (`src/core/http/deprecation.ts`): mọi phản hồi kèm `Deprecation: @<unix ngày báo>`, `Sunset: <ngày gỡ>`, `Link: <thay thế>; rel="successor-version"`; dòng của nó trong đặc tả này ghi **SẮP GỠ** kèm ngày gỡ. Báo trước tối thiểu **90 ngày** cho `/integration/*` và `/public/*`, **30 ngày** cho API chỉ giao diện SMEOS gọi; quá ngày gỡ mà route còn → test đỏ. Hiện chưa endpoint nào chờ gỡ.
+**Version và gỡ endpoint (PO 07/11/2026, audit API-14).** Không thay đổi phá vỡ tại chỗ trong `/v1` (đổi/xoá trường, đổi kiểu, siết validation, đổi mã HTTP/lỗi, đổi ngữ nghĩa) — dựng endpoint mới song song. Thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở phản hồi, nới validation không phá vỡ; client phải bỏ qua trường/giá trị lạ. Endpoint cũ khai ở `DEPRECATIONS` (`src/core/http/deprecation.ts`): mọi phản hồi kèm `Deprecation: @<unix ngày báo>`, `Sunset: <ngày gỡ>`, `Link: <thay thế>; rel="successor-version"`; dòng của nó trong đặc tả này ghi **SẮP GỠ** kèm ngày gỡ. Báo trước tối thiểu **90 ngày** cho `/integration/*` và `/public/*`, **30 ngày** cho API chỉ giao diện SMEOS gọi; quá ngày gỡ mà route còn → test đỏ. Hiện chưa endpoint nào chờ gỡ. Thay đổi hành vi đã báo trước (không gỡ endpoint): `POST /integration/jobs` — cùng khoá khác thân → 422 từ **09/02/2027** (báo 11/11/2026).
+
+**Thứ tự ưu tiên giữa đặc tả này và OpenAPI (11/11/2026).** Bốn tệp `docs/spec/contracts/openapi/{integration,public,platform,internal}.openapi.json` là bản PHÁI SINH, sinh từ lược đồ zod trong mã (`npm run gen:openapi`), không sửa tay; đăng ký ở `docs/00-DOCUMENTATION-REGISTRY.yaml` (`DOC-03-OPENAPI-*`). Khi lệch: đặc tả này thắng về đường dẫn, phương thức, mã năng lực và luật nghiệp vụ — sửa mã/lược đồ theo nó (hoặc sửa nó cùng commit nếu PO đổi luật); hình dạng thân/phản hồi chi tiết lấy theo lược đồ trong mã. `npm test` (test OpenAPI từng bề mặt) và `npm run check:docs` chặn mọi lệch giữa ba nguồn.
 
 **OpenAPI `/public/*` (07/11/2026, audit API đợt 6).** Bản máy đọc được của mọi route công khai (42 operation): `docs/spec/contracts/openapi/public.openapi.json` (OpenAPI 3.1, tệp sinh ra — `npm run gen:openapi`). Nguồn là lược đồ zod ở `src/app/api/v1/public/_contracts/`: route dùng chung lược đồ thân/query ở `requests.ts`; phản hồi khai `strictObject` và kiểm trên CSDL thật (`tests/tenant/public-contract-*.test.ts`). Route Catalog đóng băng giữ lược đồ riêng — bản sao trong `requests.ts` được test đối chiếu (`tests/unit/public/public-catalog-contract.test.ts`). Bản `public` không công bố cho đối tác; chỉ dùng để rà và kiểm hợp đồng.
 
@@ -369,6 +372,8 @@ Dành cho `LocalBudd` (M05, M06) và `SocialFlow` (M07). *(M04b đã chuyển v�
 Authorization: Bearer <token cấp theo tổ chức>
 ```
 
+**Gỡ trường nội bộ (ARC-024, PO 11/11/2026).** Báo 11/11/2026, **từ 09/02/2027 00:00 UTC** máy chủ tự bỏ khỏi phản hồi (`src/modules/integration/domain/integration-field-sunset.ts`; OpenAPI đánh dấu `deprecated`): ảnh (`/integration/assets`) — `storage_key`, `thumb_key`, `provider`, `model`, `model_version`, `pipeline_version`, `parameters`, `prompt`, `input_sha256`, `output_sha256`, `cost_usd`, `created_by`, `approved_by`, `trashed_at`, `purge_after`, `legal_hold_until`; `master-image` (`master`, `ratios[]`) — `storage_key`, `thumb_key` (dùng `url`); `job` của `/integration/jobs` — `user_id`, `workspace_id`, `branch_id`, `request_id`, `job_group_id`, `run_after`, `error` (giữ `payload`, `output`, `failure_kind`); `/integration/usage` — `user_id`, `workspace_id`, `cost_usd`, `metadata`; `/integration/catalog-links*` — `created_by`, `revoked_by`, `trashed_at`, `purge_after`. Tên camelCase cũ (`masterImageUrl`, `driveLink`, `costCredit`) giữ tới `/v2`.
+
 **OpenAPI (07/11/2026, audit API đợt 4).** Bản máy đọc được của mục này: `docs/spec/contracts/openapi/integration.openapi.json` (OpenAPI 3.1), sinh từ lược đồ zod ở `src/modules/integration/contracts/` — route dùng chung lược đồ thân, nên tài liệu không lệch mã; phản hồi khai `strictObject` và được kiểm trên CSDL thật. Sửa route `/integration/*` → sửa hợp đồng → `npm run gen:openapi`.
 
 **Giới hạn tần suất (07/11/2026, audit API-09).** Mọi đường `/integration/*`: 600 lần/phút cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức) → 429 kèm `Retry-After`, sau khi xác thực xong — token sai vẫn 401.
@@ -379,7 +384,7 @@ Authorization: Bearer <token cấp theo tổ chức>
 | GET | `/integration/products/:id/master-image` | Master Image đã duyệt, kèm các tỉ lệ |
 | GET | `/integration/business-profile` | |
 | GET | `/integration/brand-profile` | |
-| POST | `/integration/jobs` | Tạo job thay mặt tổ chức |
+| POST | `/integration/jobs` | Tạo job thay mặt tổ chức. **Thay đổi đã báo trước:** cùng `idempotency_key` mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED` từ 09/02/2027 (trước đó trả job cũ) |
 | POST | `/integration/usage` | Ghi mức dùng phát sinh ở engine ngoài |
 | POST | `/integration/capabilities/check` | Hỏi một người có năng lực gì |
 | GET | `/integration/learning-profile` | **CHƯA XÂY** — hồ sơ phong cách của tổ chức, để engine soạn nội dung đọc |
@@ -587,6 +592,11 @@ Liên kết thu hồi được nhưng không xoá được: một mã QR đã d�
 | GET | `/crm/customers/:id/orders` | `Q1` + `R1` | Đơn đã đặt của khách, mọi nguồn: đơn gắn khách hoặc đơn chưa gắn khách có SĐT người đặt trùng (Thẻ Chào, Điều phối); trong phạm vi chi nhánh; tối đa 50, mới nhất trước · khách tổ chức khác → 404 |
 | POST | `/crm/customers/:id/consent` | `Q9` | Cơ sở đồng ý, có mốc thời gian |
 | GET | `/crm/reminders/upcoming` | `Q7` | Quét dịp trước 14 ngày |
+| POST | `/crm/customers/:id/data-requests/export` | `R13` | Khách yêu cầu xuất dữ liệu cá nhân (ADR-014 D-P5): gói JSON mọi bản ghi của khách, yêu cầu hoàn tất ngay · khách tổ chức khác → 404 · đặc tả 07 §55 |
+| POST | `/crm/customers/:id/data-requests/erase` | `Q4` | Khách yêu cầu xoá: ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT, thu hồi đồng ý nhận tin; `result` = số dòng theo bảng · khách tổ chức khác → 404 |
+| POST | `/crm/customers/:id/data-requests/rectify` | `Q3` | Khách yêu cầu sửa: ghi nhận, hạn 72 giờ; sửa bằng `PATCH /crm/customers/:id` rồi đóng yêu cầu |
+| GET | `/crm/data-requests` | `Q1` | `?status` `?customer_id` — mới nhất trước, tối đa 200; `overdue` = đang chờ và quá hạn |
+| PATCH | `/crm/data-requests/:id` | `Q3` | Đóng yêu cầu đang chờ: `COMPLETED` hoặc `REJECTED` · tổ chức khác → 404 · đã đóng → 409 |
 
 **Lệch nghĩa mã cần soát:** bản cũ gán `Q5` cho xuất danh sách và `Q6` cho dịp; mã thật gán `Q5` cho dịp và `Q6` cho đồng ý. Một trong hai sai — xem **RS-10**.
 
@@ -601,7 +611,7 @@ Nội dung nhắc mua sinh từ dịp và sản phẩm. Không endpoint nào g�
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
 | GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công · `?delivery_from=&delivery_to=` (YYYY-MM-DD, theo `delivery_window.date` hoặc giờ hẹn đơn Điều phối, giờ Việt Nam; ngày sai định dạng bị bỏ qua) · `?sale_id=` (Sale phụ trách, hoặc người tạo khi đơn chưa gán Sale) · `?limit=` 1–100, mặc định 50, ngoài khoảng/không phải số nguyên → 400 (audit API-03, 06/11/2026) · Phân trang con trỏ: `?cursor=` = `next_cursor` của trang trước (mờ; hỏng → 400), mới trước — phản hồi `{ data, next_cursor, meta: { total } }`, `total` đếm cả danh sách đang lọc (audit API-10, PO 09/11/2026; trước đó `{ orders, total }` chỉ trang đầu) |
-| POST | `/orders` | `R2` | `customerId`, `branchId`, `items[].productId/variantId` của tổ chức khác → 404; đơn giá số nguyên ≥ 0, số lượng 1–999, `deliveryWindow.date` dạng `YYYY-MM-DD` (audit BL-13); dòng có `productId` với giá > 0 dưới giá sàn → 422 `BELOW_FLOOR` nếu người tạo không có `C10` (audit BL-07), vượt giá trần → 422 `ABOVE_CEILING` nếu không có `C9` (PO 07/11/2026, Q3); ngày giao trước hôm nay (giờ VN) hoặc SĐT người nhận không phải số Việt Nam → 400 (PO 07/11/2026, Q11–Q12); sản phẩm theo dõi tồn theo số lượng bị trừ tồn cùng giao dịch, không đủ → 409 (Q9) — huỷ đơn (`/orders/:id/cancel`, `/coordinator/orders/:id/cancel`) hoàn lại đúng một lần. Header `Idempotency-Key` (tuỳ chọn, ≤ 255 ký tự): gửi lại cùng khoá → trả đơn đã tạo, 201 + `Idempotent-Replayed: true`, không tạo đơn thứ hai (audit API-11, 07/11/2026) |
+| POST | `/orders` | `R2` | `customerId`, `branchId`, `items[].productId/variantId` của tổ chức khác → 404; đơn giá số nguyên ≥ 0, số lượng 1–999, `deliveryWindow.date` dạng `YYYY-MM-DD` (audit BL-13); dòng có `productId` với giá > 0 dưới giá sàn → 422 `BELOW_FLOOR` nếu người tạo không có `C10` (audit BL-07), vượt giá trần → 422 `ABOVE_CEILING` nếu không có `C9` (PO 07/11/2026, Q3); ngày giao trước hôm nay (giờ VN) hoặc SĐT người nhận không phải số Việt Nam → 400 (PO 07/11/2026, Q11–Q12); sản phẩm theo dõi tồn theo số lượng bị trừ tồn cùng giao dịch, không đủ → 409 (Q9) — huỷ đơn (`/orders/:id/cancel`, `/coordinator/orders/:id/cancel`) hoàn lại đúng một lần. Header `Idempotency-Key` (tuỳ chọn, ≤ 255 ký tự): gửi lại cùng khoá → trả đơn đã tạo, 201 + `Idempotent-Replayed: true`, không tạo đơn thứ hai (audit API-11, 07/11/2026); cùng khoá mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED` (`details.order_id`), so bằng băm thân lưu ở `orders.idempotency_body_hash` (PO 11/11/2026; đơn cũ chưa có băm vẫn trả lại như trước) |
 | GET · PATCH | `/orders/:id` | `R1` · `R3` | PATCH không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` → 422 (audit BL-01): xác nhận đi qua thu tiền/duyệt giao trước, hoàn tất qua Điều phối, huỷ qua `POST /orders/:id/cancel` |
 | POST | `/orders/:id/assign` | `R4` | Người nhận việc phải là thành viên đang hoạt động của tổ chức (khác → 422); giao lại thu hồi phân công cũ |
 | GET | `/orders/my-work` | `R17` (`?scope=team`: `R4`) | Việc chế tác đang giao cho người đăng nhập, sắp theo giờ giao; công thức và ảnh mẫu, không có giá · `scope=team`: mọi việc trong phạm vi chi nhánh, kèm tên thợ |
@@ -680,7 +690,7 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/custom-domains` | `D19` | `{ hostname }` — chuẩn hoá (chữ thường, punycode); từ chối IP, tên miền một nhãn, tên miền của hệ thống (400); tối đa 3 tên miền/tổ chức, tên miền đã có người gắn (409, không nêu tổ chức). 201, trạng thái chờ xác minh |
 | POST | `/custom-domains/:id/verify` | `D19` | Kiểm bản ghi TXT (giới hạn 20 lần/phút/tổ chức). Đúng → `VERIFIED`, gửi Render gắn tên miền và cấp chứng chỉ HTTPS (`certificateStatus` `REQUESTED`; chưa cấu hình khoá Render → `MANUAL`); chưa đúng → `verified: false`. Tên miền đang khoá → 409; của tổ chức khác → 404 |
 | DELETE | `/custom-domains/:id` | `D19` | Gỡ tên miền (gỡ khỏi Render nếu đã xác minh), ngừng phục vụ ngay. Đang khoá → 409; của tổ chức khác → 404 |
-| GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi đăng nhập tổ chức, không có thao tác ghi |
+| GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi `R1` của tổ chức (gác từ 11/11/2026, trước đó chỉ kiểm phiên), không có thao tác ghi |
 
 ## 16. Số liệu và hồ sơ phong cách — M11
 
@@ -705,7 +715,7 @@ Mỗi chỉ số trả kèm `nguon` và `den_ngay`. Dữ liệu kế thừa từ
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/chat/conversations` | `T1` · `T2` | |
+| GET | `/chat/conversations` | `T1` · `T2` | `limit` 1–100, mặc định 50; sai → 400 |
 | POST | `/chat/conversations` | `T2` | |
 | GET | `/chat/conversations/:id/messages` | `T1` · `T2` | Thay cho `GET /conversations/:id` của bản cũ |
 | POST | `/chat/conversations/:id/messages` | `T2` | |
@@ -730,7 +740,7 @@ Tin do trợ lý tự trả lời mang cờ `tu_dong: true` trong chính bản g
 | GET | `/ai-requests` | `U3` | Sổ chi phí và chất lượng từng lời gọi, lọc theo năng lực và khoảng thời gian |
 | GET | `/ai-requests/summary` | `U3` | Tổng hợp theo năng lực và theo mô hình: chi phí, độ trễ, điểm, tỷ lệ phải leo thác |
 | GET | `/ai-evaluations/:entity_type/:entity_id` | **CHƯA XÂY** `U4` | Điểm chấm của một đầu ra và lý do nó vào hàng chờ soát. Bảng `ai_evaluations` đã có; endpoint thì chưa |
-| GET · POST | `/ai-requests/review` | `U3` | Hàng chờ soát đầu ra AI — **có trong mã, thiếu trong bản đặc tả cũ** |
+| GET · POST | `/ai-requests/review` | `U3` | Hàng chờ soát đầu ra AI — **có trong mã, thiếu trong bản đặc tả cũ**. GET `limit` 1–5.000, mặc định 100; sai → 400 |
 
 ```http
 PUT /api/v1/ai-policy
@@ -778,7 +788,7 @@ Khuôn video là enum `video_format`: `REEL_15S` · `TIKTOK_30S` · `STORY_15S` 
 | GET · PUT | `/storage/:key` | — *(chữ ký URL)* | Đích của URL ký sẵn; `verifyStorageSignature` gác, hết hạn 15 phút |
 | GET | `/integration-tokens` | `F9` | Cấp token cho engine ngoài |
 | POST | `/integration-tokens` | `F9` | |
-| POST | `/integration-tokens/:id/rotate` | `F9` | |
+| POST | `/integration-tokens/:id/rotate` | `F9` | Token mới giữ thời hạn (số ngày) của token đang xoay — trước 11/11/2026 luôn ra 90 ngày |
 | DELETE | `/integration-tokens/:id` | `F9` | |
 | GET | `/template-overrides` | `F1` · `F2` | Hệ thống template SSOT |
 | PUT | `/template-overrides` | `F2` | |
@@ -1114,7 +1124,7 @@ Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<tok
 | POST | `/coordinator/orders/:id/craft-fee-complaint` | `R3` | Điều phối ghi nhận khiếu nại `{ reason }` (5–500 ký tự) vào `craft_fee_complaints`; trừ `complaintDeductionPercent`% phí gia công một lần (mặc định 0% → chỉ ghi nhận). Đơn chưa có chi nhánh nhận → 409; đơn tổ chức khác → 404. Trả `{ deducted, payableVnd }` |
 | POST | `/public/zalo-oa/webhook` | — *(chữ ký `X-ZEvent-Signature` = sha256(appId + thân + timestamp + OA secret key))* | Sự kiện Zalo OA chung. Tin `user_send_text` chứa mã liên kết → gắn `channels.zaloUserId` cho chi nhánh có mã (tổ chức suy từ mã). Sai chữ ký, sai `app_id` hoặc sự kiện lệch > 10 phút → 401. Lời mời gia công gửi qua OA khi chi nhánh không có Telegram; token OA niêm phong trong `platform_secrets`, làm mới dưới khoá dòng. 600 lần/phút/IP |
 | POST | `/internal/chain-dispatch-sweep` | — *(cron, header `x-cron-secret`)* | Quét nhắc mốc M1–M4. Chỉ lấy phiên điều phối `OPEN`/`CLAIMED_GRACE`/`COMMITTED` của đơn chưa huỷ, chưa hoàn tất, chưa giao xong (lọc trong DB), duyệt hết theo trang 50 dòng (keyset theo `id`, tối đa 200 trang, ngân sách 90 giây — dưới `--max-time 120` của cron); lượt chồng lượt đang chạy bị bỏ qua nhờ khoá `pg_try_advisory_xact_lock` (phản hồi `skipped`). Phản hồi có `pages`, `complete`, `errorCount`; đơn còn `OPEN` đã hết hạn vòng nhận → mời vòng sau (không mời lại chi nhánh đã mời/đã từ chối) hoặc chuyển `ESCALATED` và báo `coordinator_channel.telegramChatId` khi hết vòng/hết ứng viên, do Render cron `smeos-cron-dispatch-sweep` gọi 5 phút/lần qua mạng nội bộ. Link trong tin nhắc dựng từ `NEXT_PUBLIC_APP_URL`. Production thiếu `CRON_SECRET` → luôn 401. `?forceStep=` chỉ có hiệu lực ngoài production. Phiên `CLAIMED_GRACE` đã hết `graceExpiresAt` mà chi nhánh không huỷ → hệ thống chốt `COMMITTED` dưới khoá dòng (cùng use-case với nút Chốt của chi nhánh, `commit-subcontract-claim.ts`), gửi tin bắt đầu làm một lần; phản hồi có `graceCommitted` (PO 22/10/2026). Giờ giao để tính mốc = cuối khung giờ (`parseDeliveryTimestampMs`, cùng hàm với thẻ chi nhánh). Cuối lượt (UJ-11, 07/11/2026): báo giá nháp/đã gửi quá ngày hiệu lực → `EXPIRED` (tối đa 500/lượt, phản hồi `quotationsExpired`); xét vòng đời gói cho tổ chức quá hạn/tới cửa sổ gia hạn/chưa nhận credit tháng (tối đa 200/lượt, cùng luật `checkSubscription`, phản hồi `subscriptions: { checked, failed }`); job video treo cũng giải phóng video kẹt `RENDERING` (UJ-03). `GET /quotations/:id` không còn ghi trạng thái hết hạn — chỉ hiển thị |
-| GET | `/internal/health` | — *(cron, header `x-cron-secret`)* | Sức khoẻ chi tiết: độ trễ CSDL, Redis, job `PENDING`/`PROCESSING` quá 15 phút. `200` khi ổn, `503` khi `degraded`/`down` kèm `issues`. Cron `smeos-cron-dispatch-sweep` gọi sau mỗi lượt quét để Render báo lỗi. Không trả dữ liệu tenant |
+| GET | `/internal/health` | — *(cron, header `x-cron-secret`)* | Sức khoẻ chi tiết: độ trễ CSDL, Redis, job `PENDING`/`PROCESSING` quá 15 phút. `200` khi ổn, `503` khi `degraded`/`down` kèm `issues`. Cron `smeos-cron-dispatch-sweep` gọi sau mỗi lượt quét để Render báo lỗi. Không trả dữ liệu tenant. Sai/thiếu `x-cron-secret` → 401 theo envelope lỗi chung |
 
 ### 26.4 Console Vận hành Nền tảng
 
@@ -1138,7 +1148,7 @@ Bảng `notification_*` (đặc tả 07 mục 33). Mã năng lực PO duyệt 28
 | GET | `/notification/events` | — (phiên tenant) | Danh mục sự kiện hiển thị cho tầng `?tier=` (mặc định `STORE`), đã áp ma trận hiển thị của SaaS Mother |
 | GET | `/notification/channels` | — (phiên tenant) | Trạng thái bật/tắt kênh toàn sàn (chỉ đọc) |
 | GET | `/ux-rollout-flags` | — (phiên tenant) | Khoá các cờ rollout giao diện đang bật cho tổ chức của phiên `{ enabled: string[] }` — không trả danh sách tổ chức |
-| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page`, `limit` (≤ 100), `unreadOnly` |
+| GET | `/notification/inbox` | — (của chính mình) | Hộp thư của người dùng trong tổ chức hiện tại; `page` (≥ 1), `limit` (1–100, mặc định 20), `unreadOnly`; không phải số nguyên hoặc ngoài khoảng → 400 |
 | PATCH | `/notification/inbox/:id/read` | — (của chính mình) | Đánh dấu đã đọc; tin của người/tổ chức khác → không đổi |
 | POST | `/notification/inbox/mark-all-read` | — (của chính mình) | Đánh dấu đã đọc toàn bộ |
 | GET | `/notification/stream` | — (của chính mình) | SSE tin mới; ping 25 giây. Hub trong bộ nhớ tiến trình (AUD-007) |
@@ -1185,7 +1195,7 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | GET | `/internal-chat/stats` | `S1` | `{ data: { days: 30, invites_in_chat, partner_claims, partner_stores } }` — 30 ngày của tổ chức người xem (chuỗi): lời mời đơn đăng vào Trao đổi nội bộ, đơn cửa hàng đối tác đã nhận, số cửa hàng đối tác trong vòng bắn đơn; không có cửa hàng đối tác → 0. Danh sách phòng (`GET /internal-chat/conversations`) phía chuỗi kèm `activeOrderCount` cho phòng cửa hàng đối tác |
 | GET | `/internal-chat/unread` | `S1` | `{ data: { unread_count } }` — tổng tin chưa đọc của người xem trong tối đa 100 phòng gần nhất (số đếm cạnh mục menu "Trao đổi nội bộ") |
 | POST | `/internal-chat/messages/:id/action` | `S1` + `S2` | Nhận / từ chối thẻ đơn (`rejectedReason` ≤ 500). Chỉ tổ chức `assignedPartnerOrgId`, không phải người gửi, thẻ còn `PENDING_ACCEPT`; sai quyền → 404, đã xử lý → 409. Gộp trạng thái vào thẻ, giữ mã đơn / giá / ảnh |
-| GET | `/noi-bo/identity` | *(phiên)* | Danh tính nội bộ của phiên; lỗi không trả chi tiết/stack · Lỗi theo envelope chung: chưa đăng nhập/phiên bị thay → 401, không có tổ chức → 404 (trước 06/11/2026 mọi lỗi ra 500 `IDENTITY_ERROR` — audit API-04) |
+| GET | `/noi-bo/identity` | `F1` | Danh tính nội bộ của phiên, kèm tên + email thành viên (gác `F1` như `GET /members` từ 11/11/2026, trước đó mọi vai đọc được); lỗi không trả chi tiết/stack · Lỗi theo envelope chung: chưa đăng nhập/phiên bị thay → 401, không có tổ chức → 404 (trước 06/11/2026 mọi lỗi ra 500 `IDENTITY_ERROR` — audit API-04) |
 | POST | `/organizations/current/language-unlock-request` | `F2` | Xin mở thêm ngôn ngữ |
 | GET | `/platform/orgs-data` | `N1` | Trung tâm dữ liệu xuyên tổ chức |
 | GET | `/platform/orgs-data/:id` | `N1` | |

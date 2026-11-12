@@ -11,6 +11,7 @@ import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { NativeSelect } from "@/components/ui/select"
+import { requestKey, type HeldKey } from "@/components/content-studio/request-key"
 import { errorText } from "@/lib/error-text"
 import { vnTodayIso } from "@/lib/vn-date"
 import { newOrderDeliveryErrors } from "@/modules/orders/domain/order-input-rules"
@@ -58,8 +59,8 @@ interface ItemRow {
 
 export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: CreateOrderModalProps) {
   const [loading, setLoading] = useState(false)
-  // Một khoá cho mỗi lần soạn đơn: thử lại sau lỗi mạng/hết giờ không tạo đơn thứ hai (audit API-11)
-  const idempotencyKey = useRef<string | null>(null)
+  // Khoá giữ qua lần thử lại CÙNG nội dung (lỗi mạng/hết giờ không tạo đơn thứ hai); sửa đơn → khoá mới (audit API-11)
+  const idempotencyKey = useRef<HeldKey | null>(null)
   const [masterProducts, setMasterProducts] = useState<ProductMasterIndex[]>([])
   const [selectedProductId, setSelectedProductId] = useState<string>("")
   const [recipientName, setRecipientName] = useState("")
@@ -164,31 +165,28 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
       return
     }
     setLoading(true)
-    idempotencyKey.current ??= crypto.randomUUID()
     try {
-      const res = await fetch("/api/v1/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey.current },
-        body: JSON.stringify({
-          deliveryAddress: { recipientName, phone, street },
-          deliveryWindow: { date: deliveryDate, timeSlot },
-          cardMessage,
-          internalNote,
-          items: items.map((it) => ({
-            productId: it.productId,
-            description: it.description,
-            quantity: Number(it.quantity),
-            unitPriceVnd: Number(it.unitPriceVnd),
-            metadata:
-              it.sampleImageUrl || it.bomFlowers?.length
-                ? { sampleImageUrl: it.sampleImageUrl, bomSummary: it.bomSummary, flowers: it.bomFlowers, wrapStyle: it.wrapStyle, ribbon: it.ribbon }
-                : undefined,
-          })),
-        }),
+      const body = JSON.stringify({
+        deliveryAddress: { recipientName, phone, street },
+        deliveryWindow: { date: deliveryDate, timeSlot },
+        cardMessage,
+        internalNote,
+        items: items.map((it) => ({
+          productId: it.productId,
+          description: it.description,
+          quantity: Number(it.quantity),
+          unitPriceVnd: Number(it.unitPriceVnd),
+          metadata:
+            it.sampleImageUrl || it.bomFlowers?.length
+              ? { sampleImageUrl: it.sampleImageUrl, bomSummary: it.bomSummary, flowers: it.bomFlowers, wrapStyle: it.wrapStyle, ribbon: it.ribbon }
+              : undefined,
+        })),
       })
+      idempotencyKey.current = requestKey(idempotencyKey.current, body, () => crypto.randomUUID())
+      const res = await fetch("/api/v1/orders", { method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey.current.key }, body })
       if (!res.ok) {
-        const data = await res.json() as { message?: string }
-        throw new Error(data.message ?? "Chưa tạo được đơn hàng do lỗi hệ thống. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.")
+        const data = await res.json().catch(() => ({})) as { error?: { message?: string } }
+        throw new Error(data.error?.message ?? "Chưa tạo được đơn hàng do lỗi hệ thống. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.")
       }
       idempotencyKey.current = null
       onSuccess()

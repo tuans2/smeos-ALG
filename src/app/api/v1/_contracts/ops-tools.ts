@@ -36,8 +36,8 @@ export const TOOLS_OPERATIONS: OpenApiOperation[] = [
     description: `Mã năng lực kiểm ở use-case. Trường nền tảng: ghi đè của chính tổ chức, không hạ dưới mức sàn, không ẩn trường bắt buộc. ${NF}`, ok: [200, { description: "Trường", schema: res.shopFieldUpdatedResponse }], errors: [...BODY_ERRORS, 404, 422] }),
   op(FIELD, { method: "get", path: "/field-config/settings", operationId: "listShopFieldSettings", summary: "Danh sách trường cho màn Cài đặt (gồm trường đang ẩn)", cap: "D18", query: req.fieldConfigQuery,
     description: "Mã năng lực kiểm ở use-case. Trường nền tảng kèm mức sàn (`floorRequirement`, `canHide`) và trường riêng.", ok: [200, { description: "Trường", schema: res.fieldSettingsResponse }] }),
-  op(FIELD, { method: "get", path: "/field-config/catalogs", operationId: "listFieldCatalogs", summary: "Danh mục cho form nhập liệu", cap: null, auth: "session", query: req.fieldCatalogsQuery,
-    description: "Chỉ giá trị đang bật; `keys` cách dấu phẩy, bỏ trống trả hết. Route chỉ kiểm phiên của tổ chức, không kiểm `R1` như đặc tả 06 ghi (audit API §31).", ok: [200, { description: "Danh mục", schema: res.fieldCatalogsResponse }] }),
+  op(FIELD, { method: "get", path: "/field-config/catalogs", operationId: "listFieldCatalogs", summary: "Danh mục cho form nhập liệu", cap: "R1", query: req.fieldCatalogsQuery,
+    description: "Chỉ giá trị đang bật; `keys` cách dấu phẩy, bỏ trống trả hết.", ok: [200, { description: "Danh mục", schema: res.fieldCatalogsResponse }] }),
 
   op(TPL, { method: "get", path: "/template-overrides", operationId: "listTemplateOverrides", summary: "Ghi đè của một mẫu", cap: "F1", query: req.templateOverridesQuery,
     description: "Thiếu `templateKey` → 400. `next_cursor` luôn `null`.", ok: [200, { description: "Ghi đè", schema: res.templateOverridesResponse }], errors: [400] }),
@@ -46,8 +46,8 @@ export const TOOLS_OPERATIONS: OpenApiOperation[] = [
   op(TPL, { method: "delete", path: "/template-overrides/{templateKey}/{fieldKey}", operationId: "removeTemplateOverride", summary: "Bỏ ghi đè, về giá trị mặc định", cap: "F2",
     description: "Chưa có ghi đè → 404.", ok: [200, { description: "Đã bỏ", schema: res.okResponse }], errors: [404] }),
 
-  op(ORG, { method: "get", path: "/noi-bo/identity", operationId: "getOrganizationIdentity", summary: "Định danh tổ chức của phiên, liên kết chuỗi, thành viên", cap: null, auth: "session",
-    description: "Chỉ cần phiên của tổ chức — mọi vai (kể cả Shipper) thấy tên và email của tối đa 100 thành viên đang hoạt động (audit API §31). Envelope cũ `{ success, data }`.",
+  op(ORG, { method: "get", path: "/noi-bo/identity", operationId: "getOrganizationIdentity", summary: "Định danh tổ chức của phiên, liên kết chuỗi, thành viên", cap: "F1",
+    description: "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`. Envelope cũ `{ success, data }`.",
     ok: [200, { description: "Định danh", schema: res.identityResponse }], errors: [404] }),
 
   proxyOp("get", "proxyGet"),

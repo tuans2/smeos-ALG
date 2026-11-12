@@ -48,7 +48,7 @@ export const ADMIN_OPERATIONS: OpenApiOperation[] = [
   op(AI, { method: "get", path: "/ai-requests/summary", operationId: "summarizeAiRequests", summary: "Tổng hợp theo năng lực và mô hình", cap: "U3", query: req.aiRequestsQuery,
     description: "Chi phí, độ trễ, điểm, tỷ lệ phải leo thác. Cùng bộ lọc với `/ai-requests`.", ok: [200, { description: "Tổng hợp", schema: res.aiSummaryResponse }] }),
   op(AI, { method: "get", path: "/ai-requests/review", operationId: "listAiReviewQueue", summary: "Hàng chờ soát đầu ra AI", cap: "U3", query: req.reviewQueueQuery,
-    description: "Lời gọi `NEEDS_REVIEW`/`ESCALATED`, mặc định 100, tối đa 5.000. `limit` không phải số → 500 (audit API §29).", ok: [200, { description: "Hàng chờ", schema: res.reviewQueueResponse }] }),
+    description: "Lời gọi `NEEDS_REVIEW`/`ESCALATED`. `limit` 1–5.000, mặc định 100; không phải số nguyên hoặc ngoài khoảng → 400.", ok: [200, { description: "Hàng chờ", schema: res.reviewQueueResponse }], errors: [400] }),
   op(AI, { method: "post", path: "/ai-requests/review", operationId: "reviewAiRequest", summary: "Duyệt / từ chối / sửa một đầu ra AI", cap: "U3", body: req.reviewAiRequestBody,
     description: `Ghi nhật ký kiểm toán. ${NF}`, ok: [200, { description: "Quyết định", schema: res.reviewDecisionResponse }], errors: [...BODY_ERRORS, 404] }),
   op(AI, { method: "post", path: "/content-guard/validate", operationId: "validateFlowerContent", summary: "Kiểm văn bản với từ điển từ cấm ngành hoa và phong cách cấm của thương hiệu", cap: null, auth: "session",

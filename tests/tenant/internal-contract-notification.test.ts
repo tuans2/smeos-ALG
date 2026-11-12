@@ -93,13 +93,9 @@ describe("hợp đồng — thông báo", () => {
       const locks = await expectContract(await list(get(`/${tier}-hard-locks`)), 200, R.hardLocksResponse, `notif-${tier}-locks`)
       expect((locks.data as unknown[]).length).toBe(1)
       const pref = await patchPrefs(send("/preferences", "PATCH", { eventKey, channel: "SMS", enabled: true }))
-      if (tier === "org") {
-        expect(pref.status).toBe(403)
-        expect(typeof (await readJson(pref)).error).toBe("string")
-      } else {
-        // Phát hiện (audit API §15): route chỉ xét khoá của tầng TRÊN `STORE`, nên khoá tầng cửa hàng không chặn ở đây.
-        expect(pref.status).toBe(200)
-      }
+      // Cả khoá tầng chuỗi lẫn tầng cửa hàng đều chặn tuỳ chọn cá nhân (audit API §15 — trước đây khoá cửa hàng lọt qua)
+      expect(pref.status).toBe(403)
+      expect(typeof (await readJson(pref)).error).toBe("string")
       await expectContract(await unlock(send(`/${tier}-hard-locks`, "DELETE", { eventKey, channel: "SMS" })), 200, R.hardLockRemovedResponse, `notif-${tier}-unlock`)
       // Gỡ lần hai (không còn khoá) vẫn 200.
       expect((await unlock(send(`/${tier}-hard-locks`, "DELETE", { eventKey, channel: "SMS" }))).status).toBe(200)

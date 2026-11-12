@@ -127,6 +127,7 @@ export type PlatformOrganizationDetail = PlatformOrganizationSummary & {
   branchCount: number
   workspaceKinds: string[]
   lifecycleStatus: string; offboardingUntil: Date | null // ADR-016 D-S5
+  isolationTier: string // ADR-016 D-S2
   unlockedLocales?: string[] | undefined
   pendingLanguageUnlock?: {
     requested_locales: string[]
@@ -165,7 +166,7 @@ export async function getAnyOrganization(
     memberCount: org._count.memberships,
     branchCount: org._count.branches,
     workspaceKinds: org.workspaces.map((w) => w.kind),
-    lifecycleStatus: org.lifecycle_status, offboardingUntil: org.offboarding_until,
+    lifecycleStatus: org.lifecycle_status, offboardingUntil: org.offboarding_until, isolationTier: org.isolation_tier,
     unlockedLocales: Array.isArray(settings.unlocked_locales) ? (settings.unlocked_locales as string[]) : ["vi"],
     pendingLanguageUnlock:
       (settings.pending_language_unlock as

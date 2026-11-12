@@ -6,9 +6,9 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 
 | Mục | Giữ | Bị chặn hoặc bỏ |
 |---|---:|---:|
-| Trang | 90 | 26 |
-| API | 482 | 61 |
-| Tệp trong `src/` | 3559 | 659 |
+| Trang | 90 | 27 |
+| API | 487 | 61 |
+| Tệp trong `src/` | 3580 | 673 |
 
 ## Code trong phạm vi chạm vùng không giao
 
@@ -30,6 +30,7 @@ Sinh bằng `npm run release:routes` từ `src/lib/delivery/gd1.manifest.json` �
 | `src/components/dashboard/customer-service-workspace.tsx` | `/hoi-thoai` | Ẩn khi không thuộc giai đoạn |
 | `src/components/dashboard/store-growth-center.tsx` | `/creative-studio` | Ẩn khi không thuộc giai đoạn |
 | `src/components/dashboard/store-growth-center.tsx` | `/market-intelligence` | Ẩn khi không thuộc giai đoạn |
+| `src/components/integrations/api-tokens-panel.tsx` | `/tich-hop/tai-lieu-api` | Ẩn khi không thuộc giai đoạn |
 | `src/components/organization/ai-channels-settings-tab.tsx` | `/ket-noi` | Ẩn khi không thuộc giai đoạn |
 | `src/components/products/one-image-kit-dialog.tsx` | `/in-an` | Ẩn khi không thuộc giai đoạn |
 
@@ -44,14 +45,14 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `audio-studio` | 12/17 |
 | `catalog-studio` | 9/10 |
 | `chain-partnership` | 13/14 |
-| `chat-assistant` | 50/53 |
+| `chat-assistant` | 51/54 |
 | `content-engine` | 42/44 |
 | `coordinator` | 57/76 |
 | `creative-production` | 17/68 |
-| `crm` | 33/34 |
+| `crm` | 39/40 |
 | `field-platform` | 41/46 |
 | `greeting-card` | 282/286 |
-| `integration` | 20/23 |
+| `integration` | 22/26 |
 | `integration-hub` | 34/35 |
 | `jobs` | 19/20 |
 | `journey` | 6/17 |
@@ -59,8 +60,8 @@ Tệp còn lại / tổng số tệp của mô-đun. Phần bị bỏ không đ�
 | `market-intelligence` | 16/30 |
 | `media` | 11/21 |
 | `notification` | 46/47 |
-| `organization` | 101/106 |
-| `platform` | 55/62 |
+| `organization` | 102/111 |
+| `platform` | 56/64 |
 | `print` | 6/8 |
 | `product-photo-studio` | 6/7 |
 | `products` | 69/73 |

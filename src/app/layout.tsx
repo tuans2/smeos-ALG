@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Be_Vietnam_Pro } from "next/font/google"
+import { connection } from "next/server"
 import "./globals.css"
 import { publicAppUrl } from "@/lib/public-url"
 
@@ -20,11 +21,14 @@ export const metadata: Metadata = {
   description: "Nền tảng quản trị kinh doanh đa ngành cho SME",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // CSP theo nonce (ARC-022 A6): Next.js chỉ gắn nonce vào script khi render theo request — trang dựng sẵn lúc build
+  // không có nonce và bị CSP chặn. Chờ request ở đây để mọi trang render động (trước đó chỉ 4 trang là tĩnh).
+  await connection()
   return (
     <html lang="vi" data-theme="moc-lan" data-density="comfortable">
       <body className={`min-h-dvh bg-bg text-text antialiased ${beVietnamPro.variable}`}>

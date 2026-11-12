@@ -8,6 +8,7 @@
  */
 import { pingRedis } from "@/core/cache/redis-client"
 import { isAuthorizedCronRequest } from "@/core/http/cron-auth"
+import { AppError } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { log } from "@/core/observability/log"
 import { checkSystemHealth } from "@/core/observability/system-health"
@@ -17,7 +18,7 @@ import { countJobBacklog, countLiveWorkers } from "@/modules/jobs/infra/job-heal
 
 export const GET = handle(async (request) => {
   if (!isAuthorizedCronRequest(request)) {
-    return jsonResponse({ error: "Unauthorized" }, { status: 401 })
+    throw new AppError("UNAUTHENTICATED", "Không được phép")
   }
   const now = new Date()
   const health = await checkSystemHealth(

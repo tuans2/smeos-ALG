@@ -10,8 +10,8 @@ import { createTenant, readJson, withSession, type Tenant } from "../helpers/fix
 const BASE = "http://localhost/api/v1/orders"
 const body = JSON.stringify({ items: [{ description: "Bó hồng", quantity: 1, unitPriceVnd: 500_000 }] })
 
-function post(token: string, key?: string) {
-  return createOrder(withSession(BASE, token, { method: "POST", body, headers: key ? { "Idempotency-Key": key } : {} }))
+function post(token: string, key?: string, payload: string = body) {
+  return createOrder(withSession(BASE, token, { method: "POST", body: payload, headers: key ? { "Idempotency-Key": key } : {} }))
 }
 async function orderId(res: Response) {
   expect(res.status).toBe(201)
@@ -41,6 +41,23 @@ describe("chống bấm đúp POST /orders", () => {
     expect(again.headers.get("idempotent-replayed")).toBe("true")
     expect(await orderId(again)).toBe(id)
     expect(await count(a)).toBe(1)
+  })
+
+  it("cùng khoá mà thân khác (PO 11/11/2026) → 422 IDEMPOTENCY_KEY_REUSED, không tạo đơn; thân giống (khoá xáo trộn) vẫn trả đơn cũ", async () => {
+    const id = await orderId(await post(a.token, "soan-don-2"))
+    const reordered = JSON.stringify({ items: [{ unitPriceVnd: 500_000, quantity: 1, description: "Bó hồng" }] })
+    expect(await orderId(await post(a.token, "soan-don-2", reordered))).toBe(id)
+    const changed = await post(a.token, "soan-don-2", JSON.stringify({ items: [{ description: "Bó cúc", quantity: 2, unitPriceVnd: 300_000 }] }))
+    expect(changed.status).toBe(422)
+    expect((await readJson(changed)).error).toMatchObject({ code: "IDEMPOTENCY_KEY_REUSED", details: { order_id: id } })
+    expect(await count(a)).toBe(1)
+  })
+
+  it("đơn cũ có khoá nhưng chưa có băm (trước migration) → gửi lại vẫn trả đơn cũ", async () => {
+    const id = await orderId(await post(a.token, "don-cu"))
+    await prisma.orders.update({ where: { id }, data: { idempotency_body_hash: null } })
+    const other = JSON.stringify({ items: [{ description: "Bó cúc", quantity: 2, unitPriceVnd: 300_000 }] })
+    expect(await orderId(await post(a.token, "don-cu", other))).toBe(id)
   })
 
   it("hai request cùng khoá gửi đồng thời → một đơn", async () => {

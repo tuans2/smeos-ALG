@@ -1,74 +1,132 @@
-# Kiểm toán mức hoàn thiện tính năng — 06/11/2026
+# Kiểm toán mức hoàn thiện tính năng — lần 2, 12/11/2026
 
-> Trạng thái: `SNAPSHOT` (ảnh chụp tại `main` @ `d8dd00d`). Không thay `docs/kien-truc/TRANG_THAI.md` — đó vẫn là nguồn sự thật về hiện trạng.
-> Phương pháp: đọc mã thật, không tin checklist hay tài liệu. Mỗi chức năng được dò ở 5 tầng (UI · API · Backend · DB · Test), đối chiếu cờ khoá production (`src/lib/feature-lock.ts`) và Acceptance Criteria của bộ nghiệm thu.
+> Trạng thái: `SNAPSHOT`, chụp tại `main` @ `631c4921` (12/11/2026). Lần 1 chụp tại `d8dd00d` (06/11/2026); hai lần cách nhau 398 commit. Tài liệu này không thay `docs/kien-truc/TRANG_THAI.md` — đó vẫn là nguồn sự thật về hiện trạng.
+> Phương pháp: đọc mã thật, không tin checklist hay tài liệu. Mỗi chức năng được dò ở 5 tầng (UI · API · Backend · DB · Test), đối chiếu cờ khoá production (`src/lib/feature-lock.ts`), danh sách giai đoạn bàn giao (`src/lib/delivery/gd1.manifest.json`, `gd1.routes.json`) và Acceptance Criteria của bộ nghiệm thu.
 
 | Tệp | Nội dung |
 |---|---|
-| [`01-ma-tran-123-chuc-nang.md`](01-ma-tran-123-chuc-nang.md) | Feature Completeness Matrix — 123 chức năng nghiệm thu, bằng chứng từng tầng |
-| [`02-ma-tran-tuyen-va-module.md`](02-ma-tran-tuyen-va-module.md) | 114 trang giao diện (khoá/mở, có dữ liệu thật hay không) và 50 module backend |
+| [`01-ma-tran-123-chuc-nang.md`](01-ma-tran-123-chuc-nang.md) | Feature Completeness Matrix: 123 chức năng nghiệm thu, bằng chứng từng tầng, trạng thái trên smeOS production và trên bản giao GD1 |
+| [`02-ma-tran-tuyen-va-module.md`](02-ma-tran-tuyen-va-module.md) | 114 trang giao diện (khoá/mở trên smeOS production, có/không trong bản giao GD1) và 55 module backend |
 
 ## 1. Feature Inventory dùng để đối chiếu
 
-- **Danh mục:** `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`, sheet "Phủ 123 chức năng" — 10 nhóm, 123 mã (1.1 … 10.8).
-- **Acceptance Criteria:** sheet "Kịch bản" — 141 bước (luồng A–J, S), cột "Kết quả mong đợi", gắn mã chức năng.
-- **Lưu ý quan trọng:** cột "Kết quả", "Người chạy", "Ngày" của cả 140 bước đều **trống**. Chưa có lượt nghiệm thu thủ công nào được ghi lại, nên mọi kết luận ở đây là đối chiếu tĩnh với mã và kết quả bộ test tự động — không thay được lượt chạy kịch bản trên môi trường thật.
+- **Danh mục:** `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`, sheet "Phủ 123 chức năng": 10 nhóm, 123 mã (1.1 … 10.8).
+- **Acceptance Criteria:** sheet "Kịch bản", 141 bước (luồng A–J, S); cột "Kết quả mong đợi" gắn với mã chức năng.
+- **Bản đồ trang/API của từng mã:** `src/lib/delivery/gd1.manifest.json` (có từ 10/11/2026). Mọi trang và API manifest gắn cho 123 mã đều tồn tại trong mã nguồn và nằm trong phạm vi GD1.
+- **Lưu ý quan trọng:** cột "Kết quả", "Người chạy", "Ngày" của các bước kịch bản vẫn **trống**. Chưa có lượt nghiệm thu thủ công nào được ghi lại. Mọi kết luận ở đây là đối chiếu tĩnh với mã và với kết quả bộ test tự động, không thay được một lượt chạy kịch bản trên môi trường thật.
 
 ## 2. Kết quả tổng hợp
 
-| Trạng thái | Nghĩa | Số chức năng |
-|---|---|---:|
-| ✅ Hoàn thiện | Đủ UI + API + backend + DB (khi cần) + test; tuyến mở trên production | **105** |
-| 🔒 Có mã, khoá production | Mã đủ tầng nhưng màn hình của AC bị khoá "Sắp ra mắt" trên production | **13** |
-| 🟡 Một phần | Thiếu một mắt xích, hoặc AC chỉ đạt một phần | **5** |
-| 🎨 Chỉ có UI | Có giao diện, không có logic | **0** |
-| ❌ Chưa triển khai | Không có route, bảng hay màn hình | **0** |
-| 🐞 Lỗi | Chức năng trong danh mục chạy sai | **0** |
+Có hai đích chạy, nên ma trận có hai cột trạng thái:
 
-Cả 123 chức năng đều có mã thật. Phần chưa xong không nằm ở chỗ "chưa làm" mà ở **khoá production (13)** và **kênh/nhắc việc chưa nối (5)**. Các lỗi tìm thấy (mục 4) đều nằm **ngoài** 123 mã — ở những màn hình danh mục nghiệm thu không phủ tới.
+- **smeOS production** đặt `NEXT_PUBLIC_APP_ENV=production`, nên khoá "Sắp ra mắt" của `feature-lock.ts` có hiệu lực.
+- **Bản giao GD1** (bản cắt giao ALG) bật sẵn chế độ giai đoạn `gd1` và không đặt biến trên (`releases/gd1/overlay/render.yaml`), nên các chức năng bị khoá ở smeOS đều mở.
 
-**🔒 Khoá production (13):** 1.17 Nhật ký thao tác · 3.1 Quy tắc giá (`/gia`) · 4.11 Lịch sử đơn cùng khách (`/khach-hang`) · 4.12 Bảng điều phối rủi ro (`/dieu-phoi`) · 6.1 6.2 6.3 6.5 6.6 Báo cáo theo kỳ (`/bao-cao`) · 6.9 10.1 Sổ quỹ & credit (`/muc-dung`) · 9.6 Tác vụ nền (`/job`) · 9.7 Chính sách AI (`/cai-dat-ai`).
+| Trạng thái | Nghĩa | smeOS production (lần 1 → lần 2) | Bản giao GD1 |
+|---|---|---:|---:|
+| ✅ Hoàn thiện | Đủ UI + API + backend + DB (khi cần) + test; màn hình của AC mở | 105 → **108** | **123** |
+| 🔒 Có mã, khoá production | Mã đủ tầng, nhưng màn hình của AC bị khoá "Sắp ra mắt" | 13 → **15** | 0 |
+| 🟡 Một phần | Thiếu một mắt xích, hoặc AC chỉ đạt một phần / lệch quyết định đã chốt | 5 → **0** | **0** |
+| 🎨 Chỉ có UI | Có giao diện, không có logic | 0 → 0 | 0 |
+| ❌ Chưa triển khai | Không có route, bảng hay màn hình | 0 → 0 | 0 |
+| 🐞 Lỗi | Chức năng trong danh mục chạy sai | 0 → 0 | 0 |
 
-**🟡 Một phần (5):**
+Cả 123 chức năng đều có mã thật. Phần còn chưa xong:
+- **Trên smeOS production:** chỉ còn khoá "Sắp ra mắt" (15 chức năng).
+- **Trên bản giao GD1:** cả 123 chức năng đạt về mã. Hai câu AC từng lệch quyết định đã chốt (I-01 của 9.1, I-09 của 9.14) đã được sửa trong checklist ngày 12/11/2026 (mục 2.2).
 
-| Mã | Thiếu gì |
-|---|---|
-| 4.30 | Kênh báo nhân viên SMS, Zalo, Web Push là stub trả `NOT_CONFIGURED` (`notification/infra/channel-adapters/`); chỉ trong ứng dụng, email, Telegram chạy thật |
-| 4.32 | Mốc nhắc M1/M2 trước giờ giao chỉ hiện ở thanh nhắc trong `/dieu-phoi` (người dùng tự mở trang mới thấy, không có tin đẩy); trang này khoá production |
-| 8.1 | Trình dựng landing page (`/landing-page`) chạy, nhưng lối vào theo AC ("Công cụ → Tạo catalog") khoá production |
-| 9.1 | Khung trao đổi trên đơn chạy; màn "Trao đổi nội bộ" `/tin-nhan` khoá production |
-| 9.14 | JWT liên-app 15 phút có ở core; ứng dụng liên kết chưa sẵn: SocialFlow chưa nối core (nợ #45), `/lich-dang` và `/ket-noi` không chạy trên production |
+**🔒 Khoá trên smeOS production (15), mở trên bản giao GD1:**
+- 1.17 Nhật ký thao tác
+- 3.1 Quy tắc giá (`/gia`)
+- 4.11 Lịch sử đơn cùng khách (`/khach-hang`)
+- 4.12 Bảng điều phối rủi ro (`/dieu-phoi`)
+- 6.1, 6.2, 6.3, 6.5, 6.6 Báo cáo theo kỳ (`/bao-cao`)
+- 6.9 và 10.1 Sổ quỹ & credit (`/muc-dung`)
+- 8.1 Landing page (lối vào `/catalog`)
+- 9.1 Trao đổi nội bộ (`/tin-nhan`)
+- 9.6 Tác vụ nền (`/job`)
+- 9.7 Chính sách AI (`/cai-dat-ai`)
+
+### 2.1 Thay đổi so với lần 1 (06/11/2026)
+
+| Mã | Lần 1 | Lần 2 | Vì sao |
+|---|---|---|---|
+| 4.30 | 🟡 | ✅ | Tầng Mẹ đăng ký nhà cung cấp SMS (eSMS) / Zalo (ZNS) một lần (`PUT /api/v1/platform/notification/providers`, khối "Kênh liên lạc" ở `/van-hanh/thong-bao`); adapter gửi thật, thiếu cấu hình thì `NOT_CONFIGURED`. Web Push tự viết theo RFC 8291/VAPID (`push_subscriptions`). PR #30, #32 |
+| 4.32 | 🟡 | ✅ | Mốc M1/M2 được đẩy thành tin (sự kiện `DELIVERY_REMINDER_DUE`) trong cron 5 phút `chain-dispatch-sweep`, mỗi mốc một lần. Đổi mốc ở Cài đặt tiệm (mở). PR #30 |
+| 8.1 | 🟡 | 🔒 | Đổi cách xếp loại, mã không đổi: mã đủ tầng, chỉ lối vào AC (`/catalog`, nay là "Bộ sưu tập chung") bị khoá — cùng loại với 13 chức năng khoá khác. Bản giao GD1 mở |
+| 9.1 | 🟡 | 🔒 | Trao đổi nội bộ hoàn thiện, có test (PR #18); `/tin-nhan` nay có guard URL. AC I-01 đã sửa cho khớp quyết định thu hồi tin (mục 2.2). Còn lại chỉ là khoá "Sắp ra mắt"; bản giao GD1 mở |
+| 9.14 | 🟡 | ✅ | D-46: đăng bài chạy trong smeOS (module `social-publishing`). AC I-09 đã sửa sang Công cụ → Tạo nội dung → Đăng tự động (mục 2.2) |
+
+Không có chức năng ✅ nào ở lần 1 bị hạ bậc. Toàn bộ đường dẫn bằng chứng của lần 1 vẫn tồn tại. Từ lần 1 đến nay không có tệp nào dưới `src/app` bị xoá.
+
+### 2.2 Câu AC đã sửa trong checklist (12/11/2026)
+
+`docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx`, sheet "Kịch bản". Chỉ sửa chữ trong ô; mã bước, mã chức năng, cột "Khoá mã", công thức và định dạng giữ nguyên.
+
+| Bước | Cột | Trước | Sau |
+|---|---|---|---|
+| I-01 (9.1) | Thao tác | Nhắn qua lại trên 1 đơn; thử xoá tin | Nhắn qua lại trên 1 đơn, thử xoá tin; ở Trao đổi nội bộ, người gửi thu hồi 1 tin của mình, người kia thử thu hồi tin đó |
+| I-01 (9.1) | Kết quả mong đợi | Tin hiện cho người kia, đánh dấu đã đọc; không có cách xoá tin | Tin hiện cho người kia, đánh dấu đã đọc; khung trao đổi của đơn không có cách xoá tin. Ở Trao đổi nội bộ chỉ người gửi thu hồi được tin của chính mình, trong 24 giờ kể từ lúc gửi; tin hiện “Tin nhắn đã được thu hồi” với mọi người; người kia không có nút thu hồi |
+| I-09 (9.14) | Vai | Nhân viên | Điều hành (vai có quyền đăng bài `J5` và có sẵn tài khoản ở trang Chuẩn bị) |
+| I-09 (9.14) | Mở ở | Ứng dụng liên kết (SSO) | Công cụ → Tạo nội dung → Đăng tự động |
+| I-09 (9.14) | Thao tác | Từ smeOS mở ứng dụng liên kết | Đang đăng nhập smeOS, mở bước Đăng tự động (kết nối kênh, chọn bài, lên lịch) |
+| I-09 (9.14) | Kết quả mong đợi | Vào thẳng không đăng nhập lại; phiên liên kết hết hạn sau 15 phút | Vào thẳng, không phải đăng nhập lại; đăng bài chạy ngay trong smeOS, không mở ứng dụng ngoài. Thời hạn 15 phút của phiên liên kết cho ứng dụng ngoài được kiểm bằng test tự động, không chạy tay |
+
+**Đổi tên "Thẻ chào" → "Bộ sưu tập riêng" (N-03):** 23 ô ở sheet "Kịch bản" và 1 ô ở "Chuẩn bị", gồm:
+- tiêu đề và tên luồng D;
+- cột "Mở ở" của A–H (`Thẻ chào → …`, `Link Thẻ Chào …`);
+- A-08 (tên menu), B-11, G-06 (tên sheet trong file Excel xuất, theo `orders/use-cases/export-orders.ts:241`), G-07 (nhãn nguồn đơn, theo `orders/domain/order-source.ts:47`), J-11.
+
+Ô D-01 "Thẻ chào sản phẩm → Quản lý → Bộ sưu tập" đổi thành "Bộ sưu tập riêng → Quản lý → Bộ sưu tập", vì "Thẻ chào sản phẩm" giờ là bước 2 của Tạo nội dung. Tên tab trong trang (Gửi nhanh, Quản lý, Theo dõi đơn, Bán hàng, Điều hành, Điều phối, Hộp việc) không đổi. Tên chức năng và tên nhóm ở "Phủ 123 chức năng" không sửa.
+
+Căn cứ:
+- I-01: quyết định PO 09/11/2026 (`docs/plan/hoan-thien-chat-noi-bo.md` §10). Hành vi trong mã: `internal-chat/domain/message-change-policy.ts`, `components/internal-chat/message-actions.tsx`, `message-item.tsx`.
+- I-09: quyết định D-46 và `acceptanceNote` của mục 9.14 trong `gd1.manifest.json`. Ô "Tạo nội dung" nằm ở `components/dashboard/toolkit-module-detail.tsx`; quyền `J5` ở `core/rbac/capability-catalog.ts:202`.
 
 ## 3. Cổng kiểm tra đã chạy (máy kiểm toán, không phải CI)
 
 | Cổng | Kết quả |
 |---|---|
-| `npm run typecheck` | ✅ 0 lỗi (cần `NODE_OPTIONS=--max-old-space-size=6144`; heap mặc định hết bộ nhớ trên máy kiểm toán) |
-| `npm test` (unit) | ✅ 4.138/4.138 ca, 687 tệp — khi có CSDL `floraos` đã migrate + seed như CI (không có CSDL thì 27 ca chạm DB hỏng — lỗi môi trường) |
-| `npm run test:tenant` | ✅ 876/876 ca, 193 tệp (CSDL cục bộ `floraos_test`, `prisma db push` như CI) |
-| `npm run test:platform` | ✅ 43/43 ca, 14 tệp |
-| Lint, `lint:ux`, build, E2E | Không chạy — kiểm toán không đổi mã |
+| `npm run typecheck` | ✅ 0 lỗi (`NODE_OPTIONS=--max-old-space-size=6144`) |
+| `npm test` (unit) | ✅ 4.954/4.954 ca, 816 tệp. CSDL `floraos` dựng như CI: `db:deploy` + `db:seed` |
+| `npm run test:tenant` | ✅ 1.244/1.244 ca, 289 tệp (CSDL cục bộ `floraos_test`, `prisma db push` như CI) |
+| `npm run test:platform` | ✅ 64/64 ca, 19 tệp |
+| `tests/unit/release/gd1-manifest.test.ts` (đọc checklist xlsx sau khi sửa I-01, I-09) | ✅ 7/7 ca (cũng nằm trong `npm test`) |
+| `npm run check:docs` | ✅ "Tài liệu khớp mã" |
+| Lint, `lint:ux`, build, E2E | Không chạy — lần kiểm toán này không đổi mã |
 
-Môi trường: `npm ci` bị chặn tải `xlsx` từ `cdn.sheetjs.com` (chính sách mạng của máy kiểm toán); test chạy với `xlsx@0.18.5` từ npm, đã khôi phục `package.json`/`package-lock.json`, không commit.
+Môi trường: CSDL cục bộ Postgres 16. `floraos` dựng bằng `db:deploy` + `db:seed`; `floraos_test` dựng bằng `prisma db push`, đúng như `.github/workflows/ci.yml`. Lần này `npm ci` tải được `xlsx` từ `cdn.sheetjs.com`, nên không phải thay gói như lần 1.
 
 ## 4. Phát hiện ngoài danh mục 123 chức năng
 
+### 4.1 Đối chiếu lại phát hiện lần 1
+
+| # | Mức | Phát hiện | Trạng thái 12/11 | Bằng chứng |
+|---|---|---|---|---|
+| L-01 | 🐞 | Mục menu "Trợ lý tối ưu" trỏ tới trang không tồn tại | ✅ Đã sửa 07/11 (`ebd7a6ea`, UJ-05) | Đã gỡ khỏi menu; `tests/unit/architecture/nav-href-exists.test.ts`. Còn sót ánh xạ chết `/cong-cu/toi-uu-he-thong` trong `nav-matrix.ts:78`, `tool-route-entitlement.ts:27` (không hiện trên màn hình) |
+| L-02 | 🐞 | Mục Console "Catalog toàn hệ thống" trỏ `/van-hanh/san-pham` không tồn tại | ✅ Đã sửa 07/11 (`ebd7a6ea`) | Không còn tham chiếu trong `src/` |
+| L-03 | ⚠️ | Tuyến khoá production chỉ bị làm mờ trên sidebar, không có `FeatureLockedGuard` | 🟡 Còn **10** tuyến (lần 1: 11) | `/tin-nhan` đã có guard. Còn: `/audit`, `/bao-cao`, `/dieu-phoi` (+`/doi-tac`), `/duyet`, `/job` (+`/[id]`), `/muc-dung`, `/so-lieu`, `/noi-bo/ket-noi`. Chỉ ảnh hưởng smeOS production; bản giao GD1 không khoá. PO vẫn cần chốt |
+| L-04 | 🐞 | `/cham-soc` nhóm "Tất cả khách" gọi `GET /api/v1/customers` không tồn tại, lỗi bị nuốt | ❌ Còn | `src/components/marketing-center/care/care-workflow.tsx:119`. `/cham-soc` không thuộc bản giao GD1 |
+| L-05 | 🐞 | Lưu "công cụ mở cho đối tác" gọi route không tồn tại | ✅ Đã sửa 11/11 (`36abda77`) | Gọi `PATCH /api/v1/coordinator/partners/:id/tools`; test `src/components/organization/__tests__/partner-tools-api.test.ts` |
+| L-06 | 🐞 nhẹ | Cờ đồng ý của khách gán cứng `false` (`// TODO`) | ❌ Còn | `src/components/dashboard/FeaturePicker.tsx:100` |
+| L-07 | ℹ️ | `DirectCrmNotificationConnector` trả `true` mà không làm gì | ❌ Còn (mã chết, chỉ được `connectors/index.ts` xuất lại) | `src/modules/coordinator/connectors/crm-notification-connector.ts:22` |
+| L-08 | ℹ️ | Phần AI còn chạy bằng luật/stub | ❌ Còn | `creative-production/adapters/narrative-ai-adapter.ts` (stub); `market-intelligence/adapters/google-trends-adapter.ts:221` (related topics trả rỗng); `gemini`/`replicate` vẫn ngoài `OPTIMIZE_ENHANCER_PROVIDERS`. Các tuyến này đều khoá hoặc không giao |
+| L-09 | ℹ️ | Trường do Console tự tạo chưa nối vào 17 mẫu/form | ❌ Còn | `src/app/(platform)/van-hanh/truong-du-lieu/_components/truong-tu-tao-tab.tsx:5` |
+| L-10 | ℹ️ | Chặn giá dưới sàn chỉ có hiệu lực khi sản phẩm có công thức + giá vốn đầy đủ | 🟡 Có bản sửa, **chưa merge** | `src/modules/costing/use-cases/price-floor-guard.ts:27,36-38` trên `main`. Bản sửa `f0232f7c` nằm ở nhánh `claude/bold-meitner-nk07bd`. Trần chiết khấu mọi kênh chờ PO (BL-28) |
+
+### 4.2 Phát hiện mới
+
 | # | Mức | Phát hiện | Vị trí | Hệ quả |
 |---|---|---|---|---|
-| L-01 | 🐞 | Mục menu "Trợ lý tối ưu" trỏ tới trang chưa từng tồn tại | `src/components/layout/nav/nav-store-entries.ts:89`, `src/modules/toolkit/domain/toolkit-catalog.ts:382` | Người có quyền `L6` bấm vào ra 404 |
-| L-02 | 🐞 | Mục Console "Catalog toàn hệ thống" trỏ tới trang không tồn tại | `src/components/layout/nav/nav-mother.ts:87` (`/van-hanh/san-pham`) | Người vận hành bấm vào ra 404 |
-| L-03 | ⚠️ | 11 tuyến khoá production chỉ bị làm mờ trên sidebar, không có `FeatureLockedGuard`: `/audit`, `/bao-cao`, `/dieu-phoi` (+`/doi-tac`), `/duyet`, `/job` (+`/[id]`), `/muc-dung`, `/so-lieu`, `/tin-nhan`, `/noi-bo/ket-noi` | so với `src/components/layout/feature-locked-guard.tsx` ("Chặn cả khi người dùng gõ thẳng URL") | Gõ thẳng URL trên production vẫn vào đủ chức năng. Cần PO chốt: thêm guard, hay đây là cố ý (vd. để deep link từ hộp việc hoạt động) |
-| L-04 | 🐞 | Chăm sóc khách: nhóm "Tất cả khách" gọi `GET /api/v1/customers` — route không tồn tại; lỗi bị nuốt (`catch {}`) | `src/components/marketing-center/care/care-workflow.tsx:119` | Danh sách khách ở `/cham-soc` luôn rỗng, không báo lỗi |
-| L-05 | 🐞 | Lưu "công cụ mở cho đối tác" gọi `PUT /api/v1/network/partners/:id/unlocked-tools` — route không tồn tại | `src/components/organization/partner-tool-matrix-modal.tsx:68` (dùng ở `/dieu-phoi/doi-tac`) | Nút Lưu luôn báo lỗi |
-| L-06 | 🐞 nhẹ | Cờ đồng ý của khách gán cứng `false` (`// TODO`) | `src/components/dashboard/FeaturePicker.tsx:100` | Ở `/san-pham/[id]/tinh-nang`, "Tin nhắn nhắc mua lại (AI)" luôn bị chặn |
-| L-07 | ℹ️ | Mã chết trả "thành công" giả: `DirectCrmNotificationConnector` trả `true` mà không làm gì; không nơi nào gọi | `src/modules/coordinator/connectors/crm-notification-connector.ts` | Không ảnh hưởng hiện tại; dễ bị nối nhầm về sau |
-| L-08 | ℹ️ | Phần AI còn chạy bằng luật/stub: `narrative-ai-adapter.ts` (Creative Studio); related queries Google Trends chưa nối; bộ tăng cường ảnh gemini/replicate ở worker là stub (đã gỡ khỏi UI) | `src/modules/creative-production/adapters/narrative-ai-adapter.ts`, `src/modules/market-intelligence/adapters/google-trends-adapter.ts:221`, `src/modules/media/domain/optimization-rules.ts:23` | Các tuyến này đều đang khoá production |
-| L-09 | ℹ️ | Trường dữ liệu do Console tự tạo chưa nối vào 17 mẫu/form | `src/app/(platform)/van-hanh/truong-du-lieu/_components/truong-tu-tao-tab.tsx:5` | Trường cấp cửa hàng (1.9) vẫn chạy |
-| L-10 | ℹ️ | Chặn giá dưới sàn chỉ có hiệu lực khi sản phẩm có công thức và giá vốn đầy đủ | `src/modules/costing/use-cases/price-floor-guard.ts:16` | Sản phẩm thiếu dữ liệu giá vốn không có sàn (AC C-03 chỉ đạt khi đã khai giá vốn) |
+| N-01 | ⚠️ AC | AC I-01 (9.1) "không có cách xoá tin" ngược quyết định PO 09/11/2026 cho thu hồi tin trong 24 giờ | `internal-chat/domain/message-change-policy.ts`, `api/v1/internal-chat/messages/[id]/route.ts:32` | ✅ Đã sửa câu AC 12/11 (mục 2.2) |
+| N-02 | ⚠️ AC | AC I-09 (9.14) vẫn ghi "Từ smeOS mở ứng dụng liên kết", trong khi D-46 đã bỏ ứng dụng liên kết | `gd1.manifest.json` mục 9.14 `acceptanceNote`; `docs/plan/BANGIAO_GD1_123_CHUC_NANG.md` Bước 4 | ✅ Đã sửa câu AC 12/11 (mục 2.2). Cần báo ALG bản checklist mới |
+| N-03 | ℹ️ AC | Giao diện đổi tên "Thẻ chào" → **"Bộ sưu tập riêng"** và "Catalog" → **"Bộ sưu tập chung"** (PO 09/11/2026, D-66). 19 bước kịch bản vẫn ghi "Thẻ chào" ở cột "Mở ở"/"Thao tác"; I-10 ghi "Tạo catalog" | `src/modules/toolkit/domain/collection-names.ts` | 🟡 Phần "Thẻ chào" đã sửa 12/11: 23 ô ở sheet "Kịch bản" và 1 ô ở "Chuẩn bị" đổi sang "Bộ sưu tập riêng" (mục 2.2). Tên chức năng và tên nhóm ở "Phủ 123 chức năng"/"Tổng hợp" giữ nguyên vì là danh mục đã thống nhất với ALG. I-10 "Tạo catalog" chưa sửa |
+| N-04 | ℹ️ | Ba phát hiện nghiệp vụ chạm tới AC của danh mục vẫn chờ PO: BL-28 (trần chiết khấu mọi kênh, chạm 3.4/3.7), BL-29 (nhắc thu quá hạn chỉ một lần, chạm 4.26), BL-30 ("Giá trị đơn" gồm đơn Nháp, chạm 6.2). BL-35 (bộ máy duyệt thay đổi cấu hình trường không được dùng) cũng chờ PO | `docs/audit/business-logic-audit/BUSINESS_LOGIC_AUDIT_2026-11-11.md` | Các bước C-03, C-11, F-09, H-02 vẫn đạt với dữ liệu chuẩn bị trong kịch bản; rủi ro nằm ở trường hợp biên |
 
 ## 5. Phạm vi chưa xác minh
 
-- Không chạy kịch bản nghiệm thu thủ công, không gọi nhà cung cấp thật (OpenAI, Zalo ZNS, eSMS, SePay, Telegram); các chức năng phụ thuộc chúng (4.16, 4.24, 4.28, 4.31, 7.1…) chỉ được xác nhận ở mức mã + test có giả lập.
-- Không chạy build, lint, `lint:ux`, E2E.
-- Các ngưỡng thời gian trong AC (làm mới ≤ 15 giây, Kanban trong 30 giây, duyệt ảnh 10 phút) được đối chiếu bằng hằng số trong mã, không đo thực tế.
+- Không chạy kịch bản nghiệm thu thủ công, không gọi nhà cung cấp thật (OpenAI, Zalo ZNS, eSMS, SePay, Telegram, Facebook). Các chức năng phụ thuộc chúng (4.16, 4.24, 4.28, 4.30 kênh SMS/Zalo, 4.31, 7.1…) chỉ được xác nhận ở mức mã + test có giả lập.
+- Không dựng bản cắt GD1 (`npm run release:cut`), không chạy build, lint, `lint:ux`, E2E. Cột "Bản giao GD1" suy từ `gd1.routes.json`, `gd1.manifest.json` và lớp phủ `releases/gd1/overlay/`. Lần dựng bản cắt gần nhất được ghi ở `docs/plan/BANGIAO_GD1_123_CHUC_NANG.md` (ứng viên 2, `4d1fb65d`).
+- Ngưỡng thời gian trong AC (làm mới ≤ 15 giây, Kanban trong 30 giây, duyệt ảnh 10 phút, nhắc trước 60/30 phút) được đối chiếu bằng hằng số trong mã, không đo thực tế.
+- Các nhánh chưa merge (`claude/bold-meitner-nk07bd`, `claude/fervent-pascal-ilhcgb`, `claude/zealous-mayer-gkuglw`, `claude/youthful-bardeen-rni9ck`) không nằm trong lần rà này. Riêng `claude/fervent-pascal-ilhcgb` đổi tên thương hiệu sang ALG (đổi chữ trên màn hình, tài liệu và một tệp `src/`), nên nếu merge thì cần rà lại câu chữ trong AC.
 - Repo `LocalBudd`, `SocialFlow` không nằm trong phạm vi.

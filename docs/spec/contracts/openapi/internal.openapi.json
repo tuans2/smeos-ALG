@@ -1354,7 +1354,7 @@
       "get": {
         "operationId": "listAiReviewQueue",
         "summary": "Hàng chờ soát đầu ra AI",
-        "description": "Lời gọi `NEEDS_REVIEW`/`ESCALATED`, mặc định 100, tối đa 5.000. `limit` không phải số → 500 (audit API §29).",
+        "description": "Lời gọi `NEEDS_REVIEW`/`ESCALATED`. `limit` 1–5.000, mặc định 100; không phải số nguyên hoặc ngoài khoảng → 400.",
         "tags": [
           "Quản trị AI"
         ],
@@ -1494,6 +1494,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
           },
           "401": {
             "$ref": "#/components/responses/Error401"
@@ -11078,7 +11081,7 @@
       "put": {
         "operationId": "putBrandProfile",
         "summary": "Lưu hồ sơ thương hiệu",
-        "description": "`slogan` không gửi thì giữ giá trị đang lưu. `logo_asset_id` không được kiểm: mã lạ hoặc ảnh của tổ chức khác vẫn lưu (khi đó `logo_url` = `null`, không lộ ảnh) và hồ sơ bị tính là đã có logo (audit API §24).",
+        "description": "`slogan` không gửi thì giữ giá trị đang lưu. `logo_asset_id` mới (khác giá trị đang lưu, không phải đường dẫn) phải là ảnh trong kho của tổ chức — mã lạ hoặc ảnh của tổ chức khác → 404, không lưu.",
         "tags": [
           "Hồ sơ cửa hàng"
         ],
@@ -11449,6 +11452,9 @@
           },
           "403": {
             "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
           },
           "409": {
             "$ref": "#/components/responses/Error409"
@@ -14218,7 +14224,7 @@
       "put": {
         "operationId": "publishChainCollectionProfile",
         "summary": "Phát hành phiên bản hồ sơ thu thập mới",
-        "description": "Mỗi lần phát hành là một phiên bản mới, không sửa bản cũ. Quy tắc sai luật (trường S3, mức sàn vượt trần, thiếu mục đích cho trường S2, vượt trần thoả thuận chia sẻ dữ liệu) hiện cũng trả 500 (use-case ném `Error` trần) — gọi `/preview` trước để thấy lỗi trong `validation.issues`. Thiếu `rules` hoặc không phải mảng hiện trả 500 thay vì 400 (lỗi đã ghi nhận, audit API §17).",
+        "description": "Mỗi lần phát hành là một phiên bản mới, không sửa bản cũ. Quy tắc sai luật (trường S3, mức sàn vượt trần, thiếu mục đích cho trường S2, vượt trần thoả thuận chia sẻ dữ liệu) → 422 kèm `details.issues` (cùng dạng `validation.issues` của `/preview`). Thiếu `rules` hoặc không phải mảng → 400 `details.rules`.",
         "tags": [
           "Chuỗi — dữ liệu cửa hàng"
         ],
@@ -14541,8 +14547,8 @@
           "413": {
             "$ref": "#/components/responses/Error413"
           },
-          "500": {
-            "$ref": "#/components/responses/Error500"
+          "422": {
+            "$ref": "#/components/responses/Error422"
           }
         },
         "x-capability": "F2"
@@ -14552,7 +14558,7 @@
       "post": {
         "operationId": "previewChainCollectionProfile",
         "summary": "Xem trước tác động của hồ sơ thu thập",
-        "description": "Không lưu. Quy tắc sai luật trả trong `validation.issues` (vẫn 200). Thiếu `rules` hoặc không phải mảng hiện trả 500 thay vì 400 (lỗi đã ghi nhận, audit API §17).",
+        "description": "Không lưu. Quy tắc sai luật trả trong `validation.issues` (vẫn 200). Thiếu `rules` hoặc không phải mảng → 400 `details.rules`.",
         "tags": [
           "Chuỗi — dữ liệu cửa hàng"
         ],
@@ -14816,9 +14822,6 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "F1"
@@ -15275,7 +15278,7 @@
       "post": {
         "operationId": "registerPartnerStore",
         "summary": "Đăng ký cửa hàng đối tác (pháp nhân riêng) kèm thoả thuận chia sẻ dữ liệu",
-        "description": "Mã cửa hàng đã có trong tổ chức hiện trả 500 thay vì 409 (lỗi đã ghi nhận, audit API §17).",
+        "description": "Mã cửa hàng đã có trong tổ chức → 409.",
         "tags": [
           "Chuỗi — dữ liệu cửa hàng"
         ],
@@ -15453,9 +15456,6 @@
           },
           "413": {
             "$ref": "#/components/responses/Error413"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "F2"
@@ -16280,7 +16280,7 @@
       "get": {
         "operationId": "listChatConversations",
         "summary": "Hội thoại tư vấn",
-        "description": "`status` mặc định `ACTIVE`; `limit` mặc định 50, chưa có trần; `limit` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §15).",
+        "description": "`status` mặc định `ACTIVE`; `limit` 1–100, mặc định 50; không phải số nguyên hoặc ngoài khoảng → 400.",
         "tags": [
           "Trợ lý AI — hội thoại"
         ],
@@ -16391,6 +16391,9 @@
               }
             }
           },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
           "401": {
             "$ref": "#/components/responses/Error401"
           },
@@ -16399,9 +16402,6 @@
           },
           "409": {
             "$ref": "#/components/responses/Error409"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "T1"
@@ -63604,6 +63604,602 @@
         "x-capability": "Q9"
       }
     },
+    "/crm/customers/{id}/data-requests/erase": {
+      "post": {
+        "operationId": "eraseCustomerData",
+        "summary": "Khách yêu cầu xoá dữ liệu cá nhân",
+        "description": "Ẩn danh xuyên bảng ngay, giữ đơn / phiếu thu / hoá đơn VAT; thu hồi đồng ý nhận tin. `result` = số dòng theo bảng. Khách của tổ chức khác → 404.",
+        "tags": [
+          "Khách hàng — yêu cầu về dữ liệu cá nhân"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "note": {
+                    "type": "string",
+                    "maxLength": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Yêu cầu đã xử lý",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "customerId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "EXPORT",
+                            "ERASE",
+                            "RECTIFY"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "RECEIVED",
+                            "COMPLETED",
+                            "REJECTED"
+                          ]
+                        },
+                        "receivedBy": {
+                          "type": "string"
+                        },
+                        "receivedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "dueAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "overdue": {
+                          "type": "boolean"
+                        },
+                        "note": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "completedBy": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "completedAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "result": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "customerId",
+                        "type",
+                        "status",
+                        "receivedBy",
+                        "receivedAt",
+                        "dueAt",
+                        "overdue",
+                        "note",
+                        "completedBy",
+                        "completedAt",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "Q4"
+      }
+    },
+    "/crm/customers/{id}/data-requests/export": {
+      "post": {
+        "operationId": "exportCustomerData",
+        "summary": "Khách yêu cầu xuất dữ liệu cá nhân",
+        "description": "Gói JSON mọi bản ghi cá nhân của khách trong tổ chức; yêu cầu ghi là hoàn tất ngay, có nhật ký. Khách của tổ chức khác → 404.",
+        "tags": [
+          "Khách hàng — yêu cầu về dữ liệu cá nhân"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "note": {
+                    "type": "string",
+                    "maxLength": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Yêu cầu và gói dữ liệu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "request": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "customerId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "EXPORT",
+                                "ERASE",
+                                "RECTIFY"
+                              ]
+                            },
+                            "status": {
+                              "type": "string",
+                              "enum": [
+                                "RECEIVED",
+                                "COMPLETED",
+                                "REJECTED"
+                              ]
+                            },
+                            "receivedBy": {
+                              "type": "string"
+                            },
+                            "receivedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "dueAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "overdue": {
+                              "type": "boolean"
+                            },
+                            "note": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "completedBy": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "completedAt": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "result": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string"
+                                  },
+                                  "additionalProperties": {
+                                    "type": "number"
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "customerId",
+                            "type",
+                            "status",
+                            "receivedBy",
+                            "receivedAt",
+                            "dueAt",
+                            "overdue",
+                            "note",
+                            "completedBy",
+                            "completedAt",
+                            "result"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "package": {
+                          "type": "object",
+                          "propertyNames": {
+                            "type": "string"
+                          },
+                          "additionalProperties": {}
+                        }
+                      },
+                      "required": [
+                        "request",
+                        "package"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "R13"
+      }
+    },
+    "/crm/customers/{id}/data-requests/rectify": {
+      "post": {
+        "operationId": "receiveCustomerRectification",
+        "summary": "Khách yêu cầu sửa dữ liệu cá nhân",
+        "description": "Ghi nhận, hạn xử lý 72 giờ; sửa hồ sơ bằng `PATCH /crm/customers/{id}` rồi đóng yêu cầu. Khách của tổ chức khác → 404.",
+        "tags": [
+          "Khách hàng — yêu cầu về dữ liệu cá nhân"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "note": {
+                    "type": "string",
+                    "maxLength": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Yêu cầu đang chờ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "customerId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "EXPORT",
+                            "ERASE",
+                            "RECTIFY"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "RECEIVED",
+                            "COMPLETED",
+                            "REJECTED"
+                          ]
+                        },
+                        "receivedBy": {
+                          "type": "string"
+                        },
+                        "receivedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "dueAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "overdue": {
+                          "type": "boolean"
+                        },
+                        "note": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "completedBy": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "completedAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "result": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "customerId",
+                        "type",
+                        "status",
+                        "receivedBy",
+                        "receivedAt",
+                        "dueAt",
+                        "overdue",
+                        "note",
+                        "completedBy",
+                        "completedAt",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "Q3"
+      }
+    },
     "/crm/customers/{id}/master-index": {
       "get": {
         "operationId": "getCustomerMasterIndex",
@@ -64263,6 +64859,390 @@
           }
         },
         "x-capability": "R13"
+      }
+    },
+    "/crm/data-requests": {
+      "get": {
+        "operationId": "listDataRequests",
+        "summary": "Yêu cầu của khách về dữ liệu cá nhân",
+        "description": "Mới nhất trước, tối đa 200; `overdue` = đang chờ và quá hạn.",
+        "tags": [
+          "Khách hàng — yêu cầu về dữ liệu cá nhân"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "RECEIVED",
+                "COMPLETED",
+                "REJECTED"
+              ]
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Yêu cầu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "customerId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "EXPORT",
+                              "ERASE",
+                              "RECTIFY"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "RECEIVED",
+                              "COMPLETED",
+                              "REJECTED"
+                            ]
+                          },
+                          "receivedBy": {
+                            "type": "string"
+                          },
+                          "receivedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "dueAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "overdue": {
+                            "type": "boolean"
+                          },
+                          "note": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "completedBy": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "completedAt": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "result": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {
+                                  "type": "number"
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "customerId",
+                          "type",
+                          "status",
+                          "receivedBy",
+                          "receivedAt",
+                          "dueAt",
+                          "overdue",
+                          "note",
+                          "completedBy",
+                          "completedAt",
+                          "result"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          }
+        },
+        "x-capability": "Q1"
+      }
+    },
+    "/crm/data-requests/{id}": {
+      "patch": {
+        "operationId": "resolveDataRequest",
+        "summary": "Đóng yêu cầu: hoàn tất hoặc từ chối",
+        "description": "Yêu cầu của tổ chức khác → 404; đã đóng → 409.",
+        "tags": [
+          "Khách hàng — yêu cầu về dữ liệu cá nhân"
+        ],
+        "security": [
+          {
+            "tenantSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "COMPLETED",
+                      "REJECTED"
+                    ]
+                  },
+                  "note": {
+                    "type": "string",
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "status"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Yêu cầu sau khi đóng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "customerId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "EXPORT",
+                            "ERASE",
+                            "RECTIFY"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "RECEIVED",
+                            "COMPLETED",
+                            "REJECTED"
+                          ]
+                        },
+                        "receivedBy": {
+                          "type": "string"
+                        },
+                        "receivedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "dueAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "overdue": {
+                          "type": "boolean"
+                        },
+                        "note": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "completedBy": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "completedAt": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "result": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "number"
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "customerId",
+                        "type",
+                        "status",
+                        "receivedBy",
+                        "receivedAt",
+                        "dueAt",
+                        "overdue",
+                        "note",
+                        "completedBy",
+                        "completedAt",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          }
+        },
+        "x-capability": "Q3"
       }
     },
     "/crm/reminders/upcoming": {
@@ -67847,7 +68827,7 @@
       "get": {
         "operationId": "listFieldCatalogs",
         "summary": "Danh mục cho form nhập liệu",
-        "description": "Chỉ giá trị đang bật; `keys` cách dấu phẩy, bỏ trống trả hết. Route chỉ kiểm phiên của tổ chức, không kiểm `R1` như đặc tả 06 ghi (audit API §31).",
+        "description": "Chỉ giá trị đang bật; `keys` cách dấu phẩy, bỏ trống trả hết.",
         "tags": [
           "Trường dữ liệu"
         ],
@@ -67972,9 +68952,15 @@
           },
           "401": {
             "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "phiên đăng nhập"
+        "x-capability": "R1"
       }
     },
     "/field-config/settings": {
@@ -70950,6 +71936,12 @@
                               "null"
                             ]
                           },
+                          "idempotency_body_hash": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "owner_sale_id": {
                             "type": [
                               "string",
@@ -71498,6 +72490,7 @@
                           "source",
                           "source_session_id",
                           "idempotency_key",
+                          "idempotency_body_hash",
                           "owner_sale_id",
                           "lead_id",
                           "workflow",
@@ -75478,6 +76471,12 @@
                               "null"
                             ]
                           },
+                          "idempotency_body_hash": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
                           "owner_sale_id": {
                             "type": [
                               "string",
@@ -75864,6 +76863,7 @@
                           "source",
                           "source_session_id",
                           "idempotency_key",
+                          "idempotency_body_hash",
                           "owner_sale_id",
                           "lead_id",
                           "workflow",
@@ -86153,7 +87153,7 @@
       "post": {
         "operationId": "rotateIntegrationToken",
         "summary": "Xoay token — cấp token mới, giữ token cũ",
-        "description": "Hai token cùng hiệu lực trong thời gian xoay; thu hồi token cũ bằng `DELETE`. Token của tổ chức khác → 404.",
+        "description": "Hai token cùng hiệu lực trong thời gian xoay; thu hồi token cũ bằng `DELETE`. Token mới giữ đúng thời hạn (số ngày) của token đang xoay. Token của tổ chức khác → 404.",
         "tags": [
           "Token tích hợp & SSO"
         ],
@@ -90246,7 +91246,7 @@
       "post": {
         "operationId": "runChainDispatchSweep",
         "summary": "Quét nhắc mốc đơn gia công và các tác vụ dọn định kỳ",
-        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. 401 trả thân cũ. Nhắc mốc M1–M4, chuyển vòng điều phối, job kẹt, thùng rác, khoá idempotent, mã hoá dữ liệu cá nhân cũ, báo giá hết hạn, gói thuê bao. Tác vụ con hỏng → trường đó `null`, lượt vẫn 200. Có ngân sách thời gian; `complete: false` → lượt sau đi tiếp.",
+        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. Nhắc mốc M1–M4, chuyển vòng điều phối, job kẹt, thùng rác, khoá idempotent, mã hoá dữ liệu cá nhân cũ, báo giá hết hạn, gói thuê bao. Tác vụ con hỏng → trường đó `null`, lượt vẫn 200. Có ngân sách thời gian; `complete: false` → lượt sau đi tiếp.",
         "tags": [
           "Tác vụ định kỳ (cron)"
         ],
@@ -90419,7 +91419,7 @@
       "get": {
         "operationId": "getInternalHealth",
         "summary": "Sức khoẻ chi tiết: CSDL, Redis, job tồn đọng, worker",
-        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. 401 trả thân cũ `{ error: \"Unauthorized\" }`. Không khoẻ → 503 cùng thân (cron `curl -f` thất bại để báo động).",
+        "description": "Không dùng phiên: header `x-cron-secret` phải khớp `CRON_SECRET` (production thiếu biến → luôn từ chối); sai/thiếu → 401. Không khoẻ → 503 cùng thân (cron `curl -f` thất bại để báo động).",
         "tags": [
           "Tác vụ định kỳ (cron)"
         ],
@@ -98914,7 +99914,7 @@
       "get": {
         "operationId": "getOrganizationIdentity",
         "summary": "Định danh tổ chức của phiên, liên kết chuỗi, thành viên",
-        "description": "Chỉ cần phiên của tổ chức — mọi vai (kể cả Shipper) thấy tên và email của tối đa 100 thành viên đang hoạt động (audit API §31). Envelope cũ `{ success, data }`.",
+        "description": "Có tên và email của tối đa 100 thành viên đang hoạt động — cùng mã `F1` với `GET /members`. Envelope cũ `{ success, data }`.",
         "tags": [
           "Định danh tổ chức"
         ],
@@ -99148,11 +100148,17 @@
           "401": {
             "$ref": "#/components/responses/Error401"
           },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
           "404": {
             "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
           }
         },
-        "x-capability": "phiên đăng nhập"
+        "x-capability": "F1"
       }
     },
     "/notification/channels": {
@@ -99406,7 +100412,7 @@
       "get": {
         "operationId": "listInbox",
         "summary": "Hộp thư thông báo",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Phân trang theo trang: `page` (mặc định 1), `limit` (mặc định 20, máy chủ kẹp 1–100 nhưng `pagination.limit` báo lại số đã gửi). `page`/`limit` không phải số hiện trả 500 (lỗi đã ghi nhận, audit API §15).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Phân trang theo trang: `page` (mặc định 1), `limit` 1–100 (mặc định 20). Không phải số nguyên hoặc ngoài khoảng → 400.",
         "tags": [
           "Thông báo — hộp thư"
         ],
@@ -99567,6 +100573,9 @@
               }
             }
           },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
           "401": {
             "$ref": "#/components/responses/Error401"
           },
@@ -99575,9 +100584,6 @@
           },
           "409": {
             "$ref": "#/components/responses/Error409"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error500"
           }
         },
         "x-capability": "phiên đăng nhập"
@@ -100359,7 +101365,7 @@
       "patch": {
         "operationId": "updateNotificationPreference",
         "summary": "Bật/tắt một sự kiện × kênh cho tôi",
-        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng ở tầng trên cửa hàng (vd. khoá tầng chuỗi của chính tổ chức) → 403 với thân `{ error: \"chuỗi\", reason }` (ngoại lệ envelope). Khoá tầng cửa hàng hiện KHÔNG chặn ở đây (lỗi đã ghi nhận, audit API §15). Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Dữ liệu của chính người đăng nhập trong tổ chức của phiên; không cần mã năng lực. Sự kiện × kênh bị khoá cứng (tầng Mẹ, ngành, chuỗi hoặc chính cửa hàng) → 403 với thân `{ error: \"chuỗi\", reason }` (ngoại lệ envelope). Thành công trả `{ success: true, … }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
         "tags": [
           "Thông báo — tuỳ chọn & chính sách"
         ],
@@ -102359,7 +103365,7 @@
       "post": {
         "operationId": "createOrder",
         "summary": "Tạo đơn hàng",
-        "description": "Header `Idempotency-Key` tuỳ chọn: gửi lại cùng khoá trả đúng đơn đã tạo (201, header `Idempotent-Replayed: true`). Khách/chi nhánh/sản phẩm của tổ chức khác → 404.",
+        "description": "Header `Idempotency-Key` tuỳ chọn: gửi lại cùng khoá với cùng thân trả đúng đơn đã tạo (201, header `Idempotent-Replayed: true`); cùng khoá mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED` (`details.order_id`), không tạo đơn. Khách/chi nhánh/sản phẩm của tổ chức khác → 404.",
         "tags": [
           "Đơn hàng"
         ],
@@ -114689,7 +115695,7 @@
       "get": {
         "operationId": "getProductIntelligenceReport",
         "summary": "Tra lại một lượt phân tích sản phẩm đã lưu",
-        "description": "`id` là lượt chạy (`product_analysis_runs`); không thấy thì thử bản phân tích ảnh (`product_analyses`) và dựng báo cáo dự phòng từ dữ liệu gốc. `imageUrl` ký mới mỗi lần đọc. Của tổ chức khác hoặc mã lạ → 404.",
+        "description": "`id` là lượt chạy (`product_analysis_runs`); không thấy thì thử bản phân tích ảnh (`product_analyses`) và dựng báo cáo dự phòng từ dữ liệu gốc (`productName` = tên sản phẩm đã gắn, chưa gắn thì \"Sản phẩm chưa đặt tên\"). `imageUrl` ký mới mỗi lần đọc. Của tổ chức khác hoặc mã lạ → 404.",
         "tags": [
           "Phân tích sản phẩm"
         ],
@@ -136175,6 +137181,7 @@
                   "CAPABILITY_DENIED",
                   "ENTITLEMENT_REQUIRED",
                   "PASSWORD_CHANGE_REQUIRED",
+                  "CROSS_ORIGIN_REJECTED",
                   "SUBSCRIPTION_OVERDUE",
                   "ORGANIZATION_INACTIVE",
                   "NOT_FOUND",

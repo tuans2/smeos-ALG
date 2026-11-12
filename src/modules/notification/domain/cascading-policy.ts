@@ -164,6 +164,20 @@ export function getAppliedHardLock(
 }
 
 /**
+ * Khoá cứng chặn tuỳ chọn CÁ NHÂN của người dùng trong một cửa hàng: mọi khoá trong phạm vi, GỒM khoá tầng `STORE` của
+ * chính cửa hàng (audit API §15) — người dùng đứng dưới mọi tầng tổ chức, khác `getAppliedHardLock` (chỉ tầng TRÊN tầng
+ * đang xem). Cùng tập khoá `resolveCascade` áp khi gửi, nên tuỳ chọn đã lưu luôn có hiệu lực.
+ */
+export function getLockForUserPreference(
+  hardLocks: HardLockEntry[],
+  eventKey: string,
+  channel: NotifyChannel,
+  scope: LockScope
+): HardLockEntry | null {
+  return winningLock(hardLocks.filter((l) => l.eventKey === eventKey && l.channel === channel && isLockInScope(l, scope)))
+}
+
+/**
  * Kiểm tra một tầng có quyền đặt Hard Lock cho event/channel không.
  * Tầng X chỉ có thể hard lock nếu event đó thuộc scope hiển thị của tầng X.
  */

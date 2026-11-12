@@ -105,7 +105,7 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
       ? `Dạ em là smeOS Ops Copilot — Trợ lý vận hành đồng hành cùng anh/chị (${intent.userRole})!`
       : "Dạ em là smeOS Ops Copilot — Trợ lý vận hành nền tảng smeOS của cửa hàng!"
 
-    const bodyText = `${greeting} Em có thể hướng dẫn anh/chị thao tác 10 chức năng chính của tiệm:\n\n` +
+    const bodyText = `${greeting} Em có thể hướng dẫn anh/chị thao tác 11 chức năng chính của tiệm:\n\n` +
       `1. **Trang Chủ:** Xem việc cần làm đầu ngày, theo dõi đơn tồn và hạn mức AI.\n` +
       `2. **Đơn Hàng & Xưởng:** Quản lý tiến độ đơn, in phiếu chế tác giấu giá và phiếu giao cho shipper.\n` +
       `3. **Bộ sưu tập riêng:** Tạo link xem hoa gửi Zalo cho khách và nhận cọc tự động qua mã QR.\n` +
@@ -115,7 +115,8 @@ function templateFallback(intent: ParsedIntent, facts: KnowledgeFactSheet): Poli
       `7. **Quét Ảnh Hoa AI & Phân tích hoa:** Nhận diện nguyên liệu, đếm cành và soạn sẵn tin nhắn Zalo chốt đơn.\n` +
       `8. **Kho Dữ Liệu:** Lưu trữ ảnh hoa của tiệm và quản lý thùng rác 30 ngày.\n` +
       `9. **Hồ Sơ Cửa Hàng:** Cài đặt thông tin tiệm, logo và số tài khoản ngân hàng nhận tiền cọc.\n` +
-      `10. **Cài Đặt & Thành Viên:** Cấp tài khoản nhân viên dùng ngay trong 10 giây và phân quyền.\n\n` +
+      `10. **Cài Đặt & Thành Viên:** Cấp tài khoản nhân viên dùng ngay trong 10 giây và phân quyền.\n` +
+      `11. **Khách Hàng — Dữ Liệu Cá Nhân:** Xuất bản sao, sửa hoặc xoá dữ liệu khi khách yêu cầu.\n\n` +
       `Anh/chị đang cần hỗ trợ thao tác phần nào ạ?`
 
     return { greeting, bodyText, targetRoute: "/", actionLabel: "Khám Phá Các Chức Năng" }

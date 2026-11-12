@@ -4166,6 +4166,92 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 56. Mức cô lập của tổ chức — `organizations.isolation_tier` (12/11/2026)
+
+ADR-016 D-S2, bước S-5 (PO duyệt 12/11/2026). Migration `20261112120000_organization_isolation_tier` (expand, một giao
+dịch): thêm kiểu và cột bắt buộc có `DEFAULT 'SHARED'` — mọi tổ chức cũ ở mức dùng chung, đúng hiện trạng.
+
+```prisma
+enum organization_isolation_tier {
+  SHARED
+  SHARED_PLUS
+  DEDICATED
+}
+
+model organizations {
+  // …
+  isolation_tier organization_isolation_tier @default(SHARED)
+}
+```
+
+| Gói đang hiệu lực (`subscriptions.plan`, chưa huỷ) | Mức được phép |
+|---|---|
+| Chưa có thuê bao · `EXPERIENCE` · `STARTER` · `PRO` · gói lạ | `SHARED` |
+| `FLOWER_NETWORK` | `SHARED`, `SHARED_PLUS` |
+| `ENTERPRISE` | `SHARED`, `SHARED_PLUS`, `DEDICATED` |
+
+- Luật: `src/modules/organization/domain/isolation-tier.ts` (PO 12/11/2026 "theo quy mô").
+- Đổi mức: `PATCH /platform/organizations/:id` với `isolation_tier`, mã `N2`; gói không cho phép → 422; ghi
+  `platform_audit_logs` + `audit_logs` (`platform.organization_isolation_changed`).
+- Đổi gói / huỷ thuê bao (`N19`) làm mức hiện tại không còn được phép → 422, không đổi gì — hạ mức trước.
+- Cột chỉ ghi nhận mức; khôi phục riêng một tổ chức (S-4) và dựng triển khai riêng (S-6) là việc vận hành.
+
+Ca thử: `src/modules/organization/domain/isolation-tier.test.ts`, `tests/tenant/organization-isolation-tier.test.ts`.
+
+## 55. Yêu cầu của khách về dữ liệu cá nhân — `data_subject_requests` (12/11/2026)
+
+ADR-014 D-P5, bước P-7a (PO duyệt 12/11/2026). Migration `20261112100000_data_subject_requests` (expand, một giao dịch):
+hai kiểu, bảng thuộc tổ chức có RLS `tenant_isolation`.
+
+```prisma
+enum data_subject_request_type {
+  EXPORT
+  ERASE
+  RECTIFY
+}
+
+enum data_subject_request_status {
+  RECEIVED
+  COMPLETED
+  REJECTED
+}
+
+model data_subject_requests {
+  id              String                      @id @default(uuid())
+  organization_id String
+  customer_id     String?                     // khách bị xoá hẳn (Q4) → null, yêu cầu giữ làm bằng chứng
+  type            data_subject_request_type
+  status          data_subject_request_status @default(RECEIVED)
+  received_by     String                      // users.id
+  received_at     DateTime                    @default(now()) @db.Timestamptz(3)
+  due_at          DateTime                    @db.Timestamptz(3) // 72 giờ (DSR_DUE_HOURS)
+  note            String?
+  completed_by    String?
+  completed_at    DateTime?                   @db.Timestamptz(3)
+  result          Json?                       // số dòng theo bảng — không có dữ liệu cá nhân
+  created_at      DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime                    @default(now()) @updatedAt @db.Timestamptz(3)
+}
+```
+
+- **Xuất** (`R13`): gói JSON dữ liệu của khách — hồ sơ, dịp, đồng ý, tương tác, lead, phiên Thẻ chào, đơn kèm người nhận
+  và hoá đơn VAT, hội thoại, báo giá (`src/modules/crm/infra/customer-data-export.ts`). Yêu cầu ghi hoàn tất ngay; nhật ký
+  `data.export` + `crm.data_subject_export`. Chưa có bản CSV.
+- **Xoá** (`Q4`): một giao dịch (`src/modules/crm/infra/customer-erasure.ts`) — khách → `Khách đã xoá` / `ERASED`, bỏ
+  băm, 4 số cuối, email, địa chỉ, ghi chú, nhãn, sở thích (SQL thô — xem `AGENT_RULES.md` §14 #25); xoá dịp và tương tác;
+  thu hồi đồng ý (giữ dòng); lead và phiên Thẻ chào của khách bỏ tên/SĐT; hội thoại xoá tin nhắn, bỏ liên kết; đơn bỏ lời
+  chúc, ghi chú nội bộ, `delivery_address`; người nhận bỏ tên/SĐT/địa chỉ — **giữ** hoá đơn VAT; điều phối bỏ SĐT khách,
+  tên người nhận ảnh giao. Giữ đơn, dòng đơn, phiếu thu. Chi nhánh được chia sẻ đơn đọc theo tham chiếu (§50) nên thấy bản
+  đã xoá.
+- **Sửa** (`Q3`): ghi nhận `RECEIVED`; sửa hồ sơ bằng `PATCH /crm/customers/:id` rồi `PATCH /crm/data-requests/:id`.
+- Hạn 72 giờ theo thực hành phổ biến với Nghị định 13/2023/NĐ-CP — **chưa phải ý kiến pháp lý**.
+- P-7b (12/11/2026): màn hình trong hồ sơ khách, tab Quyền riêng tư (`src/components/crm/customer-data-requests-panel.tsx`);
+  bản CSV dựng ở trình duyệt từ gói JSON (`src/modules/crm/domain/data-package-csv.ts`, chặn công thức Excel).
+
+Ca thử: `src/modules/crm/domain/data-subject-request.test.ts`, `tests/tenant/data-subject-requests-isolation.test.ts`
+(cách ly ở tầng use-case — bản giao GD1 chưa có route này), `tests/tenant/data-subject-requests.test.ts` (xuất đủ
+bản ghi; xoá xuyên bảng, giữ đơn + VAT, chi nhánh được chia sẻ thấy bản đã xoá; hai khách cùng tổ chức; tổ chức khác → 404).
+
 ## 54. Hạn lưu theo loại dữ liệu — `retention_policies` (11/11/2026)
 
 ADR-014 D-P4, bước P-6a (PO duyệt 11/11/2026). Migration `20261111150000_retention_policies` (expand, một giao dịch): thêm
@@ -4199,6 +4285,7 @@ model retention_policies {
 | `customer_conversations` | 3 tháng | Ẩn danh | `chat_messages` (xoá), `chat_conversations` (bỏ `customer_id`, giữ dòng), `leads` (tên → `Khách đã xoá`, SĐT → `ERASED`, bỏ băm/4 số cuối/lời nhắn), `greeting_sessions` (bỏ tên, SĐT) | hội thoại không có tin nhắn từ mốc; lead chưa `WON`, không có đơn, `updated_at` trước mốc; phiên Thẻ chào chưa đặt (không `order_id`, chưa `ORDER_SUBMITTED`/`PAYMENT_REPORTED`/`COMPLETED`), `last_active_at` trước mốc |
 | `customer_profiles` | 24 tháng | Ẩn danh | `customer_occasions` (xoá), `customers` (như S-3b: tên, SĐT, băm, email, địa chỉ, ghi chú, nhãn, sở thích) | khách không có đơn, lead, phiên Thẻ chào, báo giá, hội thoại, tương tác nào từ mốc — **kể cả** khách có đơn đã thu (PO 12/11/2026): đơn, phiếu thu, hoá đơn VAT giữ nguyên |
 | `non_ledger_documents` | 60 tháng | Xoá | `quotations`, `orders` `CANCELLED` có `paid_vnd = 0` và không có phiếu thu (dòng con xoá dây chuyền) | `updated_at` trước mốc |
+| `finished_jobs` | 1 tháng (≈ 30 ngày) | Xoá | `generation_jobs` `COMPLETED`/`FAILED`/`CANCELLED` (nhật ký `job_events` xoá dây chuyền); giữ job còn được `product_analyses` / `brand_style_options` trỏ tới; `usage` giữ nguyên — ADR-015 D-O6, O-10, migration `20261112130000_retention_policies_finished_jobs` | `COALESCE(completed_at, cancelled_at, updated_at)` trước mốc |
 
 - Luật (loại mã biết xử lý, hành động duy nhất của từng loại, mốc cắt theo tháng lịch, giờ chạy):
   `src/modules/organization/domain/retention-policy.ts`. Dòng có loại lạ hoặc hành động khác bảng trên → bỏ qua, log
@@ -4742,7 +4829,7 @@ cron đăng bằng khoá của tổ chức sở hữu bài, thử lại có gi�
 
 ## 55. Sổ quyết toán tiền công đối tác — `partner_settlements` (12/11/2026)
 
-Audit BL-22, PO duyệt 12/11/2026. Migration `20261112110000_partner_settlements` (expand: chỉ thêm bảng, RLS theo tổ chức).
+Audit BL-22, PO duyệt 12/11/2026. Migration `20261112140000_partner_settlements` (expand: chỉ thêm bảng, RLS theo tổ chức).
 Tiền công một nguồn: phí gia công lúc chi nhánh nhận đơn trừ khấu trừ (`order_coordinations.metadata.subcontract_dispatch.craftFee`),
 không có thì giá thoả thuận lúc giao xưởng; ghi vào `order_coordinations.partner_payout_vnd` khi đóng đơn (sửa khác phải có lý
 do, ghi `audit_logs`). Sổ chụp các đơn đối tác đã đóng trong kỳ (`closed_at`, ngày Việt Nam, gồm hai đầu, ≤ 92 ngày) vào
@@ -4776,7 +4863,7 @@ model partner_settlements {
 }
 ```
 
-Dữ liệu cũ (BL-36): migration `20261112120000_coordinator_item_unit_price_backfill` chỉ đổi dữ liệu — đơn `FLR-…` có đúng một
+Dữ liệu cũ (BL-36): migration `20261112150000_coordinator_item_unit_price_backfill` chỉ đổi dữ liệu — đơn `FLR-…` có đúng một
 dòng hàng 0 ₫ được ghi đơn giá = (tổng đơn − VAT) / số lượng; chạy lại an toàn, báo số dòng đã sửa.
 
 Ca thử: `tests/tenant/partner-settlements.test.ts`, `tests/tenant/coordinator-unit-price-backfill.test.ts`,

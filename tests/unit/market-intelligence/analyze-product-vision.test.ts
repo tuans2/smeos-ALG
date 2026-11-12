@@ -121,6 +121,14 @@ describe("analyzeProductVision — Chặng 02 thu credit", () => {
     expect(refundJob).toHaveBeenCalledWith(ctx, "job-1")
   })
 
+  it("lỗi đọc kho: câu lỗi trả client không chứa khoá kho nội bộ (audit API §22)", async () => {
+    vi.mocked(enqueueJob).mockResolvedValue({ job, deduped: false, usage: { costCredit: 1, balanceAfter: 9 } } as never)
+    vi.mocked(callCapability).mockRejectedValue(new Error("Không có tệp org/org-1/unfiled/a.jpg") as never)
+    const error = (await analyzeProductVision(ctx, { assetId: "asset-1" }).catch((e: unknown) => e)) as Error
+    expect(error.message).toContain("AI chưa nhận diện được ảnh")
+    expect(error.message).not.toContain("org/")
+  })
+
   it("ảnh không thuộc tổ chức: 404 trước khi tạo job", async () => {
     findById.mockResolvedValue(null)
     await expect(analyzeProductVision(ctx, { assetId: "cua-to-chuc-khac" })).rejects.toThrow()
