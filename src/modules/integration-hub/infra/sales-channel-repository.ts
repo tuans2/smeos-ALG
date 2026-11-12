@@ -4,6 +4,7 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { ACTIVE_ORGANIZATION_ONLY } from "@/modules/organization/infra/active-organization-filter"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { ListingStatus, ListingView, ChannelOrderView } from "../domain/integration-views"
 
@@ -136,7 +137,7 @@ export class SalesChannelRepository {
   /** Kết nối kênh bán đang dùng được (xuyên tổ chức) — lượt kéo đơn dự phòng. */
   async activeSalesConnectionsSystem(connectorKeys: readonly string[], limit: number) {
     return prisma.integration_connections.findMany({
-      where: { connector_key: { in: [...connectorKeys] }, status: { in: ["ACTIVE", "DEGRADED"] } },
+      where: { connector_key: { in: [...connectorKeys] }, status: { in: ["ACTIVE", "DEGRADED"] }, ...ACTIVE_ORGANIZATION_ONLY }, // UJ-26
       orderBy: { updated_at: "asc" },
       take: limit,
       select: { id: true },

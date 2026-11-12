@@ -2,6 +2,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { PrismaClient } from "@/generated/prisma/client"
 import { STUCK_PUBLISHING_MS } from "../domain/post-lifecycle"
+import { ACTIVE_ORGANIZATION_ONLY } from "@/modules/organization/infra/active-organization-filter"
 
 export interface NewSocialPost {
   readonly contentGenerationId: string | null
@@ -128,6 +129,7 @@ export class SocialPostRepository {
       where: {
         status: "QUEUED",
         OR: [{ next_attempt_at: { lte: now } }, { next_attempt_at: null, scheduled_at: { lte: now } }],
+        ...ACTIVE_ORGANIZATION_ONLY, // tổ chức tạm ngưng / rời nền tảng không đăng (UJ-26)
       },
       orderBy: [{ scheduled_at: "asc" }, { id: "asc" }],
       take: limit,

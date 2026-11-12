@@ -5,6 +5,7 @@
 
 import type { Prisma, integration_events } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { ACTIVE_ORGANIZATION_ONLY } from "@/modules/organization/infra/active-organization-filter"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { EventStatus, EventView } from "../domain/integration-views"
 
@@ -88,6 +89,7 @@ export class EventRepository {
       where: {
         direction: "IN",
         OR: [{ status: "PENDING" }, { status: "FAILED", next_retry_at: { lte: now } }],
+        ...ACTIVE_ORGANIZATION_ONLY, // UJ-26: sự kiện của tổ chức tạm ngưng nằm chờ tới khi mở lại
       },
       orderBy: { created_at: "asc" },
       take: limit,
