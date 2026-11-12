@@ -51,7 +51,7 @@ nút nổi: 1/3 · khối chính: 2/5 · nhóm thông tin: 3/7
 
 ## 10. Dữ liệu và quyền
 - Nguồn sự thật: `NETWORK_JOURNEYS` trong `journey-catalog.ts`
-- Thẻ "Chi nhánh Mạng lưới" (`NetworkPartnerListCard`): mỗi đối tác có nút **Bảng kê** mở `PartnerStatementModal` — `GET /api/v1/coordinator/partners/:id/statement`, lập sổ `POST …/settlements`, đối soát / ghi đã thanh toán `POST /api/v1/coordinator/partner-settlements/:id/reconcile|pay`, mã `R19` (Điều hành, Kế toán). Danh sách đơn ẩn sau nút "Xem N đơn" (Progressive Disclosure)
+- Thẻ "Chi nhánh Mạng lưới" (`NetworkPartnerListCard`): mỗi đối tác có nút **Bảng kê** mở `PartnerStatementModal` — `GET /api/v1/coordinator/partners/:id/statement`, lập sổ `POST …/settlements`, đối soát / ghi đã thanh toán `POST /api/v1/coordinator/partner-settlements/:id/reconcile|pay`, mã `R19` (Điều hành, Kế toán). Danh sách đơn ẩn sau nút "Xem N đơn" (Progressive Disclosure). Màn "Quản lý" đối tác (`PartnerManagementModal`) tải danh bạ xưởng gia công `GET /api/v1/coordinator/partners?active=0` (`R1`, cả xưởng tạm ngưng — trước 12/11/2026 gọi nhầm danh sách đối tác chuỗi) và mỗi thẻ xưởng cũng có nút **Bảng kê**. Nút chỉ hiện khi người xem có `R19`; vai Điều phối (chủ nhân trang này) không có mã đó — lối vào chính là tab "Tiền công đối tác" ở `/bao-cao`
 
 ## 11. Component
 - Dùng lại: `ChoiceGrid`, `ActionCard`, `JourneyShell`, `FlowerNetworkCommandCenter`

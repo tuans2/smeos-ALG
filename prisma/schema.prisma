@@ -885,6 +885,9 @@ model subscriptions {
   current_period_end       DateTime            @db.Timestamptz(3)
   plan_credit_period       String?
   plan_credit_granted      Int                 @default(0)
+  /// Hạ gói / đổi chu kỳ chờ áp từ kỳ sau (PO 12/11/2026, audit BL-27): `{ plan, cycle, priceVnd, includedCreditsMonthly,
+  /// effectiveAt }`. Gói, giá, credit tặng hiện tại giữ tới `effectiveAt` (= hết kỳ lúc đổi); `null` = không có.
+  pending_change           Json?
   created_by               String?
   created_at               DateTime            @default(now()) @db.Timestamptz(3)
   updated_at               DateTime            @updatedAt @db.Timestamptz(3)
@@ -2042,29 +2045,29 @@ model orders {
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
-  organization      organizations           @relation(fields: [organization_id], references: [id])
+  organization          organizations           @relation(fields: [organization_id], references: [id])
   /// Khoá ghép tenant: khách phải cùng tổ chức với đơn (audit BL-13, PO duyệt 07/11/2026). NoAction thay cho
   /// SetNull cũ vì SetNull trên khoá ghép sẽ xoá cả organization_id — xoá khách thì repository gỡ khách khỏi đơn trước.
-  customer          customers?              @relation(fields: [customer_id, organization_id], references: [id, organization_id], onDelete: NoAction)
-  items             order_items[]
-  assignments       order_assignments[]
-  events            order_events[]
-  coordination      order_coordinations?
-  qc_records        order_qc_records[]
-  exceptions        order_exceptions[]
-  payments          order_payments[]
-  info_requests     order_info_requests[]
-  change_requests   order_change_requests[]
-  recipient         order_recipients?
-  shared_access     shared_order_access[]
-  bookings          product_bookings[]
-  source            String?                 @default("MANUAL") // mã ở src/modules/orders/domain/order-source.ts
-  source_session_id String? // greeting_sessions.id
+  customer              customers?              @relation(fields: [customer_id, organization_id], references: [id, organization_id], onDelete: NoAction)
+  items                 order_items[]
+  assignments           order_assignments[]
+  events                order_events[]
+  coordination          order_coordinations?
+  qc_records            order_qc_records[]
+  exceptions            order_exceptions[]
+  payments              order_payments[]
+  info_requests         order_info_requests[]
+  change_requests       order_change_requests[]
+  recipient             order_recipients?
+  shared_access         shared_order_access[]
+  bookings              product_bookings[]
+  source                String?                 @default("MANUAL") // mã ở src/modules/orders/domain/order-source.ts
+  source_session_id     String? // greeting_sessions.id
   /// `Idempotency-Key` của `POST /api/v1/orders` (audit API-11, PO 07/11/2026): bấm đúp / gửi lại cùng khoá → trả đơn cũ.
-  idempotency_key   String?
+  idempotency_key       String?
   /// SHA-256 dạng chuẩn của thân đã kiểm (audit API-11, PO 11/11/2026): cùng khoá mà khác băm → 422. NULL ở đơn cũ.
   idempotency_body_hash String?
-  greeting_sessions greeting_sessions[]
+  greeting_sessions     greeting_sessions[]
 
   /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —
   /// đơn Thẻ chào không đọc các cột này (sale phụ trách vẫn suy từ greeting_sessions.sale_id).
@@ -2348,7 +2351,7 @@ model customers {
   greeting_sessions greeting_sessions[]
 
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
-  voucher_redemptions_by_customer_id voucher_redemptions[] @relation("fk_voucher_redemptions_customer_id")
+  voucher_redemptions_by_customer_id voucher_redemptions[]   @relation("fk_voucher_redemptions_customer_id")
   data_subject_requests              data_subject_requests[]
 
   @@unique([organization_id, phone_hash]) // P-5c: một khách mỗi số (mọi cách viết) trong tổ chức

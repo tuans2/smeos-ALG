@@ -75,6 +75,7 @@ export const subscriptionResponse = z.strictObject({
         status: z.string(),
         currentPeriodEnd: timestamp,
         includedCreditsMonthly: z.number(),
+        pendingChange: z.strictObject({ planLabel: z.string(), cycle: z.string(), priceVnd: z.number(), effectiveAt: timestamp }).nullable(),
       })
       .nullable(),
     invoices: z.array(

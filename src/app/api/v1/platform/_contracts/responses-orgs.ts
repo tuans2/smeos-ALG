@@ -96,6 +96,8 @@ const subscription = z.strictObject({
   current_period_end: timestamp,
   plan_credit_period: z.string().nullable(),
   plan_credit_granted: z.number(),
+  /** Hạ gói / đổi chu kỳ chờ áp từ kỳ sau (audit BL-27). */
+  pending_change: z.strictObject({ plan: z.string(), cycle: z.enum(["MONTHLY", "YEARLY"]), priceVnd: z.number(), includedCreditsMonthly: z.number(), effectiveAt: timestamp }).nullable(),
 })
 export const subscriptionResponse = data(
   z.strictObject({

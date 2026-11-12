@@ -9,7 +9,7 @@ import { SkeletonBlock } from "@/components/ui/skeleton"
 import { StatTile } from "@/components/ui/stat-tile"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { formatCurrency, formatDate } from "@/lib/i18n/formatters"
-import { SETTLEMENT_STATUS_LABEL, type SettlementStatusCode } from "@/modules/coordinator/domain/partner-payout"
+import { periodsOverlap, SETTLEMENT_STATUS_LABEL, type SettlementStatusCode } from "@/modules/coordinator/domain/partner-payout"
 import { vnDate } from "@/modules/reporting/domain/report-period"
 
 /**
@@ -31,14 +31,25 @@ interface Statement {
 export interface PartnerStatementModalProps {
   partner: { id: string; name: string } | null
   onClose: () => void
+  /** Kỳ mở sẵn (vd. kỳ đang chọn ở Báo cáo); mặc định đầu tháng → hôm nay. */
+  initialFrom?: string | undefined
+  initialTo?: string | undefined
+}
+
+/** Lý do chưa lập được sổ cho kỳ đang xem (máy chủ vẫn kiểm lại), hoặc `null`. */
+export function blockReason(st: Pick<Statement, "orderCount" | "missingPayoutCount" | "settlements">, from: string, to: string): string | null {
+  if (st.orderCount === 0) return "Kỳ này đối tác chưa có đơn đã đóng."
+  if (st.missingPayoutCount > 0) return `Còn ${st.missingPayoutCount} đơn chưa ghi tiền công — bổ sung trước khi lập sổ.`
+  if (st.settlements.some((x) => periodsOverlap({ from, to }, x))) return "Kỳ này trùng với một sổ đã lập — chọn kỳ khác."
+  return null
 }
 
 const statusLabel = (s: string) => SETTLEMENT_STATUS_LABEL[s as SettlementStatusCode] ?? s
 
-export function PartnerStatementModal({ partner, onClose }: PartnerStatementModalProps) {
+export function PartnerStatementModal({ partner, onClose, initialFrom, initialTo }: PartnerStatementModalProps) {
   const today = vnDate(new Date())
-  const [from, setFrom] = useState(`${today.slice(0, 7)}-01`)
-  const [to, setTo] = useState(today)
+  const [from, setFrom] = useState(initialFrom ?? `${today.slice(0, 7)}-01`)
+  const [to, setTo] = useState(initialTo ?? today)
   const [showLines, setShowLines] = useState(false)
   const [busy, setBusy] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
@@ -108,10 +119,11 @@ export function PartnerStatementModal({ partner, onClose }: PartnerStatementModa
                 </div>
               )}
 
-              <Button type="button" size="sm" disabled={busy !== null || st.orderCount === 0 || st.missingPayoutCount > 0}
+              <Button type="button" size="sm" disabled={busy !== null || blockReason(st, from, to) !== null}
                 onClick={() => run("create", () => apiSend(`/api/v1/coordinator/partners/${partner.id}/settlements`, "POST", { from, to }, "Không lập được sổ quyết toán"))}>
                 {busy === "create" ? "Đang lập sổ…" : "Lập sổ quyết toán kỳ này"}
               </Button>
+              {blockReason(st, from, to) && <p className="text-caption text-text-muted">{blockReason(st, from, to)}</p>}
 
               <div className="flex flex-col gap-2">
                 <h4 className="text-body-sm font-bold text-text">Sổ quyết toán đã lập</h4>
