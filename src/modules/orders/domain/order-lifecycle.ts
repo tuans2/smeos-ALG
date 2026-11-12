@@ -11,7 +11,7 @@ import {
   validateOrderStatusTransition,
   validateProductionStatusTransition,
 } from "./order-rules"
-import type { DeliveryStatus, OrderStatus, ProductionStatus } from "./order-types"
+import type { DeliveryStatus, OrderStatus, ProductionStatus, UpdateOrderInput } from "./order-types"
 
 export interface OrderAxes {
   status: OrderStatus
@@ -29,4 +29,23 @@ export function checkLifecycleTransition(before: OrderAxes, after: OrderAxes): L
   const delivery = validateDeliveryStatusTransition(before.deliveryStatus, after.deliveryStatus)
   if (!delivery.valid) return { valid: false, axis: "delivery", reason: delivery.reason ?? "Chuyển trạng thái giao hàng không hợp lệ." }
   return { valid: true }
+}
+
+/** Audit User Journey UJ-09 (O4): đơn đã sang Điều phối chỉ đổi tiến độ ở Điều phối (đòi phân công, QC, POD). */
+export const COORDINATED_PROGRESS_MESSAGE = "Đơn đang ở Điều phối — cập nhật tiến độ ở màn Điều phối."
+/** Audit User Journey UJ-09 (O3): đơn đã hoàn tất / đã huỷ là trạng thái kết thúc. */
+export const CLOSED_ORDER_EDIT_MESSAGE = "Đơn đã kết thúc — chỉ sửa được ghi chú nội bộ."
+
+const CLOSED_STATUSES: readonly OrderStatus[] = ["COMPLETED", "CANCELLED"]
+
+/** Yêu cầu sửa có đụng tới một trong ba trục vòng đời không. */
+export function touchesLifecycleAxes(input: UpdateOrderInput): boolean {
+  return input.status !== undefined || input.productionStatus !== undefined || input.deliveryStatus !== undefined
+}
+
+/** Đơn đã kết thúc: mọi trường nghiệp vụ khoá, chỉ còn `internalNote`. `null` = được sửa. */
+export function closedOrderEditBlockReason(status: OrderStatus, input: UpdateOrderInput): string | null {
+  if (!CLOSED_STATUSES.includes(status)) return null
+  const touched = (Object.keys(input) as (keyof UpdateOrderInput)[]).filter((k) => input[k] !== undefined && k !== "internalNote")
+  return touched.length > 0 ? CLOSED_ORDER_EDIT_MESSAGE : null
 }
