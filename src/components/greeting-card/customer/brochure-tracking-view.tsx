@@ -64,7 +64,7 @@ type TrackingData = {
     productPhotoUrls?: string[]
     recipientPhotoUrls?: string[]
     photoApproval?: {
-      status: "NONE" | "PENDING" | "APPROVED" | "AUTO_APPROVED"
+      status: "NONE" | "PENDING" | "FEEDBACK" | "APPROVED" | "AUTO_APPROVED"
       uploadedAt: string | null
       countdownMinutes: number
       approvedAt: string | null
@@ -251,9 +251,9 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
           <p className="text-caption text-text-muted">Được chụp nghiệm thu trước khi giao.</p>
 
           {/* KHUNG XÁC NHẬN HÌNH ẢNH SẢN PHẨM & ĐỒNG HỒ ĐẾM NGƯỢC (SPEC #3) */}
-          {sendCode && order.photoApproval?.status === "PENDING" && order.photoApproval.uploadedAt && (
+          {sendCode && (order.photoApproval?.status === "PENDING" || order.photoApproval?.status === "FEEDBACK") && order.photoApproval.uploadedAt && (
             <PhotoApprovalCard
-              orderCode={order.code}
+              orderCode={order.code} feedbackSent={order.photoApproval.status === "FEEDBACK"}
               sendCode={sendCode}
               uploadedAt={order.photoApproval.uploadedAt}
               countdownMinutes={order.photoApproval.countdownMinutes}

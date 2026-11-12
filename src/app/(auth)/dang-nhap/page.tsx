@@ -11,11 +11,11 @@ import { BRAND } from "@/lib/brand"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 import { Suspense, useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
 import { Zap } from "@/components/ui/icon-set/zap"
 import { LoginForm } from "./components/login-form"
 import { SignupForm } from "./components/signup-form"
 import { InstantTrialForm } from "./components/instant-trial-form"
+import { SessionEndedNotice } from "./components/session-ended-notice"
 
 type CheDo = "dang-nhap" | "dang-ky" | "dung-thu"
 
@@ -102,7 +102,7 @@ export default function DangNhapPage() {
         </div>
 
         <Suspense fallback={null}>
-          <ThongBaoThietBiKhac />
+          <SessionEndedNotice />
         </Suspense>
 
         {cheDo === "dang-nhap" && (
@@ -125,17 +125,5 @@ export default function DangNhapPage() {
         © {BRAND.productName} — Hệ điều hành vận hành & quản trị Doanh nghiệp Vừa và Nhỏ
       </div>
     </main>
-  )
-}
-
-/** Bị đẩy về đây vì tài khoản vừa đăng nhập ở thiết bị khác (một tài khoản chỉ một phiên). */
-function ThongBaoThietBiKhac() {
-  const params = useSearchParams()
-  if (params.get("ly-do") !== "thiet-bi-khac") return null
-  return (
-    <div role="alert" className="rounded-xl border-[1.5px] border-warning/30 bg-warning/10 px-3.5 py-2.5 text-body-sm font-medium text-warning-text">
-      Tài khoản của bạn vừa được đăng nhập trên một thiết bị khác nên phiên ở đây đã kết thúc. Nếu
-      đó không phải bạn, hãy đăng nhập lại và đổi mật khẩu.
-    </div>
   )
 }

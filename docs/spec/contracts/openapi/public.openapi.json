@@ -783,6 +783,18 @@
                         "PAYMENT_OR_COORDINATOR"
                       ]
                     },
+                    "autoApprovePaymentMinutes": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "entryActions": {
                       "type": "object",
                       "properties": {
@@ -3042,6 +3054,7 @@
                               "type": "string",
                               "enum": [
                                 "PENDING",
+                                "FEEDBACK",
                                 "APPROVED",
                                 "NONE",
                                 "AUTO_APPROVED"
@@ -4679,6 +4692,7 @@
                               "type": "string",
                               "enum": [
                                 "PENDING",
+                                "FEEDBACK",
                                 "APPROVED",
                                 "NONE",
                                 "AUTO_APPROVED"
@@ -6522,6 +6536,116 @@
                         "choice",
                         "choiceLabel",
                         "answeredAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/brochure/tracking/{code}/photo-feedback": {
+      "post": {
+        "operationId": "trackingPhotoFeedback",
+        "summary": "Khách góp ý ảnh thành phẩm",
+        "description": "Chỉ chủ link của đơn, khi ảnh đang chờ duyệt. Góp ý dừng đồng hồ tự duyệt, chặn giao tới khi tiệm gửi lại ảnh. Đã đồng ý / quá giờ / đã góp ý / đơn huỷ → 409. 10 lần/10 phút/IP.",
+        "tags": [
+          "Thẻ chào — theo dõi đơn"
+        ],
+        "security": [
+          {
+            "brochureOwner": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "link",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đã gửi góp ý",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "const": "FEEDBACK"
+                        }
+                      },
+                      "required": [
+                        "status"
                       ],
                       "additionalProperties": false
                     }

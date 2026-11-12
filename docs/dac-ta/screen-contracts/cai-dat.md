@@ -53,6 +53,7 @@ acceptance:
 - Tab "Trường dữ liệu": chọn Đơn hàng/Đối tác; mỗi trường có ô đổi tên ("Lưu tên" chỉ hiện khi đã sửa) và công tắc Hiện/Ẩn — trường bắt buộc của hệ thống hiện "Luôn hiện", công tắc khoá; khối "Thêm trường riêng" (tên, kiểu: Chữ ngắn/Đoạn văn/Số/Số tiền/Ngày/Số điện thoại, công tắc "Bắt buộc nhập", nút "Thêm trường").
 - Tab "Tên miền riêng": ô nhập tên miền + nút chính "Thêm tên miền"; mỗi tên miền một dòng gồm trạng thái (Chờ xác minh / Đang hoạt động / Đã bị khoá), nút "Kiểm tra" (chỉ khi chờ xác minh), "Hướng dẫn DNS" (mở/đóng hai bản ghi TXT và CNAME cần thêm), "Gỡ" (hộp xác nhận nêu hậu quả; ẩn khi bị khoá). Tên miền bị khoá hiện lý do khoá.
 - Tab thanh toán, khối "Tự huỷ đơn chưa thanh toán (catalog, trang bán hàng)": công tắc (mặc định tắt) + số giờ 2–168 (mặc định 24) + nút "Lưu"; đơn nhập tay và đơn từ báo giá không bị tự huỷ (audit hành trình UJ-12, 07/11/2026).
+- Tab thanh toán, khối "Chuyển khoản ngân hàng (VietQR)": bốn ô có nhãn gắn với ô (mã ngân hàng, tên ngân hàng, số tài khoản, chủ tài khoản); đủ mã ngân hàng và số tài khoản thì hiện mã VietQR mẫu để quét thử, thiếu thì hiện dòng hướng dẫn (checklist ALG 1.8).
 - Thẻ "Liên kết chuỗi" (trên các tab, chỉ hiện với quyền `F2` khi có lời mời hoặc chuỗi đang tham gia): đồng ý / từ chối lời mời liên kết của chuỗi (hạn 7 ngày), rời chuỗi kèm lý do. Đích của thông báo `CHAIN_LINK_INVITED` / `CHAIN_LINK_STATUS_CHANGED` (audit hành trình UJ-10, 07/11/2026).
 
 ## 5. Content budget
@@ -65,6 +66,7 @@ acceptance:
 - Thành công: Alert box màu xanh lá thông báo lưu thành công.
 
 ## 7. Responsive
+- Menu tab (`SettingsTabsNav`): từ 768px là danh sách dọc ở cột trái (3/12), nhãn dài xuống dòng; dưới 768px là một hàng cuộn ngang. Số thứ tự đánh theo các tab đang hiện (tab ẩn theo môi trường hoặc quyền không làm nhảy số).
 - 390px: Lưới liên kết xếp 1 cột dọc, form nhập liệu 1 cột.
 - 768px: Lưới liên kết 2 cột, form 2 cột.
 - 1280px+: Lưới liên kết 4 cột, tối đa `max-w-5xl` căn giữa.
@@ -80,7 +82,7 @@ acceptance:
 
 ## 10. Dữ liệu và quyền
 - Nguồn sự thật: Bảng `business_profiles`.
-- Quyền: `F2` (sửa hồ sơ) hoặc `H4` (điều hành). Trường dữ liệu: `D18` (trần cứng Điều hành); trường riêng lưu ở `field_definitions.owner_organization_id`, ghi đè trường hệ thống ở `field_config_overrides`; không hạ được mức sàn của hệ thống. Tên miền riêng: `D19` (trần cứng Điều hành), bảng `custom_domains`; tên miền của tổ chức khác → 404.
+- Quyền: `F2` (sửa hồ sơ) hoặc `H4` (điều hành). Trang và mục menu "Cài đặt tiệm" mở cho `F2` hoặc `R5` (Điều phối — tab nhắc việc điều phối); "Hồ sơ cửa hàng" cho `F2`. Người chỉ có `F1` (Sale, Kế toán) mở thẳng đường dẫn thấy trạng thái không quyền (PO 11/11/2026). Trường dữ liệu: `D18` (trần cứng Điều hành); trường riêng lưu ở `field_definitions.owner_organization_id`, ghi đè trường hệ thống ở `field_config_overrides`; không hạ được mức sàn của hệ thống. Tên miền riêng: `D19` (trần cứng Điều hành), bảng `custom_domains`; tên miền của tổ chức khác → 404.
 
 ## 11. Component
 - Dùng lại: `Button`, `SkeletonBlock`, `FeatureGuidanceCard`.

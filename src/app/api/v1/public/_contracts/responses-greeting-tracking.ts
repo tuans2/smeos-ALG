@@ -59,7 +59,7 @@ const trackedOrder = z.strictObject({
   productPhotoUrls: z.array(z.string()),
   recipientPhotoUrls: z.array(z.string()),
   photoApproval: z.strictObject({
-    status: z.enum(["PENDING", "APPROVED", "NONE", "AUTO_APPROVED"]),
+    status: z.enum(["PENDING", "FEEDBACK", "APPROVED", "NONE", "AUTO_APPROVED"]),
     uploadedAt: z.string().nullable(),
     countdownMinutes: z.number(),
     approvedAt: z.string().nullable(),
@@ -135,6 +135,7 @@ export const trackingResponse = z.strictObject({
 })
 
 export const approvePhotoResponse = z.strictObject({ data: z.strictObject({ code: z.string(), approved: z.literal(true) }) })
+export const photoFeedbackResponse = z.strictObject({ data: z.strictObject({ status: z.literal("FEEDBACK") }) })
 
 export const changeRequestResponse = z.strictObject({
   data: z.strictObject({ id: z.string(), status: z.literal("PENDING"), changes: z.array(changeEntry), expectedFeeDeltaVnd: z.number() }),

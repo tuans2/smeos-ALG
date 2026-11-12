@@ -33,7 +33,7 @@ acceptance:
 
 ## Điều hướng
 
-- Mục menu "Đội ngũ & phân quyền" (Quản trị tiệm; chuỗi: Thiết lập chuỗi), quyền `F1`.
+- Mục menu "Đội ngũ & phân quyền" (Quản trị tiệm; chuỗi: Thiết lập chuỗi) và chính trang chỉ mở cho người quản lý nhân viên: một trong `A3`, `F4`, `F5` (PO 11/11/2026). Người khác mở thẳng đường dẫn thấy trạng thái không quyền. `GET /members` trả email nhân viên chỉ cho người có `A3`/`F4`/`F5`; số điện thoại chỉ cho `A3`.
 - Nút "Vai trò & quyền" ở đầu trang (chỉ khi có `F5`) mở `/cai-dat/thanh-vien/vai-tro` (checklist ALG 1.13).
 - Nút phụ "Mời người đã có tài khoản" (cùng quyền với "Thêm nhân viên") mở hộp thoại mời — người được mời nhận ở mục "Tổ chức của tôi" trong menu tài khoản, hạn 14 ngày (audit hành trình UJ-14, 07/11/2026). Email chưa có tài khoản → API trả lời chỉ sang "Thêm nhân viên".
 

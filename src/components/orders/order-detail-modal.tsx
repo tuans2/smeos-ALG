@@ -19,6 +19,7 @@ import { OrderInfoRequests } from "./order-info-requests"
 import { OrderVatSection } from "./order-vat-section"
 import { useI18n } from "@/lib/i18n"
 import { useToast } from "@/components/ui/toast"
+import { OrderDeliveryWindowEditor } from "./order-delivery-window-editor"
 import type { OrderItemRecord, OrderRecord, OrderSlaCalculation } from "@/modules/orders/domain/order-types"
 import { DELIVERY_STATUS_LABELS, PRODUCTION_STATUS_LABELS } from "@/modules/orders/domain/order-status-labels"
 
@@ -196,6 +197,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   <div className="rounded-lg border border-border p-4 space-y-2">
                     <div className="font-bold text-text">Thời gian &amp; Trạng thái</div>
                     <div className="text-text-muted text-caption">Hẹn giao: <span className="font-semibold text-text">{order.deliveryWindow?.date} ({order.deliveryWindow?.timeSlot})</span></div>
+                    {order.source !== "BROCHURE" && <OrderDeliveryWindowEditor orderId={order.id} current={order.deliveryWindow} onChanged={() => { onUpdated(); onClose() }} />}
                     <div className="text-text-muted text-caption">Sản xuất: <span className="font-semibold text-info">{PRODUCTION_STATUS_LABELS[order.productionStatus]}</span></div>
                     <div className="text-text-muted text-caption">Vận chuyển: <span className="font-semibold text-warning-text">{DELIVERY_STATUS_LABELS[order.deliveryStatus]}</span></div>
                   </div>
@@ -235,8 +237,8 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   <div className="space-y-1.5 max-h-36 overflow-y-auto rounded-lg border border-border p-3 text-caption">
                     {order.events?.map((ev) => (
                       <div key={ev.id} className="flex items-center justify-between border-b border-border/50 pb-1.5 last:border-none">
-                        <span className="font-mono text-text-muted">{new Date(ev.createdAt).toLocaleTimeString("vi-VN")} — [{ev.axis.toUpperCase()}]</span>
-                        <span className="font-semibold text-text">{ev.toValue}</span>
+                        <span className="font-mono text-text-muted">{new Date(ev.createdAt).toLocaleTimeString("vi-VN")} — {ev.axis === "delivery_window" ? "Đổi giờ giao" : `[${ev.axis.toUpperCase()}]`}</span>
+                        <span className="font-semibold text-text">{ev.axis === "delivery_window" ? `${ev.fromValue ?? "—"} → ${ev.toValue}` : ev.toValue}</span>
                         <span className="text-text-muted italic">{ev.reason ?? ""}</span>
                       </div>
                     ))}

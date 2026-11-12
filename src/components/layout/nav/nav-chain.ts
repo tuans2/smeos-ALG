@@ -220,7 +220,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
     group: "thiet-lap-chuoi",
     iconKey: "Settings2",
     navKey: "chain-settings",
-    capability: "F1",
+    capability: "F2|R5",
     mobileLabel: "Cài đặt",
   },
   {
@@ -229,7 +229,7 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
     group: "thiet-lap-chuoi",
     iconKey: "Users",
     navKey: "chain-team",
-    capability: "F1",
+    capability: "A3|F4|F5",
     mobileLabel: "Đội ngũ",
   },
   {

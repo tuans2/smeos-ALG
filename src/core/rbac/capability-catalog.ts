@@ -165,7 +165,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   F9: { name: "integration.token.manage", group: "org_member", label: "Cấp phát, xoay và thu hồi token tích hợp máy-máy", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // G — Asset và job
   G1: { name: "asset.read", group: "asset_job", label: "Xem asset của tổ chức", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing", "tho_cam"] },
-  G2: { name: "asset.upload", group: "asset_job", label: "Tải asset lên", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing", "tho_cam", "shipper"] },
+  G2: { name: "asset.upload", group: "asset_job", label: "Tải asset lên", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing", "tho_cam", "shipper", "product_manager"] },
   G3: { name: "asset.delete", group: "asset_job", label: "Xoá asset", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   G4: { name: "job.read", group: "asset_job", label: "Xem job của chính mình", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
   G5: { name: "job.read.all", group: "asset_job", label: "Xem job của toàn tổ chức", defaultRoles: ["dieu_hanh"] },
@@ -174,11 +174,11 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   G8: { name: "usage.read", group: "asset_job", label: "Xem mức dùng và hạn mức", defaultRoles: ["dieu_hanh", "ke_toan"] },
   G9: { name: "audit.read", group: "asset_job", label: "Đọc nhật ký kiểm toán", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // H — Vision
-  H1: { name: "vision.analyze", group: "vision", label: "Chạy phân tích ảnh sản phẩm", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
+  H1: { name: "vision.analyze", group: "vision", label: "Chạy phân tích ảnh sản phẩm", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing", "product_manager"] },
   H2: { name: "vision.result.edit", group: "vision", label: "Sửa kết quả phân tích trước khi duyệt", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing"] },
   H3: { name: "product.approve", group: "vision", label: "Duyệt kết quả, ghi vào Product Master", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   H4: { name: "vision.engine.manage", group: "vision", label: "Chọn bộ máy phân tích ảnh dùng cho cả tổ chức", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
-  H5: { name: "product_copy.generate", group: "vision", label: "Tạo dữ liệu bán hàng từ phân tích đã duyệt", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing"] },
+  H5: { name: "product_copy.generate", group: "vision", label: "Tạo dữ liệu bán hàng từ phân tích đã duyệt", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing", "product_manager"] },
   H6: { name: "product_copy.approve", group: "vision", label: "Duyệt dữ liệu bán hàng, ghi Product Master", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // I — Tối ưu ảnh
   I1: { name: "media.optimize", group: "media", label: "Chạy job tối ưu ảnh", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
@@ -257,6 +257,8 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   R18: { name: "delivery.assigned", group: "order_operations", label: "Xem và cập nhật đơn được giao đi giao", defaultRoles: ["dieu_hanh", "dieu_phoi", "shipper"] },
   R19: { name: "payment.reconciliation.read", group: "order_operations", label: "Xem sổ thu và đối soát giao dịch ngân hàng", defaultRoles: ["dieu_hanh", "ke_toan"] },
   R20: { name: "report.read", group: "order_operations", label: "Xem báo cáo kinh doanh theo kỳ", defaultRoles: ["dieu_hanh", "ke_toan"] }, // Đợt 5 ALG, PO Q7
+  // PO 11/11/2026 (GD1 Bước 6, E-14): Sale đổi giờ giao đơn của mình, kèm lý do, giữ lịch sử — không cần cả quyền Sửa đơn (R3)
+  R21: { name: "order.delivery_window.update", group: "order_operations", label: "Đổi giờ giao của đơn (kèm lý do)", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale"] },
   // Q — CRM & Khách hàng ngành hoa (M09, P21)
   Q1: { name: "crm.customer.read", group: "crm", label: "Xem thông tin khách hàng và hồ sơ RFM", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service", "ke_toan"] },
   Q2: { name: "crm.customer.create", group: "crm", label: "Thêm khách hàng mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },

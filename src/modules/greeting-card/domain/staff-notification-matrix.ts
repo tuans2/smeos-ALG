@@ -107,6 +107,21 @@ export const STAFF_NOTIFY_MATRIX: Record<StaffNotifyEvent, StaffRecipientTarget[
     },
   ],
 
+  PHOTO_FEEDBACK: [
+    {
+      role: "COORDINATOR",
+      dispatchMode: "BROADCAST",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "URGENT",
+    },
+    {
+      role: "SALE",
+      dispatchMode: "OWNER",
+      channels: ["APP_INBOX", "ZALO", "TELEGRAM", "WHATSAPP", "MESSENGER"],
+      priority: "URGENT",
+    },
+  ],
+
   READY: [
     {
       role: "SALE",

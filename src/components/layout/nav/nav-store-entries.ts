@@ -265,7 +265,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     group: "quan-tri",
     iconKey: "Building2",
     navKey: "business-profile",
-    capability: "F1",
+    capability: "F2",
     mobileLabel: "Hồ sơ",
   },
   {
@@ -274,7 +274,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     group: "quan-tri",
     iconKey: "Settings2",
     navKey: "settings",
-    capability: "F1",
+    capability: "F2|R5",
     mobileLabel: "Cài đặt",
   },
   {
@@ -283,7 +283,7 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     group: "quan-tri",
     iconKey: "Users",
     navKey: "team",
-    capability: "F1",
+    capability: "A3|F4|F5",
     mobileLabel: "Đội ngũ",
   },
   {

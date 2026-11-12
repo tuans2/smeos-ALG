@@ -39,7 +39,7 @@ Seed bởi `ensureSystemRoles()` duyệt `SYSTEM_ROLES` (`src/modules/organizati
 | `marketing` | Marketing | 19 | Catalog, Sản phẩm, Quét ảnh, Kho dữ liệu, Nghiên cứu thị trường, Creative Studio, Ảnh marketing, Video, Viết nội dung, Job + 4 mục không gác mã | Không có `F1`, không `R*`, không `Q*` |
 | `crm` | Chăm sóc khách hàng | 10 | Khách hàng, Đơn hàng, Hội thoại, Thẻ chào, Sản phẩm + 4 mục không gác mã | Không có `T2` (gửi tin), không `R2` |
 | `customer_service` | Chăm sóc khách hàng (CSKH) | 13 | Khách hàng, Đơn hàng, Hội thoại, Thẻ chào + 4 mục không gác mã | Không có `L1` |
-| `experience_user` | Experience User | 2 (`K1`,`K2`) | Chỉ 4 mục không gác mã (Lịch đăng, Kho mẫu, Tri thức, Kết nối kênh) | `K1/K2` không được kiểm ở đâu trong mã |
+| `experience_user` | Người dùng trải nghiệm | 2 (`K1`,`K2`) | Chỉ 4 mục không gác mã (Lịch đăng, Kho mẫu, Tri thức, Kết nối kênh) | `K1/K2` không được kiểm ở đâu trong mã |
 
 "4 mục không gác mã" = Lịch đăng, Kho mẫu, Tri thức, Kết nối kênh (mục điều hướng không khai `capability`). Ma trận đủ 151 mã: [02a-ma-tran-quyen.md](02a-ma-tran-quyen.md).
 

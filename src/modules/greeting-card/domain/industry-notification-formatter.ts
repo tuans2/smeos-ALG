@@ -191,6 +191,11 @@ export function formatIndustryStaffNotificationText(
         title: `⚠️ ${code} · Khách yêu cầu đổi thông tin đơn`,
         message: `${customer} gửi yêu cầu cập nhật thông tin đơn hàng. Cần kiểm tra và phê duyệt.${note}`,
       }
+    case "PHOTO_FEEDBACK":
+      return {
+        title: `⚠️ ${code} · Khách góp ý ảnh thành phẩm`,
+        message: `${customer} góp ý về ảnh thành phẩm — chưa giao, chỉnh theo góp ý rồi chụp lại ảnh.${note}`,
+      }
     case "READY":
       return {
         title: `${code} · Sản phẩm đã hoàn thành và kiểm tra chất lượng`,

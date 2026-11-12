@@ -51,7 +51,7 @@
     "src/components/products/bulk-import/branch-import-panel.tsx": 358,
     "src/components/products/create-product-types.ts": 473,
     "src/components/products/product-filter-types.ts": 452,
-    "src/components/products/use-create-product-form.ts": 387,
+    "src/components/products/use-create-product-form.ts": 323,
     "src/components/profiles/brand-profile-form.tsx": 384,
     "src/components/profiles/sales-defaults-form.tsx": 372,
     "src/components/sales/sales-pitch-card.tsx": 832,

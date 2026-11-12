@@ -1,5 +1,6 @@
 /** Phụ thuộc chung của use-case Trung tâm Tích hợp — tiêm được để test không cần DB. */
 
+import { isHrefInPhase } from "@/lib/delivery/delivery-phase"
 import { isRouteLocked } from "@/lib/feature-lock"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
@@ -21,6 +22,7 @@ export interface HubDeps {
   notify: typeof notifyOrganization
   isProduction: boolean
   isRouteLocked: (href: string) => boolean
+  isRouteOutOfPhase: (href: string) => boolean
   now: () => Date
 }
 
@@ -36,6 +38,7 @@ export function defaultHubDeps(): HubDeps {
     notify: notifyOrganization,
     isProduction: process.env.NODE_ENV === "production",
     isRouteLocked: (href) => isRouteLocked(href),
+    isRouteOutOfPhase: (href) => !isHrefInPhase(href),
     now: () => new Date(),
   }
 }
