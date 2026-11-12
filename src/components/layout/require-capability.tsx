@@ -13,8 +13,8 @@ export function RequireCapability({ anyOf, children }: { anyOf: readonly string[
   const { can } = useSession()
   if (anyOf.some((code) => can(code))) return <>{children}</>
   return (
-    <main className="mx-auto w-full max-w-xl px-4 py-12">
+    <div className="mx-auto w-full max-w-xl px-4 py-12">
       <EmptyState kind="forbidden" title="Bạn chưa có quyền mở trang này" reason="Liên hệ Điều hành cửa hàng nếu bạn cần quản lý mục này." />
-    </main>
+    </div>
   )
 }

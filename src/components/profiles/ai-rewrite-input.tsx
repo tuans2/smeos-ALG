@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useId, useState } from "react"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Check } from "@/components/ui/icon-set/check"
@@ -86,10 +86,11 @@ export function AiRewriteInput({
     setShowDropdown(false)
   }
 
+  const inputId = useId()
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-caption font-semibold text-text">
+        <label htmlFor={inputId} className="block text-caption font-semibold text-text">
           {label}
         </label>
       )}
@@ -97,6 +98,7 @@ export function AiRewriteInput({
       <div className="flex gap-2 relative">
         <div className="relative flex-1">
           <Input
+            id={inputId}
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}

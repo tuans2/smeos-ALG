@@ -31,7 +31,7 @@
 | L0 Hướng dẫn | 1 `<FeatureGuidanceCard />` (K1) | Đỉnh màn hình, tự thu gọn |
 | L1 Hành động | Thanh tác vụ K2 (1 primary "Thêm sản phẩm", 2 outline "Tra cứu Catalog", "Quy tắc giá") | Dưới guidance card |
 | L2 Tổng quan | 4 chỉ số danh mục: Tổng sản phẩm, Cần hoàn thiện, Sẵn sàng bán, Điểm sẵn sàng TB | Lưới 4 ô (2 cột mobile, 4 cột desktop) |
-| L3 Việc khẩn | Khối P0 "Sản phẩm chưa sẵn sàng bán" kèm lý do thiếu cụ thể và điểm % | Thẻ Card chính ở giữa |
+| L3 Việc khẩn | Khối P0 "Sản phẩm chưa sẵn sàng bán" kèm lý do thiếu cụ thể và điểm % (dòng giãn theo số nhãn lý do, không cắt chiều cao) | Thẻ Card chính ở giữa |
 | L4 Tham khảo | Khối P2 "Sản phẩm đang bán hoàn chỉnh" (100% readiness) | Dưới cùng khi đã tải xong |
 
 ## 4. Hành động

@@ -200,7 +200,7 @@ export function SanPhamClient({ initialPage }: { initialPage: ProductListPage<Pr
       {session.can("H3") && <ProposalQueueBar active={onlyProposals} onToggle={() => setOnlyProposals((v) => !v)} />}
 
       {/* Nội dung chính */}
-      <main className="flex flex-1 flex-col overflow-y-auto p-4">
+      <div className="flex flex-1 flex-col overflow-y-auto p-4">
         {loi && (
           <div className="mb-3 rounded-xl border border-danger/30 bg-danger-bg px-3.5 py-2.5 text-body-sm font-medium text-danger">
             {loi}
@@ -308,7 +308,7 @@ export function SanPhamClient({ initialPage }: { initialPage: ProductListPage<Pr
             )}
           </div>
         )}
-      </main>
+      </div>
 
       {/* Modal xác nhận xóa an toàn */}
       <TrashConfirmModal

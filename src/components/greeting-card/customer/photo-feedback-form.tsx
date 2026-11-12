@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { MessageSquare } from "@/components/ui/icons"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { apiSend } from "@/components/greeting-card/greeting-api"

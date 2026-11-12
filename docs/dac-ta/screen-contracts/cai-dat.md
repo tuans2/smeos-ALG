@@ -66,6 +66,7 @@ acceptance:
 - Thành công: Alert box màu xanh lá thông báo lưu thành công.
 
 ## 7. Responsive
+- Menu tab (`SettingsTabsNav`): từ 768px là danh sách dọc ở cột trái (3/12), nhãn dài xuống dòng; dưới 768px là một hàng cuộn ngang. Số thứ tự đánh theo các tab đang hiện (tab ẩn theo môi trường hoặc quyền không làm nhảy số).
 - 390px: Lưới liên kết xếp 1 cột dọc, form nhập liệu 1 cột.
 - 768px: Lưới liên kết 2 cột, form 2 cột.
 - 1280px+: Lưới liên kết 4 cột, tối đa `max-w-5xl` căn giữa.
