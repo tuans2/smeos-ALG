@@ -69,10 +69,15 @@ describe("PATCH /orders/:id — tiến độ đơn đang ở Điều phối, đ�
     expect((await patch(b, { productionStatus: "ASSIGNED" })).status).toBe(404)
   })
 
-  it("đơn chưa sang Điều phối: đổi trục chế tác như cũ", async () => {
-    const res = await patch(a, { productionStatus: "ASSIGNED" })
+  it("đơn chưa sang Điều phối: đổi trục chế tác như cũ; ghi nhật ký kiểm toán không chép dữ liệu cá nhân", async () => {
+    const res = await patch(a, { productionStatus: "ASSIGNED", cardMessage: "Chúc mừng sinh nhật" })
     expect(res.status).toBe(200)
     expect((await axes()).production).toBe("ASSIGNED")
+
+    const logs = await prisma.audit_logs.findMany({ where: { organization_id: a.organizationId, action: "order.update", entity_id: orderId } })
+    expect(logs).toHaveLength(1)
+    expect(logs[0]?.after).toMatchObject({ productionStatus: "ASSIGNED", fields: ["productionStatus", "cardMessage"] })
+    expect(JSON.stringify(logs[0])).not.toMatch(/Chúc mừng/)
   })
 
   it("đơn đã huỷ / đã hoàn tất: chỉ sửa ghi chú nội bộ; đổi địa chỉ, thiệp, trục → 409", async () => {

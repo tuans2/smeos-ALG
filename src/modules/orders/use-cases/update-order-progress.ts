@@ -16,24 +16,15 @@ import type { OrderRecord, UpdateOrderInput } from "../domain/order-types"
 import type { IOrderRepository, PendingOrderEvent } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
-import { orderCoordinationPort, type OrderCoordinationPort } from "@/modules/coordinator/use-cases/order-coordination-port"
 
-/**
- * `PATCH /orders/:id` (R3): sửa đơn từ sổ đơn. Đơn đã sang Điều phối không đổi trục vòng đời ở đây (audit User Journey
- * UJ-09, O4) — tiến độ đi qua `/coordinator/orders/:id/stage` để bước điều phối và ba trục cùng đổi.
- */
-export function editOrder(
-  ctx: TenantContext,
-  orderId: string,
-  input: UpdateOrderInput,
-  coordination: OrderCoordinationPort = orderCoordinationPort
-): Promise<OrderRecord> {
-  return updateOrderProgress(ctx, orderId, input, getOrderRepository(), notifyOrganization, coordination)
+/** Phần của cổng Điều phối cần ở đây — khai cấu trúc, không import module Điều phối (cổng thật: `edit-order.ts`). */
+export interface CoordinationCheck {
+  isUnderCoordination(ctx: TenantContext, orderId: string): Promise<boolean>
 }
 
 /**
- * `coordination` có giá trị → chặn đổi trục khi đơn đang ở Điều phối. Hàng đợi thợ gọi không kèm cổng này: mô hình
- * giao việc cho thợ còn chờ PO (audit User Journey R2-05/R2-06, UQ16).
+ * `coordination` có giá trị → chặn đổi trục khi đơn đang ở Điều phối (`editOrder`, audit User Journey UJ-09). Hàng đợi
+ * thợ gọi không kèm cổng này: mô hình giao việc cho thợ còn chờ PO (audit User Journey R2-05/R2-06, UQ16).
  */
 export async function updateOrderProgress(
   ctx: TenantContext,
@@ -41,7 +32,7 @@ export async function updateOrderProgress(
   input: UpdateOrderInput,
   repo: IOrderRepository = getOrderRepository(),
   notify: typeof notifyOrganization = notifyOrganization,
-  coordination: OrderCoordinationPort | null = null
+  coordination: CoordinationCheck | null = null
 ): Promise<OrderRecord> {
   const existing = await repo.findById(ctx.organizationId, orderId)
   // Ngoài chi nhánh được giao → như không tồn tại (checklist ALG 9.13)

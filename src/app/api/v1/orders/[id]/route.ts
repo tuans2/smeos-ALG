@@ -2,7 +2,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getOrder } from "@/modules/orders/use-cases/get-order"
-import { editOrder } from "@/modules/orders/use-cases/update-order-progress"
+import { editOrder } from "@/modules/orders/use-cases/edit-order"
 import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { patchOrderBody } from "@/app/api/v1/_contracts/requests-orders"
 
