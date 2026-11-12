@@ -63,9 +63,9 @@ export function AiRewriteInput({
         return
       }
       if (!res.ok) throw new Error("Yêu cầu viết lại không thành công")
-      const data = await res.json()
-      if (Array.isArray(data.suggestions) && data.suggestions.length > 0) {
-        setSuggestions(data.suggestions)
+      const suggestions = ((await res.json()) as { data?: { suggestions?: unknown } }).data?.suggestions
+      if (Array.isArray(suggestions) && suggestions.length > 0) {
+        setSuggestions(suggestions)
       } else {
         setSuggestions([value])
       }

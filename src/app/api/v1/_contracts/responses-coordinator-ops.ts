@@ -71,9 +71,8 @@ export const createPartnerResponse = z.union([
   partnerResponse,
   z.strictObject({ success: z.literal(true), data: partnership, temporaryPassword: z.string().optional() }),
 ])
-export const partnershipResponse = z.strictObject({ success: z.literal(true), data: partnership })
+export const partnershipResponse = z.strictObject({ data: partnership })
 export const partnerToolsResponse = z.strictObject({
-  success: z.literal(true),
   data: z.strictObject({ partnershipId: z.string(), partnerOrgId: z.string(), unlockedTools: z.array(z.string()) }),
 })
 
@@ -151,7 +150,6 @@ export const confirmDeliveryResponse = data(
 )
 export const craftFeeComplaintResponse = data(z.strictObject({ deducted: z.boolean(), payableVnd: z.number() }))
 export const dispatchToChatResponse = z.strictObject({
-  success: z.literal(true),
   data: z.strictObject({
     conversationId: z.string(),
     message: z.strictObject({

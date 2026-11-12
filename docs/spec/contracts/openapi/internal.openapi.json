@@ -139,49 +139,53 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "copy": {
+                    "data": {
                       "type": "object",
                       "properties": {
-                        "headline": {
-                          "type": "string"
+                        "copy": {
+                          "type": "object",
+                          "properties": {
+                            "headline": {
+                              "type": "string"
+                            },
+                            "subHeadline": {
+                              "type": "string"
+                            },
+                            "promotionBadge": {
+                              "type": "string"
+                            },
+                            "ctaText": {
+                              "type": "string"
+                            },
+                            "validityText": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "headline",
+                            "subHeadline",
+                            "promotionBadge",
+                            "ctaText"
+                          ],
+                          "additionalProperties": false
                         },
-                        "subHeadline": {
-                          "type": "string"
-                        },
-                        "promotionBadge": {
-                          "type": "string"
-                        },
-                        "ctaText": {
-                          "type": "string"
-                        },
-                        "validityText": {
-                          "type": "string"
+                        "source": {
+                          "type": "string",
+                          "enum": [
+                            "AI_CONTENT_ENGINE",
+                            "INSTANT_TEMPLATE"
+                          ]
                         }
                       },
                       "required": [
-                        "headline",
-                        "subHeadline",
-                        "promotionBadge",
-                        "ctaText"
+                        "copy",
+                        "source"
                       ],
                       "additionalProperties": false
-                    },
-                    "source": {
-                      "type": "string",
-                      "enum": [
-                        "AI_CONTENT_ENGINE",
-                        "INSTANT_TEMPLATE"
-                      ]
                     }
                   },
                   "required": [
-                    "success",
-                    "copy",
-                    "source"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -353,109 +357,113 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "qc": {
+                    "data": {
                       "type": "object",
                       "properties": {
-                        "isPassed": {
-                          "type": "boolean"
+                        "qc": {
+                          "type": "object",
+                          "properties": {
+                            "isPassed": {
+                              "type": "boolean"
+                            },
+                            "overallScore": {
+                              "type": "number"
+                            },
+                            "criteria": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "code": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "passed": {
+                                    "type": "boolean"
+                                  },
+                                  "score": {
+                                    "type": "number"
+                                  },
+                                  "message": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "code",
+                                  "name",
+                                  "passed",
+                                  "score"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "failedCriteria": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "retryHint": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "isPassed",
+                            "overallScore",
+                            "criteria",
+                            "failedCriteria"
+                          ],
+                          "additionalProperties": false
                         },
-                        "overallScore": {
-                          "type": "number"
-                        },
-                        "criteria": {
+                        "results": {
                           "type": "array",
                           "items": {
                             "type": "object",
                             "properties": {
-                              "code": {
+                              "format": {
+                                "type": "string",
+                                "enum": [
+                                  "1:1",
+                                  "4:5",
+                                  "9:16",
+                                  "16:9",
+                                  "A4"
+                                ]
+                              },
+                              "renderedUrl": {
                                 "type": "string"
                               },
-                              "name": {
-                                "type": "string"
+                              "mode": {
+                                "type": "string",
+                                "enum": [
+                                  "SINGLE_CALL_AI",
+                                  "TEMPLATE_LAYOUT"
+                                ]
                               },
-                              "passed": {
-                                "type": "boolean"
-                              },
-                              "score": {
-                                "type": "number"
-                              },
-                              "message": {
+                              "note": {
                                 "type": "string"
                               }
                             },
                             "required": [
-                              "code",
-                              "name",
-                              "passed",
-                              "score"
+                              "format",
+                              "mode",
+                              "note"
                             ],
                             "additionalProperties": false
                           }
-                        },
-                        "failedCriteria": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "retryHint": {
-                          "type": "string"
                         }
                       },
                       "required": [
-                        "isPassed",
-                        "overallScore",
-                        "criteria",
-                        "failedCriteria"
+                        "qc",
+                        "results"
                       ],
                       "additionalProperties": false
-                    },
-                    "results": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "format": {
-                            "type": "string",
-                            "enum": [
-                              "1:1",
-                              "4:5",
-                              "9:16",
-                              "16:9",
-                              "A4"
-                            ]
-                          },
-                          "renderedUrl": {
-                            "type": "string"
-                          },
-                          "mode": {
-                            "type": "string",
-                            "enum": [
-                              "SINGLE_CALL_AI",
-                              "TEMPLATE_LAYOUT"
-                            ]
-                          },
-                          "note": {
-                            "type": "string"
-                          }
-                        },
-                        "required": [
-                          "format",
-                          "mode",
-                          "note"
-                        ],
-                        "additionalProperties": false
-                      }
                     }
                   },
                   "required": [
-                    "success",
-                    "qc",
-                    "results"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -19662,23 +19670,27 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "suggestions": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "fallback": {
-                      "type": "boolean"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "suggestions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "fallback": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "suggestions"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "suggestions"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -34995,10 +35007,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -35081,7 +35089,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -45776,10 +45783,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -45880,7 +45883,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -45978,10 +45980,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -46007,7 +46005,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -46108,10 +46105,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -46212,7 +46205,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -89422,7 +89414,7 @@
       "get": {
         "operationId": "listInternalConversations",
         "summary": "Hội thoại nội bộ tôi tham gia",
-        "description": "Không cần mã năng lực. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực.",
         "tags": [
           "Chat nội bộ"
         ],
@@ -89474,10 +89466,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -89578,14 +89566,22 @@
                         "additionalProperties": false
                       }
                     },
-                    "total": {
-                      "type": "number"
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "total"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
                     "data",
-                    "total"
+                    "meta"
                   ],
                   "additionalProperties": false
                 }
@@ -89607,7 +89603,7 @@
       "post": {
         "operationId": "createInternalConversation",
         "summary": "Tạo hoặc lấy lại hội thoại nội bộ",
-        "description": "Thân `{ partnerOrgId }` / `{ chainOrgId }` / `{ branchId }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi). Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Thân `{ partnerOrgId }` / `{ chainOrgId }` / `{ branchId }` mở phòng của đúng một cặp (không liên kết đang có hiệu lực → 404); thân còn lại tạo hội thoại — `PLATFORM_TENANT` client không tự tạo được (→ 400). `targetUserId` ngoài tổ chức/đối tác/chuỗi đang liên kết, hoặc `orderId` của tổ chức khác → 404. Sai lược đồ → 400 `details.reason` (một chuỗi).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -89726,10 +89722,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -89829,7 +89821,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -90092,7 +90083,7 @@
       "get": {
         "operationId": "listInternalMessages",
         "summary": "Tin nhắn của hội thoại nội bộ",
-        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404.",
         "tags": [
           "Chat nội bộ"
         ],
@@ -90130,10 +90121,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "array",
                       "items": {
@@ -90258,7 +90245,7 @@
                         "additionalProperties": false
                       }
                     },
-                    "nextCursor": {
+                    "next_cursor": {
                       "type": [
                         "string",
                         "null"
@@ -90266,9 +90253,8 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data",
-                    "nextCursor"
+                    "next_cursor"
                   ],
                   "additionalProperties": false
                 }
@@ -90293,7 +90279,7 @@
       "post": {
         "operationId": "sendInternalMessage",
         "summary": "Gửi tin nhắn nội bộ",
-        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tin chữ: thân có `actionPayload` / `attachments` / loại khác `TEXT` hoặc tin rỗng → 400 (thẻ đơn và tin hệ thống chỉ do máy chủ sinh; ảnh gửi qua `/images`). Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tin chữ: thân có `actionPayload` / `attachments` / loại khác `TEXT` hoặc tin rỗng → 400 (thẻ đơn và tin hệ thống chỉ do máy chủ sinh; ảnh gửi qua `/images`).",
         "tags": [
           "Chat nội bộ"
         ],
@@ -90355,10 +90341,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -90482,7 +90464,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -90934,7 +90915,7 @@
       "post": {
         "operationId": "handleInternalCardAction",
         "summary": "Bấm nút trên thẻ hành động (nhận/từ chối đơn)",
-        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tổ chức được giao, không phải người gửi thẻ (khác → 404). Tin không phải thẻ đơn (`ACTION_CARD_ORDER`) → 409; thẻ đã xử lý hoặc vừa bị người khác xử lý → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định. Thành công trả `{ success: true, data }` cũ (ngoại lệ envelope, `api-envelope-legacy.txt`).",
+        "description": "Không cần mã năng lực — chỉ người tham gia hội thoại; không phải người tham gia hoặc của tổ chức khác → 404. Chỉ tổ chức được giao, không phải người gửi thẻ (khác → 404). Tin không phải thẻ đơn (`ACTION_CARD_ORDER`) → 409; thẻ đã xử lý hoặc vừa bị người khác xử lý → 409. Giữ trạng thái sống của thẻ, chỉ đổi phần do nút quyết định.",
         "tags": [
           "Chat nội bộ"
         ],
@@ -90998,10 +90979,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -91125,7 +91102,6 @@
                     }
                   },
                   "required": [
-                    "success",
                     "data"
                   ],
                   "additionalProperties": false
@@ -114371,7 +114347,7 @@
       "get": {
         "operationId": "getProductCopy",
         "summary": "Một bản dữ liệu bán hàng",
-        "description": "Mã năng lực kiểm ở use-case. Trả thẳng bản ghi (không bọc `{ data }`). Của tổ chức khác → 404.",
+        "description": "Mã năng lực kiểm ở use-case. Của tổ chức khác → 404.",
         "tags": [
           "Dữ liệu bán hàng sản phẩm"
         ],
@@ -114409,140 +114385,149 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "organization_id": {
-                      "type": "string"
-                    },
-                    "analysis_id": {
-                      "type": "string"
-                    },
-                    "product_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "raw": {
+                    "data": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "edited": {
-                      "anyOf": [
-                        {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "analysis_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "raw": {
                           "type": "object",
                           "propertyNames": {
                             "type": "string"
                           },
                           "additionalProperties": {}
                         },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approval_state": {
-                      "type": "string",
-                      "enum": [
-                        "PENDING",
-                        "APPROVED",
-                        "REJECTED"
-                      ]
-                    },
-                    "approved_by": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "approved_at": {
-                      "anyOf": [
-                        {
+                        "edited": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reject_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "latency_ms": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         },
-                        {
-                          "type": "null"
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         }
-                      ]
-                    },
-                    "profile_version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "reject_reason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "job_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "model_key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "provider": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cost_usd": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "latency_ms": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "analysis_id",
+                        "product_id",
+                        "raw",
+                        "edited",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "profile_version",
+                        "reject_reason",
+                        "job_id",
+                        "model_key",
+                        "provider",
+                        "cost_usd",
+                        "latency_ms",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "id",
-                    "organization_id",
-                    "analysis_id",
-                    "product_id",
-                    "raw",
-                    "edited",
-                    "approval_state",
-                    "approved_by",
-                    "approved_at",
-                    "profile_version",
-                    "reject_reason",
-                    "job_id",
-                    "model_key",
-                    "provider",
-                    "cost_usd",
-                    "latency_ms",
-                    "created_at",
-                    "updated_at"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -114642,140 +114627,149 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "organization_id": {
-                      "type": "string"
-                    },
-                    "analysis_id": {
-                      "type": "string"
-                    },
-                    "product_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "raw": {
+                    "data": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "edited": {
-                      "anyOf": [
-                        {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "analysis_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "raw": {
                           "type": "object",
                           "propertyNames": {
                             "type": "string"
                           },
                           "additionalProperties": {}
                         },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approval_state": {
-                      "type": "string",
-                      "enum": [
-                        "PENDING",
-                        "APPROVED",
-                        "REJECTED"
-                      ]
-                    },
-                    "approved_by": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "approved_at": {
-                      "anyOf": [
-                        {
+                        "edited": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reject_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "latency_ms": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         },
-                        {
-                          "type": "null"
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         }
-                      ]
-                    },
-                    "profile_version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "reject_reason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "job_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "model_key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "provider": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cost_usd": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "latency_ms": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "analysis_id",
+                        "product_id",
+                        "raw",
+                        "edited",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "profile_version",
+                        "reject_reason",
+                        "job_id",
+                        "model_key",
+                        "provider",
+                        "cost_usd",
+                        "latency_ms",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "id",
-                    "organization_id",
-                    "analysis_id",
-                    "product_id",
-                    "raw",
-                    "edited",
-                    "approval_state",
-                    "approved_by",
-                    "approved_at",
-                    "profile_version",
-                    "reject_reason",
-                    "job_id",
-                    "model_key",
-                    "provider",
-                    "cost_usd",
-                    "latency_ms",
-                    "created_at",
-                    "updated_at"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -114849,140 +114843,149 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "organization_id": {
-                      "type": "string"
-                    },
-                    "analysis_id": {
-                      "type": "string"
-                    },
-                    "product_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "raw": {
+                    "data": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "edited": {
-                      "anyOf": [
-                        {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "analysis_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "raw": {
                           "type": "object",
                           "propertyNames": {
                             "type": "string"
                           },
                           "additionalProperties": {}
                         },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approval_state": {
-                      "type": "string",
-                      "enum": [
-                        "PENDING",
-                        "APPROVED",
-                        "REJECTED"
-                      ]
-                    },
-                    "approved_by": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "approved_at": {
-                      "anyOf": [
-                        {
+                        "edited": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reject_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "latency_ms": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         },
-                        {
-                          "type": "null"
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         }
-                      ]
-                    },
-                    "profile_version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "reject_reason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "job_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "model_key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "provider": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cost_usd": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "latency_ms": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "analysis_id",
+                        "product_id",
+                        "raw",
+                        "edited",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "profile_version",
+                        "reject_reason",
+                        "job_id",
+                        "model_key",
+                        "provider",
+                        "cost_usd",
+                        "latency_ms",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "id",
-                    "organization_id",
-                    "analysis_id",
-                    "product_id",
-                    "raw",
-                    "edited",
-                    "approval_state",
-                    "approved_by",
-                    "approved_at",
-                    "profile_version",
-                    "reject_reason",
-                    "job_id",
-                    "model_key",
-                    "provider",
-                    "cost_usd",
-                    "latency_ms",
-                    "created_at",
-                    "updated_at"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -115068,140 +115071,149 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "organization_id": {
-                      "type": "string"
-                    },
-                    "analysis_id": {
-                      "type": "string"
-                    },
-                    "product_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "raw": {
+                    "data": {
                       "type": "object",
-                      "propertyNames": {
-                        "type": "string"
-                      },
-                      "additionalProperties": {}
-                    },
-                    "edited": {
-                      "anyOf": [
-                        {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "analysis_id": {
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "raw": {
                           "type": "object",
                           "propertyNames": {
                             "type": "string"
                           },
                           "additionalProperties": {}
                         },
-                        {
-                          "type": "null"
-                        }
-                      ]
-                    },
-                    "approval_state": {
-                      "type": "string",
-                      "enum": [
-                        "PENDING",
-                        "APPROVED",
-                        "REJECTED"
-                      ]
-                    },
-                    "approved_by": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "approved_at": {
-                      "anyOf": [
-                        {
+                        "edited": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "approval_state": {
+                          "type": "string",
+                          "enum": [
+                            "PENDING",
+                            "APPROVED",
+                            "REJECTED"
+                          ]
+                        },
+                        "approved_by": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approved_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "profile_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "reject_reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "model_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "cost_usd": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "latency_ms": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
                           "type": "string",
                           "format": "date-time",
                           "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         },
-                        {
-                          "type": "null"
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
                         }
-                      ]
-                    },
-                    "profile_version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "reject_reason": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "job_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "model_key": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "provider": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "cost_usd": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "latency_ms": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "analysis_id",
+                        "product_id",
+                        "raw",
+                        "edited",
+                        "approval_state",
+                        "approved_by",
+                        "approved_at",
+                        "profile_version",
+                        "reject_reason",
+                        "job_id",
+                        "model_key",
+                        "provider",
+                        "cost_usd",
+                        "latency_ms",
+                        "created_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "id",
-                    "organization_id",
-                    "analysis_id",
-                    "product_id",
-                    "raw",
-                    "edited",
-                    "approval_state",
-                    "approved_by",
-                    "approved_at",
-                    "profile_version",
-                    "reject_reason",
-                    "job_id",
-                    "model_key",
-                    "provider",
-                    "cost_usd",
-                    "latency_ms",
-                    "created_at",
-                    "updated_at"
+                    "data"
                   ],
                   "additionalProperties": false
                 }
@@ -120106,103 +120118,107 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "const": true
-                    },
-                    "batch_id": {
-                      "type": "string"
-                    },
-                    "total_requested": {
-                      "type": "number"
-                    },
-                    "created_count": {
-                      "type": "number"
-                    },
-                    "updated_count": {
-                      "type": "number"
-                    },
-                    "skipped_count": {
-                      "type": "number"
-                    },
-                    "images_attached_count": {
-                      "type": "number"
-                    },
-                    "drive_links_updated_count": {
-                      "type": "number"
-                    },
-                    "failed_count": {
-                      "type": "number"
-                    },
-                    "created": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "code": {
-                            "type": "string"
-                          },
-                          "name": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "batch_id": {
+                          "type": "string"
+                        },
+                        "total_requested": {
+                          "type": "number"
+                        },
+                        "created_count": {
+                          "type": "number"
+                        },
+                        "updated_count": {
+                          "type": "number"
+                        },
+                        "skipped_count": {
+                          "type": "number"
+                        },
+                        "images_attached_count": {
+                          "type": "number"
+                        },
+                        "drive_links_updated_count": {
+                          "type": "number"
+                        },
+                        "failed_count": {
+                          "type": "number"
+                        },
+                        "created": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "code",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "updated": {
+                          "type": "array",
+                          "items": {
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "id",
-                          "code",
-                          "name"
-                        ],
-                        "additionalProperties": false
-                      }
-                    },
-                    "updated": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "skipped": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "failed": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "code": {
-                            "type": "string"
-                          },
-                          "error": {
+                        "skipped": {
+                          "type": "array",
+                          "items": {
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "code",
-                          "error"
-                        ],
-                        "additionalProperties": false
-                      }
+                        "failed": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "error": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "code",
+                              "error"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "batch_id",
+                        "total_requested",
+                        "created_count",
+                        "updated_count",
+                        "skipped_count",
+                        "images_attached_count",
+                        "drive_links_updated_count",
+                        "failed_count",
+                        "created",
+                        "updated",
+                        "skipped",
+                        "failed"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "required": [
-                    "success",
-                    "batch_id",
-                    "total_requested",
-                    "created_count",
-                    "updated_count",
-                    "skipped_count",
-                    "images_attached_count",
-                    "drive_links_updated_count",
-                    "failed_count",
-                    "created",
-                    "updated",
-                    "skipped",
-                    "failed"
+                    "data"
                   ],
                   "additionalProperties": false
                 }

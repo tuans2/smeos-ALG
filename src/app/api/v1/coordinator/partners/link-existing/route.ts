@@ -27,6 +27,6 @@ export const POST = defineRoute({
       capacityDaily: parsed.data.capacityDaily,
     })
 
-    return jsonResponse({ success: true, data: partnership }, { status: 201 })
+    return jsonResponse({ data: partnership }, { status: 201 })
   },
 })

@@ -41,7 +41,7 @@ describe("hợp đồng — ấn phẩm quảng cáo, trường dữ liệu, ghi
   it("ấn phẩm quảng cáo: ưu đãi, viết chữ, dựng, lưu thư viện", async () => {
     await expectContract(await promotions(get("/ad-banner-poster/copy")), 200, R.bannerPromotionsResponse, "banner-promotions")
     const copy = await expectContract(await bannerCopy(send("/ad-banner-poster/copy", "POST", { occasion_key: "women_day", occasion_label: "8/3", shop_name: "Tiệm hoa Hoa Mẫu", product_title: "Bó hồng pastel" })), 200, R.bannerCopyResponse, "banner-copy")
-    const c = copy.copy as { headline: string; subHeadline: string; promotionBadge: string; ctaText: string }
+    const c = (copy.data as { copy: unknown }).copy as { headline: string; subHeadline: string; promotionBadge: string; ctaText: string }
     await expectContract(
       await bannerRender(send("/ad-banner-poster/render", "POST", { occasion_key: "women_day", occasion_label: "8/3", copy: c, brand_info: { shopName: "Tiệm hoa Hoa Mẫu", hotline: "0901234567" }, style_preset_id: "FESTIVE_SEASON", target_formats: ["1:1", "9:16"] })),
       200, R.bannerRenderResponse, "banner-render"

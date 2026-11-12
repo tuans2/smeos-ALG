@@ -55,8 +55,8 @@ describe("POST /api/v1/content-engine/rewrite — quyền và credit", () => {
   it("AI trả gợi ý → giữ credit, không hoàn", async () => {
     callCapability.mockResolvedValue({ kind: "xong", output: { suggestions: ["a", "b", "c"] } })
     const body = await (await post()).json()
-    expect(body.suggestions).toEqual(["a", "b", "c"])
-    expect(body.fallback).toBeUndefined()
+    expect(body.data.suggestions).toEqual(["a", "b", "c"])
+    expect(body.data.fallback).toBeUndefined()
     expect(hold).toHaveBeenCalledTimes(1)
     expect(release).not.toHaveBeenCalled()
   })
@@ -64,14 +64,14 @@ describe("POST /api/v1/content-engine/rewrite — quyền và credit", () => {
   it("AI trả không đọc được → gợi ý dựng sẵn, hoàn credit", async () => {
     callCapability.mockResolvedValue({ kind: "xong", output: { suggestions: ["x"], fallback: true } })
     const body = await (await post()).json()
-    expect(body.fallback).toBe(true)
+    expect(body.data.fallback).toBe(true)
     expect(release).toHaveBeenCalledTimes(1)
   })
 
   it("cổng AI không chạy được → gợi ý dựng sẵn, hoàn credit", async () => {
     callCapability.mockResolvedValue({ kind: "loi", reason: "no_model" })
     const body = await (await post()).json()
-    expect(body.fallback).toBe(true)
+    expect(body.data.fallback).toBe(true)
     expect(release).toHaveBeenCalledTimes(1)
   })
 

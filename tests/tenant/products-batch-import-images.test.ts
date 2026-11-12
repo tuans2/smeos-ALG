@@ -79,7 +79,7 @@ describe("batch-import — bù ảnh cho mã đã có", () => {
     const assetB = await seedAsset(b.ctx)
 
     const body = await readJson(await importItems(b, [{ code: "SP-CHUNG", image_asset_id: assetB }]))
-    expect(body.created_count).toBe(1)
+    expect((body.data as { created_count: number }).created_count).toBe(1)
     expect(await mainImages(a, "SP-CHUNG")).toHaveLength(0)
   })
 

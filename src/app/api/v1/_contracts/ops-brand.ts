@@ -46,7 +46,7 @@ export const BRAND_OPERATIONS: OpenApiOperation[] = [
   op(COPY, { method: "get", path: "/product-copies", operationId: "listProductCopies", summary: "Dữ liệu bán hàng của tổ chức", cap: "H5", query: req.productCopiesQuery,
     description: `${UC} Lọc theo sản phẩm và trạng thái duyệt.`, ok: [200, { description: "Bản dữ liệu bán hàng", schema: res.productCopiesResponse }] }),
   op(COPY, { method: "get", path: "/product-copies/{id}", operationId: "getProductCopy", summary: "Một bản dữ liệu bán hàng", cap: "H5",
-    description: `${UC} Trả thẳng bản ghi (không bọc \`{ data }\`). ${NF}`, ok: [200, { description: "Bản ghi", schema: res.productCopyResponse }], errors: [404] }),
+    description: `${UC} ${NF}`, ok: [200, { description: "Bản ghi", schema: res.productCopyResponse }], errors: [404] }),
   op(COPY, { method: "patch", path: "/product-copies/{id}", operationId: "updateProductCopy", summary: "Sửa trường trong `edited`", cap: "H5", body: req.patchProductCopyBody,
     description: `${UC} Thiếu \`edited\` hoặc có trường lạ → 400 (lỗi chỉ có \`message\`, không có \`details\`). ${NF}`,
     ok: [200, { description: "Bản ghi", schema: res.productCopyResponse }], errors: [...BODY_ERRORS, 404] }),

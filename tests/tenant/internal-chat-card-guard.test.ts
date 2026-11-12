@@ -132,17 +132,17 @@ describe("cách ly tenant — thẻ đơn và tin nhắn chat nội bộ", () =>
 
     const url = `${BASE}/internal-chat/conversations/${conversationId}/messages`
     // 61 tin: 60 tin cũ + thẻ đơn (mới nhất) → trang đầu = 50 tin mới nhất, theo thứ tự cũ → mới
-    type Page = { data: { content: string; messageType: string }[]; nextCursor: string | null }
+    type Page = { data: { content: string; messageType: string }[]; next_cursor: string | null }
     const first = (await readJson(await listMessages(withSession(`${url}?limit=50`, chain.token), params(conversationId)))) as Page
     expect(first.data).toHaveLength(50)
     expect(first.data.at(-1)?.messageType).toBe("ACTION_CARD_ORDER")
     expect(first.data.at(-2)?.content).toBe("tin 59")
     expect(first.data[0]?.content).toBe("tin 11")
-    expect(first.nextCursor).toBeTruthy()
+    expect(first.next_cursor).toBeTruthy()
 
-    const second = (await readJson(await listMessages(withSession(`${url}?before=${encodeURIComponent(first.nextCursor!)}`, chain.token), params(conversationId)))) as Page
+    const second = (await readJson(await listMessages(withSession(`${url}?before=${encodeURIComponent(first.next_cursor!)}`, chain.token), params(conversationId)))) as Page
     expect(second.data.map((m) => m.content)).toEqual(Array.from({ length: 11 }, (_, i) => `tin ${i}`))
-    expect(second.nextCursor).toBeNull()
+    expect(second.next_cursor).toBeNull()
 
     expect((await listMessages(withSession(`${url}?before=rac`, chain.token), params(conversationId))).status).toBe(400)
   })

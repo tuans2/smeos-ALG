@@ -52,9 +52,8 @@ export const GET = defineRoute({
     })
 
     return jsonResponse({
-      success: true,
       data: page.items,
-      nextCursor: page.nextCursor ? encodeMessageCursor(page.nextCursor) : null,
+      next_cursor: page.nextCursor ? encodeMessageCursor(page.nextCursor) : null,
     })
   },
 })
@@ -79,7 +78,6 @@ export const POST = defineRoute({
     })
 
     return jsonResponse({
-      success: true,
       data: message,
     })
   },

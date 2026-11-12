@@ -447,7 +447,7 @@ export default function TaiAnhPage() {
     try {
       const res = await apiFetchWithAuth(`/api/v1/product-copies/${id}`)
       if (!res.ok || !res.data) return null
-      return res.data as Record<string, unknown>
+      return (res.data as { data: Record<string, unknown> }).data
     } catch { return null }
   }
 
@@ -458,7 +458,7 @@ export default function TaiAnhPage() {
         body: JSON.stringify({ edited }),
       })
       if (!res.ok || !res.data) return null
-      return res.data as Record<string, unknown>
+      return (res.data as { data: Record<string, unknown> }).data
     } catch { return null }
   }
 
@@ -468,7 +468,7 @@ export default function TaiAnhPage() {
         method: "POST",
       })
       if (!res.ok || !res.data) return null
-      return res.data as Record<string, unknown>
+      return (res.data as { data: Record<string, unknown> }).data
     } catch { return null }
   }
 
@@ -479,7 +479,7 @@ export default function TaiAnhPage() {
         body: JSON.stringify({ reason: reason ?? null }),
       })
       if (!res.ok || !res.data) return null
-      return res.data as Record<string, unknown>
+      return (res.data as { data: Record<string, unknown> }).data
     } catch { return null }
   }
 
