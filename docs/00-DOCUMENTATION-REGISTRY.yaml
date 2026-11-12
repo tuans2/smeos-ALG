@@ -987,6 +987,20 @@ documents:
     dependencies: ["docs/kien-truc/HO_SO_BAN_GIAO.md", "prisma/schema.prisma"]
     supersedes: []
 
+  - id: "DOC-05-GO-LIVE-CHECKLIST"
+    path: "docs/handover/GO_LIVE_CHECKLIST.md"
+    title: "Checklist go-live — CSDL và vận hành"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Việc phải xong và bằng chứng cần có về sao lưu, cách ly, phát hành, quan trắc, tải và dữ liệu cá nhân trước thí điểm có trả tiền, khách chuỗi có cam kết, khách enterprise"
+    status: "DRAFT"
+    authority: "Level 5"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/plan/db-enterprise-architecture.md", "docs/handover/OPERATIONS_RUNBOOK.md", "docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md"]
+    supersedes: []
+
   - id: "DOC-05-KE-HOACH-HOAN-THIEN-54"
     path: "docs/handover/KE_HOACH_HOAN_THIEN_54_CHUC_NANG.md"
     title: "Kế hoạch hoàn thiện 54 chức năng bàn giao ALG"
