@@ -1,0 +1,72 @@
+import { describe, expect, it } from "vitest"
+
+import {
+  decryptPii, encryptPii, isPiiCiphertext, newDataKey, normalizePhoneForHash, phoneHash, phoneLast4, piiKeyVersion, piiMasterKey,
+  PiiKeyRequiredError, requirePiiMasterKey, unwrapDataKey,
+} from "../pii-cipher"
+
+const master = Buffer.alloc(32, 7)
+
+/** ADR-014 P-5a: mã hoá cột dữ liệu cá nhân — AES-256-GCM, khoá dữ liệu theo tổ chức bọc bằng khoá chủ. */
+describe("pii-cipher", () => {
+  it("mã hoá rồi giải mã đúng; bản mã khác nhau mỗi lần; sửa một ký tự → không giải được", () => {
+    const { key } = newDataKey(master)
+    const a = encryptPii(key, 1, "0912 345 678")
+    const b = encryptPii(key, 1, "0912 345 678")
+    expect(a).not.toBe(b)
+    expect(a).not.toContain("0912")
+    expect(decryptPii(key, a)).toBe("0912 345 678")
+    expect(piiKeyVersion(a)).toBe(1)
+    // Đổi ký tự kế cuối thành một ký tự KHÁC nó (trước đây so với ký tự cuối → ~1/64 lần chuỗi không đổi, test đỏ ngẫu nhiên)
+    const tampered = a.slice(0, -2) + (a.at(-2) === "A" ? "B" : "A") + a.slice(-1)
+    expect(tampered).not.toBe(a)
+    expect(() => decryptPii(key, tampered)).toThrow()
+    expect(() => decryptPii(newDataKey(master).key, a)).toThrow() // khoá của tổ chức khác
+  })
+
+  it("chuỗi rỗng: mã hoá rồi giải mã ra chuỗi rỗng; vẫn kiểm thẻ xác thực; thiếu phần → lỗi", () => {
+    const { key } = newDataKey(master)
+    const empty = encryptPii(key, 1, "")
+    expect(empty.endsWith(".")).toBe(true)
+    expect(decryptPii(key, empty)).toBe("")
+    expect(() => decryptPii(newDataKey(master).key, empty)).toThrow()
+    expect(() => decryptPii(key, empty.slice(0, -1))).toThrow() // mất phần thân
+    expect(() => decryptPii(key, `${empty}.x`)).toThrow() // thừa phần
+  })
+
+  it("khoá dữ liệu lưu dạng bọc; mở bằng đúng khoá chủ", () => {
+    const { key, wrapped } = newDataKey(master)
+    expect(wrapped.startsWith("v1.")).toBe(true)
+    expect(unwrapDataKey(master, wrapped).equals(key)).toBe(true)
+    expect(() => unwrapDataKey(Buffer.alloc(32, 8), wrapped)).toThrow()
+  })
+
+  it("băm SĐT: cùng số (mọi cách viết) cùng băm trong một tổ chức, khác tổ chức thì khác; 4 số cuối", () => {
+    expect(normalizePhoneForHash("+84 912.345.678")).toBe("0912345678")
+    expect(normalizePhoneForHash("84912345678")).toBe("0912345678")
+    expect(normalizePhoneForHash("0912-345-678")).toBe("0912345678")
+    expect(normalizePhoneForHash("  ")).toBeNull()
+    const h = phoneHash(master, "org-a", "0912345678")
+    expect(phoneHash(master, "org-a", "+84912345678")).toBe(h)
+    expect(phoneHash(master, "org-b", "0912345678")).not.toBe(h)
+    expect(h).not.toContain("345678")
+    expect(phoneLast4("0912 345 678")).toBe("5678")
+    expect(phoneLast4("12")).toBeNull()
+  })
+
+  it("khoá chủ: biến 32 byte base64; sai độ dài → lỗi; production thiếu biến → chưa mã hoá; dev dẫn xuất từ SESSION_SECRET", () => {
+    expect(piiMasterKey({ PII_ENCRYPTION_KEY: master.toString("base64") } as unknown as NodeJS.ProcessEnv)?.equals(master)).toBe(true)
+    expect(() => piiMasterKey({ PII_ENCRYPTION_KEY: "ngan-qua" } as unknown as NodeJS.ProcessEnv)).toThrow(/32 byte/)
+    expect(piiMasterKey({ NODE_ENV: "production", SESSION_SECRET: "x".repeat(32) } as unknown as NodeJS.ProcessEnv)).toBeNull()
+    const dev = piiMasterKey({ NODE_ENV: "test", SESSION_SECRET: "x".repeat(32) } as unknown as NodeJS.ProcessEnv)
+    expect(dev?.length).toBe(32)
+  })
+
+  it("P-5c: khoá chủ bắt buộc — production thiếu biến → PiiKeyRequiredError; nhận dạng bản mã", () => {
+    expect(() => requirePiiMasterKey({ NODE_ENV: "production" } as unknown as NodeJS.ProcessEnv)).toThrow(PiiKeyRequiredError)
+    expect(requirePiiMasterKey({ PII_ENCRYPTION_KEY: master.toString("base64") } as unknown as NodeJS.ProcessEnv).equals(master)).toBe(true)
+    const { key } = newDataKey(master)
+    expect(isPiiCiphertext(encryptPii(key, 3, "0912345678"))).toBe(true)
+    for (const v of ["0912345678", "pii1.x.y", null, 42]) expect(isPiiCiphertext(v)).toBe(false)
+  })
+})

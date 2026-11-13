@@ -1,0 +1,18 @@
+# Danh sách các trang được miễn trừ Screen Contract v2
+# Quy định theo ADR-011 D-UI-08: Mọi ngoại lệ bắt buộc phải có lý do kỹ thuật/nghiệp vụ cụ thể.
+
+exemptions:
+  - route: /chinh-sach-bao-mat
+    reason: Trang văn bản pháp lý tĩnh công khai, không có thao tác ứng dụng nghiệp vụ
+  - route: /dang-ky-thanh-cong
+    reason: Trang thông báo tĩnh sau đăng ký thành công
+  - route: /xem-truoc-trang
+    reason: Tuyến redirect trung gian phục vụ xem trước landing page
+  - route: /bg/[token]
+    reason: Tuyến redirect ngắn cho báo giá công khai
+  - route: /g/[id]
+    reason: Tuyến redirect ngắn cho thiệp điện tử
+  - route: /s/[code]
+    reason: Tuyến redirect ngắn cho chia sẻ cửa hàng
+  - route: /chat
+    reason: Tuyến redirect đến /hoi-thoai (hộp thư hội thoại đa kênh)

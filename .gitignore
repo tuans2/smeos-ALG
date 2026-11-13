@@ -1,0 +1,97 @@
+node_modules/
+.next/
+
+# Client Prisma sinh sẵn — sinh lại bằng `npx prisma generate`
+src/generated/
+dist/
+build/
+*.tsbuildinfo
+
+__pycache__/
+*.py[cod]
+.venv/
+.venv*/
+venv/
+.pytest_cache/
+
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+cookies.txt
+
+.DS_Store
+*.log
+
+# Kho vận hành và dữ liệu tổ chức không vào git
+du-lieu-van-hanh/
+backups/
+*.xlsx
+!docs/**/*.xlsx
+golden/images/
+
+# Ảnh thô nguồn để dựng bộ ảnh vàng (scripts/xay-dung-bo-anh-vang.py) —
+# dữ liệu sản phẩm của khách hàng, không vào git (BO_ANH_VANG.md mục 10)
+BoAnhVang/
+
+# Next
+.next/
+next-env.d.ts
+*.tsbuildinfo
+
+# Kho tệp cục bộ của LocalDiskStorageProvider (dev only) — P3
+var/storage/
+
+# JSON trung gian nạp AVI GIFT (P8) — sinh lại được bằng
+# `python3 scripts/nap-avi-gift/doc-excel.py`, chứa dữ liệu giá/BOM thật của
+# AVI GIFT, không cần giữ một bản sao thứ hai ngoài cơ sở dữ liệu
+scripts/nap-avi-gift/du-lieu-trung-gian/
+
+# Python virtualenv của worker (dev only)
+workers/.venv-worker/
+workers/.venv-local-cv/
+workers/vision/checkpoints/
+workers/tmp_smoke_test_*.py
+
+# File tạm kiểm tra
+_tmp-*
+test-results/
+
+# SQLite DB files
+*.db
+*.sqlite*
+
+Claude outputs/
+.venv-iopaint/
+.claude/*
+!.claude/hooks
+!.claude/settings.json
+!.claude/skills
+.kilo/
+.codex/
+
+# ╔══════════════════════════════════════════════════════╗
+# ║  AGENT CONFIG — INTERNAL IP, KHÔNG GIAO CHO KHÁCH  ║
+# ║  .agents/, AGENTS.md ĐƯỢC commit để mọi phiên dev  ║
+# ║  dùng; bản giao khách loại qua .gitattributes      ║
+# ║  export-ignore — kiểm bằng `npm run handover:check` ║
+# ╚══════════════════════════════════════════════════════╝
+.agent-studio/
+
+# Kết quả đo chất lượng ảnh biến thể (scripts/cham-bien-the.py) — ảnh sinh ra, không commit
+var/cham-bien-the/
+
+# Dữ liệu thật của khách (bảng giá/biên lợi nhuận) — không commit
+docs/Dongbo_excel_cho ALG/
+docs/Nhập liệu/
+
+# Ảnh + báo cáo của npm run ux:audit (sinh ra, không commit)
+ux-audit-output/
+
+# Google Service Account key files (NEVER commit)
+secrets/
+
+# Công cụ thử tải O-9: id tổ chức sinh ra ở CSDL tạm
+scripts/load-test/.seed.json
+scripts/load-test/.result.md

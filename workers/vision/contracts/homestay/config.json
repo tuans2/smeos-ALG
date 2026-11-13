@@ -1,0 +1,11 @@
+{
+  "_ghi_chu": "Tham số vận hành AI Vision ngành Homestay & Lưu trú nghỉ dưỡng.",
+  "model": "gpt-4o",
+  "temperature": 0,
+  "seed": 20261017,
+  "max_retry": 3,
+  "anh_canh_dai_px": 1400,
+  "so_cum_mau": 8,
+  "cum_mau_toi_thieu_phan_tram": 3,
+  "nguong_bong_do": 0.65
+}

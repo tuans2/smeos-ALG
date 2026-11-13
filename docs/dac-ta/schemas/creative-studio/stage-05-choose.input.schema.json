@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-05-choose.input.schema.json",
+  "title": "Chặng 05 — CHOOSE: Chọn định hướng & kịch bản sản xuất tổng — Đầu vào",
+  "description": "Chủ tiệm chọn chủ đề, mode (CREATIVE 5 cảnh / AUTHENTIC 3 cảnh) và nền tảng; AI viết ScenePlan v2 qua job. Trùng Idempotency-Key trả kịch bản cũ, không trừ credit.",
+  "x-alg": {
+    "stageId": "05",
+    "stage": 5,
+    "code": "CHOOSE",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/creative-production/scene-plans",
+      "capability": "I1",
+      "idempotencyKey": true
+    },
+    "source": "src/modules/creative-production/contracts/stage-05-choose.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "CREATIVE",
+        "AUTHENTIC"
+      ],
+      "description": "Loại hình sản xuất: CREATIVE (AI dựng bối cảnh mới, 5 cảnh) hoặc AUTHENTIC (giữ ảnh gốc, 3 cảnh)"
+    },
+    "content_provider": {
+      "description": "Nhà cung cấp nội dung cho lượt này (claude_opus | openai_structured | gemini_pro | claude_sonnet | gemini_flash | openai_direct); bỏ trống = thứ tự ưu tiên của tiệm",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+    },
+    "asset_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "product_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "product": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "category": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "style": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "colors": {
+          "default": [],
+          "maxItems": 12,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 60
+          }
+        },
+        "components": {
+          "default": [],
+          "maxItems": 12,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 60
+          }
+        },
+        "occasions": {
+          "default": [],
+          "maxItems": 12,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 60
+          }
+        },
+        "target_audience": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "price_range": {
+          "type": "string",
+          "maxLength": 80
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "platforms": {
+      "description": "Nền tảng đăng — quyết định tỉ lệ + khuôn video; bỏ trống = TikTok + Reels (9:16); \"all\" = mọi nền tảng",
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "all"
+        },
+        {
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "tiktok",
+              "instagram_reels",
+              "facebook_reels",
+              "youtube_shorts",
+              "zalo_video",
+              "youtube",
+              "facebook_feed",
+              "instagram_feed"
+            ]
+          }
+        }
+      ]
+    },
+    "outputs": {
+      "description": "Loại kết quả sản xuất (content/audio/image/video); bỏ trống hoặc \"all\" = cả 4; video kéo theo image + audio",
+      "anyOf": [
+        {
+          "type": "string",
+          "const": "all"
+        },
+        {
+          "maxItems": 4,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "content",
+              "audio",
+              "image",
+              "video"
+            ]
+          }
+        }
+      ]
+    },
+    "topic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "angle_category": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "hook": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "cta": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "format": {
+          "type": "string",
+          "maxLength": 40
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ]
+    }
+  },
+  "required": [
+    "mode",
+    "product",
+    "topic"
+  ],
+  "examples": [
+    {
+      "mode": "AUTHENTIC",
+      "asset_id": "3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f",
+      "product_id": "7a2d0e11-5b3c-4d2e-8f10-2b3c4d5e6f70",
+      "product": {
+        "name": "Bó hồng đỏ 12 bông",
+        "colors": [
+          "đỏ",
+          "trắng"
+        ],
+        "components": [
+          "Hoa hồng đỏ",
+          "Baby trắng"
+        ],
+        "occasions": [
+          "Sinh nhật"
+        ]
+      },
+      "platforms": [
+        "tiktok",
+        "instagram_reels"
+      ],
+      "outputs": "all",
+      "topic": {
+        "id": "topic-emotional-01",
+        "title": "12 bông hồng cho 12 tháng yêu nhau",
+        "angle_category": "EMOTIONAL",
+        "hook": "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
+        "cta": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm"
+      }
+    }
+  ]
+}

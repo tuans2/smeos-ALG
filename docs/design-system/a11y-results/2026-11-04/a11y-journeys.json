@@ -1,0 +1,357 @@
+{
+  "measuredAt": "2026-11-03T19:41:33.499Z",
+  "presets": [
+    "moc-lan",
+    "modern-slate",
+    "pure-swiss"
+  ],
+  "darkMode": "không có",
+  "results": [
+    {
+      "journey": "J01",
+      "path": "/c/bo-suu-tap-kiem-tro-nang-aurd2",
+      "auth": false,
+      "finalPath": "/c/bo-suu-tap-kiem-tro-nang-aurd2",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 8,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J01",
+      "path": "/b/KHONGTONTAI",
+      "auth": false,
+      "state": "không tìm thấy",
+      "finalPath": "/b/KHONGTONTAI",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 0,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J01",
+      "path": "/bst/tiem-e2e-ux-f309/khong-ton-tai",
+      "auth": false,
+      "state": "không tìm thấy",
+      "finalPath": "/bst/tiem-e2e-ux-f309/khong-ton-tai",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 1,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J02",
+      "path": "/g/khong-ton-tai",
+      "auth": false,
+      "state": "không tìm thấy",
+      "finalPath": "/g/khong-ton-tai",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 0,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J03",
+      "path": "/dang-nhap",
+      "auth": false,
+      "finalPath": "/dang-nhap",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 10,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J04",
+      "path": "/",
+      "auth": true,
+      "finalPath": "/",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J05",
+      "path": "/san-pham",
+      "auth": true,
+      "finalPath": "/san-pham",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J05",
+      "path": "/san-pham/tao-moi",
+      "auth": true,
+      "finalPath": "/san-pham/tao-moi",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J05",
+      "path": "/san-pham/f06c7875-5a85-4add-b0dc-89b2f160913b",
+      "auth": true,
+      "finalPath": "/san-pham/f06c7875-5a85-4add-b0dc-89b2f160913b",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J06",
+      "path": "/don-hang",
+      "auth": true,
+      "finalPath": "/don-hang",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J07",
+      "path": "/khach-hang",
+      "auth": true,
+      "finalPath": "/khach-hang",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J08",
+      "path": "/dieu-phoi",
+      "auth": true,
+      "finalPath": "/dieu-phoi",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J08",
+      "path": "/dieu-phoi/doi-tac",
+      "auth": true,
+      "finalPath": "/dieu-phoi/doi-tac",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J09",
+      "path": "/subcontract/KHONGTONTAI",
+      "auth": false,
+      "state": "không tìm thấy",
+      "finalPath": "/subcontract/KHONGTONTAI",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 0,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J10",
+      "path": "/so-lieu",
+      "auth": true,
+      "finalPath": "/so-lieu",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J11",
+      "path": "/cai-dat",
+      "auth": true,
+      "finalPath": "/cai-dat",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J11",
+      "path": "/uu-dai",
+      "auth": true,
+      "finalPath": "/uu-dai",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J11",
+      "path": "/tich-hop",
+      "auth": true,
+      "finalPath": "/tich-hop",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    },
+    {
+      "journey": "J12",
+      "path": "/van-hanh",
+      "auth": true,
+      "finalPath": "/van-hanh",
+      "axe": [],
+      "contrast": {
+        "moc-lan": [],
+        "modern-slate": [],
+        "pure-swiss": []
+      },
+      "keyboard": {
+        "stops": 40,
+        "issues": []
+      },
+      "zoom": [],
+      "motion": []
+    }
+  ]
+}

@@ -1,0 +1,3353 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ALG Integration API",
+    "version": "1.0.0",
+    "description": "Bề mặt máy gọi máy cho ứng dụng đối tác (LocalBudd, SocialFlow…). Tổ chức luôn suy từ chứng thư — không endpoint nào nhận `organization_id` từ client. Giới hạn tần suất: 600 lần/60 giây cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức). Lỗi theo envelope `Error`. **Thay đổi đã báo trước, áp từ 2027-02-09 00:00 UTC** (báo 2026-11-11): (1) máy chủ bỏ các trường đánh dấu `deprecated` khỏi phản hồi; (2) `POST /integration/jobs` gửi lại cùng `idempotency_key` mà thân khác → 422 `IDEMPOTENCY_KEY_REUSED`."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "paths": {
+    "/integration/assets": {
+      "post": {
+        "operationId": "integrationRegisterAsset",
+        "summary": "Đăng ký asset dẫn xuất",
+        "description": "`parent_asset_id` phải là asset `APPROVED` cùng tổ chức; asset mới luôn `PENDING`; `storage_key` phải khớp tổ chức/sản phẩm/asset. `generated_flags` (`{ generative_fill_used, requires_reshoot_warning }`) bắt buộc với asset dẫn xuất dù lược đồ ghi tuỳ chọn — thiếu → 400.",
+        "tags": [
+          "Asset"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "asset_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "product_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "parent_asset_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "MARKETING",
+                      "CATALOG",
+                      "LANDING",
+                      "SOCIAL",
+                      "VIDEO"
+                    ]
+                  },
+                  "storage_key": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "mime_type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "width": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "height": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "aspect_ratio": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "file_size": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "provider": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "model": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "model_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pipeline_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parameters": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "prompt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "output_sha256": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "quality_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "identity_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "generated_flags": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "cost_usd": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "asset_id",
+                  "parent_asset_id",
+                  "kind",
+                  "storage_key",
+                  "mime_type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Asset đã đăng ký",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "parent_asset_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "storage_key": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": "string"
+                    },
+                    "thumb_key": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "mime_type": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "height": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "aspect_ratio": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "file_size": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "provider": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "model": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "model_version": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "pipeline_version": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "parameters": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới."
+                    },
+                    "prompt": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "input_sha256": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "output_sha256": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "quality_score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "identity_score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "generated_flags": {},
+                    "cost_usd": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "approval_state": {
+                      "type": "string",
+                      "enum": [
+                        "PENDING",
+                        "APPROVED",
+                        "REJECTED"
+                      ]
+                    },
+                    "approved_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "approved_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "metadata": {},
+                    "created_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "trashed_at": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "purge_after": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "legal_hold_until": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "product_id",
+                    "parent_asset_id",
+                    "kind",
+                    "state",
+                    "version",
+                    "mime_type",
+                    "width",
+                    "height",
+                    "aspect_ratio",
+                    "file_size",
+                    "quality_score",
+                    "identity_score",
+                    "generated_flags",
+                    "approval_state",
+                    "approved_at",
+                    "metadata",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/integration/brand-profile": {
+      "get": {
+        "operationId": "integrationGetBrandProfile",
+        "summary": "Hồ sơ thương hiệu (màu, font, tông giọng)",
+        "tags": [
+          "Hồ sơ"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hồ sơ, hoặc `null` khi tổ chức chưa nhập",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "primary_color": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "secondary_color": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "accent_color": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "background_color": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "text_color": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "font_heading": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "font_body": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "logo_asset_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "logo_url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tone_of_voice": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "hashtags": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "cta_templates": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "default_offers": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "forbidden_styles": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "brand_assets": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "slogan": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "primary_color",
+                        "secondary_color",
+                        "accent_color",
+                        "background_color",
+                        "text_color",
+                        "font_heading",
+                        "font_body",
+                        "logo_asset_id",
+                        "logo_url",
+                        "tone_of_voice",
+                        "hashtags",
+                        "cta_templates",
+                        "default_offers",
+                        "forbidden_styles",
+                        "brand_assets",
+                        "slogan"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/integration/business-profile": {
+      "get": {
+        "operationId": "integrationGetBusinessProfile",
+        "summary": "Hồ sơ kinh doanh",
+        "description": "Token máy gọi máy: chỉ token `LOCALBUDD`. Nhánh SSO: theo năng lực thật của người dùng.",
+        "tags": [
+          "Hồ sơ"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hồ sơ, hoặc `null` khi tổ chức chưa nhập",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "legal_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "phone": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "email": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "address": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "website": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "social_links": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "tax_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "operating_hours": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "brand_message": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "target_customers": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "legal_name",
+                        "display_name",
+                        "phone",
+                        "email",
+                        "address",
+                        "website",
+                        "social_links",
+                        "tax_code",
+                        "description",
+                        "operating_hours",
+                        "brand_message",
+                        "target_customers"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/integration/capabilities/check": {
+      "post": {
+        "operationId": "integrationCheckCapabilities",
+        "summary": "Hỏi một người có những mã năng lực nào",
+        "description": "Người không thuộc tổ chức của token → mọi mã `false` (không rò rỉ). Mã không có trong catalog bị bỏ qua.",
+        "tags": [
+          "Quyền"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "capability_codes": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "capability_codes"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả theo từng mã",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "granted": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "required": [
+                    "granted"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/integration/catalog-links": {
+      "get": {
+        "operationId": "integrationListCatalogLinks",
+        "summary": "Danh sách liên kết catalog",
+        "description": "Cần `J1` — chỉ nhánh SSO (token máy gọi máy không có năng lực → 403).",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "include_revoked",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "slug": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "filters": {},
+                          "is_revoked": {
+                            "type": "boolean"
+                          },
+                          "revoked_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "revoked_by": {
+                            "deprecated": true,
+                            "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "created_by": {
+                            "deprecated": true,
+                            "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                            "type": "string"
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updated_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "slug",
+                          "name",
+                          "description",
+                          "filters",
+                          "is_revoked",
+                          "revoked_at",
+                          "created_at",
+                          "updated_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "J1"
+      },
+      "post": {
+        "operationId": "integrationCreateCatalogLink",
+        "summary": "Tạo liên kết catalog",
+        "description": "Cần `J1` — chỉ nhánh SSO.",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "slug": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "filters": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "slug",
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Liên kết mới (bản ghi đầy đủ)",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "filters": {},
+                    "is_revoked": {
+                      "type": "boolean"
+                    },
+                    "revoked_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "revoked_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "created_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "trashed_at": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "purge_after": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "slug",
+                    "name",
+                    "description",
+                    "filters",
+                    "is_revoked",
+                    "revoked_at",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "J1"
+      }
+    },
+    "/integration/catalog-links/{slug}": {
+      "patch": {
+        "operationId": "integrationUpdateCatalogLink",
+        "summary": "Sửa liên kết catalog",
+        "description": "Cần `J1` — chỉ nhánh SSO.",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "filters": {
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {}
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Liên kết sau khi sửa",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "slug": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "filters": {},
+                    "is_revoked": {
+                      "type": "boolean"
+                    },
+                    "revoked_at": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "revoked_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "created_by": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": "string"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "slug",
+                    "name",
+                    "description",
+                    "filters",
+                    "is_revoked",
+                    "revoked_at",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "J1"
+      }
+    },
+    "/integration/catalog-links/{slug}/revoke": {
+      "post": {
+        "operationId": "integrationRevokeCatalogLink",
+        "summary": "Thu hồi liên kết catalog",
+        "description": "Cần `J2` — chỉ nhánh SSO.",
+        "tags": [
+          "Catalog"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đã thu hồi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "revoked": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "revoked"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        },
+        "x-capability": "J2"
+      }
+    },
+    "/integration/content-metrics": {
+      "post": {
+        "operationId": "integrationRecordContentMetrics",
+        "summary": "Ghi số liệu hiệu quả nội dung",
+        "description": "Idempotent theo (`platform`, `content_id`, `metric_date`) trong tổ chức: gọi lại thì cập nhật dòng cũ.",
+        "tags": [
+          "Số liệu"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "content_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "metric_date": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  "reach": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "impressions": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "engagement": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "clicks": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "conversions": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "spend_usd": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "platform",
+                  "content_id",
+                  "metric_date"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dòng số liệu sau khi ghi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "platform": {
+                      "type": "string"
+                    },
+                    "content_id": {
+                      "type": "string"
+                    },
+                    "metric_date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "reach": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "impressions": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "engagement": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "clicks": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "conversions": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "spend_usd": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "platform",
+                    "content_id",
+                    "metric_date",
+                    "reach",
+                    "impressions",
+                    "engagement",
+                    "clicks",
+                    "conversions",
+                    "spend_usd",
+                    "created_at",
+                    "updated_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/integration/jobs": {
+      "post": {
+        "operationId": "integrationCreateJob",
+        "summary": "Tạo job thay mặt tổ chức",
+        "description": "Cùng đường kiểm hạn mức → ghi usage → tạo job như job nội bộ. Cùng `idempotency_key`, cùng `feature`/`payload` → trả job cũ với 200; cùng khoá mà thân khác: **trước 09/02/2027** vẫn trả job cũ (máy chủ ghi cảnh báo); **từ 09/02/2027 (00:00 UTC)** trả 422 `IDEMPOTENCY_KEY_REUSED` (`details.job_id` = job của yêu cầu trước), không tạo job — thay đổi đã báo trước 90 ngày từ 11/11/2026. Mỗi yêu cầu mới dùng một khoá mới.",
+        "tags": [
+          "Job & mức dùng"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "feature": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "payload": {},
+                  "product_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "feature",
+                  "payload",
+                  "idempotency_key"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Job đã có với cùng `idempotency_key` và cùng thân (`deduped: true`)",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "workspace_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": "string"
+                        },
+                        "branch_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "user_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "feature": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "stage": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "result": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "idempotency_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_group_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "request_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "run_after": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "failure_kind": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "payload": {},
+                        "output": {},
+                        "error": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "attempts": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "started_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "completed_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "cancelled_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "product_id",
+                        "feature",
+                        "status",
+                        "stage",
+                        "result",
+                        "idempotency_key",
+                        "failure_kind",
+                        "payload",
+                        "output",
+                        "attempts",
+                        "created_at",
+                        "started_at",
+                        "completed_at",
+                        "cancelled_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "deduped": {
+                      "type": "boolean"
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "costCredit": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "balanceAfter": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "costCredit",
+                        "balanceAfter"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "job",
+                    "deduped",
+                    "usage"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Job mới",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organization_id": {
+                          "type": "string"
+                        },
+                        "workspace_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": "string"
+                        },
+                        "branch_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "user_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": "string"
+                        },
+                        "product_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "feature": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "stage": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "result": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "idempotency_key": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "job_group_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "request_id": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "run_after": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "failure_kind": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "payload": {},
+                        "output": {},
+                        "error": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "attempts": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "started_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "completed_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "cancelled_at": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "updated_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "organization_id",
+                        "product_id",
+                        "feature",
+                        "status",
+                        "stage",
+                        "result",
+                        "idempotency_key",
+                        "failure_kind",
+                        "payload",
+                        "output",
+                        "attempts",
+                        "created_at",
+                        "started_at",
+                        "completed_at",
+                        "cancelled_at",
+                        "updated_at"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "deduped": {
+                      "type": "boolean"
+                    },
+                    "usage": {
+                      "type": "object",
+                      "properties": {
+                        "costCredit": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "balanceAfter": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "costCredit",
+                        "balanceAfter"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "job",
+                    "deduped",
+                    "usage"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/integration/products": {
+      "get": {
+        "operationId": "integrationListProducts",
+        "summary": "Product Master của tổ chức",
+        "description": "Luôn chỉ sản phẩm `ACTIVE`. Khối `pricing` là `null` khi người gọi không có `L5` (token máy gọi máy luôn không có).",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "branch_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "occasion_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "color",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "collection",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "price_min",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "price_max",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Một trang sản phẩm",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "shape": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "facing": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "container": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "branch_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "masterImageUrl": {
+                            "type": "string"
+                          },
+                          "price_vnd": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "driveLink": {
+                            "type": "string"
+                          },
+                          "pricing": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "partner_tier_bonus": {
+                                    "type": "object",
+                                    "propertyNames": {
+                                      "type": "string"
+                                    },
+                                    "additionalProperties": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "surcharge_groups": {
+                                    "type": "array",
+                                    "items": {}
+                                  },
+                                  "optimal_price_ratio": {
+                                    "type": "number"
+                                  },
+                                  "floor_ceiling_ratio": {
+                                    "type": "object",
+                                    "properties": {
+                                      "floorRatio": {
+                                        "type": "number"
+                                      },
+                                      "ceilingRatio": {
+                                        "type": "number"
+                                      }
+                                    },
+                                    "required": [
+                                      "floorRatio",
+                                      "ceilingRatio"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "required": [
+                                  "partner_tier_bonus",
+                                  "surcharge_groups",
+                                  "optimal_price_ratio",
+                                  "floor_ceiling_ratio"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "redacted_fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "attributes": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "propertyNames": {
+                                  "type": "string"
+                                },
+                                "additionalProperties": {}
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "availability_config": {},
+                          "commerce": {
+                            "type": "object",
+                            "properties": {
+                              "barcode": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "cost_price_vnd": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "vat_percent": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "weight_grams": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "tags": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "barcode",
+                              "cost_price_vnd",
+                              "vat_percent",
+                              "weight_grams",
+                              "tags"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "code",
+                          "name",
+                          "category",
+                          "shape",
+                          "facing",
+                          "container",
+                          "status",
+                          "branch_id",
+                          "price_vnd",
+                          "pricing",
+                          "redacted_fields",
+                          "commerce"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "next_cursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "next_cursor"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/integration/products/{id}/master-image": {
+      "get": {
+        "operationId": "integrationGetMasterImage",
+        "summary": "Ảnh Master đã duyệt và các tỉ lệ dẫn xuất",
+        "description": "Chỉ ảnh `APPROVED`; chưa có ảnh duyệt, sản phẩm không `ACTIVE` hoặc thuộc tổ chức khác → 404. `url` là URL ký sẵn, tuyệt đối.",
+        "tags": [
+          "Sản phẩm"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ảnh Master",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "master": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "storage_key": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "thumb_key": {
+                          "deprecated": true,
+                          "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mime_type": {
+                          "type": "string"
+                        },
+                        "width": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "height": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "aspect_ratio": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "created_at": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "url",
+                        "mime_type",
+                        "width",
+                        "height",
+                        "aspect_ratio",
+                        "created_at"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "ratios": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "storage_key": {
+                            "deprecated": true,
+                            "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                            "type": "string"
+                          },
+                          "url": {
+                            "type": "string"
+                          },
+                          "thumb_key": {
+                            "deprecated": true,
+                            "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "mime_type": {
+                            "type": "string"
+                          },
+                          "width": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "height": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "aspect_ratio": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "created_at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "url",
+                          "mime_type",
+                          "width",
+                          "height",
+                          "aspect_ratio",
+                          "created_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "master",
+                    "ratios"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    },
+    "/integration/usage": {
+      "post": {
+        "operationId": "integrationRecordUsage",
+        "summary": "Ghi mức dùng phát sinh ở engine ngoài",
+        "description": "Không trừ credit lần hai (`cost_credit` = 0).",
+        "tags": [
+          "Job & mức dùng"
+        ],
+        "security": [
+          {
+            "integrationToken": []
+          },
+          {
+            "algSso": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "feature": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "cost_usd": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "COMPLETED",
+                      "REFUNDED"
+                    ]
+                  },
+                  "job_id": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "feature",
+                  "status"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dòng usage đã ghi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "organization_id": {
+                      "type": "string"
+                    },
+                    "workspace_id": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": "string"
+                    },
+                    "user_id": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": "string"
+                    },
+                    "job_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "feature": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "cost_credit": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "cost_usd": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới.",
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "metadata": {
+                      "deprecated": true,
+                      "description": "Sắp gỡ: máy chủ bỏ trường này từ 2027-02-09 (báo 2026-11-11). Không dùng cho tích hợp mới."
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "organization_id",
+                    "job_id",
+                    "feature",
+                    "quantity",
+                    "cost_credit",
+                    "status",
+                    "created_at"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "integrationToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Token máy gọi máy cấp theo tổ chức (`/integration-tokens`)"
+      },
+      "algSso": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-alg-sso",
+        "description": "JWT SSO thay mặt người dùng đang đăng nhập (header cũ `x-smeos-sso`, `x-floraos-sso` vẫn nhận)"
+      }
+    },
+    "headers": {
+      "RateLimitLimit": {
+        "description": "Số lượt tối đa trong cửa sổ của luật chặt nhất",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "RateLimitRemaining": {
+        "description": "Số lượt còn lại trong cửa sổ",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "RateLimitReset": {
+        "description": "Số giây tới khi cửa sổ mở lại",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "RetryAfter": {
+        "description": "Số giây nên chờ trước khi gọi lại (chỉ khi 429)",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "VALIDATION_FAILED",
+                  "UNAUTHENTICATED",
+                  "CAPABILITY_DENIED",
+                  "ENTITLEMENT_REQUIRED",
+                  "PASSWORD_CHANGE_REQUIRED",
+                  "CROSS_ORIGIN_REJECTED",
+                  "SUBSCRIPTION_OVERDUE",
+                  "ORGANIZATION_INACTIVE",
+                  "NOT_FOUND",
+                  "CONFLICT",
+                  "PAYLOAD_TOO_LARGE",
+                  "QUOTA_EXCEEDED",
+                  "UNPROCESSABLE_ENTITY",
+                  "IDEMPOTENCY_KEY_REUSED",
+                  "RATE_LIMITED",
+                  "INTERNAL"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "Câu tiếng Việt cho người dùng cuối"
+              },
+              "details": {
+                "type": "object",
+                "description": "Lỗi validation: `issues` (mảng issue của zod)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "Sai lược đồ thân/query hoặc thân không phải JSON (`VALIDATION_FAILED`, `details.issues`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error401": {
+        "description": "Thiếu hoặc sai token / phiên SSO (`UNAUTHENTICATED`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error403": {
+        "description": "Thiếu mã năng lực hoặc token của app không được đọc tài nguyên này (`CAPABILITY_DENIED`); tổ chức tạm ngưng hoặc đang rời nền tảng (`ORGANIZATION_INACTIVE`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "Không tìm thấy, hoặc thuộc tổ chức khác (`NOT_FOUND`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error413": {
+        "description": "Thân yêu cầu vượt 2 MB (`PAYLOAD_TOO_LARGE`, `details.max_bytes`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error422": {
+        "description": "Vi phạm luật nghiệp vụ hoặc hết hạn mức (`UNPROCESSABLE_ENTITY`, `QUOTA_EXCEEDED`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error429": {
+        "description": "Quá tần suất (`RATE_LIMITED`) — chờ theo `Retry-After`",
+        "headers": {
+          "RateLimit-Limit": {
+            "$ref": "#/components/headers/RateLimitLimit"
+          },
+          "RateLimit-Remaining": {
+            "$ref": "#/components/headers/RateLimitRemaining"
+          },
+          "RateLimit-Reset": {
+            "$ref": "#/components/headers/RateLimitReset"
+          },
+          "Retry-After": {
+            "$ref": "#/components/headers/RetryAfter"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error500": {
+        "description": "Lỗi hệ thống (`INTERNAL`) — không lộ chi tiết",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-01-bring.output.schema.json",
+  "title": "Chặng 01 — BRING: Tải ảnh sản phẩm vào kho — Đầu ra",
+  "description": "Xin URL (POST /assets/upload-url) → PUT byte ảnh → đăng ký asset ORIGINAL. Từ đây mọi chặng chỉ mang asset_id, không mang ảnh.",
+  "x-alg": {
+    "stageId": "01",
+    "stage": 1,
+    "code": "BRING",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/assets",
+      "capability": "G2"
+    },
+    "source": "src/modules/creative-production/contracts/stage-01-bring.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "asset": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "organization_id": {
+          "type": "string"
+        },
+        "product_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parent_asset_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "ORIGINAL",
+            "ANALYZED",
+            "ENHANCED",
+            "MASTER",
+            "MARKETING",
+            "CATALOG",
+            "LANDING",
+            "SOCIAL",
+            "VIDEO",
+            "RATIO"
+          ]
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "PROCESSING",
+            "READY",
+            "FAILED",
+            "ARCHIVED"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "storage_key": {
+          "type": "string"
+        },
+        "mime_type": {
+          "type": "string"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "aspect_ratio": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "file_size": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approval_state": {
+          "type": "string",
+          "enum": [
+            "PENDING",
+            "APPROVED",
+            "REJECTED"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+        }
+      },
+      "required": [
+        "id",
+        "organization_id",
+        "product_id",
+        "parent_asset_id",
+        "kind",
+        "state",
+        "version",
+        "storage_key",
+        "mime_type",
+        "width",
+        "height",
+        "aspect_ratio",
+        "file_size",
+        "approval_state",
+        "created_at"
+      ],
+      "additionalProperties": {}
+    }
+  },
+  "required": [
+    "asset"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "asset": {
+        "id": "3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f",
+        "organization_id": "0b6f2c1e-0000-4000-8000-000000000001",
+        "product_id": null,
+        "parent_asset_id": null,
+        "kind": "ORIGINAL",
+        "state": "READY",
+        "version": 1,
+        "storage_key": "org/0b6f.../unfiled/3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f.jpg",
+        "mime_type": "image/jpeg",
+        "width": null,
+        "height": null,
+        "aspect_ratio": null,
+        "file_size": 482113,
+        "approval_state": "PENDING",
+        "created_at": "2026-09-24T08:00:00.000Z"
+      }
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-12-measure.output.schema.json",
+  "title": "Chặng 12 — MEASURE: Đo lường hiệu quả kinh doanh — Đầu ra",
+  "description": "Đơn/doanh thu của sản phẩm (bỏ DRAFT/CANCELLED), hội thoại, số kênh từ content_metrics; null = chưa có số; caveats hiển thị nguyên văn.",
+  "x-alg": {
+    "stageId": "12",
+    "stage": 12,
+    "code": "MEASURE",
+    "endpoint": {
+      "method": "GET",
+      "path": "/api/v1/creative-production/packages/:id/performance",
+      "capability": "R1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-12-measure.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "package_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "QA_PASSED",
+        "QA_NEEDS_REVIEW",
+        "QA_REJECTED",
+        "APPROVED"
+      ]
+    },
+    "measure": {
+      "type": "object",
+      "properties": {
+        "since": {
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "orders": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "quantity": {
+              "type": "number"
+            },
+            "revenueVnd": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "count",
+            "quantity",
+            "revenueVnd"
+          ],
+          "additionalProperties": false
+        },
+        "conversations": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "channel": {
+          "type": "object",
+          "properties": {
+            "linkedPosts": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "postsWithData": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "reach": {
+              "description": "null = chưa có số",
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "impressions": {
+              "description": "null = chưa có số",
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "engagement": {
+              "description": "null = chưa có số",
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "clicks": {
+              "description": "null = chưa có số",
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "conversions": {
+              "description": "null = chưa có số",
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "linkedPosts",
+            "postsWithData",
+            "reach",
+            "impressions",
+            "engagement",
+            "clicks",
+            "conversions"
+          ],
+          "additionalProperties": false
+        },
+        "caveats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Giới hạn của phép đo — hiển thị nguyên văn"
+        }
+      },
+      "required": [
+        "since",
+        "orders",
+        "conversations",
+        "channel",
+        "caveats"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "package_id",
+    "status",
+    "measure"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "package_id": "c0ffee00-1111-4222-8333-444455556666",
+      "status": "APPROVED",
+      "measure": {
+        "since": "2026-09-20T02:00:00.000Z",
+        "orders": {
+          "count": 1,
+          "quantity": 1,
+          "revenueVnd": 650000
+        },
+        "conversations": 7,
+        "channel": {
+          "linkedPosts": 1,
+          "postsWithData": 1,
+          "reach": 5200,
+          "impressions": 8100,
+          "engagement": 430,
+          "clicks": 61,
+          "conversions": 3
+        },
+        "caveats": [
+          "Đơn hàng tính theo sản phẩm của gói kể từ ngày duyệt — chưa quy được từng đơn về một bài đăng cụ thể.",
+          "Hội thoại tính toàn tiệm kể từ ngày duyệt."
+        ]
+      }
+    }
+  ]
+}

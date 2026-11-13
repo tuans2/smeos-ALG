@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "generate-content-request.v1.schema.json",
+  "title": "Content Engine — POST /generations request body",
+  "description": "Thân yêu cầu tạo lượt sinh bài đa kênh (Đợt 2) — cần asset_id hoặc product_id để dựng Brief.",
+  "x-alg": {
+    "module": "content-engine",
+    "source": "src/modules/content-engine/contracts/generation.ts",
+    "generateContentVersion": 1,
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:content-engine`."
+  },
+  "type": "object",
+  "properties": {
+    "asset_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "product_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "analysis_run_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "topic_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "scene_plan_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "channels": {
+      "minItems": 1,
+      "maxItems": 4,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "facebook",
+          "instagram",
+          "tiktok",
+          "zalo"
+        ],
+        "description": "Kênh bài đăng: facebook | instagram | tiktok | zalo"
+      }
+    },
+    "content_provider": {
+      "description": "Nhà cung cấp nội dung cho lượt này (claude_opus | openai_structured | gemini_pro | claude_sonnet | gemini_flash | openai_direct); bỏ trống = thứ tự ưu tiên của tiệm",
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "channels"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "asset_id": "asset_001",
+      "product_id": null,
+      "analysis_run_id": null,
+      "topic_id": "topic_001",
+      "scene_plan_id": "scene_001",
+      "channels": [
+        "facebook",
+        "instagram"
+      ]
+    }
+  ]
+}

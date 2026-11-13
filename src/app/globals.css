@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ── ALG Design Tokens (SSOT: src/styles/tokens/ — ADR-011 D-UI-04) ── */
+@import "../styles/tokens/typography.css";
+@import "../styles/tokens/color.css";
+@import "../styles/tokens/radius.css";
+@import "../styles/tokens/shadow.css";
+@import "../styles/tokens/z-index.css";
+@import "../styles/tokens/motion.css";
+@import "../styles/tokens/spacing.css";
+@import "../styles/tokens/density.css";
+@import "../styles/tokens/themes.css";
+
+html,
+body {
+  min-height: 100%;
+}
+
+/* Tiêu điểm không bị che (WCAG 2.4.11): khi cuộn tới phần tử nhận tiêu điểm, chừa vùng của
+   thanh điều hướng đáy (di động) và nút Copilot nổi ở góc dưới. */
+html {
+  scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Con trỏ phóng to cho ảnh */
+img:not([data-no-zoom="true"]) {
+  cursor: zoom-in;
+}
+
+/* Tối ưu Mobile: Ngăn chặn iOS Safari tự phóng to khung nhìn khi focus input */
+@media screen and (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

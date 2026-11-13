@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-12-measure.input.schema.json",
+  "title": "Chặng 12 — MEASURE: Đo lường hiệu quả kinh doanh — Đầu vào",
+  "description": "Đơn/doanh thu của sản phẩm (bỏ DRAFT/CANCELLED), hội thoại, số kênh từ content_metrics; null = chưa có số; caveats hiển thị nguyên văn.",
+  "x-alg": {
+    "stageId": "12",
+    "stage": 12,
+    "code": "MEASURE",
+    "endpoint": {
+      "method": "GET",
+      "path": "/api/v1/creative-production/packages/:id/performance",
+      "capability": "R1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-12-measure.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "package_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "campaign_packages.id — tham số đường dẫn :id"
+    }
+  },
+  "required": [
+    "package_id"
+  ],
+  "examples": [
+    {
+      "package_id": "c0ffee00-1111-4222-8333-444455556666"
+    }
+  ]
+}

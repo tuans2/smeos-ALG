@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "step-02-validate-plan.input.schema.json",
+  "title": "Thẩm định & Lập kế hoạch — Đầu vào",
+  "description": "Chuyển INTAKE → VALIDATING/PLANNING → ASSIGNING; máy chủ kiểm luồng và bằng chứng (409 nếu sai)",
+  "x-alg": {
+    "stepId": "02",
+    "step": 2,
+    "code": "VALIDATE_PLAN",
+    "endpoint": {
+      "method": "PATCH",
+      "path": "/api/v1/coordinator/orders/{id}/stage",
+      "capability": "R3"
+    },
+    "source": "src/modules/coordinator/contracts/step-02-validate-plan.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:coordinator`."
+  },
+  "type": "object",
+  "properties": {
+    "stage": {
+      "type": "string",
+      "enum": [
+        "INTAKE",
+        "VALIDATING",
+        "PLANNING",
+        "ASSIGNING",
+        "IN_PRODUCTION",
+        "QUALITY_CHECK",
+        "DISPATCHING",
+        "DELIVERED",
+        "COMPLETED",
+        "EXCEPTION",
+        "CANCELLED"
+      ]
+    },
+    "next_action": {
+      "type": "string",
+      "maxLength": 300
+    }
+  },
+  "required": [
+    "stage"
+  ],
+  "examples": [
+    {
+      "stage": "PLANNING",
+      "next_action": "Chốt giờ lấy hàng 16:30"
+    }
+  ]
+}

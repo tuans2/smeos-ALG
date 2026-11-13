@@ -1,0 +1,20 @@
+{
+  "_comment": "Phát hiện CodeQL mức >= 7.0 có sẵn trên main khi chốt CodeQL ra đời (PR #189, PO duyệt 07/11/2026). Chốt chỉ chặn phát hiện MỚI; mốc chỉ được thu hẹp — sửa xong chỗ nào thì xoá/giảm dòng đó. Khoá: <luật>|<tệp> → số phát hiện.",
+  "javascript-typescript": {
+    "js/file-system-race|scripts/check-docs.mjs": 1,
+    "js/file-system-race|scripts/gen-content-engine-schemas.ts": 1,
+    "js/file-system-race|scripts/gen-coordinator-schemas.ts": 1,
+    "js/file-system-race|scripts/gen-creative-studio-schemas.ts": 1,
+    "js/file-system-race|scripts/new-industry.ts": 1,
+    "js/biased-cryptographic-random|src/modules/acquisition/domain/short-link-rules.ts": 1,
+    "js/biased-cryptographic-random|src/modules/greeting-card/domain/greeting-card-rules.ts": 1,
+    "js/xss-through-dom|src/components/greeting-card/coordinator/coordinator-image-upload.tsx": 1,
+    "js/insufficient-password-hash|src/modules/greeting-card/use-cases/payment-webhook.ts": 1
+  },
+  "python": {},
+  "_reviewed_false_positives": {
+    "_approved": "PO duyệt 10/11/2026: ngoại lệ có lý do cho quy tắc 'mốc chỉ được thu hẹp' — hai báo nhầm dưới đây, đã đọc tận mắt.",
+    "js/xss-through-dom|src/components/greeting-card/coordinator/coordinator-image-upload.tsx": "Đo thời lượng video người dùng tự chọn: gán object URL vào thẻ <video> tạm (videoDuration). URL.createObjectURL luôn trả 'blob:<origin>/<uuid>', không mang được javascript: hay HTML. Ảnh xem trước đã chuyển sang canvas (LocalImagePreview, PR #23).",
+    "js/insufficient-password-hash|src/modules/greeting-card/use-cases/payment-webhook.ts": "hashWebhookKey băm khoá webhook SePay ngẫu nhiên 192 bit (randomBytes(24)), không phải mật khẩu người dùng; SHA-256 tất định là đúng để tra khoá. Hàm băm chậm không thêm an toàn với khoá entropy cao."
+  }
+}

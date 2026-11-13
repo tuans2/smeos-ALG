@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-06a-create-content.input.schema.json",
+  "title": "Chặng 06a — CREATE · Khu vực B: Nội dung bài đăng — Đầu vào",
+  "description": "Bài viết theo kênh (tối đa một bài/kênh) sinh từ kịch bản; tự lưu, ghi đè bản cũ cùng khoá ảnh + chủ đề + mode.",
+  "x-alg": {
+    "stageId": "06a",
+    "stage": 6,
+    "code": "CREATE_CONTENT",
+    "endpoint": {
+      "method": "PUT",
+      "path": "/api/v1/creative-production/content-drafts",
+      "capability": "I1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-06a-create-content.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+    },
+    "topic_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "CREATIVE",
+        "AUTHENTIC"
+      ],
+      "description": "Loại hình sản xuất: CREATIVE (AI dựng bối cảnh mới, 5 cảnh) hoặc AUTHENTIC (giữ ảnh gốc, 3 cảnh)"
+    },
+    "topic_title": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 500
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "posts": {
+      "maxItems": 4,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "facebook",
+              "instagram",
+              "tiktok",
+              "zalo"
+            ],
+            "description": "Kênh bài đăng của gói chiến dịch"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 70000
+          },
+          "hashtags": {
+            "default": [],
+            "maxItems": 60,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        },
+        "required": [
+          "channel",
+          "text"
+        ]
+      },
+      "description": "Tối đa một bài cho mỗi kênh"
+    }
+  },
+  "required": [
+    "asset_id",
+    "topic_id",
+    "mode",
+    "posts"
+  ],
+  "examples": [
+    {
+      "asset_id": "3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f",
+      "topic_id": "topic-emotional-01",
+      "mode": "AUTHENTIC",
+      "topic_title": "12 bông hồng cho 12 tháng yêu nhau",
+      "posts": [
+        {
+          "channel": "facebook",
+          "text": "12 bông hồng đỏ — mỗi bông cho một tháng bên nhau. Nhắn tiệm để giữ hoa cho ngày kỷ niệm 🌹",
+          "hashtags": [
+            "#hoahong",
+            "#kyniem"
+          ]
+        }
+      ]
+    }
+  ]
+}

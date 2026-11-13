@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-06c-create-media.output.schema.json",
+  "title": "Chặng 06c — CREATE · Khu vực D: Ảnh biến thể theo cảnh — Đầu ra",
+  "description": "Mỗi cảnh một job; qua cổng Subject Integrity. Kết quả là assets MARKETING (PENDING) có cha là Master — đọc qua GET /media/variants/:id.",
+  "x-alg": {
+    "stageId": "06c",
+    "stage": 6,
+    "code": "CREATE_MEDIA",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/media/variants",
+      "capability": "I4",
+      "idempotencyKey": true
+    },
+    "source": "src/modules/creative-production/contracts/stage-06c-create-media.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "job_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "description": "Trạng thái generation_jobs lúc nhận"
+    },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "local_studio",
+        "cloud_provider"
+      ]
+    },
+    "deduped": {
+      "type": "boolean"
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "cost_credit": {
+          "type": "number"
+        },
+        "balance_after": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "cost_credit",
+        "balance_after"
+      ],
+      "additionalProperties": false,
+      "description": "cost_credit = TỔNG mọi phương án"
+    },
+    "job_group_id": {
+      "description": "Nhóm các phương án; null khi variant_count = 1",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "candidates": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "Thứ tự phương án, 1..variant_count"
+          },
+          "job_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED",
+              "CANCELLED"
+            ]
+          },
+          "deduped": {
+            "type": "boolean"
+          },
+          "cost_credit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "index",
+          "job_id",
+          "status",
+          "deduped",
+          "cost_credit"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Mỗi phương án một job — đọc từng job qua GET /media/variants/:id"
+    }
+  },
+  "required": [
+    "job_id",
+    "status",
+    "engine",
+    "deduped",
+    "usage",
+    "job_group_id",
+    "candidates"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "job_id": "e5f6a7b8-c9d0-4e1f-8a2b-3c4d5e6f7a8c",
+      "status": "PENDING",
+      "engine": "cloud_provider",
+      "deduped": false,
+      "usage": {
+        "cost_credit": 8,
+        "balance_after": 239
+      },
+      "job_group_id": "0b1c2d3e-4f50-4617-8829-3a4b5c6d7e8f",
+      "candidates": [
+        {
+          "index": 1,
+          "job_id": "e5f6a7b8-c9d0-4e1f-8a2b-3c4d5e6f7a8c",
+          "status": "PENDING",
+          "deduped": false,
+          "cost_credit": 4
+        },
+        {
+          "index": 2,
+          "job_id": "f6a7b8c9-d0e1-4f2a-8b3c-4d5e6f7a8b9d",
+          "status": "PENDING",
+          "deduped": false,
+          "cost_credit": 4
+        }
+      ]
+    }
+  ]
+}

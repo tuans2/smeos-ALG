@@ -1,0 +1,16 @@
+@theme {
+  /* Semantic spacing (ADR-011 D-UI-05, F1-02) */
+  --space-section: 2rem;
+  --space-card: 1.25rem;
+
+  /* Control heights */
+  --control-h-sm: 2rem;       /* 32px - density compact */
+  --control-h-md: 2.5rem;     /* 40px */
+  --control-h-lg: 2.75rem;    /* 44px - touch target sàn */
+
+  /* Layout max widths (Archetypes A-F, ADR-011 D-UI-05) */
+  --layout-max-narrow: 48rem; /* 768px - D/F max-w-3xl */
+  --layout-max-medium: 64rem; /* 1024px - A/C max-w-5xl */
+  --layout-max-wide: 72rem;   /* 1152px - B/E max-w-6xl */
+}
+

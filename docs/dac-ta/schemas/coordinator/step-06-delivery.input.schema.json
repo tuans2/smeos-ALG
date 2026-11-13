@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "step-06-delivery.input.schema.json",
+  "title": "Giao hàng & POD (T18–T21, F11/F12) — Đầu vào",
+  "description": "PICKED_UP → ON_THE_WAY → DELIVERED_SUCCESS (bắt buộc ảnh POD hoặc tên người ký) / DELIVERY_FAILED (mở sự cố)",
+  "x-alg": {
+    "stepId": "06",
+    "step": 6,
+    "code": "DELIVERY",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/coordinator/orders/{id}/delivery",
+      "capability": "R5"
+    },
+    "source": "src/modules/coordinator/contracts/step-06-delivery.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:coordinator`."
+  },
+  "type": "object",
+  "properties": {
+    "event": {
+      "type": "string",
+      "enum": [
+        "PICKED_UP",
+        "ON_THE_WAY",
+        "DELIVERED_SUCCESS",
+        "DELIVERY_FAILED"
+      ]
+    },
+    "carrier": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "shipper_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "shipper_phone": {
+      "type": "string",
+      "maxLength": 20
+    },
+    "pod_asset_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "recipient_signed_name": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "failure_reason": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "event",
+    "shipper_name"
+  ],
+  "examples": [
+    {
+      "event": "DELIVERED_SUCCESS",
+      "carrier": "AhaMove",
+      "shipper_name": "Lê Văn Hùng",
+      "shipper_phone": "0933221100",
+      "recipient_signed_name": "Trần Thị Bình"
+    }
+  ]
+}

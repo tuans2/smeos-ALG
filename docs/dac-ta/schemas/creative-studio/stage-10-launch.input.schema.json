@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-10-launch.input.schema.json",
+  "title": "Chặng 10 — LAUNCH: Đăng tải / lên lịch đa kênh — Đầu vào",
+  "description": "Gói phải APPROVED. post_refs khớp content_metrics.content_id để Chặng 12 đọc số thật; việc đăng thực hiện ở Lịch đăng.",
+  "x-alg": {
+    "stageId": "10",
+    "stage": 10,
+    "code": "LAUNCH",
+    "endpoint": {
+      "method": "PUT",
+      "path": "/api/v1/creative-production/packages/:id/launch",
+      "capability": "J5"
+    },
+    "source": "src/modules/creative-production/contracts/stage-10-launch.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "package_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "campaign_packages.id — tham số đường dẫn :id"
+    },
+    "channels": {
+      "minItems": 1,
+      "maxItems": 4,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "facebook",
+          "instagram",
+          "tiktok",
+          "zalo"
+        ]
+      }
+    },
+    "scheduled_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "post_refs": {
+      "default": [],
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": [
+              "facebook",
+              "instagram",
+              "tiktok",
+              "zalo"
+            ]
+          },
+          "content_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "platform",
+          "content_id"
+        ]
+      }
+    }
+  },
+  "required": [
+    "package_id",
+    "channels"
+  ],
+  "examples": [
+    {
+      "package_id": "c0ffee00-1111-4222-8333-444455556666",
+      "channels": [
+        "tiktok"
+      ],
+      "scheduled_at": "2026-09-25T12:00:00.000Z",
+      "post_refs": [
+        {
+          "platform": "tiktok",
+          "content_id": "sf-post-8812"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,801 @@
+{
+ "name": "PhanTichSanPhamHoa",
+ "strict": true,
+ "schema": {
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+   "palette_accounting",
+   "checklist",
+   "identity",
+   "bom",
+   "confidence",
+   "san_xuat"
+  ],
+  "properties": {
+   "palette_accounting": {
+    "type": "array",
+    "description": "Giai trinh bang mau. Moi cum mau da do phai co dung mot phan tu o day, khong duoc bo sot cum nao.",
+    "items": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "cluster_index",
+      "thuoc_ve",
+      "nhom",
+      "confidence"
+     ],
+     "properties": {
+      "cluster_index": {
+       "type": "integer",
+       "description": "So thu tu cum mau trong bang da do"
+      },
+      "thuoc_ve": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "description": "Ten thanh phan mang mau nay. Null chi khi that su khong xac dinh duoc."
+      },
+      "nhom": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "enum": [
+        "Hoa",
+        "Lá",
+        "Phụ kiện",
+        "Vật liệu gói",
+        "Nền ảnh",
+        "Không xác định",
+        null
+       ]
+      },
+      "confidence": {
+       "type": [
+        "integer",
+        "null"
+       ]
+      }
+     }
+    }
+   },
+   "checklist": {
+    "type": "object",
+    "description": "Ra soat bat buoc. Moi truong nhan Co hoac Khong co, khong duoc de trong.",
+    "additionalProperties": false,
+    "required": [
+     "hoa_chu_dao",
+     "hoa_phu",
+     "hoa_lap_day",
+     "la_nen",
+     "la_diem_nhan",
+     "vat_lieu_goi",
+     "day_buoc",
+     "ruy_bang",
+     "thiep_bien_chu",
+     "phu_kien_trang_tri"
+    ],
+    "properties": {
+     "hoa_chu_dao": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "hoa_phu": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "hoa_lap_day": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "la_nen": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "la_diem_nhan": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "vat_lieu_goi": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "day_buoc": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "ruy_bang": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "thiep_bien_chu": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     },
+     "phu_kien_trang_tri": {
+      "type": "string",
+      "enum": [
+       "Có",
+       "Không có"
+      ]
+     }
+    }
+   },
+   "identity": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "shape",
+     "facing",
+     "category",
+     "container",
+     "phong_cach",
+     "dip_su_dung"
+    ],
+    "properties": {
+     "shape": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "enum": [
+       "Tròn",
+       "Bán cầu",
+       "Tam giác",
+       "Thác đổ",
+       "Chữ L",
+       "Chữ S",
+       "Thẳng đứng",
+       "Toả tia",
+       "Vòng tròn",
+       "Tự do",
+       null
+      ]
+     },
+     "facing": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "enum": [
+       "Một mặt",
+       "Hai mặt",
+       "Toàn diện 360",
+       null
+      ]
+     },
+     "category": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "enum": [
+       "Bó hoa",
+       "Giỏ hoa",
+       "Hộp hoa",
+       "Bình hoa",
+       "Kệ hoa",
+       "Lẵng hoa",
+       "Vòng hoa",
+       "Bó cầm tay cô dâu",
+       "Hoa cài áo",
+       "Khác",
+       null
+      ]
+     },
+"container": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "enum": [
+        "Giấy gói",
+        "Giỏ mây",
+        "Hộp tròn",
+        "Hộp vuông",
+        "Bình thủy tinh",
+        "Bình gốm",
+        "Kệ 3 chân",
+        "Xốp cắm",
+        "Không có",
+        "Khác",
+        null
+       ]
+      },
+      "phong_cach": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "description": "Phong cách sản phẩm: Cổ điển, Hiện đại, Tối giản, Lãng mạn, Bohemian, Vintage..."
+      },
+      "dip_su_dung": {
+       "type": [
+        "string",
+        "null"
+       ],
+       "description": "Dịp sử dụng: Tết, Valentine, 8/3, Sinh nhật, Kỷ niệm, Cưới, Chia buồn, Khai trương..."
+      }
+     }
+   },
+   "bom": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "flowers",
+     "foliage",
+     "accessories",
+     "wrapping",
+     "materials_note"
+    ],
+    "properties": {
+     "flowers": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "nhom_hoa",
+        "name",
+        "shade",
+        "color",
+        "quantity",
+        "dem_tung_vung",
+        "bloom_diameter_ratio",
+        "cluster_indices",
+        "role",
+        "confidence",
+        "ma",
+        "dvt_dem",
+        "mau",
+        "mo_ta_mau",
+        "dau_hieu_nhan_dang",
+        "so_nu",
+        "so_hong",
+        "bien_the",
+        "chieu_dai_cm",
+        "duoc_thay_the",
+        "thu_tu_uu_tien_thay_the"
+       ],
+       "properties": {
+        "nhom_hoa": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Nhóm hoa nhìn thấy được: Cúc, Hồng, Lan, Đồng tiền, Cẩm chướng, Ly, Baby... Khai nhóm TRƯỚC rồi mới chọn loài cụ thể trong nhóm ấy. Chỉ chắc tới nhóm thì vẫn khai nhóm, đừng bỏ trống."
+        },
+        "name": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Chon trong danh muc neu prompt co cung cap danh muc"
+        },
+        "shade": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "Đậm",
+          "Vừa",
+          "Nhạt",
+          "Pha hai tông",
+          null
+         ]
+        },
+        "color": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "quantity": {
+         "type": [
+          "integer",
+          "null"
+         ],
+         "description": "So bong nhin thay duoc cua rieng loai nay"
+        },
+        "dem_tung_vung": {
+         "type": "array",
+         "items": {
+          "type": "integer"
+         },
+         "description": "Số đơn vị đếm được ở từng vùng của sản phẩm, theo thứ tự trái sang phải rồi trên xuống dưới. Tổng của mảng này PHẢI bằng quantity. Bắt buộc khi quantity từ 10 trở lên; dưới 10 thì để mảng rỗng."
+        },
+        "bloom_diameter_ratio": {
+         "type": [
+          "number",
+          "null"
+         ],
+         "description": "Duong kinh mot bong chia cho canh ngan vung san pham. Tinh bang cach lay mot chia cho so bong xep kin mot hang ngang qua cho rong nhat cua khoi hoa. Tra ve so tinh ra, khong lam tron ve gia tri quen thuoc"
+        },
+        "cluster_indices": {
+         "type": "array",
+         "items": {
+          "type": "integer"
+         },
+         "description": "Cac cum mau thuoc ve loai hoa nay"
+        },
+        "role": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "Hoa chủ đạo",
+          "Hoa phụ",
+          "Hoa điểm xuyết",
+          "Hoa lấp đầy",
+          null
+         ]
+        },
+        "confidence": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        },
+        "ma": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Mã trong danh mục, null khi không khớp."
+        },
+        "dvt_dem": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "Bông",
+          "Cành",
+          "Lá",
+          "Cây",
+          null
+         ],
+         "description": "Chép đúng cột ĐVT đếm của danh mục."
+        },
+        "mau": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "TM01 Đỏ",
+          "TM02 Hồng",
+          "TM03 Trắng",
+          "TM04 Cam",
+          "TM05 Xanh lá",
+          "TM06 Xanh Blue",
+          "TM07 Tím",
+          "TM08 Vàng",
+          "TM09 Nhiều màu sắc",
+          null
+         ],
+         "description": "Một trong chín tone chuẩn."
+        },
+        "mo_ta_mau": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Sắc thái cụ thể."
+        },
+        "dau_hieu_nhan_dang": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Nhãn thô tiếng Anh gốc của mô hình — luôn có, khớp mã hay không."
+        },
+        "so_nu": {
+         "type": [
+          "integer",
+          "null"
+         ],
+         "description": "So NU CHUA NO cua rieng loai nay. Dem rieng, KHONG cong vao quantity. Khong thay nu nao thi 0; khong phan biet duoc thi null."
+        },
+        "so_hong": {
+         "type": [
+          "integer",
+          "null"
+         ],
+         "description": "So don vi HONG cua rieng loai nay: gay co, heo, dap canh. Da NAM TRONG quantity, khong cong them. Khong thay don vi hong nao thi 0."
+        },
+        "bien_the": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Giong/bien the cu the cua nhom hoa (vd nhom_hoa = Hong, bien_the = Ohara/Explorer). MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        },
+        "chieu_dai_cm": {
+         "type": [
+          "number",
+          "null"
+         ],
+         "description": "Chieu dai canh hoa, don vi cm. MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        },
+        "duoc_thay_the": {
+         "type": [
+          "boolean",
+          "null"
+         ],
+         "description": "Co cho phep thay the dong BOM nay khi thieu hang. MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        },
+        "thu_tu_uu_tien_thay_the": {
+         "type": [
+          "integer",
+          "null"
+         ],
+         "description": "Thu tu uu tien bi thay the khi thieu hang, so nho hon thay truoc. MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        }
+       }
+      }
+     },
+     "foliage": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "name",
+        "quantity",
+        "cluster_indices",
+        "role",
+        "confidence",
+        "color",
+        "ma",
+        "dvt_dem",
+        "mau",
+        "mo_ta_mau",
+        "dau_hieu_nhan_dang",
+        "duoc_thay_the"
+       ],
+       "properties": {
+        "name": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "quantity": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        },
+        "cluster_indices": {
+         "type": "array",
+         "items": {
+          "type": "integer"
+         }
+        },
+        "role": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "Nền",
+          "Viền",
+          "Điểm nhấn",
+          "Lấp đầy",
+          null
+         ]
+        },
+        "confidence": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        },
+        "color": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Mau cua la, vi du Xanh dam, Xanh bac, Do tia"
+        },
+        "ma": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Mã trong danh mục, null khi không khớp."
+        },
+        "dvt_dem": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "Bông",
+          "Cành",
+          "Lá",
+          "Cây",
+          null
+         ],
+         "description": "Chép đúng cột ĐVT đếm của danh mục."
+        },
+        "mau": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "TM01 Đỏ",
+          "TM02 Hồng",
+          "TM03 Trắng",
+          "TM04 Cam",
+          "TM05 Xanh lá",
+          "TM06 Xanh Blue",
+          "TM07 Tím",
+          "TM08 Vàng",
+          "TM09 Nhiều màu sắc",
+          null
+         ],
+         "description": "Một trong chín tone chuẩn."
+        },
+        "mo_ta_mau": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Sắc thái cụ thể."
+        },
+        "dau_hieu_nhan_dang": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Nhãn thô tiếng Anh gốc của mô hình — luôn có, khớp mã hay không."
+        },
+        "duoc_thay_the": {
+         "type": [
+          "boolean",
+          "null"
+         ],
+         "description": "Co cho phep thay the dong BOM nay khi thieu hang. MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        }
+       }
+      }
+     },
+     "accessories": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "name",
+        "material",
+        "color",
+        "quantity",
+        "printed_text",
+        "confidence",
+        "ma",
+        "don_vi",
+        "duoc_thay_the"
+       ],
+       "properties": {
+        "name": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "material": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "color": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "quantity": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        },
+        "printed_text": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Chu in tren chinh phu kien nay, nguyen van"
+        },
+        "confidence": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        },
+        "ma": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Mã trong danh mục, null khi không khớp."
+        },
+        "don_vi": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Don vi tinh cua phu kien (vd cai, bo) - khac dvt_dem (chi danh cho hoa/la). MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        },
+        "duoc_thay_the": {
+         "type": [
+          "boolean",
+          "null"
+         ],
+         "description": "Co cho phep thay the dong BOM nay khi thieu hang. MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        }
+       }
+      }
+     },
+     "wrapping": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "layer",
+        "material",
+        "color",
+        "texture",
+        "confidence",
+        "ma",
+        "hoa_van",
+        "so_luong",
+        "duoc_thay_the"
+       ],
+       "properties": {
+        "layer": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "Lớp ngoài",
+          "Lớp giữa",
+          "Lớp trong",
+          "Đai buộc",
+          null
+         ]
+        },
+        "material": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "color": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "texture": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "enum": [
+          "Trơn",
+          "Nhăn",
+          "Dệt thô",
+          "Bóng",
+          "Mờ",
+          null
+         ]
+        },
+        "confidence": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        },
+        "ma": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Mã trong danh mục, null khi không khớp."
+        },
+        "hoa_van": {
+         "type": [
+          "string",
+          "null"
+         ],
+         "description": "Hoa van/hoa tiet cua lop goi nay - khac texture (ket cau vat lieu). MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        },
+        "so_luong": {
+         "type": [
+          "integer",
+          "null"
+         ],
+         "description": "So luong lop/tam cua CHINH lop goi nay (vd 2 lop giay lua cung mau). MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        },
+        "duoc_thay_the": {
+         "type": [
+          "boolean",
+          "null"
+         ],
+         "description": "Co cho phep thay the dong BOM nay khi thieu hang. MI-12 (DP-2b, 26/09/2026). AI dien khi nhan dien duoc; khong nhan dien duoc thi de null, KHONG DOAN."
+        }
+       }
+      }
+     },
+     "materials_note": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   },
+   "confidence": {
+    "type": [
+     "integer",
+     "null"
+    ],
+    "description": "0-100, do tin cay cua toan bo phan tich"
+   },
+   "san_xuat": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "so_tang_lop"
+    ],
+    "properties": {
+     "so_tang_lop": {
+      "type": [
+       "integer",
+       "null"
+      ],
+      "description": "So tang lop hoa xep chong tu ngoai vao trong"
+     }
+    }
+   }
+  }
+ }
+}

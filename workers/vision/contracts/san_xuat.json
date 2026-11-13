@@ -1,0 +1,30 @@
+{
+  "_ghi_chu": "Quy tắc suy thời gian làm và độ khó. Mô hình đọc ảnh không đo được hai đại lượng này: 11 trên 15 sản phẩm đã phân tích đều trả về đúng 90 phút và 13 trên 15 đều trả về độ khó 4, tức nó trả một hằng số. Số ở đây là mốc khởi tạo, thay bằng số bấm giờ thật khi có.",
+
+  "_cong_thuc": "thoi_gian_phut = phut_nen + phut_moi_bong * tong_so_bong + phut_moi_tang * (so_tang_lop - 1), làm tròn tới bội số 5, chặn trong khoảng toi_thieu - toi_da",
+
+  "thoi_gian": {
+    "Bó hoa":                { "phut_nen": 12, "phut_moi_bong": 0.45, "phut_moi_tang": 5,  "toi_thieu": 10, "toi_da": 60 },
+    "Bó cầm tay cô dâu":     { "phut_nen": 20, "phut_moi_bong": 0.60, "phut_moi_tang": 8,  "toi_thieu": 20, "toi_da": 90 },
+    "Giỏ hoa":               { "phut_nen": 20, "phut_moi_bong": 0.45, "phut_moi_tang": 8,  "toi_thieu": 20, "toi_da": 90 },
+    "Lẵng hoa":              { "phut_nen": 20, "phut_moi_bong": 0.45, "phut_moi_tang": 8,  "toi_thieu": 20, "toi_da": 90 },
+    "Hộp hoa":               { "phut_nen": 18, "phut_moi_bong": 0.40, "phut_moi_tang": 6,  "toi_thieu": 15, "toi_da": 75 },
+    "Bình hoa":              { "phut_nen": 15, "phut_moi_bong": 0.35, "phut_moi_tang": 5,  "toi_thieu": 12, "toi_da": 60 },
+    "Kệ hoa":                { "phut_nen": 45, "phut_moi_bong": 0.35, "phut_moi_tang": 15, "toi_thieu": 45, "toi_da": 180 },
+    "Vòng hoa":              { "phut_nen": 55, "phut_moi_bong": 0.35, "phut_moi_tang": 15, "toi_thieu": 50, "toi_da": 180 },
+    "Hoa cài áo":            { "phut_nen": 8,  "phut_moi_bong": 0.80, "phut_moi_tang": 3,  "toi_thieu": 5,  "toi_da": 30 },
+    "*":                     { "phut_nen": 20, "phut_moi_bong": 0.45, "phut_moi_tang": 8,  "toi_thieu": 10, "toi_da": 120 }
+  },
+
+  "_ghi_chu_do_kho": "Chấm theo thang 5 mức của Prompt.md. Cắm trên xốp là mốc chia giữa mức 3 và mức 4.",
+  "cam_tren_xop": ["Giỏ hoa", "Lẵng hoa", "Hộp hoa", "Kệ hoa", "Vòng hoa"],
+  "khung_lon": ["Kệ hoa", "Vòng hoa"],
+  "do_kho": {
+    "mot_loai_mot_tang": 1,
+    "hai_loai": 2,
+    "ba_loai_tro_len": 3,
+    "cam_tren_xop": 4,
+    "khung_lon_nhieu_tang": 5,
+    "nguong_tang_muc_5": 3
+  }
+}

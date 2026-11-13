@@ -1,0 +1,686 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-09-approve.output.schema.json",
+  "title": "Chặng 09 — APPROVE: Chủ tiệm chốt duyệt — Đầu ra",
+  "description": "Chỉ duyệt gói đã chạy QA; QA_REJECTED không duyệt được; QA_NEEDS_REVIEW cần xác nhận đã xem cảnh báo.",
+  "x-alg": {
+    "stageId": "09",
+    "stage": 9,
+    "code": "APPROVE",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/creative-production/packages/:id/approve",
+      "capability": "J5"
+    },
+    "source": "src/modules/creative-production/contracts/stage-09-approve.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "CREATIVE",
+        "AUTHENTIC"
+      ],
+      "description": "Loại hình sản xuất: CREATIVE (AI dựng bối cảnh mới, 5 cảnh) hoặc AUTHENTIC (giữ ảnh gốc, 3 cảnh)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "QA_PASSED",
+        "QA_NEEDS_REVIEW",
+        "QA_REJECTED",
+        "APPROVED"
+      ]
+    },
+    "master_asset_id": {
+      "type": "string"
+    },
+    "product_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "topic": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "title": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "angleCategory": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "hook": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "cta": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "scene2Preset": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "scenePlanId": {
+              "type": "string",
+              "maxLength": 160
+            },
+            "scenePlanRevision": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "id",
+            "title"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "posts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "facebook",
+              "instagram",
+              "tiktok",
+              "zalo"
+            ],
+            "description": "Kênh bài đăng của gói chiến dịch"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 70000
+          },
+          "hashtags": {
+            "default": [],
+            "maxItems": 60,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        },
+        "required": [
+          "channel",
+          "text",
+          "hashtags"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "variant_asset_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "video_job_id": {
+      "description": "Video chính (= video_job_ids[0])",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "video_job_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Mọi video của gói — mỗi khung hình trong phạm vi một video"
+    },
+    "audio_job_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "asset_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL ký có hạn"
+          },
+          "aspect_ratio": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "identity_score": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "approval_state": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "scene_index": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "watermark": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "asset_id",
+          "url",
+          "aspect_ratio",
+          "identity_score",
+          "approval_state",
+          "scene_index",
+          "watermark"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "video": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "stage": {
+              "type": "string"
+            },
+            "video_approval": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "APPROVED",
+                "REJECTED"
+              ]
+            },
+            "aspect_ratio": {
+              "type": "string"
+            },
+            "final_video_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "script_approval": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "APPROVED",
+                "REJECTED"
+              ]
+            },
+            "view_url": {
+              "description": "URL ký có hạn để phát video",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "id",
+            "title",
+            "stage",
+            "video_approval",
+            "aspect_ratio",
+            "final_video_url",
+            "script_approval",
+            "view_url"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Video chính (= videos[0])"
+    },
+    "videos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "video_approval": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "aspect_ratio": {
+            "type": "string"
+          },
+          "final_video_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "script_approval": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED"
+            ]
+          },
+          "view_url": {
+            "description": "URL ký có hạn để phát video",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "stage",
+          "video_approval",
+          "aspect_ratio",
+          "final_video_url",
+          "script_approval",
+          "view_url"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Mọi video của gói, theo thứ tự video_job_ids"
+    },
+    "audio": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "job_id": {
+              "type": "string"
+            },
+            "stage": {
+              "type": "string"
+            },
+            "audio_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "job_id",
+            "stage",
+            "audio_url"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "qa_report": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "verdict": {
+              "type": "string",
+              "enum": [
+                "PASS",
+                "NEEDS_REVIEW",
+                "REJECTED"
+              ]
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "enum": [
+                      "product_integrity",
+                      "approvals",
+                      "platform_specs",
+                      "content",
+                      "brand",
+                      "plan_consistency",
+                      "scope_coverage"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "verdict": {
+                    "type": "string",
+                    "enum": [
+                      "PASS",
+                      "NEEDS_REVIEW",
+                      "REJECTED"
+                    ]
+                  },
+                  "reasons": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "id",
+                  "title",
+                  "verdict",
+                  "reasons"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "checkedAt": {
+              "type": "string",
+              "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+            }
+          },
+          "required": [
+            "verdict",
+            "checks",
+            "checkedAt"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "qa_checked_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "approved_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "approved_at": {
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "launch_plan": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "channels": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "facebook",
+                  "instagram",
+                  "tiktok",
+                  "zalo"
+                ],
+                "description": "Kênh bài đăng của gói chiến dịch"
+              }
+            },
+            "scheduledAt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "postRefs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "platform": {
+                    "type": "string",
+                    "enum": [
+                      "facebook",
+                      "instagram",
+                      "tiktok",
+                      "zalo"
+                    ],
+                    "description": "Kênh bài đăng của gói chiến dịch"
+                  },
+                  "contentId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "platform",
+                  "contentId"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "channels",
+            "scheduledAt",
+            "postRefs"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "mode",
+    "status",
+    "master_asset_id",
+    "product_id",
+    "topic",
+    "posts",
+    "variant_asset_ids",
+    "video_job_id",
+    "video_job_ids",
+    "audio_job_id",
+    "variants",
+    "video",
+    "videos",
+    "audio",
+    "qa_report",
+    "qa_checked_at",
+    "approved_by",
+    "approved_at",
+    "launch_plan",
+    "created_at",
+    "updated_at"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "c0ffee00-1111-4222-8333-444455556666",
+      "name": "Kỷ niệm — Bó hồng đỏ 12 bông",
+      "mode": "AUTHENTIC",
+      "master_asset_id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+      "product_id": "7a2d0e11-5b3c-4d2e-8f10-2b3c4d5e6f70",
+      "topic": {
+        "id": "topic-emotional-01",
+        "title": "12 bông hồng cho 12 tháng yêu nhau",
+        "angleCategory": "EMOTIONAL",
+        "hook": "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
+        "cta": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
+        "scenePlanId": "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "scenePlanRevision": 1
+      },
+      "posts": [
+        {
+          "channel": "tiktok",
+          "text": "12 bông hồng cho 12 tháng yêu nhau 🌹 Nhắn tiệm giữ hoa nhé!",
+          "hashtags": [
+            "#hoahong",
+            "#kyniem"
+          ]
+        }
+      ],
+      "variant_asset_ids": [
+        "e5f6a7b8-c9d0-4e1f-8a2b-3c4d5e6f7a8c"
+      ],
+      "video_job_id": null,
+      "video_job_ids": [],
+      "audio_job_id": null,
+      "variants": [
+        {
+          "asset_id": "e5f6a7b8-c9d0-4e1f-8a2b-3c4d5e6f7a8c",
+          "url": "https://storage.example/signed/e5f6a7b8.jpg",
+          "aspect_ratio": "9:16",
+          "identity_score": 0.9995,
+          "approval_state": "APPROVED",
+          "scene_index": 2,
+          "watermark": true
+        }
+      ],
+      "video": null,
+      "videos": [],
+      "audio": null,
+      "approved_by": "11111111-2222-4333-8444-555555555555",
+      "approved_at": "2026-09-20T02:00:00.000Z",
+      "launch_plan": null,
+      "created_at": "2026-09-24T08:00:00.000Z",
+      "updated_at": "2026-09-24T08:00:00.000Z",
+      "status": "APPROVED",
+      "qa_report": {
+        "verdict": "PASS",
+        "checks": [
+          {
+            "id": "product_integrity",
+            "title": "Toàn vẹn sản phẩm (Subject Integrity đo thật)",
+            "verdict": "PASS",
+            "reasons": []
+          },
+          {
+            "id": "approvals",
+            "title": "Cổng duyệt từng tài sản (I5 · P4)",
+            "verdict": "PASS",
+            "reasons": []
+          },
+          {
+            "id": "platform_specs",
+            "title": "Chuẩn tỷ lệ theo kênh",
+            "verdict": "PASS",
+            "reasons": []
+          },
+          {
+            "id": "content",
+            "title": "Nội dung & từ điển ngành hoa",
+            "verdict": "PASS",
+            "reasons": []
+          },
+          {
+            "id": "brand",
+            "title": "Nhận diện thương hiệu",
+            "verdict": "PASS",
+            "reasons": []
+          },
+          {
+            "id": "plan_consistency",
+            "title": "Đồng nhất kịch bản sản xuất (Chặng 05)",
+            "verdict": "PASS",
+            "reasons": []
+          }
+        ],
+        "checkedAt": "2026-09-24T08:00:00.000Z"
+      },
+      "qa_checked_at": "2026-09-24T08:00:00.000Z"
+    }
+  ]
+}

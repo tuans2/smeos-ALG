@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-07-package.input.schema.json",
+  "title": "Chặng 07 — PACKAGE: Đóng gói trọn bộ chiến dịch — Đầu vào",
+  "description": "Gom bài B, âm thanh C, ảnh D, video E vào campaign_packages (DRAFT). Sửa gói (PATCH) đưa về DRAFT và xoá kết quả QA cũ.",
+  "x-alg": {
+    "stageId": "07",
+    "stage": 7,
+    "code": "PACKAGE",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/creative-production/packages",
+      "capability": "I1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-07-package.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "CREATIVE",
+        "AUTHENTIC"
+      ],
+      "description": "Loại hình sản xuất: CREATIVE (AI dựng bối cảnh mới, 5 cảnh) hoặc AUTHENTIC (giữ ảnh gốc, 3 cảnh)"
+    },
+    "master_asset_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Master Image đã duyệt (cổng 2, I2)"
+    },
+    "topic": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "angleCategory": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "hook": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "cta": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "scene2Preset": {
+          "type": "string",
+          "maxLength": 50
+        },
+        "scenePlanId": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "scenePlanRevision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ]
+    },
+    "posts": {
+      "maxItems": 4,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "facebook",
+              "instagram",
+              "tiktok",
+              "zalo"
+            ],
+            "description": "Kênh bài đăng của gói chiến dịch"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 70000
+          },
+          "hashtags": {
+            "default": [],
+            "maxItems": 60,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            }
+          }
+        },
+        "required": [
+          "channel",
+          "text"
+        ]
+      },
+      "description": "Tối đa một bài cho mỗi kênh"
+    },
+    "variant_asset_ids": {
+      "description": "Biến thể MARKETING của đúng Master",
+      "maxItems": 40,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "video_job_id": {
+      "description": "Video chính (API cũ) — gộp vào video_job_ids",
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "video_job_ids": {
+      "description": "Mỗi khung hình trong phạm vi một video",
+      "maxItems": 8,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "audio_job_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "name",
+    "mode",
+    "master_asset_id"
+  ],
+  "examples": [
+    {
+      "name": "Kỷ niệm — Bó hồng đỏ 12 bông",
+      "mode": "AUTHENTIC",
+      "master_asset_id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+      "topic": {
+        "id": "topic-emotional-01",
+        "title": "12 bông hồng cho 12 tháng yêu nhau",
+        "angleCategory": "EMOTIONAL",
+        "hook": "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
+        "cta": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
+        "scenePlanId": "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "scenePlanRevision": 1
+      },
+      "posts": [
+        {
+          "channel": "tiktok",
+          "text": "12 bông hồng cho 12 tháng yêu nhau 🌹 Nhắn tiệm giữ hoa nhé!",
+          "hashtags": [
+            "#hoahong",
+            "#kyniem"
+          ]
+        }
+      ],
+      "variant_asset_ids": [
+        "e5f6a7b8-c9d0-4e1f-8a2b-3c4d5e6f7a8c"
+      ],
+      "video_job_id": null,
+      "audio_job_id": null
+    }
+  ]
+}

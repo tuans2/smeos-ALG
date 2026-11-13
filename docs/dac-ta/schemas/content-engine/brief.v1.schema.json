@@ -1,0 +1,767 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "brief.v1.schema.json",
+  "title": "Content Engine — Content Brief v1",
+  "description": "Hợp đồng duy nhất mà chuỗi agent Strategist→Writer→Critic→Rewriter đọc để viết bài; nơi duy nhất thêm thông tin cho engine.",
+  "x-alg": {
+    "module": "content-engine",
+    "source": "src/modules/content-engine/contracts/brief.ts",
+    "briefVersion": 1,
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:content-engine`."
+  },
+  "type": "object",
+  "properties": {
+    "briefVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "organizationId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assetId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "product": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "style": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "flowerType": {
+                "type": "string",
+                "minLength": 1
+              },
+              "quantityEstimate": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "unit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "role": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "dominant",
+                      "supporting",
+                      "foliage"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "color": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "flowerType"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "packaging": {
+          "type": "object",
+          "properties": {
+            "wrappingMaterial": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "wrappingColor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ribbon": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "accessories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cardText": {
+              "description": "Chữ trên thiệp — đọc qua OCR (`report.packaging.card.printedText`)",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "accessories"
+          ],
+          "additionalProperties": false
+        },
+        "price": {
+          "type": "object",
+          "properties": {
+            "exact": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "rangeLabel": {
+              "description": "Khoảng giá dạng câu, vd '450.000đ – 650.000đ'",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "components",
+        "packaging",
+        "price"
+      ],
+      "additionalProperties": false
+    },
+    "passport": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "sellingPoints": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "flowerMeaningStory": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "recipient": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "buyerPersona": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "occasions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "careInstructions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cardMessageSuggestions": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "romantic": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "subtle": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "congratulatory": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "sellingPoints",
+            "occasions",
+            "careInstructions"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "topic": {
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "angleCategory": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hook": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "cta": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "format": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidenceNote": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "story": {
+      "description": "Vắng khi chưa có kịch bản Chặng 05 (vd. gọi rời từ `/noi-dung`)",
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "scenePlanId": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mode": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "AUTHENTIC",
+                    "CREATIVE"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "logline": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "emotionalTone": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hook": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "cta": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sceneLines": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "`voiceScript` từng cảnh, theo đúng thứ tự — Writer kể cùng câu chuyện"
+            }
+          },
+          "required": [
+            "sceneLines"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "shop": {
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "toneOfVoice": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hashtags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ctaPhrase": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "defaultOffers": {
+          "type": "object",
+          "properties": {
+            "freeGifts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "guarantees": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "freeGifts",
+            "guarantees"
+          ],
+          "additionalProperties": false
+        },
+        "forbiddenStyles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "website": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "operatingHours": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "brandMessage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "targetCustomers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "displayName",
+        "hashtags",
+        "defaultOffers",
+        "forbiddenStyles"
+      ],
+      "additionalProperties": false
+    },
+    "channels": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "facebook",
+              "instagram",
+              "tiktok",
+              "zalo"
+            ],
+            "description": "Kênh bài đăng: facebook | instagram | tiktok | zalo"
+          },
+          "maxChars": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "targetCharsRange": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "hashtagRange": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "tone": {
+            "type": "string"
+          },
+          "structureNote": {
+            "type": "string"
+          },
+          "ctaStyle": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel",
+          "maxChars",
+          "targetCharsRange",
+          "hashtagRange",
+          "tone",
+          "structureNote",
+          "ctaStyle"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "facts": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "factId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "product",
+              "component",
+              "packaging",
+              "price",
+              "passport",
+              "topic",
+              "story",
+              "shop",
+              "offer",
+              "contact"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "factId",
+          "category",
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "rules": {
+      "type": "object",
+      "properties": {
+        "bannedPhraseCount": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "Số mục trong từ điển từ cấm đầy đủ (không liệt kê hết vào brief, Writer nhận qua system prompt)"
+        },
+        "forbiddenStyles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Trùng `shop.forbiddenStyles` — tách riêng để Rewriter đọc thẳng"
+        },
+        "factsOnlyNotice": {
+          "type": "string",
+          "const": "Chỉ được nói những gì có trong facts[]. Không tự thêm khuyến mãi, freeship, quà tặng, cam kết hay giá không có ở đây."
+        }
+      },
+      "required": [
+        "bannedPhraseCount",
+        "forbiddenStyles",
+        "factsOnlyNotice"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "briefVersion",
+    "organizationId",
+    "product",
+    "topic",
+    "shop",
+    "channels",
+    "facts",
+    "rules"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "briefVersion": 1,
+      "organizationId": "org_avigift",
+      "assetId": "asset_001",
+      "product": {
+        "productId": "prod_001",
+        "name": "Sản phẩm hồng đỏ 20 cành",
+        "style": "cổ điển, sang trọng",
+        "components": [
+          {
+            "flowerType": "Hồng đỏ Ecuador",
+            "quantityEstimate": 20,
+            "unit": "cành",
+            "role": "dominant",
+            "color": "đỏ"
+          }
+        ],
+        "packaging": {
+          "wrappingMaterial": "giấy kraft",
+          "wrappingColor": "nâu",
+          "ribbon": "lụa đỏ",
+          "accessories": [
+            "thiệp"
+          ],
+          "cardText": "Chúc mừng sinh nhật!"
+        },
+        "price": {
+          "exact": 650000,
+          "rangeLabel": null
+        }
+      },
+      "passport": {
+        "sellingPoints": [
+          "Hoa nhập khẩu tuyển chọn",
+          "Cắm trong ngày"
+        ],
+        "flowerMeaningStory": "Hoa hồng đỏ tượng trưng cho tình yêu nồng nàn.",
+        "recipient": "người yêu, vợ/chồng",
+        "buyerPersona": "nam giới 25-40 tuổi",
+        "occasions": [
+          "sinh nhật",
+          "kỷ niệm"
+        ],
+        "careInstructions": [
+          "Thay nước mỗi 2 ngày",
+          "Cắt vát cành mỗi lần thay nước"
+        ],
+        "cardMessageSuggestions": {
+          "romantic": "Anh yêu em!",
+          "subtle": null,
+          "congratulatory": null
+        }
+      },
+      "topic": {
+        "topicId": "topic_001",
+        "title": "Sản phẩm sinh nhật tone đỏ",
+        "angleCategory": "EMOTIONAL",
+        "hook": "Món quà nào nói hộ lời yêu thương?",
+        "cta": "Nhắn tin đặt hoa ngay hôm nay",
+        "format": "REELS_TIKTOK_9_16",
+        "evidenceNote": null
+      },
+      "story": {
+        "scenePlanId": "scene_001",
+        "mode": "AUTHENTIC",
+        "logline": "Một buổi sáng chuẩn bị sản phẩm cho ngày sinh nhật đặc biệt.",
+        "emotionalTone": "ấm áp",
+        "hook": "Món quà nào nói hộ lời yêu thương?",
+        "cta": "Nhắn tin đặt hoa ngay hôm nay",
+        "sceneLines": [
+          "Xưởng hoa sáng sớm, từng cành hồng được chọn lọc kỹ càng."
+        ]
+      },
+      "shop": {
+        "displayName": "SiiN Store",
+        "toneOfVoice": "thân thiện, tinh tế",
+        "hashtags": [
+          "#hoatuoi",
+          "#siinstore"
+        ],
+        "ctaPhrase": "Nhắn tin tiệm để được tư vấn nhé!",
+        "defaultOffers": {
+          "freeGifts": [
+            "Thiệp thiết kế riêng"
+          ],
+          "guarantees": []
+        },
+        "forbiddenStyles": [
+          "chợ búa",
+          "giật gân"
+        ],
+        "phone": "0909xxxxxx",
+        "address": "123 Đường ABC, Q.1, TP.HCM",
+        "website": "https://siinstore.vn",
+        "operatingHours": "8:00 - 20:00"
+      },
+      "channels": [
+        {
+          "channel": "facebook",
+          "maxChars": 63206,
+          "targetCharsRange": [
+            400,
+            900
+          ],
+          "hashtagRange": [
+            4,
+            6
+          ],
+          "tone": "Kể chuyện (storytelling), lôi cuốn, 3–4 đoạn ngắn dễ đọc",
+          "structureNote": "Câu mở gợi cảm xúc (hook) → mô tả nét đẹp sản phẩm → CTA",
+          "ctaStyle": "Mời nhắn tin Inbox hoặc Zalo để được tư vấn thiết kế riêng"
+        }
+      ],
+      "facts": [
+        {
+          "factId": "F1",
+          "category": "product",
+          "text": "Sản phẩm: Sản phẩm hồng đỏ 20 cành — phong cách cổ điển, sang trọng"
+        },
+        {
+          "factId": "F2",
+          "category": "offer",
+          "text": "Quà tặng kèm: Thiệp thiết kế riêng"
+        }
+      ],
+      "rules": {
+        "bannedPhraseCount": 24,
+        "forbiddenStyles": [
+          "chợ búa",
+          "giật gân"
+        ],
+        "factsOnlyNotice": "Chỉ được nói những gì có trong facts[]. Không tự thêm khuyến mãi, freeship, quà tặng, cam kết hay giá không có ở đây."
+      }
+    }
+  ]
+}

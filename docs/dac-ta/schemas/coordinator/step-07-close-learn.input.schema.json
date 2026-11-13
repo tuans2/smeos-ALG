@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "step-07-close-learn.input.schema.json",
+  "title": "Nghiệm thu & Đóng đơn — Đầu vào",
+  "description": "Chỉ khi DELIVERED và không còn sự cố mở; chốt điểm + tiền công đối tác, ghi audit",
+  "x-alg": {
+    "stepId": "07",
+    "step": 7,
+    "code": "CLOSE_LEARN",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/coordinator/orders/{id}/close",
+      "capability": "R3"
+    },
+    "source": "src/modules/coordinator/contracts/step-07-close-learn.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:coordinator`."
+  },
+  "type": "object",
+  "properties": {
+    "partner_rating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "partner_payout_vnd": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000000
+    },
+    "payout_reason": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    }
+  },
+  "examples": [
+    {
+      "partner_rating": 5,
+      "partner_payout_vnd": 350000,
+      "notes": "Giao sớm 5 phút"
+    }
+  ]
+}

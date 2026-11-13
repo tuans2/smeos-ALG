@@ -1,0 +1,227 @@
+{
+  "name": "PhanTichSanPhamThoiTrang",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "required": [
+      "palette_accounting",
+      "checklist",
+      "identity",
+      "bom",
+      "confidence",
+      "san_xuat"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "palette_accounting": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "cluster_index",
+            "component_group",
+            "assigned_to",
+            "confidence"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "cluster_index": { "type": "integer" },
+            "component_group": {
+              "type": "string",
+              "enum": [
+                "Vải chính",
+                "Vải lót",
+                "Khóa / Cúc / Kim loại",
+                "Nhãn mác / Phụ kiện",
+                "Nền ảnh",
+                "Không xác định"
+              ]
+            },
+            "assigned_to": { "type": "string" },
+            "confidence": { "type": "integer" }
+          }
+        }
+      },
+      "checklist": {
+        "type": "object",
+        "required": [
+          "vai_chinh",
+          "vai_lot",
+          "khoa_cuc_kim_loai",
+          "nhan_mac_phu_kien",
+          "duong_may_dac_biet"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "vai_chinh": { "type": "string", "enum": ["Có", "Không có"] },
+          "vai_lot": { "type": "string", "enum": ["Có", "Không có"] },
+          "khoa_cuc_kim_loai": { "type": "string", "enum": ["Có", "Không có"] },
+          "nhan_mac_phu_kien": { "type": "string", "enum": ["Có", "Không có"] },
+          "duong_may_dac_biet": { "type": "string", "enum": ["Có", "Không có"] }
+        }
+      },
+      "identity": {
+        "type": "object",
+        "required": [
+          "category",
+          "silhouette",
+          "neckline_or_collar",
+          "sleeve_style",
+          "closure",
+          "phong_cach"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "Đầm & Váy thiết kế",
+              "Áo sơ mi & Áo kiểu",
+              "Suit & Áo Blazer",
+              "Quần âu & Chân váy",
+              "Set đồ phối sẵn",
+              "Phụ kiện thời trang",
+              "Khác"
+            ]
+          },
+          "silhouette": { "type": "string" },
+          "neckline_or_collar": { "type": "string" },
+          "sleeve_style": { "type": "string" },
+          "closure": { "type": "string" },
+          "phong_cach": { "type": "string" }
+        }
+      },
+      "bom": {
+        "type": "object",
+        "required": [
+          "primary_materials",
+          "secondary_materials",
+          "hardware",
+          "accessories",
+          "materials_note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "primary_materials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "color",
+                "shade",
+                "pattern",
+                "cluster_indices",
+                "confidence"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "color": { "type": "string" },
+                "shade": { "type": "string" },
+                "pattern": { "type": "string" },
+                "cluster_indices": {
+                  "type": "array",
+                  "items": { "type": "integer" }
+                },
+                "confidence": { "type": "integer" }
+              }
+            }
+          },
+          "secondary_materials": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "color",
+                "cluster_indices",
+                "confidence"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "color": { "type": "string" },
+                "cluster_indices": {
+                  "type": "array",
+                  "items": { "type": "integer" }
+                },
+                "confidence": { "type": "integer" }
+              }
+            }
+          },
+          "hardware": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "material",
+                "quantity",
+                "cluster_indices",
+                "confidence"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "material": { "type": "string" },
+                "quantity": {
+                  "type": ["integer", "null"]
+                },
+                "cluster_indices": {
+                  "type": "array",
+                  "items": { "type": "integer" }
+                },
+                "confidence": { "type": "integer" }
+              }
+            }
+          },
+          "accessories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "cluster_indices",
+                "confidence"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "cluster_indices": {
+                  "type": "array",
+                  "items": { "type": "integer" }
+                },
+                "confidence": { "type": "integer" }
+              }
+            }
+          },
+          "materials_note": {
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "confidence": {
+        "type": "integer"
+      },
+      "san_xuat": {
+        "type": "object",
+        "required": [
+          "do_kho_may"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "do_kho_may": {
+            "type": "string",
+            "enum": [
+              "Dễ",
+              "Trung bình",
+              "May đo cao cấp",
+              "Phức tạp"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

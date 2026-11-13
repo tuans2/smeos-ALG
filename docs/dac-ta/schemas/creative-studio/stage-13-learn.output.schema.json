@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-13-learn.output.schema.json",
+  "title": "Chặng 13 — LEARN: Trích xuất mẫu thắng (Winning Patterns) — Đầu ra",
+  "description": "So trên các gói đã duyệt của chính tiệm; dưới 3 gói có số đo thì trả INSUFFICIENT_DATA, không bịa mẫu.",
+  "x-alg": {
+    "stageId": "13",
+    "stage": 13,
+    "code": "LEARN",
+    "endpoint": {
+      "method": "GET",
+      "path": "/api/v1/creative-production/packages/:id/performance",
+      "capability": "R1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-13-learn.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "package_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "QA_PASSED",
+        "QA_NEEDS_REVIEW",
+        "QA_REJECTED",
+        "APPROVED"
+      ]
+    },
+    "learn": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "INSUFFICIENT_DATA"
+            },
+            "have": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "need": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991,
+              "description": "Tối thiểu 3 gói có số đo"
+            }
+          },
+          "required": [
+            "status",
+            "have",
+            "need"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "OK"
+            },
+            "basedOn": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "patterns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dimension": {
+                    "type": "string",
+                    "enum": [
+                      "angleCategory",
+                      "scene2Preset",
+                      "hasVideo"
+                    ]
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "packages": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  },
+                  "avgRevenueVnd": {
+                    "type": "number"
+                  },
+                  "avgOrders": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "dimension",
+                  "value",
+                  "packages",
+                  "avgRevenueVnd",
+                  "avgOrders"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "status",
+            "basedOn",
+            "patterns"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": [
+    "package_id",
+    "status",
+    "learn"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "package_id": "c0ffee00-1111-4222-8333-444455556666",
+      "status": "APPROVED",
+      "learn": {
+        "status": "INSUFFICIENT_DATA",
+        "have": 0,
+        "need": 3
+      }
+    }
+  ]
+}

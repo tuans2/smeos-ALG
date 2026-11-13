@@ -1,0 +1,22 @@
+{
+  "_ghi_chu": "Tham số vận hành cho M04a/M04b. Sửa giá ở đây, không sửa trong mã.",
+  "_ghi_chu_gia_token_anh": "Giá token của OpenAI Images API, đọc từ trang giá chính thức (community.openai.com, đối chiếu developers.openai.com/api/docs/models/gpt-image-1) ngày 17/09. Đơn vị USD trên MỘT TRIỆU token, đúng cách nhà cung cấp niêm yết. `text_vao` và `anh_vao` là hai KIỂU input khác giá — API tách hai số này ở `usage.input_tokens_details`, không gộp chung một cột `input_tokens` khi tính tiền (workers/media_ai/providers/chung.py).",
+  "_ghi_chu_gpt_image_1": "`gpt-image-1` đã bị chính OpenAI đánh dấu 'Deprecated' trên trang tài liệu của mô hình (developers.openai.com/api/docs/models/gpt-image-1), kế nhiệm là `gpt-image-2`. `OpenAIEnhancer` (workers/media_ai/providers/enhancement/openai_enhancer.py) vẫn đang hardcode mô hình này làm mặc định — đổi mô hình là việc khác, chưa làm ở đợt này. Bảng giá dưới đây vẫn đúng cho tới khi mô hình đổi vì giá gắn theo TÊN mô hình, không theo ngày.",
+  "gia_token_anh": {
+    "gpt-image-1": {
+      "text_vao": 5.0,
+      "anh_vao": 10.0,
+      "anh_ra": 40.0
+    }
+  },
+  "_ghi_chu_gia_luot_replicate": "Giá THEO LƯỢT (flat-rate) cho `AIC-13` (mở rộng khung/outpainting, nợ #78, 17/09) — khác `gia_token_anh` ở trên vì các nhà cung cấp này không tách token input/output. Tên khối (`gia_luot_replicate`) còn lại từ đợt đầu chỉ có Replicate — vẫn dùng CHUNG cho MỌI provider tính phí theo lượt (kể cả fal.ai, thêm 18/09), khoá tra bằng `model_version` của từng provider, không phải riêng Replicate; đổi tên khối là việc khác, ngoài phạm vi đợt đổi provider 18/09. `moi_luot` (USD/lượt) cho `bria/expand-image` (Replicate) LẤY TỪ NGUỒN BÊN THỨ BA (không phải trang giá chính thức của Replicate — chưa gọi được `api.replicate.com` để đối chiếu, mạng ra ngoài của môi trường soạn mã bị chặn ở cấp tổ chức), nên CHƯA XÁC NHẬN — cần đối chiếu lại khi có `REPLICATE_API_TOKEN` thật (xem cảnh báo trong `providers/expansion/replicate_outpainter.py`). `moi_luot` cho `fal-ai/bria/expand` (fal.ai, nợ #105) ĐÃ xác nhận trực tiếp trên trang model của fal.ai ngày 18/09 (\"$0.04 per generation\") — độ tin cậy cao hơn dòng Replicate ở trên.",
+  "_ghi_chu_iopaint": "`iopaint` (Mức 2 tự host, nợ #104, tiếp #78) CỐ Ý không có dòng giá ở `gia_luot_replicate` bên dưới — hạ tầng tự host được khấu hao, không tính tiền theo lượt gọi. `so_do_chi_phi_luot()` (providers/chung.py) đọc `gia_luot.get(model)` không thấy khoá này thì tự trả `cost_usd = None` (không đo được là chuyện khác hẳn với đo được và bằng 0, đúng nguyên tắc nợ #71/#78) — không cần thêm mã, chỉ cần KHÔNG thêm dòng giá vào đây. Nếu một ngày có hợp đồng GPU thuê ngoài tính theo giờ/lượt thật, ghi giá đó vào đây rồi mới có ý nghĩa.",
+  "gia_luot_replicate": {
+    "bria/expand-image": {
+      "moi_luot": 0.04
+    },
+    "fal-ai/bria/expand": {
+      "moi_luot": 0.04
+    }
+  }
+}

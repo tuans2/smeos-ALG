@@ -1,0 +1,16 @@
+/* ── UI Density Tokens (ADR-011 D-UI-03: giữ comfortable và compact; bỏ spacious) ─ */
+[data-density="compact"] {
+  --table-py: 0.375rem;
+  --table-px: 0.75rem;
+  --card-padding: 0.875rem;
+  --form-field-gap: 0.5rem;
+}
+
+[data-density="comfortable"],
+:root:not([data-density="compact"]) {
+  --table-py: 0.75rem;
+  --table-px: 1rem;
+  --card-padding: 1.25rem;
+  --form-field-gap: 0.75rem;
+}
+

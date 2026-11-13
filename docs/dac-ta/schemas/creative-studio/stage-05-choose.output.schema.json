@@ -1,0 +1,799 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-05-choose.output.schema.json",
+  "title": "Chặng 05 — CHOOSE: Chọn định hướng & kịch bản sản xuất tổng — Đầu ra",
+  "description": "Chủ tiệm chọn chủ đề, mode (CREATIVE 5 cảnh / AUTHENTIC 3 cảnh) và nền tảng; AI viết ScenePlan v2 qua job. Trùng Idempotency-Key trả kịch bản cũ, không trừ credit.",
+  "x-alg": {
+    "stageId": "05",
+    "stage": 5,
+    "code": "CHOOSE",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/creative-production/scene-plans",
+      "capability": "I1",
+      "idempotencyKey": true
+    },
+    "source": "src/modules/creative-production/contracts/stage-05-choose.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "job_id": {
+      "type": "string"
+    },
+    "status": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "PENDING",
+            "PROCESSING",
+            "COMPLETED",
+            "FAILED",
+            "CANCELLED"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "plan": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "number",
+              "const": 2
+            },
+            "source": {
+              "type": "string",
+              "enum": [
+                "ai",
+                "rule"
+              ],
+              "description": "ai = mô hình viết qua job; rule = kịch bản cơ bản khi AI lỗi"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "CREATIVE",
+                "AUTHENTIC"
+              ],
+              "description": "Loại hình sản xuất: CREATIVE (AI dựng bối cảnh mới, 5 cảnh) hoặc AUTHENTIC (giữ ảnh gốc, 3 cảnh)"
+            },
+            "topicId": {
+              "type": "string"
+            },
+            "topicTitle": {
+              "type": "string"
+            },
+            "emotionalTone": {
+              "type": "string"
+            },
+            "reasoning": {
+              "type": "string"
+            },
+            "scenes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sceneIndex": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "beat": {
+                    "type": "string",
+                    "enum": [
+                      "SETUP",
+                      "RISING",
+                      "CLIMAX",
+                      "RESOLUTION",
+                      "CTA"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "setting": {
+                    "type": "string",
+                    "description": "Bối cảnh, tiếng Việt — hiển thị cho chủ tiệm"
+                  },
+                  "lighting": {
+                    "type": "string"
+                  },
+                  "palette": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "purpose": {
+                    "type": "string"
+                  },
+                  "backgroundPrompt": {
+                    "type": "string",
+                    "description": "Mô tả hậu cảnh tiếng Anh gửi Stability — không hoa, không người, không chữ"
+                  },
+                  "localBackdrop": {
+                    "type": "string",
+                    "enum": [
+                      "studio_white",
+                      "wedding",
+                      "living_room",
+                      "wood_minimal",
+                      "luxury_hotel"
+                    ]
+                  },
+                  "voiceScript": {
+                    "type": "string"
+                  },
+                  "textOverlay": {
+                    "type": "string"
+                  },
+                  "motionEffect": {
+                    "type": "string",
+                    "enum": [
+                      "zoom_in",
+                      "zoom_out",
+                      "pan_left",
+                      "pan_right",
+                      "pan_up",
+                      "static"
+                    ]
+                  },
+                  "durationSeconds": {
+                    "type": "number",
+                    "maximum": 15
+                  },
+                  "transition": {
+                    "type": "string",
+                    "enum": [
+                      "fade",
+                      "slide_left",
+                      "slide_right",
+                      "zoom_in",
+                      "zoom_out",
+                      "dissolve"
+                    ]
+                  },
+                  "shot": {
+                    "type": "string",
+                    "enum": [
+                      "close",
+                      "medium",
+                      "wide"
+                    ]
+                  },
+                  "musicCue": {
+                    "type": "string",
+                    "enum": [
+                      "soft",
+                      "build",
+                      "peak",
+                      "resolve"
+                    ]
+                  }
+                },
+                "required": [
+                  "sceneIndex",
+                  "beat",
+                  "title",
+                  "setting",
+                  "lighting",
+                  "palette",
+                  "purpose",
+                  "backgroundPrompt",
+                  "localBackdrop",
+                  "voiceScript",
+                  "textOverlay",
+                  "motionEffect",
+                  "durationSeconds",
+                  "transition",
+                  "shot",
+                  "musicCue"
+                ],
+                "additionalProperties": false
+              },
+              "description": "CREATIVE 5 cảnh, AUTHENTIC 3 cảnh"
+            },
+            "revision": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "story": {
+              "type": "object",
+              "properties": {
+                "hook": {
+                  "type": "string"
+                },
+                "cta": {
+                  "type": "string"
+                },
+                "logline": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "hook",
+                "cta",
+                "logline"
+              ],
+              "additionalProperties": false
+            },
+            "publishing": {
+              "type": "object",
+              "properties": {
+                "platforms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "tiktok",
+                      "instagram_reels",
+                      "facebook_reels",
+                      "youtube_shorts",
+                      "zalo_video",
+                      "youtube",
+                      "facebook_feed",
+                      "instagram_feed"
+                    ]
+                  }
+                },
+                "allPlatforms": {
+                  "type": "boolean"
+                },
+                "outputs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "content",
+                      "audio",
+                      "image",
+                      "video"
+                    ],
+                    "description": "Loại kết quả: content | audio | image | video"
+                  },
+                  "description": "Loại kết quả người dùng chọn"
+                },
+                "allOutputs": {
+                  "type": "boolean"
+                },
+                "derivedOutputs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "content",
+                      "audio",
+                      "image",
+                      "video"
+                    ],
+                    "description": "Loại kết quả: content | audio | image | video"
+                  },
+                  "description": "Tự thêm vì phụ thuộc (video ⇒ ảnh + âm thanh)"
+                },
+                "produce": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "content",
+                      "audio",
+                      "image",
+                      "video"
+                    ],
+                    "description": "Loại kết quả: content | audio | image | video"
+                  },
+                  "description": "Sẽ sản xuất = chọn + phụ thuộc"
+                },
+                "ratios": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "9:16",
+                      "4:5",
+                      "1:1",
+                      "16:9"
+                    ]
+                  },
+                  "description": "Mọi khung cần sinh; aspectRatio là khung chính"
+                },
+                "videoVariants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ratio": {
+                        "type": "string",
+                        "enum": [
+                          "9:16",
+                          "4:5",
+                          "1:1",
+                          "16:9"
+                        ]
+                      },
+                      "videoFormat": {
+                        "type": "string",
+                        "enum": [
+                          "REEL_15S",
+                          "TIKTOK_30S",
+                          "STORY_15S",
+                          "SLIDESHOW",
+                          "PRODUCT_PAGE",
+                          "AD_MOTION"
+                        ]
+                      },
+                      "targetSeconds": {
+                        "type": "number"
+                      },
+                      "platforms": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "tiktok",
+                            "instagram_reels",
+                            "facebook_reels",
+                            "youtube_shorts",
+                            "zalo_video",
+                            "youtube",
+                            "facebook_feed",
+                            "instagram_feed"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "ratio",
+                      "videoFormat",
+                      "targetSeconds",
+                      "platforms"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Một video mỗi khung"
+                },
+                "aspectRatio": {
+                  "type": "string",
+                  "enum": [
+                    "9:16",
+                    "4:5",
+                    "1:1",
+                    "16:9"
+                  ]
+                },
+                "otherRatios": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "platform": {
+                        "type": "string",
+                        "enum": [
+                          "tiktok",
+                          "instagram_reels",
+                          "facebook_reels",
+                          "youtube_shorts",
+                          "zalo_video",
+                          "youtube",
+                          "facebook_feed",
+                          "instagram_feed"
+                        ]
+                      },
+                      "ratio": {
+                        "type": "string",
+                        "enum": [
+                          "9:16",
+                          "4:5",
+                          "1:1",
+                          "16:9"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "platform",
+                      "ratio"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "platforms",
+                "allPlatforms",
+                "outputs",
+                "allOutputs",
+                "derivedOutputs",
+                "produce",
+                "ratios",
+                "videoVariants",
+                "aspectRatio",
+                "otherRatios"
+              ],
+              "additionalProperties": false,
+              "description": "Phạm vi sản xuất (PO 24/09/2026 tối): nền tảng × loại kết quả, rỗng = tất cả"
+            },
+            "video": {
+              "type": "object",
+              "properties": {
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "REEL_15S",
+                    "TIKTOK_30S",
+                    "STORY_15S",
+                    "SLIDESHOW",
+                    "PRODUCT_PAGE",
+                    "AD_MOTION"
+                  ]
+                },
+                "totalDurationSeconds": {
+                  "type": "number"
+                },
+                "captionStyle": {
+                  "type": "string",
+                  "enum": [
+                    "MODERN_BADGE",
+                    "MINIMAL_ELEGANT",
+                    "HIGHLIGHT_BOX",
+                    "BOTTOM_BANNER",
+                    "NONE"
+                  ]
+                },
+                "hasSubtitle": {
+                  "type": "boolean"
+                },
+                "hasWatermark": {
+                  "type": "boolean"
+                },
+                "coverSceneIndex": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "endCardText": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "format",
+                "totalDurationSeconds",
+                "captionStyle",
+                "hasSubtitle",
+                "hasWatermark",
+                "coverSceneIndex",
+                "endCardText"
+              ],
+              "additionalProperties": false
+            },
+            "audio": {
+              "type": "object",
+              "properties": {
+                "voiceId": {
+                  "type": "string"
+                },
+                "qualityTier": {
+                  "type": "string",
+                  "enum": [
+                    "standard",
+                    "hd",
+                    "premium"
+                  ]
+                },
+                "musicMood": {
+                  "type": "string",
+                  "enum": [
+                    "romantic",
+                    "upbeat",
+                    "chill",
+                    "warm",
+                    "luxury",
+                    "none"
+                  ]
+                },
+                "pacing": {
+                  "type": "string",
+                  "enum": [
+                    "slow",
+                    "medium",
+                    "fast"
+                  ]
+                }
+              },
+              "required": [
+                "voiceId",
+                "qualityTier",
+                "musicMood",
+                "pacing"
+              ],
+              "additionalProperties": false
+            },
+            "content": {
+              "type": "object",
+              "properties": {
+                "posts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "channel": {
+                        "type": "string",
+                        "enum": [
+                          "facebook",
+                          "instagram",
+                          "tiktok",
+                          "zalo"
+                        ],
+                        "description": "Kênh bài đăng của gói chiến dịch"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "hashtags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "channel",
+                      "text",
+                      "hashtags"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "videoCaption": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "hashtags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "hashtags"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "posts",
+                "videoCaption"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "version",
+            "source",
+            "mode",
+            "topicId",
+            "topicTitle",
+            "emotionalTone",
+            "reasoning",
+            "scenes",
+            "revision",
+            "story",
+            "publishing",
+            "video",
+            "audio",
+            "content"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "deduped": {
+      "type": "boolean"
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "cost_credit": {
+          "type": "number"
+        },
+        "balance_after": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "cost_credit",
+        "balance_after"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "job_id",
+    "status",
+    "error",
+    "plan",
+    "deduped",
+    "usage"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "job_id": "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "status": "COMPLETED",
+      "error": null,
+      "plan": {
+        "version": 2,
+        "source": "rule",
+        "mode": "AUTHENTIC",
+        "topicId": "topic-emotional-01",
+        "topicTitle": "12 bông hồng cho 12 tháng yêu nhau",
+        "emotionalTone": "Sinh nhật",
+        "reasoning": "Kịch bản cơ bản (không dùng AI): dịp \"Sinh nhật\", tông màu đỏ, hồng, trắng.",
+        "scenes": [
+          {
+            "sceneIndex": 1,
+            "beat": "SETUP",
+            "title": "Giới thiệu sản phẩm",
+            "setting": "Phông studio sáng, đổ bóng mềm, tông màu hoà với sản phẩm",
+            "lighting": "Ánh sáng tản đều",
+            "palette": [
+              "đỏ",
+              "hồng",
+              "trắng"
+            ],
+            "purpose": "Ảnh catalog, bài giới thiệu",
+            "backgroundPrompt": "a clean seamless studio backdrop in deep red and ivory, blush pink and white, white and soft beige, soft shadow, product photography",
+            "localBackdrop": "studio_white",
+            "voiceScript": "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
+            "textOverlay": "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
+            "motionEffect": "zoom_in",
+            "durationSeconds": 4.7,
+            "transition": "fade",
+            "shot": "medium",
+            "musicCue": "soft"
+          },
+          {
+            "sceneIndex": 2,
+            "beat": "CLIMAX",
+            "title": "Cận cảnh điểm nhấn",
+            "setting": "Mặt bàn gỗ sáng, cận cảnh để thấy rõ phụ liệu và thiệp",
+            "lighting": "Ánh ban mai nghiêng",
+            "palette": [
+              "đỏ",
+              "hồng",
+              "trắng"
+            ],
+            "purpose": "Ảnh chi tiết, chốt đơn Zalo",
+            "backgroundPrompt": "a light wooden tabletop close-up with morning side light, deep red and ivory, blush pink and white, white and soft beige accents",
+            "localBackdrop": "wood_minimal",
+            "voiceScript": "Từng chi tiết của Bó hồng đỏ 12 bông đều được chăm chút.",
+            "textOverlay": "Từng chi tiết của Bó hồng đỏ 12 bông đều được chăm chút.",
+            "motionEffect": "zoom_out",
+            "durationSeconds": 6.6,
+            "transition": "zoom_in",
+            "shot": "close",
+            "musicCue": "peak"
+          },
+          {
+            "sceneIndex": 3,
+            "beat": "CTA",
+            "title": "Kêu gọi đặt hoa",
+            "setting": "Phông tối giản cùng tông màu, chừa khoảng trống cho chữ CTA",
+            "lighting": "Ánh sáng sạch",
+            "palette": [
+              "đỏ",
+              "hồng",
+              "trắng"
+            ],
+            "purpose": "Banner, ảnh kết video",
+            "backgroundPrompt": "a minimal backdrop in deep red and ivory, blush pink and white, white and soft beige with generous empty space, soft light",
+            "localBackdrop": "studio_white",
+            "voiceScript": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
+            "textOverlay": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
+            "motionEffect": "static",
+            "durationSeconds": 3.8,
+            "transition": "fade",
+            "shot": "medium",
+            "musicCue": "resolve"
+          }
+        ],
+        "revision": 1,
+        "story": {
+          "hook": "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
+          "cta": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
+          "logline": ""
+        },
+        "publishing": {
+          "platforms": [
+            "tiktok",
+            "instagram_reels",
+            "facebook_reels"
+          ],
+          "allPlatforms": false,
+          "outputs": [
+            "content",
+            "audio",
+            "image",
+            "video"
+          ],
+          "allOutputs": true,
+          "derivedOutputs": [],
+          "produce": [
+            "content",
+            "audio",
+            "image",
+            "video"
+          ],
+          "ratios": [
+            "9:16"
+          ],
+          "videoVariants": [
+            {
+              "ratio": "9:16",
+              "videoFormat": "REEL_15S",
+              "targetSeconds": 15,
+              "platforms": [
+                "tiktok",
+                "instagram_reels",
+                "facebook_reels"
+              ]
+            }
+          ],
+          "aspectRatio": "9:16",
+          "otherRatios": []
+        },
+        "video": {
+          "format": "REEL_15S",
+          "totalDurationSeconds": 15.1,
+          "captionStyle": "MODERN_BADGE",
+          "hasSubtitle": true,
+          "hasWatermark": true,
+          "coverSceneIndex": 1,
+          "endCardText": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm"
+        },
+        "audio": {
+          "voiceId": "flora-nu-truyen-cam",
+          "qualityTier": "hd",
+          "musicMood": "romantic",
+          "pacing": "slow"
+        },
+        "content": {
+          "posts": [],
+          "videoCaption": {
+            "text": "",
+            "hashtags": []
+          }
+        }
+      },
+      "deduped": false,
+      "usage": {
+        "cost_credit": 1,
+        "balance_after": 249
+      }
+    }
+  ]
+}

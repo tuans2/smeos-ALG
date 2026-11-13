@@ -1,0 +1,142 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-09-15T07:15:00Z",
+  "description": "Banned and restricted words lexicon for ALG AI Content Engine (M07)",
+  "rules": [
+    {
+      "id": "FB-01",
+      "phrase": "hoa vĩnh cửu",
+      "level": "HARD_BLOCK",
+      "category": "flower_false_guarantee",
+      "reason": "Hoa tươi cắt cành có chu kỳ 3-7 ngày, cấm cam kết vĩnh cửu",
+      "suggested_replacement": "hoa giữ độ tươi bền lâu",
+      "approved_by_expert": true
+    },
+    {
+      "id": "FB-02",
+      "phrase": "không bao giờ tàn",
+      "level": "HARD_BLOCK",
+      "category": "flower_false_guarantee",
+      "reason": "Phản khoa học với hoa tươi",
+      "suggested_replacement": "được dưỡng tươi theo quy trình chuẩn",
+      "approved_by_expert": true
+    },
+    {
+      "id": "FB-03",
+      "phrase": "hoa tự nhiên 100%",
+      "level": "HARD_BLOCK",
+      "category": "flower_false_guarantee",
+      "reason": "Hoa nhuộm màu công nghệ cao không phải màu tự nhiên nguyên bản",
+      "suggested_replacement": "hoa nhập khẩu xử lý màu công nghệ cao",
+      "approved_by_expert": true
+    },
+    {
+      "id": "FB-04",
+      "phrase": "giống hệt 100% hình mẫu",
+      "level": "WARNING",
+      "category": "flower_false_guarantee",
+      "reason": "Sản phẩm thủ công tự nhiên có dung sai nở ±10%",
+      "suggested_replacement": "chuẩn tone màu và phom dáng 90-95%",
+      "approved_by_expert": true
+    },
+    {
+      "id": "FB-05",
+      "phrase": "hoa nở mãi mãi",
+      "level": "HARD_BLOCK",
+      "category": "flower_false_guarantee",
+      "reason": "Gây hiểu nhầm sang hoa sáp/hoa giả",
+      "suggested_replacement": "hoa nở rộ căng tràn sức sống",
+      "approved_by_expert": true
+    },
+    {
+      "id": "AI-01",
+      "phrase": "tóm lại",
+      "level": "HARD_BLOCK",
+      "category": "ai_slop",
+      "reason": "Giọng văn nghị luận, sáo rỗng AI",
+      "suggested_replacement": "",
+      "approved_by_expert": true
+    },
+    {
+      "id": "AI-02",
+      "phrase": "chúng tôi vô cùng hào hứng",
+      "level": "WARNING",
+      "category": "ai_slop",
+      "reason": "Cụm từ máy móc của bot (excited to share)",
+      "suggested_replacement": "Hôm nay tiệm vừa về mẻ hoa mới...",
+      "approved_by_expert": true
+    },
+    {
+      "id": "AI-03",
+      "phrase": "bước ngoặt mang tính cách mạng",
+      "level": "HARD_BLOCK",
+      "category": "ai_slop",
+      "reason": "Khoa trương công nghệ, không hợp hoa tươi",
+      "suggested_replacement": "thiết kế độc bản tinh tế",
+      "approved_by_expert": true
+    },
+    {
+      "id": "AI-04",
+      "phrase": "là một mô hình ai",
+      "level": "HARD_BLOCK",
+      "category": "ai_slop",
+      "reason": "Lộ prompt bot",
+      "suggested_replacement": "Tiệm hoa...",
+      "approved_by_expert": true
+    },
+    {
+      "id": "AI-05",
+      "phrase": "đắm chìm vào",
+      "level": "WARNING",
+      "category": "ai_slop",
+      "reason": "Dịch máy sáo rỗng (let's dive into)",
+      "suggested_replacement": "Cùng ngắm nhìn vẻ đẹp của...",
+      "approved_by_expert": true
+    },
+    {
+      "id": "CB-01",
+      "phrase": "xả kho lỗ vốn",
+      "level": "HARD_BLOCK",
+      "category": "clickbait_cheap",
+      "reason": "Hạ thấp giá trị quà tặng hoa tươi",
+      "suggested_replacement": "Ưu đãi tri ân đặc biệt trong ngày",
+      "approved_by_expert": true
+    },
+    {
+      "id": "CB-02",
+      "phrase": "rẻ như cho",
+      "level": "HARD_BLOCK",
+      "category": "clickbait_cheap",
+      "reason": "Chợ búa, mất tính trang trọng của hoa quà tặng",
+      "suggested_replacement": "Mức giá trải nghiệm cực kỳ hợp lý",
+      "approved_by_expert": true
+    },
+    {
+      "id": "CB-03",
+      "phrase": "hoa ế thanh lý",
+      "level": "HARD_BLOCK",
+      "category": "clickbait_cheap",
+      "reason": "Đại kỵ trong văn hóa tặng hoa cưới/sinh nhật/khai trương",
+      "suggested_replacement": "Số lượng giới hạn trong hôm nay",
+      "approved_by_expert": true
+    },
+    {
+      "id": "POL-01",
+      "phrase": "chữa lành tâm linh hoàn toàn",
+      "level": "HARD_BLOCK",
+      "category": "platform_policy",
+      "reason": "Vi phạm chính sách y tế/sức khỏe của Meta & TikTok",
+      "suggested_replacement": "mang lại năng lượng tích cực, xoa dịu tinh thần",
+      "approved_by_expert": true
+    },
+    {
+      "id": "POL-02",
+      "phrase": "click ngay kẻo lỡ",
+      "level": "WARNING",
+      "category": "platform_policy",
+      "reason": "Lỗi Engagement Bait bị Facebook bóp tương tác",
+      "suggested_replacement": "Nhắn tiệm để giữ mẫu hoa yêu thích nhé",
+      "approved_by_expert": true
+    }
+  ]
+}

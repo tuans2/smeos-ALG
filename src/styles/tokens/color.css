@@ -1,0 +1,115 @@
+@theme {
+  /*
+   * Đã đối chiếu tỉ lệ tương phản WCAG thật (luminance chuẩn):
+   * primary/#FFFFFF = 9.14:1 (đạt AAA cho chữ trắng trên nút primary);
+   * primary-dark/#FFFFFF = 12.70:1; secondary-text/#FFFFFF = 6.45:1 (đạt AA);
+   * text/bg = 14.97:1; text-muted/bg = 4.68:1 (đạt AA);
+   * text-muted/surface = 5.03:1.
+   */
+  --color-primary: #7A2E42;
+  --color-primary-dark: #57202F;
+  --color-primary-foreground: #FFFFFF;
+  --color-primary-fg: #FFFFFF; /* Alias tương thích (ADR-011 D-UI-07, F1-07) */
+  --color-secondary: #9CAF88;
+  --color-secondary-text: #52643F;
+  --color-accent: #C89B3C;
+  --color-accent-text: #6B4F1A;
+
+  --color-bg: #FBF6F2;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F5ECE4;
+  --color-border: #E7DCD0;
+
+  --color-text: #2A1E22;
+  --color-text-muted: #746364;
+
+  /* Token mục đang chọn (Selected Item) */
+  --color-selected: #F5ECE4;
+  --color-selected-text: #7A2E42;
+
+  /* Màu chức năng (cảnh báo/nguy hiểm/thành công/thông tin) */
+  --color-warning: #C97A2E;
+  --color-warning-bg: #FBF1E4;
+  --color-warning-text: #8A4807;
+  --color-warning-border: #F0D9B5;
+
+  --color-danger: #C4463D;
+  --color-danger-bg: #FBEBE9;
+  --color-danger-text: #7A2420;
+  --color-danger-border: #F5C6C2;
+
+  --color-success: #52643F;
+  --color-success-bg: #EAF0E6;
+  --color-success-text: #3A4A2C;
+  --color-success-border: #C6D9BC;
+
+  --color-info: #1D4ED8;
+  --color-info-bg: #EFF6FF;
+  --color-info-text: #1E3A5F;
+  --color-info-border: #BFDBFE;
+
+  /* Token khối hướng dẫn FeatureGuidanceCard (K1) */
+  --color-guidance: #B91C1C;
+  --color-guidance-text: #450A0A;
+  --color-guidance-bg: #FEF2F2;
+  --color-guidance-border: #FCA5A5;
+  --color-guidance-tag-bg: #FEE2E2;
+
+  /* Sub-token phụ */
+  --color-primary-muted: #F5E6EA;
+  --color-primary-border: #E0B4C0;
+  --color-accent-bg: #FBF5E9;
+  --color-accent-border: #E8D5A8;
+
+  /* Màu nhóm cho ô icon điều hướng (IconTile / MODULE_TONES) */
+  --color-tone-plum: #7A2E42;
+  --color-tone-rose: #A8445D;
+  --color-tone-orange: #B93B0B;
+  --color-tone-amber: #A04A06;
+  --color-tone-teal: #0F766E;
+  --color-tone-blue: #1D4ED8;
+  --color-tone-indigo: #4338CA;
+  --color-tone-green: #15803D;
+  --color-tone-pink: #BE185D;
+  --color-tone-emerald: #047857;
+
+  /* Token biểu đồ chuẩn (ADR-011 D-UI-02, F1-02) */
+  --color-chart-1: #2563EB;
+  --color-chart-2: #059669;
+  --color-chart-3: #EA580C;
+  --color-chart-4: #7C3AED;
+  --color-chart-5: #E11D48;
+  --color-chart-6: #0891B2;
+  --color-chart-7: #D97706;
+  --color-chart-8: #4F46E5;
+
+  /* Màu nhận diện nền tảng đối tác */
+  --color-linkedin: #0A66C2;
+  --color-facebook: #1877F2;
+  --color-zalo: #0068FF;
+  --color-zalo-bg: #EEF2F8;
+  --color-tiktok-grad: #00f2fe;
+
+  /* Màu minh hoạ thực vật (Botanical Illustration) */
+  --color-flora-green: #174C3C;
+  --color-flora-sage: #5F9670;
+  --color-flora-petal: #E48692;
+  --color-flora-leaf: #EEF4EE;
+  --color-gold: #C89B3C;
+  --color-sage-bg: #F4F7F2;
+
+  /* Tương thích ngược Shadcn Tokens */
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-input: var(--color-border);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-text);
+  --color-destructive: var(--color-danger);
+  --color-destructive-foreground: #FFFFFF;
+  --color-ring: var(--color-primary);
+
+}
+

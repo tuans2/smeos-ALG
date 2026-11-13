@@ -1,0 +1,22 @@
+@theme {
+  /* Motion tokens (ADR-011 D-UI-03, F1-02) */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(0.3, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* prefers-reduced-motion toàn cục (ADR-011 D-UI-07, F1-09) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

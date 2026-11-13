@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-04-ideate.input.schema.json",
+  "title": "Chặng 04 — IDEATE: Sinh chủ đề, góc tiếp cận, hook — Đầu vào",
+  "description": "Chủ đề sinh cùng lượt Chặng 03; Creative Studio đọc lại report theo id (không truyền report qua URL). Trường IDEATE: topics[] (10) + readiness.",
+  "x-alg": {
+    "stageId": "04",
+    "stage": 4,
+    "code": "IDEATE",
+    "endpoint": {
+      "method": "GET",
+      "path": "/api/v1/product-intelligence/:id",
+      "capability": "V2"
+    },
+    "source": "src/modules/creative-production/contracts/stage-04-ideate.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "product_analysis_runs.id — tham số đường dẫn :id"
+    }
+  },
+  "required": [
+    "report_id"
+  ],
+  "examples": [
+    {
+      "report_id": "9c8b7a65-4321-4fed-8cba-0987654321ab"
+    }
+  ]
+}

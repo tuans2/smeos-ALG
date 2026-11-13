@@ -1,0 +1,11 @@
+@theme {
+  /* Z-index tokens (ADR-011 D-UI-09, F1-02) */
+  --z-base: 0;
+  --z-sticky: 20;
+  --z-nav: 30;
+  --z-floating: 40;
+  --z-overlay: 50;
+  --z-toast: 60;
+  --z-tooltip: 70;
+}
+

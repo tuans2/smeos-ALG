@@ -1,0 +1,18 @@
+# `run_worker` gọi `conn.notifies(timeout=…)` — tham số đó có từ psycopg 3.2.
+# Cài đúng 3.1.x thì worker ném TypeError ngay lần thăm dò rỗng đầu tiên.
+psycopg[binary]>=3.2
+pydantic>=2.14.1
+pillow>=13.0.0
+numpy>=2.4.6
+scipy>=1.12
+openai>=1.40
+pytest>=9.1.1
+rembg>=2.0
+onnxruntime>=1.31.0
+opencv-python>=5.0.0.93
+# `ReplicateOutpainter` (AIC-13, nợ #78, 17/09) gọi thẳng REST API của
+# Replicate — không dùng SDK `replicate` để khỏi thêm một tầng trừu tượng
+# chưa cần, cùng cách `openai_enhancer.py` tự quản việc gọi API của mình.
+httpx>=0.27
+# Theo dõi lỗi (ROADMAP E1.5, PO chọn Sentry). Chỉ bật khi có SENTRY_DSN — `shared/log_json.py`.
+sentry-sdk==2.72.0

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-14-next-best-action.output.schema.json",
+  "title": "Chặng 14 — NEXT BEST ACTION: Đề xuất hành động kế tiếp — Đầu ra",
+  "description": "Danh sách hành động có lý do và đích (khu vực Creative Studio hoặc route).",
+  "x-alg": {
+    "stageId": "14",
+    "stage": 14,
+    "code": "NEXT_BEST_ACTION",
+    "endpoint": {
+      "method": "GET",
+      "path": "/api/v1/creative-production/packages/:id/performance",
+      "capability": "R1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-14-next-best-action.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "package_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "QA_PASSED",
+        "QA_NEEDS_REVIEW",
+        "QA_REJECTED",
+        "APPROVED"
+      ]
+    },
+    "next_best_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string",
+            "enum": [
+              "area-b",
+              "area-d",
+              "area-e",
+              "area-f",
+              "/lich-dang",
+              "/hoi-thoai"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "why",
+          "target"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "computed_at": {
+      "type": "string",
+      "description": "Thời điểm ISO-8601, vd. 2026-09-24T08:00:00.000Z"
+    }
+  },
+  "required": [
+    "package_id",
+    "status",
+    "next_best_actions",
+    "computed_at"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "package_id": "c0ffee00-1111-4222-8333-444455556666",
+      "status": "APPROVED",
+      "next_best_actions": [
+        {
+          "id": "add-video",
+          "title": "Dựng thêm video 9:16 cho TikTok/Reels",
+          "why": "Gói chưa có video; TikTok chỉ nhận nội dung dọc 9:16.",
+          "target": "area-e"
+        },
+        {
+          "id": "occasion-2026-10-20",
+          "title": "Chuẩn bị nội dung cho Phụ nữ Việt Nam 20/10",
+          "why": "Còn 26 ngày (2026-10-20).",
+          "target": "area-b"
+        }
+      ],
+      "computed_at": "2026-09-24T08:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-06d-create-video.input.schema.json",
+  "title": "Chặng 06d — CREATE · Khu vực E: Video — Đầu vào",
+  "description": "Tạo job video (DRAFT) với storyboard theo kịch bản; duyệt kịch bản (P3) → render → duyệt video (P4) ngay trong Khu vực E.",
+  "x-alg": {
+    "stageId": "06d",
+    "stage": 6,
+    "code": "CREATE_VIDEO",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/video/jobs",
+      "capability": "I1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-06d-create-video.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "productId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "REEL_15S",
+        "TIKTOK_30S",
+        "STORY_15S",
+        "SLIDESHOW",
+        "PRODUCT_PAGE",
+        "AD_MOTION"
+      ]
+    },
+    "aspectRatio": {
+      "description": "Mặc định 9:16",
+      "type": "string"
+    },
+    "musicTrack": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "voiceCode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hasSubtitle": {
+      "type": "boolean"
+    },
+    "captionStyle": {
+      "type": "string",
+      "enum": [
+        "MODERN_BADGE",
+        "MINIMAL_ELEGANT",
+        "HIGHLIGHT_BOX",
+        "BOTTOM_BANNER",
+        "NONE"
+      ]
+    },
+    "hasWatermark": {
+      "type": "boolean"
+    },
+    "scenes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sceneIndex": {
+            "type": "number"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 15
+          },
+          "imageAssetId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "textOverlay": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "voiceScript": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "transitionEffect": {
+            "type": "string"
+          },
+          "motionEffect": {
+            "type": "string",
+            "enum": [
+              "ZOOM_IN",
+              "ZOOM_OUT",
+              "PAN_UP",
+              "PAN_RIGHT",
+              "STATIC"
+            ]
+          }
+        },
+        "required": [
+          "durationSeconds"
+        ]
+      }
+    }
+  },
+  "required": [
+    "title",
+    "format"
+  ],
+  "examples": [
+    {
+      "productId": "7a2d0e11-5b3c-4d2e-8f10-2b3c4d5e6f70",
+      "title": "12 bông hồng cho 12 tháng yêu nhau",
+      "format": "TIKTOK_30S",
+      "aspectRatio": "9:16",
+      "captionStyle": "MODERN_BADGE",
+      "scenes": [
+        {
+          "sceneIndex": 1,
+          "durationSeconds": 4,
+          "imageAssetId": "e5f6a7b8-c9d0-4e1f-8a2b-3c4d5e6f7a8c",
+          "textOverlay": "12 tháng yêu nhau",
+          "motionEffect": "ZOOM_IN"
+        }
+      ]
+    }
+  ]
+}

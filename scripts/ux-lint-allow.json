@@ -1,0 +1,290 @@
+{
+  "entries": [
+    {
+      "rule": "R1",
+      "pathGlob": "src/components/market-intelligence/**",
+      "match": "(tiktok|youtube)",
+      "reason": "Màu nhận diện nền tảng TikTok/YouTube (AGENTS.md Dẫn chứng Video Kép)"
+    },
+    {
+      "rule": "R3",
+      "path": "src/lib/mock-data.ts",
+      "reason": "Màu dữ liệu mẫu của hoa"
+    },
+    {
+      "rule": "R3",
+      "path": "src/components/greeting-card/customer/templates/template-style-preview-thumb.tsx",
+      "reason": "SVG illustration thumbnail — stopColor/fill/stroke là dữ liệu màu minh họa của 12 style, không phải CSS UI styling"
+    },
+    {
+      "rule": "R2",
+      "path": "src/components/greeting-card/customer/templates/template-selector-card.tsx",
+      "reason": "Nhãn overlay trong thumbnail preview (text-[10px]/text-[11px]) — nằm bên trong SVG card, không phải typography hệ thống"
+    },
+    {
+      "rule": "R3",
+      "path": "src/components/profiles/brand-profile-form.tsx",
+      "reason": "Giá trị màu mặc định trong form chọn màu thương hiệu (dữ liệu nghiệp vụ, không phải styling)"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(app)/hoi-thoai/page.tsx",
+      "reason": "Các nút ở các phase/role khác nhau — không hiện cùng lúc"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(app)/noi-dung/page.tsx",
+      "reason": "Wizard sinh nội dung 3 phase — 1 nút primary mỗi phase"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(app)/san-pham/[id]/tinh-nang/page.tsx",
+      "reason": "Nút phụ thuộc quyền/trạng thái — điều kiện isPending/canEdit"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(app)/san-pham/[id]/tinh-nang/product-copy/[copyId]/page.tsx",
+      "reason": "Nút Lưu chỉ xuất hiện khi isPending && canEdit — không cạnh tranh với Duyệt"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(app)/so-lieu/page.tsx",
+      "reason": "4 phase riêng biệt (metrics/explain/learning/saved) — mỗi phase 1 primary"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(app)/tai-anh/page.tsx",
+      "reason": "Wizard 6 bước — mỗi bước 1 nút primary"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(app)/video/page.tsx",
+      "reason": "Step-conditional: Tạo/Duyệt kịch bản/Render/Duyệt video — không cùng lúc"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/upload/upload-wizard.tsx",
+      "reason": "Upload wizard nhiều bước — mỗi bước 1 CTA primary"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/market-intelligence/creative-handoff-modal.tsx",
+      "reason": "Nút 'Dùng kịch bản' phụ thuộc preview.jobId — conditional"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/creative-studio/optimize-workspace.tsx",
+      "reason": "Phase-based workspace — mỗi phase 1 nút primary"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/creative-studio/variant-workspace.tsx",
+      "reason": "Phase-based workspace — 7 bước không hiện đồng thời"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/creative-studio/package-workspace.tsx",
+      "reason": "Step-based package flow — ternary conditional"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/creative-studio/package-review-section.tsx",
+      "reason": "Conditional review/approve flow"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/creative-studio/package-revise-panels.tsx",
+      "reason": "Revise panels với trạng thái stage !== null"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/creative-studio/video-job-lifecycle.tsx",
+      "reason": "Job state branches — Retry/Render/Approve không hiện cùng lúc"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/coordinator/control-tower-dashboard.tsx",
+      "reason": "Dashboard đa section — nút trong list exception items và detail panel riêng biệt"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/chat/copilot-message-item.tsx",
+      "reason": "Loại message khác nhau — navigate vs create order không cùng loại message"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/result/result-card.tsx",
+      "reason": "Card state branches — Approve/Confirm-replace không cùng trạng thái"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/templates/social-publishing/post-status-report-card.tsx",
+      "reason": "Status branches — Đăng ngay chỉ hiện ở 1 trong 2 status branch"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/templates/social-publishing/schedule-calendar-card.tsx",
+      "reason": "Header + item đều conditional on different states"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/templates/social-publishing/schedule-queue-tab.tsx",
+      "reason": "Empty state CTA vs Confirm schedule — không hiện cùng lúc"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/templates/platform-connections/platform-account-card.tsx",
+      "reason": "Auth state branches — Đăng nhập vs Kết nối không hiện cùng lúc"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/templates/coordinator/production-update-modal.tsx",
+      "reason": "progress === 100 ternary — Lưu chỉ hiện khi hoàn tất"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(platform)/van-hanh/truong-du-lieu/_components/diff-confirm.tsx",
+      "reason": "Toggle component: if (!open) → trigger button, else → confirm button — 2 trạng thái loại trừ nhau"
+    },
+    {
+      "rule": "R3",
+      "path": "src/components/greeting-card/og/catalog-collage-image.tsx",
+      "reason": "Ảnh OG dựng bằng next/og (satori) — không đọc được CSS token, màu phải viết thẳng"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/greeting-card/coordinator/coordinator-card-decision-blocks.tsx",
+      "reason": "3 khối conditional loại trừ nhau (acceptBlocker null, xác nhận cọc, xác nhận lần 2) — không hiện cùng lúc"
+    },
+    {
+      "rule": "R4",
+      "path": "src/components/greeting-card/order-detail-footer.tsx",
+      "reason": "Khối xác nhận cọc, lần 2, và tiếp nhận đơn là conditional blocks loại trừ nhau — không hiện đồng thời"
+    },
+    {
+      "rule": "R4",
+      "path": "src/app/(platform)/van-hanh/thu-vien-giao-dien/catalog-sections.tsx",
+      "reason": "Showcase catalog hiển thị các biến thể nút bấm của Design System (C2-00)"
+    },
+    {
+      "rule": "R19",
+      "pathGlob": "src/components/layout/**",
+      "reason": "App shell navigation drawers và menu backdrops toàn cục (mobile drawer, ui studio, user menu)"
+    },
+    {
+      "rule": "R1",
+      "pathGlob": "src/components/templates/**",
+      "reason": "Mẫu ấn phẩm, thiệp, ticket in ấn và mockup mạng xã hội theo quy chuẩn đồ họa cố định"
+    },
+    {
+      "rule": "R21",
+      "pathGlob": "src/components/templates/**",
+      "reason": "Typography đồ họa cố định cho mẫu in ấn và preview mạng xã hội trong Kho Templates"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/catalog/public/public-hero.tsx",
+      "reason": "Trang catalog công khai /c/[slug] không dùng PageHeader — tiêu đề trang phải là <h1> (SEO, WCAG 1.3.1); quyết định PO 03/11/2026"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/catalog/catalog-storefront-hero.tsx",
+      "reason": "Trang catalog công khai /c/[slug] không dùng PageHeader — tiêu đề trang phải là <h1> (SEO, WCAG 1.3.1); quyết định PO 03/11/2026"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/catalog/catalog-storefront.tsx",
+      "reason": "Trang catalog công khai /c/[slug] không dùng PageHeader — tiêu đề trang phải là <h1> (SEO, WCAG 1.3.1); quyết định PO 03/11/2026"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/c/not-found.tsx",
+      "reason": "Trang catalog công khai /c/[slug] không dùng PageHeader — tiêu đề trang phải là <h1> (SEO, WCAG 1.3.1); quyết định PO 03/11/2026"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/layout/feature-locked-guard.tsx",
+      "reason": "Màn \"Sắp ra mắt\" thay toàn bộ trang bị khóa, bố cục căn giữa kiểu EmptyState — không có PageHeader nên tiêu đề phải là <h1>"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/ad-banner-poster/poster-banner-client.tsx",
+      "reason": "Tiêu đề trang <h1> ẩn (sr-only) để giữ nguyên K2 TabActionHeader — UX PO khoá, không thêm PageHeader hiển thị"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/promotions/price-list-document.tsx",
+      "reason": "Nội dung trang /bang-gia/[id] là bản bảng giá căn giữa để in hoặc gửi khách — tiêu đề tài liệu là <h1>, không dùng PageHeader để giữ bố cục bản in"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/ch/[slug]/page.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/ch/not-found.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/chia-se/cho-doi-tac/[token]/shared-marketplace-view.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/chinh-sach-bao-mat/page.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/dang-ky-thanh-cong/page.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/global-error.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/components/store-share/public-store-profile-view.tsx",
+      "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "pathGlob": "src/components/greeting-card/customer/**",
+      "reason": "Trang khách công khai (brochure, khoá link, hết hạn) không có khung app — tiêu đề <h1> theo giao diện mẫu brochure, PageHeader là đầu trang quản trị (ADR-011 D-UI-05 áp cho màn trong app)"
+    },
+    {
+      "rule": "R18",
+      "path": "src/components/greeting-card/customer/honeypot-field.tsx",
+      "reason": "Ô bẫy chống spam phải là <input> thô ẩn khỏi người dùng/trình đọc màn hình để chỉ bot điền vào"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/(auth)/dang-nhap/page.tsx",
+      "reason": "Trang đăng nhập trước khi vào app, thương hiệu căn giữa — không có PageHeader/shell nên tên sản phẩm là <h1> duy nhất của trang (WCAG 1.3.1; DS-07)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/bg/[token]/page.tsx",
+      "reason": "Báo giá công khai gửi khách, không có shell/PageHeader — mã báo giá là <h1> duy nhất của trang (WCAG 1.3.1; DS-07)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/(app)/the-chao/page.tsx",
+      "reason": "Đầu trang Thẻ chào (K2) giữ <h1> kèm InfoTip theo thiết kế đã khoá; quyết định T3-4 ngày 11/11/2026 giữ nguyên tiêu đề, không chuyển PageHeader"
+    },
+    {
+      "rule": "R18",
+      "path": "src/components/product-photo-studio/enhance-comparison.tsx",
+      "reason": "Ô kéo so sánh ảnh trước/sau: input range trong suốt phủ toàn bộ khung ảnh để kéo ở bất kỳ đâu, đã có aria-label; Slider dạng thanh không thay được (Đợt 4, D4-08)"
+    },
+    {
+      "rule": "R20",
+      "path": "src/app/subcontract/[orderCode]/page.tsx",
+      "reason": "Trang công khai cho xưởng gia công nhận đơn (không đăng nhập, không có khung ứng dụng) — tiêu đề trang là <h1> căn giữa, cùng nguyên tắc PO 03/11/2026 cho trang công khai (Đợt 4)"
+    }
+  ]
+}

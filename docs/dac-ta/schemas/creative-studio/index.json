@@ -1,0 +1,248 @@
+{
+  "title": "ALG Creative Studio — hợp đồng input/output 14 chặng",
+  "x-alg": {
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`.",
+    "source": "src/modules/creative-production/contracts"
+  },
+  "stages": [
+    {
+      "id": "01",
+      "stage": 1,
+      "code": "BRING",
+      "title": "Chặng 01 — BRING: Tải ảnh sản phẩm vào kho",
+      "endpoint": "POST /api/v1/assets",
+      "capability": "G2",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-01-bring.ts",
+      "files": [
+        "stage-01-bring.input.schema.json",
+        "stage-01-bring.output.schema.json"
+      ]
+    },
+    {
+      "id": "02",
+      "stage": 2,
+      "code": "UNDERSTAND",
+      "title": "Chặng 02 — UNDERSTAND: Nhận diện cấu trúc & định tính thương mại",
+      "endpoint": "POST /api/v1/market-intelligence/vision-extract",
+      "capability": "V1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-02-understand.ts",
+      "files": [
+        "stage-02-understand.input.schema.json",
+        "stage-02-understand.output.schema.json"
+      ]
+    },
+    {
+      "id": "03",
+      "stage": 3,
+      "code": "DISCOVER",
+      "title": "Chặng 03 — DISCOVER: Nghiên cứu xu hướng & cơ hội thị trường",
+      "endpoint": "POST /api/v1/market-intelligence/product-intelligence",
+      "capability": "V1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-03-discover.ts",
+      "files": [
+        "stage-03-discover.input.schema.json",
+        "stage-03-discover.output.schema.json"
+      ]
+    },
+    {
+      "id": "04",
+      "stage": 4,
+      "code": "IDEATE",
+      "title": "Chặng 04 — IDEATE: Sinh chủ đề, góc tiếp cận, hook",
+      "endpoint": "GET /api/v1/product-intelligence/:id",
+      "capability": "V2",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-04-ideate.ts",
+      "files": [
+        "stage-04-ideate.input.schema.json",
+        "stage-04-ideate.output.schema.json"
+      ]
+    },
+    {
+      "id": "05",
+      "stage": 5,
+      "code": "CHOOSE",
+      "title": "Chặng 05 — CHOOSE: Chọn định hướng & kịch bản sản xuất tổng",
+      "endpoint": "POST /api/v1/creative-production/scene-plans",
+      "capability": "I1",
+      "idempotencyKey": true,
+      "source": "src/modules/creative-production/contracts/stage-05-choose.ts",
+      "files": [
+        "stage-05-choose.input.schema.json",
+        "stage-05-choose.output.schema.json",
+        "stage-05-choose.handoff.schema.json"
+      ]
+    },
+    {
+      "id": "06a",
+      "stage": 6,
+      "code": "CREATE_CONTENT",
+      "title": "Chặng 06a — CREATE · Khu vực B: Nội dung bài đăng",
+      "endpoint": "PUT /api/v1/creative-production/content-drafts",
+      "capability": "I1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-06a-create-content.ts",
+      "files": [
+        "stage-06a-create-content.input.schema.json",
+        "stage-06a-create-content.output.schema.json"
+      ]
+    },
+    {
+      "id": "06b",
+      "stage": 6,
+      "code": "CREATE_AUDIO",
+      "title": "Chặng 06b — CREATE · Khu vực C: Giọng đọc & nhạc nền",
+      "endpoint": "POST /api/v1/audio/jobs",
+      "capability": "I1",
+      "idempotencyKey": true,
+      "source": "src/modules/creative-production/contracts/stage-06b-create-audio.ts",
+      "files": [
+        "stage-06b-create-audio.input.schema.json",
+        "stage-06b-create-audio.output.schema.json"
+      ]
+    },
+    {
+      "id": "06c",
+      "stage": 6,
+      "code": "CREATE_MEDIA",
+      "title": "Chặng 06c — CREATE · Khu vực D: Ảnh biến thể theo cảnh",
+      "endpoint": "POST /api/v1/media/variants",
+      "capability": "I4",
+      "idempotencyKey": true,
+      "source": "src/modules/creative-production/contracts/stage-06c-create-media.ts",
+      "files": [
+        "stage-06c-create-media.input.schema.json",
+        "stage-06c-create-media.output.schema.json"
+      ]
+    },
+    {
+      "id": "06d",
+      "stage": 6,
+      "code": "CREATE_VIDEO",
+      "title": "Chặng 06d — CREATE · Khu vực E: Video",
+      "endpoint": "POST /api/v1/video/jobs",
+      "capability": "I1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-06d-create-video.ts",
+      "files": [
+        "stage-06d-create-video.input.schema.json",
+        "stage-06d-create-video.output.schema.json"
+      ]
+    },
+    {
+      "id": "07",
+      "stage": 7,
+      "code": "PACKAGE",
+      "title": "Chặng 07 — PACKAGE: Đóng gói trọn bộ chiến dịch",
+      "endpoint": "POST /api/v1/creative-production/packages",
+      "capability": "I1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-07-package.ts",
+      "files": [
+        "stage-07-package.input.schema.json",
+        "stage-07-package.output.schema.json"
+      ]
+    },
+    {
+      "id": "08",
+      "stage": 8,
+      "code": "QA",
+      "title": "Chặng 08 — QA: Kiểm tra Thương hiệu / Sản phẩm / Nội dung / Kênh",
+      "endpoint": "POST /api/v1/creative-production/packages/:id/qa",
+      "capability": "I1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-08-qa.ts",
+      "files": [
+        "stage-08-qa.input.schema.json",
+        "stage-08-qa.output.schema.json"
+      ]
+    },
+    {
+      "id": "09",
+      "stage": 9,
+      "code": "APPROVE",
+      "title": "Chặng 09 — APPROVE: Chủ tiệm chốt duyệt",
+      "endpoint": "POST /api/v1/creative-production/packages/:id/approve",
+      "capability": "J5",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-09-approve.ts",
+      "files": [
+        "stage-09-approve.input.schema.json",
+        "stage-09-approve.output.schema.json"
+      ]
+    },
+    {
+      "id": "10",
+      "stage": 10,
+      "code": "LAUNCH",
+      "title": "Chặng 10 — LAUNCH: Đăng tải / lên lịch đa kênh",
+      "endpoint": "PUT /api/v1/creative-production/packages/:id/launch",
+      "capability": "J5",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-10-launch.ts",
+      "files": [
+        "stage-10-launch.input.schema.json",
+        "stage-10-launch.output.schema.json"
+      ]
+    },
+    {
+      "id": "11",
+      "stage": 11,
+      "code": "SELL",
+      "title": "Chặng 11 — SELL: AI Chat Sales tư vấn chốt đơn",
+      "endpoint": "GET /api/v1/creative-production/packages/:id/performance",
+      "capability": "R1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-11-sell.ts",
+      "files": [
+        "stage-11-sell.input.schema.json",
+        "stage-11-sell.output.schema.json"
+      ]
+    },
+    {
+      "id": "12",
+      "stage": 12,
+      "code": "MEASURE",
+      "title": "Chặng 12 — MEASURE: Đo lường hiệu quả kinh doanh",
+      "endpoint": "GET /api/v1/creative-production/packages/:id/performance",
+      "capability": "R1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-12-measure.ts",
+      "files": [
+        "stage-12-measure.input.schema.json",
+        "stage-12-measure.output.schema.json"
+      ]
+    },
+    {
+      "id": "13",
+      "stage": 13,
+      "code": "LEARN",
+      "title": "Chặng 13 — LEARN: Trích xuất mẫu thắng (Winning Patterns)",
+      "endpoint": "GET /api/v1/creative-production/packages/:id/performance",
+      "capability": "R1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-13-learn.ts",
+      "files": [
+        "stage-13-learn.input.schema.json",
+        "stage-13-learn.output.schema.json"
+      ]
+    },
+    {
+      "id": "14",
+      "stage": 14,
+      "code": "NEXT_BEST_ACTION",
+      "title": "Chặng 14 — NEXT BEST ACTION: Đề xuất hành động kế tiếp",
+      "endpoint": "GET /api/v1/creative-production/packages/:id/performance",
+      "capability": "R1",
+      "idempotencyKey": false,
+      "source": "src/modules/creative-production/contracts/stage-14-next-best-action.ts",
+      "files": [
+        "stage-14-next-best-action.input.schema.json",
+        "stage-14-next-best-action.output.schema.json"
+      ]
+    }
+  ]
+}

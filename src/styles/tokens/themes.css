@@ -1,0 +1,141 @@
+/* ── Theme Presets (ADR-011 D-UI-03: Giữ 3 preset chuẩn; bỏ 5 preset thử nghiệm khỏi runtime) ── */
+
+/* Preset 1: Mộc Lan (chuẩn mặc định cho StoreOS hoa tươi) */
+[data-theme="moc-lan"] {
+  --color-primary: #7A2E42;
+  --color-primary-dark: #57202F;
+  --color-primary-muted: #F5E6EA;
+  --color-primary-border: #E0B4C0;
+  --color-secondary: #9CAF88;
+  --color-secondary-text: #52643F;
+  --color-accent: #C89B3C;
+  --color-accent-bg: #FBF5E9;
+  --color-accent-text: #6B4F1A;
+  --color-bg: #FBF6F2;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F5ECE4;
+  --color-border: #E7DCD0;
+  --color-text: #2A1E22;
+  --color-text-muted: #746364;
+  --color-selected: #F5ECE4;
+  --color-selected-text: #7A2E42;
+  --radius-card: 1rem;
+  --radius-button: 0.75rem;
+  --radius-dialog: 1rem;
+}
+
+/* Preset 2: Modern Slate (chuẩn cho SaaS Mother, SaaS Ngành, ChainOS; hỗ trợ alias clean-blue) */
+[data-theme="modern-slate"],
+[data-theme="clean-blue"] {
+  --color-primary: #1554E0; /* ≥4,54:1 trên nền primary/10–15% (#2563EB chỉ 3,85–4,48:1 < AA) */
+  --color-primary-dark: #1D4ED8;
+  --color-primary-muted: #EFF6FF;
+  --color-primary-border: #BFDBFE;
+  --color-secondary: #475569;
+  --color-secondary-text: #334155;
+  --color-accent: #EA580C;
+  --color-accent-bg: #FFF7ED;
+  --color-accent-text: #9A3412;
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F1F5F9;
+  --color-border: #E2E8F0;
+  --color-text: #0F172A;
+  --color-text-muted: #5D6C81; /* 4,88:1 trên surface-alt (#64748B chỉ 4,34:1 < AA) */
+  --color-selected: #EFF6FF;
+  --color-selected-text: #1554E0;
+  --radius-card: 0.75rem;
+  --radius-button: 0.5rem;
+  --radius-dialog: 0.75rem;
+}
+
+/* Preset 3: Pure Swiss (chuẩn tối giản tinh tế) */
+[data-theme="pure-swiss"] {
+  --color-primary: #18181B;
+  --color-primary-dark: #09090B;
+  --color-primary-muted: #F4F4F5;
+  --color-primary-border: #E4E4E7;
+  --color-secondary: #71717A;
+  --color-secondary-text: #52525B;
+  --color-accent: #059669;
+  --color-accent-bg: #ECFDF5;
+  --color-accent-text: #047857;
+  --color-bg: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F4F4F5;
+  --color-border: #E4E4E7;
+  --color-text: #09090B;
+  --color-text-muted: #696971; /* 4,95:1 trên surface-alt (#71717A chỉ 4,40:1 < AA) */
+  --color-selected: #F4F4F5;
+  --color-selected-text: #18181B;
+  --radius-card: 0.25rem;
+  --radius-button: 0.25rem;
+  --radius-dialog: 0.375rem;
+}
+
+
+/* Preset 4: AVI Lotus Group (ALG) — bộ nhận diện bàn giao, mặc định toàn nền tảng (đổi thương hiệu mức 3,
+ * quyết định 12/11/2026, chờ PO xác nhận). Nguồn: brand kit ALG (Botanical Garden #133D31, Wispy Clouds
+ * #F0EFEF, Jet Set #242C28, màu phụ Forest Shade/Yellow Balloon/Pinkesque/Brick Red/Powder Blue).
+ * Màu trạng thái: màu thương hiệu dùng cho nền/viền; chữ và nền đậm dùng sắc đậm hơn cùng tông để đạt AA
+ * (#93A87C và #9DB4D4 chỉ 2,1–2,6:1 với chữ trắng). Mọi cặp chữ/nền ở đây đã kiểm ≥ 4,6:1. */
+[data-theme="alg"] {
+  --color-primary: #133D31;
+  --color-primary-dark: #0C2920;
+  --color-primary-muted: #E7ECEA;
+  --color-primary-border: #B8C5C1;
+  --color-secondary: #93A87C;
+  --color-secondary-text: #556744;
+  --color-accent: #E7C447;
+  --color-accent-bg: #FBF6E2;
+  --color-accent-text: #705A0F;
+  --color-bg: #F0EFEF;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #E8E7E6;
+  --color-border: #DCDAD8;
+  --color-text: #242C28;
+  --color-text-muted: #5A6360;
+  --color-selected: #E7ECEA;
+  --color-selected-text: #133D31;
+  --color-warning: #E7C447;
+  --color-warning-bg: #FBF6E2;
+  --color-warning-text: #705A0F;
+  --color-warning-border: #E7C447;
+  --color-danger: #97353E;
+  --color-danger-bg: #F7ECED;
+  --color-danger-text: #7E2C34;
+  --color-danger-border: #C99196;
+  --color-success: #4E5D3D;
+  --color-success-bg: #EEF1EA;
+  --color-success-text: #526141;
+  --color-success-border: #93A87C;
+  --color-info: #3A5984;
+  --color-info-bg: #EFF3F8;
+  --color-info-text: #3D5E8B;
+  --color-info-border: #9DB4D4;
+  /* Màu nhóm ô biểu tượng (IconTile / AppIcon) và biểu đồ theo brand kit ALG (Đợt 4, D4-18).
+   * Màu nhóm: ≥ 4,6:1 với icon trắng và trên nền nhạt 10% của chính nó. Biểu đồ: ≥ 3:1 trên nền trang/thẻ.
+   * Brand kit không có cam/chàm: "orange" = giữa Yellow Balloon và Brick Red; "indigo" = Powder Blue trầm. */
+  --color-tone-plum: #9C3740;
+  --color-tone-rose: #A1434C;
+  --color-tone-orange: #8C5630;
+  --color-tone-amber: #76600F;
+  --color-tone-teal: #46676C;
+  --color-tone-blue: #416494;
+  --color-tone-indigo: #566471;
+  --color-tone-green: #576745;
+  --color-tone-pink: #94485A;
+  --color-tone-emerald: #133D31;
+  --color-chart-1: #133D31;
+  --color-chart-2: #9C3740;
+  --color-chart-3: #668ABC;
+  --color-chart-4: #A38415;
+  --color-chart-5: #788F5F;
+  --color-chart-6: #C0657C;
+  --color-chart-7: #242C28;
+  --color-chart-8: #587882;
+  --font-display: var(--font-sans);
+  --radius-card: 0.75rem;
+  --radius-button: 0.5rem;
+  --radius-dialog: 0.75rem;
+}

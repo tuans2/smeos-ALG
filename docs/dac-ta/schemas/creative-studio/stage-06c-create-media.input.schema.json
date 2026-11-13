@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-06c-create-media.input.schema.json",
+  "title": "Chặng 06c — CREATE · Khu vực D: Ảnh biến thể theo cảnh — Đầu vào",
+  "description": "Mỗi cảnh một job; qua cổng Subject Integrity. Kết quả là assets MARKETING (PENDING) có cha là Master — đọc qua GET /media/variants/:id.",
+  "x-alg": {
+    "stageId": "06c",
+    "stage": 6,
+    "code": "CREATE_MEDIA",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/media/variants",
+      "capability": "I4",
+      "idempotencyKey": true
+    },
+    "source": "src/modules/creative-production/contracts/stage-06c-create-media.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "master_asset_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Master Image đã duyệt"
+    },
+    "engine": {
+      "default": "cloud_provider",
+      "type": "string",
+      "enum": [
+        "local_studio",
+        "cloud_provider"
+      ]
+    },
+    "preset": {
+      "type": "string",
+      "enum": [
+        "transparent",
+        "studio_white",
+        "wedding",
+        "living_room",
+        "wood_minimal",
+        "luxury_hotel"
+      ]
+    },
+    "ratio": {
+      "type": "string",
+      "enum": [
+        "1:1",
+        "4:5",
+        "9:16",
+        "16:9"
+      ]
+    },
+    "watermark": {
+      "default": true,
+      "type": "boolean"
+    },
+    "auto_enhance": {
+      "default": false,
+      "description": "AIC-14 — chỉ chỉnh vùng nền",
+      "type": "boolean"
+    },
+    "scene_index": {
+      "description": "Cảnh 1..5 của kịch bản (CREATIVE 5, AUTHENTIC 3)",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "scene_plan_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "scene_plan_revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100000
+    },
+    "provider_key": {
+      "description": "Chỉ nhánh cloud_provider — nhà cung cấp thử TRƯỚC; bỏ trống = theo VARIANT_PROVIDER_ORDER (các bên vai trò tương đương, bên lỗi thì thử bên kế tiếp)",
+      "type": "string",
+      "enum": [
+        "fal",
+        "stability",
+        "imagen"
+      ]
+    },
+    "scene_prompt": {
+      "description": "Chỉ nhánh cloud_provider — backgroundPrompt của cảnh",
+      "type": "string",
+      "maxLength": 600
+    },
+    "fill_mode": {
+      "default": "full_frame",
+      "description": "full_frame = hậu cảnh dựng đúng khung đích (mặc định); pad = cách cũ, đệm màu trơn",
+      "type": "string",
+      "enum": [
+        "full_frame",
+        "pad"
+      ]
+    },
+    "composition": {
+      "type": "object",
+      "properties": {
+        "shot": {
+          "description": "Cỡ cảnh: cận / trung / toàn — mặc định theo kịch bản, không có thì medium",
+          "type": "string",
+          "enum": [
+            "close",
+            "medium",
+            "wide"
+          ]
+        },
+        "placement": {
+          "description": "Vị trí sản phẩm — mặc định center",
+          "type": "string",
+          "enum": [
+            "center",
+            "left_third",
+            "right_third"
+          ]
+        }
+      }
+    },
+    "lighting": {
+      "type": "object",
+      "properties": {
+        "direction": {
+          "description": "Hướng nguồn sáng — quyết định hướng bóng; mặc định suy từ kịch bản, không có thì left",
+          "type": "string",
+          "enum": [
+            "left",
+            "right",
+            "above",
+            "front"
+          ]
+        },
+        "mood": {
+          "description": "Mô tả không khí ánh sáng (tiếng Anh) — ghép vào prompt nhà cung cấp",
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    },
+    "palette": {
+      "description": "Bảng màu hậu cảnh — mặc định palette của cảnh; màu tiếng Việt thông dụng tự dịch",
+      "maxItems": 5,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 40
+      }
+    },
+    "seed": {
+      "description": "Cùng seed → tái tạo đúng hậu cảnh; bỏ trống thì tự bốc và ghi lại vào asset (nhà cung cấp hỗ trợ seed)",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967294
+    },
+    "style": {
+      "description": "Phong cách hậu cảnh (ý định ALG) — Stability dịch sang style_preset; phông cục bộ ghi provider_ignored",
+      "type": "string",
+      "enum": [
+        "natural",
+        "cinematic",
+        "film",
+        "vivid"
+      ]
+    },
+    "variant_count": {
+      "default": 1,
+      "description": "Số phương án cho cảnh — n job con cùng job_group_id, credit nhân n. Mặc định 1 (PO chốt 24/09)",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4
+    },
+    "quality": {
+      "default": "standard",
+      "description": "high = Stability Ultra (chỉ đám mây, +2 credit/phương án — giá tạm); phông cục bộ ghi provider_ignored",
+      "type": "string",
+      "enum": [
+        "standard",
+        "high"
+      ]
+    },
+    "upscale": {
+      "default": "none",
+      "description": "2x = khung xuất gấp đôi (9:16 → 2160×3840), tăng nét HẬU CẢNH; sản phẩm không qua mô hình siêu phân giải",
+      "type": "string",
+      "enum": [
+        "none",
+        "2x"
+      ]
+    },
+    "compose_mode": {
+      "description": "Bỏ trống = theo engine: cloud_provider → relight (NHÀ CUNG CẤP LÀM TRỌN GÓI: tách nền, dựng cảnh, chỉnh sáng, tăng nét; cổng đo hình dáng + cấu trúc + màu), local_studio → paste. paste = tự dán nguyên khối sản phẩm (giữ từng điểm ảnh); harmonize = paste + hoà bóng/độ nét cục bộ",
+      "type": "string",
+      "enum": [
+        "paste",
+        "harmonize",
+        "relight"
+      ]
+    }
+  },
+  "required": [
+    "master_asset_id",
+    "preset",
+    "ratio"
+  ],
+  "examples": [
+    {
+      "master_asset_id": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+      "engine": "cloud_provider",
+      "preset": "wedding",
+      "ratio": "9:16",
+      "scene_index": 2,
+      "scene_plan_id": "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+      "scene_plan_revision": 1,
+      "scene_prompt": "warm bokeh restaurant table at dusk, soft candle light, empty space in the center",
+      "fill_mode": "full_frame",
+      "composition": {
+        "shot": "wide",
+        "placement": "center"
+      },
+      "lighting": {
+        "direction": "right"
+      },
+      "palette": [
+        "đỏ",
+        "kem"
+      ],
+      "style": "natural",
+      "variant_count": 2
+    }
+  ]
+}

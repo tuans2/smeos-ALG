@@ -1,0 +1,67 @@
+{
+  "name": "Prescreen",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "is_flower_product",
+      "product_bbox",
+      "bloom_diameter_ratio",
+      "foreign_objects",
+      "occlusion_note",
+      "confidence"
+    ],
+    "properties": {
+      "is_flower_product": {
+        "type": "boolean",
+        "description": "True nếu ảnh chứa sản phẩm hoa rõ ràng, False nếu là ảnh người, ảnh phong cảnh, ảnh cửa hàng trống, hoặc không phải hoa."
+      },
+      "product_bbox": {
+        "type": "array",
+        "description": "Khung bao của riêng sản phẩm hoa, toạ độ chuẩn hoá 0-1 (trái, trên, phải, dưới).",
+        "items": {
+          "type": "number"
+        }
+      },
+      "bloom_diameter_ratio": {
+        "type": "number",
+        "description": "Đường kính của loại hoa chủ đạo chia cho cạnh ngắn của vùng sản phẩm. Tính bằng cách lấy một chia cho số bông xếp kín một hàng ngang qua chỗ rộng nhất của khối hoa. Trả về số tính ra, không làm tròn về giá trị quen thuộc."
+      },
+      "foreign_objects": {
+        "type": "array",
+        "description": "Các vật thể ngoài hoa cần loại bỏ (tay người, logo, tường, mặt bàn, nơ, biển chữ).",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "bbox"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "bbox": {
+              "type": "array",
+              "description": "Toạ độ chuẩn hoá 0-1 (trái, trên, phải, dưới) của vật thể.",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "occlusion_note": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "confidence": {
+        "type": "integer",
+        "description": "Độ tin cậy của việc nhận diện, 0-100."
+      }
+    }
+  }
+}

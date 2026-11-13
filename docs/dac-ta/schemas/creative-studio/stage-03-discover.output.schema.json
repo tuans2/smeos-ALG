@@ -1,0 +1,788 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-03-discover.output.schema.json",
+  "title": "Chặng 03 — DISCOVER: Nghiên cứu xu hướng & cơ hội thị trường — Đầu ra",
+  "description": "Một lượt gọi trả ProductIntelligenceReport: điểm phù hợp, ma trận xu hướng, KEEP/IMPROVE/TEST — và luôn cả 10 chủ đề của Chặng 04.",
+  "x-alg": {
+    "stageId": "03",
+    "stage": 3,
+    "code": "DISCOVER",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/market-intelligence/product-intelligence",
+      "capability": "V1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-03-discover.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "product_analysis_runs.id"
+    },
+    "productName": {
+      "type": "string"
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "trendFitScore": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "audienceFitScore": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "contentFitScore": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "overallFit": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "MEDIUM",
+        "LOW"
+      ]
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "flowerType": {
+            "type": "string",
+            "description": "Tên hoa/lá, vd. Hoa hồng đỏ"
+          },
+          "quantityEstimate": {
+            "type": "number",
+            "description": "Số lượng ước tính"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Đơn vị, vd. bông, cành"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "dominant",
+              "supporting",
+              "foliage"
+            ],
+            "description": "Vai trò; lá/cành đệm là foliage"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "flowerType",
+          "quantityEstimate",
+          "unit",
+          "role"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "attributes": {
+      "type": "object",
+      "properties": {
+        "mainColors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secondaryColors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "style": {
+          "type": "string"
+        },
+        "shape": {
+          "type": "string"
+        },
+        "sizeEstimate": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mainColors",
+        "secondaryColors",
+        "style",
+        "shape",
+        "sizeEstimate"
+      ],
+      "additionalProperties": false
+    },
+    "packaging": {
+      "type": "object",
+      "properties": {
+        "wrappingMaterial": {
+          "type": "string"
+        },
+        "wrappingColor": {
+          "type": "string"
+        },
+        "ribbon": {
+          "type": "string"
+        },
+        "accessories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "card": {
+          "type": "object",
+          "properties": {
+            "hasCard": {
+              "type": "boolean"
+            },
+            "cardType": {
+              "type": "string",
+              "enum": [
+                "Thiệp gập thiết kế",
+                "Tag cắm mini",
+                "Biển mica nghệ thuật",
+                "Banner dải băng chữ",
+                "Khác"
+              ]
+            },
+            "printedText": {
+              "description": "Chữ in/viết bóc tách qua OCR",
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "hasCard"
+          ],
+          "additionalProperties": false
+        },
+        "ribbonDetail": {
+          "type": "object",
+          "properties": {
+            "ribbonColor": {
+              "type": "string"
+            },
+            "ribbonMaterial": {
+              "type": "string"
+            },
+            "bowStyle": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "otherAccessories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "color": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "quantity",
+              "unit"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "wrappingMaterial",
+        "wrappingColor",
+        "ribbon",
+        "accessories"
+      ],
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "likelyOccasions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "likelyAudience": {
+          "type": "string"
+        },
+        "suggestedPrice": {
+          "type": "number"
+        },
+        "confidence": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "likelyOccasions",
+        "likelyAudience",
+        "suggestedPrice",
+        "confidence"
+      ],
+      "additionalProperties": false
+    },
+    "commercialPassport": {
+      "type": "object",
+      "properties": {
+        "suggestedName": {
+          "type": "string"
+        },
+        "shortHeadline": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "style": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "seoKeywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "occasions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "targetAudience": {
+          "type": "object",
+          "properties": {
+            "recipient": {
+              "type": "string"
+            },
+            "buyerPersona": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "recipient",
+            "buyerPersona"
+          ],
+          "additionalProperties": false
+        },
+        "flowerMeaningStory": {
+          "type": "string"
+        },
+        "keySellingPoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cardMessageSuggestions": {
+          "type": "object",
+          "properties": {
+            "romantic": {
+              "type": "string"
+            },
+            "subtle": {
+              "type": "string"
+            },
+            "congratulatory": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "romantic",
+            "subtle",
+            "congratulatory"
+          ],
+          "additionalProperties": false
+        },
+        "careInstructions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "priceSegment": {
+          "type": "string",
+          "enum": [
+            "budget",
+            "standard",
+            "premium",
+            "luxury"
+          ]
+        },
+        "priceRange": {
+          "type": "object",
+          "properties": {
+            "minPrice": {
+              "type": "number"
+            },
+            "targetPrice": {
+              "type": "number"
+            },
+            "maxPrice": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "minPrice",
+            "targetPrice",
+            "maxPrice"
+          ],
+          "additionalProperties": false
+        },
+        "recommendedUpsells": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "suggestedName",
+        "shortHeadline",
+        "description",
+        "style",
+        "tags",
+        "seoKeywords",
+        "occasions",
+        "targetAudience",
+        "flowerMeaningStory",
+        "keySellingPoints",
+        "cardMessageSuggestions",
+        "careInstructions",
+        "priceSegment",
+        "priceRange",
+        "recommendedUpsells"
+      ],
+      "additionalProperties": false
+    },
+    "trendFitMatrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "attribute": {
+            "type": "string"
+          },
+          "productValue": {
+            "type": "string"
+          },
+          "marketSignal": {
+            "type": "string"
+          },
+          "matchStatus": {
+            "type": "string",
+            "enum": [
+              "MATCH",
+              "PARTIAL",
+              "MISMATCH"
+            ]
+          },
+          "lifecycle": {
+            "type": "string",
+            "enum": [
+              "EMERGING",
+              "GROWING",
+              "PEAK",
+              "STABLE",
+              "DECLINING"
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "attribute",
+          "productValue",
+          "marketSignal",
+          "matchStatus",
+          "lifecycle",
+          "note"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "improvements": {
+      "type": "object",
+      "properties": {
+        "keep": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "improve": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "test": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "keep",
+        "improve",
+        "test"
+      ],
+      "additionalProperties": false
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "angleCategory": {
+            "type": "string",
+            "enum": [
+              "EMOTIONAL",
+              "PROBLEM_SOLUTION",
+              "PRODUCT_SHOWCASE",
+              "EDUCATIONAL",
+              "TREND",
+              "PRICE_VALUE"
+            ]
+          },
+          "hook": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "REELS_TIKTOK_9_16",
+              "CAROUSEL_PHOTO_1_1",
+              "STORY_DAILY"
+            ]
+          },
+          "cta": {
+            "type": "string"
+          },
+          "evidenceNote": {
+            "type": "string"
+          },
+          "referenceUrl": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string",
+            "enum": [
+              "tiktok",
+              "youtube",
+              "google",
+              "facebook"
+            ]
+          },
+          "dualVideoEvidence": {
+            "type": "object",
+            "properties": {
+              "youtube": {
+                "type": "object",
+                "properties": {
+                  "thumbnailUrl": {
+                    "type": "string"
+                  },
+                  "videoUrl": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "metrics": {
+                    "type": "string"
+                  },
+                  "alt": {
+                    "type": "string"
+                  },
+                  "isLiveEvidence": {
+                    "description": "false = danh mục tham khảo (metrics ƯỚC TÍNH) — giao diện phải gắn nhãn",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "thumbnailUrl",
+                  "videoUrl",
+                  "title",
+                  "author",
+                  "metrics"
+                ],
+                "additionalProperties": false
+              },
+              "tiktok": {
+                "type": "object",
+                "properties": {
+                  "thumbnailUrl": {
+                    "type": "string"
+                  },
+                  "videoUrl": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "author": {
+                    "type": "string"
+                  },
+                  "metrics": {
+                    "type": "string"
+                  },
+                  "alt": {
+                    "type": "string"
+                  },
+                  "isLiveEvidence": {
+                    "description": "false = danh mục tham khảo (metrics ƯỚC TÍNH) — giao diện phải gắn nhãn",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "thumbnailUrl",
+                  "videoUrl",
+                  "title",
+                  "author",
+                  "metrics"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "youtube",
+              "tiktok"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "angleCategory",
+          "hook",
+          "format",
+          "cta",
+          "evidenceNote"
+        ],
+        "additionalProperties": false
+      },
+      "description": "10 chủ đề của Chặng 04 IDEATE"
+    },
+    "readiness": {
+      "type": "object",
+      "properties": {
+        "productRecognition": {
+          "type": "boolean"
+        },
+        "trendFit": {
+          "type": "boolean"
+        },
+        "audienceDefined": {
+          "type": "boolean"
+        },
+        "positioningDefined": {
+          "type": "boolean"
+        },
+        "visualQuality": {
+          "type": "string",
+          "enum": [
+            "EXCELLENT",
+            "ACCEPTABLE",
+            "NEEDS_IMPROVEMENT"
+          ]
+        },
+        "videoPotential": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "productRecognition",
+        "trendFit",
+        "audienceDefined",
+        "positioningDefined",
+        "visualQuality",
+        "videoPotential"
+      ],
+      "additionalProperties": false
+    },
+    "createdAt": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "productName",
+    "imageUrl",
+    "trendFitScore",
+    "audienceFitScore",
+    "contentFitScore",
+    "overallFit",
+    "components",
+    "attributes",
+    "packaging",
+    "context",
+    "trendFitMatrix",
+    "improvements",
+    "topics",
+    "readiness",
+    "createdAt"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "id": "9c8b7a65-4321-4fed-8cba-0987654321ab",
+      "productName": "Bó hồng đỏ 12 bông",
+      "imageUrl": "/api/v1/assets/3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f/view-url",
+      "trendFitScore": 78,
+      "audienceFitScore": 84,
+      "contentFitScore": 80,
+      "overallFit": "HIGH",
+      "components": [
+        {
+          "flowerType": "Hoa hồng đỏ",
+          "quantityEstimate": 12,
+          "unit": "bông",
+          "role": "dominant",
+          "color": "đỏ"
+        },
+        {
+          "flowerType": "Baby trắng",
+          "quantityEstimate": 5,
+          "unit": "cành",
+          "role": "supporting",
+          "color": "trắng"
+        },
+        {
+          "flowerType": "Lá bạc",
+          "quantityEstimate": 4,
+          "unit": "cành",
+          "role": "foliage"
+        }
+      ],
+      "attributes": {
+        "mainColors": [
+          "đỏ"
+        ],
+        "secondaryColors": [
+          "trắng",
+          "xanh bạc"
+        ],
+        "style": "Lãng mạn",
+        "shape": "Bó tròn",
+        "sizeEstimate": "Trung (40cm)"
+      },
+      "packaging": {
+        "wrappingMaterial": "Giấy Hàn Quốc",
+        "wrappingColor": "đen",
+        "ribbon": "Ruy băng lụa đỏ",
+        "accessories": [
+          "thiệp"
+        ],
+        "card": {
+          "hasCard": true,
+          "cardType": "Thiệp gập thiết kế",
+          "printedText": "Happy Birthday"
+        }
+      },
+      "context": {
+        "likelyOccasions": [
+          "Sinh nhật",
+          "Kỷ niệm"
+        ],
+        "likelyAudience": "Nam 25–35 tặng người yêu",
+        "suggestedPrice": 650000,
+        "confidence": 0.82
+      },
+      "trendFitMatrix": [
+        {
+          "attribute": "Màu chủ đạo",
+          "productValue": "đỏ",
+          "marketSignal": "Đỏ trầm đang lên",
+          "matchStatus": "MATCH",
+          "lifecycle": "GROWING",
+          "note": "Giữ tông đỏ"
+        }
+      ],
+      "improvements": {
+        "keep": [
+          "Tông đỏ"
+        ],
+        "improve": [
+          "Thêm thiệp in tên"
+        ],
+        "test": [
+          "Giấy gói kraft"
+        ]
+      },
+      "topics": [
+        {
+          "id": "topic-emotional-01",
+          "title": "12 bông hồng cho 12 tháng yêu nhau",
+          "angleCategory": "EMOTIONAL",
+          "hook": "Bạn đã nói cảm ơn người ấy bao nhiêu lần năm nay?",
+          "format": "REELS_TIKTOK_9_16",
+          "cta": "Nhắn tiệm để giữ sản phẩm cho ngày kỷ niệm",
+          "evidenceNote": "Chủ đề kỷ niệm tăng mạnh trên TikTok tuần này"
+        }
+      ],
+      "readiness": {
+        "productRecognition": true,
+        "trendFit": true,
+        "audienceDefined": true,
+        "positioningDefined": true,
+        "visualQuality": "ACCEPTABLE",
+        "videoPotential": true
+      },
+      "createdAt": "2026-09-24T08:00:00.000Z"
+    }
+  ]
+}

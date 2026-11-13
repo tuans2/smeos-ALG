@@ -1,0 +1,129 @@
+{
+  "total": 53,
+  "files": {
+    "scripts/check-industry.ts": {
+      "@typescript-eslint/no-explicit-any": 5
+    },
+    "scripts/setup-hooks.ts": {
+      "@typescript-eslint/no-explicit-any": 1
+    },
+    "src/app/(app)/audit/page.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/app/(app)/bao-gia/page.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/app/(app)/cai-dat/page.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/app/(app)/cai-dat/thanh-vien/_components/change-role-dialog.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/app/(app)/cai-dat/thanh-vien/page.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/app/(app)/don-hang/page.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/app/(app)/muc-dung/page.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/app/(auth)/dang-nhap/page.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/app/(platform)/van-hanh/to-chuc/[id]/page.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/availability/manual-block-modal.tsx": {
+      "react-hooks/purity": 1
+    },
+    "src/components/catalog/catalog-journey-entry.tsx": {
+      "react/no-unescaped-entities": 2
+    },
+    "src/components/catalog/landing-templates/landing-template-video.tsx": {
+      "react-hooks/rules-of-hooks": 1
+    },
+    "src/components/coordinator/partner-management-modal.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/coordinator/sla-monitor-modal.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/dashboard/crm-workspace.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/dashboard/customer-service-workspace.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/dashboard/flower-network-command-center.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/dashboard/network-journey-home.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/dashboard/platform-journey-home.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/dashboard/product-manager-workspace.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/dashboard/store-growth-center.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/dashboard/store-journey-home.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/greeting-card/customer/homestay-order-fields.tsx": {
+      "react-hooks/rules-of-hooks": 1
+    },
+    "src/components/greeting-card/subcontract/chain-dispatch-panel.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/layout/desktop-nav.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/orders/create-order-modal.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/orders/order-detail-modal.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/platform/vietqr-topup-modal.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/products/ai-product-enrichment-modal.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/products/bulk-import/branch-import-panel.tsx": {
+      "react/no-unescaped-entities": 2
+    },
+    "src/components/products/use-create-product-form.ts": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/products/use-normalize-image.ts": {
+      "react-hooks/immutability": 1
+    },
+    "src/components/profiles/brand-profile-form.tsx": {
+      "react-hooks/set-state-in-effect": 1,
+      "react/no-unescaped-entities": 2
+    },
+    "src/components/storage/storage-trash-tab.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/components/templates/shared/feature-guidance-card.tsx": {
+      "react-hooks/set-state-in-effect": 1
+    },
+    "src/modules/greeting-card/infra/__tests__/subcontract-order-repository.test.ts": {
+      "@typescript-eslint/no-explicit-any": 1
+    },
+    "src/modules/journey/domain/journey-state.test.ts": {
+      "prefer-const": 1
+    },
+    "src/modules/organization/domain/industry-profile.ts": {
+      "@typescript-eslint/no-explicit-any": 1
+    },
+    "src/modules/storage/infra/trash-repository.ts": {
+      "@typescript-eslint/no-explicit-any": 5
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-08-qa.input.schema.json",
+  "title": "Chặng 08 — QA: Kiểm tra Thương hiệu / Sản phẩm / Nội dung / Kênh — Đầu vào",
+  "description": "Trục: product_integrity, approvals, platform_specs, content, brand, plan_consistency. Kết quả đổi status: QA_PASSED | QA_NEEDS_REVIEW | QA_REJECTED.",
+  "x-alg": {
+    "stageId": "08",
+    "stage": 8,
+    "code": "QA",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/creative-production/packages/:id/qa",
+      "capability": "I1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-08-qa.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "package_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "campaign_packages.id — tham số đường dẫn :id"
+    }
+  },
+  "required": [
+    "package_id"
+  ],
+  "examples": [
+    {
+      "package_id": "c0ffee00-1111-4222-8333-444455556666"
+    }
+  ]
+}

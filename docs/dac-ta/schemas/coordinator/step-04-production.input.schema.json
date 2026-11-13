@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "step-04-production.input.schema.json",
+  "title": "Theo dõi sản xuất — Đầu vào",
+  "description": "Cập nhật tiến độ; báo cắm xong bắt buộc kèm ảnh thành phẩm (assets cùng tổ chức) → QUALITY_CHECK; báo thiếu vật liệu mở sự cố",
+  "x-alg": {
+    "stepId": "04",
+    "step": 4,
+    "code": "PRODUCTION",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/coordinator/orders/{id}/production",
+      "capability": "R3"
+    },
+    "source": "src/modules/coordinator/contracts/step-04-production.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:coordinator`."
+  },
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "UPDATE_PROGRESS",
+        "MARK_READY",
+        "REPORT_MATERIAL_ISSUE"
+      ]
+    },
+    "progress_percent": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "finished_asset_ids": {
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      }
+    },
+    "issue_note": {
+      "type": "string",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "action",
+    "progress_percent"
+  ],
+  "examples": [
+    {
+      "action": "MARK_READY",
+      "progress_percent": 100,
+      "finished_asset_ids": [
+        "a3c1d2e4-5f60-4718-9a2b-3c4d5e6f7a8b"
+      ]
+    }
+  ]
+}

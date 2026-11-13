@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-01-bring.input.schema.json",
+  "title": "Chặng 01 — BRING: Tải ảnh sản phẩm vào kho — Đầu vào",
+  "description": "Xin URL (POST /assets/upload-url) → PUT byte ảnh → đăng ký asset ORIGINAL. Từ đây mọi chặng chỉ mang asset_id, không mang ảnh.",
+  "x-alg": {
+    "stageId": "01",
+    "stage": 1,
+    "code": "BRING",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/assets",
+      "capability": "G2"
+    },
+    "source": "src/modules/creative-production/contracts/stage-01-bring.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "asset_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "asset_id do POST /assets/upload-url cấp"
+    },
+    "product_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parent_asset_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "ORIGINAL",
+        "ANALYZED",
+        "ENHANCED",
+        "MASTER",
+        "MARKETING",
+        "CATALOG",
+        "LANDING",
+        "SOCIAL"
+      ]
+    },
+    "storage_key": {
+      "type": "string",
+      "minLength": 1,
+      "description": "org/<organization_id>/<product_id|unfiled>/<asset_id>.<ext>"
+    },
+    "mime_type": {
+      "type": "string",
+      "minLength": 1
+    },
+    "width": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "height": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "aspect_ratio": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "file_size": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provider": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "model_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pipeline_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parameters": {
+      "anyOf": [
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "prompt": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "output_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "quality_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "identity_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "generated_flags": {
+      "anyOf": [
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "cost_usd": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "asset_id",
+    "kind",
+    "storage_key",
+    "mime_type"
+  ],
+  "examples": [
+    {
+      "asset_id": "3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f",
+      "product_id": null,
+      "kind": "ORIGINAL",
+      "storage_key": "org/0b6f.../unfiled/3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f.jpg",
+      "mime_type": "image/jpeg",
+      "file_size": 482113
+    }
+  ]
+}

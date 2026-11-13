@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-02-understand.input.schema.json",
+  "title": "Chặng 02 — UNDERSTAND: Nhận diện cấu trúc & định tính thương mại — Đầu vào",
+  "description": "Mô hình thị giác (gpt-4o-mini) đọc ảnh TỪ KHO theo asset_id, trả thành phần hoa, thuộc tính thị giác, bao bì, bối cảnh; người dùng sửa được từng trường. Thu product.vision_extract (1 credit) khi mô hình chạy; cùng ảnh bấm lại không thu lần hai; hỏng thì hoàn.",
+  "x-alg": {
+    "stageId": "02",
+    "stage": 2,
+    "code": "UNDERSTAND",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/market-intelligence/vision-extract",
+      "capability": "V1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-02-understand.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "image_url": {
+      "description": "BỎ QUA từ 25/09/2026 — máy chủ đọc ảnh từ kho theo asset_id; giữ để client cũ không vỡ",
+      "type": "string"
+    },
+    "asset_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Ảnh đã lưu kho của đúng tổ chức (bắt buộc từ 25/09/2026)"
+    },
+    "product_title": {
+      "type": "string"
+    },
+    "reanalyze_key": {
+      "description": "Người dùng xác nhận phân tích LẠI ảnh đã có kết quả: bỏ kết quả cũ, gọi mô hình mới và thu credit; cùng khoá = cùng một lần bấm (chống trừ hai lần)",
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 64
+    }
+  },
+  "required": [
+    "asset_id"
+  ],
+  "examples": [
+    {
+      "asset_id": "3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f",
+      "product_title": "Bó hồng đỏ 12 bông"
+    }
+  ]
+}

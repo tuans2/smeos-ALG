@@ -1,0 +1,349 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-02-understand.output.schema.json",
+  "title": "Chặng 02 — UNDERSTAND: Nhận diện cấu trúc & định tính thương mại — Đầu ra",
+  "description": "Mô hình thị giác (gpt-4o-mini) đọc ảnh TỪ KHO theo asset_id, trả thành phần hoa, thuộc tính thị giác, bao bì, bối cảnh; người dùng sửa được từng trường. Thu product.vision_extract (1 credit) khi mô hình chạy; cùng ảnh bấm lại không thu lần hai; hỏng thì hoàn.",
+  "x-alg": {
+    "stageId": "02",
+    "stage": 2,
+    "code": "UNDERSTAND",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/market-intelligence/vision-extract",
+      "capability": "V1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-02-understand.ts",
+    "direction": "output",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "productName": {
+      "type": "string"
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "assetId": {
+      "type": "string"
+    },
+    "reused": {
+      "description": "true = kết quả cũ của chính ảnh này (không gọi mô hình, không thu credit)",
+      "type": "boolean"
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "flowerType": {
+            "type": "string",
+            "description": "Tên hoa/lá, vd. Hoa hồng đỏ"
+          },
+          "quantityEstimate": {
+            "type": "number",
+            "description": "Số lượng ước tính"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Đơn vị, vd. bông, cành"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "dominant",
+              "supporting",
+              "foliage"
+            ],
+            "description": "Vai trò; lá/cành đệm là foliage"
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "flowerType",
+          "quantityEstimate",
+          "unit",
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Hoa + lá đệm (role foliage) — không có mảng riêng"
+    },
+    "attributes": {
+      "type": "object",
+      "properties": {
+        "mainColors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secondaryColors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "style": {
+          "type": "string"
+        },
+        "shape": {
+          "type": "string"
+        },
+        "sizeEstimate": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mainColors",
+        "secondaryColors",
+        "style",
+        "shape",
+        "sizeEstimate"
+      ],
+      "additionalProperties": false
+    },
+    "packaging": {
+      "type": "object",
+      "properties": {
+        "wrappingMaterial": {
+          "type": "string"
+        },
+        "wrappingColor": {
+          "type": "string"
+        },
+        "ribbon": {
+          "type": "string"
+        },
+        "accessories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "card": {
+          "type": "object",
+          "properties": {
+            "hasCard": {
+              "type": "boolean"
+            },
+            "cardType": {
+              "type": "string",
+              "enum": [
+                "Thiệp gập thiết kế",
+                "Tag cắm mini",
+                "Biển mica nghệ thuật",
+                "Banner dải băng chữ",
+                "Khác"
+              ]
+            },
+            "printedText": {
+              "description": "Chữ in/viết bóc tách qua OCR",
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "hasCard"
+          ],
+          "additionalProperties": false
+        },
+        "ribbonDetail": {
+          "type": "object",
+          "properties": {
+            "ribbonColor": {
+              "type": "string"
+            },
+            "ribbonMaterial": {
+              "type": "string"
+            },
+            "bowStyle": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "otherAccessories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "color": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "quantity",
+              "unit"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "wrappingMaterial",
+        "wrappingColor",
+        "ribbon",
+        "accessories"
+      ],
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "likelyOccasions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "likelyAudience": {
+          "type": "string"
+        },
+        "suggestedPrice": {
+          "type": "number"
+        },
+        "confidence": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "likelyOccasions",
+        "likelyAudience",
+        "suggestedPrice",
+        "confidence"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "description": "vision_ai = mô hình vừa đọc ảnh (thu credit) · m01 = kết quả M01 đã lưu (miễn phí)",
+      "type": "string",
+      "enum": [
+        "vision_ai",
+        "m01"
+      ]
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "cost_credit": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "balance_after": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "cost_credit",
+        "balance_after"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "productName",
+    "imageUrl",
+    "components",
+    "attributes",
+    "packaging",
+    "context"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "productName": "Bó hồng đỏ 12 bông",
+      "imageUrl": "https://storage.example/signed/3f1c9a52.jpg",
+      "assetId": "3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f",
+      "components": [
+        {
+          "flowerType": "Hoa hồng đỏ",
+          "quantityEstimate": 12,
+          "unit": "bông",
+          "role": "dominant",
+          "color": "đỏ"
+        },
+        {
+          "flowerType": "Baby trắng",
+          "quantityEstimate": 5,
+          "unit": "cành",
+          "role": "supporting",
+          "color": "trắng"
+        },
+        {
+          "flowerType": "Lá bạc",
+          "quantityEstimate": 4,
+          "unit": "cành",
+          "role": "foliage"
+        }
+      ],
+      "attributes": {
+        "mainColors": [
+          "đỏ"
+        ],
+        "secondaryColors": [
+          "trắng",
+          "xanh bạc"
+        ],
+        "style": "Lãng mạn",
+        "shape": "Bó tròn",
+        "sizeEstimate": "Trung (40cm)"
+      },
+      "packaging": {
+        "wrappingMaterial": "Giấy Hàn Quốc",
+        "wrappingColor": "đen",
+        "ribbon": "Ruy băng lụa đỏ",
+        "accessories": [
+          "thiệp"
+        ],
+        "card": {
+          "hasCard": true,
+          "cardType": "Thiệp gập thiết kế",
+          "printedText": "Happy Birthday"
+        }
+      },
+      "context": {
+        "likelyOccasions": [
+          "Sinh nhật",
+          "Kỷ niệm"
+        ],
+        "likelyAudience": "Nam 25–35 tặng người yêu",
+        "suggestedPrice": 650000,
+        "confidence": 0.82
+      }
+    }
+  ]
+}

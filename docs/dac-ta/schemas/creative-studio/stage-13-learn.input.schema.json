@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-13-learn.input.schema.json",
+  "title": "Chặng 13 — LEARN: Trích xuất mẫu thắng (Winning Patterns) — Đầu vào",
+  "description": "So trên các gói đã duyệt của chính tiệm; dưới 3 gói có số đo thì trả INSUFFICIENT_DATA, không bịa mẫu.",
+  "x-alg": {
+    "stageId": "13",
+    "stage": 13,
+    "code": "LEARN",
+    "endpoint": {
+      "method": "GET",
+      "path": "/api/v1/creative-production/packages/:id/performance",
+      "capability": "R1"
+    },
+    "source": "src/modules/creative-production/contracts/stage-13-learn.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "package_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "campaign_packages.id — tham số đường dẫn :id"
+    }
+  },
+  "required": [
+    "package_id"
+  ],
+  "examples": [
+    {
+      "package_id": "c0ffee00-1111-4222-8333-444455556666"
+    }
+  ]
+}

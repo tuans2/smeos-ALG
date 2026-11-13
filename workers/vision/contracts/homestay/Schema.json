@@ -1,0 +1,214 @@
+{
+  "name": "PhanTichKhongGianPhong",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "required": [
+      "palette_accounting",
+      "checklist",
+      "identity",
+      "bom",
+      "confidence",
+      "san_xuat"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "palette_accounting": {
+        "type": "array",
+        "description": "Giải trình bảng màu không gian phòng. Mỗi cụm màu đã đo phải có đúng một phần tử ở đây, không được bỏ sót cụm nào.",
+        "items": {
+          "type": "object",
+          "required": [
+            "cluster_index",
+            "component_group",
+            "assigned_to",
+            "confidence"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "cluster_index": { "type": "integer" },
+            "component_group": {
+              "type": "string",
+              "enum": [
+                "Tường / Trần",
+                "Sàn / Thảm",
+                "Đồ nội thất",
+                "Chăn ga gối",
+                "Ánh sáng / Bóng tối",
+                "Cửa sổ / Cửa ra vào",
+                "Trang trí phòng",
+                "Nền ảnh / Không xác định"
+              ]
+            },
+            "assigned_to": { "type": "string" },
+            "confidence": { "type": "integer" }
+          }
+        }
+      },
+      "checklist": {
+        "type": "object",
+        "description": "Rà soát bắt buộc các yếu tố chất lượng không gian. Mỗi trường chọn Có hoặc Không có.",
+        "required": [
+          "giuong_ga_goi_sach",
+          "anh_sang_tu_nhien",
+          "phong_ngu_sach_gon",
+          "noi_that_dong_bo",
+          "dieu_hoa_hoat_dong",
+          "view_dep_ben_ngoai",
+          "thiet_bi_ve_sinh_du",
+          "dieu_kien_an_toan"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "giuong_ga_goi_sach": { "type": "string", "enum": ["Có", "Không có"] },
+          "anh_sang_tu_nhien": { "type": "string", "enum": ["Có", "Không có"] },
+          "phong_ngu_sach_gon": { "type": "string", "enum": ["Có", "Không có"] },
+          "noi_that_dong_bo": { "type": "string", "enum": ["Có", "Không có"] },
+          "dieu_hoa_hoat_dong": { "type": "string", "enum": ["Có", "Không có"] },
+          "view_dep_ben_ngoai": { "type": "string", "enum": ["Có", "Không có"] },
+          "thiet_bi_ve_sinh_du": { "type": "string", "enum": ["Có", "Không có"] },
+          "dieu_kien_an_toan": { "type": "string", "enum": ["Có", "Không có"] }
+        }
+      },
+      "identity": {
+        "type": "object",
+        "required": [
+          "category",
+          "phong_cach",
+          "loai_giuong",
+          "anh_sang_chinh",
+          "dip_su_dung"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "Phòng Studio khép kín",
+              "Phòng gia đình nhiều giường",
+              "Phòng đơn tiêu chuẩn",
+              "Phòng đôi sang trọng",
+              "Thuê nguyên căn Villa / Nhà riêng",
+              "Bungalow sân vườn view thiên nhiên",
+              "Giường tầng tập thể Dormitory",
+              "Gói nghỉ theo giờ / Trong ngày",
+              "Khác"
+            ]
+          },
+          "phong_cach": { "type": "string" },
+          "loai_giuong": { "type": "string" },
+          "anh_sang_chinh": {
+            "type": "string",
+            "enum": [
+              "Ánh sáng tự nhiên ban ngày",
+              "Đèn trang trí ấm áp",
+              "Đèn điện trắng hiện đại",
+              "Ánh nến / Đèn thấp lãng mạn",
+              "Kết hợp nhiều nguồn sáng"
+            ]
+          },
+          "dip_su_dung": { "type": "string" }
+        }
+      },
+      "bom": {
+        "type": "object",
+        "required": [
+          "amenities",
+          "linen_quality",
+          "furniture",
+          "decor_items",
+          "room_note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "amenities": {
+            "type": "array",
+            "description": "Các tiện nghi nhìn thấy được trong phòng (điều hòa, TV, tủ lạnh, ấm đun nước, két sắt...)",
+            "items": {
+              "type": "object",
+              "required": ["name", "visible", "condition", "confidence"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "visible": { "type": "boolean" },
+                "condition": {
+                  "type": "string",
+                  "enum": ["Mới / Rất tốt", "Tốt", "Bình thường", "Cũ / Cần thay"]
+                },
+                "confidence": { "type": "integer" }
+              }
+            }
+          },
+          "linen_quality": {
+            "type": "object",
+            "required": ["color", "condition", "style"],
+            "additionalProperties": false,
+            "properties": {
+              "color": { "type": "string" },
+              "condition": {
+                "type": "string",
+                "enum": ["Trắng tinh / Như mới", "Sạch sẽ bình thường", "Cần giặt / Cũ"]
+              },
+              "style": { "type": "string" }
+            }
+          },
+          "furniture": {
+            "type": "array",
+            "description": "Đồ nội thất chính nhìn thấy trong phòng",
+            "items": {
+              "type": "object",
+              "required": ["name", "material", "condition", "confidence"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "material": { "type": ["string", "null"] },
+                "condition": {
+                  "type": "string",
+                  "enum": ["Mới / Cao cấp", "Tốt", "Bình thường", "Cũ / Cần thay mới"]
+                },
+                "confidence": { "type": "integer" }
+              }
+            }
+          },
+          "decor_items": {
+            "type": "array",
+            "description": "Đồ trang trí & điểm nhấn thẩm mỹ (tranh treo, đèn trang trí, cây xanh, gương...)",
+            "items": {
+              "type": "object",
+              "required": ["name", "confidence"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "confidence": { "type": "integer" }
+              }
+            }
+          },
+          "room_note": {
+            "type": ["string", "null"],
+            "description": "Ghi chú tổng thể về tình trạng phòng, điểm mạnh nổi bật hoặc điểm cần cải thiện"
+          }
+        }
+      },
+      "confidence": {
+        "type": "integer",
+        "description": "Độ tin cậy tổng thể 0–100 của toàn bộ phân tích"
+      },
+      "san_xuat": {
+        "type": "object",
+        "required": ["dang_cap_phong"],
+        "additionalProperties": false,
+        "properties": {
+          "dang_cap_phong": {
+            "type": "string",
+            "enum": [
+              "Bình dân / Cơ bản",
+              "Tiêu chuẩn / Sạch sẽ tốt",
+              "Sang trọng / Thiết kế cao cấp",
+              "Boutique / Phong cách đặc biệt"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

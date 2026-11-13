@@ -1,0 +1,13 @@
+# Tệp dưới src/app/api trả envelope lệch chuẩn API Contract v1.1 §4 (PO chốt 07/11/2026), theo từng mẫu.
+# Danh sách chỉ được thu hẹp: sửa tệp về { data } / { error: { code, message } } thì xoá dòng của nó.
+# Webhook bị nhà cung cấp quy định thân phản hồi vẫn nằm đây — ghi lý do ở chính route.
+# Ngoại lệ lâu dài — nhà cung cấp quy định thân phản hồi (chuẩn §4): Facebook, Zalo, Zalo OA, SePay.
+ok-envelope	src/app/api/v1/public/zalo-oa/webhook/route.ts
+string-error	src/app/api/v1/public/zalo-oa/webhook/route.ts
+success-envelope	src/app/api/v1/billing/sepay/route.ts
+success-envelope	src/app/api/v1/public/payments/sepay/route.ts
+# Ngoại lệ lâu dài — ngoài /api/v1: kiểm sức khoẻ cho Render/giám sát, công cụ chỉ chạy ở môi trường dev.
+next-response-json	src/app/api/dev/role-override/route.ts
+next-response-json	src/app/api/health/ready/route.ts
+next-response-json	src/app/api/health/route.ts
+string-error	src/app/api/dev/role-override/route.ts

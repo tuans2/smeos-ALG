@@ -1,0 +1,38 @@
+# Cập nhật dependency tự động (rà soát 21/10/2026, giai đoạn 3; PO duyệt 22/10).
+# Mỗi PR của Dependabot vẫn phải qua đủ cổng CI và được người duyệt — không tự merge.
+#
+# Bỏ qua bản nâng LỚN (semver-major) ở cả ba hệ (PO 22/10): lượt đầu Dependabot mở 14 PR, phần lớn
+# là nâng lớn dễ gãy build (TypeScript 7, vitest 5, ioredis 6, @types/node 26). Nâng lớn làm tay,
+# từng gói một, kèm sửa mã. Lỗ hổng cần nâng lớn vẫn bị chặn ở CI (`npm audit` mức high).
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      timezone: "Asia/Ho_Chi_Minh"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      npm-minor-patch:
+        update-types: ["minor", "patch"]
+  - package-ecosystem: "pip"
+    directory: "/workers"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      timezone: "Asia/Ho_Chi_Minh"
+    open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "step-03-assign-partner.input.schema.json",
+  "title": "Phân công đối tác xưởng — Đầu vào",
+  "description": "Gán đối tác cùng tổ chức, kiểm tạm ngưng và công suất ngày; đơn vào IN_PRODUCTION",
+  "x-alg": {
+    "stepId": "03",
+    "step": 3,
+    "code": "ASSIGN_PARTNER",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/coordinator/orders/{id}/assign-partner",
+      "capability": "R4"
+    },
+    "source": "src/modules/coordinator/contracts/step-03-assign-partner.ts",
+    "direction": "input",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:coordinator`."
+  },
+  "type": "object",
+  "properties": {
+    "partner_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "override_capacity": {
+      "type": "boolean"
+    },
+    "agreed_craft_fee_vnd": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000000
+    }
+  },
+  "required": [
+    "partner_id"
+  ],
+  "examples": [
+    {
+      "partner_id": "0b7f4a52-2c1e-4a8f-9c3d-5e6f7a8b9c0d",
+      "notes": "Ưu tiên hồng nhập sáng nay"
+    }
+  ]
+}

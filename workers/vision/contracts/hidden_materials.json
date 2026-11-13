@@ -1,0 +1,36 @@
+{
+  "_ghi_chu": "Thành phần khuất không nhìn thấy trong ảnh, suy từ phân loại sản phẩm và vật chứa. Khoá cấp 1 là category, khoá cấp 2 là container. Khoá * áp cho mọi container.",
+
+  "Bó hoa": {
+    "*": ["Dây buộc", "Giấy thấm cuống"],
+    "Giấy gói": ["Ghim kẹp giấy"],
+    "Không có": []
+  },
+  "Bó cầm tay cô dâu": {
+    "*": ["Dây buộc", "Băng dính lụa", "Giấy thấm cuống"]
+  },
+  "Giỏ hoa": {
+    "*": ["Xốp cắm", "Ni lông lót", "Ghim"]
+  },
+  "Hộp hoa": {
+    "*": ["Xốp cắm", "Ni lông lót"]
+  },
+  "Bình hoa": {
+    "*": ["Băng dính lưới", "Nước dưỡng hoa"]
+  },
+  "Kệ hoa": {
+    "*": ["Xốp cắm", "Khung sắt hoặc gỗ", "Ghim", "Dây kẽm"]
+  },
+  "Lẵng hoa": {
+    "*": ["Xốp cắm", "Ni lông lót", "Ghim"]
+  },
+  "Vòng hoa": {
+    "*": ["Xốp cắm dạng vòng", "Khung tròn", "Ghim", "Dây kẽm", "Giá đỡ ba chân"]
+  },
+  "Hoa cài áo": {
+    "*": ["Dây kẽm", "Băng dính lụa", "Ghim cài"]
+  },
+  "Khác": {
+    "*": []
+  }
+}

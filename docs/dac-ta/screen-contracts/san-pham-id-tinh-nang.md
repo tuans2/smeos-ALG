@@ -1,0 +1,39 @@
+---
+id: SCR-STORE-san-pham-id-tinh-nang
+tier: STORE
+module: dashboard
+route: /san-pham/[id]/tinh-nang
+archetype: C
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
+# Screen Contract — Danh sách & Chi tiết Sản phẩm (`/san-pham/[id]/tinh-nang`)
+
+> **Lối vào tuyến khoá (12/11/2026, audit N-05):** khi `NEXT_PUBLIC_APP_ENV=production` bật khoá "Sắp ra mắt", lối vào tuyến khoá bị ẩn thay vì dẫn tới màn khoá (`isHrefOpen`, `src/lib/feature-lock.ts`). Nút "Theo dõi tiến trình" (sang `/job`) ẩn khi `/job` đang khoá. Khoá tắt (staging, bản giao GD1) giữ nguyên.
+
+> **Đồng ý của khách (12/11/2026, audit L-06):** chức năng gửi tới khách (nhắc mua lại) không bị khoá vì "đồng ý" ở trang này — trang của một sản phẩm không có khách cụ thể. Thẻ chức năng hiện ghi chú "Chỉ gửi cho khách đã đồng ý nhận tin"; khách chưa đồng ý bị loại khi lập danh sách gửi.
+
+**Mã màn:** `SCR-STORE-san-pham-id-tinh-nang` · **Tuyến:** `/san-pham/[id]/tinh-nang` · **Tầng:** `STORE` · **Bố cục:** `C` · **Tệp chính:** `src/app/(app)/san-pham/[id]/tinh-nang/page.tsx`
+
+Đặc tả nghiệp vụ chi tiết: [`san-pham.md`](./san-pham.md). Tệp này là front-matter v2 cho `check:screen-contracts`; hiện trạng dưới đây đo bằng đọc mã ngày 05/11/2026, không phải kiểm chạy thật.
+
+## Hiện trạng đo từ mã
+
+| Mục | Hiện trạng |
+|---|---|
+| Đầu trang | qua thành phần con |
+| Số `variant="primary"` trong trang và mọi thành phần nó dùng (gộp cả tab, hộp thoại — không phải số nút trên một màn) | 0 |
+| Trạng thái đang tải | có |
+| Trạng thái rỗng (`EmptyState`) | có |
+| Trạng thái lỗi | có |
+| Chặn quyền / không tìm thấy trong mã trang (layout và API có thể chặn thêm) | **chưa thấy trong mã** |
+
+## Chưa kiểm
+- Ảnh mốc 390×844 và 1280×800, quét axe, bàn phím, đọc màn hình: chưa có ca trong `tests/e2e/ux` cho tuyến này.

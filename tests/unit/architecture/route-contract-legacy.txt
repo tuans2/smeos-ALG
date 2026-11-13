@@ -1,0 +1,5 @@
+# Route /api/v1 có trước chuẩn API Contract v1.1 (PO chốt 07/11/2026) — chưa khai bằng defineRoute.
+# Danh sách chỉ được thu hẹp: chuyển route sang defineRoute (hoặc xoá route) thì xoá dòng của nó.
+# Ngoại lệ lâu dài (12/11/2026): webhook/widget chat chạy quyền hệ thống ngoài handle() (asSystemDb, tổ chức suy từ kênh) —
+# bọc defineRoute sẽ đổi ngữ cảnh truy cập CSDL. Giữ ở đây kèm lý do tại chính route.
+chat/public/widget

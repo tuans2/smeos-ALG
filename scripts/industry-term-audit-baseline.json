@@ -1,0 +1,9 @@
+{
+  "total": 5,
+  "errorCount": 0,
+  "byRule": {
+    "IT-F07": 2,
+    "IT-F08": 3
+  },
+  "updatedAt": "2026-11-03T23:39:53.126Z"
+}

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stage-05-choose.handoff.schema.json",
+  "title": "Chặng 05 — CHOOSE: Chọn định hướng & kịch bản sản xuất tổng — hợp đồng phụ \"handoff\"",
+  "description": "Query string của /creative-studio; tổng độ dài ≤ 2000 ký tự",
+  "x-alg": {
+    "stageId": "05",
+    "stage": 5,
+    "code": "CHOOSE",
+    "endpoint": {
+      "method": "POST",
+      "path": "/api/v1/creative-production/scene-plans",
+      "capability": "I1",
+      "idempotencyKey": true
+    },
+    "source": "src/modules/creative-production/contracts/stage-05-choose.ts",
+    "direction": "handoff",
+    "generated": "SINH TỰ ĐỘNG — không sửa tay. Sửa zod ở tệp nguồn rồi chạy `npm run gen:schemas:creative`."
+  },
+  "type": "object",
+  "properties": {
+    "topic": {
+      "type": "string",
+      "minLength": 1,
+      "description": "report.id (lượt phân tích) hoặc id topic"
+    },
+    "selectedTopic": {
+      "description": "ConcreteTopic.id đã chọn",
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "CREATIVE",
+        "AUTHENTIC"
+      ],
+      "description": "Loại hình sản xuất: CREATIVE (AI dựng bối cảnh mới, 5 cảnh) hoặc AUTHENTIC (giữ ảnh gốc, 3 cảnh)"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "both"
+      ]
+    },
+    "assetId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "BẮT BUỘC — ảnh đã lưu kho"
+    },
+    "area": {
+      "type": "string",
+      "enum": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f"
+      ]
+    },
+    "productName": {
+      "type": "string"
+    },
+    "productId": {
+      "type": "string"
+    },
+    "audioJobId": {
+      "description": "Ghi thêm bởi Khu vực C",
+      "type": "string"
+    },
+    "videoJobId": {
+      "description": "Ghi thêm bởi Khu vực E",
+      "type": "string"
+    },
+    "platforms": {
+      "description": "Phạm vi nền tảng chọn cuối Chặng 04: danh sách cách nhau dấu phẩy hoặc \"all\"; bỏ trống = TikTok + Reels",
+      "type": "string",
+      "maxLength": 200
+    },
+    "outputs": {
+      "description": "Loại kết quả: content,audio,image,video hoặc \"all\"; bỏ trống = tất cả",
+      "type": "string",
+      "maxLength": 60
+    }
+  },
+  "required": [
+    "topic",
+    "mode",
+    "source",
+    "assetId",
+    "area"
+  ],
+  "examples": [
+    {
+      "topic": "9c8b7a65-4321-4fed-8cba-0987654321ab",
+      "selectedTopic": "topic-emotional-01",
+      "mode": "AUTHENTIC",
+      "source": "image",
+      "assetId": "3f1c9a52-7d7e-4b8e-9d7a-1a2b3c4d5e6f",
+      "area": "a",
+      "productName": "Bó hồng đỏ 12 bông",
+      "platforms": "tiktok,instagram_reels",
+      "outputs": "all"
+    }
+  ]
+}
