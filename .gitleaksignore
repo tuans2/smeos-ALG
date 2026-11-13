@@ -78,3 +78,28 @@ b774e948f8098a94234a8257d19cfc7d38090e26:tests/unit/market-intelligence/analyze-
 # Biên bản nghiệm thu GD1 bước 6 vòng 3: UUID shipper trong JSON `"key"` của dữ liệu thử (đã kiểm dạng UUID) — nhánh alg_123cn_2 và bản cherry-pick.
 2b9f73d6bc6ff15a43190018753a8a6957fb68cc:docs/audit/gd1-buoc6/README.md:generic-api-key:211
 8bd22ae62e6b96fd9112958dfd4b3d99abf11098:docs/audit/gd1-buoc6/README.md:generic-api-key:211
+
+# Bản cắt bàn giao GD1 từ main 7a64a354 (commit gốc 3ac0c39, nhánh Alg_123Cn, 13/11/2026): cùng 22 giá trị báo nhầm đã
+# allowlist ở main (đối chiếu bằng băm, 22/22 trùng). Bản cắt là commit mồ côi nên mang dấu vết mới.
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/dispatch-reminder-policy-card.tsx:generic-api-key:40
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/dispatch-reminder-policy-card.tsx:generic-api-key:50
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/dispatch-reminder-policy-card.tsx:generic-api-key:60
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/dispatch-reminder-policy-card.tsx:generic-api-key:70
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:24
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:29
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:32
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:37
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:40
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:45
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:48
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/coordinator/product-reminder-override-meta.ts:generic-api-key:53
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/governance/governance-catalog-registry.ts:generic-api-key:139
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/governance/governance-catalog-registry.ts:generic-api-key:280
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/layout/nav-storage.ts:generic-api-key:12
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/components/organization/__tests__/partner-credential-dialog.test.ts:generic-api-key:17
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/modules/integration-hub/use-cases/__tests__/integration-governance.test.ts:generic-api-key:10
+3ac0c3939655a9af050f2325ed0a4467a914433d:src/modules/integration-hub/use-cases/__tests__/integration-hub-use-cases.test.ts:generic-api-key:10
+3ac0c3939655a9af050f2325ed0a4467a914433d:tests/tenant/internal-contract-chat.test.ts:generic-api-key:70
+3ac0c3939655a9af050f2325ed0a4467a914433d:tests/tenant/internal-contract-integrations.test.ts:generic-api-key:32
+3ac0c3939655a9af050f2325ed0a4467a914433d:tests/unit/lib/env-empty-values.test.ts:generic-api-key:7
+3ac0c3939655a9af050f2325ed0a4467a914433d:tests/unit/market-intelligence/analyze-product-vision.test.ts:generic-api-key:99
