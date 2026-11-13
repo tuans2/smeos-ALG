@@ -7,6 +7,7 @@ import { catalogPolicyKeysChanged } from "@/modules/greeting-card/domain/catalog
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { createCatalogBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const GET = defineRoute({
   auth: { kind: "tenant", capability: GREETING_CARD_CAPABILITY.read },
@@ -33,17 +34,18 @@ export const POST = defineRoute({
     if (!parsed.success) {
       throw validationFailed({ issues: parsed.error.issues })
     }
+    const input = camelKeys(parsed.data)
     // Bộ sưu tập mới mang sẵn khoá chính sách (ảnh bill, duyệt thanh toán, thời hạn) → cần quyền sửa cấu hình tiệm
-    if (catalogPolicyKeysChanged(null, parsed.data.filters)) requireCapability(ctx, "F2")
+    if (catalogPolicyKeysChanged(null, input.filters)) requireCapability(ctx, "F2")
 
     const repo = new GreetingCardRepository()
     const catalog = await repo.createCatalog(ctx, {
-      code: parsed.data.code,
-      name: parsed.data.name,
-      type: parsed.data.type,
-      description: parsed.data.description,
-      filters: parsed.data.filters,
-      productIds: parsed.data.productIds,
+      code: input.code,
+      name: input.name,
+      type: input.type,
+      description: input.description,
+      filters: input.filters,
+      productIds: input.productIds,
       createdBy: ctx.userId,
     })
 

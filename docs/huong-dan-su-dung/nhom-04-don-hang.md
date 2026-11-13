@@ -54,6 +54,9 @@ lịch sử đơn (4.8).
 
 **Lưu ý:** shipper thuê ngoài không có tài khoản thì chỉ ghi tên và số điện thoại vào đơn.
 
+Màn **Đơn cần giao** của Shipper dùng cho đơn ở bảng Điều phối. Đơn Thẻ Chào do Điều phối cập nhật giao: bấm **Giao Ship** (ghi thông tin
+vận chuyển), rồi tải **ảnh giao** khi giao xong.
+
 ### 4.6 Đổi thông tin đơn
 
 1. Trong chi tiết đơn, gửi yêu cầu đổi (địa chỉ, giờ giao, lời thiệp…) kèm lý do.
@@ -129,7 +132,7 @@ bình thường.
 
 ### 4.17 Bàn giao shipper và giao lại
 
-1. Điều phối chọn shipper (ghi tên và số điện thoại), chuyển đơn sang đang giao.
+1. Điều phối chọn shipper (ghi tên và số điện thoại), chuyển đơn sang đang giao. Đơn Thẻ Chào: bấm **Giao Ship** và ghi thông tin vận chuyển.
 2. Giao không được: Hộp việc hiện việc **Giao không thành công — Hẹn giao lại** (hoặc **Liên hệ lại người nhận**); hẹn lại giờ giao rồi điều xe lần nữa.
 
 ### 4.18 Ảnh giao bắt buộc

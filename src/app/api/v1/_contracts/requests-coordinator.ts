@@ -27,12 +27,12 @@ export {
 export const bypassDecisionBody = z.object({
   step: z.enum(["QC", "SHIPPER", "POD"]),
   decision: z.enum(["APPROVE", "REJECT"]),
-  reviewNote: z.string().trim().max(300).optional(),
+  review_note: z.string().trim().max(300).optional(),
 })
 
 // orders/[id]/confirm-delivery/route.ts
 export const confirmDeliveryBody = z.object({
-  confirmWithoutPhoto: z.literal(true),
+  confirm_without_photo: z.literal(true),
   reason: z.string().trim().min(5, "Lý do tối thiểu 5 ký tự").max(300),
 })
 
@@ -49,12 +49,12 @@ const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
 
 // orders/[id]/set-shipper/route.ts
 export const setShipperBody = z.object({
-  shipperName: z.string().trim().min(2, "Tên shipper tối thiểu 2 ký tự").max(80),
-  shipperPhone: z
+  shipper_name: z.string().trim().min(2, "Tên shipper tối thiểu 2 ký tự").max(80),
+  shipper_phone: z
     .string()
     .trim()
     .regex(VIETNAM_PHONE_RE, "Số điện thoại không hợp lệ (vd: 0912345678)"),
-  shipperNote: z.string().trim().max(200).optional(),
+  shipper_note: z.string().trim().max(200).optional(),
 })
 
 // partners/[id]/status/route.ts

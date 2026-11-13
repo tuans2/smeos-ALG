@@ -75,7 +75,7 @@ describe("phí gia công của đơn điều phối chuỗi", () => {
     await setPolicy(a, { method: "TIERED" })
     const orderId = await seedOrder(a)
     const res = await chainDispatch(
-      withSession(`http://localhost/api/v1/greeting-card/orders/${orderId}/chain-dispatch`, a.token, { method: "POST", body: JSON.stringify({ approvedBranchIds: [BRANCH] }) }),
+      withSession(`http://localhost/api/v1/greeting-card/orders/${orderId}/chain-dispatch`, a.token, { method: "POST", body: JSON.stringify({ approved_branch_ids: [BRANCH] }) }),
       params({ id: orderId })
     )
     expect(res.status).toBe(200)
@@ -90,7 +90,7 @@ describe("phí gia công của đơn điều phối chuỗi", () => {
     const res = await confirmDelivery(
       withSession(`http://localhost/api/v1/coordinator/orders/${orderId}/confirm-delivery`, a.token, {
         method: "POST",
-        body: JSON.stringify({ confirmWithoutPhoto: true, reason: "Khách xác nhận qua điện thoại" }),
+        body: JSON.stringify({ confirm_without_photo: true, reason: "Khách xác nhận qua điện thoại" }),
       }),
       params({ id: orderId })
     )
@@ -109,7 +109,7 @@ describe("phí gia công của đơn điều phối chuỗi", () => {
     await confirmDelivery(
       withSession(`http://localhost/api/v1/coordinator/orders/${orderId}/confirm-delivery`, a.token, {
         method: "POST",
-        body: JSON.stringify({ confirmWithoutPhoto: true, reason: "Khách xác nhận qua điện thoại" }),
+        body: JSON.stringify({ confirm_without_photo: true, reason: "Khách xác nhận qua điện thoại" }),
       }),
       params({ id: orderId })
     )

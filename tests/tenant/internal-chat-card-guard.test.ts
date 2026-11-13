@@ -77,7 +77,7 @@ describe("cách ly tenant — thẻ đơn và tin nhắn chat nội bộ", () =>
   it("client không tự gửi được tin hệ thống, thẻ hay đính kèm; không tạo phòng PLATFORM_TENANT", async () => {
     const { conversationId } = await dispatchCard()
     const url = `${BASE}/internal-chat/conversations/${conversationId}/messages`
-    expect((await sendMessage(post(url, partner.token, { content: "Đã nhận", messageType: "SYSTEM_NOTICE" }), params(conversationId))).status).toBe(400)
+    expect((await sendMessage(post(url, partner.token, { content: "Đã nhận", message_type: "SYSTEM_NOTICE" }), params(conversationId))).status).toBe(400)
     expect((await sendMessage(post(url, partner.token, { content: "x", actionPayload: { status: "ACCEPTED" } }), params(conversationId))).status).toBe(400)
     expect((await sendMessage(post(url, partner.token, { content: "x", attachments: ["https://la.example/anh.png"] }), params(conversationId))).status).toBe(400)
     expect((await sendMessage(post(url, partner.token, { content: "Chào chuỗi" }), params(conversationId))).status).toBe(200)

@@ -91,7 +91,7 @@ export function useCatalogItems<TDetail extends { items: Array<{ product: { id: 
       await apiSend(
         `/api/v1/greeting-card/catalogs/${catalogId}/products`,
         method,
-        { productId },
+        { product_id: productId },
         method === "POST" ? "Không thêm được sản phẩm" : "Không xoá được sản phẩm"
       )
       await detail.mutate()

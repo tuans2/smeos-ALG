@@ -109,22 +109,22 @@ describe("hợp đồng — đơn Thẻ chào", () => {
     const id = await newOrder()
     await expectContract(await listOrders(get("?limit=10")), 200, R.gcOrdersResponse, "gc-orders")
     await expectContract(await getVat(get(`/${id}/vat`), ps(id)), 200, R.orderSlipResponse, "gc-slip")
-    await expectContract(await putVat(send(`/${id}/vat`, { enabled: true, rate: 8, companyName: "Công ty A", taxCode: "0123456789" }, "PUT"), ps(id)), 200, R.gcVatResponse, "gc-vat")
+    await expectContract(await putVat(send(`/${id}/vat`, { enabled: true, rate: 8, company_name: "Công ty A", tax_code: "0123456789" }, "PUT"), ps(id)), 200, R.gcVatResponse, "gc-vat")
     // Gate 1: xác nhận tiền trước, rồi mới nhận đơn
-    await expectContract(await confirmPayment(send(`/${id}/confirm-payment`, { amountVnd: 300_000, reference: "CK-1" }), ps(id)), 200, R.paymentConfirmedResponse, "gc-payment")
+    await expectContract(await confirmPayment(send(`/${id}/confirm-payment`, { amount_vnd: 300_000, reference: "CK-1" }), ps(id)), 200, R.paymentConfirmedResponse, "gc-payment")
     await expectContract(await confirmOrder(send(`/${id}/confirm-order`, { note: "Đã gọi khách" }), ps(id)), 200, R.confirmOrderResponse, "gc-confirm-order")
-    await expectContract(await assignFlorist(send(`/${id}/assign-florist`, { floristNote: "Thợ Lan cắm" }), ps(id)), 200, R.orderRefResponse, "gc-assign")
+    await expectContract(await assignFlorist(send(`/${id}/assign-florist`, { florist_note: "Thợ Lan cắm" }), ps(id)), 200, R.orderRefResponse, "gc-assign")
     await expectContract(await craftFee(get(`/${id}/craft-fee`), ps(id)), 200, R.craftFeeResponse, "gc-craft-fee")
-    await expectContract(await productPhoto(send(`/${id}/product-photo`, { skipPhoto: true, skipReason: "Khách không cần ảnh" }), ps(id)), 200, R.orderRefResponse, "gc-product-photo")
+    await expectContract(await productPhoto(send(`/${id}/product-photo`, { skip_photo: true, skip_reason: "Khách không cần ảnh" }), ps(id)), 200, R.orderRefResponse, "gc-product-photo")
     await expectContract(await confirmBalance(send(`/${id}/confirm-balance`, { note: "Khách trả nốt" }), ps(id)), 200, R.balanceConfirmedResponse, "gc-balance")
-    await expectContract(await dispatchShipping(send(`/${id}/dispatch-shipping`, { trackingNote: "Shipper Minh, 0909" }), ps(id)), 200, R.orderRefResponse, "gc-ship")
-    await expectContract(await recipientPhoto(send(`/${id}/recipient-photo`, { skipPhoto: true, skipReason: "Người nhận từ chối chụp" }), ps(id)), 200, R.orderRefResponse, "gc-recipient-photo")
+    await expectContract(await dispatchShipping(send(`/${id}/dispatch-shipping`, { tracking_note: "Shipper Minh, 0909" }), ps(id)), 200, R.orderRefResponse, "gc-ship")
+    await expectContract(await recipientPhoto(send(`/${id}/recipient-photo`, { skip_photo: true, skip_reason: "Người nhận từ chối chụp" }), ps(id)), 200, R.orderRefResponse, "gc-recipient-photo")
   })
 
   it("đề xuất thay mẫu / thay hoa, xin giảm giá, giao lỗi, hoàn tiền, huỷ", async () => {
     const id = await newOrder()
     await expectContract(await substituteOptions(get(`/${id}/substitute`), ps(id)), 200, R.substituteOptionsResponse, "gc-substitute-options")
-    await expectContract(await proposeSubstitute(send(`/${id}/substitute`, { reason: "Hết hồng đỏ", productIds: [alternative] }), ps(id)), 201, R.substituteProposalResponse, "gc-substitute")
+    await expectContract(await proposeSubstitute(send(`/${id}/substitute`, { reason: "Hết hồng đỏ", product_ids: [alternative] }), ps(id)), 201, R.substituteProposalResponse, "gc-substitute")
     const other = await newOrder()
     // Công thức hoa của dòng đơn (bản chụp lúc đặt) — chỉ đổi được hoa phụ
     await prisma.order_items.updateMany({ where: { order_id: other }, data: { metadata: BOM.bom } })
@@ -136,7 +136,7 @@ describe("hợp đồng — đơn Thẻ chào", () => {
       storageKey: `org/${t.organizationId}/khong-san-pham/${randomUUID()}.jpg`, mimeType: "image/jpeg", createdBy: t.userId,
     })
     await expectContract(
-      await proposeFlower(send(`/${other}/flower-substitute`, { reason: "Baby trắng hết hàng", lineIndex, replacementName: "Thạch thảo", photoAssetId: asset.id }), ps(other)),
+      await proposeFlower(send(`/${other}/flower-substitute`, { reason: "Baby trắng hết hàng", line_index: lineIndex, replacement_name: "Thạch thảo", photo_asset_id: asset.id }), ps(other)),
       201,
       R.flowerSubstituteProposalResponse,
       "gc-flower-substitute"
@@ -145,21 +145,21 @@ describe("hợp đồng — đơn Thẻ chào", () => {
 
     const paid = await newOrder()
     for (const [route, path, body] of [
-      [confirmPayment, "confirm-payment", { amountVnd: 1_000_000 }],
+      [confirmPayment, "confirm-payment", { amount_vnd: 1_000_000 }],
       [confirmOrder, "confirm-order", {}],
-      [productPhoto, "product-photo", { skipPhoto: true, skipReason: "Không cần ảnh" }],
-      [dispatchShipping, "dispatch-shipping", { trackingNote: "Shipper" }],
+      [productPhoto, "product-photo", { skip_photo: true, skip_reason: "Không cần ảnh" }],
+      [dispatchShipping, "dispatch-shipping", { tracking_note: "Shipper" }],
     ] as const) {
       expect((await route(send(`/${paid}/${path}`, body), ps(paid))).status, path).toBe(200)
     }
-    await expectContract(await deliveryFailed(send(`/${paid}/delivery-failed`, { reason: "NO_ANSWER", chargeFee: false }), ps(paid)), 200, R.deliveryFailedResponse, "gc-delivery-failed")
-    await expectContract(await refund(send(`/${paid}/refund`, { amountVnd: 100_000, reason: "Giao trễ" }), ps(paid)), 200, R.refundResponse, "gc-refund")
-    await expectContract(await cancel(send(`/${paid}/cancel`, { reason: "Khách huỷ", confirmInTransit: true }), ps(paid)), 200, R.gcCancelResponse, "gc-cancel")
+    await expectContract(await deliveryFailed(send(`/${paid}/delivery-failed`, { reason: "NO_ANSWER", charge_fee: false }), ps(paid)), 200, R.deliveryFailedResponse, "gc-delivery-failed")
+    await expectContract(await refund(send(`/${paid}/refund`, { amount_vnd: 100_000, reason: "Giao trễ" }), ps(paid)), 200, R.refundResponse, "gc-refund")
+    await expectContract(await cancel(send(`/${paid}/cancel`, { reason: "Khách huỷ", confirm_in_transit: true }), ps(paid)), 200, R.gcCancelResponse, "gc-cancel")
   })
 
   it("báo giá đơn chưa có giá, từ chối đơn mới, từ chối báo chuyển khoản, Điều phối duyệt cọc / từ chối nhận", async () => {
     const q = await newOrder(unpriced)
-    await expectContract(await quote(send(`/${q}/quote`, { totalVnd: 1_200_000, reason: "Lẵng lớn" }), ps(q)), 200, R.gcQuoteResponse, "gc-quote")
+    await expectContract(await quote(send(`/${q}/quote`, { total_vnd: 1_200_000, reason: "Lẵng lớn" }), ps(q)), 200, R.gcQuoteResponse, "gc-quote")
     const rejected = await newOrder()
     await expectContract(await rejectNew(send(`/${rejected}/confirm-order`, { reason: "Hết hàng" }, "DELETE"), ps(rejected)), 200, R.rejectProposalResponse, "gc-reject-new")
     const reported = await newOrder()
@@ -183,7 +183,7 @@ describe("hợp đồng — đơn Thẻ chào", () => {
     await expectContract(await accept(acceptReq, ps(accepted)), 200, R.orderRefResponse, "gc-accept")
     await prisma.organizations.update({ where: { id: t.organizationId }, data: { settings: settings as object } })
     const declined = await newOrder()
-    await confirmPayment(send(`/${declined}/confirm-payment`, { amountVnd: 300_000 }), ps(declined))
+    await confirmPayment(send(`/${declined}/confirm-payment`, { amount_vnd: 300_000 }), ps(declined))
     await expectContract(await rejectOrder(send(`/${declined}/reject`, { reason: "Xưởng kín lịch" }), ps(declined)), 200, R.rejectProposalResponse, "gc-reject")
   })
 
@@ -192,8 +192,8 @@ describe("hợp đồng — đơn Thẻ chào", () => {
     const branch = await seedChainBranch(t, "CN-Q1", "Chi nhánh Quận 1")
     expect(branch).toBeTruthy()
     const id = await newOrder()
-    await confirmPayment(send(`/${id}/confirm-payment`, { amountVnd: 300_000, manualDispatch: true }), ps(id))
+    await confirmPayment(send(`/${id}/confirm-payment`, { amount_vnd: 300_000, manual_dispatch: true }), ps(id))
     await expectContract(await dispatchState(get(`/${id}/chain-dispatch`), ps(id)), 200, R.chainDispatchStateResponse, "gc-dispatch-state")
-    await expectContract(await startDispatch(send(`/${id}/chain-dispatch`, { approvedBranchIds: ["CN-Q1"], subcontractPriceVnd: 200_000 }), ps(id)), 200, R.chainDispatchStartResponse, "gc-dispatch-start")
+    await expectContract(await startDispatch(send(`/${id}/chain-dispatch`, { approved_branch_ids: ["CN-Q1"], subcontract_price_vnd: 200_000 }), ps(id)), 200, R.chainDispatchStartResponse, "gc-dispatch-start")
   })
 })

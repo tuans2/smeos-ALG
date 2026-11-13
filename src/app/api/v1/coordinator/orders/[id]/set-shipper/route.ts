@@ -21,6 +21,7 @@ import {
 import { queueStaffNotification } from "@/modules/greeting-card/use-cases/notify-staff"
 import { setShipperBody } from "@/app/api/v1/_contracts/requests-coordinator"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 export const POST = defineRoute({
   auth: { kind: "tenant", capability: "R5" },
@@ -38,8 +39,9 @@ export const POST = defineRoute({
         Object.fromEntries(parsed.error.issues.map((i) => [i.path[0] ?? "body", i.message]))
       )
     }
+    const input = camelKeys(parsed.data)
 
-    const { shipperName, shipperPhone, shipperNote } = parsed.data
+    const { shipperName, shipperPhone, shipperNote } = input
 
     // Idempotent: nếu đã có shipper info → trả thông báo đã có
     const coordMeta = (order.coordination?.metadata as Record<string, unknown> | null) ?? {}

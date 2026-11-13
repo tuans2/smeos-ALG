@@ -137,7 +137,7 @@ describe("greeting-card: multi-view theo dõi tiến độ", () => {
     const kanban = await (await trackingGet(withSession("http://localhost/api/v1/greeting-card/tracking?view=kanban", a.token))).json()
     expect(Array.isArray(kanban.data.columns)).toBe(true)
 
-    const tl = await (await timelineGet(withSession(`http://localhost/api/v1/greeting-card/tracking/timeline?orderId=${order.orderId}`, a.token))).json()
+    const tl = await (await timelineGet(withSession(`http://localhost/api/v1/greeting-card/tracking/timeline?order_id=${order.orderId}`, a.token))).json()
     expect(Array.isArray(tl.data)).toBe(true)
     expect(tl.segments.length).toBeGreaterThan(0)
   })

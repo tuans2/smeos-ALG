@@ -4,6 +4,7 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { chainBranchPatchBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * PATCH /api/v1/greeting-card/chain-branches/[branchCode]  `{ isActive }`
@@ -14,11 +15,12 @@ export const PATCH = defineRoute({
   handler: async ({ request, ctx, params }) => {
     const parsed = chainBranchPatchBody.safeParse(await request.json().catch(() => ({})))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
 
     const { branchCode } = params as { branchCode: string }
-    const updated = await new ChainBranchRepository().setActive(ctx.organizationId, branchCode, parsed.data.isActive)
+    const updated = await new ChainBranchRepository().setActive(ctx.organizationId, branchCode, input.isActive)
     if (!updated) throw notFound()
-    return jsonResponse({ data: { branchCode, isActive: parsed.data.isActive } })
+    return jsonResponse({ data: { branchCode, isActive: input.isActive } })
   },
 })
 

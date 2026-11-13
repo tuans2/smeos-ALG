@@ -48,7 +48,7 @@ export function LinkCustomerCard({
       const res = await apiSend<{ data: { customerName: string; customerPhone: string | null } }>(
         `/api/v1/greeting-card/send-links/${target.sessionId}/customer`,
         "PATCH",
-        { customerName: name.trim(), customerPhone: phone.trim() || null },
+        { customer_name: name.trim(), customer_phone: phone.trim() || null },
       )
       onSaved?.(res.data)
       setEditing(false)

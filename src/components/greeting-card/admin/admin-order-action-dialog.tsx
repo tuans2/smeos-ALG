@@ -146,12 +146,12 @@ export function AdminOrderActionDialog({
     try {
       if (type === "quote") {
         await apiSend(`/api/v1/greeting-card/orders/${order.id}/quote`, "POST", {
-          totalVnd: amountVnd, ...(text.trim() ? { reason: text.trim() } : {}),
+          total_vnd: amountVnd, ...(text.trim() ? { reason: text.trim() } : {}),
         }, "Không lưu được báo giá")
         onDone({ message: `Đã báo giá ${vnd(amountVnd)} cho đơn ${order.code}. Khách mở lại link sẽ thấy mã QR thanh toán.` })
       } else if (type === "collect") {
         await apiSend(`/api/v1/greeting-card/orders/${order.id}/confirm-payment`, "POST", {
-          amountVnd, ...(text.trim() ? { reference: text.trim() } : {}),
+          amount_vnd: amountVnd, ...(text.trim() ? { reference: text.trim() } : {}),
         }, "Không ghi nhận được thanh toán")
         onDone({
           message: `Đã ghi nhận ${vnd(amountVnd)} cho đơn ${order.code}.`,
@@ -163,10 +163,10 @@ export function AdminOrderActionDialog({
           }),
         })
       } else if (type === "cancel") {
-        await apiSend(`/api/v1/greeting-card/orders/${order.id}/cancel`, "POST", { reason: text, ...(inTransit ? { confirmInTransit: true } : {}) }, "Không huỷ được đơn")
+        await apiSend(`/api/v1/greeting-card/orders/${order.id}/cancel`, "POST", { reason: text, ...(inTransit ? { confirm_in_transit: true } : {}) }, "Không huỷ được đơn")
         onDone({ message: `Đã huỷ đơn ${order.code}${order.paid_vnd > 0 ? " — hoàn tiền là bước riêng: bấm \"Hoàn tiền\" khi đã chuyển trả khách" : ""}.` })
       } else {
-        await apiSend(`/api/v1/greeting-card/orders/${order.id}/refund`, "POST", { amountVnd, reason: text }, "Không ghi nhận được hoàn tiền")
+        await apiSend(`/api/v1/greeting-card/orders/${order.id}/refund`, "POST", { amount_vnd: amountVnd, reason: text }, "Không ghi nhận được hoàn tiền")
         onDone({ message: `Đã ghi nhận hoàn ${vnd(amountVnd)} cho đơn ${order.code}.` })
       }
     } catch (err) {

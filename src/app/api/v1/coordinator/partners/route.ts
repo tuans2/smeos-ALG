@@ -3,6 +3,7 @@ import { validationFailed } from "@/core/http/errors"
 import { createPartnerSchema } from "@/modules/coordinator/adapters/http-schemas"
 import { createPartner, listPartners } from "@/modules/coordinator/use-cases/manage-partners"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * Đối tác gia công của Điều phối. Cửa hàng đối tác của chuỗi ở `/coordinator/chain-partners` (tách 12/11/2026 —
@@ -21,6 +22,6 @@ export const POST = defineRoute({
   handler: async ({ request, ctx }) => {
     const parsed = createPartnerSchema.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    return jsonResponse({ data: await createPartner(ctx, parsed.data) }, { status: 201 })
+    return jsonResponse({ data: await createPartner(ctx, camelKeys(parsed.data)) }, { status: 201 })
   },
 })

@@ -46,7 +46,7 @@ export function useDisplaySettings() {
     const res = await fetch(API, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ templateId, fields, pricing: next.pricing, thankYou: { enabled: next.thankYou.enabled, percent: next.thankYou.percent } }),
+      body: JSON.stringify({ template_id: templateId, fields, pricing: next.pricing, thank_you: { enabled: next.thankYou.enabled, percent: next.thankYou.percent } }),
     })
     if (!res.ok) throw new Error("Không lưu được cài đặt hiển thị. Vui lòng thử lại.")
     const j = (await res.json()) as { data: { settings: DisplaySettings; pricing: PriceVisibility; thankYou: ThankYouPolicy } }

@@ -297,29 +297,20 @@ không sinh check nào thì không deploy. Ruleset `main` ở P0-03 vẫn nên b
 
 ## 12. Bảng theo dõi tiến độ
 
-Trạng thái: ⬜ chưa làm · 🟨 đang làm · 🟦 chờ PO · ✅ xong · ⛔ bị chặn.
+Trạng thái: ⬜ chưa làm · 🟨 một phần · 🟦 mã xong, chờ PO/thao tác tay · ✅ xong · 🔁 quyết định PO thay hướng · ⛔ bị chặn.
 
-| Mã | Trạng thái | PR | Ngày xong | Ghi chú |
-|---|---|---|---|---|
-| P0-01 | 🟦 | nhánh `Nangcap_kientruc_toanhethong` `c15f2d6c` | | chờ CI + PO |
-| P0-02 | 🟦 | `455a48b6` | | cần 4 secret deploy hook (P0-03) trước khi merge |
-| P0-03 | ⬜ | — | | [TAY] |
-| P0-04 | 🟦 | `cc58a058` | | |
-| P0-05 | 🟦 | `3a536cd5` | | PO xác nhận `STORAGE_*` trên Render trước khi merge |
-| P0-06 | 🟦 | `33ceb37d` | | |
-| P0-07 | 🟦 | — | | không có lỗi có sẵn ngoài P0-01 |
-| P0-08 | 🟦 | `5e31cb87` | | |
-| P0-09 / S-00 | ⬜ | — | | [TAY] ngày nộp: … |
-| P1-01 … P1-07 | ⬜ | | | |
-| P2-A1 … A11 | ⬜ | | | |
-| P2-B1 … B5 | ⬜ | | | |
-| P2-C1 … C10 | ⬜ | | | |
-| P2-D1, D2 | ⬜ | | | |
-| P2-E1 … E3 | ⬜ | | | |
-| P2-F1 … F4 | ⬜ | | | |
-| P2-G1, G2, G4 | ⬜ | | | |
-| S-02 … S-16 | ⬜ | | | |
-| P3-01 … P3-09 | ⬜ | | | |
-| M1 · M2 · M3 · M4 | ⬜ | — | | |
+**Đối chiếu với mã 13/11/2026:** chi tiết từng hạng mục và bằng chứng ở `21_CHECKLIST_RECONCILIATION_2026-11-13.md`; bảng dưới là bản rút gọn. Ô tick ở §2–§9 chưa sửa — tài liệu `21` là nguồn đúng cho trạng thái hiện tại.
+
+| Nhóm | ✅ | 🟨 | 🟦 | ⬜ | 🔁 | Còn chặn mốc |
+|---|---|---|---|---|---|---|
+| GĐ0 (P0-01…09) | 01, 04, 06, 07, 08 | — | 02, 05 | 03, 09 | — | [TAY] Render/GitHub, duyệt app |
+| GĐ1 (P1-01…07) | — | 01, 04, 05 | 07 | 02, 03, 06 | — | smoke, Sentry, PITR, cảnh báo vận hành |
+| GĐ2-A (A1…A11) | A2, A3, A4, A11 | A5, A7, A8, A9 | — | A6, A10 | A1 (D-48) | khuôn UX theo mã quyền, khoá công cụ API, ma trận thanh toán |
+| GĐ2-B (B1…B5) | — | — | — | B1…B5 | — | toàn nhóm |
+| GĐ2-C (C1…C10) | C8, C9, C10 | C1, C2, C4, C7 | — | C3, C5, C6 | — | kênh chưa qua Hub, Telegram ba bản |
+| GĐ2-D/E/F/G | E1, E2, F1, F4 | — | F2 | D1, D2, E3, F3, G1, G2, G4 | — | AI ở worker, ASVS, vệ sinh lược đồ, gỡ LocalBudd |
+| Workstream S | S-01…04, S-06, S-10 | S-05, S-16 | S-07…09 | S-00, S-11…15 | — | UI `/lich-dang` còn gọi SocialFlow |
+| GĐ3 (P3-01…09) | 06 | 02, 03, 07 | — | 01, 04, 05, 08, 09 | — | gói bàn giao, kiểm tải |
+| M1 · M2 · M3 · M4 | — | — | — | chưa đạt | — | xem `21` mục "Tổng hợp theo cổng mốc" |
 
 Gộp dòng để gọn; khi bắt đầu một nhóm, tách thành từng dòng hạng mục.

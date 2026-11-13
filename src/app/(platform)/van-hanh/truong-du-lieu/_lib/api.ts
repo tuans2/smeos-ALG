@@ -3,6 +3,8 @@
 // `src/modules/field-platform/infra/row-mappers.ts` — sửa một bên thì sửa
 // bên kia theo.
 
+import { snakeKeys } from "@/lib/case-keys"
+
 export type FieldAudience = "INTERNAL" | "PARTNER" | "SHIPPER" | "CUSTOMER"
 export const ALL_AUDIENCES: FieldAudience[] = ["INTERNAL", "PARTNER", "SHIPPER", "CUSTOMER"]
 export type FieldVisibilityMap = Partial<Record<FieldAudience, boolean>>
@@ -138,28 +140,28 @@ export const fieldPlatformApi = {
   listFields: (entity?: FieldEntityKind) =>
     call<FieldDefinitionApiView[]>(`/api/v1/platform/fields${entity ? `?entity=${entity}` : ""}`),
   updateFieldConfig: (body: Record<string, unknown>) =>
-    call<FieldDefinitionApiView>("/api/v1/platform/fields", { method: "PATCH", body: JSON.stringify(body) }),
+    call<FieldDefinitionApiView>("/api/v1/platform/fields", { method: "PATCH", body: JSON.stringify(snakeKeys(body)) }),
   createCustomField: (body: Record<string, unknown>) =>
-    call<FieldDefinitionApiView>("/api/v1/platform/fields", { method: "POST", body: JSON.stringify(body) }),
+    call<FieldDefinitionApiView>("/api/v1/platform/fields", { method: "POST", body: JSON.stringify(snakeKeys(body)) }),
   deactivateField: (key: string) =>
     call<FieldDefinitionApiView>(`/api/v1/platform/fields/${encodeURIComponent(key)}/deactivate`, { method: "POST" }),
   listCatalogs: () => call<CatalogApiView[]>("/api/v1/platform/catalogs"),
   addCatalogValue: (catalogKey: string, body: Record<string, unknown>) =>
     call<CatalogValueApiView>(`/api/v1/platform/catalogs/${encodeURIComponent(catalogKey)}/values`, {
       method: "POST",
-      body: JSON.stringify(body),
+      body: JSON.stringify(snakeKeys(body)),
     }),
   listBehaviorCodes: (kind: string) =>
     call<{ kind: string; codes: string[] }>(`/api/v1/platform/behaviors?kind=${encodeURIComponent(kind)}`),
   setFieldOverride: (organizationId: string, body: Record<string, unknown>) =>
     call<FieldConfigOverrideApiView>(`/api/v1/platform/organizations/${organizationId}/field-overrides`, {
       method: "PUT",
-      body: JSON.stringify({ target: "field", ...body }),
+      body: JSON.stringify(snakeKeys({ target: "field", ...body })),
     }),
   setCatalogValueOverride: (organizationId: string, body: Record<string, unknown>) =>
     call<FieldConfigOverrideApiView>(`/api/v1/platform/organizations/${organizationId}/field-overrides`, {
       method: "PUT",
-      body: JSON.stringify({ target: "catalogValue", ...body }),
+      body: JSON.stringify(snakeKeys({ target: "catalogValue", ...body })),
     }),
   listOrganizations: () => call<PlatformOrganizationSummary[]>("/api/v1/platform/organizations"),
   previewOrgConfig: (organizationId: string, entity?: FieldEntityKind) =>

@@ -15,6 +15,9 @@ export type Tenant = {
   readonly ctx: TenantContext
 }
 
+/** Mật khẩu dùng chung của tài khoản thử trong bộ test (không phải mật khẩu thật). */
+export const TEST_PASSWORD = "mat-khau-du-dai"
+
 /**
  * Dựng một tổ chức hoàn chỉnh qua đúng luồng đăng ký thật, để bộ test cách ly
  * chạy trên dữ liệu do chính hệ thống sinh ra chứ không do test cấy vào.
@@ -22,7 +25,7 @@ export type Tenant = {
 export async function createTenant(label: string): Promise<Tenant> {
   const result = await signUp({
     email: `${label}@vi-du.test`,
-    password: "mat-khau-du-dai",
+    password: TEST_PASSWORD,
     name: `Người dùng ${label}`,
     organizationName: `Tiệm hoa ${label}`,
   })

@@ -8,6 +8,7 @@ import { roleOf } from "@/modules/greeting-card/domain/internal-message"
 import { assertOrderInScope } from "@/modules/greeting-card/use-cases/order-scope"
 import { cancellationRequestBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * `POST /api/v1/greeting-card/cancellation-requests`
@@ -21,17 +22,18 @@ export const POST = defineRoute({
 
     const parsed = cancellationRequestBody.safeParse(await req.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
 
     // Sale "chỉ khách của mình" không đề xuất huỷ/hoàn đơn của sale khác (404 như mọi thao tác tiền)
-    await assertOrderInScope(ctx, parsed.data.orderId)
+    await assertOrderInScope(ctx, input.orderId)
     const result = await new CancellationRepository().createProposal(ctx, {
-      orderId: parsed.data.orderId,
+      orderId: input.orderId,
       senderRole: senderRole ?? "SALE",
       proposal: {
-        type: parsed.data.type,
-        reason: parsed.data.reason,
-        refundAmountVnd: parsed.data.refundAmountVnd,
-        note: parsed.data.note,
+        type: input.type,
+        reason: input.reason,
+        refundAmountVnd: input.refundAmountVnd,
+        note: input.note,
       },
     })
 

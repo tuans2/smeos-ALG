@@ -29,7 +29,7 @@ export const step04ProductionContract = defineStep({
   input: Step04ProductionInputSchema,
   output: Step04ProductionOutputSchema,
   examples: {
-    input: { action: "MARK_READY", progressPercent: 100, finishedAssetIds: ["a3c1d2e4-5f60-4718-9a2b-3c4d5e6f7a8b"] },
+    input: { action: "MARK_READY", progress_percent: 100, finished_asset_ids: ["a3c1d2e4-5f60-4718-9a2b-3c4d5e6f7a8b"] },
     output: { order: exampleOrderView({ stage: "QUALITY_CHECK", stageLabel: "Chờ kiểm định QC", productionProgress: 100, finishedImageUrls: ["/api/v1/storage/org/…/a3c1d2e4.jpg?exp=…&sig=…"] }) },
   },
 })

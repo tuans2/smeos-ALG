@@ -11,6 +11,7 @@ import type { CoordinatorOrderView } from "@/modules/coordinator/use-cases/prese
 import type { PartnerView } from "@/modules/coordinator/use-cases/manage-partners"
 import type { OrderPaymentView } from "@/modules/coordinator/use-cases/record-payment"
 import type { TenantCatalogView } from "@/modules/field-platform/use-cases/list-catalogs-for-tenant"
+import { snakeKeys } from "@/lib/case-keys"
 
 export type CoordinationOrder = CoordinatorOrderView
 export type CoordinationPartner = PartnerView
@@ -48,7 +49,8 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
 }
 
 const BASE = "/api/v1/coordinator"
-const post = (body: unknown): RequestInit => ({ method: "POST", body: JSON.stringify(body) })
+/** Thân gửi máy chủ: khoá cấp đầu snake_case (PO D-69); object lồng giữ nguyên. */
+const post = (body: object): RequestInit => ({ method: "POST", body: JSON.stringify(snakeKeys(body)) })
 
 async function orderCall(url: string, init: RequestInit): Promise<CoordinationOrder> {
   return (await request<{ order: CoordinationOrder }>(url, init)).order
@@ -107,7 +109,7 @@ export const coordinatorApi = {
   getOrder: (id: string) => orderCall(`${BASE}/orders/${id}`, { method: "GET" }),
   createOrder: (body: CreateOrderRequest) => orderCall(`${BASE}/orders`, post(body)),
   updateStage: (id: string, stage: string, nextAction?: string) =>
-    orderCall(`${BASE}/orders/${id}/stage`, { method: "PATCH", body: JSON.stringify({ stage, nextAction }) }),
+    orderCall(`${BASE}/orders/${id}/stage`, { method: "PATCH", body: JSON.stringify({ stage, next_action: nextAction }) }),
   assignPartner: (
     id: string,
     body: { partnerId: string; notes?: string; overrideCapacity?: boolean; agreedCraftFeeVnd?: number }
@@ -143,7 +145,7 @@ export const coordinatorApi = {
     orderCall(`${BASE}/orders/${id}/close`, post(body)),
   cancel: (id: string, reason: string) => orderCall(`${BASE}/orders/${id}/cancel`, post({ reason })),
   updateCustomFields: (id: string, customFields: Record<string, unknown>) =>
-    orderCall(`${BASE}/orders/${id}/custom-fields`, { method: "PATCH", body: JSON.stringify({ customFields }) }),
+    orderCall(`${BASE}/orders/${id}/custom-fields`, { method: "PATCH", body: JSON.stringify({ custom_fields: customFields }) }),
   /** ĐP-4a.3 (26/09/2026) — ghi một dòng sổ thu (cọc/thu nốt/hoàn tiền); trả đơn đã cập nhật (paidVnd/balanceVnd/paymentStatus). */
   recordPayment: (id: string, body: RecordPaymentBody) => orderCall(`${BASE}/orders/${id}/payments`, post(body)),
   /** Điều hành xác nhận / từ chối khoản Sale-Điều phối đã ghi (checklist ALG 1.16); trả đơn đã cập nhật. */

@@ -54,7 +54,7 @@ describe("greeting-card: chỉ Điều hành xác nhận tiền (R11)", () => {
       const staff = await addStaffWithSession(a, role, role)
       const confirm = await confirmPost(post(`/greeting-card/orders/${orderId}/confirm-payment`, staff.token), params(orderId))
       expect(confirm.status).toBe(403)
-      const quote = await quotePost(post(`/greeting-card/orders/${orderId}/quote`, staff.token, { totalVnd: 900_000 }), params(orderId))
+      const quote = await quotePost(post(`/greeting-card/orders/${orderId}/quote`, staff.token, { total_vnd: 900_000 }), params(orderId))
       expect(quote.status).toBe(403)
       const events = await paymentEventsGet(withSession(url("/greeting-card/payment-events"), staff.token))
       expect(events.status).toBe(403)

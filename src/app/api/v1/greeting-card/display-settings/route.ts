@@ -5,6 +5,7 @@ import { getDisplaySettings, updateDisplaySettings } from "@/modules/greeting-ca
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { displaySettingsBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /** GET — trường thông tin hiển thị theo từng mẫu Thẻ chào (L1, như xem bộ sưu tập). */
 export const GET = defineRoute({
@@ -21,6 +22,7 @@ export const PUT = defineRoute({
     assertCanEditSharedDisplay(ctx)
     const parsed = displaySettingsBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    return jsonResponse({ data: await updateDisplaySettings(ctx, parsed.data) })
+    const input = camelKeys(parsed.data)
+    return jsonResponse({ data: await updateDisplaySettings(ctx, input) })
   },
 })

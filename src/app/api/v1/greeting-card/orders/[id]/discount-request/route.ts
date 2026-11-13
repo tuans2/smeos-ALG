@@ -4,6 +4,7 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { requestDiscount } from "@/modules/greeting-card/use-cases/discount-requests"
 import { discountRequestBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /** POST /api/v1/greeting-card/orders/[id]/discount-request — sale xin giảm giá, gửi thẳng Điều hành. */
 export const POST = defineRoute({
@@ -12,7 +13,8 @@ export const POST = defineRoute({
     const { id } = params as { id: string }
     const parsed = discountRequestBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    const { reason, ...ask } = parsed.data
+    const input = camelKeys(parsed.data)
+    const { reason, ...ask } = input
     return jsonResponse({ data: await requestDiscount(ctx, { orderId: id, ask, reason }) }, { status: 201 })
   },
 })

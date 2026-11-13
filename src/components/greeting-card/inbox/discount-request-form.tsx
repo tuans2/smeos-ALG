@@ -21,7 +21,7 @@ export function DiscountRequestForm({ orderId, onSent }: { orderId: string; onSe
     setError(null)
     try {
       await apiSend(`/api/v1/greeting-card/orders/${orderId}/discount-request`, "POST", {
-        ...(unit === "PERCENT" ? { percent: n } : { amountVnd: n }), reason: reason.trim(),
+        ...(unit === "PERCENT" ? { percent: n } : { amount_vnd: n }), reason: reason.trim(),
       }, "Không gửi được yêu cầu giảm giá")
       setValue("")
       setReason("")

@@ -29,7 +29,7 @@ export const step03AssignPartnerContract = defineStep({
   input: Step03AssignPartnerInputSchema,
   output: Step03AssignPartnerOutputSchema,
   examples: {
-    input: { partnerId: "0b7f4a52-2c1e-4a8f-9c3d-5e6f7a8b9c0d", notes: "Ưu tiên hồng nhập sáng nay" },
+    input: { partner_id: "0b7f4a52-2c1e-4a8f-9c3d-5e6f7a8b9c0d", notes: "Ưu tiên hồng nhập sáng nay" },
     output: { order: exampleOrderView({ stage: "IN_PRODUCTION", stageLabel: "Đang chế tác", partner: { id: "0b7f4a52-2c1e-4a8f-9c3d-5e6f7a8b9c0d", name: "Flora Boutique Ba Đình", phone: "0912345678" }, partnerName: "Flora Boutique Ba Đình", nextAction: "Xưởng Flora Boutique Ba Đình đang cắm theo BOM" }) },
   },
 })

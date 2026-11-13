@@ -33,7 +33,7 @@ export function TelegramLinkedChatCard({
     if (!(await confirm({ title: `Gỡ "${chat.title}"?`, consequence: "Bot sẽ không gửi tin tới đây nữa. Muốn dùng lại, gửi mã liên kết vào đó rồi quét lại.", confirmLabel: "Gỡ liên kết", tone: "danger" }))) return
     setRemoving(true)
     try {
-      await apiSend(`/api/v1/greeting-card/integrations/telegram-dispatch?chatId=${encodeURIComponent(chat.id)}`, "DELETE", undefined, "Không gỡ được")
+      await apiSend(`/api/v1/greeting-card/integrations/telegram-dispatch?chat_id=${encodeURIComponent(chat.id)}`, "DELETE", undefined, "Không gỡ được")
       onRemoved()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Không gỡ được")

@@ -87,7 +87,7 @@ export function TelegramDispatchConnector() {
         "/api/v1/greeting-card/integrations/telegram-dispatch",
         "POST",
         {
-          chatId: testChatId.trim(),
+          chat_id: testChatId.trim(),
           message: testMessage.trim() || undefined,
         },
         "Gửi tin nhắn Telegram không thành công"

@@ -63,7 +63,7 @@ export function EvidenceTimelineDiagram({
   const orderTerms = getIndustryOrderTerms(organization?.industry)
   const [copied, setCopied] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
-  const qs = orderId ? `orderId=${encodeURIComponent(orderId)}` : `sessionId=${encodeURIComponent(sessionId ?? "")}`
+  const qs = orderId ? `order_id=${encodeURIComponent(orderId)}` : `session_id=${encodeURIComponent(sessionId ?? "")}`
   const { data, isLoading } = useApi<TimelineResponse>(`/api/v1/greeting-card/tracking/timeline?${qs}`)
 
   const events = data?.data ?? []

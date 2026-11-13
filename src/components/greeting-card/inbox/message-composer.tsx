@@ -40,11 +40,11 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
     const [kind, value] = to.split(":")
     try {
       await apiSend("/api/v1/greeting-card/messages", "POST", {
-        ...(target.orderId ? { orderId: target.orderId } : { sessionId: target.sessionId }),
-        stepKey,
+        ...(target.orderId ? { order_id: target.orderId } : { session_id: target.sessionId }),
+        step_key: stepKey,
         to: kind === "ROLE" ? { kind, role: value } : kind === "USER" ? { kind, userId: value } : { kind: "OWNER_SALE" },
         body: text,
-        ...(replyTo ? { replyToId: replyTo.id } : {}),
+        ...(replyTo ? { reply_to_id: replyTo.id } : {}),
       }, "Không gửi được tin nhắn")
       setBody("")
       onCancelReply()

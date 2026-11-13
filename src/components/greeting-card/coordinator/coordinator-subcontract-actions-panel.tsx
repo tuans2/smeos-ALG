@@ -230,7 +230,7 @@ function M3SetShipperAction({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ shipperName: name, shipperPhone: phone, shipperNote: note }),
+          body: JSON.stringify({ shipper_name: name, shipper_phone: phone, shipper_note: note }),
         }
       )
       if (!res.ok) throw new Error(await readApiError(res, "Lỗi nhập shipper"))
@@ -349,7 +349,7 @@ function M4ConfirmDeliveryAction({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ confirmWithoutPhoto: true, reason }),
+          body: JSON.stringify({ confirm_without_photo: true, reason }),
         }
       )
       if (!res.ok) throw new Error(await readApiError(res, "Lỗi xác nhận"))

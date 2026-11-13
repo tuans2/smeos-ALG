@@ -7,6 +7,7 @@ import { parseListQuery, toPage } from "@/modules/greeting-card/contracts/list-q
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
 import { createSendLinkBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 const SESSION_STATUSES = [
   "CREATED", "OPENED", "BROWSING", "SELECTED", "ORDER_SUBMITTED", "PAYMENT_REPORTED", "COMPLETED",
@@ -20,19 +21,20 @@ export const POST = defineRoute({
     if (!parsed.success) {
       throw validationFailed({ issues: parsed.error.issues })
     }
+    const input = camelKeys(parsed.data)
 
     const result = await createSendLink(ctx, {
-      catalogId: parsed.data.catalogId,
-      catalogCode: parsed.data.catalogCode,
-      customerName: parsed.data.customerName,
-      customerPhone: parsed.data.customerPhone,
-      prefix: parsed.data.prefix,
-      customCatalog: parsed.data.customCatalog
+      catalogId: input.catalogId,
+      catalogCode: input.catalogCode,
+      customerName: input.customerName,
+      customerPhone: input.customerPhone,
+      prefix: input.prefix,
+      customCatalog: input.customCatalog
         ? {
-            name: parsed.data.customCatalog.name,
-            description: parsed.data.customCatalog.description,
-            filters: parsed.data.customCatalog.filters,
-            productIds: parsed.data.customCatalog.productIds,
+            name: input.customCatalog.name,
+            description: input.customCatalog.description,
+            filters: input.customCatalog.filters,
+            productIds: input.customCatalog.productIds,
           }
         : undefined,
     })

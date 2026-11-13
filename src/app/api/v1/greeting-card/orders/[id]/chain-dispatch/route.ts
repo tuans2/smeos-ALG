@@ -8,6 +8,7 @@ import { listLinkedTelegramChatIds } from "@/modules/greeting-card/infra/telegra
 import { rankBranchesForOrder, startChainDispatch } from "@/modules/greeting-card/use-cases/start-chain-dispatch"
 import { chainDispatchBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 type RouteCtx = { params: Promise<{ id: string }> }
 
@@ -88,8 +89,9 @@ export const POST = defineRoute({
     const body = await request.json().catch(() => ({}))
     const parsed = chainDispatchBody.safeParse(body)
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
 
-    const { approvedBranchIds, subcontractPriceVnd } = parsed.data
+    const { approvedBranchIds, subcontractPriceVnd } = input
 
     const result = await startChainDispatch(ctx, id, { approvedBranchIds, subcontractPriceVnd })
     return jsonResponse({ data: result })

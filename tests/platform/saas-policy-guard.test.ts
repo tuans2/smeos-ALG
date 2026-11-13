@@ -12,7 +12,7 @@ import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
 const BASE = "http://localhost/api/v1"
 
 /**
- * Chính sách kênh SaaS nhận `targetOrganizationId` trong body — trước đây chỉ gác bằng mã R2
+ * Chính sách kênh SaaS nhận `target_organization_id` trong body — trước đây chỉ gác bằng mã R2
  * của tenant, nên chủ tiệm A sửa được kênh của tiệm B (rà soát 21/10/2026).
  */
 describe("chính sách kênh thông báo SaaS chỉ dành cho người vận hành nền tảng", () => {
@@ -35,7 +35,7 @@ describe("chính sách kênh thông báo SaaS chỉ dành cho người vận hà
   function policyRequest(token: string): Request {
     return withSession(`${BASE}/greeting-card/integrations/staff-notifications/saas-policy`, token, {
       method: "PUT",
-      body: JSON.stringify({ targetOrganizationId: b.organizationId, allowedChannels: ["TELEGRAM", "SMS"] }),
+      body: JSON.stringify({ target_organization_id: b.organizationId, allowed_channels: ["TELEGRAM", "SMS"] }),
     })
   }
   // @release-strip-end

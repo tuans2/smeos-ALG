@@ -34,7 +34,7 @@
         "CANCELLED"
       ]
     },
-    "nextAction": {
+    "next_action": {
       "type": "string",
       "maxLength": 300
     }
@@ -45,7 +45,7 @@
   "examples": [
     {
       "stage": "PLANNING",
-      "nextAction": "Chốt giờ lấy hàng 16:30"
+      "next_action": "Chốt giờ lấy hàng 16:30"
     }
   ]
 }

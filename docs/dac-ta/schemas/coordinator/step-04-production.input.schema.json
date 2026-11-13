@@ -26,12 +26,12 @@
         "REPORT_MATERIAL_ISSUE"
       ]
     },
-    "progressPercent": {
+    "progress_percent": {
       "type": "integer",
       "minimum": 0,
       "maximum": 100
     },
-    "finishedAssetIds": {
+    "finished_asset_ids": {
       "maxItems": 10,
       "type": "array",
       "items": {
@@ -40,20 +40,20 @@
         "maxLength": 64
       }
     },
-    "issueNote": {
+    "issue_note": {
       "type": "string",
       "maxLength": 1000
     }
   },
   "required": [
     "action",
-    "progressPercent"
+    "progress_percent"
   ],
   "examples": [
     {
       "action": "MARK_READY",
-      "progressPercent": 100,
-      "finishedAssetIds": [
+      "progress_percent": 100,
+      "finished_asset_ids": [
         "a3c1d2e4-5f60-4718-9a2b-3c4d5e6f7a8b"
       ]
     }

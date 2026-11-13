@@ -97,7 +97,7 @@ describe("chi nhánh điều phối chuỗi (branches nhận đơn)", () => {
       patchBranch(
         withSession(`http://localhost/api/v1/greeting-card/chain-branches/${code}`, tenant.token, {
           method: "PATCH",
-          body: JSON.stringify({ isActive: false }),
+          body: JSON.stringify({ is_active: false }),
         }),
         { params: Promise.resolve({ branchCode: code }) }
       )

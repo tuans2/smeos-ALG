@@ -4,6 +4,7 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { proposeSubstitute, substituteOptions } from "@/modules/greeting-card/use-cases/substitute"
 import { substituteBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * GET /api/v1/greeting-card/orders/[id]/substitute — mẫu đang đặt, các mẫu còn bán trong cùng bộ
@@ -27,7 +28,8 @@ export const POST = defineRoute({
     const { id } = params as { id: string }
     const parsed = substituteBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    return jsonResponse({ data: await proposeSubstitute(ctx, id, parsed.data) }, { status: 201 })
+    const input = camelKeys(parsed.data)
+    return jsonResponse({ data: await proposeSubstitute(ctx, id, input) }, { status: 201 })
   },
 })
 

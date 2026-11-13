@@ -4,6 +4,7 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { createShareLink, listShareLinks } from "@/modules/greeting-card/use-cases/share-links"
 import { shareLinkBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /** GET /api/v1/greeting-card/share-links — link bộ sưu tập đã sao chép (30 ngày) kèm số khách mở, số đơn. */
 export const GET = defineRoute({
@@ -19,7 +20,8 @@ export const POST = defineRoute({
   handler: async ({ request, ctx }) => {
     const parsed = shareLinkBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    return jsonResponse({ data: await createShareLink(ctx, parsed.data) }, { status: 201 })
+    const input = camelKeys(parsed.data)
+    return jsonResponse({ data: await createShareLink(ctx, input) }, { status: 201 })
   },
 })
 

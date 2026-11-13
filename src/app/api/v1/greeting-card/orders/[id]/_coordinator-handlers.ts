@@ -3,6 +3,7 @@ import { validationFailed } from "@/core/http/errors"
 import { defineRoute } from "@/core/http/define-route"
 import { jsonResponse } from "@/core/http/response"
 import type { TenantContext } from "@/core/tenancy"
+import { camelKeys, type CamelKeys } from "@/lib/case-keys"
 import {
   assignBrochureFlorist,
   uploadBrochureProductPhoto,
@@ -17,12 +18,12 @@ import { acceptOrderBody, deliveryFailedBody, floristBody, photoBody, rejectOrde
 
 /**
  * Dựng một handler tác vụ xưởng: phiên → năng lực → schema → use-case.
- * Bốn route con chỉ khác nhau ở bốn tham số này.
+ * Bốn route con chỉ khác nhau ở bốn tham số này. Thân snake_case (D-69) → camelCase cho use-case.
  */
-function coordinatorHandler<T>(
+function coordinatorHandler<T extends object>(
   capability: string,
   schema: z.ZodType<T>,
-  run: (ctx: TenantContext, id: string, input: T) => Promise<unknown>
+  run: (ctx: TenantContext, id: string, input: CamelKeys<T>) => Promise<unknown>
 ) {
   return defineRoute({
     auth: { kind: "tenant", capability },
@@ -30,7 +31,7 @@ function coordinatorHandler<T>(
       const { id } = params as { id: string }
       const parsed = schema.safeParse(await request.json().catch(() => ({})))
       if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-      return jsonResponse({ data: await run(ctx, id, parsed.data) })
+      return jsonResponse({ data: await run(ctx, id, camelKeys(parsed.data)) })
     },
   })
 }

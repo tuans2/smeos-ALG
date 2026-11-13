@@ -111,8 +111,8 @@ export function ChainDispatchPanel({
         `/api/v1/greeting-card/orders/${orderId}/chain-dispatch`,
         "POST",
         {
-          approvedBranchIds: selectedBranchIds,
-          subcontractPriceVnd: suggestedCraftFee,
+          approved_branch_ids: selectedBranchIds,
+          subcontract_price_vnd: suggestedCraftFee,
         },
         "Không thể phát lệnh điều phối chuỗi"
       )
@@ -249,10 +249,10 @@ export function ChainDispatchPanel({
                     `/api/v1/greeting-card/orders/${orderId}/chain-dispatch`,
                     "POST",
                     {
-                      approvedBranchIds: selectedBranchIds.length > 0
+                      approved_branch_ids: selectedBranchIds.length > 0
                         ? selectedBranchIds
                         : topBranches.slice(0, policy?.topN || 3).map((b) => b.branchId),
-                      subcontractPriceVnd: suggestedCraftFee,
+                      subcontract_price_vnd: suggestedCraftFee,
                     },
                     "Không thể gửi lại thông báo"
                   )

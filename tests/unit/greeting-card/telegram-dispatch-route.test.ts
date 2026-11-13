@@ -37,7 +37,7 @@ function post(chatId: string): Request {
   return new Request("http://localhost/api/v1/greeting-card/integrations/telegram-dispatch", {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ chatId }),
+    body: JSON.stringify({ chat_id: chatId }),
   })
 }
 
@@ -107,7 +107,7 @@ describe("telegram-dispatch route", () => {
 
   it("Gỡ nhóm: bot thôi gửi, quét lại không làm nhóm hiện lại (mã cũ)", async () => {
     await GET(new Request("http://localhost/x"))
-    const del = await DELETE(new Request("http://localhost/x?chatId=-100", { method: "DELETE" }))
+    const del = await DELETE(new Request("http://localhost/x?chat_id=-100", { method: "DELETE" }))
     expect(del.status).toBe(200)
     const body = await (await GET(new Request("http://localhost/x"))).json()
     expect(body.data.recentChats).toEqual([])
@@ -115,7 +115,7 @@ describe("telegram-dispatch route", () => {
   })
 
   it("Gỡ nhóm không thuộc cửa hàng: 404", async () => {
-    const del = await DELETE(new Request("http://localhost/x?chatId=-200", { method: "DELETE" }))
+    const del = await DELETE(new Request("http://localhost/x?chat_id=-200", { method: "DELETE" }))
     expect(del.status).toBe(404)
   })
 })

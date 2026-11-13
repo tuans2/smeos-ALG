@@ -14,6 +14,7 @@ import { BrochureOrderRepository } from "@/modules/greeting-card/infra/brochure-
 import { dispatchAfterPaymentConfirmed } from "@/modules/greeting-card/use-cases/dispatch-after-payment"
 import { confirmDepositBody } from "@/app/api/v1/_contracts/requests-greeting-orders"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /**
  * POST /api/v1/greeting-card/orders/[id]/confirm-deposit
@@ -53,10 +54,11 @@ export const POST = defineRoute({
     const body = await request.json().catch(() => ({}))
     const parsed = confirmDepositBody.safeParse(body)
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
+    const input = camelKeys(parsed.data)
 
-    const result = await coordinatorConfirmDepositPayment(ctx, id, { note: parsed.data.note })
+    const result = await coordinatorConfirmDepositPayment(ctx, id, { note: input.note })
     // Chuỗi: tiền đã ghi nhận → chọn cửa hàng gia công theo cài đặt (PO 22/10/2026)
-    const dispatch = await dispatchAfterPaymentConfirmed(ctx, id, { manualDispatch: parsed.data.manualDispatch })
+    const dispatch = await dispatchAfterPaymentConfirmed(ctx, id, { manualDispatch: input.manualDispatch })
     return jsonResponse({ data: { ...result, dispatch } })
   },
 })

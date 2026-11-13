@@ -31,40 +31,40 @@
       "type": "string",
       "maxLength": 100
     },
-    "shipperName": {
+    "shipper_name": {
       "type": "string",
       "minLength": 1,
       "maxLength": 200
     },
-    "shipperPhone": {
+    "shipper_phone": {
       "type": "string",
       "maxLength": 20
     },
-    "podAssetId": {
+    "pod_asset_id": {
       "type": "string",
       "minLength": 1,
       "maxLength": 64
     },
-    "recipientSignedName": {
+    "recipient_signed_name": {
       "type": "string",
       "maxLength": 200
     },
-    "failureReason": {
+    "failure_reason": {
       "type": "string",
       "maxLength": 1000
     }
   },
   "required": [
     "event",
-    "shipperName"
+    "shipper_name"
   ],
   "examples": [
     {
       "event": "DELIVERED_SUCCESS",
       "carrier": "AhaMove",
-      "shipperName": "Lê Văn Hùng",
-      "shipperPhone": "0933221100",
-      "recipientSignedName": "Trần Thị Bình"
+      "shipper_name": "Lê Văn Hùng",
+      "shipper_phone": "0933221100",
+      "recipient_signed_name": "Trần Thị Bình"
     }
   ]
 }

@@ -29,7 +29,7 @@ export const step06DeliveryContract = defineStep({
   input: Step06DeliveryInputSchema,
   output: Step06DeliveryOutputSchema,
   examples: {
-    input: { event: "DELIVERED_SUCCESS", carrier: "AhaMove", shipperName: "Lê Văn Hùng", shipperPhone: "0933221100", recipientSignedName: "Trần Thị Bình" },
+    input: { event: "DELIVERED_SUCCESS", carrier: "AhaMove", shipper_name: "Lê Văn Hùng", shipper_phone: "0933221100", recipient_signed_name: "Trần Thị Bình" },
     output: { order: exampleOrderView({ stage: "DELIVERED", stageLabel: "Đã giao (chờ đóng đơn)", delivery: { carrier: "AhaMove", shipperName: "Lê Văn Hùng", shipperPhone: "0933221100", state: "DELIVERED_SUCCESS", podImageUrl: null, podRecipientName: "Trần Thị Bình", podCapturedAt: "2026-09-25T09:55:00.000Z", actualDeliveryAt: "2026-09-25T09:55:00.000Z" } }) },
   },
 })

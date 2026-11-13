@@ -52,23 +52,23 @@ async function json(res: Response): Promise<ApiBody> {
 }
 
 const ORDER_BODY = {
-  customerName: "Nguyễn Văn An",
+  customer_name: "Nguyễn Văn An",
   // ĐP-3.16 (26/09/2026): trường lõi REQUIRED tại INTAKE (field-registry seed)
   // — thiếu thì cổng `update-coordinator-stage.ts` chặn RỜI bước INTAKE.
   // Trước đây không bắt buộc ở tầng chạy nên fixture này không có, giờ mọi
   // đơn mặc định của bộ test phải có để còn chuyển bước được (nợ phát hiện
   // 26/09/2026 khi chạy `test:tenant` thật lần đầu sau ĐP-2b).
-  customerPhone: "0987654321",
-  customerTier: "VIP",
-  recipientName: "Trần Thị Bình",
-  recipientPhone: "0901234567",
-  deliveryAddress: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
-  deliveryTargetTime: "17:00 hôm nay",
-  deliveryTargetAt: new Date(Date.now() + 6 * 3600_000).toISOString(),
-  productTitle: "Bó hoa hồng Pastel",
-  unitPriceVnd: 850000,
+  customer_phone: "0987654321",
+  customer_tier: "VIP",
+  recipient_name: "Trần Thị Bình",
+  recipient_phone: "0901234567",
+  delivery_address: { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội" },
+  delivery_target_time: "17:00 hôm nay",
+  delivery_target_at: new Date(Date.now() + 6 * 3600_000).toISOString(),
+  product_title: "Bó hoa hồng Pastel",
+  unit_price_vnd: 850000,
   flowers: [{ flowerName: "Hồng Ohara", quantity: 12, unit: "cành", color: "hồng", role: "Chủ đạo" }],
-  cardMessage: "Chúc mừng sinh nhật!",
+  card_message: "Chúc mừng sinh nhật!",
 }
 
 async function newOrder(t: Tenant, body: Record<string, unknown> = ORDER_BODY): Promise<CoordinatorOrderView> {
@@ -81,7 +81,7 @@ async function newPartner(t: Tenant, code = "XUONG-01", capacityDaily = 10): Pro
   const res = await createPartner(
     withSession(`${BASE}/partners`, t.token, {
       method: "POST",
-      body: JSON.stringify({ code, name: `Xưởng ${code}`, phone: "0912345678", capacityDaily }),
+      body: JSON.stringify({ code, name: `Xưởng ${code}`, phone: "0912345678", capacity_daily: capacityDaily }),
     })
   )
   expect(res.status).toBe(201)
@@ -107,9 +107,9 @@ async function toQualityCheck(t: Tenant): Promise<{ order: CoordinatorOrderView;
   const order = await newOrder(t)
   const partner = await newPartner(t, `P-${randomUUID().slice(0, 6)}`)
   expect((await call(patchStage, t, order.id, { stage: "PLANNING" }, "PATCH")).status).toBe(200)
-  expect((await call(assignPartner, t, order.id, { partnerId: partner.id })).status).toBe(200)
+  expect((await call(assignPartner, t, order.id, { partner_id: partner.id })).status).toBe(200)
   const imageId = await seedAsset(t.ctx)
-  const res = await call(production, t, order.id, { action: "MARK_READY", progressPercent: 100, finishedAssetIds: [imageId] })
+  const res = await call(production, t, order.id, { action: "MARK_READY", progress_percent: 100, finished_asset_ids: [imageId] })
   expect(res.status).toBe(200)
   return { order: (await json(res)).order, imageId }
 }
@@ -195,7 +195,7 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
 
   it("customFields lúc tạo đơn được kiểm theo định nghĩa đang ACTIVE rồi lưu vào custom_fields, trả về ở view", async () => {
     await seedCustomField("cf_ma_don_ngoai")
-    const order = await newOrder(a, { ...ORDER_BODY, customFields: { cf_ma_don_ngoai: "PO-123" } })
+    const order = await newOrder(a, { ...ORDER_BODY, custom_fields: { cf_ma_don_ngoai: "PO-123" } })
     expect(order.customFields).toMatchObject({ cf_ma_don_ngoai: "PO-123" })
 
     const coordination = await prisma.order_coordinations.findUnique({ where: { order_id: order.id } })
@@ -205,9 +205,9 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
   it("PATCH .../custom-fields trộn giá trị mới vào giá trị cũ, không thay nguyên khối", async () => {
     await seedCustomField("cf_a")
     await seedCustomField("cf_b")
-    const order = await newOrder(a, { ...ORDER_BODY, customFields: { cf_a: "giá trị a" } })
+    const order = await newOrder(a, { ...ORDER_BODY, custom_fields: { cf_a: "giá trị a" } })
 
-    const res = await call(patchCustomFields, a, order.id, { customFields: { cf_b: "giá trị b" } }, "PATCH")
+    const res = await call(patchCustomFields, a, order.id, { custom_fields: { cf_b: "giá trị b" } }, "PATCH")
     expect(res.status).toBe(200)
     const updated = (await json(res)).order
     expect(updated.customFields).toMatchObject({ cf_a: "giá trị a", cf_b: "giá trị b" })
@@ -222,7 +222,7 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     const blockedBody = (await readJson(blocked)) as { error: { message: string } }
     expect(blockedBody.error.message).toContain("cf_ghi_chu_bat_buoc")
 
-    expect((await call(patchCustomFields, a, order.id, { customFields: { cf_ghi_chu_bat_buoc: "đã điền" } }, "PATCH")).status).toBe(200)
+    expect((await call(patchCustomFields, a, order.id, { custom_fields: { cf_ghi_chu_bat_buoc: "đã điền" } }, "PATCH")).status).toBe(200)
     expect((await call(patchStage, a, order.id, { stage: "VALIDATING" }, "PATCH")).status).toBe(200)
   })
 
@@ -271,30 +271,30 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     const order = await newOrder(a)
     const partnerB = await newPartner(b)
     await call(patchStage, a, order.id, { stage: "PLANNING" }, "PATCH")
-    expect((await call(assignPartner, a, order.id, { partnerId: partnerB.id })).status).toBe(404)
+    expect((await call(assignPartner, a, order.id, { partner_id: partnerB.id })).status).toBe(404)
 
     const partnersA = (await readJson(await listPartners(withSession(`${BASE}/partners`, a.token)))).data as PartnerView[]
     expect(partnersA).toHaveLength(0)
-    expect((await call(patchPartner, a, partnerB.id, { isActive: false }, "PATCH")).status).toBe(404)
+    expect((await call(patchPartner, a, partnerB.id, { is_active: false }, "PATCH")).status).toBe(404)
   })
 
   it("không gắn được ảnh (assets) của tổ chức khác làm ảnh thành phẩm / POD (422)", async () => {
     const order = await newOrder(a)
     const partner = await newPartner(a)
     await call(patchStage, a, order.id, { stage: "PLANNING" }, "PATCH")
-    await call(assignPartner, a, order.id, { partnerId: partner.id })
+    await call(assignPartner, a, order.id, { partner_id: partner.id })
     const foreignImage = await seedAsset(b.ctx)
-    const res = await call(production, a, order.id, { action: "MARK_READY", progressPercent: 100, finishedAssetIds: [foreignImage] })
+    const res = await call(production, a, order.id, { action: "MARK_READY", progress_percent: 100, finished_asset_ids: [foreignImage] })
     expect(res.status).toBe(422)
   })
 
   it("body sai → 400, bước lạ → 400, nhảy cóc → 409 (không còn 500)", async () => {
-    const bad = await createOrder(withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify({ customerName: "" }) }))
+    const bad = await createOrder(withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify({ customer_name: "" }) }))
     expect(bad.status).toBe(400)
     const dataUrl = await createOrder(
       withSession(`${BASE}/orders`, a.token, {
         method: "POST",
-        body: JSON.stringify({ ...ORDER_BODY, sampleImageUrl: "data:image/png;base64,AAAA" }),
+        body: JSON.stringify({ ...ORDER_BODY, sample_image_url: "data:image/png;base64,AAAA" }),
       })
     )
     expect(dataUrl.status).toBe(400)
@@ -310,7 +310,7 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     const oneStringAddress = await createOrder(
       withSession(`${BASE}/orders`, a.token, {
         method: "POST",
-        body: JSON.stringify({ ...ORDER_BODY, deliveryAddress: "123 Phố Huế, Hà Nội" }),
+        body: JSON.stringify({ ...ORDER_BODY, delivery_address: "123 Phố Huế, Hà Nội" }),
       })
     )
     expect(oneStringAddress.status).toBe(400)
@@ -318,7 +318,7 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     const missingTier = await createOrder(
       withSession(`${BASE}/orders`, a.token, {
         method: "POST",
-        body: JSON.stringify({ ...ORDER_BODY, deliveryAddress: { street: "123 Phố Huế", city: "Hà Nội" } }),
+        body: JSON.stringify({ ...ORDER_BODY, delivery_address: { street: "123 Phố Huế", city: "Hà Nội" } }),
       })
     )
     expect(missingTier.status).toBe(400)
@@ -335,16 +335,16 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     // Không gửi customerPhone (khách không cho số, hoặc đã chọn từ CMI) → chuỗi rỗng, không lỗi
     // lúc TẠO đơn (chỉ chặn lúc RỜI bước INTAKE, xem cổng 3.16). `undefined` để
     // JSON.stringify bỏ hẳn khoá, mô phỏng đúng "không gửi trường này".
-    const withoutPhone = await newOrder(a, { ...ORDER_BODY, customerPhone: undefined })
+    const withoutPhone = await newOrder(a, { ...ORDER_BODY, customer_phone: undefined })
     expect(withoutPhone.customerPhone).toBe("")
   })
 
   it("ĐP-1.7 (26/09/2026): ghi chú phân công cho đối tác tách khỏi ghi chú nội bộ", async () => {
-    const order = await newOrder(a, { ...ORDER_BODY, internalNote: "Ghi chú riêng của điều phối, không cho xưởng xem" })
+    const order = await newOrder(a, { ...ORDER_BODY, internal_note: "Ghi chú riêng của điều phối, không cho xưởng xem" })
     const partner = await newPartner(a)
     await call(patchStage, a, order.id, { stage: "PLANNING" }, "PATCH")
 
-    const res = await call(assignPartner, a, order.id, { partnerId: partner.id, notes: "Gói giấy lụa mờ, nơ đỏ" })
+    const res = await call(assignPartner, a, order.id, { partner_id: partner.id, notes: "Gói giấy lụa mờ, nơ đỏ" })
     expect(res.status).toBe(200)
     const view = (await json(res)).order
 
@@ -384,7 +384,7 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
 
   it("ĐP-2.6/2.7 (26/09/2026): tạo đơn có productId → snapshot Master Index (MI-5), không lộ costPriceVnd", async () => {
     const productId = await seedProduct(a)
-    const order = await newOrder(a, { ...ORDER_BODY, productId })
+    const order = await newOrder(a, { ...ORDER_BODY, product_id: productId })
 
     expect(order.productId).toBe(productId)
     expect(order.product).not.toBeNull()
@@ -404,14 +404,14 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
   it("ĐP-2.6: productId của tổ chức khác hoặc không tồn tại → 422, không tạo đơn", async () => {
     const productId = await seedProduct(b)
     const res = await createOrder(
-      withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify({ ...ORDER_BODY, productId }) })
+      withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify({ ...ORDER_BODY, product_id: productId }) })
     )
     expect(res.status).toBe(422)
 
     const resMissing = await createOrder(
       withSession(`${BASE}/orders`, a.token, {
         method: "POST",
-        body: JSON.stringify({ ...ORDER_BODY, productId: randomUUID() }),
+        body: JSON.stringify({ ...ORDER_BODY, product_id: randomUUID() }),
       })
     )
     expect(resMissing.status).toBe(422)
@@ -421,7 +421,7 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     const productId = await seedProduct(a)
     const order = await newOrder(a, {
       ...ORDER_BODY,
-      productId,
+      product_id: productId,
       flowers: [{ flowerName: "Hồng Ohara", quantity: 20, unit: "cành", color: "Hồng phấn", role: "Chủ đạo" }],
     })
     const item = await prisma.order_items.findFirst({ where: { order_id: order.id } })
@@ -443,10 +443,10 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     })
     const order = await newOrder(a, {
       ...ORDER_BODY,
-      customerId: customer.id,
-      customerName: "Tên giả client tự gõ",
-      customerTier: "NEW",
-      customerPhone: "0000000000",
+      customer_id: customer.id,
+      customer_name: "Tên giả client tự gõ",
+      customer_tier: "NEW",
+      customer_phone: "0000000000",
     })
     expect(order.customerName).toBe("Lê Thị Hồng Từ CMI")
     expect(order.customerTier).toBe("VIP")
@@ -458,7 +458,7 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
       data: { organization_id: b.organizationId, code: `KH-${randomUUID().slice(0, 8)}`, name: "Khách bên B", phone: "0900000001" },
     })
     const res = await createOrder(
-      withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify({ ...ORDER_BODY, customerId: customer.id }) })
+      withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify({ ...ORDER_BODY, customer_id: customer.id }) })
     )
     expect(res.status).toBe(422)
   })
@@ -483,7 +483,7 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     expect(order.finishedImageUrls).toHaveLength(1)
 
     // Chưa QC đạt thì không giao được.
-    expect((await call(delivery, a, order.id, { event: "PICKED_UP", shipperName: "Bình" })).status).toBe(422)
+    expect((await call(delivery, a, order.id, { event: "PICKED_UP", shipper_name: "Bình" })).status).toBe(422)
 
     const passed = (await json(await call(qc, a, order.id, { decision: "PASSED" })))
     expect(passed.order.stage).toBe("DISPATCHING")
@@ -492,27 +492,27 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     const qcRow = await prisma.order_qc_records.findFirst({ where: { order_id: order.id } })
     expect(qcRow?.image_asset_ids).toEqual([imageId])
 
-    expect((await call(delivery, a, order.id, { event: "PICKED_UP", shipperName: "Bình", carrier: "AhaMove" })).status).toBe(200)
-    expect((await call(delivery, a, order.id, { event: "ON_THE_WAY", shipperName: "Bình" })).status).toBe(200)
+    expect((await call(delivery, a, order.id, { event: "PICKED_UP", shipper_name: "Bình", carrier: "AhaMove" })).status).toBe(200)
+    expect((await call(delivery, a, order.id, { event: "ON_THE_WAY", shipper_name: "Bình" })).status).toBe(200)
     // Không lùi trạng thái giao.
-    expect((await call(delivery, a, order.id, { event: "PICKED_UP", shipperName: "Bình" })).status).toBe(422)
+    expect((await call(delivery, a, order.id, { event: "PICKED_UP", shipper_name: "Bình" })).status).toBe(422)
     // Thiếu POD → 422.
-    expect((await call(delivery, a, order.id, { event: "DELIVERED_SUCCESS", shipperName: "Bình" })).status).toBe(422)
+    expect((await call(delivery, a, order.id, { event: "DELIVERED_SUCCESS", shipper_name: "Bình" })).status).toBe(422)
 
     const pod = await seedAsset(a.ctx)
     const delivered = (await json(
-      await call(delivery, a, order.id, { event: "DELIVERED_SUCCESS", shipperName: "Bình", podAssetId: pod, recipientSignedName: "Lan" })
+      await call(delivery, a, order.id, { event: "DELIVERED_SUCCESS", shipper_name: "Bình", pod_asset_id: pod, recipient_signed_name: "Lan" })
     ))
     expect(delivered.order.stage).toBe("DELIVERED")
     expect(delivered.order.delivery.podImageUrl).toBeTruthy()
     expect(delivered.order.delivery.carrier).toBe("AhaMove")
 
     // Còn nợ thì chưa hoàn tất (PO 04/11/2026, checklist ALG 4.26); thu đủ rồi mới đóng
-    expect((await call(closeOrder, a, order.id, { partnerRating: 5, partnerPayoutVnd: 350000 })).status).toBe(422)
+    expect((await call(closeOrder, a, order.id, { partner_rating: 5, partner_payout_vnd: 350000 })).status).toBe(422)
     const due = Number((await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })).balance_vnd)
-    if (due > 0) expect((await call(recordOrderPayment, a, order.id, { kind: "BALANCE", amountVnd: due, paymentMethod: "CASH" })).status).toBe(201)
+    if (due > 0) expect((await call(recordOrderPayment, a, order.id, { kind: "BALANCE", amount_vnd: due, payment_method: "CASH" })).status).toBe(201)
 
-    const closed = (await json(await call(closeOrder, a, order.id, { partnerRating: 5, partnerPayoutVnd: 350000 })))
+    const closed = (await json(await call(closeOrder, a, order.id, { partner_rating: 5, partner_payout_vnd: 350000 })))
     expect(closed.order.stage).toBe("COMPLETED")
     expect(closed.order.partnerPayoutVnd).toBe(350000)
 
@@ -550,10 +550,10 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
   it("sự cố: mở → đơn về EXCEPTION giữ nguyên trục giao; xử lý xong → tự về đúng bước cũ; chưa xử lý thì không đóng", async () => {
     const { order } = await toQualityCheck(a)
     await call(qc, a, order.id, { decision: "PASSED" })
-    await call(delivery, a, order.id, { event: "PICKED_UP", shipperName: "Bình" })
+    await call(delivery, a, order.id, { event: "PICKED_UP", shipper_name: "Bình" })
 
     const failed = (await json(
-      await call(delivery, a, order.id, { event: "DELIVERY_FAILED", shipperName: "Bình", failureReason: "Người nhận không nghe máy" })
+      await call(delivery, a, order.id, { event: "DELIVERY_FAILED", shipper_name: "Bình", failure_reason: "Người nhận không nghe máy" })
     ))
     expect(failed.order.stage).toBe("EXCEPTION")
     expect(failed.order.hasException).toBe(true)
@@ -612,15 +612,15 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     const o1 = await newOrder(a)
     const o2 = await newOrder(a)
     for (const o of [o1, o2]) await call(patchStage, a, o.id, { stage: "PLANNING" }, "PATCH")
-    expect((await call(assignPartner, a, o1.id, { partnerId: small.id })).status).toBe(200)
-    expect((await call(assignPartner, a, o2.id, { partnerId: small.id })).status).toBe(422)
-    expect((await call(assignPartner, a, o2.id, { partnerId: small.id, overrideCapacity: true })).status).toBe(200)
+    expect((await call(assignPartner, a, o1.id, { partner_id: small.id })).status).toBe(200)
+    expect((await call(assignPartner, a, o2.id, { partner_id: small.id })).status).toBe(422)
+    expect((await call(assignPartner, a, o2.id, { partner_id: small.id, override_capacity: true })).status).toBe(200)
 
     const paused = await newPartner(a, "XUONG-NGHI")
-    expect((await call(patchPartner, a, paused.id, { isActive: false }, "PATCH")).status).toBe(200)
+    expect((await call(patchPartner, a, paused.id, { is_active: false }, "PATCH")).status).toBe(200)
     const o3 = await newOrder(a)
     await call(patchStage, a, o3.id, { stage: "PLANNING" }, "PATCH")
-    expect((await call(assignPartner, a, o3.id, { partnerId: paused.id })).status).toBe(422)
+    expect((await call(assignPartner, a, o3.id, { partner_id: paused.id })).status).toBe(422)
   })
 
   it("bảng công tắc tắt R5 cho điều hành → cập nhật giao hàng trả 403", async () => {
@@ -636,26 +636,26 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
         updated_by: a.userId,
       },
     })
-    expect((await call(delivery, a, order.id, { event: "PICKED_UP", shipperName: "Bình" })).status).toBe(403)
+    expect((await call(delivery, a, order.id, { event: "PICKED_UP", shipper_name: "Bình" })).status).toBe(403)
   })
 
   // ── ĐP-4a (26/09/2026, PO D2) — Sổ thu ───────────────────────────────────
 
   it("sổ thu: cọc rồi thu nốt → paidVnd/balanceVnd/paymentStatus đúng, khớp DB", async () => {
-    const order = await newOrder(a, { ...ORDER_BODY, unitPriceVnd: 1_000_000 })
+    const order = await newOrder(a, { ...ORDER_BODY, unit_price_vnd: 1_000_000 })
     expect(order.paidVnd).toBe(0)
     expect(order.balanceVnd).toBe(1_000_000)
     expect(order.paymentStatus).toBe("UNPAID")
 
     const deposit = await json(
-      await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 500_000, paymentMethod: "CASH" })
+      await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amount_vnd: 500_000, payment_method: "CASH" })
     )
     expect(deposit.order.paidVnd).toBe(500_000)
     expect(deposit.order.balanceVnd).toBe(500_000)
     expect(deposit.order.paymentStatus).toBe("PARTIALLY_PAID")
 
     const balance = await json(
-      await call(recordOrderPayment, a, order.id, { kind: "BALANCE", amountVnd: 500_000, reference: "VCB-001" })
+      await call(recordOrderPayment, a, order.id, { kind: "BALANCE", amount_vnd: 500_000, reference: "VCB-001" })
     )
     expect(balance.order.paidVnd).toBe(1_000_000)
     expect(balance.order.balanceVnd).toBe(0)
@@ -674,17 +674,17 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
 
   it("sổ thu: cách ly tổ chức — tổ chức khác không đọc/ghi được", async () => {
     const order = await newOrder(a)
-    expect((await call(recordOrderPayment, b, order.id, { kind: "DEPOSIT", amountVnd: 100_000 })).status).toBe(404)
+    expect((await call(recordOrderPayment, b, order.id, { kind: "DEPOSIT", amount_vnd: 100_000 })).status).toBe(404)
     expect((await call(listOrderPayments, b, order.id, undefined, "GET")).status).toBe(404)
   })
 
   it("sổ thu: hoàn tiền không được vượt số đã thu (422), REFUND gác bằng R10 (trần cứng điều hành)", async () => {
-    const order = await newOrder(a, { ...ORDER_BODY, unitPriceVnd: 500_000 })
-    await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 500_000 })
+    const order = await newOrder(a, { ...ORDER_BODY, unit_price_vnd: 500_000 })
+    await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amount_vnd: 500_000 })
 
-    expect((await call(recordOrderPayment, a, order.id, { kind: "REFUND", amountVnd: 600_000 })).status).toBe(422)
+    expect((await call(recordOrderPayment, a, order.id, { kind: "REFUND", amount_vnd: 600_000 })).status).toBe(422)
 
-    const refunded = await json(await call(recordOrderPayment, a, order.id, { kind: "REFUND", amountVnd: 500_000 }))
+    const refunded = await json(await call(recordOrderPayment, a, order.id, { kind: "REFUND", amount_vnd: 500_000 }))
     expect(refunded.order.paidVnd).toBe(0)
     expect(refunded.order.paymentStatus).toBe("REFUNDED")
 
@@ -698,27 +698,27 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
         updated_by: a.userId,
       },
     })
-    expect((await call(recordOrderPayment, a, order.id, { kind: "REFUND", amountVnd: 1 })).status).toBe(403)
+    expect((await call(recordOrderPayment, a, order.id, { kind: "REFUND", amount_vnd: 1 })).status).toBe(403)
     // R9 (ghi DEPOSIT/BALANCE) không bị ảnh hưởng bởi việc tắt R10.
-    expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 1 })).status).toBe(201)
+    expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amount_vnd: 1 })).status).toBe(201)
   })
 
   // Audit BL-05 (06/11/2026): sổ thu Điều phối từng không chặn thu vượt / đơn huỷ, và ghi `paid_vnd`
   // tuyệt đối tính từ lần đọc — hai lượt đồng thời mất một khoản. Nay chung luật `planPayment` + khoá lạc quan.
   it("sổ thu: thu vượt phần còn phải thu hoặc thu vào đơn đã huỷ → 422, sổ không đổi", async () => {
-    const order = await newOrder(a, { ...ORDER_BODY, unitPriceVnd: 500_000 })
-    expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 500_001 })).status).toBe(422)
+    const order = await newOrder(a, { ...ORDER_BODY, unit_price_vnd: 500_000 })
+    expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amount_vnd: 500_001 })).status).toBe(422)
     await prisma.orders.update({ where: { id: order.id }, data: { status: "CANCELLED" } })
-    expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 100_000 })).status).toBe(422)
+    expect((await call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amount_vnd: 100_000 })).status).toBe(422)
     expect(await prisma.order_payments.count({ where: { order_id: order.id } })).toBe(0)
     expect(Number((await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })).paid_vnd)).toBe(0)
   })
 
   it("sổ thu: hai lượt thu đồng thời → paid_vnd luôn bằng tổng sổ, lượt thua (nếu có) nhận 409", async () => {
-    const order = await newOrder(a, { ...ORDER_BODY, unitPriceVnd: 1_000_000 })
+    const order = await newOrder(a, { ...ORDER_BODY, unit_price_vnd: 1_000_000 })
     const results = await Promise.all([
-      call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 400_000 }),
-      call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amountVnd: 400_000 }),
+      call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amount_vnd: 400_000 }),
+      call(recordOrderPayment, a, order.id, { kind: "DEPOSIT", amount_vnd: 400_000 }),
     ])
     for (const r of results) expect([201, 409]).toContain(r.status)
     const row = await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })
@@ -734,10 +734,10 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     const post = (body: Record<string, unknown>) =>
       createOrder(withSession(`${BASE}/orders`, a.token, { method: "POST", body: JSON.stringify(body) }))
     const yesterday = new Date(Date.now() - 36 * 3600_000).toISOString()
-    expect((await post({ ...ORDER_BODY, deliveryTargetAt: yesterday })).status).toBe(400)
-    expect((await post({ ...ORDER_BODY, recipientPhone: "+1 415 555 0100" })).status).toBe(400)
+    expect((await post({ ...ORDER_BODY, delivery_target_at: yesterday })).status).toBe(400)
+    expect((await post({ ...ORDER_BODY, recipient_phone: "+1 415 555 0100" })).status).toBe(400)
     expect(await prisma.orders.count({ where: { organization_id: a.organizationId } })).toBe(0)
-    expect((await post({ ...ORDER_BODY, recipientPhone: "0901 234 567" })).status).toBe(201)
+    expect((await post({ ...ORDER_BODY, recipient_phone: "0901 234 567" })).status).toBe(201)
   })
 
   it("order_info_requests: cách ly tổ chức — tổ chức B không thấy yêu cầu thông tin của tổ chức A", async () => {

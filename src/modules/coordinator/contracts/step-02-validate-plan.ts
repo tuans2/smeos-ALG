@@ -29,7 +29,7 @@ export const step02ValidatePlanContract = defineStep({
   input: Step02ValidatePlanInputSchema,
   output: Step02ValidatePlanOutputSchema,
   examples: {
-    input: { stage: "PLANNING", nextAction: "Chốt giờ lấy hàng 16:30" },
+    input: { stage: "PLANNING", next_action: "Chốt giờ lấy hàng 16:30" },
     output: { order: exampleOrderView({ stage: "PLANNING", stageLabel: "Lập kế hoạch", nextAction: "Chốt giờ lấy hàng 16:30" }) },
   },
 })

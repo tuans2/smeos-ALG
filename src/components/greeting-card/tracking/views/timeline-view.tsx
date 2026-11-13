@@ -26,7 +26,7 @@ export function TimelineView({ qs, state, onChange, onOpen }: {
 
 /** Lịch sử một đơn/link: từng bước đã qua so với thời gian chuẩn + mọi sự kiện. */
 export function OrderHistoryPanel({ orderId, sessionId }: { orderId?: string | null | undefined; sessionId?: string | null | undefined }) {
-  const refQs = orderId ? `orderId=${orderId}` : sessionId ? `sessionId=${sessionId}` : null
+  const refQs = orderId ? `order_id=${orderId}` : sessionId ? `session_id=${sessionId}` : null
   if (!refQs) return null
   return <HistoryContent refQs={refQs} />
 }

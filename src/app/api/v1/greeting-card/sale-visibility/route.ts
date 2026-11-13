@@ -4,6 +4,7 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 import { getSaleVisibility, setSaleVisibility } from "@/modules/greeting-card/use-cases/sale-visibility"
 import { saleVisibilityBody } from "@/app/api/v1/_contracts/requests-greeting"
 import { defineRoute } from "@/core/http/define-route"
+import { camelKeys } from "@/lib/case-keys"
 
 /** GET /api/v1/greeting-card/sale-visibility — mặc định + lựa chọn riêng từng sale (F2). */
 export const GET = defineRoute({
@@ -19,7 +20,8 @@ export const PUT = defineRoute({
   handler: async ({ request, ctx }) => {
     const parsed = saleVisibilityBody.safeParse(await request.json().catch(() => null))
     if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
-    if (!parsed.data.userId && !parsed.data.mode) throw validationFailed({ mode: "Chọn chế độ mặc định" })
-    return jsonResponse({ data: await setSaleVisibility(ctx, parsed.data) })
+    const input = camelKeys(parsed.data)
+    if (!input.userId && !input.mode) throw validationFailed({ mode: "Chọn chế độ mặc định" })
+    return jsonResponse({ data: await setSaleVisibility(ctx, input) })
   },
 })

@@ -45,9 +45,9 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
         "/api/v1/greeting-card/send-links",
         "POST",
         {
-          catalogId: catalogId || undefined,
-          customerName: customerName.trim() || undefined,
-          customerPhone: customerPhone.trim() || undefined,
+          catalog_id: catalogId || undefined,
+          customer_name: customerName.trim() || undefined,
+          customer_phone: customerPhone.trim() || undefined,
         },
         "Không tạo được link chào khách"
       )
